@@ -85,7 +85,7 @@
                                 <template #icon>
                                     <component :is="getActionIcon(action.icon)" :size="18" />
                                 </template>
-                                {{ action.label }}
+                                {{ t('agora', action.label) }}
                             </NcActionButton>
                         </NcActions>
                     </div>
@@ -151,7 +151,6 @@
                 :options-by-inquiry="optionsByInquiry"
                 :is-readonly="isReadOnly"
                 :is-official-user="inquiryStore.user?.isOfficial || false"
-                :can-manage-vote="canManageVote"
                 :can-add-options="showCreateOptionButtons"
                 :parent-id="inquiryStore.id"
                 :target-type="targetType"
@@ -285,7 +284,6 @@ const modalComponentCache = new Map<string, Component>()
 
 // Computed
 const isReadOnly = computed(() => route.name === 'publicInquiry')
-const canManageVote = computed(() => inquiryStore.currentUserStatus?.isOwner || sessionStore.currentUser?.isAdmin || sessionStore.currentUser?.isOfficial)
 
 // Target type - this component is for options
 const targetType = computed(() => 'option' as const)
@@ -328,7 +326,7 @@ const showCreateOptionButtons = computed(() => {
    
     // For vote family, additionally check if there's an active engine
     if (family.key === 'vote') {
-        return allowCreation && hasActiveEngineForActiveFamily.value
+        return allowCreation && hasActiveEngineForActiveFamily.value && inquiryStore.permissions.edit
     }
     
     return allowCreation
@@ -520,7 +518,6 @@ const familyOptions = computed(() => {
 
     return getFamilyOptionsByTarget(
         optionsStore.options,
-        allOptionTypes.value,
         activeFamilyData.value.key,
         inquiryStore.id
     )

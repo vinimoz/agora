@@ -1,5 +1,63 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+# [1.7.13] - 2026-09-24
+Fix:
+    - Bug #64: do not touch the description editor once destroyed
+    - Bug #63: check permissions on votes and support engines
+    - Bug #62: show voters only what they need to vote
+    - Bug #61: hide engine results until close, on stacked engine blocks
+    - Bug #60: hide an engine's results until it is close
+    - Bug #59: save stacked yes/no and grade answers automatically
+    - Bug #58: show overall progress below stacked engine blocks
+    - Bug #57: show one block per engine when an inquiry is split into themes
+    - Bug #56: fit the card grid to narrow screens
+    - Bug #55: open the comment field on chosen majority judgment grades
+    - Bug #54: comment on an option from its vote card
+    - Bug #53: grade a majority judgment option with one tap
+    - Bug #52: label the balance bar with position counts
+    - Bug #51: restrict editing and moderation to the users entitled to them
+    - Bug #50: fall back to the stored catalogue for option type labels
+    - Bug #49: answer 400 on a bad submit action and stop a PHP warning
+    - Bug #48: show every inquiry, and keep the list inside its area 
+    - Bug #47: publish results that match the ballots
+    - Bug #46: elect the best median, and show what was cast
+    - Bug #45: make the ballot usable again
+    - Bug #44: Bug in template creation
+    - Fix group inquiry owner display
+
+
+# [1.7.12] - 2026-09-20
+Fix:
+    - Bug #43: make commenting work on the /page/inquiry route
+    - Bug #42: show options not handled by any section
+    - Bug #41: translate leftover English strings
+    - Bug #40: allow creating an option with a title only
+    - In reel, cannot click on support
+    - Display Item, when there is an expieration date, support hidded.
+
+# [1.7.11] - 2026-09-18
+Fix:
+    - Bug #39 : pass family to InquiryDto on update
+
+# [1.7.10] - 2026-09-17
+Fix:
+    - Nextcloud 35 integration
+
+# [1.7.9] - 2026-09-15
+Fix:
+    - Bug #38: delete instead of DELETE
+    - Navigation
+Feature:
+    - First IA integration
+    - New reel view
+
+# [1.7.8] - 2026-08-16
+Fix: 
+    - Navigation display ui
+    - Navigation menu creation
+    - I18n : plural
+
 # [1.7.7] - 2026-08-07
 Fix: 
     - Deletion redirect of an inquiry

@@ -4,6 +4,7 @@
  */
 
 import { defineStore } from 'pinia'
+import { t } from '@nextcloud/l10n'
 import { AppSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { BaseEntry, InquiryType, InquiryOptionType, InquiryFamily, OptionFamily } from '../Types/index.ts'
@@ -712,7 +713,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 			const items = type === 'category' ? this.categoryTab : this.locationTab
 			const tree = this.buildTree(items)
 
-			const options = [{ id: 0, name: 'No parent' }]
+			const options = [{ id: 0, name: t('agora', 'No parent') }]
 
 			const flattenTree = (nodes: BaseEntry[], level = 0) => {
 				let results: BaseEntry[] = []

@@ -259,6 +259,7 @@ class InquiryController extends BaseController
                 (string) $data['title'],
                 (string) $data['type'],
                 (string) $data['family'],
+                isset($data['access']) ? (string) $data['access'] : '',
                 isset($data['ownedGroup']) ? (string) $data['ownedGroup'] : '',
                 isset($data['description']) ? (string) $data['description'] : '',
                 isset($data['parentId']) ? (int) $data['parentId'] : null,
@@ -351,7 +352,7 @@ class InquiryController extends BaseController
             $dto = new InquiryDto(
                 (string) $data['title'],
                 (string) $data['type'],
-                (string) $data['family'],
+                isset($data['family']) ? (string) $data['family'] : '',
                 isset($data['ownedGroup']) ? (string) $data['ownedGroup'] : '',
                 isset($data['description']) ? (string) $data['description'] : '',
                 isset($data['parentId']) ? (int) $data['parentId'] : 0,
@@ -427,11 +428,19 @@ class InquiryController extends BaseController
     public function submitInquiry(int $inquiryId): JSONResponse
     {
         $rawData = $this->request->getParams('data');
-        return $this->response(
-            fn () => [
-                'inquiry' => $this->inquiryService->applyAction($inquiryId, $rawData['action']),
-            ]
-        );
+
+        try {
+            return $this->response(
+                fn () => [
+                    'inquiry' => $this->inquiryService->applyAction($inquiryId, $rawData['action'] ?? ''),
+                ]
+            );
+        } catch (\InvalidArgumentException $e) {
+            return new JSONResponse(
+                ['error' => $e->getMessage()],
+                Http::STATUS_BAD_REQUEST
+            );
+        }
     }
 
 

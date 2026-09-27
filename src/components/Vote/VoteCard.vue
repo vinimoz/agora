@@ -13,7 +13,7 @@
     @click="handleCardClick"
   >
     <!-- Header with icon, type label, and creation date -->
-    <div class="card-header">
+    <div v-if="inquiryStore.permissions.edit" class="card-header">
       <div class="header-left">
         <div class="type-icon" :style="{ color: itemTypeColor }">
           <component :is="itemIcon" :size="20" />
@@ -21,7 +21,7 @@
         
         <div class="header-meta">
           <span class="item-type-label">{{ itemTypeLabel }}</span>
-          <span class="timestamp">{{ formatDate(item.status?.created || item.created) }}</span>
+          <span class="timestamp">{{ formatDate(item.status.created) }}</span>
         </div>
       </div>
     </div>
@@ -33,20 +33,20 @@
       
       <!-- Support and comments stats (when not voting mode) -->
       <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div class="support-stats" @click.stop="openSupportsModal">
+        <div v-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
           <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
         </div>
         
-        <div v-if="allowComment && item.status?.countComments" class="comments-stats">
+        <div v-if="allowComment && item.status.countComments" class="comments-stats">
           <component :is="InquiryOptionIcons.Comment" :size="14" class="stat-icon" />
           <span>{{ item.status.countComments }}</span>
         </div>
       </div>
 
       <!-- Progress bar for voting mode -->
-      <div v-if="!canVote || hasUserVoted" class="progress-bar-container">
+      <div v-if="(!canVote || hasUserVoted) && !hideResults" class="progress-bar-container">
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: percentage + '%' }" />
         </div>
@@ -84,8 +84,28 @@
       @change-grade="handleGradeChange"
     />
 
+    <div v-if="canComment" class="item-comment">
+      <NcButton
+        variant="tertiary"
+        :aria-expanded="showComment ? 'true' : 'false'"
+        :aria-controls="commentZoneId"
+        @click="toggleComment"
+      >
+        {{ showComment ? t('agora', 'Hide comment') : t('agora', 'Add comment') }}
+      </NcButton>
+      <div v-show="showComment" :id="commentZoneId">
+        <CommentAdd
+          v-if="commentMounted"
+          ref="commentAdd"
+          :item-id="item.id"
+          :input-label="t('agora', 'Comment on {item}', { item: item.title })"
+          :placeholder="openedByGrade ? t('agora', 'Under which conditions? Why?') : undefined"
+        />
+      </div>
+    </div>
+
     <!-- Footer with owner info -->
-    <div v-if="!compact" class="card-footer">
+    <div v-if="!compact && inquiryStore.permissions.edit" class="card-footer">
       <div class="owner-info">
         <NcAvatar
           v-if="item.owner?.id"
@@ -106,25 +126,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import VoteInput from './VoteInput.vue'
+import CommentAdd from '../Comments/CommentAdd.vue'
 import { useSessionStore } from '../../stores/session'
+import { useInquiryStore } from '../../stores/inquiry'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import {
-  getOptionTypeLabel,
-  getOptionTypeIconComponent,
-  getOptionTypeColor,
-  hasSupportFeature as hasSupportFeatureHelper,
-  allowsComments
-} from '../../helpers/modules/InquiryOptionHelper'
+  getItemTypeLabel,
+  getItemTypeIconComponent,
+  getItemTypeColor,
+} from '../../helpers/modules/InquiryHelper'
 
-import type { Option, Inquiry, SupportValue } from '../../Types/index'
+import type { Item, SupportValue } from '../../Types/index'
 
 const props = defineProps<{
-  item: Option | Inquiry
+  item: Item
   compact?: boolean
   effectiveEngineId: string
   engineConfig: Record<string, unknown>
@@ -143,10 +164,11 @@ const props = defineProps<{
   currentTokenWeight?: number | null
   getUserVoteValueForItem: (itemId: number) => SupportValue | null
   totalItems?: number
+  hideResults?: boolean
 }>()
 
 const emit = defineEmits<{
-  vote: [item: Option | Inquiry, value: SupportValue]
+  vote: [item: Item, value: SupportValue]
   'approvalToggle': [itemId: number]
   'changeRank': [itemId: number, rank: number | null]
   'changeGrade': [itemId: number, grade: string | null]
@@ -159,19 +181,14 @@ const emit = defineEmits<{
 }>()
 
 const sessionStore = useSessionStore()
-const allItemTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
-
-// Determine if item is an Option or Inquiry
-const isOption = computed(() => 'type' in props.item && props.item.type !== undefined)
-const isInquiry = computed(() => 'inquiryStatus' in props.item)
+const inquiryStore = useInquiryStore()
+const allItemTypes = computed(() => sessionStore.appSettings?.inquiryItemTypeTab || [])
 
 const itemTypeLabel = computed(() => {
-  if (isOption.value) {
-    const option = props.item as Option
-    return getOptionTypeLabel(option.type, allItemTypes.value, t('agora', 'Option'))
-  } 
-    return t('agora', 'Inquiry')
-  
+  if (!props.item?.type || !allItemTypes.value) {
+    return t('agora', 'Item')
+  }
+  return getItemTypeLabel(props.item.type, allItemTypes.value, t('agora', 'Item'))
 })
 
 const isMultiEngine = computed(() => {
@@ -190,6 +207,7 @@ const canRemoveVote = computed(() => {
 
 function handleRemoveVote() {
   const engine = props.effectiveEngineId
+  // Clear the value for this item
   if (['binary', 'ternary', 'score', 'star'].includes(engine)) {
     emit('update:score', props.item.id, null)
   } else if (engine === 'majority_judgment') {
@@ -198,38 +216,47 @@ function handleRemoveVote() {
 }
 
 const itemIcon = computed(() => {
-  if (isOption.value) {
-    const option = props.item as Option
-    return getOptionTypeIconComponent(option.type, allItemTypes.value)
-  } 
+  if (!props.item?.type || !allItemTypes.value) {
     return InquiryOptionIcons.Default
-  
+  }
+  return getItemTypeIconComponent(props.item.type, allItemTypes.value)
 })
 
 const itemTypeColor = computed(() => {
-  if (isOption.value) {
-    const option = props.item as Option
-    return getOptionTypeColor(option.type, allItemTypes.value)
-  } 
+  if (!props.item?.type || !allItemTypes.value) {
     return 'var(--color-text-light)'
-  
+  }
+  return getItemTypeColor(props.item.type, allItemTypes.value)
 })
 
-const allowComment = computed(() => {
-  if (isOption.value) {
-    const option = props.item as Option
-    return allowsComments(option.type, allItemTypes.value)
-  }
-  return false
-})
+const allowComment = computed(() => 
+  allowsComments(props.item.type, allItemTypes.value)
+)
 
-const hasSupportFeature = computed(() => {
-  if (isOption.value) {
-    const option = props.item as Option
-    return hasSupportFeatureHelper(option.type, allItemTypes.value)
+// PublicController::addComment drops itemId, so no per-item comment on a public link.
+const canComment = computed(() => !!props.item.permissions?.comment
+  && inquiryStore.permissions.comment
+  && sessionStore.route.name !== 'publicInquiry')
+const showComment = ref(false)
+const commentMounted = ref(false)
+const openedByGrade = ref(false)
+const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null)
+const commentZoneId = computed(() => `item-comment-${props.item.id}`)
+const commentGrades = computed(() => (props.engineConfig.comment_grades as string[] | undefined) ?? [])
+
+async function toggleComment() {
+  showComment.value = !showComment.value
+  if (showComment.value) {
+    openedByGrade.value = false
+    commentMounted.value = true
+    await nextTick()
+    commentAdd.value?.focus()
   }
-  return false
-})
+}
+
+const hasSupportFeature = computed(() => 
+  hasSupportFeatureHelper(props.item.type, allItemTypes.value)
+)
 
 const formatDate = (timestamp: number) => {
   if (!timestamp) return ''
@@ -245,7 +272,7 @@ const formatDate = (timestamp: number) => {
 const userVoteForItem = computed(() => {
   const value = props.getUserVoteValueForItem?.(props.item.id)
   if (!value) return undefined
-  return { value, optionId: props.item.id } as SupportData
+  return { value, itemId: props.item.id } as SupportData
 })
 
 function openSupportsModal() {
@@ -254,19 +281,29 @@ function openSupportsModal() {
 
 const showVoteInput = computed(() => props.canVote)
 
+
 function handleVote(value: SupportValue) { emit('vote', props.item, value) }
 function handleApprovalToggle() { emit('approvalToggle', props.item.id) }
 function handleRankChange(rank: number | null) { emit('changeRank', props.item.id, rank) }
-function handleGradeChange(grade: string | null) { emit('changeGrade', props.item.id, grade) }
+function handleGradeChange(grade: string | null) {
+  emit('changeGrade', props.item.id, grade)
+  if (grade && canComment.value && commentGrades.value.includes(grade)) {
+    if (!showComment.value) openedByGrade.value = true
+    commentMounted.value = true
+    showComment.value = true
+  }
+}
 function handleUpdateScore(itemId: number, score: number | null) { emit('update:score', itemId, score) }
 function handleUpdateStar(itemId: number, star: number | null) { emit('update:star', itemId, star) }
 function handleUpdateReaction(itemId: number, reaction: string[] | null) { emit('update:reaction', itemId, reaction) }
 function handleUpdateQuadratic(itemId: number, votes: number | null) { emit('update:quadratic', itemId, votes) }
 function handleUpdateTokenWeight(itemId: number, weight: number | null) { emit('update:token_weight', itemId, weight) }
 
+
+
 function handleCardClick(event: MouseEvent) {
   const target = event.target as HTMLElement
-  if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats')) {
+  if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats') || target.closest('.item-comment')) {
     return
   }
   emit('openSupportsModal', props.item.id)
@@ -285,7 +322,11 @@ function handleCardClick(event: MouseEvent) {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-primary-element);
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-main-text);
+    outline-offset: 2px;
   }
 
   &.user-voted {
@@ -293,6 +334,7 @@ function handleCardClick(event: MouseEvent) {
     border-color: #42b883;
   }
 
+  // Card Header
   .card-header {
     display: flex;
     justify-content: space-between;
@@ -346,6 +388,7 @@ function handleCardClick(event: MouseEvent) {
     }
   }
 
+  // Item Info
   .item-info {
     margin-bottom: 12px;
 
@@ -454,6 +497,7 @@ function handleCardClick(event: MouseEvent) {
     }
   }
 
+  // Footer
   .card-footer {
     padding-top: 12px;
     margin-top: 8px;
@@ -472,6 +516,11 @@ function handleCardClick(event: MouseEvent) {
     }
   }
 
+  .item-comment {
+    margin-top: 8px;
+  }
+
+  // Voted Badge
   .voted-badge {
     display: flex;
     align-items: center;
@@ -494,6 +543,7 @@ function handleCardClick(event: MouseEvent) {
   }
 }
 
+// Responsive design
 @media (max-width: 768px) {
   .vote-card {
     padding: 12px;

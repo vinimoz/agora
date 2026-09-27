@@ -122,7 +122,7 @@ export const useSessionStore = defineStore('session', {
 
 
     currentInquiryId(state): number {
-      if (state.route.name === 'inquiry') {
+      if (state.route.name === 'inquiry' || state.route.name === 'page') {
         return Number(state.route.params.id)
       }
       return 0

@@ -31,8 +31,8 @@
             <template #actions>
               <InquiryItemActions
                 v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
-                class="reel-actions-wrapper"
                 :key="`actions-${inquiry.id}`"
+                class="reel-actions-wrapper"
                 :inquiry="inquiry"
               />
             </template>

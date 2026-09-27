@@ -281,11 +281,10 @@ class UserBase implements JsonSerializable
         return [];
     }
 
-    $this->groups = array_map(
-        fn(\OCP\IGroup $g) => $g->getGID(),
-        $this->groupManager->getUserGroups($user)
-    );
-
+$this->groups = array_values(array_map(
+    fn(\OCP\IGroup $g) => $g->getGID(),
+    $this->groupManager->getUserGroups($user)
+));
     return $this->groups;
     }
 

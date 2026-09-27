@@ -20,7 +20,7 @@
             id="resolution-text"
             v-model="resolutionText"
             class="resolution-textarea"
-            :placeholder="t('agora', 'Describe how this objection can be resolved...')"
+            :placeholder="t('agora', 'Describe how this objection can be resolved …')"
             required
             rows="6"
           />

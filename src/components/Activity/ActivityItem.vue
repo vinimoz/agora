@@ -26,19 +26,19 @@ const dateActivityRelative = computed(() => {
     // Simple relative time formatter
     if (diffSeconds < 60) {
         return 'just now'
-    } else if (diffSeconds < 3600) {
+    } if (diffSeconds < 3600) {
         const minutes = Math.floor(diffSeconds / 60)
         return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
-    } else if (diffSeconds < 86400) {
+    } if (diffSeconds < 86400) {
         const hours = Math.floor(diffSeconds / 3600)
         return `${hours} hour${hours > 1 ? 's' : ''} ago`
-    } else if (diffSeconds < 604800) {
+    } if (diffSeconds < 604800) {
         const days = Math.floor(diffSeconds / 86400)
         return `${days} day${days > 1 ? 's' : ''} ago`
-    } else {
+    } 
         // Fallback to locale date string
         return date.toLocaleDateString()
-    }
+    
 })
 
 

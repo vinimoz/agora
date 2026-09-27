@@ -452,6 +452,8 @@ class InquiryGroupService
 	    ?string $inquiryGroupName = null,
     ): InquiryGroup {
 	    $inquiry = $this->inquiryMapper->get($inquiryId);
+        $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+        $inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
 
 	    // Without inquiry group id, create a new inquiry group
 	    if ($inquiryGroupId === null && $inquiryGroupName !== null && $inquiryGroupName !== '') {
@@ -476,15 +478,16 @@ class InquiryGroupService
 			    $inquiryGroup->setOwner($this->userSession->getCurrentUserId());
 		    }
 
-		    $inquiryGroup = $this->inquiryGroupMapper->insert($inquiryGroup);
-		    // Set basic permissions only
-		    $this->setBasicPermissions($inquiryGroup);
-	    } elseif ($inquiryGroupId !== null) {
-		    $inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
-		    $this->enrichInquiryGroup($inquiryGroup, false, false);
-	    } else {
-		    throw new InsufficientAttributesException('An existing inquiry group id must be provided or a new inquiry group name must be given.');
-	    }
+            $inquiryGroup = $this->inquiryGroupMapper->insert($inquiryGroup);
+            // Set basic permissions only
+            $this->setBasicPermissions($inquiryGroup);
+        } elseif ($inquiryGroupId !== null) {
+            $inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
+            $inquiryGroup->request(InquiryGroup::PERMISSION_INQUIRY_GROUP_EDIT);
+            $this->enrichInquiryGroup($inquiryGroup, false, false);
+        } else {
+            throw new InsufficientAttributesException('An existing inquiry group id must be provided or a new inquiry group name must be given.');
+        }
 
 	    if (!$inquiryGroup->hasInquiry($inquiryId)) {
 		    try {

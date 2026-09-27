@@ -38,8 +38,9 @@ export interface VoteContext {
   reactions: Ref<Record<number, string[] | null>>
   quadraticVotes: Ref<Record<number, number>>
   tokenWeights: Ref<Record<number, number>>
-  selectedOptions: Ref<Set<number>>
+  selectedItems: Ref<Set<number>>
   hasUserVoted: ComputedRef<boolean>
+  hasSelectionsChanged: ComputedRef<boolean>
   canVote: ComputedRef<boolean>
   canSubmitMultiVote: ComputedRef<boolean>
   voteSelectionInfo: ComputedRef<string | null>
@@ -52,6 +53,7 @@ export interface VoteContext {
   getWinner: (items: VotableItem[]) => VotableItem | null
   getWinnerPercentage: (items: VotableItem[]) => number
   getUserVoteValueForItem: (itemId: number) => SupportValue | null
+  getItemRank: (itemId: number) => number | null
 
   effectiveEngineId: ComputedRef<string>
   maxRank: ComputedRef<number>
@@ -69,6 +71,8 @@ export interface VoteContext {
   updateTokenWeight: (itemId: number, weight: number | null) => void
   submitSingleVote: (parentId: number, item: VotableItem, value: SupportValue) => Promise<boolean>
   submitMultiVote: () => Promise<boolean>
+  removeMyVote: (reload?: boolean) => Promise<boolean>
+  loadUserVotesForEngine: (engineId: number) => void
   resetSelections: () => void
   hasUserVotedFor: (itemId: number) => boolean
   isSelectedForVote: (itemId: number) => boolean
@@ -77,7 +81,8 @@ export interface VoteContext {
 
 export function useVoteContext(
   parentId: number | null,
-  targetType: TargetType
+  targetType: TargetType,
+  engineId?: number
 ): VoteContext {
   const engineStore = useSupportEngineStore()
   const supportsStore = useSupportsStore()
@@ -87,20 +92,17 @@ export function useVoteContext(
   const inquiriesStore = useInquiriesStore()
 
   // ---------- Engine management ----------
-  const loadingEngines = ref(false)
-  const selectedEngineId = ref<number | null>(null)
-  
-  // Get engines for this parent (inquiry or option group)
-  const availableEngines = computed(() => {
-    console.log(" PARENT IDDDDDDDDDDDDDDD",parentId)
-    console.log(" TARGET TYPE  IDDDDDDDDDDDDDDD",targetType)
-
+  const selectedEngineId = ref<number | null>(engineId ?? null)
+  const availableEngines = computed<SupportEngine[]>(() => {
     if (!parentId) return []
     return engineStore.getEnginesByTarget(targetType, parentId)
   })
 
   const currentEngine = computed<SupportEngine | null>(() => {
     const engines = availableEngines.value
+    if (engineId !== undefined) {
+      return engines.find((e) => e.id === engineId) ?? null
+    }
     if (!engines.length) return null
 
     if (selectedEngineId.value) {
@@ -132,11 +134,11 @@ export function useVoteContext(
     if (targetType === 'option') {
       const allOptions = optionsStore.options || []
       return allOptions.filter((opt) => engine.target_ids.includes(opt.id))
-    } 
+    } else {
       // targetType === 'inquiry'
       const allInquiries = inquiriesStore.inquiries || []
       return allInquiries.filter((inq) => engine.target_ids.includes(inq.id))
-    
+    }
   })
 
   const hasActiveEngine = computed(() => availableEngines.value.length > 0)
@@ -161,7 +163,7 @@ export function useVoteContext(
   const reactions = ref<Record<number, string[] | null>>({})
   const quadraticVotes = ref<Record<number, number>>({})
   const tokenWeights = ref<Record<number, number>>({})
-  const selectedOptions = ref<Set<number>>(new Set())
+  const selectedItems = ref<Set<number>>(new Set())
 
 const currentUserVotes = computed(() => {
   const userId = sessionStore.currentUser?.id
@@ -236,7 +238,7 @@ const hasUserVoted = computed(() => {
       return tokenWeights.value[itemId] !== undefined && tokenWeights.value[itemId] > 0
     }
     if (['approval', 'phased_voting'].includes(engineId)) {
-      return selectedOptions.value.has(itemId)
+      return selectedItems.value.has(itemId)
     }
     return false
   }
@@ -286,7 +288,7 @@ const currentUserVoteForEngine = computed(() => {
         return !objectsEqual(reactions.value, saved.reactions || {})
       case 'approval':
       case 'phased_voting': {
-        const currentSet = new Set(selectedOptions.value)
+        const currentSet = new Set(selectedItems.value)
         const savedSet = new Set(saved.selected || [])
         if (currentSet.size !== savedSet.size) return true
         for (const id of currentSet) {
@@ -328,8 +330,8 @@ const currentUserVoteForEngine = computed(() => {
 
   // ---------- Update functions ----------
   const toggleSelection = (itemId: number) => {
-    if (selectedOptions.value.has(itemId)) selectedOptions.value.delete(itemId)
-    else selectedOptions.value.add(itemId)
+    if (selectedItems.value.has(itemId)) selectedItems.value.delete(itemId)
+    else selectedItems.value.add(itemId)
   }
 
   const updateRanking = (itemId: number, rank: number | null) => {
@@ -393,7 +395,7 @@ const currentUserVoteForEngine = computed(() => {
   }
 
   const resetSelections = () => {
-    selectedOptions.value.clear()
+    selectedItems.value.clear()
     rankings.value = {}
     scores.value = {}
     grades.value = {}
@@ -435,7 +437,7 @@ const currentUserVoteForEngine = computed(() => {
       case 'approval': {
         const min = (config.min_choices as number) || 1
         const max = config.max_choices as number | null
-        const count = selectedOptions.value.size
+        const count = selectedItems.value.size
         valid = count >= min && (max === null || count <= max) && count > 0
         break
       }
@@ -517,11 +519,11 @@ const currentUserVoteForEngine = computed(() => {
         break
 
       case 'phased_voting':
-        valid = selectedOptions.value.size > 0
+        valid = selectedItems.value.size > 0
         break
 
       default:
-        valid = selectedOptions.value.size > 0
+        valid = selectedItems.value.size > 0
     }
     return valid
   })
@@ -533,7 +535,7 @@ const currentUserVoteForEngine = computed(() => {
     if (['approval', 'phased_voting'].includes(engineId)) {
       const min = (config.min_choices as number) || 1
       const max = config.max_choices as number | null
-      const count = selectedOptions.value.size
+      const count = selectedItems.value.size
       if (max) return t('agora', '{count}/{max} selected (min: {min})', { count, max, min })
       return t('agora', '{count} selected (min: {min})', { count, min })
     }
@@ -578,7 +580,7 @@ const currentUserVoteForEngine = computed(() => {
     return t('agora', '{count} options voted', { count })
   })
 
-  async function submitMultiVote() {
+  async function submitMultiVote(reload = true): Promise<boolean> {
     if (!canVote.value || !canSubmitMultiVote.value || !parentId) return false
 
     const engine = currentEngine.value
@@ -615,7 +617,7 @@ const currentUserVoteForEngine = computed(() => {
       }
 
       case 'approval': {
-        const selected = Array.from(selectedOptions.value)
+        const selected = Array.from(selectedItems.value)
         if (selected.length === 0) return false
         payload = { selected }
         break
@@ -665,7 +667,7 @@ const currentUserVoteForEngine = computed(() => {
       }
 
       case 'phased_voting': {
-        const selected = Array.from(selectedOptions.value)
+        const selected = Array.from(selectedItems.value)
         const round = (engine.config?.current_round as number) || 1
         if (selected.length === 0) return false
         payload = { selected, round }
@@ -673,7 +675,7 @@ const currentUserVoteForEngine = computed(() => {
       }
 
       default:
-        payload = { selected: Array.from(selectedOptions.value) }
+        payload = { selected: Array.from(selectedItems.value) }
         break
     }
 
@@ -686,7 +688,7 @@ const currentUserVoteForEngine = computed(() => {
         await supportsStore.addSupport(parentId, userId, payload, 0, engineId)
       }
 
-      await loadUserVotesForEngine(engineId)
+      if (reload) await loadUserVotesForEngine(engineId)
       await loadResults()
       return true
     } catch (error) {
@@ -772,6 +774,17 @@ const currentUserVoteForEngine = computed(() => {
       default:
         return 0
     }
+  }
+
+  /**
+   * Rank computed by the server, which shares a rank between tied options.
+   * Null when the engine does not publish one, the caller then falls back
+   * to the row position.
+   * @param optionId
+   */
+  const getOptionRank = (optionId: number): number | null => {
+      const res = engineResult.value
+      return res?.ranking?.[optionId] ?? null
   }
 
   const totalVotes = computed(() => {
@@ -860,10 +873,25 @@ const currentUserVoteForEngine = computed(() => {
     }
   })
 
-  const getPercentage = (item: VotableItem, total: number = totalVotes.value): number => {
-    const count = getItemVoteCount(item.id)
-    if (total === 0) return 0
-    return Math.round((count / total) * 100)
+  // Borda spreads points across the options and Condorcet counts won duels, so
+  // an option scores on a scale that has nothing to do with the number of
+  // voters: two voters ranking three options give the winner six points, which
+  // totalVotes turned into 300%. Their share is of the points handed out.
+  const pointBasedEngines = ['borda', 'condorcet']
+
+  const percentageBase = computed(() => {
+      if (!pointBasedEngines.includes(effectiveEngineId.value)) {
+          return totalVotes.value
+      }
+      let total = 0
+      for (const opt of votableOptions.value) total += getOptionVoteCount(opt.id)
+          return total
+  })
+
+  const getPercentage = (option: Option, total: number = percentageBase.value): number => {
+      const count = getOptionVoteCount(option.id)
+      if (total === 0) return 0
+          return Math.round((count / total) * 100)
   }
 
   const getRankedItems = (items: VotableItem[]): VotableItem[] => {
@@ -953,7 +981,7 @@ const currentUserVoteForEngine = computed(() => {
         }
 
         if (value.selected && Array.isArray(value.selected)) {
-          value.selected.forEach((id: number) => selectedOptions.value.add(id))
+          value.selected.forEach((id: number) => selectedItems.value.add(id))
         }
       }
     }
@@ -961,12 +989,14 @@ const currentUserVoteForEngine = computed(() => {
 
   /**
    * Remove all votes of the current user for the active engine.
+   * This handles both engine‑level (optionId = 0) and per‑option votes.
+   * @param reload reset and reload the selections after the removal
    */
-  const removeMyVote = async (): Promise<boolean> => {
-    const engine = currentEngine.value
-    if (!engine || !parentId) return false
-    const userId = sessionStore.currentUser?.id
-    if (!userId) return false
+  const removeMyVote = async (reload = true): Promise<boolean> => {
+      const engine = currentEngine.value
+      if (!engine) return false
+          const userId = sessionStore.currentUser?.id
+      if (!userId) return false
 
     const userVotes = supportsStore
       .getSupportsByParent(parentId, targetType)
@@ -978,9 +1008,12 @@ const currentUserVoteForEngine = computed(() => {
       await supportsStore.removeSupport(parentId, userId, support.optionId, engine.id)
     }
 
-    resetSelections()
-    await loadUserVotesForEngine(engine.id)
-    await loadResults()
+              // Clear local selections and reload fresh state
+              if (reload) {
+                  resetSelections()
+                  await loadUserVotesForEngine(engine.id)
+              }
+              await loadResults()
 
     return true
   }
@@ -1000,7 +1033,7 @@ const currentUserVoteForEngine = computed(() => {
         (r) => r.support_engine_id === selectedEngineId.value && r.target_type === targetType
       )
       if (engineResultEntry) {
-        engineResult.value = engineResultEntry.result
+          engineResult.value = engineResultEntry?.result ?? null
       }
     }
   }
@@ -1064,7 +1097,7 @@ const currentUserVoteForEngine = computed(() => {
     reactions,
     quadraticVotes,
     tokenWeights,
-    selectedOptions,
+    selectedItems,
     hasUserVoted,
     hasSelectionsChanged,
     canVote,
@@ -1084,21 +1117,23 @@ const currentUserVoteForEngine = computed(() => {
     submitSingleVote,
     submitMultiVote,
 
-    totalVotes,
-    getItemVoteCount,
-    getPercentage,
-    getRankedItems,
-    getWinner,
-    getUserVoteValueForItem,
-    getWinnerPercentage,
+      totalVotes,
+      getItemVoteCount,
+      getItemRank,
+      getPercentage,
+      getRankedItems,
+      getWinner,
+      getUserVoteValueForItem,
+      getWinnerPercentage,
 
     effectiveEngineId,
     maxRank,
     scoreMin,
     scoreMax,
 
-    selectEngine,
-    refreshEngines,
-    removeMyVote,
+      selectEngine,
+      refreshEngines,
+      removeMyVote,
+      loadUserVotesForEngine,
   }
 }

@@ -21,7 +21,7 @@
                     <Vote :size="14" />
                     {{ t('agora', 'Total votes: {total}', { total: totalVotes }) }}
                 </span>
-                <span v-if="currentEngine && (currentEngine.voteScope === 'per_option' || currentEngine.voteScope === 'cross_option')" class="metadata-badge">
+                <span v-if="currentEngine && (currentEngine.voteScope === 'per_item' || currentEngine.voteScope === 'cross_item')" class="metadata-badge">
                     <CheckCircle :size="14" />
                     {{ t('agora', 'Multiple choices allowed') }}
                 </span>
@@ -49,7 +49,7 @@
             <div v-if="availableEngines.length > 0" class="engine-selector">
                 <NcSelect
                         :model-value="currentEngine"
-                        :options="availableEngines"
+                        :items="availableEngines"
                         :placeholder="t('agora', 'Select voting method')"
                         :clearable="false"
                         label="title"
@@ -58,72 +58,72 @@
 			:label-outside="true"
                         @update:model-value="handleEngineChange"
                         >
-                        <!-- Custom dropdown option rendering -->
-                        <template #option="{ option }">
-                            <div v-if="option" class="engine-option">
-                                <div class="engine-option-icon-wrapper">
-                                    <component :is="getEngineIcon(option.engine)" :size="20" class="engine-option-icon" />
+                        <!-- Custom dropdown item rendering -->
+                        <template #item="{ item }">
+                            <div v-if="item" class="engine-item">
+                                <div class="engine-item-icon-wrapper">
+                                    <component :is="getEngineIcon(item.engine)" :size="20" class="engine-item-icon" />
                                 </div>
-                                <div class="engine-option-content">
-                                    <div class="engine-option-header">
-                                        <span class="engine-option-title">{{ option.title || getEngineLabel(option.engine) }}</span>
+                                <div class="engine-item-content">
+                                    <div class="engine-item-header">
+                                        <span class="engine-item-title">{{ item.title || getEngineLabel(item.engine) }}</span>
                                         <div class="engine-right-badges">
-                                            <span v-if="option.purpose" class="engine-purpose-badge">
-                                                {{ getPurposeLabel(option.purpose) }}
+                                            <span v-if="item.purpose" class="engine-purpose-badge">
+                                                {{ getPurposeLabel(item.purpose) }}
                                             </span>
-                                            <span v-if="option.metadata?.phase" class="engine-phase-badge" :class="`phase-${option.metadata.phase}`">
-                                                {{ formatPhase(option.metadata.phase) }}
+                                            <span v-if="item.metadata?.phase" class="engine-phase-badge" :class="`phase-${item.metadata.phase}`">
+                                                {{ formatPhase(item.metadata.phase) }}
                                             </span>
-                                            <span v-if="option.status" class="engine-status-badge" :class="`status-${option.status}`">
-                                                {{ formatStatus(option.status) }}
+                                            <span v-if="item.status" class="engine-status-badge" :class="`status-${item.status}`">
+                                                {{ formatStatus(item.status) }}
                                             </span>
                                         </div>
                                     </div>
-                                    <div v-if="option.description" class="engine-option-description">
-                                        {{ truncateText(option.description, 120) }}
+                                    <div v-if="item.description" class="engine-item-description">
+                                        {{ truncateText(item.description, 120) }}
                                     </div>
-                                    <div class="engine-option-meta">
-                                        <span v-if="option.target_type" class="meta-tag">
+                                    <div class="engine-item-meta">
+                                        <span v-if="item.target_type" class="meta-tag">
                                             <Users :size="10" />
-                                            {{ formatTargetType(option.target_type) }}
+                                            {{ formatTargetType(item.target_type) }}
                                         </span>
-                                        <span v-if="option.target_ids?.length" class="meta-tag">
+                                        <span v-if="item.target_ids?.length" class="meta-tag">
                                             <Hash :size="10" />
-                                            {{ option.target_ids.length }} {{ t('agora', 'targets') }}
+                                            {{ item.target_ids.length }} {{ t('agora', 'targets') }}
                                         </span>
-                                        <span v-if="option.config?.quorum" class="meta-tag">
+                                        <span v-if="item.config?.quorum" class="meta-tag">
                                             <Users :size="10" />
-                                            {{ t('agora', 'Quorum: {quorum}', { quorum: option.config.quorum }) }}
+                                            {{ t('agora', 'Quorum: {quorum}', { quorum: item.config.quorum }) }}
                                         </span>
-                                        <span v-if="option.config?.max_votes_per_user" class="meta-tag">
+                                        <span v-if="item.config?.max_votes_per_user" class="meta-tag">
                                             <Vote :size="10" />
-                                            {{ t('agora', 'Max votes: {max}', { max: option.config.max_votes_per_user }) }}
+                                            {{ t('agora', 'Max votes: {max}', { max: item.config.max_votes_per_user }) }}
                                         </span>
-                                        <span v-if="option.config?.min !== undefined && option.config?.max !== undefined" class="meta-tag">
+                                        <span v-if="item.config?.min !== undefined && item.config?.max !== undefined" class="meta-tag">
                                             <Star :size="10" />
-                                            {{ t('agora', 'Range: {min}-{max}', { min: option.config.min, max: option.config.max }) }}
+                                            {{ t('agora', 'Range: {min}-{max}', { min: item.config.min, max: item.config.max }) }}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </template>
 
-                        <!-- Custom selected option rendering -->
-                        <template #selected-option="{ option }">
-                            <div v-if="option" class="engine-selected">
-                                <component :is="getEngineIcon(option.engine)" :size="16" class="engine-selected-icon" />
+                        <!-- Custom selected item rendering -->
+                        <template #selected-item="{ item }">
+                            <div v-if="item" class="engine-selected">
+                                <component :is="getEngineIcon(item.engine)" :size="16" class="engine-selected-icon" />
                                 <div class="engine-selected-info">
-                                    <span class="engine-selected-title">{{ option.title || getEngineLabel(option.engine) }}</span>
-                                    <span v-if="option.purpose" class="engine-selected-purpose">
-                                        {{ getPurposeLabel(option.purpose) }}
+                                    <span class="engine-selected-title">{{ item.title || getEngineLabel(item.engine) }}</span>
+                                    <span v-if="item.purpose" class="engine-selected-purpose">
+                                        {{ getPurposeLabel(item.purpose) }}
                                     </span>
                                 </div>
                                 <div class="engine-selected-right">
-                                    <span v-if="option.metadata?.phase" class="engine-selected-phase" :class="`phase-${option.metadata.phase}`">
-                                        {{ formatPhase(option.metadata.phase) }}
+                                    <span v-if="item.metadata?.phase" class="engine-selected-phase" :class="`phase-${item.metadata.phase}`">
+                                        {{ formatPhase(item.metadata.phase) }}
                                     </span>
-                                    <span v-if="option.status" class="engine-selected-status" :class="`status-${option.status}`">
-                                        {{ formatStatus(option.status) }}
+                                    <span v-if="item.status" class="engine-selected-status" :class="`status-${item.status}`">
+                                        {{ formatStatus(item.status) }}
                                     </span>
                                 </div>
                             </div>
@@ -366,7 +366,7 @@ const formatPhase = (phase: string): string => {
 const formatTargetType = (targetType: string): string => {
     const types: Record<string, string> = {
         'inquiry': t('agora', 'Inquiry'),
-        'option': t('agora', 'Option'),
+        'item': t('agora', 'Item'),
     }
     return types[targetType] || targetType
 }
@@ -494,7 +494,7 @@ const getLayoutIcon = (layout: string): unknown => {
                     }
                 }
 
-                :deep(.vs__selected-options) {
+                :deep(.vs__selected-items) {
                     padding: 6px 12px;
                     flex-wrap: wrap;
                     gap: 4px;
@@ -532,7 +532,7 @@ const getLayoutIcon = (layout: string): unknown => {
                     }
                 }
 
-                :deep(.vs__dropdown-option) {
+                :deep(.vs__dropdown-item) {
                     padding: 0;
 
                     &:hover {
@@ -541,7 +541,7 @@ const getLayoutIcon = (layout: string): unknown => {
                 }
             }
 
-            .engine-option {
+            .engine-item {
                 display: flex;
                 align-items: flex-start;
                 gap: 14px;
@@ -559,7 +559,7 @@ const getLayoutIcon = (layout: string): unknown => {
                     border-bottom: none;
                 }
 
-                .engine-option-icon-wrapper {
+                .engine-item-icon-wrapper {
                     flex-shrink: 0;
                     width: 40px;
                     height: 40px;
@@ -569,16 +569,16 @@ const getLayoutIcon = (layout: string): unknown => {
                     background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
                     border-radius: 10px;
 
-                    .engine-option-icon {
+                    .engine-item-icon {
                         color: white;
                     }
                 }
 
-                .engine-option-content {
+                .engine-item-content {
                     flex: 1;
                     min-width: 0;
 
-                    .engine-option-header {
+                    .engine-item-header {
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
@@ -586,7 +586,7 @@ const getLayoutIcon = (layout: string): unknown => {
                         margin-bottom: 8px;
                         flex-wrap: wrap;
 
-                        .engine-option-title {
+                        .engine-item-title {
                             font-weight: 600;
                             font-size: 14px;
                             color: var(--color-text-main);
@@ -688,7 +688,7 @@ const getLayoutIcon = (layout: string): unknown => {
                         }
                     }
 
-                    .engine-option-description {
+                    .engine-item-description {
                         font-size: 12px;
                         color: var(--color-text-lighter);
                         line-height: 1.5;
@@ -696,7 +696,7 @@ const getLayoutIcon = (layout: string): unknown => {
                         word-break: break-word;
                     }
 
-                    .engine-option-meta {
+                    .engine-item-meta {
                         display: flex;
                         gap: 8px;
                         flex-wrap: wrap;

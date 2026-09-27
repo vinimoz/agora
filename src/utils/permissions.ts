@@ -77,9 +77,10 @@ export enum PublicationStatusLevel {
  */
 export enum VisibilityLevel {
   Private = 'private',
-  Groups = 'groups',
+  // Groups = 'groups',
   Participants = 'participants',
   Everyone = 'everyone',
+  Group = 'group',
 }
 
 /**
@@ -632,6 +633,12 @@ function isAccessRestrictedForComments(context: PermissionContext): boolean {
         case VisibilityLevel.Private:
             return true
         case VisibilityLevel.Everyone:
+            return true
+   	case VisibilityLevel.Group:
+            return !hasGroupAccess(context)
+
+        case VisibilityLevel.Moderate:
+            return context.userType !== UserType.Moderator && context.userType !== UserType.Admin
             default:
             return false
     }
@@ -659,6 +666,10 @@ function isAccessRestrictedForSupports(context: PermissionContext): boolean {
         case VisibilityLevel.Private:
             return true
         case VisibilityLevel.Everyone:
+	        case VisibilityLevel.Group:
+            // group members can support; outsiders can't
+            return !hasGroupAccess(context)
+
             default:
             return false
     }
@@ -681,8 +692,13 @@ function isAccessRestrictedForSharing(context: PermissionContext): boolean {
         case VisibilityLevel.Private:
             return true
         case VisibilityLevel.Everyone:
+		   case VisibilityLevel.Group:
+            // group members can support; outsiders can't
+            return !hasGroupAccess(context)
+
             default:
             return false
+
     }
 
      switch (context.publicationStatusLevel) {

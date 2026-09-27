@@ -309,7 +309,9 @@ public function findSupportById(int $id): ?Support
            ->andWhere($qb->expr()->eq('option_id', $qb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
            ->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
-        if ($engineId !== null) {
+        if ($engineId === null) {
+            $qb->andWhere($qb->expr()->isNull('support_engine_id'));
+        } else {
             $qb->andWhere($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
         }
 

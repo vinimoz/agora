@@ -471,6 +471,115 @@ export function getStatusColor(status: string): string {
 }
 
 // ============================================================================
+// TYPE LABEL HELPERS (à ajouter à GenericItemHelper.ts)
+// ============================================================================
+
+/**
+ * Get a human-readable label for an item type
+ */
+export function getItemTypeLabel(
+  type: string | null | undefined,
+  optionTypes: Array<{ option_type: string; label?: string }> = [],
+  fallback: string = 'Item'
+): string {
+  if (!type) return fallback
+
+  const found = optionTypes.find(opt => opt.option_type === type)
+  if (found?.label) return found.label
+
+  // Format the type key as a readable label
+  return type
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+/**
+ * Get a human-readable label for a status
+ */
+export function getItemStatusLabel(status: string | null | undefined): string {
+  if (!status) return 'Draft'
+
+  const labels: Record<string, string> = {
+    draft: 'Draft',
+    active: 'Active',
+    published: 'Published',
+    archived: 'Archived',
+    closed: 'Closed',
+    completed: 'Completed',
+    cancelled: 'Cancelled',
+    pending: 'Pending',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    open: 'Open',
+    under_discussion: 'Under Discussion',
+    resolved: 'Resolved',
+    blocked: 'Blocked',
+    accepted: 'Accepted',
+    implemented: 'Implemented',
+  }
+
+  return labels[status] || status
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+/**
+ * Get a color for an item type
+ */
+export function getItemTypeColor(
+  type: string | null | undefined,
+  optionTypes: Array<{ option_type: string; color?: string }> = []
+): string {
+  if (!type) return '#949494'
+
+  const found = optionTypes.find(opt => opt.option_type === type)
+  if (found?.color) return found.color
+
+  return '#949494'
+}
+
+/**
+ * Get the icon component for a status
+ */
+export function getItemStatusIcon(status: string | null | undefined): Component {
+  if (!status) return InquiryGeneralIcons.File
+
+  const icons: Record<string, string> = {
+    draft: 'File',
+    active: 'Play',
+    published: 'Check',
+    archived: 'Archive',
+    closed: 'Lock',
+    completed: 'CheckCircle',
+    cancelled: 'Close',
+    pending: 'Clock',
+    approved: 'CheckCircle',
+    rejected: 'Close',
+    open: 'HelpCircle',
+    under_discussion: 'MessageSquare',
+    resolved: 'CheckCircle',
+    blocked: 'AlertCircle',
+    accepted: 'CheckCircle',
+    implemented: 'CheckCircle',
+  }
+
+  const iconName = icons[status] || 'File'
+  return InquiryOptionIcons[iconName] || InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
+}
+
+/**
+ * Get the icon component for an item (based on type)
+ */
+export function getItemIcon(item: GenericItem | null | undefined): Component {
+  if (!item) return InquiryGeneralIcons.File
+  const type = getItemType(item)
+  return getItemTypeIconComponent(type, [])
+}
+
+
+// ============================================================================
 // GROUPING HELPERS
 // ============================================================================
 

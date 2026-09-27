@@ -84,7 +84,7 @@ export const useCommentsStore = defineStore('comments', {
               sessionStore.route.params.token as string,
             )
           }
-          if (sessionStore.route.name === 'inquiry') {
+          if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'page') {
             return CommentsAPI.getComments(sessionStore.currentInquiryId)
           }
           if (inquiryId) {
@@ -205,7 +205,7 @@ export const useCommentsStore = defineStore('comments', {
             )
           }
 
-          if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'group-list') {
+          if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'page' || sessionStore.route.name === 'group-list') {
             const targetInquiryId = sessionStore.currentInquiryId
 
             if (!targetInquiryId) {

@@ -64,8 +64,7 @@ class InquiryService
 		private IGroupManager $groupManager, 
 		private OptionService $optionService,
 		private LoggerInterface $logger,
-	) {
-	}
+	) {}
 
 	/**
 	 * Get list of inquiries
@@ -937,22 +936,38 @@ public function getValidEnum(): array
 	];
 }
 
-public function applyAction(int $inquiryId, string $action): Inquiry
-{
-	$inquiry = $this->inquiryMapper->find($inquiryId);
+    public function applyAction(int $inquiryId, string $action): Inquiry
+    {
+        $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
 
 	if (!$inquiry) {
 		throw new \Exception('Inquiry not found');
 	}
 
+        // The author saves and submits; moderators accept or reject. The
+        // author may also accept when moderation is off or an official
+        // may bypass it.
+        $user = $this->userSession->getCurrentUser();
+        $selfAccept = !$this->appSettings->getUseModeration()
+            || ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
+        $allowed = match ($action) {
+            'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
+            'submit_for_accepted' => $user->getIsModerator()
+                || ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
+            'submit_for_rejected' => $user->getIsModerator(),
+            default => true,
+        };
+        if (!$allowed) {
+            throw new ForbiddenException('denied action ' . $action);
+        }
+
 	$timestamp = time();
 
 	switch ($action) {
 	case 'save_draft':
-		$inquiry->setVisibility('private');
-		$inquiry->setPublicationStatus('draft');
-		$inquiry->setInquiryStatus('draft');
-		$inquiry->setModerationStatus('draft');
+		$inquiry->setPublicationStatus('pending');
+		$inquiry->setInquiryStatus('waiting_approval');
+		$inquiry->setModerationStatus('pending');
 		$inquiry->setLastInteraction($timestamp);
 		$inquiry = $this->inquiryMapper->update($inquiry);
 		break;
@@ -996,6 +1011,8 @@ public function applyAction(int $inquiryId, string $action): Inquiry
 	}
 
 	return $inquiry;
-}
+    }
+
+
 }
 

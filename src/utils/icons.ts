@@ -109,9 +109,6 @@ import MonitorOff from '@iconify-icons/mdi/monitor-off'
 
 // For 'ViewKanban' - use one of these alternatives:
 import ViewDashboard from '@iconify-icons/mdi/view-dashboard'  // Alternative for Kanban ✓
-// import ViewDashboardOutline from '@iconify-icons/mdi/view-dashboard-outline'  // Alternative ✓
-// import ViewGrid from '@iconify-icons/mdi/view-grid'  // Alternative ✓
-// import ViewGridPlus from '@iconify-icons/mdi/view-grid-plus'  // Alternative ✓
 
 import Reply from '@iconify-icons/mdi/reply'          
 // import Grid from '@iconify-icons/mdi/grid'               

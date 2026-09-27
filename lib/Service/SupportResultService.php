@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace OCA\Agora\Service;
 
 use OCA\Agora\Service\TrendingService;
+use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\Option;
+use OCA\Agora\Db\SupportEngine;
 use OCA\Agora\Db\SupportResult;
 use OCA\Agora\Db\SupportResultMapper;
 use OCA\Agora\Db\CommentMapper;
@@ -18,6 +21,7 @@ use OCA\Agora\Db\SupportEngineMapper;
 use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Service\InquiryMiscService;
 use OCA\Agora\Db\OptionMapper;
+use OCP\AppFramework\Db\DoesNotExistException;
 use Psr\Log\LoggerInterface;
 
 class SupportResultService
@@ -150,18 +154,17 @@ class SupportResultService
             // Unranked options receive 0 points (no action needed)
         }
 
-        // Sort options by score descending
+        // Sort options by score descending, then rank them, tied options
+        // sharing the rank of the first of them.
         arsort($scores);
         $rank = 1;
         $ranking = [];
         $prevScore = null;
-        $skip = 0;
+        $position = 0;
         foreach ($scores as $oid => $score) {
-            if ($score !== $prevScore) {
-                $rank += $skip;
-                $skip = 0;
-            } else {
-                $skip++;
+            $position++;
+            if ($prevScore === null || $score != $prevScore) {
+                $rank = $position;
             }
             $ranking[$oid] = $rank;
             $prevScore = $score;
@@ -202,7 +205,112 @@ class SupportResultService
             $results = array_values($results); // re-index
         }
 
-        return $results;
+        if (!$results) {
+            return $results;
+        }
+        $inquiryId = $targetType === 'inquiry' ? $targetId : $this->optionMapper->find($targetId)->getTargetId();
+        return $this->filterHidden($results, $inquiryId);
+    }
+
+    /**
+     * Engines of an inquiry whose results are hidden from the current user
+     *
+     * @return SupportEngine[]
+     */
+    private function getHiddenEngines(int $inquiryId): array
+    {
+        $engines = array_values(array_filter(
+            $this->engineMapper->findByInquiryId($inquiryId),
+            fn (SupportEngine $e) => SupportEngine::hidesResults($e->getConfig(), $e->getStatus()),
+        ));
+        if (!$engines) {
+            return [];
+        }
+        try {
+            if ($this->inquiryMapper->get($inquiryId, true, true)->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)) {
+                return [];
+            }
+        } catch (DoesNotExistException $e) {
+            return [];
+        }
+        return $engines;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getHiddenEngineIds(int $inquiryId): array
+    {
+        return array_map(fn (SupportEngine $e) => $e->getId(), $this->getHiddenEngines($inquiryId));
+    }
+
+    public function isEngineHidden(?int $engineId): bool
+    {
+        if ($engineId === null) {
+            return false;
+        }
+        $engine = $this->engineMapper->find($engineId);
+        return $engine !== null && in_array($engineId, $this->getHiddenEngineIds($engine->getInquiryId()), true);
+    }
+
+    /**
+     * @param SupportResult[] $results
+     * @return SupportResult[]
+     */
+    private function filterHidden(array $results, int $inquiryId): array
+    {
+        $hidden = $this->getHiddenEngineIds($inquiryId);
+        if (!$hidden) {
+            return $results;
+        }
+        return array_values(array_filter(
+            $results,
+            fn ($r) => !in_array($r->getSupportEngineId(), $hidden, true),
+        ));
+    }
+
+    /**
+     * Strip counts and results of hidden engines from options of one inquiry
+     *
+     * @param Option[] $options
+     * @return Option[]
+     */
+    public function redactOptions(array $options, int $inquiryId): array
+    {
+        $engines = $this->getHiddenEngines($inquiryId);
+        if (!$engines) {
+            return $options;
+        }
+        $hidden = [];
+        $targets = [];
+        foreach ($engines as $engine) {
+            $hidden[] = $engine->getId();
+            foreach ($engine->getTargetIds() as $targetId) {
+                $targets[(int)$targetId] = true;
+            }
+        }
+        $walk = function (array $options) use (&$walk, $targets, $hidden): void {
+            foreach ($options as $option) {
+                if (isset($targets[$option->getId()])) {
+                    $kept = array_values(array_filter(
+                        $option->getSupportResult() ?? [],
+                        fn ($r) => !in_array((int)($r['support_engine_id'] ?? 0), $hidden, true),
+                    ));
+                    $option->setSupportResult(json_encode($kept));
+                    $option->setCountSupports(0);
+                    $option->setCountParticipants(0);
+                }
+                $walk($option->getChildren());
+            }
+        };
+        $walk($options);
+        return $options;
+    }
+
+    public function redactOption(Option $option): Option
+    {
+        $this->redactOptions([$option], $option->getTargetId());
+        return $option;
     }
 
     /**
@@ -364,6 +472,9 @@ class SupportResultService
     {
         $this->logger->info('Getting results by engine', ['engineId' => $engineId]);
 
+        if ($this->isEngineHidden($engineId)) {
+            return [];
+        }
         // This assumes your SupportResultMapper has a findByEngineId method
         // If not, you'll need to add it there too
         return $this->resultMapper->findByEngineId($engineId);
@@ -851,7 +962,9 @@ class SupportResultService
                 continue;
             }
 
-            // Sort grades from best to worst (according to gradeOrder)
+            // Grades are configured from worst to best, so sorting by their
+            // index walks them from worst to best. floor((n - 1) / 2) then
+            // lands on the lower median, which is the majority judgment rule.
             $sortedGrades = $data['grades'];
             usort($sortedGrades, function($a, $b) use ($gradeOrder) {
                 return $gradeOrder[$a] <=> $gradeOrder[$b];
@@ -864,8 +977,8 @@ class SupportResultService
             $aboveCount = 0;
             $belowCount = 0;
             foreach ($sortedGrades as $g) {
-                if ($gradeOrder[$g] < $gradeOrder[$medianGrade]) $aboveCount++;
-                elseif ($gradeOrder[$g] > $gradeOrder[$medianGrade]) $belowCount++;
+                if ($gradeOrder[$g] > $gradeOrder[$medianGrade]) $aboveCount++;
+                elseif ($gradeOrder[$g] < $gradeOrder[$medianGrade]) $belowCount++;
             }
 
             $optionRankings[$oid] = [
@@ -884,7 +997,7 @@ class SupportResultService
         if (!empty($optionRankings)) {
             uasort($optionRankings, function($a, $b) {
                 if ($a['median_index'] !== $b['median_index']) {
-                    return $a['median_index'] <=> $b['median_index'];
+                    return $b['median_index'] <=> $a['median_index'];
                 }
                 return $b['above_share'] <=> $a['above_share'];
             });
@@ -896,7 +1009,7 @@ class SupportResultService
         foreach (array_keys($optionRankings) as $oid) {
             try {
                 $option = $this->optionMapper->find($oid);
-                $optionNames[$oid] = $option->getOption();
+                $optionNames[$oid] = $option->getTitle();
             } catch (\Exception $e) {
                 $optionNames[$oid] = "Option $oid";
             }
@@ -984,7 +1097,7 @@ class SupportResultService
         }
 
         // Default fallback
-        $defaultGrades = ['Excellent', 'Good', 'Fair', 'Poor'];
+        $defaultGrades = ['Poor', 'Fair', 'Good', 'Excellent'];
         $this->logger->warning('No grades found for majority judgment, using defaults', [
             'inquiryId' => $inquiryId,
             'optionId' => $optionId,
@@ -1356,7 +1469,7 @@ class SupportResultService
     {
         $this->logger->debug('Getting results by inquiry', ['inquiryId' => $inquiryId]);
         $results = $this->resultMapper->findResultsByTarget('inquiry', $inquiryId);
-        return array_filter($results, fn($r) => $r !== null);
+        return $this->filterHidden(array_filter($results, fn($r) => $r !== null), $inquiryId);
     }
 
     /**

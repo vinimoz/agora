@@ -4,7 +4,7 @@
   <div class="cards-layout">
     <div class="cards-grid">
       <VoteCard
-        v-for="item in rankedItems"
+        v-for="item in items"
         :key="item.id"
         :item="item"
         :effective-engine-id="effectiveEngineId"
@@ -22,7 +22,8 @@
         :current-reaction="reactions[item.id]"
         :current-quadratic-votes="quadraticVotes[item.id]"
         :current-token-weight="tokenWeights[item.id]"
-        :total-items="rankedItems.length"
+        :total-items="items.length"
+        :hide-results="hideResults"
         :get-user-vote-value-for-item="getUserVoteValueForItem"
         @vote="(item, value) => $emit('vote', item, value)"
         @approval-toggle="(itemId) => $emit('toggleSelection', itemId)"
@@ -37,14 +38,15 @@
       />
     </div>
 
+
     <!-- Empty state -->
-    <div v-if="rankedItems.length === 0" class="empty-state">
+    <div v-if="items.length === 0" class="empty-state">
       <component :is="InquiryOptionIcons.Inbox" :size="48" />
       <p>{{ t('agora', 'No items available') }}</p>
     </div>
 
     <!-- Submit section -->
-    <div v-if="showSubmitButton" class="submit-vote-section">
+    <div v-if="showSubmitButton && !autoSave" class="submit-vote-section">
       <div class="submit-container">
         <NcButton
           type="primary"
@@ -82,13 +84,14 @@
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import { Vote, X } from 'lucide-vue-next'
-import VoteCard from '../Vote/VoteCard.vue'
+import { Vote , X } from 'lucide-vue-next'
+import VoteCard from './VoteCard.vue'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import type { Option, Inquiry, SupportEngine, SupportValue } from '../../Types/index'
+import type { Item, SupportEngine } from '../../Types/index'
+import type { SupportValue } from '../../Types/votingType'
 
 const props = defineProps<{
-  rankedItems: (Option | Inquiry)[]
+  items: Item[]
   effectiveEngineId: string
   activeEngine?: SupportEngine
   canVote?: boolean
@@ -103,12 +106,15 @@ const props = defineProps<{
   canSubmitMultiVote: boolean
   voteSelectionInfo: string | null
   getItemVoteCount: (itemId: number) => number
-  getPercentage: (item: Option | Inquiry) => number
+  getPercentage: (item: Item) => number
   hasUserVotedFor: (itemId: number) => boolean
   isSelectedForVote: (itemId: number) => boolean
   getUserVoteValueForItem: (itemId: number) => SupportValue | null
+  autoSave?: boolean
+  hideResults?: boolean
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
   'toggleSelection': [itemId: number]
   'update:rankings': [rankings: Record<number, number>]
@@ -117,7 +123,7 @@ const emit = defineEmits<{
   'update:reactions': [reactions: Record<number, string[] | null>]
   'update:quadraticVotes': [votes: Record<number, number>]
   'update:tokenWeights': [weights: Record<number, number>]
-  'vote': [item: Option | Inquiry, value: unknown]
+  'vote': [item: Item, value: unknown]
   'removeMyVote': []
   'openSupportsModal': [itemId: number]
   'submitMultiVote': []
@@ -127,7 +133,7 @@ const showSubmitButton = computed(() =>
   props.canVote &&
   props.activeEngine?.status === 'active' &&
   props.effectiveEngineId !== 'trending' &&
-  props.rankedItems.length > 0
+  props.items.length > 0
 )
 
 const getSubmitButtonText = (): string => {
@@ -141,13 +147,14 @@ const getSubmitButtonText = (): string => {
   }
   return texts[props.effectiveEngineId] || t('agora', 'Submit vote')
 }
+
 </script>
 
 <style scoped lang="scss">
 .cards-layout {
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
     gap: 20px;
     margin-bottom: 24px;
   }
@@ -212,11 +219,6 @@ const getSubmitButtonText = (): string => {
 
 @media (max-width: 768px) {
   .cards-layout {
-    .cards-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
     .submit-vote-section .submit-container {
       flex-direction: column;
       border-radius: 20px;

@@ -35,7 +35,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     configure: []
-    'addOption': []
+    'addItem': []
     'addToVote': []
 }>()
 
@@ -93,7 +93,7 @@ const handleClick = () => {
     } else if (props.noItemsLinked || props.showAddButton) {
         emit('addToVote')
     } else if (props.showAddButton) {
-        emit('addOption')
+        emit('addItem')
     }
 }
 </script>

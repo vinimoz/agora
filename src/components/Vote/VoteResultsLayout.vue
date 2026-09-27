@@ -69,21 +69,22 @@
                     <tr v-for="(item, index) in rankedItems" :key="item.id">
                         <td class="rank-cell">
                             <span 
-                                v-if="index === 0" 
-                                class="medal" 
-                                aria-label="First place"
-                            >🥇</span>
-                            <span 
-                                v-else-if="index === 1" 
-                                class="medal" 
-                                aria-label="Second place"
-                            >🥈</span>
-                            <span 
-                                v-else-if="index === 2" 
-                                class="medal" 
-                                aria-label="Third place"
-                            >🥉</span>
-                            <span v-else class="rank-badge">{{ index + 1 }}</span>
+    v-if="rankOf(item, index) === 1" 
+    class="medal" 
+    :aria-label="t('agora', 'First place')"
+>🥇</span>
+<span 
+    v-else-if="rankOf(item, index) === 2" 
+    class="medal" 
+    :aria-label="t('agora', 'Second place')"
+>🥈</span>
+<span 
+    v-else-if="rankOf(item, index) === 3" 
+    class="medal" 
+    :aria-label="t('agora', 'Third place')"
+>🥉</span>
+                            <span v-else class="rank-badge">{{ rankOf(item, index) }}</span>
+
                         </td>
                         <td>
                             <div class="item-name">{{ item.title }}</div>
@@ -125,8 +126,14 @@ const props = defineProps<{
     winnerPercentage: number
     timeRemaining: string
     getItemVoteCount: (itemId: number) => number
-    getPercentage: (item: Option | Inquiry) => number
+    getPercentage: (item: Item) => number
+    getItemRank?: (itemId: number) => number | null
 }>()
+
+// Rank published by the server, which shares a rank between tied items.
+// Falls back to the row position for engines that do not publish one.
+const rankOf = (item: Item, index: number): number =>
+    props.getItemRank?.(item.id) ?? index + 1
 
 const pieChartCanvas = ref<HTMLCanvasElement | null>(null)
 const barChartCanvas = ref<HTMLCanvasElement | null>(null)
@@ -154,7 +161,7 @@ const createCharts = (): void => {
                 hoverOffset: 10
             }]
         },
-        options: {
+        items: {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
@@ -194,7 +201,7 @@ const createCharts = (): void => {
                 categoryPercentage: 0.8
             }]
         },
-        options: {
+        items: {
             responsive: true,
             maintainAspectRatio: true,
             scales: { 

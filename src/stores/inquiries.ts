@@ -40,6 +40,7 @@ export type FilterType =
   | 'reject'
   | 'private'
   | 'participated'
+  | 'group'
   | 'open'
   | 'all'
   | 'closed'
@@ -133,6 +134,7 @@ const inquiryCategories: InquiryCategoryList = {
       DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -30 &&
       inquiry.permissions.view &&
       (inquiry.configuration.visibility === 'everyone' ||
+     inquiry.configuration.visibility === 'groups' ||
         inquiry.configuration.visibility === 'private'),
   },
   reject: {
@@ -145,10 +147,16 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore()
       return sessionStore.appPermissions.inquiryCreation
     },
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      inquiry.currentUserStatus.isOwner &&
-      inquiry.status.moderationStatus === 'rejected',
+    filterCondition: (inquiry: Inquiry) => {
+    if (inquiry.status.isArchived || inquiry.status.moderationStatus !== 'rejected') {
+      return false
+    }
+    const sessionStore = useSessionStore()
+    if (sessionStore.currentUser?.isModerator || sessionStore.currentUser?.isAdmin) {
+      return inquiry.permissions.view
+    }
+    return inquiry.currentUserStatus.isOwner
+  },
   },
   my: {
     id: 'my',
@@ -179,6 +187,7 @@ const inquiryCategories: InquiryCategoryList = {
       inquiry.currentUserStatus.isOwner &&
       inquiry.configuration.visibility === 'private',
   },
+
   participated: {
     id: 'participated',
     title: t('agora', 'Participated'),
@@ -189,6 +198,24 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived && inquiry.status.countParticipants > 0,
   },
+
+group: {
+  id: 'group' as FilterType,
+  title: t('agora', 'Group inquiries'),
+  titleExt: t('agora', 'Inquiries shared with my groups'),
+  description: t('agora', 'Inquiries visible to the groups you belong to.'),
+  pinned: false,
+  showInNavigation: () => {
+    const sessionStore = useSessionStore()
+    return (sessionStore.currentUser?.groups?.length ?? 0) > 0
+  },
+  filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    inquiry.configuration.access === 'group' &&
+    inquiry.ownedGroup &&
+    (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
+},
   open: {
     id: 'open',
     title: t('agora', 'Openly visible inquiries'),
@@ -202,19 +229,47 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived && (inquiry.configuration.visibility === 'everyone' || inquiry.configuration.visibility === 'groups' || inquiry.configuration.visibility === 'participants' || inquiry.configuration.visibility === 'users'),
   },
-  all: {
+    all: {
     id: 'all',
     title: t('agora', 'All inquiries'),
     titleExt: t('agora', 'All inquiries'),
     description: t('agora', 'All inquiries open and public, where you have visibility to'),
     pinned: false,
     showInNavigation: () => true,
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      inquiry.permissions.view &&
-      (inquiry.configuration.visibility === 'everyone' ||
-        inquiry.configuration.visibility === 'private'),
-  },
+    filterCondition: (inquiry: Inquiry) => {
+      if (inquiry.status.isArchived || !inquiry.permissions.view) {
+        return false
+      }
+
+      const sessionStore = useSessionStore()
+      const visibilty = inquiry.configuration.visibility
+
+      // Open and public are always visible
+      if (visibility === 'everyone') {
+        return true
+      }
+
+      // Private inquiries are only visible to the owner
+      if (visibility === 'private') {
+        return inquiry.currentUserStatus.isOwner
+      }
+
+      // Moderate inquiries are visible to moderators and admins
+      if (visibility === 'moderate') {
+        return !!(sessionStore.currentUser?.isModerator || sessionStore.currentUser?.isAdmin)
+      }
+
+      // Group inquiries are visible if the user is in the owning group
+      if (visibility === 'groups') {
+        return !!(
+          inquiry.ownedGroup &&
+          (sessionStore.currentUser?.groups ?? []).includes(inquiry.ownedGroup)
+        )
+      }
+
+      return false
+    },  
+  },     
   closed: {
     id: 'closed',
     title: t('agora', 'Closed inquiries'),
@@ -251,7 +306,7 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore()
       return !!sessionStore.currentUser?.isAdmin
     },
-    filterCondition: (inquiry: Inquiry) => inquiry.permissions.view,
+    filterCondition: (inquiry: Inquiry) => !inquiry.status.isArchived && inquiry.permissions.view,
   },
   moderate: {
     id: 'moderate',
@@ -263,7 +318,10 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore()
       return !!sessionStore.currentUser?.isModerator
     },
-    filterCondition: (inquiry: Inquiry) => inquiry.status.publicationStatus === 'pending',
+    filterCondition: (inquiry: Inquiry) => 
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    inquiry.status.publicationStatus === 'pending',
   },
 }
 
@@ -412,10 +470,12 @@ export const useInquiriesStore = defineStore('inquiries', {
         )
       }
 
-      // Filter by parentId
-      if (state.advancedFilters.parentId !== undefined ) {
-        filteredInquiries = filteredInquiries.filter(
-          (inquiry) => inquiry.parentId === state.advancedFilters.parentId
+      // Filter by parentId. A root inquiry carries either null or 0 depending
+      // on how it was created, so asking for "no parent" has to accept both.
+      if (state.advancedFilters.parentId !== undefined) {
+        const wantedParent = state.advancedFilters.parentId
+        filteredInquiries = filteredInquiries.filter((inquiry) =>
+          wantedParent === null ? !inquiry.parentId : inquiry.parentId === wantedParent
         )
       }
 
@@ -721,7 +781,7 @@ export const useInquiriesStore = defineStore('inquiries', {
 	    try {
 		    const response = await InquiriesAPI.getInquiries()
 		    this.inquiries = response.data.inquiries
-		    inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups
+		    inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups ?? []
 		    this.meta.status = 'loaded'
 	    } catch (error) {
 		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {

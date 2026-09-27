@@ -101,6 +101,9 @@ abstract class EntityWithUser extends Entity
     /**
      * @return UserBase Gets owner of the entity
      */
+        /**
+     * @return UserBase Gets owner of the entity
+     */
     public function getUser(): UserBase
     {
         if ($this->getEntityAnonymization()) {
@@ -117,10 +120,18 @@ abstract class EntityWithUser extends Entity
             }
             $user = $userMapper->getParticipant($this->getUserId(), $inquiryId);
             // Get user from userbase
+        } catch (\OCA\Agora\Exceptions\UserNotFoundException $e) {
+            // The referenced user no longer exists in Nextcloud.
+            return new Anon($this->getUserId());
         } catch (Exception $e) {
-            // If inquiryId is not set, we assume that the user is not a participant of a inquiry
-            $user = $userMapper->getUserFromUserBase($this->getUserId());
+            // If inquiryId is not set, we assume that the user is not a participant of an inquiry
+            try {
+                $user = $userMapper->getUserFromUserBase($this->getUserId());
+            } catch (\OCA\Agora\Exceptions\UserNotFoundException $e2) {
+                return new Anon($this->getUserId());
+            }
         }
+
         return $user;
     }
 }

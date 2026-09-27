@@ -31,16 +31,16 @@
 import { ref, computed, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type {  Option } from '../../Types/index'
+import type {  Item } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: Option
+  item: Item
   currentWeight?: number | null
 }>()
 
 const emit = defineEmits<{
-  'update:token_weight': [optionId: number, weight: number | null]
+  'update:token_weight': [itemId: number, weight: number | null]
 }>()
 
 const maxWeight = computed(() => (props.engineConfig.max_weight as number) || 100)
@@ -65,14 +65,14 @@ function handleSliderChange(event: Event) {
   const target = event.target as HTMLInputElement
   const value = parseInt(target.value, 10)
   if (value === 0) {
-    emit('update:token_weight', props.option.id, null)
+    emit('update:token_weight', props.item.id, null)
   } else {
-    emit('update:token_weight', props.option.id, value)
+    emit('update:token_weight', props.item.id, value)
   }
 }
 
 function clearWeight() {
-  emit('update:token_weight', props.option.id, null)
+  emit('update:token_weight', props.item.id, null)
 }
 </script>
 

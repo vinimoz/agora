@@ -43,16 +43,16 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import { Plus, Minus, X } from 'lucide-vue-next'
-import type {  Option } from '../../Types/index'
+import type {  Item } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: Option
+  item: Item
   currentVotes?: number | null
 }>()
 
 const emit = defineEmits<{
-  'update:quadratic': [optionId: number, votes: number | null]
+  'update:quadratic': [itemId: number, votes: number | null]
 }>()
 
 const maxCredits = computed(() => (props.engineConfig.credits_per_user as number) || 100)
@@ -85,7 +85,7 @@ function increment() {
   const current = currentValue.value || 0
   const newValue = current + 1
   if (getCost(newValue) <= maxCredits.value) {
-    emit('update:quadratic', props.option.id, newValue)
+    emit('update:quadratic', props.item.id, newValue)
   }
 }
 
@@ -93,14 +93,14 @@ function decrement() {
   const current = currentValue.value || 0
   const newValue = Math.max(0, current - 1)
   if (newValue === 0) {
-    emit('update:quadratic', props.option.id, null)
+    emit('update:quadratic', props.item.id, null)
   } else {
-    emit('update:quadratic', props.option.id, newValue)
+    emit('update:quadratic', props.item.id, newValue)
   }
 }
 
 function clearVotes() {
-  emit('update:quadratic', props.option.id, null)
+  emit('update:quadratic', props.item.id, null)
 }
 </script>
 

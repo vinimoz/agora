@@ -115,6 +115,14 @@ public function setMetadata(array|string|null $metadata): void
     
 
 
+    /**
+     * Whether results stay hidden from non editors until the engine is closed
+     */
+    public static function hidesResults(array $config, string $status): bool
+    {
+        return ($config['results_visibility'] ?? 'always') === 'closed' && $status !== self::STATUS_CLOSED;
+    }
+
     // Helper methods for config-driven fields
 
     public function getPhase(): string

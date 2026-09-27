@@ -98,9 +98,8 @@
               ></div>
             </div>
             <div class="balance-stats">
-              <span class="for-stats">{{ debateBalance.for }}%</span>
-              <span class="vs-indicator">{{ t('agora', 'VS') }}</span>
-              <span class="against-stats">{{ debateBalance.against }}%</span>
+              <span class="for-stats">{{ t('agora', '{count} for', { count: debateBalance.forCount }) }}</span>
+              <span class="against-stats">{{ t('agora', '{count} against', { count: debateBalance.againstCount }) }}</span>
             </div>
           </div>
 
@@ -665,6 +664,8 @@ const hasUnpairedOptions = computed(() => unpairedOptions.value.length > 0)
 // Debate Metrics
 // ============================================
 
+// The bar counts positions written on each side, not supporters, so the
+// labels show those counts rather than a percentage.
 const debateBalance = computed(() => {
   const forPositions = getOptionsByType('position_for')
   const againstPositions = getOptionsByType('position_against')
@@ -673,6 +674,8 @@ const debateBalance = computed(() => {
   return {
     for: Math.round((forPositions.length / total) * 100),
     against: Math.round((againstPositions.length / total) * 100),
+    forCount: forPositions.length,
+    againstCount: againstPositions.length
   }
 })
 
@@ -1120,12 +1123,6 @@ $neutral-color: #6c757d;
 
           .against-stats {
             color: $error-color;
-          }
-
-          .vs-indicator {
-            color: var(--color-text-lighter);
-            font-weight: 400;
-            font-size: 8px;
           }
         }
       }

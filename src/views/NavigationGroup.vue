@@ -283,7 +283,7 @@ const hasGroups = computed(() => {
 </script>
 
 <template>
-  <NcAppNavigation class="agora-navigation" aria-label="Agora Navigation">
+  <NcAppNavigation class="agora-navigation" :aria-label="t('agora', 'Agora navigation')">
     <!-- Navigation List -->
     <template #list>
       <!-- Groups Section -->

@@ -6,11 +6,10 @@ import { defineStore } from 'pinia'
 import domPurify from 'dompurify'
 import { marked } from 'marked'
 import { gfmHeadingId } from 'marked-gfm-heading-id'
-import { t } from '@nextcloud/l10n'
+import { t  } from '@nextcloud/l10n'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { AxiosError } from '@nextcloud/axios'
-import { getCanonicalLocale, getLocale } from '@nextcloud/l10n'
 import { Logger } from '../helpers/index.ts'
 import { PublicAPI, InquiriesAPI } from '../Api/index.ts'
 import {
@@ -252,7 +251,7 @@ export const useInquiryStore = defineStore('inquiry', {
 			return !this.isClosed && state.permissions.edit
 		},
 
-		// In the getters section, replace the isClosed getter with:
+		// In the getters section, replace the isClosed getter with:y
 
 isClosed(state): boolean {
     const now = Date.now() / 1000 // Current time in seconds
@@ -262,6 +261,24 @@ isClosed(state): boolean {
     )
 },
 
+		isGroupRestricted(state): boolean {
+			return state.configuration.visibilitiy === 'groups' && state.ownedGroup !== ''
+		},
+
+
+
+	/**
+	 * Check if the current user belongs to the inquiry's owned group.
+	 * Returns true if no ownedGroup is set (no restriction),
+	 * otherwise checks if the current user's groups include the ownedGroup.
+	 */
+	isCurrentUserInOwnedGroup(): boolean {
+	if (!this.ownedGroup) {
+		return true
+	}
+	const sessionStore = useSessionStore()
+	return (sessionStore.currentUser?.groups ?? []).includes(this.ownedGroup)
+	},
 
 		descriptionMarkDown(state): string {
 			marked.use(gfmHeadingId(markedPrefix))
@@ -321,7 +338,6 @@ isClosed(state): boolean {
           this.status.inquiryStatus = 'waiting_approval'
           this.configuration.visibility = 'private'
         }
-
         const response = await InquiriesAPI.submitInquiry(this.id, action)
         if (!response || !response.data) {
           this.$reset()
@@ -426,6 +442,7 @@ isClosed(state): boolean {
 			type?: string
 			family: string
 			ownedGroup?: string
+			access?: AccessType
 			description?: string
 			parentId?: number
 			locationId?: number
@@ -441,6 +458,7 @@ isClosed(state): boolean {
 					family: payload.family,
 					parentId: payload.parentId,
 					locationId: payload.locationId,
+					access: payload.access,
 					categoryId: payload.categoryId,
 					description: payload.description,
 					owner: payload.owner,

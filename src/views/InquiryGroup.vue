@@ -405,7 +405,6 @@
                 </div>
               </div>
             </div>
-
             <div v-else class="empty-state">
               <div class="empty-icon">📁</div>
               <h3>{{ t('agora', 'No groups available') }}</h3>

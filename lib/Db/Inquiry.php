@@ -16,6 +16,7 @@ use OCA\Agora\Helper\Container;
 use OCA\Agora\Model\Settings\AppSettings;
 use OCA\Agora\Model\Settings\SystemSettings;
 use OCA\Agora\UserSession;
+use OCA\Agora\Db\SupportEngine;
 use OCP\IGroupManager; 
 use OCP\IURLGenerator;
 
@@ -355,6 +356,27 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$decoded = json_decode($this->supportResult, true);
 		return is_array($decoded) ? $decoded : [];
 	}
+		/**
+	 * Support results without those of engines hidden until close
+	 */
+	private function getVisibleSupportResult(): ?array
+	{
+		$results = $this->getSupportResult();
+		if (!$results || $this->getIsAllowed(self::PERMISSION_INQUIRY_EDIT)) {
+			return $results;
+		}
+		$hidden = [];
+		foreach ($this->getSupportEngine() as $engine) {
+			$config = is_string($engine['config'] ?? null) ? json_decode($engine['config'], true) : ($engine['config'] ?? []);
+			if (SupportEngine::hidesResults($config ?? [], $engine['status'] ?? '')) {
+				$hidden[] = (int)$engine['id'];
+			}
+		}
+		return array_values(array_filter(
+			$results,
+			fn ($r) => !in_array((int)($r['support_engine_id'] ?? 0), $hidden, true),
+		));
+	}
 
 	/**
 	 * Get support engine as array (decoded from JSON string)
@@ -386,7 +408,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			'relevantThreshold' => $this->getRelevantThreshold(),
 			'deletionDate' => $this->getDeleted(),
 			'archivedDate' => $this->getArchived(),
-			'supportResult' => $this->getSupportResult(),
+			'supportResult' => $this->getVisibleSupportResult(),
 			'countSupports' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) ? $this->getCountSupports() : 0,
 			'countParticipants' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) 
 			? $this->getCountParticipants() 
@@ -894,10 +916,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			return true;
 		}
 
-		if ($this->getVisibility() !== self::VISIBILITY_PRIVATE) {
-			return true;
-		}
-
 		if ($this->getIsOpenInquiry()) {
 			return true;
 		}
@@ -916,27 +934,38 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			|| $this->userSession->getCurrentUser()->getIsAdmin();
 	}
 
-	private function getAllowVisibilityInquiry(): bool
-	{
-		if ($this->getAllowEditInquiry()) {
-			return true;
-		}
+private function getAllowVisibilityInquiry(): bool
+{
+    if ($this->getAllowEditInquiry()) {
+        return true;
+    }
 
-		if ($this->getDeleted()) {
-			return false;
-		}
+    if ($this->getDeleted()) {
+        return false;
+    }
 
-		if ($this->getArchived()) {
-			return false;
-		}
 
-		if ($this->getIsOpenInquiry()) {
-			return true;
-		}
+    if ($this->getVisibility() === self::VISIBILITY_GROUPS) {
+        $ownedGroup = $this->getOwnedGroup();
 
-		$share = $this->userSession->getShare();
-		return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
-	}
+        // Group-scoped: decide here and return, do not fall through.
+        if ($ownedGroup !== '' && $ownedGroup !== null) {
+            $user = $this->userSession->getCurrentUser();
+
+            $isOwner = $this->getOwner() === $user->getId();
+            $isInGroup = in_array($ownedGroup, $user->getGroups(), true);
+
+            return $user->getIsAdmin() || $isOwner || $isInGroup;
+        }
+    }
+
+    if ($this->getIsOpenInquiry()) {
+        return true;
+    }
+
+    $share = $this->userSession->getShare();
+    return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
+}
 
 	private function getAllowDeleteInquiry(): bool
 	{

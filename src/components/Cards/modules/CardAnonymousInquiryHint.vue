@@ -21,7 +21,7 @@ const inquiryStore = useInquiryStore()
       )
     }}
     {{
-      t('inquiries', 'But be aware that your name is not stored in an encrypted or obfuscated way.')
+      t('agora', 'But be aware that your name is not stored in an encrypted or obfuscated way.')
     }}
   </CardDiv>
   <CardDiv v-else :type="cardType">

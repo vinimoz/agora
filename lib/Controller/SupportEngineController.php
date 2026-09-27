@@ -17,7 +17,9 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
+use OCA\Agora\Exceptions\ForbiddenException;
 use OCA\Agora\Service\SupportEngineService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use Psr\Log\LoggerInterface;
 use OCA\Agora\Db\SupportEngine; 
 
@@ -99,7 +101,6 @@ class SupportEngineController extends Controller
      * Create a new support engine
      */
     #[NoAdminRequired]
-    #[NoCSRFRequired]
     #[FrontpageRoute(verb: 'POST', url: '/support/engine')]
     public function create(): JSONResponse
     {
@@ -134,6 +135,10 @@ class SupportEngineController extends Controller
             ]);
 
             return new JSONResponse($engine, Http::STATUS_CREATED);
+        } catch (ForbiddenException $e) {
+            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+        } catch (DoesNotExistException $e) {
+            return new JSONResponse(['error' => 'Inquiry not found'], Http::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
             $this->logger->error('Error creating support engine', [
                 'error' => $e->getMessage(),
@@ -147,7 +152,6 @@ class SupportEngineController extends Controller
      * Update an existing support engine
      */
     #[NoAdminRequired]
-    #[NoCSRFRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/support/engine/{id}')]
     public function update(int $id): JSONResponse
     {
@@ -157,6 +161,8 @@ class SupportEngineController extends Controller
             if (!$data) {
                 return new JSONResponse(['error' => 'Invalid JSON data'], Http::STATUS_BAD_REQUEST);
             }
+
+            $this->engineService->requestEditEngine($id);
 
             // Check if engine can be modified (has votes?)
             if (isset($data['engine'])) {
@@ -172,6 +178,10 @@ class SupportEngineController extends Controller
             }
 
             return new JSONResponse($updatedEngine);
+        } catch (ForbiddenException $e) {
+            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+        } catch (DoesNotExistException $e) {
+            return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
             $this->logger->error('Error updating support engine', [
                 'id' => $id,
@@ -185,11 +195,12 @@ class SupportEngineController extends Controller
      * Delete a support engine
      */
     #[NoAdminRequired]
-    #[NoCSRFRequired]
     #[FrontpageRoute(verb: 'DELETE', url: '/support/engine/{id}')]
     public function delete(int $id): JSONResponse
     {
         try {
+            $this->engineService->requestEditEngine($id);
+
             // Check if there are votes before deletion
             $hasVotes = $this->engineService->hasVotes($id);
             if ($hasVotes) {
@@ -202,6 +213,10 @@ class SupportEngineController extends Controller
             }
 
             return new JSONResponse(['success' => true]);
+        } catch (ForbiddenException $e) {
+            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+        } catch (DoesNotExistException $e) {
+            return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
             $this->logger->error('Error deleting support engine', [
                 'id' => $id,
@@ -215,7 +230,6 @@ class SupportEngineController extends Controller
      * Set active engine for a target
      */
     #[NoAdminRequired]
-    #[NoCSRFRequired]
     #[FrontpageRoute(verb: 'POST', url: '/support/engine/active')]
     public function setActive(): JSONResponse
     {
@@ -233,6 +247,10 @@ class SupportEngineController extends Controller
             );
 
             return new JSONResponse(['success' => true]);
+        } catch (ForbiddenException $e) {
+            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+        } catch (DoesNotExistException $e) {
+            return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
         } catch (\Exception $e) {
             $this->logger->error('Error setting active engine', [
                 'error' => $e->getMessage()

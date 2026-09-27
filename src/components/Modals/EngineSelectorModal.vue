@@ -140,6 +140,12 @@
                           :placeholder="t('agora', 'Grade {n}', { n: index + 1 })"
                           class="grade-input"
                           />
+                  <NcCheckboxRadioSwitch
+                          :model-value="commentGrades.includes(grade)"
+                          @update:model-value="toggleCommentGrade(grade, $event)"
+                          >
+                          {{ t('agora', 'Open comment on this grade') }}
+                  </NcCheckboxRadioSwitch>
                   <NcButton
                           v-if="(tempConfig.grades || defaultGrades).length > 2"
                           class="grade-remove"
@@ -242,6 +248,14 @@
           </NcCheckboxRadioSwitch>
           </NcRadioGroup>
       </div>
+
+      <NcCheckboxRadioSwitch
+              v-if="mode !== 'deliberative'"
+              :model-value="tempConfig.results_visibility === 'closed'"
+              @update:model-value="tempConfig.results_visibility = $event ? 'closed' : 'always'"
+              >
+              {{ t('agora', 'Hide results until voting is closed') }}
+      </NcCheckboxRadioSwitch>
 
       <div class="modal-footer">
           <NcButton class="btn-secondary" @click="$emit('close')">
@@ -476,23 +490,23 @@ const defaultGrades = ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Goo
 
 // Condorcet variants
 const condorcetVariants = [
-  { id: 'schulze', label: 'Schulze Method', description: 'Also known as Beatpath method, considered one of the most robust Condorcet methods' },
-  { id: 'copeland', label: 'Copeland Method', description: 'Simple method based on win-loss record against other candidates' },
-  { id: 'minimax', label: 'Minimax', description: 'Also known as Simpson-Kramer method, minimizes the largest opposition' },
-  { id: 'ranked_pairs', label: 'Ranked Pairs', description: 'Tideman method that builds a ranking from strongest to weakest majorities' },
-  { id: 'kemeny_young', label: 'Kemeny-Young', description: 'Finds the most likely ranking based on voters preferences' },
+  { id: 'schulze', label: t('agora', 'Schulze Method'), description: t('agora', 'Also known as Beatpath method, considered one of the most robust Condorcet methods') },
+  { id: 'copeland', label: t('agora', 'Copeland Method'), description: t('agora', 'Simple method based on win-loss record against other candidates') },
+  { id: 'minimax', label: t('agora', 'Minimax'), description: t('agora', 'Also known as Simpson-Kramer method, minimizes the largest opposition') },
+  { id: 'ranked_pairs', label: t('agora', 'Ranked Pairs'), description: t('agora', 'Tideman method that builds a ranking from strongest to weakest majorities') },
+  { id: 'kemeny_young', label: t('agora', 'Kemeny-Young'), description: t('agora', 'Finds the most likely ranking based on voters preferences') },
 ]
 
 // Reaction options
 const reactionOptions = [
-  { value: '👍', label: 'Thumbs Up', emoji: '👍' },
-  { value: '❤️', label: 'Heart', emoji: '❤️' },
-  { value: '😊', label: 'Smile', emoji: '😊' },
-  { value: '🎉', label: 'Celebrate', emoji: '🎉' },
-  { value: '🤔', label: 'Thinking', emoji: '🤔' },
-  { value: '👎', label: 'Thumbs Down', emoji: '👎' },
-  { value: '😢', label: 'Sad', emoji: '😢' },
-  { value: '😡', label: 'Angry', emoji: '😡' },
+  { value: '👍', label: t('agora', 'Thumbs Up'), emoji: '👍' },
+  { value: '❤️', label: t('agora', 'Heart'), emoji: '❤️' },
+  { value: '😊', label: t('agora', 'Smile'), emoji: '😊' },
+  { value: '🎉', label: t('agora', 'Celebrate'), emoji: '🎉' },
+  { value: '🤔', label: t('agora', 'Thinking'), emoji: '🤔' },
+  { value: '👎', label: t('agora', 'Thumbs Down'), emoji: '👎' },
+  { value: '😢', label: t('agora', 'Sad'), emoji: '😢' },
+  { value: '😡', label: t('agora', 'Angry'), emoji: '😡' },
 ]
 
 
@@ -566,6 +580,13 @@ const removeGrade = (index: number) => {
   }
 }
 
+const commentGrades = computed(() => (tempConfig.value.comment_grades as string[] | undefined) ?? [])
+
+const toggleCommentGrade = (grade: string, checked: boolean) => {
+  const others = commentGrades.value.filter((g) => g !== grade)
+  tempConfig.value.comment_grades = checked ? [...others, grade] : others
+}
+
 const getSelectOptions = (schema: ConfigSchemaField) => {
   if (!schema.options) return []
 
@@ -573,9 +594,19 @@ const getSelectOptions = (schema: ConfigSchemaField) => {
     ? schema.options 
     : Object.values(schema.options)
 
+  const labels: Record<string, string> = {
+    ...Object.fromEntries(condorcetVariants.map((variant) => [variant.id, variant.label])),
+    none: t('agora', 'None'),
+    'min-max': t('agora', 'Min-max'),
+    'z-score': t('agora', 'Z-score'),
+    bottom: t('agora', 'Bottom'),
+    threshold: t('agora', 'Threshold'),
+    top: t('agora', 'Top'),
+  }
+
   return options.map((opt: string) => ({
     value: opt,
-    label: opt.charAt(0).toUpperCase() + opt.slice(1).replace(/_/g, ' ')
+    label: labels[opt] || opt.charAt(0).toUpperCase() + opt.slice(1).replace(/_/g, ' ')
   }))
 }
 
@@ -657,6 +688,9 @@ const save = (): void => {
     // Clean up empty grades
     if (selectedEngine.value === 'majority_judgment' && config.grades) {
         config.grades = (config.grades as string[]).filter(g => g.trim() !== '')
+        if (config.comment_grades) {
+            config.comment_grades = (config.comment_grades as string[]).filter((g) => (config.grades as string[]).includes(g))
+        }
     }
 
     // VALIDATION: Ensure min < max for score/star
@@ -1009,6 +1043,7 @@ onMounted(() => {
             .grade-item {
                 display: flex;
                 align-items: center;
+                flex-wrap: wrap;
                 gap: 8px;
                 margin-bottom: 8px;
 

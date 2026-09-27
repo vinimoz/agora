@@ -38,18 +38,18 @@ const props = defineProps<{
   engineConfig: Record<string, unknown>
   disabled?: boolean
   rank?: number | null
-  totalOptions?: number 
+  totalItems?: number 
 }>()
 
 const emit = defineEmits<{
   'changeRank': [rank: number | null]
 }>()
 
-// If max_rank is null or undefined, rank all options (use totalOptions)
+// If max_rank is null or undefined, rank all items (use totalItems)
 const maxRank = computed(() => {
   const max = props.engineConfig.max_rank
   if (max === null || max === undefined) {
-    return props.totalOptions ?? 10
+    return props.totalItems ?? 10
   }
   return max as number
 })

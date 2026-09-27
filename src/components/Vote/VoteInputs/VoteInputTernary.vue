@@ -3,20 +3,20 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div class="vote-input-ternary">
+  <div class="vote-input-ternary" role="group" :aria-label="item.title">
     <NcButton
-      v-for="option in ternaryOptions"
-      :key="option.value"
-      :type="isSelected(option.value) ? 'primary' : 'tertiary'"
-      size="small"
-      :class="{ 'ternary-selected': isSelected(option.value) }"
+      v-for="choice in ternaryItems"
+      :key="choice.value"
+      size="large"
+      :pressed="isSelected(choice.value)"
       :disabled="disabled"
-      @click="vote(option.value)"
+      @click="vote(choice.value)"
     >
       <template #icon>
-        <component :is="option.icon" :size="16" />
+        <CheckIcon v-if="isSelected(choice.value)" :size="20" />
+        <component :is="choice.icon" v-else :size="20" />
       </template>
-      {{ option.label }}
+      {{ choice.label }}
     </NcButton>
   </div>
 </template>
@@ -25,11 +25,12 @@
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
 import { ThumbsUp, Minus, ThumbsDown } from 'lucide-vue-next'
-import type { SupportData, Option, Inquiry } from '../../Types/index'
+import type { SupportData, Item } from '../../Types/index'
 
 const props = defineProps<{
-  item: Option | Inquiry
+  item: Item
   disabled?: boolean
   userVote?: SupportData
   currentScore?: number | null
@@ -39,17 +40,19 @@ const emit = defineEmits<{
   'update:score': [itemId: number, score: number | null]
 }>()
 
-const ternaryOptions = [
+const ternaryItems = [
   { value: 1, label: t('agora', 'For'), icon: ThumbsUp },
   { value: 0, label: t('agora', 'Abstain'), icon: Minus },
   { value: -1, label: t('agora', 'Against'), icon: ThumbsDown },
 ]
 
 const currentValue = computed(() => {
+  // Normalize to number
   if (props.currentScore !== undefined && props.currentScore !== null) {
     const num = Number(props.currentScore)
     return isNaN(num) ? null : num
   }
+  // Fallback to stored vote
   if (!props.userVote) return null
   let raw = props.userVote.value
   if (raw && typeof raw === 'object' && 'value' in raw) raw = raw.value
@@ -71,43 +74,14 @@ function vote(value: number) {
 <style scoped lang="scss">
 .vote-input-ternary {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  align-items: center;
 
-  :deep(.button-vue--primary) {
-    background: transparent !important;
-    border-color: var(--color-border) !important;
-    color: var(--color-main-text) !important;
-    box-shadow: none !important;
-
-    &:hover {
-      background: var(--color-background-hover) !important;
-    }
-  }
-
-  .ternary-selected {
-    :deep(.button-vue--primary) {
-      border-color: #f1c40f !important;
-      background: transparent !important;
-    }
-
-    :deep(svg) {
-      color: #f1c40f !important;
-      fill: #f1c40f !important;
-    }
-
-    &::after {
-      content: '✓';
-      font-size: 10px;
-      color: #f1c40f;
-      margin-left: 4px;
-      font-weight: bold;
-    }
-  }
-
-  :deep(svg) {
-    color: var(--color-text-lighter);
-    transition: color 0.2s ease;
+  // Never truncate a choice: NcButton ends its label with an ellipsis.
+  :deep(.button-vue__text) {
+    overflow: visible;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
 </style>

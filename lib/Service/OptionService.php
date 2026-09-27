@@ -33,6 +33,7 @@ use OCA\Agora\Exceptions\UserNotFoundException;
 use OCA\Agora\Model\Settings\AppSettings;
 use OCA\Agora\Model\UserBase;
 use OCA\Agora\Service\SettingsService;
+use OCA\Agora\Service\SupportResultService;
 use OCA\Agora\UserSession;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -56,8 +57,26 @@ class OptionService
         private SettingsService $settings,
         private TrendingService $trendingService,
         private LoggerInterface $logger,
+        private SupportResultService $supportResultService,
     ) {
         $this->option = new Option();
+    }
+
+    /**
+     * Strip results of engines hidden until close, inquiry by inquiry
+     *
+     * @param Option[] $options
+     * @return Option[]
+     */
+    private function redactResults(array $options): array
+    {
+        foreach (array_unique(array_map(fn (Option $o) => $o->getTargetId(), $options)) as $inquiryId) {
+            $this->supportResultService->redactOptions(
+                array_filter($options, fn (Option $o) => $o->getTargetId() === $inquiryId),
+                $inquiryId,
+            );
+        }
+        return $options;
     }
 
     /**
@@ -72,17 +91,17 @@ class OptionService
         }
 
         if ($this->userSession->getCurrentUser()->getIsAdmin()) {
-            return $optionList;
+            return $this->redactResults($optionList);
         }
 
-        return array_values(
+        return $this->redactResults(array_values(
             array_filter(
                 $optionList,
                 function (Option $option): bool {
                     return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
                 }
             )
-        );
+        ));
     }
 
     /**
@@ -136,14 +155,14 @@ class OptionService
             $type = $option->getType();
         }
 
-        return array_values(
+        return $this->supportResultService->redactOptions(array_values(
             array_filter(
                 $options,
                 function (Option $option): bool {
                     return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
                 }
             )
-        );
+        ), $targetId);
     }
 
     /**
@@ -184,7 +203,7 @@ class OptionService
                 // silent catch
             }
         }
-        return $optionList;
+        return $this->redactResults($optionList);
     }
 
     /**
@@ -269,7 +288,7 @@ class OptionService
 
         $this->eventDispatcher->dispatchTyped(new OptionOwnerChangeEvent($option, $oldOwner, $option->getOwner()));
 
-        return $option;
+        return $this->supportResultService->redactOption($option);
     }
 
     /**
@@ -289,8 +308,8 @@ class OptionService
             $this->option->request(Option::PERMISSION_OPTION_VIEW);
 
             $family = $this->optionTypeMapper->getFamilyFromType($this->option->getType());
-           
-            return $this->option;
+
+            return $this->supportResultService->redactOption($this->option);
         } catch (DoesNotExistException $e) {
             throw new NotFoundException('Option not found');
         }
@@ -309,7 +328,7 @@ class OptionService
               
             }
 
-            return $options;
+            return $this->redactResults($options);
         } catch (DoesNotExistException $e) {
             throw new NotFoundException('Options not found for parent');
         }
@@ -352,8 +371,9 @@ class OptionService
      */
     public function create(array $data): Option
     {
-        if (empty($data['text'])) {
-            throw new EmptyTextException('Text must not be empty');
+
+        if (empty($data['text']) && empty($data['title'])) {
+            throw new EmptyTextException('Title or text must not be empty');
         }
 
         if (empty($data['type'])) {
@@ -508,7 +528,7 @@ class OptionService
 
         $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
 
-        return $this->option;
+        return $this->supportResultService->redactOption($this->option);
     }
 
     /**
@@ -532,7 +552,7 @@ class OptionService
 
         $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
 
-        return $this->option;
+        return $this->supportResultService->redactOption($this->option);
     }
 
     /**
@@ -599,7 +619,7 @@ public function toggleArchiveRecursive(int $optionId, bool $archiveState = null)
         }
 
         return [
-            'option' => $this->option,
+            'option' => $this->supportResultService->redactOption($this->option),
             'archivedCount' => $archivedCount
         ];
     } catch (\Exception $e) {
@@ -660,7 +680,7 @@ public function toggleArchiveRecursive(int $optionId, bool $archiveState = null)
             $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($this->option));
         }
 
-        return $this->option;
+        return $this->supportResultService->redactOption($this->option);
     }
 
 
@@ -700,7 +720,7 @@ public function delete(int $optionId): Option
     $this->option->setUpdated(time());
 
     $this->optionMapper->delete($this->option);
-    return $this->option;
+    return $this->supportResultService->redactOption($this->option);
 }
 
 
@@ -883,7 +903,7 @@ public function delete(int $optionId): Option
                 throw new \InvalidArgumentException("Unknown action '$action'");
         }
 
-        return $option;
+        return $this->supportResultService->redactOption($option);
     }
 
     /**

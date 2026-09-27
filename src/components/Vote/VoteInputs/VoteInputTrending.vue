@@ -16,11 +16,11 @@
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { TrendingUp } from 'lucide-vue-next'
-import type { SupportData, Option } from '../../Types/index'
+import type { SupportData, Item } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: Option
+  item: Item
   userVote?: SupportData
 }>()
 

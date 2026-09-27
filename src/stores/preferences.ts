@@ -25,7 +25,6 @@ export type SessionSettings = {
   manualViewInquiry: '' | ViewMode
 }
 
-
 export type Preferences = {
   user: UserPreferences
   session: SessionSettings

@@ -14,7 +14,8 @@ import { useAttachmentsStore } from '../../stores/attachments'
 import { BaseEntry, Event } from '../../Types/index.ts'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+
 import {
   getInquiryTypeData,
 } from '../../helpers/modules/InquiryHelper.ts'
@@ -38,6 +39,7 @@ import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 import {
   canSupport,
   canComment,
+  canEdit,
   createInquiryContext,
 } from '../../utils/permissions.ts'
 
@@ -47,13 +49,13 @@ const props = defineProps<{
   isReadonly: boolean
 }>()
 
-
-// Store declarations
+const hasAccess = ref(true)
 const sessionStore = useSessionStore()
 const commentsStore = useCommentsStore()
 const inquiryStore = useInquiryStore()
 const inquiriesStore = useInquiriesStore()
 const route = useRoute()
+const router = useRouter()
 const attachmentsStore = useAttachmentsStore()
 
 const imageFileInput = ref(null)
@@ -116,7 +118,7 @@ const availableInquiryStatuses = computed(() => {
   if (inquiryStore.status.inquiryStatus === 'draft') {
     statusesFromSettings.unshift({
       statusKey: 'draft',
-      label: 'Draft',
+      label: t('agora', 'Draft'),
       icon: 'draft',
       inquiryType: inquiryStore.type,
       order: 0,
@@ -126,7 +128,7 @@ const availableInquiryStatuses = computed(() => {
   if (inquiryStore.status.inquiryStatus === 'waiting_approval') {
     statusesFromSettings.unshift({
       statusKey: 'waiting_approval',
-      label: 'Waiting Approval',
+      label: t('agora', 'Pending approval'),
       icon: 'waitingapproval',
       inquiryType: inquiryStore.type,
       order: 1,
@@ -141,14 +143,14 @@ const currentInquiryStatus = computed(
     const specialStatuses = {
       'draft': {
 	statusKey: 'draft',
-	label: 'Draft',
+	label: t('agora', 'Draft'),
 	icon: 'draft',
 	inquiryType: inquiryStore.type,
 	order: 0,
       },
       'waiting_approval': {
 	statusKey: 'waiting_approval',
-	label: 'Waiting Approval',
+	label: t('agora', 'Pending approval'),
 	icon: 'waitingapproval',
 	inquiryType: inquiryStore.type,
 	order: 1,
@@ -326,8 +328,14 @@ watch(
 )
 
 // Event subscriptions
-onMounted(() => {
-
+onMounted(async () => {
+  if (!inquiryStore.isCurrentUserInOwnedGroup) { 
+        hasAccess.value = false
+  	showError("Error you cannot view this inquiry !")
+	router.push({ name: 'list', params: { type: 'relevant' } })
+	return
+}
+  
   if (inquiryStore.coverId) { 
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
    }
@@ -422,6 +430,11 @@ const canSupportInquiry = computed(() =>
    context.value ? canSupport(context.value) : false
 )
 
+const canEditInquiry = computed(() =>
+  // You might have a context or permission check here
+   context.value ? canEdit(context.value) : false
+)
+
 
 // Format date
 const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDateString()
@@ -437,7 +450,7 @@ return isPublicRoute
 </script>
 
 <template>
-	<div v-if="isLoaded" class="inquiry-edit-view">
+	<div v-if="isLoaded && hasAccess" class="inquiry-edit-view">
 		<!-- Cover Image Section -->
 
 		<div v-if="inquiryStore.currentUserStatus?.isOwner" class="cover-image-section">
@@ -662,7 +675,7 @@ return isPublicRoute
                         </div>
                         <div class="metadata-content">
                             <span class="metadata-label">{{ t('agora', 'Status') }}</span>
-                            <template v-if="sessionStore.currentUser.isModerator">
+                            <template v-if="canEditInquiry">
                                 <div class="select-container">
                                     <NcSelect
                                             v-model="selectedInquiryStatus"

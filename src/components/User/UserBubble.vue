@@ -21,7 +21,7 @@ const bubbleProps = computed(() => ({
 	user: user.isNoUser || user.isGuest ? undefined : user.id,
 	displayName:
 		user.type === 'deleted'
-			? t('polls', 'Deleted participant')
+			? t('agora', 'Deleted participant')
 			: user.displayName,
 }))
 </script>

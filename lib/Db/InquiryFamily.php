@@ -90,4 +90,5 @@ class InquiryFamily extends Entity implements JsonSerializable
             'actions' => $this->getActions() ?? [],
         ];
     }
+
 }

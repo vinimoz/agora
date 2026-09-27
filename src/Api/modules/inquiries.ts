@@ -154,6 +154,7 @@ const inquiries = {
     title: string
     family: string
     owner: string
+    access: string
     ownedGroup: string
     configuration?: InquiryConfiguration
     parentId?: number
