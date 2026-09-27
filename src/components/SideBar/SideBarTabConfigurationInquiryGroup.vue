@@ -154,7 +154,7 @@ const getSaveableData = () => ({
     title: inquiryGroupStore.title.trim(),
     titleExt: inquiryGroupStore.titleExt.trim(),
     description: inquiryGroupStore.description.trim(),
-    groupStatus: inquiryGroupStore.groupStatus,
+    groupStatus: inquiryGroupStore.status.groupStatus,
     expire: inquiryGroupStore.expire,
     coverId: inquiryGroupStore.coverId,
   })
@@ -269,7 +269,7 @@ const getFormFieldState = (field: keyof typeof formErrors) => ({
 watch(() => inquiryGroupStore.title, debouncedSave, { deep: true })
 watch(() => inquiryGroupStore.titleExt, debouncedSave, { deep: true })
 watch(() => inquiryGroupStore.description, debouncedSave, { deep: true })
-watch(() => inquiryGroupStore.groupStatus, debouncedSave, { deep: true })
+watch(() => inquiryGroupStore.status.groupStatus, debouncedSave, { deep: true })
 watch(() => inquiryGroupStore.expire, debouncedSave, { deep: true })
 watch(() => inquiryGroupStore.coverId, debouncedSave, { deep: true })
 
@@ -448,7 +448,7 @@ onMounted(() => {
             {{ t('agora', 'Status') }}
           </label>
           <NcSelect
-            v-model="inquiryGroupStore.groupStatus"
+            v-model="inquiryGroupStore.status.groupStatus"
             :options="statusOptions"
             :clearable="false"
             :disabled="!canEditGroup || autoSaving"

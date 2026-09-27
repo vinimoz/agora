@@ -5,7 +5,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import moment from '@nextcloud/moment'
 
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
@@ -19,19 +18,38 @@ const props = defineProps({
   },
 })
 
-const dateActivityRelative = computed(() => moment(props.activity.datetime).fromNow())
+const dateActivityRelative = computed(() => {
+    const date = new Date(props.activity.datetime)
+    const now = new Date()
+    const diffSeconds = (now.getTime() - date.getTime()) / 1000
+
+    // Simple relative time formatter
+    if (diffSeconds < 60) {
+        return 'just now'
+    } else if (diffSeconds < 3600) {
+        const minutes = Math.floor(diffSeconds / 60)
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
+    } else if (diffSeconds < 86400) {
+        const hours = Math.floor(diffSeconds / 3600)
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`
+    } else if (diffSeconds < 604800) {
+        const days = Math.floor(diffSeconds / 86400)
+        return `${days} day${days > 1 ? 's' : ''} ago`
+    } else {
+        // Fallback to locale date string
+        return date.toLocaleDateString()
+    }
+})
+
 
 const message = computed(() => {
   const subject = props.activity.subject_rich[0]
   const parameters = JSON.parse(JSON.stringify(props.activity.subject_rich[1]))
-  if (
-    parameters.after &&
-    typeof parameters.after.id === 'string' &&
-    parameters.after.id.startsWith('dt:')
-  ) {
+if (parameters.after && typeof parameters.after.id === 'string' && parameters.after.id.startsWith('dt:')) {
     const dateTime = parameters.after.id.slice(3)
-    parameters.after.name = moment(dateTime).format('L LTS')
-  }
+    const date = new Date(dateTime)
+    parameters.after.name = date.toLocaleString()
+}
 
   Object.keys(parameters).forEach(function (key) {
     const { type } = parameters[key]

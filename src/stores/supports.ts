@@ -89,6 +89,20 @@ export const useSupportsStore = defineStore('supports', () => {
         supports.value.filter((s) => s.inquiryId === inquiryId)
   )
 
+  const getSupportsByParent = computed(
+	  () => (parentId: number, targetType: 'inquiry' | 'option'): Support[] => {
+		  if (!supports.value || !Array.isArray(supports.value)) return []
+
+			  if (targetType === 'option') {
+				  // For options, filter by optionId
+				  return supports.value.filter((s) => s.optionId === parentId)
+			  } 
+				  // For inquiries, filter by inquiryId
+				  return supports.value.filter((s) => s.inquiryId === parentId)
+			  
+	  }
+  )
+
   const getOptionSupports = computed(
     () =>
       (inquiryId: number, optionId: number): Support[] =>
@@ -1258,6 +1272,7 @@ return {
     count,
     getSupport,
     getSupportsByInquiryId,
+    getSupportsByParent,
     getOptionSupports,
     getResult,
 

@@ -13,8 +13,10 @@ import {
   getInquiryTypeData,
 } from '../../helpers/modules/InquiryHelper.ts'
 
+import InquiryContextMenu from './InquiryContextMenu.vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
@@ -36,6 +38,9 @@ const props = defineProps<{
 }>()
 
 const inquiriesStore = useInquiriesStore()
+
+
+const caption = t('agora', 'Inquiry information')
 
 
 // Emits
@@ -290,18 +295,21 @@ const handleAllowedTransformation = (transformType: string) => {
                 </div>
             </div>
 
-            <div class="status-section">
+	    <!--
+            <div v-if="inquiryStore.status.publicationStatus !== 'accepted'" class="status-section">
                 <div class="status-badge" :style="getStatusColor(inquiryStore.status.moderationStatus)">
                     {{ getStatusLabel(inquiryStore.status.moderationStatus) }}
                 </div>
-            </div>
+	    </div> -->
 
-            <div
+            <!-- <div
                     v-if="canViewToggle(context)"
                     class="item-actions"
                     >
                     <InquiryItemActions :key="`actions-${inquiryStore.id}`" :inquiry="inquiryStore" />
-            </div>
+	    </div > -->
+                <InquiryContextMenu />
+
         </div>
     </div>
 </template>

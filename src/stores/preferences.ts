@@ -4,17 +4,13 @@
  */
 
 import { defineStore } from 'pinia'
-import { CalendarAPI, UserSettingsAPI } from '../Api/index.ts'
+import { UserSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 
-export type ViewMode = 'table-view' | 'list-view'
+export type ViewMode = 'table-view' | 'list-view' | 'reel-view'
 
 export type UserPreferences = {
-  calendarPeek: boolean
-  checkCalendars: string[]
-  checkCalendarsHoursBefore: number
-  checkCalendarsHoursAfter: number
   defaultViewInquiry: ViewMode
   inquiryCombo: number[]
   relevantOffset: number
@@ -29,18 +25,10 @@ export type SessionSettings = {
   manualViewInquiry: '' | ViewMode
 }
 
-export type Calendar = {
-  key: string
-  name: string
-  calendarUri: string
-  displayColor: string
-  permissions: number
-}
 
 export type Preferences = {
   user: UserPreferences
   session: SessionSettings
-  availableCalendars: Calendar[]
 }
 
 export const usePreferencesStore = defineStore('preferences', {
@@ -59,7 +47,6 @@ export const usePreferencesStore = defineStore('preferences', {
     session: {
       manualViewInquiry: '',
     },
-    availableCalendars: [],
   }),
 
   getters: {
@@ -83,25 +70,20 @@ export const usePreferencesStore = defineStore('preferences', {
   },
 
   actions: {
-    setCalendars(payload: { calendars: Calendar[] }) {
-      this.availableCalendars = payload.calendars
-    },
-
-    addCheckCalendar(calendar: Calendar) {
-      this.user.checkCalendars.push(calendar.key)
-      this.write()
-    },
-
-    removeCheckCalendar(calendar: Calendar) {
-      const index = this.user.checkCalendars.indexOf(calendar.key)
-      if (index !== -1) {
-        this.user.checkCalendars.splice(index, 1)
-      }
-      this.write()
-    },
 
     setViewInquiry(viewMode: ViewMode) {
       this.session.manualViewInquiry = viewMode
+    },
+
+    // Add this method to set user preferences
+    setUserPreference(key: keyof UserPreferences, value: any) {
+      if (key in this.user) {
+        this.user[key] = value
+        // Optionally save to server
+        this.write().catch(() => {
+          Logger.debug('Failed to save preference:', key, value)
+        })
+      }
     },
 
     async load(): Promise<void> {
@@ -133,18 +115,5 @@ export const usePreferencesStore = defineStore('preferences', {
       }
     },
 
-    async getCalendars() {
-      try {
-        const response = await CalendarAPI.getCalendars()
-        // this.availableCalendars = response.data.calendars
-        this.setCalendars({ calendars: response.data.calendars })
-        return response
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        throw error
-      }
-    },
   },
 })

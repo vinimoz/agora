@@ -127,33 +127,6 @@ export const useSessionStore = defineStore('session', {
       }
       return 0
     },
-    /*
-    windowTitle(state): string {
-      const inquiryStore = useInquiryStore()
-
-      const windowTitle = {
-        prefix: `${t('agora', 'Agora')}`,
-        name: 'Nextcloud',
-      }
-
-      if (state.route.name === 'list') {
-        const inquiriesStore = useInquiriesStore()
-        windowTitle.name = inquiriesStore.categories[this.route.params.type as FilterType].titleExt
-      } else if (state.route.name === 'group') {
-        const inquiryGroupsStore = useInquiryGroupsStore()
-        windowTitle.name =
-          inquiryGroupsStore.currentInquiryGroup?.titleExt ||
-          inquiryGroupsStore.currentInquiryGroup?.name ||
-          ''
-      } else if (state.route.name === 'publicInquiry') {
-        windowTitle.name = inquiryStore.title
-      } else if (state.route.name === 'inquiry') {
-        windowTitle.name = inquiryStore.title ?? t('agora', 'Enter title')
-      }
-
-      return `${windowTitle.prefix} – ${windowTitle.name}`
-    },
-  }, */
       windowTitle(state): string {
     // Don't import at top level, import dynamically
     let title = `${t('agora', 'Agora')} – Nextcloud`

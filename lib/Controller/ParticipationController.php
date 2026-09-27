@@ -128,6 +128,20 @@ class ParticipationController extends BaseController
     }
 
     #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'POST', url: '/participation/{targetType}/{targetId}/lottery/reset')]
+    public function resetLottery(string $targetType, int $targetId): DataResponse
+    {
+        try {
+
+
+            $run = $this->participationService->resetLottery($targetType,$targetId);
+            return new DataResponse($run->jsonSerialize());
+        } catch (\Exception $e) {
+            return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+        }
+    }
+
+    #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/participation/{targetType}/{targetId}/lottery/cancel')]
     public function cancelLottery(string $targetType, int $targetId, string $reason): DataResponse
     {

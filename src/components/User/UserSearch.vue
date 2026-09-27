@@ -92,7 +92,7 @@ async function optionSelected(user: User | User[]) {
 
 const selectProps = {
   ariaLabelCombobox: ariaLabel,
-  multiple: multiple,
+  multiple,
   userSelect: true,
   tagWidth: 80,
   loading: isLoading.value,
@@ -108,8 +108,8 @@ const selectProps = {
 <template>
   <NcSelectUsers
     id="ajax"
-    v-model="model"
     ref="userSelect"
+    v-model="model"
     v-bind="selectProps"
     :options="users"
     :loading="isLoading"

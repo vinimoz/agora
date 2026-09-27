@@ -56,12 +56,15 @@ export const useSubscriptionStore = defineStore('subscription', () => {
    */
   async function write() {
     const sessionStore = useSessionStore()
+
+    let inquiryId = sessionStore.currentInquiryId
     try {
       const response = await (() => {
         if (sessionStore.route.name === 'publicInquiry') {
           return PublicAPI.setSubscription(sessionStore.route.params.token, !subscribed.value)
         }
         if (sessionStore.route.name === 'inquiry') {
+		console.log(" WE TAKE ROUTE SET SUB ", sessionStore.currentInquiryId)
           return InquiriesAPI.setSubscription(sessionStore.currentInquiryId, !subscribed.value)
         }
 

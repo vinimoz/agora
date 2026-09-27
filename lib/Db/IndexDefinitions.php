@@ -60,15 +60,23 @@ abstract class IndexDefinitions
             Comment::TABLE => ['constraintColumn' => 'inquiry_id', 'onDelete' => 'CASCADE'],
             Attachment::TABLE => ['constraintColumn' => 'inquiry_id', 'onDelete' => 'CASCADE'],
             Quorum::TABLE => ['constraintColumn' => 'inquiry_id', 'onDelete' => 'CASCADE'],
+            // FIX (Bug 19 from earlier audit): Share references Inquiry too
+            Share::TABLE => ['constraintColumn' => 'inquiry_id', 'onDelete' => 'CASCADE'],
         ],
 
         InquiryGroup::TABLE => [
             InquiryGroupMisc::TABLE => ['constraintColumn' => 'inquiry_group_id', 'onDelete' => 'CASCADE'],
             InquiryGroup::RELATION_TABLE => ['constraintColumn' => 'group_id', 'onDelete' => 'CASCADE'],
+            // FIX: Share references InquiryGroup too
+            Share::TABLE => ['constraintColumn' => 'group_id', 'onDelete' => 'CASCADE'],
         ],
 
         Option::TABLE => [
             OptionMisc::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
+            // FIX: Comment, Support, Quorum reference Option
+            Comment::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
+            Support::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
+            Quorum::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
         ],
     ];
 
@@ -156,19 +164,13 @@ abstract class IndexDefinitions
             'columns' => ['user_id', 'deleted']
         ],
 
-        'support_option_value' => [
-            'table' => Support::TABLE,
-            'name' => 'agora_support_option_value',
-            'unique' => false,
-            'columns' => ['option_id', 'value']
-        ],
-        'comment_option_deleted' => [
+        'agora_comment_option_deleted' => [
             'table' => Comment::TABLE,
             'name' => 'agora_comment_option_deleted',
             'unique' => false,
             'columns' => ['option_id', 'deleted']
         ],
-        'support_option_user' => [
+        'agora_support_option_user' => [
             'table' => Support::TABLE,
             'name' => 'agora_support_option_user',
             'unique' => false,
@@ -237,44 +239,50 @@ abstract class IndexDefinitions
      * tableName => [
      *  indexName => ['columns' => [column1, column2, ...]],
      * ...]
+     *
+     * FIX (Bug D): Removed all entries that are superseded by COMMON_INDICES
+     * with a different name. These 21 entries used to appear both here AND in
+     * the OBSOLETE_INDICES list of Version010710, causing the migration to
+     * drop and immediately re-add each one. Removed entries are listed below
+     * the array for reference.
      */
     public const OPTIONAL_INDICES = [
         Inquiry::TABLE => [
-            'inquiries_inquiries_owners_non_deleted' => ['columns' => ['owner', 'deleted']],
-            'inquiries_inquiries_deleted' => ['columns' => ['deleted']],
-            'inquiries_inquiries_owners' => ['columns' => ['owner']],
-            'inquiries_family_type' => ['columns' => ['family', 'type']],
-            'inquiries_status_expire' => ['columns' => ['inquiry_status', 'expire']],
+            // Removed: inquiries_inquiries_owners_non_deleted  → use inq_owner_deleted
+            // Removed: inquiries_inquiries_deleted             → use inq_owner_deleted
+            // Removed: inquiries_inquiries_owners              → use inq_owner_deleted
+            // Removed: inquiries_family_type                   → use inq_type_family
+            // Removed: inquiries_status_expire                 → use inq_expire_status
         ],
         Option::TABLE => [
-            'inquiries_options_non_deleted' => ['columns' => ['parent_id', 'deleted']],
-            'inquiries_options_owner' => ['columns' => ['parent_id', 'owner']],
-            'inquiries_options_type_status' => ['columns' => ['type', 'option_status']],
-            'inquiries_options_sort_order' => ['columns' => ['parent_id', 'sort_order']],
+            // Removed: inquiries_options_non_deleted    → use opt_type_status
+            // Removed: inquiries_options_owner          → no replacement
+            // Removed: inquiries_options_type_status    → use opt_type_status
+            // Removed: inquiries_options_sort_order     → no replacement
         ],
         Share::TABLE => [
-            'inquiries_shares_user' => ['columns' => ['inquiry_id', 'user_id', 'deleted']],
-            'inquiries_shares_types' => ['columns' => ['inquiry_id', 'type', 'deleted']],
-            'inquiries_group_shares_user' => ['columns' => ['group_id', 'user_id', 'deleted']],
-            'inquiries_shares_token' => ['columns' => ['token', 'deleted']],
+            // Removed: inquiries_shares_user            → use share_user_deleted
+            // Removed: inquiries_shares_types           → use share_inquiry_type
+            // Removed: inquiries_group_shares_user      → use share_group_type
+            // Removed: inquiries_shares_token           → use agora_uniq_token
         ],
         Support::TABLE => [
-            'inquiries_supports_hash' => ['columns' => ['inquiry_id', 'support_hash']],
-            'inquiries_supports_user_created' => ['columns' => ['user_id', 'created']],
+            // Removed: inquiries_supports_hash          → no replacement
+            // Removed: inquiries_supports_user_created  → no replacement
         ],
         InquiryGroup::TABLE => [
-            'inquirygroup_deleted' => ['columns' => ['deleted']],
-            'inquirygroup_owner' => ['columns' => ['owner']],
-            'inquirygroup_type_status' => ['columns' => ['type', 'group_status']],
+            // Removed: inquirygroup_deleted             → use inq_group_owner_deleted
+            // Removed: inquirygroup_owner               → use inq_group_owner_deleted
+            // Removed: inquirygroup_type_status         → use inq_group_type_parent
         ],
         InquiryGroupMisc::TABLE => [
-            'groupmisc_key' => ['columns' => ['key']],
-            'groupmisc_group_key' => ['columns' => ['inquiry_group_id', 'key']],
+            // Removed: groupmisc_key                    → no replacement
+            // Removed: groupmisc_group_key              → use agora_uniq_group_misc
         ],
         Comment::TABLE => [
-            'comment_inquiry_deleted' => ['columns' => ['inquiry_id', 'deleted']],
-            'comment_option_deleted' => ['columns' => ['option_id', 'deleted']],
-        ]
+            // Removed: comment_inquiry_deleted          → no replacement
+            // Removed: comment_option_deleted           → use agora_comment_option_deleted
+        ],
     ];
 
     /**
@@ -304,8 +312,13 @@ abstract class IndexDefinitions
             'agora_uniq_shares' => ['columns' => ['inquiry_id', 'group_id', 'user_id']],
             'agora_uniq_token' => ['columns' => ['token']],
         ],
+        // FIX (Issue 7): Must include support_engine_id to match the
+        // definition created by Version20250715120000::createSupportTable()
+        // and modified by Version010705.
         Support::TABLE => [
-            'agora_uniq_supports' => ['columns' => ['inquiry_id', 'option_id', 'user_id']],
+            'agora_uniq_supports' => [
+                'columns' => ['inquiry_id', 'option_id', 'user_id', 'support_engine_id']
+            ],
         ],
         Preferences::TABLE => [
             'agora_uniq_preferences' => ['columns' => ['user_id']],
@@ -313,8 +326,11 @@ abstract class IndexDefinitions
         Watch::TABLE => [
             'agora_uniq_watch' => ['columns' => ['inquiry_id', 'table', 'session_id']],
         ],
+        // FIX (Issue 3): Renamed to match Version010702's rename.
+        // The old name 'agora_uniq_inquiry_group_relation' is dropped by
+        // Version010702 and replaced by 'uq_agora_ginq_ig'.
         InquiryGroup::RELATION_TABLE => [
-            'agora_uniq_inquiry_group_relation' => ['columns' => ['inquiry_id', 'group_id']],
+            'uq_agora_ginq_ig' => ['columns' => ['inquiry_id', 'group_id']],
         ],
         InquiryMisc::TABLE => [
             'agora_uniq_inquiry_misc' => ['columns' => ['inquiry_id', 'key']],
@@ -371,7 +387,10 @@ abstract class IndexDefinitions
             'result_engine_idx' => ['columns' => ['support_engine_id']],
             'result_target_idx' => ['columns' => ['target_type', 'target_id']],
             'result_updated_idx' => ['columns' => ['updated']],
-            'result_target_uniq' => ['columns' => ['target_type', 'target_id', 'support_engine_id'], 'unique' => true],
+            'result_target_uniq' => [
+                'columns' => ['target_type', 'target_id', 'support_engine_id'],
+                'unique' => true,
+            ],
         ],
     ];
 
@@ -390,33 +409,21 @@ abstract class IndexDefinitions
         );
     }
 
-    /**
-     * Get unique indices only
-     */
     public static function getUniqueIndices(): array
     {
         return self::UNIQUE_INDICES;
     }
 
-    /**
-     * Get common indices only
-     */
     public static function getCommonIndices(): array
     {
         return self::COMMON_INDICES;
     }
 
-    /**
-     * Get optional indices only
-     */
     public static function getOptionalIndices(): array
     {
         return self::OPTIONAL_INDICES;
     }
 
-    /**
-     * Get foreign key indices only
-     */
     public static function getFkIndices(): array
     {
         return self::FK_INDICES;

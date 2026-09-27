@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Command\Db;
 
-use Doctrine\DBAL\Schema\Schema;
 use OCA\Agora\Command\Command;
 use OCA\Agora\Db\IndexManager;
+use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 
 /**
@@ -22,33 +22,39 @@ class RemoveIndices extends Command
     protected string $name = parent::NAME_PREFIX . 'index:remove';
     protected string $description = 'Remove all indices and foreign key constraints';
     protected array $operationHints = [
-    'Removes all indices and foreign key constraints.',
-    'NO data migration will be executed, so make sure you have a backup of your database.',
+        'Removes all indices and foreign key constraints.',
+        'NO data migration will be executed, so make sure you have a backup of your database.',
     ];
 
     public function __construct(
         private IndexManager $indexManager,
         private IDBConnection $connection,
-        private Schema $schema,
     ) {
         parent::__construct();
     }
 
     protected function runCommands(): int
     {
-        // remove constraints and indices
-        $this->schema = $this->connection->createSchema();
-        $this->indexManager->setSchema($this->schema);
+        // Create schema using the connection
+        $schema = $this->connection->createSchema();
+        
+        // Set the schema on the index manager
+        $this->indexManager->setSchema($schema);
+        
+        // Remove constraints and indices
         $this->deleteForeignKeyConstraints();
         $this->deleteGenericIndices();
         $this->deleteUniqueIndices();
         $this->deleteNamedIndices();
-        $this->connection->migrateToSchema($this->schema);
+        
+        // Migrate the schema to the database
+        $this->connection->migrateToSchema($schema);
+        
         return 0;
     }
 
     /**
-     * remove on delete fk contraint from all tables referencing the main agora table
+     * remove on delete fk constraint from all tables referencing the main agora table
      */
     private function deleteForeignKeyConstraints(): void
     {
@@ -76,6 +82,7 @@ class RemoveIndices extends Command
         $messages = $this->indexManager->removeAllUniqueIndices();
         $this->printInfo($messages, ' - ');
     }
+
     /**
      * remove all named indices
      */

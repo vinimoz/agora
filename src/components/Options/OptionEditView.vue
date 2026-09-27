@@ -102,31 +102,61 @@
             </div>
 
             <!-- Dynamic Modals Container -->
-		  <component
-            :is="currentActionComponent"
-            v-if="currentActionComponent && showActionComponent"
-            :show="showActionComponent"
-            :inquiry-id="inquiryStore.id"
-            :action-key="currentActionKey"
-            :action-data="currentActionData"
-            @close="closeActionComponent"
-            @action-completed="handleActionCompleted"
-        />
+            <component
+                :is="currentActionComponent"
+                v-if="currentActionComponent && showActionComponent"
+                :show="showActionComponent"
+                :inquiry-id="inquiryStore.id"
+                :action-key="currentActionKey"
+                :action-data="currentActionData"
+                @close="closeActionComponent"
+                @action-completed="handleActionCompleted"
+            />
 
             <!-- Dynamic Family Layout Component -->
-            <component
+	    <component
+  :is="currentFamilyLayout"
+  ref="currentFamilyLayoutRef"
+  :items="unifiedItems"
+  :family="activeFamilyData"
+  :parent-id="inquiryStore.id"
+  :target-type="targetType"
+  :option-types="activeFamilyData.optionTypes"
+  :family-option-types="familyOptionTypes"
+  :family-key="activeFamilyData.key"
+  :is-readonly="isReadOnly"
+  :can-manage-vote="canManageVote"
+  :app-settings="appSettings"
+  @add-option="openAddOptionModal"
+  @open-detail="openOptionDetail"
+  @option-updated="handleOptionUpdated"
+  @option-deleted="handleOptionDeleted"
+  @configure-engine="handleConfigureEngine"
+  @add-to-vote="handleAddToVote"
+  @update-items="handleItemsUpdated"
+  @delete-item="handleItemDeleted"
+  @remove-from-timeline="handleRemoveFromTimeline"
+  @event-drop="handleEventDrop"
+  @date-select="handleDateSelect"
+  @event-receive="handleEventReceive"
+/>
+ <!--           <component
                 :is="currentFamilyLayout"
                 ref="currentFamilyLayoutRef"
                 :options="familyOptions"
                 :family="activeFamilyData"
                 :inquiry-id="inquiryStore.id"
                 :option-types="activeFamilyData.optionTypes"
-		:family-option-types="familyOptionTypes"
+                :family-option-types="familyOptionTypes"
                 :options-by-inquiry="optionsByInquiry"
                 :is-readonly="isReadOnly"
                 :is-official-user="inquiryStore.user?.isOfficial || false"
                 :can-manage-vote="canManageVote"
                 :can-add-options="showCreateOptionButtons"
+                :parent-id="inquiryStore.id"
+                :target-type="targetType"
+                :items="familyItems"
+                :app-settings="appSettings"
                 @add-option="openAddOptionModal"
                 @open-detail="openOptionDetail"
                 @option-updated="handleOptionUpdated"
@@ -134,7 +164,14 @@
                 @configure-engine="handleConfigureEngine"
                 @add-to-vote="handleAddToVote"
                 @option-family-changed="handleOptionFamilyChanged"
-            />
+                @update:items="handleItemsUpdated"
+                @delete-item="handleItemDeleted"
+                @remove-from-timeline="handleRemoveFromTimeline"
+                @event-drop="handleEventDrop"
+                @date-select="handleDateSelect"
+                @event-receive="handleEventReceive"
+                @item-family-changed="handleItemFamilyChanged"
+		/> -->
         </div>
 
         <!-- Empty State when no families -->
@@ -174,20 +211,21 @@ import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
+import { useInquiriesStore } from '../../stores/inquiries'
 import { useSessionStore } from '../../stores/session'
 import { useSupportEngineStore } from '../../stores/supportEngine'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 
-import type { InquiryType, OptionType, Option, Action } from '../../Types/index.ts'
+import type { InquiryType, OptionType, Option, Action, Inquiry } from '../../Types/index.ts'
 
 // Import layout components
 import FamilyLayoutTree from './FamilyLayouts/FamilyLayoutTree.vue'
 import FamilyLayoutCards from './FamilyLayouts/FamilyLayoutCards.vue'
 import FamilyLayoutPaired from './FamilyLayouts/FamilyLayoutPaired.vue'
 import FamilyLayoutConsensusFlow from './FamilyLayouts/FamilyLayoutConsensusFlow.vue'
-import FamilyLayoutKanban from './FamilyLayouts/FamilyLayoutKanban.vue'
-import FamilyLayoutTimeline from './FamilyLayouts/FamilyLayoutTimeline.vue'
-import FamilyLayoutVote from './FamilyLayouts/FamilyLayoutVote.vue'
+import FamilyLayoutKanban from '../FamilyLayouts/FamilyLayoutKanban.vue'
+import FamilyLayoutTimeline from '../FamilyLayouts/FamilyLayoutTimeline.vue'
+import FamilyLayoutVote from '../FamilyLayouts/FamilyLayoutVote.vue'
 
 // Import option cards and modals
 import OptionAddModal from '../Modals/OptionAddModal.vue'
@@ -204,17 +242,22 @@ import {
     getOptionsCountByFamily,
     getFamilyOptionsByTarget,
     getOptionTypesForFamily,
+    filterItemsByLayout,
 } from '../../helpers/modules/InquiryOptionHelper'
+
+import { toItems } from '../../helpers/modules/itemHelpers'
+import type { Item } from '../../Types/index.ts'
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
-  hasVisibleFamilies: boolean
+    hasVisibleFamilies: boolean
 }>()
-
 
 // Stores
 const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
+const inquiriesStore = useInquiriesStore()
 const sessionStore = useSessionStore()
 const engineStore = useSupportEngineStore()
 
@@ -229,10 +272,8 @@ const selectedParentId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
 
 // Modal state for dynamic actions
-// const showModal = ref(false)
 const currentActionKey = ref<string | null>(null)
 const currentActionData = ref<unknown>(null)
-// const currentModalComponent = ref<Component | null>(null)
 const currentActionComponent = ref<Component | null>(null)
 const showActionComponent = ref(false)
 
@@ -245,6 +286,12 @@ const modalComponentCache = new Map<string, Component>()
 // Computed
 const isReadOnly = computed(() => route.name === 'publicInquiry')
 const canManageVote = computed(() => inquiryStore.currentUserStatus?.isOwner || sessionStore.currentUser?.isAdmin || sessionStore.currentUser?.isOfficial)
+
+// Target type - this component is for options
+const targetType = computed(() => 'option' as const)
+
+// App settings for layout components
+const appSettings = computed(() => sessionStore.appSettings)
 
 // Layout component registry
 const layoutComponents: Record<string, Component> = {
@@ -270,6 +317,9 @@ const hasActiveEngineForActiveFamily = computed(() => {
     return engines.length > 0
 })
 
+const unifiedItems = computed<Item[]>(() => toItems(familyItems.value as (Option | Inquiry)[])) 
+
+
 // Check if we should show create option buttons based on family features
 const showCreateOptionButtons = computed(() => {
     const family = activeFamilyData.value
@@ -291,7 +341,6 @@ const getActionIcon = (icon: string | Component): Component => {
     return icon
 }
 
-
 const loadActionComponent = async (familyKey: string, actionKey: string): Promise<Component | null> => {
     const cacheKey = `${familyKey}-${actionKey}`
 
@@ -310,6 +359,10 @@ const loadActionComponent = async (familyKey: string, actionKey: string): Promis
         // For structure family, use ActionStructure.vue
         else if (familyKey === 'structure') {
             const module = await import(`./Actions/ActionStructure.vue`)
+            component = markRaw(module.default || module)
+        }
+        else if (familyKey === 'proposal') {
+            const module = await import(`./Actions/ActionProposal.vue`)
             component = markRaw(module.default || module)
         }
         // For other families, try to load individual action modals
@@ -336,7 +389,6 @@ const loadActionComponent = async (familyKey: string, actionKey: string): Promis
 }
 
 const handleFamilyAction = async (action: Action) => {
-    // For all actions, load the appropriate component
     const familyKey = activeFamilyData.value?.key
 
     if (!familyKey) {
@@ -354,7 +406,6 @@ const handleFamilyAction = async (action: Action) => {
         return
     }
 
-    // If no component found, try direct handler
     if (action.handler) {
         await action.handler(action.data)
         return
@@ -376,7 +427,6 @@ const handleActionCompleted = (result: unknown) => {
     }
     closeActionComponent()
 }
-
 
 // Computed for families and options
 const allInquiryTypes = computed<InquiryType[]>(() =>
@@ -411,7 +461,6 @@ const familiesWithOptions = computed(() => {
     }))
 })
 
-
 // Handle vote-specific actions
 const handleConfigureEngine = () => {
     // console.log('Configure voting engine')
@@ -441,8 +490,30 @@ const optionsByInquiry = computed(() => {
 })
 
 /**
- * Get all options that belong to the current inquiry (targetId)
+ * Get all items (options) that belong to the current inquiry
  * and match the active family's option types
+ */
+const familyItems = computed(() => {
+    if (!activeFamilyData.value) return []
+
+    // For option-only layouts (cards, consensus, paired, tree) - use filtered options
+    const optionOnlyFamilies = ['cards', 'consensus_flow:', 'paired', 'tree', 'tree']
+    if (optionOnlyFamilies.includes(activeFamilyData.value.key)) {
+        return getFamilyOptionsByTarget(
+            optionsStore.options,
+            allOptionTypes.value,
+            activeFamilyData.value.key,
+            inquiryStore.id
+        )
+    }
+
+    // For generic layouts (vote, kanban, timeline) - use all options for this inquiry
+    return optionsStore.getOptionsByTargetId(inquiryStore.id)
+})
+
+/**
+ * Get all options that belong to the current family
+ * (for backward compatibility with existing props)
  */
 const familyOptions = computed(() => {
     if (!activeFamilyData.value) return []
@@ -454,7 +525,6 @@ const familyOptions = computed(() => {
         inquiryStore.id
     )
 })
-
 
 /**
  * Get all option types that belong to the current family
@@ -468,9 +538,6 @@ const familyOptionTypes = computed(() => {
     // Get ALL option types for this family from the full option types list
     return getOptionTypesForFamily(familyKey, allOptionTypes.value)
 })
-
-
-
 
 const setActiveFamily = (familyKey: string) => {
     activeFamily.value = familyKey
@@ -546,6 +613,53 @@ const handleOptionDeleted = (deletedOptionId: number) => {
         optionsStore.options.splice(index, 1)
     }
     closeOptionDetail()
+}
+
+// Event handlers for generic layouts (kanban, timeline, vote)
+const handleItemsUpdated = () => {
+    optionsStore.load(inquiryStore.id)
+}
+
+const handleItemDeleted = (itemId: number) => {
+    const index = optionsStore.options.findIndex(opt => opt.id === itemId)
+    if (index >= 0) {
+        optionsStore.options.splice(index, 1)
+    }
+}
+
+const handleRemoveFromTimeline = (itemId: number, updatedLayouts: string[]) => {
+    const option = optionsStore.options.find(opt => opt.id === itemId)
+    if (option) {
+        option.miscFields = {
+            ...option.miscFields,
+            force_layouts: updatedLayouts
+        }
+        // Update the option in the store
+        const index = optionsStore.options.findIndex(opt => opt.id === itemId)
+        if (index >= 0) {
+            optionsStore.options[index] = option
+        }
+    }
+}
+
+const handleEventDrop = (eventData: unknown) => {
+    // Handle event drop in timeline
+    console.log('Event dropped:', eventData)
+}
+
+const handleDateSelect = (dateInfo: unknown) => {
+    // Handle date selection in timeline
+    console.log('Date selected:', dateInfo)
+}
+
+const handleEventReceive = (eventInfo: unknown) => {
+    // Handle event receive in timeline
+    console.log('Event received:', eventInfo)
+}
+
+const handleItemFamilyChanged = (payload: { itemId: number, familyKey: string, action: string }) => {
+    // Handle item family changed event from generic layouts
+    console.log('Item family changed:', payload)
 }
 
 // Initialize

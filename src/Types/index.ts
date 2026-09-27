@@ -148,10 +148,35 @@ export interface Option {
   }
 }
 
+// ============================================================================
+// UNIFIED ITEM — what every FamilyLayout consumes
+// ============================================================================
+
+export type ItemKind = 'option' | 'inquiry'
+
+/**
+ * Common shape for anything a family layout renders.
+ * Adapters (below) convert Option | Inquiry → Item.
+ */
+export interface Item {
+  kind: ItemKind
+  id: number
+  parentId: number
+  title: string
+  text: string
+  type: string
+  family: string
+  owner: User
+  statusKey: string
+  /** Original object, untouched */
+  raw: Option | Inquiry
+}
 
 // ============================================================================
 // FAMILY TYPES
 // ============================================================================
+
+
 
 export interface FamilyFeatures {
     create_option_button?: boolean
@@ -216,7 +241,6 @@ export type UserType =
 
 export type VirtualUserItemType = 'addPublicLink' | 'internalAccess' | 'deleted' | 'anonymous'
 
-export type ISearchType = 0 | 1 | 2 | 4 | 7 | 51 | 99
 
 export type Chunking = {
   size: number

@@ -7,11 +7,10 @@ import domPurify from 'dompurify'
 import { marked } from 'marked'
 import { gfmHeadingId } from 'marked-gfm-heading-id'
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { AxiosError } from '@nextcloud/axios'
-
+import { getCanonicalLocale, getLocale } from '@nextcloud/l10n'
 import { Logger } from '../helpers/index.ts'
 import { PublicAPI, InquiriesAPI } from '../Api/index.ts'
 import {
@@ -79,6 +78,7 @@ export type InquiryStatus = {
   countParticipants: number
   countComments: number
   countSupports: number
+  trendingScore: number
   publicationStatus: string
 }
 
@@ -195,6 +195,7 @@ export const useInquiryStore = defineStore('inquiry', {
       countComments: 0,
       countSupports: 0,
       publicationStatus: 'draft',
+      trendingScore: 0,
     },
     currentUserStatus: {
       groupInvitations: [],
@@ -224,7 +225,7 @@ export const useInquiryStore = defineStore('inquiry', {
       reorderOptions: false,
       seeResults: false,
       seeUsernames: false,
-      subscribe: false,
+      subscribe: true,
       takeOver: false,
       deanonymize: false,
       addOptions: false,
@@ -251,12 +252,16 @@ export const useInquiryStore = defineStore('inquiry', {
 			return !this.isClosed && state.permissions.edit
 		},
 
-		isClosed(state): boolean {
-			return (
-				state.status.isExpired ||
-					(state.configuration.expire > 0 && moment.unix(state.configuration.expire).diff() < 1000)
-			)
-		},
+		// In the getters section, replace the isClosed getter with:
+
+isClosed(state): boolean {
+    const now = Date.now() / 1000 // Current time in seconds
+    return (
+        state.status.isExpired ||
+        (state.configuration.expire > 0 && state.configuration.expire < now)
+    )
+},
+
 
 		descriptionMarkDown(state): string {
 			marked.use(gfmHeadingId(markedPrefix))
@@ -292,39 +297,43 @@ export const useInquiryStore = defineStore('inquiry', {
 			// subscriptionStore.$reset()
 		},
 
-		async submitInquiry(
-			action: 'submit_for_accepted' | 'submit_for_rejected' | 'submit_for_moderate'
-		): Promise<void> {
-			const appSettingsStore = useAppSettingsStore()
-			try {
-				if (action === 'submit_for_accepted') {
-					this.status.moderationStatus = 'accepted'
-					this.status.inquiryStatus = appSettingsStore.getFirstStatusKeyByInquiryType(
-						this.type
-					) as InquiryWorkflowStatus
-					this.configuration.access = 'open'
-				} else if (action === 'submit_for_rejected') {
-					this.status.moderationStatus = 'rejected'
-					this.status.inquiryStatus = 'rejected'
-					this.configuration.access = 'private'
-				} else if (action === 'submit_for_moderate') {
-					this.status.moderationStatus = 'pending'
-					this.status.inquiryStatus = 'waiting_approval'
-					this.configuration.access = 'moderate'
-				}
+    async submitInquiry(
+      action: 'submit_for_accepted' | 'submit_for_rejected' | 'submit_for_moderate'
+    ): Promise<void> {
+      const appSettingsStore = useAppSettingsStore()
+      try {
+        if (action === 'submit_for_accepted') {
+          this.status.moderationStatus = 'accepted'
+	  this.status.publicationStatus = 'published'
+          this.status.inquiryStatus = appSettingsStore.getFirstStatusKeyByInquiryType(
+            this.type
+          ) as InquiryWorkflowStatus
+          this.configuration.visibility = 'everyone'
+        } else if (action === 'submit_for_rejected') {
+          this.status.moderationStatus = 'rejected'
+	  this.status.publicationStatus = 'draft'
+	  this.configuration.visibility = 'private'
+          this.status.inquiryStatus = 'rejected'
+          this.configuration.visibility = 'private'
+        } else if (action === 'submit_for_moderate') {
+          this.status.moderationStatus = 'pending'
+	  this.status.publicationStatus = 'pending'
+          this.status.inquiryStatus = 'waiting_approval'
+          this.configuration.visibility = 'private'
+        }
 
-				const response = await InquiriesAPI.submitInquiry(this.id, action)
-				if (!response || !response.data) {
-					this.$reset()
-				}
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				Logger.error('Error submitting inquiry', { error, action })
-				throw error
-			}
-		},
+        const response = await InquiriesAPI.submitInquiry(this.id, action)
+        if (!response || !response.data) {
+          this.$reset()
+        }
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error submitting inquiry', { error, action })
+        throw error
+      }
+    },
 
 		async loadByToken(token: string): Promise<void> {
 			this.meta.status = 'loading'

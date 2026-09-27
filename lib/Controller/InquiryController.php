@@ -191,7 +191,8 @@ class InquiryController extends BaseController
         $supports = $this->supportService->getSupportsByInquiry($inquiryId);
         $timerMicro['supports'] = microtime(true);
 
-	$participation = $this->participationService->getPolicy('inquiry', $inquiryId);
+	$participation = $this->participationService->getPolicyWithRelations('inquiry', $inquiryId);
+
         $timerMicro['participation'] = microtime(true);
 
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];

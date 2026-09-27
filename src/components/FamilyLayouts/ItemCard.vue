@@ -95,7 +95,7 @@
       <!-- Support feature -->
       <div v-if="hasSupportFeature" class="feature-item support-feature">
         <SupportFeature
-          :item="item"
+          :item="supportItem"
           :item-type="targetType"
           :context="itemContext"
           :show-quorum="true"
@@ -218,7 +218,7 @@
       <!-- Support feature -->
       <div v-if="hasSupportFeature" class="inline-feature-item support-feature">
         <SupportFeature
-          :item="item"
+          :item="supportItem"
           :item-type="targetType"
           :context="itemContext"
           :show-quorum="true"
@@ -291,29 +291,30 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import { SupportFeature } from '../Base/index.ts'
+import { isImportedFromView as checkImported } from '../../helpers/modules/InquiryOptionHelper'
+
 
 import { useOptionsStore } from '../../stores/options'
-import { useInquiriesStore } from '../../stores/inquiries'
 import { useSessionStore } from '../../stores/session'
+import { useInquiriesStore } from '../../stores/inquiries'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { 
+import {
   createOptionContext,
   canEditOption,
   canDeleteOption,
 } from '../../utils/permissions.ts'
 
-// Types
-import type { Option, Inquiry } from '../../Types/index.ts'
+// ---- Unified types ----
+import type { Item } from '../../Types/index.ts'
 import {
   getItemTitle,
   getItemStatus,
   getItemType,
   getItemFamily,
   getForceLayouts,
-  removeLayoutFromItem
+  removeLayoutFromItem,
 } from '../../helpers/modules/GenericItemHelper'
-
 import {
   getOptionTypeLabel,
   getOptionTypeIconComponent,
@@ -321,21 +322,14 @@ import {
   getAllowedResponses,
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments,
-  usesTitle
+  usesTitle,
 } from '../../helpers/modules/InquiryOptionHelper'
-
 import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
 
 export type TargetType = 'option' | 'inquiry'
 
-// Props
 const props = defineProps<{
-  item: (Option | Inquiry) & {
-    currentUserStatus?: {
-      hasSupported: boolean
-      supportValue: number | null
-    }
-  }
+  item: Item                   
   parentId: number
   targetType: TargetType
   compact?: boolean
@@ -350,245 +344,130 @@ const props = defineProps<{
   familyType?: string
 }>()
 
-// Emits
 const emit = defineEmits<{
-  click: [item: Option | Inquiry]
-  edit: [item: Option | Inquiry]
+  click: [item: Item]
+  edit: [item: Item]
   delete: [itemId: number]
   supportChanged: [itemId: number, support: string]
-  comment: [item: Option | Inquiry]
-  viewChildren: [item: Option | Inquiry, childType: string]
+  comment: [item: Item]
+  viewChildren: [item: Item, childType: string]
   removeFromView: [itemId: number, updatedForceLayouts: string[]]
 }>()
 
-// Defaults
-const textMaxLength = props.textMaxLength || 200
+// ---- Raw object still needed for helpers that predate unification ----
+const raw = computed(() => (props.item as any).raw ?? props.item)
 
-// Stores
-const optionsStore = useOptionsStore()
-const inquiriesStore = useInquiriesStore()
-const sessionStore = useSessionStore()
+const itemTitle = computed(() => props.item.title)
+const itemStatus = computed(() => props.item.statusKey)
+const itemType = computed(() => props.item.type)
+const itemFamily = computed(() => props.item.family)
+const itemText = computed(() => props.item.text)
 
-const showDeleteDialog = ref(false)
-
-const confirmDelete = () => {
-  showDeleteDialog.value = true
-}
-
-const handleConfirmDelete = () => {
-  deleteItem()
-}
-
-const handleRemoveFromView = () => {
-  removeFromCurrentView()
-}
-
-// Item properties using generic helpers
-const itemTitle = computed(() => getItemTitle(props.item))
-const itemStatus = computed(() => getItemStatus(props.item))
-const itemType = computed(() => getItemType(props.item))
-const itemFamily = computed(() => getItemFamily(props.item))
-const itemText = computed(() => {
-  if ('text' in props.item && props.item.text) return props.item.text
-  if ('description' in props.item && props.item.description) return props.item.description
-  return ''
-})
 const itemCreatedAt = computed(() => {
-  if ('created' in props.item && props.item.created) return props.item.created
-  if ('status' in props.item && props.item.status && typeof props.item.status === 'object' && 'created' in props.item.status) {
-    return (props.item.status as { created: number }).created
-  }
+  const r = raw.value
+  if (!r) return Date.now()
+  if (r.created) return r.created
+  if (r.status?.created) return r.status.created
   return Date.now()
 })
 
-// Owner info
-const ownerId = computed(() => {
-  if ('owner' in props.item && props.item.owner && typeof props.item.owner === 'object' && 'id' in props.item.owner) {
-    return (props.item.owner as { id: string }).id
-  }
-  return null
-})
 
-const ownerName = computed(() => {
-  if ('owner' in props.item && props.item.owner && typeof props.item.owner === 'object' && 'displayName' in props.item.owner) {
-    return (props.item.owner as { displayName: string }).displayName
-  }
-  return null
-})
+const ownerId = computed(() => raw?.value.owner?.id ?? null)
+const ownerName = computed(() => raw?.value.owner?.displayName ?? null)
+const commentCount = computed(() => raw?.value.status?.countComments ?? 0)
 
-// Comment count
-const commentCount = computed(() => {
-  if ('status' in props.item && props.item.status && typeof props.item.status === 'object' && 'countComments' in props.item.status) {
-    return (props.item.status as { countComments: number }).countComments || 0
-  }
-  return 0
-})
+const isImportedFromView = computed(() =>
+  checkImported(raw.value, props.familyType || '')
+)
 
-// Create context once as computed
+const sessionStore = useSessionStore()
+const optionsStore = useOptionsStore()
+const inquiriesStore = useInquiriesStore()
+
+
+// ---- SupportFeature still wants the raw object ----
+const supportItem = computed(() => raw.value)
+
 const itemContext = computed(() => {
-  if (!props.item) return null
-  return createOptionContext(props.item)
+   if (!props.item || !raw.value) return null
+  return createOptionContext(raw.value) 
 })
 
-// Permission checks as computed properties
-const canEdit = computed(() => {
-  if (!props.item || itemContext.value === null) return false
-  return canEditOption(itemContext.value)
-})
-
-const canDelete = computed(() => {
-  if (!props.item || itemContext.value === null) return false
-  return canDeleteOption(itemContext.value)
-})
-
+const canEdit = computed(() =>
+  itemContext.value ? canEditOption(itemContext.value) : false
+)
+const canDelete = computed(() =>
+  itemContext.value ? canDeleteOption(itemContext.value) : false
+)
 const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
-// Get item types from session store
+// ---- Type lookups stay the same ----
+
 const allItemTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
-const itemTypeLabel = computed(() => {
-  if (!props.item || !allItemTypes.value) {
-    return props.targetType === 'option' ? t('agora', 'Option') : t('agora', 'Inquiry')
-  }
-  return getOptionTypeLabel(itemType.value, allItemTypes.value, props.targetType === 'option' ? t('agora', 'Option') : t('agora', 'Inquiry'))
-})
+const itemTypeLabel = computed(() =>
+  getOptionTypeLabel(
+    itemType.value,
+    allItemTypes.value,
+    props.targetType === 'option' ? t('agora', 'Option') : t('agora', 'Inquiry')
+  )
+)
 
-const itemIcon = computed(() => {
-  if (!props.item || !allItemTypes.value) {
-    return InquiryOptionIcons.Default
-  }
-  return getOptionTypeIconComponent(itemType.value, allItemTypes.value)
-})
+const itemIcon = computed(() =>
+  getOptionTypeIconComponent(itemType.value, allItemTypes.value)
+)
 
-const itemTypeColor = computed(() => {
-  if (!props.item || !allItemTypes.value) {
-    return 'var(--color-text-light)'
-  }
-  return getOptionTypeColor(itemType.value, allItemTypes.value)
-})
+const itemTypeColor = computed(() =>
+  getOptionTypeColor(itemType.value, allItemTypes.value)
+)
 
-const showTitle = computed(() => {
-  if (props.targetType === 'inquiry') return true
-  return usesTitle(itemType.value, allItemTypes.value)
-})
+const showTitle = computed(() =>
+  props.targetType === 'inquiry' ? true : usesTitle(itemType.value, allItemTypes.value)
+)
 
-const allowComment = computed(() => {
-  if (props.targetType === 'inquiry') return true
-  return allowsComments(itemType.value, allItemTypes.value)
-})
+const allowComment = computed(() =>
+  props.targetType === 'inquiry' ? true : allowsComments(itemType.value, allItemTypes.value)
+)
 
-const hasSupportFeature = computed(() => {
-  if (props.targetType === 'inquiry') return false
-  return hasSupportFeatureHelper(itemType.value, allItemTypes.value)
-})
+const hasSupportFeature = computed(() =>
+  props.targetType === 'inquiry' ? false : hasSupportFeatureHelper(itemType.value, allItemTypes.value)
+)
 
-// Get allowed child item types
-const allowedChildTypes = computed(() => {
-  if (props.targetType === 'inquiry') return []
-  return getAllowedResponses(itemType.value, allItemTypes.value)
-})
+const allowedChildTypes = computed(() =>
+  props.targetType === 'inquiry' ? [] : getAllowedResponses(itemType.value, allItemTypes.value)
+)
 
-const getChildItemTypeIcon = (type: string) => getOptionTypeIconComponent(type, allItemTypes.value)
+const hasChildItems = computed(() => allowedChildTypes.value.length > 0)
 
-const getChildItemTypeLabel = (type: string) => getOptionTypeLabel(type, allItemTypes.value, type)
-
-const useTitle = computed(() => {
-  if (props.targetType === 'inquiry') return true
-  return usesTitle(itemType.value, allItemTypes.value)
-})
-
-const progressPercentage = computed(() => {
-  if (!props.progressBar) return 0
-
-  if ('status' in props.item && props.item.status && typeof props.item.status === 'object' && 'supportCount' in props.item.status) {
-    const maxSupport = (props.item as Option).maxSupport || 100
-    return Math.min(100, (((props.item.status as { supportCount: number }).supportCount || 0) / maxSupport) * 100)
-  }
-
-  return 50
-})
-
-const hasChildItems = computed(() => {
-  if (props.targetType === 'inquiry') return false
-  return allowedChildTypes.value.length > 0
-})
-
-// Get child items (for options only)
+// ---- Child lookup: optionsStore only knows about options ----
 const childItems = computed(() => {
-  if (props.targetType === 'inquiry' || !props.item?.id) return []
+  if (props.targetType !== 'option') return []
   return optionsStore.options.filter(opt => opt.parentId === props.item.id)
 })
 
 const childItemsByType = computed(() => {
   const counts: Record<string, number> = {}
-
-  if (props.targetType === 'inquiry' || !props.item.id) return counts
-
-  // Initialize counts for allowed child types
-  allowedChildTypes.value.forEach((type: string) => {
-    counts[type] = 0
-  })
-
-  // Count children by type
+  allowedChildTypes.value.forEach(type => { counts[type] = 0 })
   childItems.value.forEach(child => {
-    if (counts[child.type] !== undefined) {
-      counts[child.type] = (counts[child.type] || 0) + 1
-    }
+    if (counts[child.type] !== undefined) counts[child.type]++
   })
-
   return counts
 })
 
-const childItemsTotal = computed(() => 
-  Object.values(childItemsByType.value).reduce((sum, count) => sum + count, 0)
+const childItemsTotal = computed(() =>
+  Object.values(childItemsByType.value).reduce((a, b) => a + b, 0)
 )
 
-const childItemTypes = computed(() => 
-  Object.keys(childItemsByType.value).filter(type => childItemsByType.value[type] > 0)
+const childItemTypes = computed(() =>
+  Object.keys(childItemsByType.value).filter(t => childItemsByType.value[t] > 0)
 )
 
-// Tooltip state
-const activeTooltip = ref<string | null>(null)
+const getChildItemTypeIcon = (type: string) => getOptionTypeIconComponent(type, allItemTypes.value)
+const getChildItemTypeLabel = (type: string) => getOptionTypeLabel(type, allItemTypes.value, type)
+const getChildrenByType = (type: string) =>
+  childItems.value.filter(c => c.type === type).slice(0, 3)
 
-const showChildTooltip = (type: string) => {
-  activeTooltip.value = type
-}
-
-const hideChildTooltip = () => {
-  activeTooltip.value = null
-}
-
-const getChildrenByType = (type: string) => 
-  childItems.value
-    .filter(child => child.type === type)
-    .slice(0, 3)
-
-// Helper methods
-const formatDate = (timestamp: number) => {
-  let date = new Date()
-  if (timestamp) date = new Date(timestamp * 1000)
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date)
-}
-
-const isImportedFromView = computed(() => itemFamily.value !== props.familyType)
-
-const truncateText = (text: string, maxLength: number) => {
-  if (!text) return ''
-  if (text.length <= maxLength) return text
-  return `${text.substring(0, maxLength)}...`
-}
-
-const handleCardClick = () => {
-  if (!props.preventClick) {
-    emit('click', props.item)
-  }
-}
-
+// ---- Delete / remove-from-view: unwrap for API calls ----
 const deleteItem = async () => {
   try {
     if (props.targetType === 'option') {
@@ -596,38 +475,52 @@ const deleteItem = async () => {
     } else {
       await inquiriesStore.deleteInquiry(props.item.id)
     }
-    
     emit('delete', props.item.id)
     showSuccess(t('agora', 'Item deleted successfully'))
   } catch (err) {
-    console.error('Error deleting item:', err)
+    console.error(err)
     showError(t('agora', 'Failed to delete item'))
   }
 }
 
 const removeFromCurrentView = async () => {
   try {
-    const updatedItem = removeLayoutFromItem(props.item, props.familyType || '')
-
+    const updated = removeLayoutFromItem(raw.value, props.familyType || '')
     if (props.targetType === 'option') {
-      await optionsStore.updateOption({
-        ...props.item,
-        miscFields: updatedItem.miscFields
-      })
+      await optionsStore.updateOption({ ...raw.value, miscFields: updated.miscFields })
     } else {
-      await inquiriesStore.updateInquiry({
-        id: props.item.id,
-        miscFields: updatedItem.miscFields
-      })
+      await inquiriesStore.updateInquiry({ id: props.item.id, miscFields: updated.miscFields })
     }
-
-    const forceLayouts = getForceLayouts(updatedItem)
-    emit('removeFromView', props.item.id, forceLayouts)
+    emit('removeFromView', props.item.id, getForceLayouts(updated))
     showSuccess(t('agora', 'Item removed from view'))
   } catch (err) {
-    console.error('Error removing item from view:', err)
+    console.error(err)
     showError(t('agora', 'Failed to remove item from view'))
   }
+}
+
+// ---- Misc ----
+const activeTooltip = ref<string | null>(null)
+const showChildTooltip = (t: string) => { activeTooltip.value = t }
+const hideChildTooltip = () => { activeTooltip.value = null }
+const showDeleteDialog = ref(false)
+
+const confirmDelete = () => { showDeleteDialog.value = true }
+const handleConfirmDelete = () => { deleteItem() }
+const handleRemoveFromView = () => { removeFromCurrentView() }
+
+const formatDate = (ts: number) => {
+  const d = ts ? new Date(ts * 1000) : new Date()
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+  }).format(d)
+}
+
+const truncateText = (text: string, max: number) =>
+  text && text.length > max ? `${text.substring(0, max)}…` : text
+
+const handleCardClick = () => {
+  if (!props.preventClick) emit('click', props.item)
 }
 </script>
 

@@ -22,7 +22,8 @@ use Psr\Log\LoggerInterface;
 
 abstract class DbManager
 {
-    protected Schema|ISchemaWrapper $schema;
+    /** @var ISchemaWrapper|Schema|null */
+    protected $schema;
     protected string $dbPrefix;
 
     /** @psalm-suppress PossiblyUnusedMethod */
@@ -39,10 +40,13 @@ abstract class DbManager
      * This method is used to set the schema for the database manager.
      * It can be used to overwrite the current schema.
      * It must be called before any other methods that require a schema.
-     * @param Schema|ISchemaWrapper $schema
+     * 
+     * This accepts both ISchemaWrapper and Schema for compatibility.
+     * 
+     * @param ISchemaWrapper|Schema $schema
      * @return void
      */
-    public function setSchema(Schema|ISchemaWrapper &$schema): void
+    public function setSchema($schema): void
     {
         $this->schema = $schema;
     }
@@ -64,15 +68,32 @@ abstract class DbManager
      * This method is used to apply the schema changes to the database.
      * It must be called after the schema is set.
      *
-     * @throws SchemaMissmatchException if the schema is not an instance of Schema class
+     * @throws SchemaMissmatchException if the schema is not set or not compatible
      */
     public function migrateToSchema(): void
     {
-        // Schema must be of class Schema
-        $this->needsSchema(allowISchemWrapperClass: false);
-        if ($this->schema instanceof Schema) {
+        // Schema must be set
+        $this->needsSchema();
+        
+        // If it's an ISchemaWrapper, use it directly
+        if ($this->schema instanceof ISchemaWrapper) {
             $this->connection->migrateToSchema($this->schema);
+            return;
         }
+        
+        // If it's a Doctrine Schema, we need to convert it to ISchemaWrapper
+        if ($this->schema instanceof Schema) {
+            // Create a new schema wrapper from the connection
+            // Note: This might not work in all versions, but it's a fallback
+            $wrapper = $this->connection->createSchema();
+            // Copy the schema structure if possible
+            // Alternatively, just migrate the Doctrine schema directly
+            // Some versions of Nextcloud accept Schema directly
+            $this->connection->migrateToSchema($this->schema);
+            return;
+        }
+        
+        throw new SchemaMissmatchException('Schema is not an instance of ISchemaWrapper or Schema (caller: ' . self::formatCaller() . ')');
     }
 
     /**
@@ -106,34 +127,21 @@ abstract class DbManager
     /**
      * Use this as a predetermined breaking point to ensure if a method needs a schema to be set.
      *
-     * @param bool $allowSchemaClass allow schema to be an instance of Schema (default is true). table names are not prefixed
-     * @param bool $allowISchemWrapperClass allow schema to be an instance of ISchemaWrapper (default is true), tablen ames are prefixed
-     *
-     * @throws SchemaMissmatchException if the schema is not set or not of a required class
+     * @throws SchemaMissmatchException if the schema is not set or not compatible
      */
-    protected function needsSchema(bool $allowSchemaClass = true, bool $allowISchemWrapperClass = true): void
+    protected function needsSchema(): void
     {
-        if (($this->schema instanceof Schema) && $allowSchemaClass) {
+        if ($this->schema === null) {
+            // Auto-create schema if not set
+            $this->createSchema();
             return;
         }
-
-        if (($this->schema instanceof ISchemaWrapper) && $allowISchemWrapperClass) {
+        
+        if ($this->schema instanceof ISchemaWrapper || $this->schema instanceof Schema) {
             return;
         }
-
-        if ($allowSchemaClass && $allowISchemWrapperClass) {
-            // If the schema is not set or not an instance of Schema or ISchemaWrapper, throw an exception
-            throw new SchemaMissmatchException('Schema is not set or not an instance of Schema or ISchemaWrapper (caller: ' . self::formatCaller() . ')');
-        }
-        if ($allowSchemaClass) {
-            // If the schema is not set or not an instance of Schema, throw an exception
-            throw new SchemaMissmatchException('Schema is not set or not an instance of Schema (caller: ' . self::formatCaller() . ')');
-        }
-        if ($allowISchemWrapperClass) {
-            // If the schema is not set or not an instance of ISchemaWrapper, throw an exception
-            throw new SchemaMissmatchException('Schema is not set or not an instance of ISchemaWrapper(caller: ' . self::formatCaller() . ')');
-        }
-        throw new SchemaMissmatchException('Unexpected. Schema is an instance of ' . get_class($this->schema) . '(caller: ' . self::formatCaller() . ')');
+        
+        throw new SchemaMissmatchException('Schema is not set or not an instance of ISchemaWrapper or Schema (caller: ' . self::formatCaller() . ')');
     }
 
     /**

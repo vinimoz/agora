@@ -111,15 +111,15 @@ import { t } from '@nextcloud/l10n'
 import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import VoteInput from './VoteInput.vue'
-import { useSessionStore } from '../../../stores/session'
-import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import { useSessionStore } from '../../stores/session'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 import {
   getOptionTypeLabel,
   getOptionTypeIconComponent,
   getOptionTypeColor,
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments
-} from '../../../helpers/modules/InquiryOptionHelper'
+} from '../../helpers/modules/InquiryOptionHelper'
 
 import type { Option, Inquiry, SupportValue } from '../../Types/index'
 
@@ -169,9 +169,9 @@ const itemTypeLabel = computed(() => {
   if (isOption.value) {
     const option = props.item as Option
     return getOptionTypeLabel(option.type, allItemTypes.value, t('agora', 'Option'))
-  } else {
+  } 
     return t('agora', 'Inquiry')
-  }
+  
 })
 
 const isMultiEngine = computed(() => {
@@ -201,18 +201,18 @@ const itemIcon = computed(() => {
   if (isOption.value) {
     const option = props.item as Option
     return getOptionTypeIconComponent(option.type, allItemTypes.value)
-  } else {
+  } 
     return InquiryOptionIcons.Default
-  }
+  
 })
 
 const itemTypeColor = computed(() => {
   if (isOption.value) {
     const option = props.item as Option
     return getOptionTypeColor(option.type, allItemTypes.value)
-  } else {
+  } 
     return 'var(--color-text-light)'
-  }
+  
 })
 
 const allowComment = computed(() => {

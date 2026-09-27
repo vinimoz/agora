@@ -1,100 +1,73 @@
 <!--
-  SPDX-FileCopyrightText: 2024 Nextcloud contributors
+  SPDX-FileCopyrightText: 2026 Nextcloud contributors
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-  <div class="kanban-layout">
-    <!-- Add inquiry button (optional) -->
-    <div class="kanban-actions">
-      <NcButton
-        type="primary"
-        class="add-kanban-btn"
-        @click="showAddModal = true"
-      >
-        <template #icon>
-          <component :is="InquiryGeneralIcons.Plus" :size="18" />
-        </template>
-        {{ t('agora', 'Add inquiry') }}
-      </NcButton>
-    </div>
-
-    <!-- Column headers -->
+  <div class="inquiry-kanban">
+    <!-- Kanban Header -->
     <div class="kanban-header">
-      <div
-        v-for="column in columns"
-        :key="column.status"
-        class="kanban-column-header"
-        :class="`status-${column.status}`"
-        @dragover.prevent
-        @drop="handleDrop($event, column.status)"
-      >
-        <div class="header-content">
-          <span class="status-badge" :style="{ backgroundColor: column.color }" />
-          <span class="status-label">{{ column.label }}</span>
-          <span class="item-count">{{ getInquiriesByStatus(column.status).length }}</span>
-        </div>
+      <div class="header-left">
+        <component :is="Icons.ViewKanban" :size="24" class="kanban-icon" />
+        <h2>{{ t('agora', 'Kanban Board') }}</h2>
+        <span class="kanban-count">{{ inquiries.length }}</span>
+        <span v-if="useProcessColumns" class="process-badge">
+          <component :is="Icons.GitBranch" :size="12" />
+          {{ t('agora', 'Process') }}
+        </span>
+      </div>
+      <div class="header-right">
+        <button
+          v-for="option in groupingOptions"
+          :key="option.key"
+          class="group-btn"
+          :class="{ active: groupBy === option.key }"
+          @click="groupBy = option.key"
+        >
+          <component :is="option.icon" :size="14" />
+          {{ option.label }}
+        </button>
       </div>
     </div>
 
-    <!-- Kanban board -->
+    <!-- Kanban Board -->
     <div class="kanban-board">
       <div
-        v-for="column in columns"
-        :key="column.status"
+        v-for="(column, columnKey) in groupedColumns"
+        :key="columnKey"
         class="kanban-column"
-        :class="`column-${column.status}`"
+        :class="getColumnClass(columnKey)"
         @dragover.prevent
-        @drop="handleDrop($event, column.status)"
+        @drop="handleDrop(columnKey, $event)"
       >
+        <div class="column-header">
+          <div class="column-title-wrapper">
+            <component :is="getColumnIcon(columnKey)" :size="16" class="column-icon" />
+            <span class="column-title">{{ getColumnLabel(columnKey) }}</span>
+            <span class="column-count">{{ column.length }}</span>
+          </div>
+          <div v-if="canAddToColumn(columnKey)" class="column-actions">
+            <button class="add-btn" @click="handleAdd(columnKey)" :title="t('agora', 'Add to column')">
+              <component :is="Icons.Plus" :size="16" />
+            </button>
+          </div>
+        </div>
+
         <div class="column-items">
-          <div
-            v-for="inquiry in getInquiriesByStatus(column.status)"
+          <KanbanItem
+            v-for="inquiry in column"
             :key="inquiry.id"
-            class="kanban-item"
-            :class="{ 'dragging': draggingInquiryId === inquiry.id }"
-            draggable="true"
+            :inquiry="inquiry"
+            :draggable="true"
+            @click="handleClick"
             @dragstart="handleDragStart($event, inquiry)"
-            @dragend="handleDragEnd"
-            @click="emit('openDetail', inquiry.id)"
-          >
-            <div class="item-content">
-              <div class="item-title">{{ inquiry.title }}</div>
-              <div class="item-meta">
-                <span class="item-id">#{{ inquiry.id }}</span>
-                <span class="item-owner">{{ inquiry.owner.displayName }}</span>
-              </div>
-            </div>
+          />
+        </div>
 
-            <!-- Footer with move actions -->
-            <div class="item-footer">
-              <NcActions>
-                <NcActionButton
-                  v-for="target in columns.filter(c => c.status !== inquiry.status.inquiryStatus)"
-                  :key="target.status"
-                  @click="changeStatus(inquiry.id, target.status)"
-                >
-                  <template #icon>
-                    <div class="status-dot-small" :style="{ backgroundColor: target.color }" />
-                  </template>
-                  {{ t('agora', 'Move to {column}', { column: target.label }) }}
-                </NcActionButton>
-              </NcActions>
-            </div>
-          </div>
-
-          <!-- Empty column placeholder -->
-          <div
-            v-if="getInquiriesByStatus(column.status).length === 0"
-            class="empty-column"
-            @dragover.prevent
-            @drop="handleDrop($event, column.status)"
-          >
-            <div class="empty-icon">
-              <component :is="InquiryGeneralIcons.Board" :size="32" />
-            </div>
-            <p>{{ t('agora', 'No inquiries in this column') }}</p>
-          </div>
+        <!-- Empty state for column -->
+        <div v-if="column.length === 0" class="column-empty">
+          <component :is="Icons.Inbox" :size="32" />
+          <span>{{ t('agora', 'No items') }}</span>
         </div>
       </div>
     </div>
@@ -102,365 +75,558 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import type { Inquiry } from '../../stores/inquiry.ts'
-import { useInquiriesStore } from '../../stores/inquiries.ts'
+import { InquiryGeneralIcons as Icons } from '../../utils/icons'
+import KanbanItem from './KanbanItem.vue'
+import type { Inquiry } from '../../Types'
+import { useSessionStore } from '../../stores/session'
+import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
 
-// Props
-const props = defineProps<{
+interface Props {
   inquiries: Inquiry[]
-}>()
-
-// Emits
-const emit = defineEmits<{
-  openDetail: [inquiryId: number]
-  statusChanged: []
-}>()
-
-// Store
-const inquiriesStore = useInquiriesStore()
-
-// State
-const draggingInquiryId = ref<number | null>(null)
-const showAddModal = ref(false)
-
-// Helper: generate a color based on status string (deterministic)
-const getColorForStatus = (status: string): string => {
-  const colors: Record<string, string> = {
-    draft: '#949494',
-    waiting_approval: '#f39c12',
-    pending: '#f39c12',
-    under_process: '#f39c12',
-    need_revised: '#f39c12',
-    collecting_support: '#3498db',
-    quorum_reached: '#27ae60',
-    active: '#3498db',
-    closed: '#27ae60',
-    rejected: '#e74c3c',
-    resolved: '#27ae60',
-    dismissed: '#e74c3c',
-    integrated: '#27ae60',
-    discarded: '#e74c3c',
-    funded: '#27ae60',
-    not_funded: '#e74c3c',
-    in_progress: '#3498db',
-    completed: '#27ae60',
-    planned: '#3498db',
-    in_session: '#3498db',
-    concluded: '#27ae60',
-    open: '#3498db',
-    under_review: '#f39c12',
-    accepted: '#27ae60',
-    drafting: '#3498db',
-    reviewing: '#f39c12',
-    validated: '#27ae60',
-    resolved_by_proposal: '#27ae60',
-    resolved_directly: '#27ae60',
-    unresolved: '#e74c3c',
-    published: '#27ae60',
-    archived: '#949494',
-    // add more as needed
-  }
-  return colors[status] || `hsl(${Math.abs(hashString(status)) % 360}, 70%, 60%)`
+  groupId?: number
+  processPhases?: Array<{ key: string; label: string; icon?: string }>
 }
 
-// Simple hash for generating fallback colors
-const hashString = (str: string): number => {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i)
-    hash |= 0 // Convert to 32-bit integer
-  }
-  return Math.abs(hash)
-}
-
-// Compute columns dynamically from the actual statuses present in the inquiries
-const columns = computed(() => {
-  // Get unique statuses
-  const statusSet = new Set<string>()
-  props.inquiries.forEach(inquiry => {
-    if (inquiry.status.inquiryStatus) {
-      statusSet.add(inquiry.status.inquiryStatus)
-    }
-  })
-
-  // Build column definitions
-  return Array.from(statusSet).map(status => ({
-    status,
-    label: status.charAt(0).toUpperCase() + status.replace(/_/g, ' ').slice(1),
-    color: getColorForStatus(status)
-  }))
+const props = withDefaults(defineProps<Props>(), {
+  processPhases: () => []
 })
 
-// Helper: filter inquiries by status
-const getInquiriesByStatus = (status: string) => props.inquiries.filter(inquiry => inquiry.status.inquiryStatus === status)
+const emit = defineEmits<{
+  click: [inquiry: Inquiry]
+  add: [columnKey: string]
+  move: [inquiry: Inquiry, fromColumn: string, toColumn: string]
+}>()
 
-// Drag handlers
-const handleDragStart = (event: DragEvent, inquiry: Inquiry) => {
-  draggingInquiryId.value = inquiry.id
-  event.dataTransfer?.setData('text/plain', inquiry.id.toString())
-  event.dataTransfer!.effectAllowed = 'move'
-}
+const sessionStore = useSessionStore()
 
-const handleDragEnd = () => {
-  draggingInquiryId.value = null
-}
+// Determine if we use process columns
+const useProcessColumns = computed(() => props.processPhases.length > 0)
 
-const handleDrop = async (event: DragEvent, newStatus: string) => {
-  event.preventDefault()
-  const idStr = event.dataTransfer?.getData('text/plain')
-  if (!idStr) return
-  const inquiryId = parseInt(idStr)
-  await changeStatus(inquiryId, newStatus)
-}
+// Grouping mode
+const groupBy = ref<'process' | 'status' | 'type' | 'family'>(
+  useProcessColumns.value ? 'process' : 'status'
+)
 
-// Change status: direct API call + local update
-const changeStatus = async (inquiryId: number, newStatus: string) => {
-  const inquiry = props.inquiries.find(i => i.id === inquiryId)
-  if (!inquiry) return
-  if (inquiry.status.inquiryStatus === newStatus) return
-
-  if (!inquiry.permissions.edit) {
-    showError(t('agora', 'You do not have permission to change the status'))
-    return
+// Grouping options with French labels
+const groupingOptions = computed(() => {
+  const options = [
+    { key: 'status', label: t('agora', 'Status'), icon: Icons.CheckCircle },
+    { key: 'type', label: t('agora', 'Type'), icon: Icons.Folder },
+    { key: 'family', label: t('agora', 'Family'), icon: Icons.Layers }
+  ]
+  if (useProcessColumns.value) {
+    options.unshift({ key: 'process', label: t('agora', 'Process'), icon: Icons.GitBranch })
   }
+  return options
+})
 
-  try {
-    // Call the API directly
-    await inquiriesStore.setInquiryStatus(inquiryId, newStatus)
+const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+const draggedInquiryId = ref<number | null>(null)
 
-    // Update local state in the store
-    const storeInquiry = inquiriesStore.inquiries.find(i => i.id === inquiryId)
-    if (storeInquiry) {
-      storeInquiry.status.inquiryStatus = newStatus
+// Group inquiries by selected grouping
+const groupedColumns = computed(() => {
+  const groups: Record<string, Inquiry[]> = {}
+  const groupKey = groupBy.value
+
+  props.inquiries.forEach(inquiry => {
+    let key: string
+
+    switch (groupKey) {
+      case 'process':
+        key = inquiry.miscFields?.processPhase || props.processPhases[0]?.key || 'default'
+        break
+      case 'status':
+        key = inquiry.status?.inquiryStatus || 'draft'
+        break
+      case 'type':
+        key = inquiry.type || 'general'
+        break
+      case 'family':
+        key = inquiry.family || 'default'
+        break
+      default:
+        key = 'default'
     }
 
-    showSuccess(t('agora', 'Inquiry moved to {column}', {
-      column: columns.value.find(c => c.status === newStatus)?.label || newStatus
-    }))
+    if (!groups[key]) {
+      groups[key] = []
+    }
+    groups[key].push(inquiry)
+  })
 
-    // Notify parent to refresh (optional)
-    emit('statusChanged')
-  } catch (error) {
-    console.error('Failed to update inquiry status', error)
-    showError(t('agora', 'Failed to update status'))
+  // Sort columns by predefined order
+  const sortedKeys = sortColumnKeys(Object.keys(groups))
+  const sortedGroups: Record<string, Inquiry[]> = {}
+  sortedKeys.forEach(key => {
+    sortedGroups[key] = groups[key]
+  })
+
+  return sortedGroups
+})
+
+function sortColumnKeys(keys: string[]): string[] {
+  if (groupBy.value === 'process') {
+    const order = props.processPhases.map(p => p.key)
+    return keys.sort((a, b) => {
+      const idxA = order.indexOf(a)
+      const idxB = order.indexOf(b)
+      if (idxA === -1 && idxB === -1) return a.localeCompare(b)
+      if (idxA === -1) return 1
+      if (idxB === -1) return -1
+      return idxA - idxB
+    })
   }
+
+  if (groupBy.value === 'status') {
+    const order = ['active', 'open', 'waiting_approval', 'draft', 'closed', 'rejected']
+    return keys.sort((a, b) => {
+      const idxA = order.indexOf(a)
+      const idxB = order.indexOf(b)
+      if (idxA === -1 && idxB === -1) return a.localeCompare(b)
+      if (idxA === -1) return 1
+      if (idxB === -1) return -1
+      return idxA - idxB
+    })
+  }
+
+  if (groupBy.value === 'type') {
+    const types = sessionStore.appSettings?.inquiryTypeTab || []
+    const order = types.map(t => t.typeKey || t.label)
+    return keys.sort((a, b) => {
+      const idxA = order.indexOf(a)
+      const idxB = order.indexOf(b)
+      if (idxA === -1 && idxB === -1) return a.localeCompare(b)
+      if (idxA === -1) return 1
+      if (idxB === -1) return -1
+      return idxA - idxB
+    })
+  }
+
+  return keys.sort()
 }
+
+function getColumnLabel(key: string): string {
+  if (groupBy.value === 'process') {
+    const phase = props.processPhases.find(p => p.key === key)
+    return phase?.label || key
+  }
+
+  if (groupBy.value === 'status') {
+    const map: Record<string, string> = {
+      'active': t('agora', 'Active'),
+      'open': t('agora', 'Open'),
+      'closed': t('agora', 'Closed'),
+      'draft': t('agora', 'Draft'),
+      'waiting_approval': t('agora', 'Pending'),
+      'rejected': t('agora', 'Rejected')
+    }
+    return map[key] || key
+  }
+
+  if (groupBy.value === 'type') {
+    const types = sessionStore.appSettings?.inquiryTypeTab || []
+    const data = getInquiryTypeData(key, types)
+    return data?.label || key
+  }
+
+  if (groupBy.value === 'family') {
+    const map: Record<string, string> = {
+      'default': t('agora', 'Default'),
+      'proposal': t('agora', 'Proposals'),
+      'poll': t('agora', 'Polls'),
+      'survey': t('agora', 'Surveys'),
+      'discussion': t('agora', 'Discussions')
+    }
+    return map[key] || key
+  }
+
+  return key
+}
+
+function getColumnIcon(key: string): any {
+  if (groupBy.value === 'process') {
+    const phase = props.processPhases.find(p => p.key === key)
+    if (phase?.icon) {
+      return Icons[phase.icon] || Icons.Circle
+    }
+    return Icons.GitBranch
+  }
+
+  if (groupBy.value === 'status') {
+    const map: Record<string, any> = {
+      'active': Icons.CheckCircle,
+      'open': Icons.CheckCircle,
+      'closed': Icons.Close,
+      'draft': Icons.Edit,
+      'waiting_approval': Icons.Clock,
+      'rejected': Icons.Close
+    }
+    return map[key] || Icons.Circle
+  }
+
+  if (groupBy.value === 'type') {
+    const types = sessionStore.appSettings?.inquiryTypeTab || []
+    const data = getInquiryTypeData(key, types)
+    return data?.icon || Icons.Folder
+  }
+
+  return Icons.Layers
+}
+
+function getColumnClass(key: string): string {
+  if (groupBy.value === 'status') {
+    return `column-status-${key}`
+  }
+  if (groupBy.value === 'process') {
+    return `column-process`
+  }
+  return ''
+}
+
+function canAddToColumn(key: string): boolean {
+  if (groupBy.value === 'status') {
+    return !['closed', 'rejected'].includes(key)
+  }
+  return true
+}
+
+function handleDragStart(event: DragEvent, inquiry: Inquiry) {
+  if (!event.dataTransfer) return
+  draggedInquiryId.value = inquiry.id
+  event.dataTransfer.effectAllowed = 'move'
+  event.dataTransfer.setData('text/plain', String(inquiry.id))
+}
+
+function handleDrop(columnKey: string, event: DragEvent) {
+  if (!event.dataTransfer) return
+  const inquiryId = parseInt(event.dataTransfer.getData('text/plain'))
+  const inquiry = props.inquiries.find(i => i.id === inquiryId)
+  if (!inquiry) return
+
+  // Find which column the inquiry is currently in
+  let fromColumn = ''
+  for (const [key, items] of Object.entries(groupedColumns.value)) {
+    if (items.some(i => i.id === inquiryId)) {
+      fromColumn = key
+      break
+    }
+  }
+
+  if (fromColumn && fromColumn !== columnKey) {
+    // If process grouping, update the inquiry's processPhase
+    if (groupBy.value === 'process') {
+      // Store the phase change for the move event
+      emit('move', inquiry, fromColumn, columnKey)
+    } else {
+      emit('move', inquiry, fromColumn, columnKey)
+    }
+  }
+
+  draggedInquiryId.value = null
+}
+
+function handleClick(inquiry: Inquiry) {
+  emit('click', inquiry)
+}
+
+function handleAdd(columnKey: string) {
+  emit('add', columnKey)
+}
+
+// Watch for process phases changes
+watch(
+  () => props.processPhases,
+  (newPhases) => {
+    if (newPhases.length > 0 && groupBy.value === 'status') {
+      groupBy.value = 'process'
+    }
+  },
+  { deep: true }
+)
 </script>
 
-<style scoped lang="scss">
-.kanban-layout {
+<style lang="scss" scoped>
+.inquiry-kanban {
+  background: var(--color-main-background);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.kanban-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 4px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background-dark);
 
-  .kanban-actions {
+  .header-left {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
 
-    .add-kanban-btn {
-      background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
-      border: none;
-      color: white;
+    .kanban-icon {
+      color: var(--color-primary-element);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-main-text);
+      letter-spacing: -0.01em;
+    }
+
+    .kanban-count {
+      font-size: 12px;
       font-weight: 600;
-      padding: 8px 16px;
+      background: var(--color-background-darker);
+      padding: 3px 12px;
       border-radius: 20px;
+      color: var(--color-text-lighter);
+    }
+
+    .process-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      background: var(--color-primary-light);
+      color: var(--color-primary-element);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+    }
+  }
+
+  .header-right {
+    display: flex;
+    gap: 6px;
+
+    .group-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--color-text-lighter);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
+        background: var(--color-background-hover);
+        color: var(--color-main-text);
+        transform: translateY(-1px);
+      }
+
+      &.active {
+        background: var(--color-primary-light);
+        border-color: var(--color-primary-element);
+        color: var(--color-primary-element);
+        box-shadow: 0 1px 3px rgba(var(--color-primary-rgb), 0.1);
       }
     }
   }
+}
 
-  .kanban-header {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  overflow-x: auto;
+  min-height: 500px;
+  background: var(--color-background-dark);
+}
 
-    .kanban-column-header {
+.kanban-column {
+  background: var(--color-main-background);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+  max-height: 650px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: var(--color-border-dark);
+  }
+
+  &.column-status-active {
+    border-top: 4px solid var(--color-success);
+  }
+  &.column-status-open {
+    border-top: 4px solid var(--color-success);
+  }
+  &.column-status-closed {
+    border-top: 4px solid var(--color-error);
+  }
+  &.column-status-draft {
+    border-top: 4px solid var(--color-text-lighter);
+  }
+  &.column-status-waiting_approval {
+    border-top: 4px solid var(--color-warning);
+  }
+  &.column-status-rejected {
+    border-top: 4px solid var(--color-error);
+  }
+  &.column-process {
+    border-top: 4px solid var(--color-primary-element);
+  }
+
+  .column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+    background: var(--color-background-dark);
+    border-radius: 12px 12px 0 0;
+
+    .column-title-wrapper {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px;
-      background: var(--color-main-background);
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-      border-bottom: 4px solid;
+      gap: 10px;
 
-      &.status-draft { border-bottom-color: #949494; }
-      &.status-waiting_approval { border-bottom-color: #f39c12; }
-      &.status-active { border-bottom-color: #3498db; }
-      &.status-closed { border-bottom-color: #27ae60; }
-      &.status-rejected { border-bottom-color: #e74c3c; }
+      .column-icon {
+        color: var(--color-text-lighter);
+      }
 
-      .header-content {
+      .column-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--color-main-text);
+        letter-spacing: -0.01em;
+      }
+
+      .column-count {
+        font-size: 12px;
+        font-weight: 600;
+        background: var(--color-background-darker);
+        padding: 2px 10px;
+        border-radius: 12px;
+        color: var(--color-text-lighter);
+      }
+    }
+
+    .column-actions {
+      .add-btn {
         display: flex;
         align-items: center;
-        gap: 10px;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-main-background);
+        color: var(--color-text-lighter);
+        cursor: pointer;
+        transition: all 0.2s ease;
 
-        .status-badge {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          box-shadow: 0 0 0 2px var(--color-main-background);
-        }
-
-        .status-label {
-          font-weight: 700;
-          font-size: 15px;
-        }
-
-        .item-count {
-          background: var(--color-background-dark);
-          padding: 4px 10px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          color: var(--color-text-light);
+        &:hover {
+          border-color: var(--color-primary-element);
+          color: var(--color-primary-element);
+          background: var(--color-primary-light);
+          transform: scale(1.05);
         }
       }
     }
   }
 
-  .kanban-board {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    min-height: 600px;
+  .column-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
-    .kanban-column {
-      background: var(--color-background-dark);
-      border-radius: 16px;
-      padding: 20px 16px;
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
 
-      .column-items {
-        min-height: 400px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-        .kanban-item {
-          position: relative;
-          cursor: grab;
-          transition: all 0.2s ease;
-          border-radius: 12px;
-          background: var(--color-main-background);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-          padding: 12px;
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 4px;
+    }
+  }
 
-          &:active {
-            cursor: grabbing;
-          }
+  .column-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    color: var(--color-text-lighter);
+    font-size: 13px;
+    gap: 8px;
+    opacity: 0.6;
 
-          &.dragging {
-            opacity: 0.5;
-            transform: scale(0.98);
-          }
-
-          .item-content {
-            .item-title {
-              font-weight: 600;
-              font-size: 14px;
-              margin-bottom: 8px;
-              word-break: break-word;
-            }
-
-            .item-meta {
-              display: flex;
-              gap: 12px;
-              font-size: 12px;
-              color: var(--color-text-lighter);
-
-              .item-id {
-                font-family: monospace;
-                background: var(--color-background-dark);
-                padding: 2px 6px;
-                border-radius: 4px;
-              }
-            }
-          }
-
-          .item-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid var(--color-border);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-          }
-
-          &:hover .item-footer {
-            opacity: 1;
-          }
-        }
-
-        .empty-column {
-          text-align: center;
-          padding: 40px 20px;
-          background: var(--color-background);
-          border: 2px dashed var(--color-border);
-          border-radius: 16px;
-
-          .empty-icon {
-            color: var(--color-text-lighter);
-            margin-bottom: 12px;
-            opacity: 0.5;
-          }
-
-          p {
-            margin: 0;
-            color: var(--color-text-lighter);
-            font-style: italic;
-            font-size: 13px;
-          }
-        }
-      }
+    svg {
+      opacity: 0.5;
     }
   }
 }
 
-.status-dot-small {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-/* Responsive */
-@media (max-width: 1400px) {
-  .kanban-header,
-  .kanban-board {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
+/* Responsive adjustments */
 @media (max-width: 1024px) {
-  .kanban-header,
   .kanban-board {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    padding: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .kanban-header,
+  .kanban-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    padding: 16px 20px;
+
+    .header-right {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
   .kanban-board {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .kanban-column {
+    max-height: 450px;
+    min-height: 200px;
   }
 }
 
 @media (max-width: 480px) {
-  .kanban-header,
-  .kanban-board {
-    grid-template-columns: 1fr;
+  .kanban-header .header-left h2 {
+    font-size: 17px;
+  }
+
+  .kanban-header .header-right .group-btn {
+    padding: 5px 12px;
+    font-size: 12px;
   }
 }
 </style>

@@ -2,22 +2,18 @@
 
 declare(strict_types=1);
 
-/**
- * SPDX-FileCopyrightText: 2025 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-
 namespace OCA\Agora\Service;
 
+use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Db\Option;
-use OCA\Agora\Db\Support;
-use OCA\Agora\Db\SupportMapper;
-use OCA\Agora\Db\CommentMapper;
 use OCA\Agora\Db\OptionMapper;
+use OCA\Agora\Db\CommentMapper;
+use OCA\Agora\Db\SupportMapper;
+use OCA\Agora\Db\TrendingScore;
+use OCA\Agora\Db\TrendingScoreMapper;
 use Psr\Log\LoggerInterface;
-use OCP\Cache\IMemcache;
-use OCP\ICacheFactory;
 use OCP\ICache;
+use OCP\ICacheFactory;
 
 class TrendingService
 {
@@ -37,12 +33,13 @@ class TrendingService
         private SupportMapper $supportMapper,
         private CommentMapper $commentMapper,
         private OptionMapper $optionMapper,
+        private TrendingScoreMapper $trendingScoreMapper,
+        private InquiryMapper $inquiryMapper, // ADDED - was missing!
         private LoggerInterface $logger,
         ICacheFactory $cacheFactory,
     ) {
-        // Use the factory to create a cache instance
+        // Initialize cache
         try {
-            // Try to create a distributed cache
             if (method_exists($cacheFactory, 'createDistributed')) {
                 $cache = $cacheFactory->createDistributed(self::CACHE_PREFIX);
                 if ($cache instanceof ICache) {
@@ -58,6 +55,142 @@ class TrendingService
             $this->logger->warning('Could not initialize cache for TrendingService: ' . $e->getMessage());
             $this->cache = null;
         }
+    }
+
+    /**
+     * Get trending scores with fallback to stored or fresh calculation
+     */
+    public function getTrendingScoresWithFallback(int $inquiryId, bool $useCache = true): array
+    {
+        $cacheKey = $this->getCacheKey($inquiryId);
+
+        // Try cache first
+        if ($useCache && $this->cache !== null) {
+            $cached = $this->cache->get($cacheKey);
+            if ($cached !== null && is_array($cached)) {
+                $this->logger->debug('Trending scores served from cache', ['inquiryId' => $inquiryId]);
+                return $cached;
+            }
+        }
+
+        // Try stored scores from database
+        $storedScores = $this->getStoredTrendingScores($inquiryId);
+
+        if (!empty($storedScores)) {
+            // Check if they're stale (older than 1 hour)
+            $maxUpdated = max(array_column($storedScores, 'updated_at'));
+            if (time() - $maxUpdated < 3600) {
+                $this->cacheScores($inquiryId, $storedScores);
+                return $storedScores;
+            }
+        }
+
+        // Calculate fresh scores
+        $freshScores = $this->calculateAndStoreTrendingScores($inquiryId);
+        $this->cacheScores($inquiryId, $freshScores);
+
+        return $freshScores;
+    }
+
+    /**
+     * Get stored trending scores from database
+     */
+    private function getStoredTrendingScores(int $inquiryId): array
+    {
+        $scores = $this->trendingScoreMapper->findByInquiryId($inquiryId);
+
+        $result = [];
+        foreach ($scores as $score) {
+            $result[$score->getOptionId()] = [
+                'score' => $score->getScore(),
+                'updated_at' => $score->getUpdatedAt()
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Calculate and store trending scores for all options in an inquiry
+     * Returns array of option_id => score
+     */
+    public function calculateAndStoreTrendingScores(int $inquiryId): array
+    {
+        $options = $this->optionMapper->findByTargetId($inquiryId);
+        $scores = $this->calculateTrendingScores($inquiryId, $options);
+
+        $now = time();
+
+        // Store inquiry-level score (average of all options or 0 if no options)
+        $inquiryScore = !empty($scores) ? array_sum($scores) / count($scores) : 0;
+        $this->storeTrendingScore($inquiryId, 0, $inquiryScore, $now);
+
+        // Store option-level scores
+        foreach ($scores as $optionId => $score) {
+            $this->storeTrendingScore($inquiryId, $optionId, $score, $now);
+        }
+
+        // Invalidate cache
+        $this->invalidateCache($inquiryId);
+
+        $this->logger->debug('Trending scores calculated and stored', [
+            'inquiryId' => $inquiryId,
+            'optionsCount' => count($scores),
+            'inquiryScore' => $inquiryScore
+        ]);
+
+        return $scores;
+    }
+
+    /**
+     * Store a single trending score using the mapper
+     */
+    private function storeTrendingScore(int $inquiryId, int $optionId, float $score, int $timestamp): void
+    {
+        $trendingScore = new TrendingScore();
+        $trendingScore->setInquiryId($inquiryId);
+        $trendingScore->setOptionId($optionId);
+        $trendingScore->setScore($score);
+        $trendingScore->setUpdatedAt($timestamp);
+
+        $this->trendingScoreMapper->upsert($trendingScore);
+    }
+
+    /**
+     * Get trending scores with option details
+     */
+    public function getTrendingScoresWithDetails(int $inquiryId): array
+    {
+        return $this->trendingScoreMapper->findByInquiryIdWithOptions($inquiryId);
+    }
+
+    /**
+     * Update trending scores for all active inquiries
+     */
+    public function updateAllTrendingScores(int $batchSize = 50): int
+    {
+	 $inquiries = $this->inquiryMapper->findAllWithTrendingFeature();
+        $updated = 0;
+
+        foreach (array_chunk($inquiries, $batchSize) as $chunk) {
+            foreach ($chunk as $inquiry) {
+                    try {
+                        $this->calculateAndStoreTrendingScores($inquiry->getId());
+                        $updated++;
+                    } catch (\Exception $e) {
+                        $this->logger->error('Failed to update trending scores for inquiry ' . $inquiry->getId(), [
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+            }
+
+            // Small sleep to prevent DB overload
+            if (count($chunk) >= $batchSize) {
+                usleep(100000); // 100ms
+            }
+        }
+
+        return $updated;
     }
 
     /**
@@ -94,6 +227,32 @@ class TrendingService
     }
 
     /**
+     * Calculate trending scores for a single inquiry
+     * Used for real-time updates
+     */
+    public function updateTrendingScoresForInquiry(int $inquiryId): array
+    {
+        try {
+            $inquiry = $this->inquiryMapper->find($inquiryId);
+
+            if (!$inquiry || $inquiry->getSupportFeature() !== 'trending') {
+                return [];
+            }
+
+            $scores = $this->calculateAndStoreTrendingScores($inquiryId);
+            $this->invalidateCache($inquiryId);
+
+            return $scores;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to update trending scores for inquiry', [
+                'inquiryId' => $inquiryId,
+                'error' => $e->getMessage()
+            ]);
+            return [];
+        }
+    }
+
+    /**
      * Calculate trending scores for all options in an inquiry
      */
     private function calculateTrendingScores(int $inquiryId, ?array $options = null): array
@@ -105,7 +264,7 @@ class TrendingService
         $trendingScores = [];
         $currentTime = time();
 
-        // Get all supports for this inquiry (deliberative mode only)
+        // Get all supports for this inquiry
         $supports = $this->supportMapper->findByInquiryId($inquiryId);
         
         // Get all comments for this inquiry
@@ -314,6 +473,14 @@ class TrendingService
             $cacheKey = $this->getCacheKey($inquiryId);
             $this->cache->remove($cacheKey);
             $this->logger->debug('Trending cache invalidated', ['inquiryId' => $inquiryId]);
+        }
+    }
+
+    private function cacheScores(int $inquiryId, array $scores): void
+    {
+        if ($this->cache !== null) {
+            $cacheKey = $this->getCacheKey($inquiryId);
+            $this->cache->set($cacheKey, $scores, self::CACHE_TTL);
         }
     }
 

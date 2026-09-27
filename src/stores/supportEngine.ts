@@ -62,27 +62,36 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
   })
   
   /**
- * Get support engines that target inquiries in a group
- */
-  const getEnginesByGroup = computed(() => (groupId: number) => {
-  	return this.engines.filter(
-    		engine => engine.inquiry_group_id === groupId && engine.target_type === 'inquiry'
-  	)
+   * Get support engines that target inquiries in a group
+   */
+const getEnginesByTarget = computed(
+  () => (targetType: 'inquiry' | 'option', parentId: number) => {
+    if (!engines.value || !Array.isArray(engines.value)) return []
+    
+    if (targetType === 'option') {
+      // For options, return engines where inquiry_id === parentId
+      return engines.value.filter(
+        (engine) => engine.inquiry_id === parentId
+      )
+    } 
+      // For inquiries, return engines where inquiry_group_id === targetId
+      return engines.value.filter(
+        (engine) => engine.inquiry_group_id === parentId
+      )
+    
   })
+
+const getEnginesByGroup = computed(() => (groupId: number) => {
+  if (!engines.value || !Array.isArray(engines.value)) return []
+  return engines.value.filter(
+    engine => engine.inquiry_group_id === groupId && engine.target_type === 'inquiry'
+  )
+})
 
   const getEnginesByInquiryGroup = computed(() => (inquiryGroupId: number) => {
     if (!engines.value || !Array.isArray(engines.value)) return []
     return engines.value.filter((engine) => engine.inquiry_group_id === inquiryGroupId)
   })
-
-  const getEnginesByTarget = computed(
-    () => (targetType: 'inquiry' | 'option', targetId: number) => {
-      if (!engines.value || !Array.isArray(engines.value)) return []
-      return engines.value.filter(
-        (engine) => engine.target_type === targetType && engine.target_ids.includes(targetId)
-      )
-    }
-  )
 
   const getActiveEngineForTarget = computed(
     () => (targetType: 'inquiry' | 'option', targetId: number) => {

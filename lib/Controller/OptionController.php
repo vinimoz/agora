@@ -88,6 +88,23 @@ class OptionController extends BaseController
     }
 
     /**
+     * Get options by type
+     *
+     * @param int $inquiryId Inquiry id
+     * @param string $type Option type
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}/options/type/{type}')]
+    public function listByType(int $inquiryId, string $type): JSONResponse
+    {
+        return $this->response(
+            function () use ($inquiryId, $type) {
+                return ['options' => $this->optionService->listByType($type, $inquiryId)];
+            }
+        );
+    }
+
+    /**
      * Get a specific option
      *
      * @param int $optionId Option id

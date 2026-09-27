@@ -21,9 +21,9 @@
         - 🗣 Real debate features (structured replies, multi-thread discussions)  
         - 📜 Project law reading with article-level comments and supports  
         - 🧰 Template for different goal, democraty, university, company, custom 
+        - 🏛 Visibility can be set for inquiries,and inquiry groups and Participation with Lottery could be apply for inquiry.
 
         ### 🧭 Coming Next
-        - 🏛 Lottery.
         - 🧮 Quorums and workflow automation  
         - 🧰 Better permission control and moderation tools  
         ]]></description>
@@ -48,8 +48,8 @@
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid2.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
     <dependencies>
-        <php min-version="8.1"/>
-        <nextcloud min-version="31" max-version="34"/>
+        <php min-version="8.3"/>
+        <nextcloud min-version="31" max-version="35"/>
     </dependencies>
     <background-jobs>
         <job>OCA\Agora\Cron\NotificationCron</job>
@@ -68,13 +68,14 @@
         <command>OCA\Agora\Command\Share\Add</command>
         <command>OCA\Agora\Command\Share\Remove</command>
         <command>OCA\Agora\Command\Db\Purge</command>
-		<command>OCA\Agora\Command\Db\CleanInstance</command>
+	<command>OCA\Agora\Command\Db\CleanInstance</command>
         <command>OCA\Agora\Command\Db\RemoveIndices</command>
         <command>OCA\Agora\Command\Db\Rebuild</command>
         <command>OCA\Agora\Command\Db\CreateIndices</command>
         <command>OCA\Agora\Command\Db\ResetWatch</command>
         <command>OCA\Agora\Command\Db\InitDbDefault</command>
         <command>OCA\Agora\Command\Inquiry\TransferOwnership</command>
+        <command>OCA\Agora\Command\Trending\UpdateScores</command>
     </commands>
     <settings>
         <admin>OCA\Agora\Settings\AdminSettings</admin>

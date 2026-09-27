@@ -1,481 +1,343 @@
 <?php
+
 namespace OCA\Agora\Service\Ai;
+
+use OCA\Agora\Service\AIService;
 
 class OptionGenerator {
     private $promptRepository;
-    private $aiClient;
-    private $documentParser;
-    private $structureAnalyzer;
+    private $aiService;  
 
     public function __construct(
         PromptRepository $promptRepository, 
-        $aiClient,
-        DocumentParser $documentParser,
-        StructureAnalyzer $structureAnalyzer
+        AIService $aiService  
     ) {
         $this->promptRepository = $promptRepository;
-        $this->aiClient = $aiClient;
-        $this->documentParser = $documentParser;
-        $this->structureAnalyzer = $structureAnalyzer;
+        $this->aiService = $aiService;
     }
 
     /**
-     * Generate options from document content with structure awareness
+     * Generate options from inquiry context (title + description)
+     */
+    /**
+     * Generate options from inquiry context (title + description)
+     */
+    public function generateOptionsFromContext(array $context, int $count = 4): array
+    {
+        try {
+            // Build a more specific prompt
+            $prompt = $this->buildPrompt($context, $count);
+
+            // Log the prompt
+            error_log('AI Prompt: ' . $prompt);
+
+            // Use AIService's enhanceText method
+            $response = $this->aiService->enhanceText($prompt);
+
+            // Log the response
+            error_log('AI Response: ' . substr($response, 0, 500));
+
+            // If empty response, use fallback
+            if (empty($response)) {
+                error_log('AI returned empty response, using fallback');
+                return $this->getFallbackOptions($context, $count);
+            }
+
+            // Try to parse JSON response first
+            $options = $this->parseJsonResponse($response);
+
+            // If JSON parsing failed, try text parsing
+            if (empty($options)) {
+                $options = $this->parseTextOptions($response);
+            }
+
+            // Ensure we return at least something
+            if (empty($options)) {
+                error_log('No options parsed from AI response, using fallback');
+                return $this->getFallbackOptions($context, $count);
+            }
+
+            // Limit to requested count
+            return array_slice($options, 0, $count);
+
+        } catch (\Throwable $e) {
+            error_log('Error generating options: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
+            return $this->getFallbackOptions($context, $count);
+        }
+    }
+  private function buildPrompt(array $context, int $count): string
+    {
+        $title = $context['title'] ?? 'the topic';
+        $description = $context['description'] ?? '';
+        
+        return "Generate $count specific, actionable options for: $title\n\n" .
+               "Context: $description\n\n" .
+               "Please provide the response as a JSON array of objects, each with these fields:\n" .
+               "- title: A short, descriptive title for the option\n" .
+               "- text: A detailed description of the option\n" .
+               "- description: A brief summary (optional)\n" .
+               "- pros: Array of advantages (optional)\n" .
+               "- cons: Array of disadvantages (optional)\n" .
+               "- tags: Array of relevant keywords (optional)\n\n" .
+               "Return ONLY the JSON array, no other text.";
+    }
+
+    private function parseJsonResponse(string $response): array
+    {
+        // Try to extract JSON from the response
+        $json = $response;
+        
+        // If response contains markdown code blocks, extract the JSON
+        if (preg_match('/```(?:json)?\s*([\s\S]*?)\s*```/', $response, $matches)) {
+            $json = trim($matches[1]);
+        }
+        
+        // Try to parse as JSON
+        $decoded = json_decode($json, true);
+        
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return array_map(function($item) {
+                return [
+                    'title' => $item['title'] ?? $item['text'] ?? '',
+                    'text' => $item['text'] ?? $item['description'] ?? '',
+                    'description' => $item['description'] ?? '',
+                    'pros' => $item['pros'] ?? [],
+                    'cons' => $item['cons'] ?? [],
+                    'tags' => $item['tags'] ?? []
+                ];
+            }, $decoded);
+        }
+        
+        return [];
+    }
+
+    private function parseTextOptions(string $response): array
+    {
+        $options = [];
+        $lines = explode("\n", $response);
+        $currentOption = null;
+        $currentText = '';
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            
+            // Check for numbered options (1., 2., etc.)
+            if (preg_match('/^(\d+)[\.\)]\s*(.+)/', $line, $matches)) {
+                if ($currentOption !== null) {
+                    $options[] = [
+                        'title' => $currentOption,
+                        'text' => $currentText,
+                        'description' => $currentText,
+                        'pros' => [],
+                        'cons' => [],
+                        'tags' => []
+                    ];
+                }
+                $currentOption = trim($matches[2]);
+                $currentText = $currentOption;
+            } 
+            // Check for bullet points
+            elseif (preg_match('/^[-*•]\s*(.+)/', $line, $matches)) {
+                if ($currentOption !== null) {
+                    $currentText .= ' ' . trim($matches[1]);
+                }
+            } 
+            // Continue line
+            elseif ($line && $currentOption !== null) {
+                $currentText .= ' ' . $line;
+            }
+        }
+        
+        // Add the last option
+        if ($currentOption !== null) {
+            $options[] = [
+                'title' => $currentOption,
+                'text' => $currentText,
+                'description' => $currentText,
+                'pros' => [],
+                'cons' => [],
+                'tags' => []
+            ];
+        }
+        
+        return $options;
+    }
+
+    /**
+     * Generate decision options with pros and cons
+     */
+    public function generateDecisionOptions(string $problem, array $constraints = []): array
+    {
+        try {
+            $prompt = $this->promptRepository->getPrompt('decision_options', [
+                'problem' => $problem,
+                'constraints' => json_encode($constraints)
+            ]);
+
+            $response = $this->aiService->enhanceText($prompt);
+            
+            if (empty($response)) {
+                return $this->getFallbackDecisionOptions($problem);
+            }
+            
+            $result = json_decode($response, true);
+            return is_array($result) ? $result : $this->getFallbackDecisionOptions($problem);
+            
+        } catch (\Throwable $e) {
+            error_log('Error generating decision options: ' . $e->getMessage());
+            return $this->getFallbackDecisionOptions($problem);
+        }
+    }
+
+    /**
+     * Generate creative ideas
+     */
+    public function generateCreativeIdeas(string $topic, int $count = 5): array
+    {
+        try {
+            $prompt = $this->promptRepository->getPrompt('creative_ideas', [
+                'topic' => $topic,
+                'count' => $count
+            ]);
+
+            $response = $this->aiService->enhanceText($prompt);
+            
+            if (empty($response)) {
+                return $this->getFallbackIdeas($topic, $count);
+            }
+            
+            $ideas = $this->parseIdeas($response);
+            
+            if (empty($ideas)) {
+                return $this->getFallbackIdeas($topic, $count);
+            }
+            
+            return array_slice($ideas, 0, $count);
+            
+        } catch (\Throwable $e) {
+            error_log('Error generating creative ideas: ' . $e->getMessage());
+            return $this->getFallbackIdeas($topic, $count);
+        }
+    }
+
+    /**
+     * Generate options from document (placeholder for future implementation)
      */
     public function generateOptionsFromDocument(
         string $documentPath, 
         string $optionType = 'chapter', 
         array $options = []
     ): array {
-        // Parse document
-        $documentContent = $this->documentParser->parse($documentPath);
-        
-        // Analyze document structure
-        $structure = $this->structureAnalyzer->analyze($documentContent);
-        
-        // Generate options based on structure type
-        switch ($optionType) {
-            case 'chapter':
-                return $this->generateChapterOptions($structure, $options);
-            case 'section':
-                return $this->generateSectionOptions($structure, $options);
-            case 'subsection':
-                return $this->generateSubsectionOptions($structure, $options);
-            case 'paragraph':
-                return $this->generateParagraphOptions($structure, $options);
-            case 'custom':
-                return $this->generateCustomStructureOptions($structure, $options);
-            default:
-                return $this->generateGenericOptions($structure, $options);
-        }
+        // For now, return empty array or use a simple prompt
+        // This will be implemented when document parsing is fully set up
+        return [
+            [
+                'id' => 'doc1',
+                'type' => 'document',
+                'title' => 'Document option',
+                'content' => 'Document parsing not fully implemented yet.',
+                'summary' => 'Coming soon...',
+                'metadata' => ['document' => $documentPath]
+            ]
+        ];
     }
 
-    /**
-     * Generate chapter-based options from document
-     */
-    private function generateChapterOptions(array $structure, array $options = []): array {
-        $chapters = $structure['chapters'] ?? [];
-        $result = [];
+    // ============ PARSING METHODS ============
 
-        foreach ($chapters as $index => $chapter) {
-            $option = [
-                'id' => $options['prefix'] ?? 'ch' . ($index + 1),
-                'type' => 'chapter',
-                'title' => $chapter['title'] ?? "Chapter " . ($index + 1),
-                'content' => $chapter['content'] ?? '',
-                'summary' => $this->generateOptionSummary($chapter['content'] ?? ''),
-                'sections' => $this->extractSections($chapter),
-                'metadata' => [
-                    'position' => $index + 1,
-                    'page' => $chapter['page'] ?? null,
-                    'length' => str_word_count($chapter['content'] ?? '')
-                ]
-            ];
+    private function parseOptions(string $response): array
+    {
+        $options = [];
+        $lines = explode("\n", $response);
+        $currentOption = null;
 
-            // Add AI-generated insights
-            if ($options['with_insights'] ?? false) {
-                $option['insights'] = $this->generateInsights($chapter['content'] ?? '');
-            }
-
-            $result[] = $option;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Generate section-based options from document
-     */
-    private function generateSectionOptions(array $structure, array $options = []): array {
-        $sections = $this->extractAllSections($structure);
-        $result = [];
-
-        foreach ($sections as $index => $section) {
-            $option = [
-                'id' => $options['prefix'] ?? 'sec' . ($index + 1),
-                'type' => 'section',
-                'title' => $section['title'] ?? "Section " . ($index + 1),
-                'parent_chapter' => $section['parent_chapter'] ?? null,
-                'content' => $section['content'] ?? '',
-                'summary' => $this->generateOptionSummary($section['content'] ?? ''),
-                'subsections' => $section['subsections'] ?? [],
-                'metadata' => [
-                    'position' => $index + 1,
-                    'level' => $section['level'] ?? 1,
-                    'page' => $section['page'] ?? null
-                ]
-            ];
-
-            // Add key concepts if requested
-            if ($options['extract_concepts'] ?? false) {
-                $option['key_concepts'] = $this->extractKeyConcepts($section['content'] ?? '');
-            }
-
-            $result[] = $option;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Generate subsection-based options
-     */
-    private function generateSubsectionOptions(array $structure, array $options = []): array {
-        $subsections = $this->extractAllSubsections($structure);
-        $result = [];
-
-        foreach ($subsections as $index => $subsection) {
-            $option = [
-                'id' => $options['prefix'] ?? 'sub' . ($index + 1),
-                'type' => 'subsection',
-                'title' => $subsection['title'] ?? "Subsection " . ($index + 1),
-                'parent_section' => $subsection['parent_section'] ?? null,
-                'parent_chapter' => $subsection['parent_chapter'] ?? null,
-                'content' => $subsection['content'] ?? '',
-                'summary' => $this->generateOptionSummary($subsection['content'] ?? ''),
-                'metadata' => [
-                    'position' => $index + 1,
-                    'level' => $subsection['level'] ?? 2,
-                    'page' => $subsection['page'] ?? null
-                ]
-            ];
-
-            // Add topic tags if requested
-            if ($options['add_tags'] ?? false) {
-                $option['tags'] = $this->extractTags($subsection['content'] ?? '');
-            }
-
-            $result[] = $option;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Generate paragraph-level options
-     */
-    private function generateParagraphOptions(array $structure, array $options = []): array {
-        $paragraphs = $this->extractAllParagraphs($structure);
-        $result = [];
-
-        // Group paragraphs by section/chapter context
-        $groupedParagraphs = $this->groupParagraphsByContext($paragraphs);
-
-        foreach ($groupedParagraphs as $index => $group) {
-            $option = [
-                'id' => $options['prefix'] ?? 'p' . ($index + 1),
-                'type' => 'paragraph_group',
-                'title' => $this->generateParagraphGroupTitle($group),
-                'content' => $group['text'] ?? '',
-                'context' => $group['context'] ?? [],
-                'summary' => $this->generateOptionSummary($group['text'] ?? ''),
-                'paragraphs' => $group['individual_paragraphs'] ?? [],
-                'metadata' => [
-                    'position' => $index + 1,
-                    'paragraph_count' => count($group['individual_paragraphs'] ?? []),
-                    'page_range' => $group['page_range'] ?? null
-                ]
-            ];
-
-            // Add sentiment analysis if requested
-            if ($options['analyze_sentiment'] ?? false) {
-                $option['sentiment'] = $this->analyzeTextSentiment($group['text'] ?? '');
-            }
-
-            $result[] = $option;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Generate custom structure options
-     */
-    private function generateCustomStructureOptions(array $structure, array $options = []): array {
-        $customType = $options['custom_type'] ?? 'segment';
-        $segments = $this->segmentDocumentByCustomRules($structure, $options);
-
-        return array_map(function($segment, $index) use ($customType, $options) {
-            return [
-                'id' => $options['prefix'] ?? $customType[0] . ($index + 1),
-                'type' => $customType,
-                'title' => $this->generateCustomTitle($segment, $index, $options),
-                'content' => $segment['content'] ?? '',
-                'summary' => $this->generateOptionSummary($segment['content'] ?? ''),
-                'custom_metadata' => $segment['metadata'] ?? [],
-                'metadata' => [
-                    'position' => $index + 1,
-                    'segment_size' => str_word_count($segment['content'] ?? '')
-                ]
-            ];
-        }, $segments, array_keys($segments));
-    }
-
-    /**
-     * Generate generic options (fallback)
-     */
-    private function generateGenericOptions(array $structure, array $options = []): array {
-        $content = $structure['full_text'] ?? '';
-        $segments = $this->splitIntoCoherentSegments($content, $options);
-
-        return array_map(function($segment, $index) use ($options) {
-            return [
-                'id' => $options['prefix'] ?? 'opt' . ($index + 1),
-                'type' => 'generic',
-                'title' => $this->generateGenericTitle($segment, $index),
-                'content' => $segment,
-                'summary' => $this->generateOptionSummary($segment),
-                'metadata' => [
-                    'position' => $index + 1,
-                    'length' => str_word_count($segment)
-                ]
-            ];
-        }, $segments, array_keys($segments));
-    }
-
-    /**
-     * Generate AI-powered summary for option content
-     */
-    private function generateOptionSummary(string $content): string {
-        $prompt = $this->promptRepository->getPrompt('option_summary', [
-            'content' => $content
-        ]);
-
-        return $this->aiClient->complete($prompt);
-    }
-
-    /**
-     * Generate AI insights for content
-     */
-    private function generateInsights(string $content): array {
-        $prompt = $this->promptRepository->getPrompt('content_insights', [
-            'content' => $content
-        ]);
-
-        $response = $this->aiClient->complete($prompt);
-        return json_decode($response, true) ?? [];
-    }
-
-    /**
-     * Extract key concepts from content
-     */
-    private function extractKeyConcepts(string $content): array {
-        $prompt = $this->promptRepository->getPrompt('extract_concepts', [
-            'content' => $content
-        ]);
-
-        $response = $this->aiClient->complete($prompt);
-        return $this->parseConcepts($response);
-    }
-
-    /**
-     * Extract tags from content
-     */
-    private function extractTags(string $content): array {
-        $prompt = $this->promptRepository->getPrompt('extract_tags', [
-            'content' => $content
-        ]);
-
-        $response = $this->aiClient->complete($prompt);
-        return $this->parseTags($response);
-    }
-
-    /**
-     * Analyze text sentiment
-     */
-    private function analyzeTextSentiment(string $text): array {
-        $prompt = $this->promptRepository->getPrompt('sentiment_analysis', [
-            'text' => $text
-        ]);
-
-        $response = $this->aiClient->complete($prompt);
-        return json_decode($response, true) ?? ['sentiment' => 'neutral'];
-    }
-
-    // Helper methods for document structure extraction
-    private function extractSections(array $chapter): array {
-        return $chapter['sections'] ?? [];
-    }
-
-    private function extractAllSections(array $structure): array {
-        $sections = [];
-        foreach ($structure['chapters'] ?? [] as $chapter) {
-            foreach ($chapter['sections'] ?? [] as $section) {
-                $section['parent_chapter'] = $chapter['title'] ?? null;
-                $sections[] = $section;
-            }
-        }
-        return $sections;
-    }
-
-    private function extractAllSubsections(array $structure): array {
-        $subsections = [];
-        foreach ($this->extractAllSections($structure) as $section) {
-            foreach ($section['subsections'] ?? [] as $subsection) {
-                $subsection['parent_section'] = $section['title'] ?? null;
-                $subsection['parent_chapter'] = $section['parent_chapter'] ?? null;
-                $subsections[] = $subsection;
-            }
-        }
-        return $subsections;
-    }
-
-    private function extractAllParagraphs(array $structure): array {
-        $paragraphs = [];
-        // Recursively extract paragraphs from all levels
-        $this->recursiveExtractParagraphs($structure, $paragraphs);
-        return $paragraphs;
-    }
-
-    private function recursiveExtractParagraphs(array $node, array &$paragraphs, array $context = []) {
-        if (isset($node['paragraphs'])) {
-            foreach ($node['paragraphs'] as $paragraph) {
-                $paragraph['context'] = $context;
-                $paragraphs[] = $paragraph;
-            }
-        }
-
-        // Check for children nodes
-        foreach (['chapters', 'sections', 'subsections'] as $childKey) {
-            if (isset($node[$childKey])) {
-                foreach ($node[$childKey] as $child) {
-                    $newContext = array_merge($context, [
-                        'parent_type' => $childKey,
-                        'parent_title' => $child['title'] ?? null
-                    ]);
-                    $this->recursiveExtractParagraphs($child, $paragraphs, $newContext);
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (preg_match('/^[0-9]+[\.\)]\s*(.+)/', $line, $matches)) {
+                if ($currentOption) {
+                    $options[] = $currentOption;
                 }
+                $currentOption = trim($matches[1]);
+            } elseif ($currentOption && preg_match('/^[-*•]\s*(.+)/', $line, $matches)) {
+                $currentOption .= ' - ' . trim($matches[1]);
+            } elseif ($line && $currentOption) {
+                $currentOption .= ' ' . $line;
             }
         }
-    }
 
-    private function groupParagraphsByContext(array $paragraphs): array {
-        $groups = [];
-        $currentGroup = [];
-        $currentContext = null;
-
-        foreach ($paragraphs as $paragraph) {
-            $context = $this->getParagraphContext($paragraph);
-            if ($context !== $currentContext) {
-                if (!empty($currentGroup)) {
-                    $groups[] = [
-                        'text' => implode("\n\n", $currentGroup),
-                        'context' => $currentContext,
-                        'individual_paragraphs' => $currentGroup,
-                        'page_range' => $this->getPageRange($currentGroup)
-                    ];
-                }
-                $currentGroup = [];
-                $currentContext = $context;
-            }
-            $currentGroup[] = $paragraph['text'] ?? '';
+        if ($currentOption) {
+            $options[] = $currentOption;
         }
 
-        // Add last group
-        if (!empty($currentGroup)) {
-            $groups[] = [
-                'text' => implode("\n\n", $currentGroup),
-                'context' => $currentContext,
-                'individual_paragraphs' => $currentGroup,
-                'page_range' => $this->getPageRange($currentGroup)
-            ];
-        }
-
-        return $groups;
+        return $options;
     }
 
-    private function getParagraphContext(array $paragraph): string {
-        return implode(' > ', array_map(function($ctx) {
-            return $ctx['parent_title'] ?? 'unknown';
-        }, $paragraph['context'] ?? []));
-    }
-
-    private function getPageRange(array $paragraphs): ?array {
-        // Extract page numbers from paragraphs if available
-        $pages = [];
-        foreach ($paragraphs as $p) {
-            if (isset($p['page'])) {
-                $pages[] = $p['page'];
-            }
-        }
-        return !empty($pages) ? [min($pages), max($pages)] : null;
-    }
-
-    private function splitIntoCoherentSegments(string $content, array $options): array {
-        $segmentSize = $options['segment_size'] ?? 3; // number of paragraphs
-        $paragraphs = preg_split('/\n\s*\n/', $content);
-        $segments = [];
-        
-        for ($i = 0; $i < count($paragraphs); $i += $segmentSize) {
-            $segment = implode("\n\n", array_slice($paragraphs, $i, $segmentSize));
-            if (!empty(trim($segment))) {
-                $segments[] = $segment;
-            }
-        }
-        
-        return $segments;
-    }
-
-    private function generateParagraphGroupTitle(array $group): string {
-        $firstParagraph = explode("\n", $group['text'] ?? '')[0] ?? '';
-        $title = substr($firstParagraph, 0, 50);
-        return strlen($title) < strlen($firstParagraph) ? $title . '...' : $title;
-    }
-
-    private function generateCustomTitle(array $segment, int $index, array $options): string {
-        $title = $segment['metadata']['title'] ?? null;
-        if ($title) {
-            return $title;
-        }
-        return ($options['custom_type'] ?? 'Segment') . ' ' . ($index + 1);
-    }
-
-    private function generateGenericTitle(string $segment, int $index): string {
-        $firstLine = explode("\n", $segment)[0] ?? '';
-        $title = substr($firstLine, 0, 60);
-        return strlen($title) < strlen($firstLine) ? $title . '...' : $title;
-    }
-
-    private function parseConcepts(string $response): array {
-        $concepts = [];
+    private function parseIdeas(string $response): array
+    {
+        $ideas = [];
         $lines = explode("\n", $response);
         foreach ($lines as $line) {
             if (preg_match('/^[-*•]\s*(.+)/', trim($line), $matches)) {
-                $concepts[] = trim($matches[1]);
+                $ideas[] = trim($matches[1]);
             }
         }
-        return $concepts;
+        return $ideas;
     }
 
-    private function parseTags(string $response): array {
-        $tags = [];
-        $lines = explode("\n", $response);
-        foreach ($lines as $line) {
-            if (preg_match('/^[-*•]\s*(.+)/', trim($line), $matches)) {
-                $tags[] = trim($matches[1]);
-            }
-        }
-        return $tags;
+    // ============ FALLBACK METHODS ============
+
+    private function getFallbackOptions(array $context, int $count): array
+    {
+        $title = $context['title'] ?? 'the topic';
+        $options = [];
+        
+        $suggestions = [
+            "Develop a comprehensive plan for '$title'",
+            "Research best practices for '$title'",
+            "Engage stakeholders in discussions about '$title'",
+            "Create a roadmap for implementing '$title'",
+            "Analyze the costs and benefits of '$title'",
+            "Develop metrics to measure success for '$title'",
+            "Create a timeline for '$title' implementation",
+            "Identify key challenges and solutions for '$title'"
+        ];
+        
+        return array_slice($suggestions, 0, $count);
     }
 
-    private function segmentDocumentByCustomRules(array $structure, array $options): array {
-        // Implement custom segmentation logic based on provided rules
-        $rules = $options['segmentation_rules'] ?? [];
-        $segments = [];
-        
-        // Default: split by headings if available
-        if (isset($structure['headings'])) {
-            foreach ($structure['headings'] as $heading) {
-                $segments[] = [
-                    'content' => $heading['content'] ?? '',
-                    'metadata' => [
-                        'title' => $heading['title'] ?? null,
-                        'level' => $heading['level'] ?? null
-                    ]
-                ];
-            }
-        }
-        
-        return $segments;
+    private function getFallbackDecisionOptions(string $problem): array
+    {
+        return [
+            [
+                'option' => 'Option A: Full implementation',
+                'pros' => ['Maximum impact', 'Long-term benefits'],
+                'cons' => ['Higher cost', 'More resources needed']
+            ],
+            [
+                'option' => 'Option B: Phased approach',
+                'pros' => ['Manageable risk', 'Can adjust based on feedback'],
+                'cons' => ['Takes longer', 'May lose momentum']
+            ],
+            [
+                'option' => 'Option C: Pilot program',
+                'pros' => ['Low risk', 'Test before full commitment'],
+                'cons' => ['Limited impact', 'May not scale well']
+            ]
+        ];
+    }
+
+    private function getFallbackIdeas(string $topic, int $count): array
+    {
+        $ideas = [
+            "Innovative approach to '$topic'",
+            "Community-driven solution for '$topic'",
+            "Technology-enabled transformation of '$topic'",
+            "Sustainable model for '$topic'",
+            "Collaborative framework for '$topic'",
+            "Data-driven strategy for '$topic'",
+            "User-centered design for '$topic'",
+            "Scalable solution for '$topic'"
+        ];
+        return array_slice($ideas, 0, $count);
     }
 }

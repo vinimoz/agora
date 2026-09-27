@@ -188,7 +188,13 @@ class LotteryService
         if ($run === null) {
             throw new Exception('Lottery run not found');
         }
-
+    $this->logger->warning('validateLottery - find result', [
+        'runId' => $runId,
+        'type' => gettype($run),
+        'is_object' => is_object($run),
+        'class' => is_object($run) ? get_class($run) : 'not_object'
+    ]);
+    
         if (!$run->isCompleted()) {
             throw new Exception('Only completed lottery runs can be validated');
         }
@@ -204,7 +210,7 @@ class LotteryService
         $run->setMetadata($metadata);
         $this->lotteryRunMapper->update($run);
 
-        $this->logger->info('Lottery validated', [
+        $this->logger->warning('Lottery validated', [
             'run_id' => $runId,
             'validated_by' => $this->userSession->getCurrentUserId(),
         ]);

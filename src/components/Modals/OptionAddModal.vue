@@ -144,14 +144,15 @@
           <div class="preview-column">
             <h4>{{ t('agora', 'Preview') }}</h4>
             <div class="preview-card">
-              <OptionCard
-                :option="previewOption"
-                :inquiry-id="inquiryId"
+               <ItemCard
+                :item="previewOption"
+                :parent-id="inquiryId"
+	        :target-type="'option'"
                 :show-action="false"
                 :compact="false"
                 prevent-click
-              />
-            </div>
+		/> 
+	    </div> 
 
             <!-- Help text -->
             <div v-if="optionTypeHelp" class="help-text">
@@ -248,7 +249,7 @@ import {
 
 // Import components
 import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
-import OptionCard from '../Options/OptionCard.vue'
+import ItemCard from '../FamilyLayouts/ItemCard.vue'
 
 // Props
 const props = defineProps<{

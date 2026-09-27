@@ -91,6 +91,14 @@ const participation = {
     })
   },
 
+  resetlLottery(targetType: string, targetId: number): Promise<AxiosResponse> {
+    return httpInstance.request({
+      method: 'POST',
+      url: `participation/${targetType}/${targetId}/lottery/reset`,
+      cancelToken: cancelTokenHandlerObject[this.resetLottery.name].handleRequestCancellation().token,
+    })
+  },
+
   cancelLottery(targetType: string, targetId: number, reason: string): Promise<AxiosResponse> {
     return httpInstance.request({
       method: 'POST',

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Migration;
 
-use Doctrine\DBAL\Types\Type;
+use OCP\DB\Types;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryFamily;
@@ -29,7 +29,7 @@ use OCA\Agora\Db\Support;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
-use OCP\DB\Types;
+use OCP\IDBConnection;
 
 /**
  * Migration from Agora version 1.7.0 to 1.7.1
@@ -42,6 +42,10 @@ class Version01070120260104120000 extends SimpleMigrationStep
     private ?IOutput $output = null;
     private bool $isMySQL = false;
 
+    public function __construct(
+	    private IDBConnection $connection,
+    ) {
+    }
     /**
      * @param IOutput $output
      * @param \Closure $schemaClosure
@@ -50,43 +54,41 @@ class Version01070120260104120000 extends SimpleMigrationStep
      */
     public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper
     {
-        $this->output = $output;
-        $this->schema = $schemaClosure();
-        
-        // Detect database platform
-        $platform = $this->schema->getDatabasePlatform();
-        $this->isMySQL = $platform instanceof MySQLPlatform;
+	    $this->output = $output;
+	    $this->schema = $schemaClosure();
 
-        $this->logInfo('Starting Agora 1.7.1 comprehensive schema fix');
-        $this->logInfo('Database platform: ' . ($this->isMySQL ? 'MySQL' : 'PostgreSQL'));
+	    // Detect database platform
+	    $platform = $this->schema->getDatabasePlatform();
+	    $this->isMySQL = $platform instanceof MySQLPlatform;
 
-        // 1. Fix index collisions first (before any table operations)
-        $this->fixIndexCollisions();
+	    $this->logInfo('Starting Agora 1.7.1 comprehensive schema fix');
+	    $this->logInfo('Database platform: ' . ($this->isMySQL ? 'MySQL' : 'PostgreSQL'));
 
-        // 2. Fix table name inconsistencies
-        $this->fixTableNamePrefixes();
+	    // 1. Fix index collisions first (before any table operations)
+	    $this->fixIndexCollisions();
 
-        // 3. Create any missing tables (with platform-aware JSON defaults)
-        $this->createMissingTables();
 
-        // 4. Add missing columns to existing tables
-        $this->addMissingColumns();
+	    // 3. Create any missing tables (with platform-aware JSON defaults)
+	    $this->createMissingTables();
 
-        // 5. Fix column type mismatches and JSON defaults
-        $this->fixColumnTypes();
+	    // 4. Add missing columns to existing tables
+	    $this->addMissingColumns();
 
-        // 6. Drop obsolete tables and columns
-        $this->dropObsoleteItems();
+	    // 5. Fix column type mismatches and JSON defaults
+	    $this->fixColumnTypes();
 
-        // 7. Create all indices (COMMON, OPTIONAL, UNIQUE)
-        $this->createAllIndices();
+	    // 6. Drop obsolete tables and columns
+	    $this->dropObsoleteItems();
 
-        // 8. Create foreign key constraints
-       //  $this->createForeignKeyConstraints();
+	    // 7. Create all indices (COMMON, OPTIONAL, UNIQUE)
+	    $this->createAllIndices();
+		
+	    // 8. Create foreign key constraints
+	     $this->createForeignKeyConstraints();
 
-        $this->logInfo('Agora 1.7.1 schema fix completed');
+	    $this->logInfo('Agora 1.7.1 schema fix completed');
 
-        return $this->schema;
+	    return $this->schema;
     }
 
     public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
@@ -94,7 +96,7 @@ class Version01070120260104120000 extends SimpleMigrationStep
 	    $this->output = $output;
 	    $this->logInfo('Post-migration: migrating allow_support boolean to support_feature');
 
-	    $tableName = 'oc_agora_inquiries';
+	    $tableName = 'agora_inquiries';
 
 	    try {
 		    // Vérifier si la colonne allow_support existe encore
@@ -154,7 +156,7 @@ class Version01070120260104120000 extends SimpleMigrationStep
 	    }
 
 	    // Also check oc_agora_preferences variant
-	    $ocTableName = 'oc_agora_preferences';
+	    $ocTableName = 'agora_preferences';
 	    if ($this->schema->hasTable($ocTableName)) {
 		    $table = $this->schema->getTable($ocTableName);
 		    if ($table->hasIndex($oldIndexName)) {
@@ -164,27 +166,6 @@ class Version01070120260104120000 extends SimpleMigrationStep
 		    if (!$table->hasIndex($newIndexName)) {
 			    $table->addUniqueIndex(['user_id'], $newIndexName);
 			    $this->logInfo("Added unique index '{$newIndexName}' to '{$ocTableName}'");
-		    }
-	    }
-    }
-
-    /**
-     * Fix table names that have 'oc_' prefix when they shouldn't
-     */
-    private function fixTableNamePrefixes(): void
-    {
-	    $prefixMap = [
-		    'oc_agora_inquiries' => 'agora_inquiries',
-		    'oc_agora_inq_type' => 'agora_inq_type',
-		    'oc_agora_inq_option_type' => 'agora_inq_option_type',
-		    'oc_agora_support' => 'agora_support',
-	    ];
-
-	    foreach ($prefixMap as $oldName => $newName) {
-		    if ($this->schema->hasTable($oldName) && !$this->schema->hasTable($newName)) {
-			    $this->logInfo("Renaming table '{$oldName}' to '{$newName}'");
-			    $table = $this->schema->getTable($oldName);
-			    $table->setName($newName);
 		    }
 	    }
     }
@@ -368,7 +349,7 @@ class Version01070120260104120000 extends SimpleMigrationStep
 	    if ($this->schema->hasTable(Option::TABLE)) {
 		    $table = $this->schema->getTable(Option::TABLE);
 		    $this->addColumnIfMissing($table, 'target_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
-		    $this->addColumnIfMissing($table, 'publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
+		    $this->addColumnIfMissing($table, 'access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
 		    $this->addColumnIfMissing($table, 'updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
 		    $this->addColumnIfMissing($table, 'archived', Types::BIGINT, ['notnull' => false, 'default' => 0, 'unsigned' => true, 'length' => 20]);
 		    $this->addColumnIfMissing($table, 'family', Types::STRING, ['notnull' => false, 'default' => 'debate', 'length' => 64]);
@@ -593,14 +574,14 @@ class Version01070120260104120000 extends SimpleMigrationStep
 			    'inq_owner_deleted' => ['owner', 'deleted'],
 			    'inq_type_family' => ['type', 'family'],
 			    'inq_status_created' => ['inquiry_status', 'created'],
-			    'inq_pub_stat_owner' => ['publication_status', 'owner'],
+			    'inq_access_owner' => ['access', 'owner'],
 			    'inq_expire_status' => ['expire', 'inquiry_status'],
 		    ],
 		    'oc_agora_inquiries' => [
 			    'inq_owner_deleted' => ['owner', 'deleted'],
 			    'inq_type_family' => ['type', 'family'],
 			    'inq_status_created' => ['inquiry_status', 'created'],
-			    'inq_pub_stat_owner' => ['publication_status', 'owner'],
+			    'inq_access_owner' => ['access', 'owner'],
 			    'inq_expire_status' => ['expire', 'inquiry_status'],
 		    ],
 		    Option::TABLE => [
@@ -653,64 +634,60 @@ class Version01070120260104120000 extends SimpleMigrationStep
     /**
      * Create foreign key constraints defined in TableSchema::FK_INDICES
      */
-    private function createForeignKeyConstraints(): void
-    {
-	    $fkIndices = [
-		    Inquiry::TABLE => [
-			    'agora_log' => ['inquiry_id', 'CASCADE'],
-			    'agora_subscription' => ['inquiry_id', 'CASCADE'],
-			    'agora_support' => ['inquiry_id', 'CASCADE'],
-			    'agora_watch' => ['inquiry_id', 'CASCADE'],
-			    InquiryGroup::RELATION_TABLE => ['inquiry_id', 'CASCADE'],
-			    'agora_inquiry_misc' => ['inquiry_id', 'CASCADE'],
-			    'agora_inquiry_link' => ['inquiry_id', 'CASCADE'],
-			    'agora_comment' => ['inquiry_id', 'CASCADE'],
-			    'agora_attachment' => ['inquiry_id', 'CASCADE'],
-			    'agora_quorums' => ['inquiry_id', 'CASCADE'],
-		    ],
-		    InquiryGroup::TABLE => [
-			    'agora_inquiry_group_misc' => ['inquiry_group_id', 'CASCADE'],
-			    InquiryGroup::RELATION_TABLE => ['group_id', 'CASCADE'],
-		    ],
-		    Option::TABLE => [
-			    'agora_option_misc' => ['option_id', 'CASCADE'],
-		    ],
-	    ];
 
-	    foreach ($fkIndices as $parentTable => $children) {
-		    if (!$this->schema->hasTable($parentTable)) {
-			    continue;
-		    }
+private function createForeignKeyConstraints(): void
+{
+    $fkIndices = [
+        Inquiry::TABLE => [
+            'agora_log' => ['inquiry_id', 'CASCADE'],
+            // ...
+        ],
+        // ...
+    ];
 
-		    foreach ($children as $childTable => [$column, $onDelete]) {
-			    if (!$this->schema->hasTable($childTable)) {
-				    continue;
-			    }
+    foreach ($fkIndices as $parentTable => $children) {
+        // Resolve the PARENT table object (this gives you the real, prefixed name)
+        if (!$this->schema->hasTable($parentTable)) {
+            $this->logInfo("Parent table {$parentTable} not found, skipping");
+            continue;
+        }
+        $parentTableObj = $this->schema->getTable($parentTable);
 
-			    $fkName = 'fk_' . str_replace('agora_', '', $parentTable) . '_' . str_replace('agora_', '', $childTable);
+        foreach ($children as $childTable => [$column, $onDelete]) {
+            if (!$this->schema->hasTable($childTable)) {
+                continue;
+            }
+            $childTableObj = $this->schema->getTable($childTable);
 
-			    $childTableObj = $this->schema->getTable($childTable);
-			    $fkExists = false;
-			    foreach ($childTableObj->getForeignKeys() as $fk) {
-				    if ($fk->getForeignTableName() === $parentTable) {
-					    $fkExists = true;
-					    break;
-				    }
-			    }
+            // Pass the parent TABLE OBJECT, not the string
+            $fkName = 'fk_' . str_replace('agora_', '', $parentTableObj->getName()) 
+                    . '_' . str_replace('agora_', '', $childTableObj->getName());
+            // Truncate to 63 chars (MySQL identifier limit) — actually use a shorter scheme
+            $fkName = substr($fkName, 0, 63);
 
-			    if (!$fkExists && $childTableObj->hasColumn($column)) {
-				    $childTableObj->addForeignKeyConstraint(
-					    $parentTable,
-					    [$column],
-					    ['id'],
-					    ['onDelete' => $onDelete],
-					    $fkName
-				    );
-				    $this->logInfo("Added FK constraint '{$fkName}' from '{$childTable}' to '{$parentTable}'");
-			    }
-		    }
-	    }
+            $fkExists = false;
+            foreach ($childTableObj->getForeignKeys() as $fk) {
+                if ($fk->getName() === $fkName) {
+                    $fkExists = true;
+                    break;
+                }
+            }
+
+            if (!$fkExists && $childTableObj->hasColumn($column)) {
+                $childTableObj->addForeignKeyConstraint(
+                    $parentTableObj,   // ← TABLE OBJECT, not string
+                    [$column],
+                    ['id'],
+                    ['onDelete' => $onDelete],
+                    $fkName
+                );
+                $this->logInfo("Added FK constraint '{$fkName}' from '{$childTableObj->getName()}' to '{$parentTableObj->getName()}'");
+            }
+        }
     }
+}
+
+
 
     /**
      * Log info message

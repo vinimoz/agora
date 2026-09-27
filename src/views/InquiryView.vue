@@ -271,8 +271,7 @@ const handleGroupUpdate = (groups) => {
       {{ t('agora', 'You are viewing a public inquiry') }}
     </div>
 
-    <Collapsible v-if="inquiryStore.description" class="sticky-left" v-bind="collapsibleProps" />
-    <InquiryHeaderButtons />
+    <InquiryHeaderButtons /> 
     
     <!-- Action toolbar component - caché en mode public -->
     <InquiryActionToolbar

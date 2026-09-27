@@ -49,7 +49,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
     private bool $isPostgreSQL = false;
     private bool $isSQLite = false;
     private ?IDBConnection $connection = null;
-
+    
     private const S_PARTICIPATION = 'agora_participation';
     private const S_LOTTERY_RUN = 'agora_lottery_run';
     private const S_LOTTERY_SELECTION = 'agora_lottery_selection';
@@ -58,6 +58,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
     private const S_OPTIONS = 'agora_options';
     private const S_GROUP_RELATIONS = 'agora_group_relations';
     private const S_USER_RELATIONS = 'agora_user_relations';
+    private const S_TRENDING_SCORES = 'agora_trending_scores';
 
     public function __construct(
         private ?IDBConnection $dbConnection = null
@@ -76,7 +77,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
 
         $this->log('Agora 1.8.0 - Adding Sortition/Lottery and visibility systems');
         $this->log('Platform: ' . ($this->isMySQL ? 'MySQL' : ($this->isPostgreSQL ? 'PostgreSQL' : 'SQLite')));
-
+        
         // Create/modify tables
         $this->modifyInquiriesTable();
         $this->modifyInquiryGroupsTable();
@@ -88,6 +89,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
         $this->createParticipationTable();
         $this->createLotteryRunTable();
         $this->createLotterySelectionTable();
+	$this->createTrendingScoresTable();
 
         $this->log('Schema changes queued');
         return $this->schema;
@@ -209,6 +211,56 @@ class Version01080020260707120000 extends SimpleMigrationStep
     // ====================================================================
     // TABLE CREATION
     // ====================================================================
+
+    private function createTrendingScoresTable(): void
+{
+    if ($this->schema->hasTable(self::S_TRENDING_SCORES)) {
+        return;
+    }
+
+    $this->log("  Create: " . self::S_TRENDING_SCORES);
+    $table = $this->schema->createTable(self::S_TRENDING_SCORES);
+
+    $table->addColumn('id', Types::BIGINT, [
+        'autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20
+    ]);
+    $table->addColumn('inquiry_id', Types::BIGINT, [
+        'notnull' => true, 'unsigned' => true, 'length' => 20
+    ]);
+    $table->addColumn('option_id', Types::BIGINT, [
+        'notnull' => true, 'unsigned' => true, 'length' => 20,
+        'default' => 0
+    ]);
+    $table->addColumn('score', Types::FLOAT, [
+        'notnull' => true, 'default' => 0
+    ]);
+    $table->addColumn('updated_at', Types::BIGINT, [
+        'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
+    ]);
+
+    $table->setPrimaryKey(['id']);
+    $table->addUniqueIndex(
+        ['inquiry_id', 'option_id'],
+        'trending_inquiry_option_unique'
+    );
+    $table->addIndex(['inquiry_id'], 'trending_inquiry_idx');
+    $table->addIndex(['score'], 'trending_score_idx');
+    $table->addIndex(['updated_at'], 'trending_updated_idx');
+
+    // Add foreign key to inquiries table
+    if (!$this->isSQLite) {
+        $this->log("    ✓ Adding foreign key to inquiries");
+    }
+
+    $this->addIndexIfNotExists(self::S_TRENDING_SCORES, 'trending_inquiry_idx', ['inquiry_id']);
+    $this->addIndexIfNotExists(self::S_TRENDING_SCORES, 'trending_score_idx', ['score']);
+    $this->addIndexIfNotExists(self::S_TRENDING_SCORES, 'trending_updated_idx', ['updated_at']);
+
+    $this->log('  ✓ Indices added');
+
+    $this->log("  ✓ Table created");
+}
+
 
     private function createGroupRelationsTable(): void
     {

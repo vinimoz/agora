@@ -23,6 +23,7 @@ export interface GenericItemWithMiscFields extends GenericItem {
 
 /**
  * Get the title of an item (works for both Option and Inquiry)
+ * @param item
  */
 export function getItemTitle(item: GenericItem | null | undefined): string {
   if (!item) return ''
@@ -33,6 +34,7 @@ export function getItemTitle(item: GenericItem | null | undefined): string {
 
 /**
  * Get the status of an item (works for both Option and Inquiry)
+ * @param item
  */
 export function getItemStatus(item: GenericItem | null | undefined): string {
   if (!item) return 'draft'
@@ -50,6 +52,7 @@ export function getItemStatus(item: GenericItem | null | undefined): string {
 
 /**
  * Get the type of an item (works for both Option and Inquiry)
+ * @param item
  */
 export function getItemType(item: GenericItem | null | undefined): string {
   if (!item) return 'text'
@@ -60,6 +63,7 @@ export function getItemType(item: GenericItem | null | undefined): string {
 
 /**
  * Get the family of an item (works for both Option and Inquiry)
+ * @param item
  */
 export function getItemFamily(item: GenericItem | null | undefined): string {
   if (!item) return 'default'
@@ -69,6 +73,7 @@ export function getItemFamily(item: GenericItem | null | undefined): string {
 
 /**
  * Get the ID of an item (works for both Option and Inquiry)
+ * @param item
  */
 export function getItemId(item: GenericItem | null | undefined): number | null {
   if (!item) return null
@@ -81,6 +86,7 @@ export function getItemId(item: GenericItem | null | undefined): number | null {
 
 /**
  * Get force_layouts from an item's miscFields (works for both Option and Inquiry)
+ * @param item
  */
 export function getForceLayouts(item: GenericItemWithMiscFields | null | undefined): string[] {
   if (!item?.miscFields?.force_layouts) return []
@@ -107,6 +113,8 @@ export function getForceLayouts(item: GenericItemWithMiscFields | null | undefin
 
 /**
  * Add a layout to an item's force_layouts
+ * @param item
+ * @param layout
  */
 export function addLayoutToItem<T extends GenericItemWithMiscFields>(
   item: T,
@@ -128,6 +136,8 @@ export function addLayoutToItem<T extends GenericItemWithMiscFields>(
 
 /**
  * Remove a layout from an item's force_layouts
+ * @param item
+ * @param layout
  */
 export function removeLayoutFromItem<T extends GenericItemWithMiscFields>(
   item: T,
@@ -151,6 +161,8 @@ export function removeLayoutFromItem<T extends GenericItemWithMiscFields>(
 
 /**
  * Check if an item has a specific layout
+ * @param item
+ * @param layout
  */
 export function hasLayout(item: GenericItemWithMiscFields | null | undefined, layout: string): boolean {
   if (!item) return false
@@ -163,6 +175,9 @@ export function hasLayout(item: GenericItemWithMiscFields | null | undefined, la
  * Shows items that:
  * 1. Belong to the target family (if specified), OR
  * 2. Have force_layouts containing this layout
+ * @param items
+ * @param layout
+ * @param targetFamily
  */
 export function filterItemsByLayout<T extends GenericItemWithMiscFields>(
   items: T[],
@@ -186,6 +201,7 @@ export function filterItemsByLayout<T extends GenericItemWithMiscFields>(
 
 /**
  * Format a date to YYYY-MM-DD string
+ * @param date
  */
 export function formatDateToISO(date: Date | string | null): string | null {
   if (!date) return null
@@ -209,6 +225,9 @@ export function formatDateToISO(date: Date | string | null): string | null {
 
 /**
  * Set timeline dates on an item
+ * @param item
+ * @param startDate
+ * @param endDate
  */
 export function setTimelineDates<T extends GenericItemWithMiscFields>(
   item: T,
@@ -247,6 +266,7 @@ export function setTimelineDates<T extends GenericItemWithMiscFields>(
 
 /**
  * Get timeline start date from an item
+ * @param item
  */
 export function getTimelineStartDate(item: GenericItemWithMiscFields | null | undefined): Date | null {
   if (!item) return null
@@ -281,6 +301,7 @@ export function getTimelineStartDate(item: GenericItemWithMiscFields | null | un
 
 /**
  * Get timeline end date from an item
+ * @param item
  */
 export function getTimelineEndDate(item: GenericItemWithMiscFields | null | undefined): Date | null {
   if (!item) return null
@@ -311,6 +332,7 @@ export function getTimelineEndDate(item: GenericItemWithMiscFields | null | unde
 
 /**
  * Check if an item has timeline dates set
+ * @param item
  */
 export function hasTimelineDates(item: GenericItemWithMiscFields | null | undefined): boolean {
   return getTimelineStartDate(item) !== null
@@ -318,6 +340,9 @@ export function hasTimelineDates(item: GenericItemWithMiscFields | null | undefi
 
 /**
  * Add an item to timeline (sets dates and adds to force_layouts)
+ * @param item
+ * @param startDate
+ * @param endDate
  */
 export function addToTimeline<T extends GenericItemWithMiscFields>(
   item: T,
@@ -331,6 +356,7 @@ export function addToTimeline<T extends GenericItemWithMiscFields>(
 
 /**
  * Remove an item from timeline (removes timeline from force_layouts)
+ * @param item
  */
 export function removeFromTimeline<T extends GenericItemWithMiscFields>(item: T): T {
   return removeLayoutFromItem(item, 'timeline')
@@ -342,6 +368,8 @@ export function removeFromTimeline<T extends GenericItemWithMiscFields>(item: T)
 
 /**
  * Get the icon name for an item type
+ * @param type
+ * @param optionTypes
  */
 export function getItemTypeIcon(
   type: string | null | undefined,
@@ -383,6 +411,8 @@ export function getItemTypeIcon(
 
 /**
  * Get the icon component for an item type
+ * @param type
+ * @param optionTypes
  */
 export function getItemTypeIconComponent(
   type: string | null | undefined,
@@ -398,6 +428,8 @@ export function getItemTypeIconComponent(
 
 /**
  * Get available statuses for an item type
+ * @param itemType
+ * @param optionTypes
  */
 export function getAvailableStatuses(
   itemType: string | null | undefined,
@@ -422,6 +454,7 @@ export function getAvailableStatuses(
 
 /**
  * Get status color
+ * @param status
  */
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
@@ -443,6 +476,7 @@ export function getStatusColor(status: string): string {
 
 /**
  * Group items by family
+ * @param items
  */
 export function groupItemsByFamily<T extends GenericItem>(items: T[]): Record<string, T[]> {
   const grouped: Record<string, T[]> = {}
@@ -460,6 +494,7 @@ export function groupItemsByFamily<T extends GenericItem>(items: T[]): Record<st
 
 /**
  * Group items by status
+ * @param items
  */
 export function groupItemsByStatus<T extends GenericItem>(items: T[]): Record<string, T[]> {
   const grouped: Record<string, T[]> = {}
@@ -477,6 +512,7 @@ export function groupItemsByStatus<T extends GenericItem>(items: T[]): Record<st
 
 /**
  * Group items by type
+ * @param items
  */
 export function groupItemsByType<T extends GenericItem>(items: T[]): Record<string, T[]> {
   const grouped: Record<string, T[]> = {}
@@ -498,6 +534,8 @@ export function groupItemsByType<T extends GenericItem>(items: T[]): Record<stri
 
 /**
  * Search items by title
+ * @param items
+ * @param searchTerm
  */
 export function searchItemsByTitle<T extends GenericItem>(
   items: T[],
@@ -514,6 +552,8 @@ export function searchItemsByTitle<T extends GenericItem>(
 
 /**
  * Filter items by status
+ * @param items
+ * @param statuses
  */
 export function filterItemsByStatus<T extends GenericItem>(
   items: T[],
@@ -529,6 +569,8 @@ export function filterItemsByStatus<T extends GenericItem>(
 
 /**
  * Filter items by type
+ * @param items
+ * @param types
  */
 export function filterItemsByType<T extends GenericItem>(
   items: T[],

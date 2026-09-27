@@ -134,19 +134,23 @@
           <span v-if="participantCount > 0" class="stat">
             <component :is="InquiryOptionIcons.Users" :size="12" />
             {{ participantCount }} {{ t('agora', 'participants') }}
-          </span>
-        </div>
+	  </span>
+	</div>
       </div>
 
       <!-- Raised by info -->
       <div v-if="raisedByCount > 0" class="raised-by">
-        <component :is="InquiryOptionIcons.AccountMultiple" :size="12" />
-        <span>{{ t('agora', 'Raised by {count} participant{plural}', { 
-          count: raisedByCount, 
-          plural: raisedByCount > 1 ? 's' : '' 
-        }) }}</span>
+	      <component :is="InquiryOptionIcons.AccountMultiple" :size="12" />
+	      <span>
+		      {{ n(
+		      'agora',
+		      'Raised by %n participant',
+		      'Raised by %n participants',
+		      raisedByCount
+		      ) }}
+	      </span>
       </div>
-    </div>
+      </div>
 
     <!-- ======================================== -->
     <!-- ACTIONS -->

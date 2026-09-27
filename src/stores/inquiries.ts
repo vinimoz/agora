@@ -132,8 +132,7 @@ const inquiryCategories: InquiryCategoryList = {
       !inquiry.status.isArchived &&
       DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -30 &&
       inquiry.permissions.view &&
-      (inquiry.configuration.visibility === 'open' ||
-        inquiry.configuration.visibility === 'public' ||
+      (inquiry.configuration.visibility === 'everyone' ||
         inquiry.configuration.visibility === 'private'),
   },
   reject: {
@@ -214,8 +213,6 @@ const inquiryCategories: InquiryCategoryList = {
       !inquiry.status.isArchived &&
       inquiry.permissions.view &&
       (inquiry.configuration.visibility === 'everyone' ||
-        inquiry.configuration.visibility === 'moderate' ||
-        inquiry.configuration.visibility === 'public' ||
         inquiry.configuration.visibility === 'private'),
   },
   closed: {
@@ -266,7 +263,7 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore()
       return !!sessionStore.currentUser?.isModerator
     },
-    filterCondition: (inquiry: Inquiry) => inquiry.status.publicationStation === 'pending',
+    filterCondition: (inquiry: Inquiry) => inquiry.status.publicationStatus === 'pending',
   },
 }
 
@@ -384,7 +381,7 @@ export const useInquiriesStore = defineStore('inquiries', {
 
       // if we are in a group route, return the inquiries of the current group
       if (sessionStore.route.name === 'group') {
-        return inquiryGroupsStore.inquiriesInCurrendInquiryGroup
+	return inquiryGroupsStore.inquiriesInCurrentInquiryGroup
       }
 
       let filteredInquiries = state.inquiries
@@ -469,8 +466,8 @@ export const useInquiriesStore = defineStore('inquiries', {
       // Additional visibility control: exclude moderate access inquiries from regular lists
       // unless the user has specific moderation permissions
       filteredInquiries = filteredInquiries.filter((inquiry) => {
-        // Always exclude moderate visibility inquiries from regular lists
-        if (inquiry.configuration.visibility === 'moderate') {
+        // Always exclude moderate access inquiries from regular lists
+        if (inquiry.status.publicationStatus === 'pending') {
           // Only show moderate inquiries to users with moderation permissions
           const sessionStore = useSessionStore()
           return !!sessionStore.currentUser?.isModerator
@@ -594,7 +591,7 @@ export const useInquiriesStore = defineStore('inquiries', {
         } else if (action === 'submit_for_rejected') {
           inquiry.status.moderationStatus = 'rejected'
           inquiry.status.publicationStatus = 'draft'
-          inquiry.status.visibility = 'private'
+          inquiry.configuration.visibility = 'private'
           inquiry.status.inquiryStatus = 'rejected'
           inquiry.configuration.visibility = 'private'
         } else if (action === 'submit_for_moderate') {

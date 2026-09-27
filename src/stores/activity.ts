@@ -22,7 +22,7 @@ export const useActivityStore = defineStore('activity', {
 			const sessionStore = useSessionStore()
 			try {
 				const response = await ActivityAPI.getActivities(
-					sessionStore.currentPollId,
+					sessionStore.currentInquiryId,
 				)
 				this.activities = response.data.ocs.data
 			} catch (error) {
