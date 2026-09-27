@@ -84,6 +84,8 @@ OC.L10N.register(
     "Normal" : "Normal",
     "Year" : "Año",
     "Details" : "Detalles",
+    "Saved" : "Guardado",
+    "Not saved" : "No guardado",
     "Progress" : "Progreso",
     "Responses" : "Respuestas",
     "Feedback" : "Retroalimentación",

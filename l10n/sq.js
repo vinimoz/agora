@@ -76,6 +76,8 @@ OC.L10N.register(
     "Explore" : "Eksploroni",
     "Normal" : "Normal",
     "Details" : "Detajet",
+    "Saved" : "Ruajtur",
+    "Not saved" : "Nuk u ruajt",
     "Progress" : "Progresi",
     "Feedback" : "Përshtypje",
     "Reset" : "Rivendos",
