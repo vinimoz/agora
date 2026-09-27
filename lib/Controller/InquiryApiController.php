@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Agora\Controller;
 
 use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryTypeMapper;
 use OCA\Agora\Dto\InquiryDto;
 use OCA\Agora\Service\CommentService;
 use OCA\Agora\Service\AttachmentService;
@@ -49,6 +50,7 @@ class InquiryApiController extends BaseApiV2Controller
         private AttachmentService $attachmentService,
         private MailService $mailService,
         private AppSettings $appSettings,
+        private InquiryTypeMapper $inquiryTypeMapper,
         private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
@@ -151,9 +153,16 @@ class InquiryApiController extends BaseApiV2Controller
         ?int $categoryId = 0
     ): DataResponse {
         try {
+            $family = $this->inquiryTypeMapper->getFamilyFromType($type);
+            if ($family === '') {
+                throw new \InvalidArgumentException('Unknown inquiry type ' . $type);
+            }
+            // Created private, as a draft created from the app
             $dto = new InquiryDto(
                 $title,
                 $type,
+                $family,
+                Inquiry::ACCESS_PRIVATE,
                 $ownedGroup ?? '',
                 $description ?? '',
                 $parentId ?? 0,
@@ -216,6 +225,7 @@ class InquiryApiController extends BaseApiV2Controller
             $dto = new InquiryDto(
                 $title,
                 $type,
+                '',
                 '',
                 $ownedGroup ?? '',
                 $description ?? '',

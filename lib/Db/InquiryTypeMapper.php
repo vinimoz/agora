@@ -142,7 +142,7 @@ class InquiryTypeMapper extends QBMapper
 
         $result = $qb->executeQuery()->fetch();
 
-        return $result['family'];
+        return $result['family'] ?? '';
     }
 
     /**
