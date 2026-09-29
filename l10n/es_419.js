@@ -68,6 +68,8 @@ OC.L10N.register(
     "Explore" : "Explorar",
     "Normal" : "Normal",
     "Details" : "Detalles",
+    "Saved" : "Guardado",
+    "Not saved" : "No guardado",
     "Feedback" : "Retroalimentación",
     "Reset" : "Restaurar",
     "Rank" : "Rango",

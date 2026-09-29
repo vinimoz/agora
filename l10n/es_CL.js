@@ -75,6 +75,8 @@ OC.L10N.register(
     "Discussion" : "Comentarios",
     "Explore" : "Explorar",
     "Normal" : "Normal",
+    "Saved" : "Guardado",
+    "Not saved" : "No guardado",
     "Feedback" : "Retroalimentación",
     "Reset" : "Restablecer",
     "Rank" : "Rango",
