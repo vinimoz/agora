@@ -21,7 +21,7 @@
         
         <div class="header-meta">
           <span class="item-type-label">{{ itemTypeLabel }}</span>
-          <span class="timestamp">{{ formatDate(item.status.created) }}</span>
+          <span class="timestamp">{{ formatDate(raw?.status?.created ?? 0) }}</span>
         </div>
       </div>
     </div>
@@ -39,9 +39,9 @@
           <span class="percentage">{{ percentage }}%</span>
         </div>
         
-        <div v-if="allowComment && item.status.countComments" class="comments-stats">
+        <div v-if="allowComment && raw.status.countComments" class="comments-stats">
           <component :is="InquiryOptionIcons.Comment" :size="14" class="stat-icon" />
-          <span>{{ item.status.countComments }}</span>
+          <span>{{ raw.status.countComments }}</span>
         </div>
       </div>
 
@@ -55,7 +55,7 @@
 
     <!-- Vote input section -->
     <VoteInput
-      v-if="showVoteInput"
+      v-if="canVote"
       :engine-id="effectiveEngineId"
       :engine-config="engineConfig"
       :item="item"
@@ -108,17 +108,17 @@
     <div v-if="!compact && inquiryStore.permissions.edit" class="card-footer">
       <div class="owner-info">
         <NcAvatar
-          v-if="item.owner?.id"
-          :user="item.owner.id"
-          :display-name="item.owner.displayName"
+          v-if="raw.owner?.id"
+          :user="raw.owner.id"
+          :display-name="raw.owner.displayName"
           :size="20"
         />
-        <span class="owner-name">{{ item.owner?.displayName || t('agora', 'Unknown owner') }}</span>
+        <span class="owner-name">{{ raw.owner?.displayName || t('agora', 'Unknown owner') }}</span>
       </div>
     </div>
 
     <!-- Voted badge -->
-    <div v-if="hasUserVotedFor(item.id) && !showVoteInput" class="voted-badge">
+    <div v-if="hasUserVotedFor(item.id) && !canVote" class="voted-badge">
       <CheckCircle :size="16" />
       <span>{{ t('agora', 'Voted') }}</span>
     </div>
@@ -141,8 +141,12 @@ import {
   getItemTypeIconComponent,
   getItemTypeColor,
 } from '../../helpers/modules/InquiryHelper'
+import {
+  allowsComments,
+  hasSupportFeature as hasSupportFeatureHelper,
+} from '../../helpers/modules/InquiryOptionHelper'
 
-import type { Item, SupportValue } from '../../Types/index'
+import type { Item, SupportData, SupportValue } from '../../Types/index'
 
 const props = defineProps<{
   item: Item
@@ -166,6 +170,8 @@ const props = defineProps<{
   totalItems?: number
   hideResults?: boolean
 }>()
+
+const raw = computed(() => (props.item as any).raw ?? props.item)
 
 const emit = defineEmits<{
   vote: [item: Item, value: SupportValue]
@@ -207,12 +213,38 @@ const canRemoveVote = computed(() => {
 
 function handleRemoveVote() {
   const engine = props.effectiveEngineId
-  // Clear the value for this item
+  const id = props.item.id
+
   if (['binary', 'ternary', 'score', 'star'].includes(engine)) {
-    emit('update:score', props.item.id, null)
-  } else if (engine === 'majority_judgment') {
-    emit('changeGrade', props.item.id, null)
+    emit('update:score', id, null)
+    return
   }
+  if (engine === 'majority_judgment') {
+    emit('changeGrade', id, null)
+    return
+  }
+  if (engine === 'reaction') {
+    emit('update:reaction', id, null)
+    return
+  }
+  if (['ranking', 'condorcet', 'borda'].includes(engine)) {
+    emit('changeRank', id, null)
+    return
+  }
+  if (engine === 'quadratic') {
+    emit('update:quadratic', id, null)
+    return
+  }
+  if (engine === 'token_weighted') {
+    emit('update:token_weight', id, null)
+    return
+  }
+  if (['approval', 'phased_voting'].includes(engine)) {
+    // Toggling twice removes the selection for approval/phased
+    if (props.isSelected) emit('approvalToggle', id)
+    return
+  }
+  console.warn(`[VoteCard] handleRemoveVote: unsupported engine ${engine}`)
 }
 
 const itemIcon = computed(() => {
@@ -234,7 +266,7 @@ const allowComment = computed(() =>
 )
 
 // PublicController::addComment drops itemId, so no per-item comment on a public link.
-const canComment = computed(() => !!props.item.permissions?.comment
+const canComment = computed(() => !!raw.permissions?.comment
   && inquiryStore.permissions.comment
   && sessionStore.route.name !== 'publicInquiry')
 const showComment = ref(false)
@@ -279,8 +311,6 @@ function openSupportsModal() {
   emit('openSupportsModal', props.item.id)
 }
 
-const showVoteInput = computed(() => props.canVote)
-
 
 function handleVote(value: SupportValue) { emit('vote', props.item, value) }
 function handleApprovalToggle() { emit('approvalToggle', props.item.id) }
@@ -303,11 +333,15 @@ function handleUpdateTokenWeight(itemId: number, weight: number | null) { emit('
 
 function handleCardClick(event: MouseEvent) {
   const target = event.target as HTMLElement
-  if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats') || target.closest('.item-comment')) {
-    return
-  }
+  if (
+    target.closest('.vote-input-container') ||
+    target.closest('.voted-badge') ||
+    target.closest('.support-stats') ||
+    target.closest('.item-comment')
+  ) return
   emit('openSupportsModal', props.item.id)
 }
+
 </script>
 
 <style scoped lang="scss">

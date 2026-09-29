@@ -32,17 +32,19 @@ export const useParticipationStore = defineStore('participation', {
 		participationType: (state) => state.participation?.policyType || 'everyone',
 			isLottery: (state) => state.participation?.policyType === 'lottery',
 			lotteryConfig: (state) => state.participation?.policyConfig || {},
-    canCurrentUserParticipate: (state) => {
-        const inquiryStore = useInquiryStore()
-        const context = createInquiryContext(inquiryStore, {})
-        return canParticipateInInquiry(inquiryStore, state.participation)
-    },
+	canCurrentUserParticipate(): boolean {
+	const inquiryStore = useInquiryStore()
+	const ctx = createInquiryContext(inquiryStore)
+	if (!ctx) return false
+	return canParticipateInInquiry(ctx, this.participation)
+},
 
-    participationStatus: (state) => {
-        const inquiryStore = useInquiryStore()
-        const context = createInquiryContext(inquiryStore, {})
-        return getParticipationStatus(context, state.participation)
-    },
+participationStatus() {
+	const inquiryStore = useInquiryStore()
+	const ctx = createInquiryContext(inquiryStore)
+	if (!ctx) return { canParticipate: false }
+	return getParticipationStatus(ctx, this.participation)
+},
 	},
 
 		actions: {

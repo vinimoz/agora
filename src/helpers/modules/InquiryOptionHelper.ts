@@ -1780,18 +1780,19 @@ export function getRootOptionTypesForFamily(
  */
 export function getFamilyOptionsByTarget(
     options: Option[],
+    optionTypes: InquiryOptionType[],  // To be fixed ignored 
     familyKey: string,
     targetId: number
 ): Option[] {
-    // Filter options by:
-    // 1. targetId matches the inquiry ID
-    // 2. family matches the family key
-    return options.filter(option =>
-        option.targetId === targetId &&
-        option.family === familyKey
-    )
+    // Prefer the option's own `family` field when it's set, otherwise derive
+    // it from the option type definition.
+    return options.filter((option) => {
+        if (option.targetId !== targetId) return false
+        const optionFamily =
+            option.family || getOptionTypeFamily(option.type, optionTypes)
+        return optionFamily === familyKey
+    })
 }
-
 
 /**
  * Get all root options for a specific family and target ID
@@ -1807,8 +1808,13 @@ export function getFamilyRootOptionsByTarget(
     familyKey: string,
     targetId: number
 ): Option[] {
-    const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
-    return familyOptions.filter(opt => !opt.parentId || opt.parentId === 0)
+    const familyOptions = getFamilyOptionsByTarget(
+        options,
+        optionTypes,
+        familyKey,
+        targetId,
+    )
+    return familyOptions.filter((opt) => !opt.parentId || opt.parentId === 0)
 }
 
 /**
@@ -1827,8 +1833,13 @@ export function getFamilyChildOptionsByTarget(
     targetId: number,
     parentId: number
 ): Option[] {
-    const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
-    return familyOptions.filter(opt => opt.parentId === parentId)
+    const familyOptions = getFamilyOptionsByTarget(
+        options,
+        optionTypes,
+        familyKey,
+        targetId,
+    )
+    return familyOptions.filter((opt) => opt.parentId === parentId)
 }
 
 /**
@@ -1873,5 +1884,3 @@ export function isOptionInFamilyAndTarget(
     const optionFamily = getOptionTypeFamily(option.type, optionTypes)
     return optionFamily === familyKey && option.targetId === targetId
 }
-export {
-} from 'GenericItemHelpers.ts'

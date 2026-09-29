@@ -109,98 +109,98 @@
                 :inquiry-id="inquiryStore.id"
                 :action-key="currentActionKey"
                 :action-data="currentActionData"
-                @close="closeActionComponent"
-                @action-completed="handleActionCompleted"
-            />
+		@close="closeActionComponent"
+		@action-completed="handleActionCompleted"
+		/>
 
-            <!-- Dynamic Family Layout Component -->
+	    <!-- Dynamic Family Layout Component -->
 	    <component
-  :is="currentFamilyLayout"
-  ref="currentFamilyLayoutRef"
-  :items="unifiedItems"
-  :family="activeFamilyData"
-  :parent-id="inquiryStore.id"
-  :target-type="targetType"
-  :option-types="activeFamilyData.optionTypes"
-  :family-option-types="familyOptionTypes"
-  :family-key="activeFamilyData.key"
-  :is-readonly="isReadOnly"
-  :can-manage-vote="canManageVote"
-  :app-settings="appSettings"
-  @add-option="openAddOptionModal"
-  @open-detail="openOptionDetail"
-  @option-updated="handleOptionUpdated"
-  @option-deleted="handleOptionDeleted"
-  @configure-engine="handleConfigureEngine"
-  @add-to-vote="handleAddToVote"
-  @update-items="handleItemsUpdated"
-  @delete-item="handleItemDeleted"
-  @remove-from-timeline="handleRemoveFromTimeline"
-  @event-drop="handleEventDrop"
-  @date-select="handleDateSelect"
-  @event-receive="handleEventReceive"
-/>
- <!--           <component
-                :is="currentFamilyLayout"
-                ref="currentFamilyLayoutRef"
-                :options="familyOptions"
-                :family="activeFamilyData"
-                :inquiry-id="inquiryStore.id"
-                :option-types="activeFamilyData.optionTypes"
-                :family-option-types="familyOptionTypes"
-                :options-by-inquiry="optionsByInquiry"
-                :is-readonly="isReadOnly"
-                :is-official-user="inquiryStore.user?.isOfficial || false"
-                :can-add-options="showCreateOptionButtons"
-                :parent-id="inquiryStore.id"
-                :target-type="targetType"
-                :items="familyItems"
-                :app-settings="appSettings"
-                @add-option="openAddOptionModal"
-                @open-detail="openOptionDetail"
-                @option-updated="handleOptionUpdated"
-                @option-deleted="handleOptionDeleted"
-                @configure-engine="handleConfigureEngine"
-                @add-to-vote="handleAddToVote"
-                @option-family-changed="handleOptionFamilyChanged"
-                @update:items="handleItemsUpdated"
-                @delete-item="handleItemDeleted"
-                @remove-from-timeline="handleRemoveFromTimeline"
-                @event-drop="handleEventDrop"
-                @date-select="handleDateSelect"
-                @event-receive="handleEventReceive"
-                @item-family-changed="handleItemFamilyChanged"
-		/> -->
-        </div>
+			    :is="currentFamilyLayout"
+			    ref="currentFamilyLayoutRef"
+			    :items="unifiedItems"
+			    :family="activeFamilyData"
+			    :parent-id="inquiryStore.id"
+			    :target-type="targetType"
+			    :option-types="activeFamilyData.optionTypes"
+			    :family-option-types="familyOptionTypes"
+			    :family-key="activeFamilyData.key"
+			    :is-readonly="isReadOnly"
+			    :can-manage-vote="canManageVote"
+			    :app-settings="appSettings"
+			    @add-option="openAddOptionModal"
+			    @open-detail="openOptionDetail"
+			    @option-updated="handleOptionUpdated"
+			    @option-deleted="handleOptionDeleted"
+			    @configure-engine="handleConfigureEngine"
+			    @add-to-vote="handleAddToVote"
+			    @update-items="handleItemsUpdated"
+			    @delete-item="handleItemDeleted"
+			    @remove-from-timeline="handleRemoveFromTimeline"
+			    @event-drop="handleEventDrop"
+			    @date-select="handleDateSelect"
+			    @event-receive="handleEventReceive"
+			    />
+	    <!--           <component
+		    :is="currentFamilyLayout"
+		    ref="currentFamilyLayoutRef"
+		    :options="familyOptions"
+		    :family="activeFamilyData"
+		    :inquiry-id="inquiryStore.id"
+		    :option-types="activeFamilyData.optionTypes"
+		    :family-option-types="familyOptionTypes"
+		    :options-by-inquiry="optionsByInquiry"
+		    :is-readonly="isReadOnly"
+		    :is-official-user="inquiryStore.user?.isOfficial || false"
+		    :can-add-options="showCreateOptionButtons"
+		    :parent-id="inquiryStore.id"
+		    :target-type="targetType"
+		    :items="familyItems"
+		    :app-settings="appSettings"
+		    @add-option="openAddOptionModal"
+		    @open-detail="openOptionDetail"
+		    @option-updated="handleOptionUpdated"
+		    @option-deleted="handleOptionDeleted"
+		    @configure-engine="handleConfigureEngine"
+		    @add-to-vote="handleAddToVote"
+		    @option-family-changed="handleOptionFamilyChanged"
+		    @update:items="handleItemsUpdated"
+		    @delete-item="handleItemDeleted"
+		    @remove-from-timeline="handleRemoveFromTimeline"
+		    @event-drop="handleEventDrop"
+		    @date-select="handleDateSelect"
+		    @event-receive="handleEventReceive"
+		    @item-family-changed="handleItemFamilyChanged"
+		    /> -->
+	</div>
 
-        <!-- Empty State when no families -->
-        <div v-else-if="!hasVisibleFamilies && inquiryStore.type" class="no-families">
-            <component :is="InquiryOptionIcons.Options" :size="64" />
-            <h3>{{ t('agora', 'No option families available') }}</h3>
-            <p>{{ t('agora', 'This inquiry type doesn\'t support any option families') }}</p>
-        </div>
+	<!-- Empty State when no families -->
+	<div v-else-if="!hasVisibleFamilies && inquiryStore.type" class="no-families">
+		<component :is="InquiryOptionIcons.Options" :size="64" />
+		<h3>{{ t('agora', 'No option families available') }}</h3>
+		<p>{{ t('agora', 'This inquiry type doesn\'t support any option families') }}</p>
+	</div>
 
-        <!-- Modals -->
-        <OptionAddModal
-            v-if="showAddOptionModal && !isReadOnly && showCreateOptionButtons"
-            :inquiry-id="inquiryStore.id"
-            :option-type="selectedOptionTypeKey"
-            :parent-id="selectedParentId"
-            @close="closeAddOptionModal"
-            @created="handleOptionCreated"
-        />
-        <OptionDetailModal
-            v-if="showOptionDetail && !isReadOnly"
-            :option-id="selectedOptionId"
-            :inquiry-id="inquiryStore.id"
-            @close="closeOptionDetail"
-            @deleted="handleOptionDeleted"
-        />
+	<!-- Modals -->
+	<OptionAddModal
+			v-if="showAddOptionModal && !isReadOnly && showCreateOptionButtons"
+			:inquiry-id="inquiryStore.id"
+			:option-type="selectedOptionTypeKey"
+			:parent-id="selectedParentId"
+			@close="closeAddOptionModal"
+			@created="handleOptionCreated"
+			/>
+	<OptionDetailModal
+			v-if="showOptionDetail && !isReadOnly"
+			:option-id="selectedOptionId"
+			:inquiry-id="inquiryStore.id"
+			@close="closeOptionDetail"
+			@deleted="handleOptionDeleted"
+			/>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, markRaw, type Component } from 'vue'
+	import { ref, computed, onMounted, watch, markRaw, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -266,6 +266,7 @@ const route = useRoute()
 const activeFamily = ref<string>('')
 const showAddOptionModal = ref(false)
 const showOptionDetail = ref(false)
+const canManageVote = ref(true)
 const selectedOptionTypeKey = ref<string | null>(null)
 const selectedParentId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
@@ -323,18 +324,18 @@ const showCreateOptionButtons = computed(() => {
     const family = activeFamilyData.value
     if (!family) return false
     const allowCreation = true
-   
+
     // For vote family, additionally check if there's an active engine
     if (family.key === 'vote') {
-        return allowCreation && hasActiveEngineForActiveFamily.value && inquiryStore.permissions.edit
+	return allowCreation && hasActiveEngineForActiveFamily.value && inquiryStore.permissions.edit
     }
-    
+
     return allowCreation
 })
 
 const getActionIcon = (icon: string | Component): Component => {
     if (typeof icon === 'string') {
-        return InquiryOptionIcons[icon] || InquiryOptionIcons.File
+	return InquiryOptionIcons[icon] || InquiryOptionIcons.File
     }
     return icon
 }
@@ -343,46 +344,46 @@ const loadActionComponent = async (familyKey: string, actionKey: string): Promis
     const cacheKey = `${familyKey}-${actionKey}`
 
     if (modalComponentCache.has(cacheKey)) {
-        return modalComponentCache.get(cacheKey)!
+	return modalComponentCache.get(cacheKey)!
     }
 
     try {
-        let component: Component | null = null
+	let component: Component | null = null
 
-        // For vote family, always use ActionVue.vue
-        if (familyKey === 'vote') {
-            const module = await import(`./Actions/ActionVote.vue`)
-            component = markRaw(module.default || module)
-        }
-        // For structure family, use ActionStructure.vue
-        else if (familyKey === 'structure') {
-            const module = await import(`./Actions/ActionStructure.vue`)
-            component = markRaw(module.default || module)
-        }
-        else if (familyKey === 'proposal') {
-            const module = await import(`./Actions/ActionProposal.vue`)
-            component = markRaw(module.default || module)
-        }
-        // For other families, try to load individual action modals
-        else {
-            const componentName = `${actionKey
-                .split('_')
-                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-                .join('')}Modal`
+	// For vote family, always use ActionVue.vue
+	if (familyKey === 'vote') {
+	    const module = await import(`./Actions/ActionVote.vue`)
+	    component = markRaw(module.default || module)
+	}
+	// For structure family, use ActionStructure.vue
+	else if (familyKey === 'structure') {
+	    const module = await import(`./Actions/ActionStructure.vue`)
+	    component = markRaw(module.default || module)
+	}
+	else if (familyKey === 'proposal') {
+	    const module = await import(`./Actions/ActionProposal.vue`)
+	    component = markRaw(module.default || module)
+	}
+	// For other families, try to load individual action modals
+	else {
+	    const componentName = `${actionKey
+		.split('_')
+		.map(part => part.charAt(0).toUpperCase() + part.slice(1))
+		.join('')}Modal`
 
-            const module = await import(`./Actions/${componentName}.vue`)
-            component = markRaw(module.default || module)
-        }
+	    const module = await import(`./Actions/${componentName}.vue`)
+	    component = markRaw(module.default || module)
+	}
 
-        if (component) {
-            modalComponentCache.set(cacheKey, component)
-            return component
-        }
+	if (component) {
+	    modalComponentCache.set(cacheKey, component)
+	    return component
+	}
 
-        return null
+	return null
     } catch (error) {
-        console.error(`Failed to load action component for family "${familyKey}" action "${actionKey}":`, error)
-        return null
+	console.error(`Failed to load action component for family "${familyKey}" action "${actionKey}":`, error)
+	return null
     }
 }
 
@@ -390,23 +391,23 @@ const handleFamilyAction = async (action: Action) => {
     const familyKey = activeFamilyData.value?.key
 
     if (!familyKey) {
-        console.warn('No active family found')
-        return
+	console.warn('No active family found')
+	return
     }
 
     const actionComponent = await loadActionComponent(familyKey, action.key)
 
     if (actionComponent) {
-        currentActionComponent.value = actionComponent
-        currentActionKey.value = action.key
-        currentActionData.value = action.data || {}
-        showActionComponent.value = true
-        return
+	currentActionComponent.value = actionComponent
+	currentActionKey.value = action.key
+	currentActionData.value = action.data || {}
+	showActionComponent.value = true
+	return
     }
 
     if (action.handler) {
-        await action.handler(action.data)
-        return
+	await action.handler(action.data)
+	return
     }
 
     console.warn(`No handler or component defined for action: ${action.key}`)
@@ -421,7 +422,7 @@ const closeActionComponent = () => {
 
 const handleActionCompleted = (result: unknown) => {
     if (result?.refreshOptions) {
-        optionsStore.load(inquiryStore.id)
+	optionsStore.load(inquiryStore.id)
     }
     closeActionComponent()
 }
@@ -439,23 +440,23 @@ const familiesWithOptions = computed(() => {
     const inquiryTypeKey = inquiryStore.type
 
     if (!inquiryTypeKey || !allInquiryTypes.value?.length || !allOptionTypes.value?.length) {
-        return []
+	return []
     }
 
     const families = getFamiliesWithOptionTypes(
-        inquiryTypeKey,
-        allInquiryTypes.value,
-        allOptionTypes.value
+	inquiryTypeKey,
+	allInquiryTypes.value,
+	allOptionTypes.value
     )
 
     return families.map(family => ({
-        ...family,
-        name: t('agora', family.name),
-        label: t('agora', family.label),
-        description: t('agora', family.description),
-        layout_ux: family.layout_ux || getLayoutForFamily(family.key),
-        isOfficial: family.isOfficial || false,
-        features: family.features || {},
+	...family,
+	name: t('agora', family.name),
+	label: t('agora', family.label),
+	description: t('agora', family.description),
+	layout_ux: family.layout_ux || getLayoutForFamily(family.key),
+	isOfficial: family.isOfficial || false,
+	features: family.features || {},
     }))
 })
 
@@ -497,12 +498,12 @@ const familyItems = computed(() => {
     // For option-only layouts (cards, consensus, paired, tree) - use filtered options
     const optionOnlyFamilies = ['cards', 'consensus_flow:', 'paired', 'tree', 'tree']
     if (optionOnlyFamilies.includes(activeFamilyData.value.key)) {
-        return getFamilyOptionsByTarget(
-            optionsStore.options,
-            allOptionTypes.value,
-            activeFamilyData.value.key,
-            inquiryStore.id
-        )
+	return getFamilyOptionsByTarget(
+	    optionsStore.options,
+	    allOptionTypes.value,
+	    activeFamilyData.value.key,
+	    inquiryStore.id
+	)
     }
 
     // For generic layouts (vote, kanban, timeline) - use all options for this inquiry
@@ -517,9 +518,9 @@ const familyOptions = computed(() => {
     if (!activeFamilyData.value) return []
 
     return getFamilyOptionsByTarget(
-        optionsStore.options,
-        activeFamilyData.value.key,
-        inquiryStore.id
+	optionsStore.options,
+	activeFamilyData.value.key,
+	inquiryStore.id
     )
 })
 
@@ -545,8 +546,8 @@ const openAddOptionModal = (optionTypeKey: string, parentId?: number) => {
     if (!showCreateOptionButtons.value) return
 
     if (!optionTypeKey) {
-        console.error('Cannot open add option modal: optionTypeKey is undefined')
-        return
+	console.error('Cannot open add option modal: optionTypeKey is undefined')
+	return
     }
     selectedOptionTypeKey.value = optionTypeKey
     selectedParentId.value = parentId || null
@@ -577,11 +578,11 @@ const handleOptionCreated = async (newOption: Option) => {
 
     // Use helper to check if option belongs to vote family
     if (isOptionTypeInFamily(newOption.type, 'vote', allOptionTypes.value)) {
-        const activeEngine = engineStore.getCurrentEngine()
-        if (activeEngine && !activeEngine.target_ids.includes(newOption.id)) {
-            const newTargetIds = [...activeEngine.target_ids, newOption.id]
-            await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
-        }
+	const activeEngine = engineStore.getCurrentEngine()
+	if (activeEngine && !activeEngine.target_ids.includes(newOption.id)) {
+	    const newTargetIds = [...activeEngine.target_ids, newOption.id]
+	    await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
+	}
     }
 }
 
@@ -592,22 +593,22 @@ const handleOptionFamilyChanged = async ({ optionId, familyKey, action }: { opti
     const activeEngine = engineStore.getCurrentEngine()
 
     if (activeEngine && !activeEngine.target_ids.includes(optionId)) {
-        const newTargetIds = [...activeEngine.target_ids, optionId]
-        await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
+	const newTargetIds = [...activeEngine.target_ids, optionId]
+	await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
     }
 }
 
 const handleOptionUpdated = (updatedOption: Option) => {
     const index = optionsStore.options.findIndex(opt => opt.id === updatedOption.id)
     if (index >= 0) {
-        optionsStore.options[index] = updatedOption
+	optionsStore.options[index] = updatedOption
     }
 }
 
 const handleOptionDeleted = (deletedOptionId: number) => {
     const index = optionsStore.options.findIndex(opt => opt.id === deletedOptionId)
     if (index >= 0) {
-        optionsStore.options.splice(index, 1)
+	optionsStore.options.splice(index, 1)
     }
     closeOptionDetail()
 }
@@ -620,22 +621,22 @@ const handleItemsUpdated = () => {
 const handleItemDeleted = (itemId: number) => {
     const index = optionsStore.options.findIndex(opt => opt.id === itemId)
     if (index >= 0) {
-        optionsStore.options.splice(index, 1)
+	optionsStore.options.splice(index, 1)
     }
 }
 
 const handleRemoveFromTimeline = (itemId: number, updatedLayouts: string[]) => {
     const option = optionsStore.options.find(opt => opt.id === itemId)
     if (option) {
-        option.miscFields = {
-            ...option.miscFields,
-            force_layouts: updatedLayouts
-        }
-        // Update the option in the store
-        const index = optionsStore.options.findIndex(opt => opt.id === itemId)
-        if (index >= 0) {
-            optionsStore.options[index] = option
-        }
+	option.miscFields = {
+	    ...option.miscFields,
+	    force_layouts: updatedLayouts
+	}
+	// Update the option in the store
+	const index = optionsStore.options.findIndex(opt => opt.id === itemId)
+	if (index >= 0) {
+	    optionsStore.options[index] = option
+	}
     }
 }
 
@@ -662,14 +663,14 @@ const handleItemFamilyChanged = (payload: { itemId: number, familyKey: string, a
 // Initialize
 onMounted(() => {
     if (familiesWithOptions.value.length > 0) {
-        activeFamily.value = familiesWithOptions.value[0].key
+	activeFamily.value = familiesWithOptions.value[0].key
     }
 })
 
 watch(() => inquiryStore.type, () => {
     activeFamily.value = ''
     if (familiesWithOptions.value.length > 0) {
-        activeFamily.value = familiesWithOptions.value[0].key
+	activeFamily.value = familiesWithOptions.value[0].key
     }
 })
 
@@ -677,272 +678,272 @@ watch(() => inquiryStore.type, () => {
 
 <style scoped lang="scss">
 .inquiry-options-view {
-    margin-top: 32px;
-    padding: 24px;
-    background: var(--color-main-background);
-    border: 2px solid var(--color-border);
-    border-radius: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+	margin-top: 32px;
+	padding: 24px;
+	background: var(--color-main-background);
+	border: 2px solid var(--color-border);
+	border-radius: 24px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
-    .family-tabs-container {
-        margin-bottom: 32px;
+	.family-tabs-container {
+		margin-bottom: 32px;
 
-        .family-tabs {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--color-border);
+		.family-tabs {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			padding-bottom: 16px;
+			border-bottom: 2px solid var(--color-border);
 
-            .family-tab {
-                background: var(--color-background-dark) !important;
-                border: 2px solid transparent !important;
-                border-radius: 16px !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                min-height: auto !important;
-                transition: all 0.3s ease !important;
+			.family-tab {
+				background: var(--color-background-dark) !important;
+				border: 2px solid transparent !important;
+				border-radius: 16px !important;
+				padding: 0 !important;
+				margin: 0 !important;
+				min-height: auto !important;
+				transition: all 0.3s ease !important;
 
-                :deep(.button-vue) {
-                    padding: 12px 20px !important;
-                    background: transparent !important;
-                    border: none !important;
-                    min-height: auto !important;
-                }
+				:deep(.button-vue) {
+					padding: 12px 20px !important;
+					background: transparent !important;
+					border: none !important;
+					min-height: auto !important;
+				}
 
-                &:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+				&:hover {
+					transform: translateY(-2px);
+					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-                    :deep(.button-vue) {
-                        background: transparent !important;
-                    }
-                }
+					:deep(.button-vue) {
+						background: transparent !important;
+					}
+				}
 
-                &.active {
-                    background: var(--color-primary-light) !important;
-                    border-color: var(--color-primary-element) !important;
+				&.active {
+					background: var(--color-primary-light) !important;
+					border-color: var(--color-primary-element) !important;
 
-                    .tab-icon {
-                        background: var(--color-primary-element);
-                        color: white !important;
-                    }
+					.tab-icon {
+						background: var(--color-primary-element);
+						color: white !important;
+					}
 
-                    .tab-label {
-                        color: var(--color-primary-element);
-                    }
-                }
+					.tab-label {
+						color: var(--color-primary-element);
+					}
+				}
 
-                .tab-content {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 12px 20px;
-                    width: 100%;
-                    min-width: max-content;
-                }
+				.tab-content {
+					display: flex;
+					align-items: center;
+					gap: 8px;
+					padding: 12px 20px;
+					width: 100%;
+					min-width: max-content;
+				}
 
-                .tab-icon {
-                    width: 32px;
-                    height: 32px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background: var(--color-background-darker);
-                    border-radius: 10px;
-                    transition: all 0.3s ease;
-                    flex-shrink: 0;
-                }
+				.tab-icon {
+					width: 32px;
+					height: 32px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					background: var(--color-background-darker);
+					border-radius: 10px;
+					transition: all 0.3s ease;
+					flex-shrink: 0;
+				}
 
-                .tab-label {
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: var(--color-text-light);
-                    white-space: nowrap;
-                }
+				.tab-label {
+					font-size: 14px;
+					font-weight: 600;
+					color: var(--color-text-light);
+					white-space: nowrap;
+				}
 
-                .tab-counter {
-                    margin-left: 4px;
-                    flex-shrink: 0;
+				.tab-counter {
+					margin-left: 4px;
+					flex-shrink: 0;
 
-                    :deep(.counter-bubble) {
-                        min-width: 24px;
-                        height: 24px;
-                        font-size: 12px;
-                        font-weight: 600;
-                    }
-                }
-            }
-        }
-    }
+					:deep(.counter-bubble) {
+						min-width: 24px;
+						height: 24px;
+						font-size: 12px;
+						font-weight: 600;
+					}
+				}
+			}
+		}
+	}
 
-    .family-content {
-        .family-header {
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--color-border);
+	.family-content {
+		.family-header {
+			margin-bottom: 24px;
+			padding-bottom: 20px;
+			border-bottom: 2px solid var(--color-border);
 
-            .family-title {
-                font-size: 24px;
-                font-weight: 700;
-                margin: 0 0 8px 0;
-                color: var(--color-main-text);
-            }
+			.family-title {
+				font-size: 24px;
+				font-weight: 700;
+				margin: 0 0 8px 0;
+				color: var(--color-main-text);
+			}
 
-            .family-text {
-                font-size: 16px;
-                color: var(--color-text-lighter);
-                margin: 0 0 20px 0;
-                max-width: 600px;
-                line-height: 1.5;
-            }
+			.family-text {
+				font-size: 16px;
+				color: var(--color-text-lighter);
+				margin: 0 0 20px 0;
+				max-width: 600px;
+				line-height: 1.5;
+			}
 
-            .family-actions-wrapper {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 16px;
-                margin-top: 16px;
+			.family-actions-wrapper {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 16px;
+				margin-top: 16px;
 
-                .create-options-bar {
-                    display: flex;
-                    gap: 12px;
-                    flex-wrap: wrap;
-                    flex: 1;
+				.create-options-bar {
+					display: flex;
+					gap: 12px;
+					flex-wrap: wrap;
+					flex: 1;
 
-                    .create-option-btn {
-                        padding: 10px 20px;
-                        border-radius: 12px;
-                        font-weight: 600;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        transition: all 0.3s ease;
+					.create-option-btn {
+						padding: 10px 20px;
+						border-radius: 12px;
+						font-weight: 600;
+						display: flex;
+						align-items: center;
+						gap: 8px;
+						transition: all 0.3s ease;
 
-                        &:hover {
-                            transform: translateY(-2px);
-                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                        }
-                    }
-                }
+						&:hover {
+							transform: translateY(-2px);
+							box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+						}
+					}
+				}
 
-                .no-engine-message {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 10px 16px;
-                    background: var(--color-background-dark);
-                    border-radius: 12px;
-                    color: var(--color-text-lighter);
-                    font-size: 13px;
+				.no-engine-message {
+					display: flex;
+					align-items: center;
+					gap: 8px;
+					padding: 10px 16px;
+					background: var(--color-background-dark);
+					border-radius: 12px;
+					color: var(--color-text-lighter);
+					font-size: 13px;
 
-                    svg {
-                        color: var(--color-primary-element);
-                    }
-                }
+					svg {
+						color: var(--color-primary-element);
+					}
+				}
 
-                .actions-dropdown {
-                    flex-shrink: 0;
-                    margin-left: auto;
+				.actions-dropdown {
+					flex-shrink: 0;
+					margin-left: auto;
 
-                    :deep(.action-item) {
-                        .action-item__menutoggle {
-                            padding: 10px 16px;
-                            border-radius: 12px;
-                            background: var(--color-background-dark);
-                            border: 1px solid var(--color-border);
+					:deep(.action-item) {
+						.action-item__menutoggle {
+							padding: 10px 16px;
+							border-radius: 12px;
+							background: var(--color-background-dark);
+							border: 1px solid var(--color-border);
 
-                            &:hover {
-                                background: var(--color-background-darker);
-                                transform: translateY(-2px);
-                                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                            }
-                        }
-                    }
-                }
-            }
+							&:hover {
+								background: var(--color-background-darker);
+								transform: translateY(-2px);
+								box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+							}
+						}
+					}
+				}
+			}
 
-            .read-only-indicator {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                background: var(--color-background-dark);
-                border-radius: 12px;
-                color: var(--color-text-lighter);
-                font-size: 14px;
-                margin-top: 8px;
+			.read-only-indicator {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				padding: 8px 16px;
+				background: var(--color-background-dark);
+				border-radius: 12px;
+				color: var(--color-text-lighter);
+				font-size: 14px;
+				margin-top: 8px;
 
-                svg {
-                    color: var(--color-primary-element);
-                }
-            }
-        }
-    }
+				svg {
+					color: var(--color-primary-element);
+				}
+			}
+		}
+	}
 
-    .no-families {
-        text-align: center;
-        padding: 60px 20px;
+	.no-families {
+		text-align: center;
+		padding: 60px 20px;
 
-        svg {
-            color: var(--color-text-lighter);
-            margin-bottom: 20px;
-        }
+		svg {
+			color: var(--color-text-lighter);
+			margin-bottom: 20px;
+		}
 
-        h3 {
-            margin: 0 0 8px 0;
-            color: var(--color-main-text);
-            font-size: 20px;
-        }
+		h3 {
+			margin: 0 0 8px 0;
+			color: var(--color-main-text);
+			font-size: 20px;
+		}
 
-        p {
-            margin: 0;
-            color: var(--color-text-lighter);
-            font-style: italic;
-        }
-    }
+		p {
+			margin: 0;
+			color: var(--color-text-lighter);
+			font-style: italic;
+		}
+	}
 
-    @media (max-width: 768px) {
-        padding: 16px;
+	@media (max-width: 768px) {
+		padding: 16px;
 
-        .family-tabs {
-            overflow-x: auto;
-            padding-bottom: 12px;
+		.family-tabs {
+			overflow-x: auto;
+			padding-bottom: 12px;
 
-            .family-tab {
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
-        }
+			.family-tab {
+				white-space: nowrap;
+				flex-shrink: 0;
+			}
+		}
 
-        .family-actions-wrapper {
-            flex-direction: column;
-            align-items: stretch !important;
+		.family-actions-wrapper {
+			flex-direction: column;
+			align-items: stretch !important;
 
-            .create-options-bar {
-                width: 100%;
+			.create-options-bar {
+				width: 100%;
 
-                .create-option-btn {
-                    flex: 1;
-                    justify-content: center;
-                }
-            }
+				.create-option-btn {
+					flex: 1;
+					justify-content: center;
+				}
+			}
 
-            .actions-dropdown {
-                width: 100%;
-                margin-left: 0 !important;
+			.actions-dropdown {
+				width: 100%;
+				margin-left: 0 !important;
 
-                :deep(.action-item) {
-                    width: 100%;
+				:deep(.action-item) {
+					width: 100%;
 
-                    .action-item__menutoggle {
-                        width: 100%;
-                        justify-content: center;
-                    }
-                }
-            }
-        }
-    }
+					.action-item__menutoggle {
+						width: 100%;
+						justify-content: center;
+					}
+				}
+			}
+		}
+	}
 }
 </style>

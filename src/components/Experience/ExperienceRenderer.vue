@@ -306,9 +306,8 @@ import {
   type ToolValue,
 } from '../Types/experience.types'
 
+import type { Inquiry, Option, Item } from '../../Types/index.ts'
 import { toItems } from '../../helpers/modules/itemAdapter'
-import type { Item } from '../../Types/index.ts'
-
 
 // ============================================================
 // PROPS
@@ -978,29 +977,6 @@ function getZoneProps(zone: any) {
       }
     }
 
-    case 'inquiries': {
-      const inquiriesData = data.length > 0 ? data : props.inquiries || []
-      const isSingle = inquiriesData.length === 1
-      const singleInquiry = isSingle ? inquiriesData[0] : null
-      const cardsPerRow = display.cardsPerRow || 3
-
-      return {
-        ...baseProps,
-        inquiries: inquiriesData,
-        inquiryIds: inquiriesData.map(i => i.id),
-        group: props.group,
-        columns: cardsPerRow,
-        selectedInquiry: selectedInquiry,
-        tool: tool,
-        families: zone.scope?.families || [],
-        family: zone.scope?.family || null,
-        optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
-        mode: type === 'list' ? 'list' : 'cards',
-        inquiry: singleInquiry,
-        initialInquiry: inquiriesData.length > 0 ? inquiriesData[0] : null,
-      }
-    }
-
     case 'inquiry': {
       const inquiryData = data.length > 0 ? data[0] : selectedInquiry || props.inquiries?.[0]
       const inquiriesData = data.length > 0 ? data : [inquiryData].filter(Boolean)
@@ -1011,59 +987,84 @@ function getZoneProps(zone: any) {
         inquiries: inquiriesData,
         group: props.group,
         displayMode: type === 'book' ? 'book' : type,
-        openMode: displayOptions.openMode || 'none',
+	openMode: displayOptions.openMode || 'none',
       }
     }
 
-    case 'options':
-      return {
-        ...baseProps,
-        options: data,
-        targetType: selectedInquiry?.type,
-        parentId: selectedInquiry?.id,
-        inquiry: selectedInquiry,
-        inquiryId: selectedInquiry?.id,
-        tool: tool,
-        families: zone.scope?.families || [],
-        family: zone.scope?.family || null,
-        optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
-      }
+case 'options': {
+  const optionsData = Array.isArray(data) ? (data as Option[]) : []
+  return {
+    ...baseProps,
+    items: toItems(optionsData),               
+    parentId: selectedInquiry?.id ?? 0,     
+    targetType: 'option' as const,         
+    optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
+    family: zone.scope?.family || null,
+    familyKey: zone.scope?.family || null,
+    tool,
+    families: zone.scope?.families || [],
+    inquiry: selectedInquiry,         
+    inquiryId: selectedInquiry?.id,            
+    options: optionsData,                  
+  }
+}
 
+case 'inquiries': {
+  const inquiriesData = data.length > 0 ? data : props.inquiries || []
+  const itemList = toItems(inquiriesData as Inquiry[])
+  return {
+    ...baseProps,
+    items: itemList,                                 
+    inquiries: inquiriesData,                   
+    parentId: props.group?.id ?? 0,        
+    targetType: 'inquiry' as const,      
+    optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
+    family: zone.scope?.family || null,
+    familyKey: zone.scope?.family || null,
+    tool,
+    families: zone.scope?.families || [],
+    group: props.group,
+    columns: display.cardsPerRow || 3,
+    selectedInquiry,
+    inquiry: inquiriesData.length === 1 ? inquiriesData[0] : null,
+    initialInquiry: inquiriesData[0] ?? null,
+  }
+}
     case 'resources':
       return {
-        ...baseProps,
-        inquiry: selectedInquiry,
-        inquiryId: selectedInquiry?.id,
-        showResources: true,
+	...baseProps,
+	inquiry: selectedInquiry,
+	inquiryId: selectedInquiry?.id,
+	showResources: true,
       }
 
     case 'comments':
       return {
-        ...baseProps,
-        inquiry: selectedInquiry,
-        inquiryId: selectedInquiry?.id,
+	...baseProps,
+	inquiry: selectedInquiry,
+	inquiryId: selectedInquiry?.id,
       }
 
     case 'statistics':
       return {
-        ...baseProps,
-        inquiries: data,
-        groupId: props.group?.id,
+	...baseProps,
+	inquiries: data,
+	groupId: props.group?.id,
       }
 
     case 'activity':
       return {
-        ...baseProps,
-        inquiries: data,
-        limit: zone.scope?.pagination?.limit || 20,
+	...baseProps,
+	inquiries: data,
+	limit: zone.scope?.pagination?.limit || 20,
       }
 
     default:
       return {
-        ...baseProps,
-        data: data,
-        content: content,
-        group: props.group,
+	...baseProps,
+	data: data,
+	content: content,
+	group: props.group,
       }
   }
 }
@@ -1160,7 +1161,7 @@ function executeInquiryAction(
   switch (action) {
     case 'open':
       if (target === 'same_view') {
-        return
+	return
       }
       emit('viewInquiry', inquiry)
       return
@@ -1270,7 +1271,7 @@ function findZoneForInquiry(inquiry: Inquiry): string | null {
     if (zone.content === 'inquiries' || zone.content === 'inquiry') {
       const data = getZoneData(zone)
       if (data.some((item: any) => item.id === inquiry.id)) {
-        return key
+	return key
       }
     }
   }
@@ -1282,7 +1283,7 @@ function findZoneForOption(option: any): string | null {
     if (zone.content === 'options') {
       const data = getZoneData(zone)
       if (data.some((item: any) => item.id === option.id)) {
-        return key
+	return key
       }
     }
   }
@@ -1294,7 +1295,7 @@ function findZoneForGroup(group: InquiryGroup): string | null {
     if (zone.content === 'inquiry_groups') {
       const data = getZoneData(zone)
       if (data.some((item: any) => item.id === group.id)) {
-        return key
+	return key
       }
     }
   }
@@ -1364,393 +1365,393 @@ watch(
 /* EXPERIENCE RENDERER STYLES                                   */
 /* ============================================================ */
 .experience-renderer {
-  width: 100%;
-  min-height: 400px;
+	width: 100%;
+	min-height: 400px;
 }
-
-.experience-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0 16px;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 12px;
-
-  .controls-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .controls-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-}
-
-/* ============================================================ */
-/* LOADING & ERROR STATES                                       */
-/* ============================================================ */
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--color-border);
-    border-top-color: var(--color-primary-element);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  p {
-    margin-top: 16px;
-    color: var(--color-text-lighter);
-  }
-}
-
-.error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  text-align: center;
-
-  svg {
-    color: var(--color-error);
-    opacity: 0.5;
-    margin-bottom: 16px;
-  }
-
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--color-main-text);
-  }
-
-  p {
-    margin: 0 0 24px 0;
-    color: var(--color-text-lighter);
-    max-width: 400px;
-  }
-}
-
-/* ============================================================ */
-/* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
-/* ============================================================ */
-.architecture-grid {
-  display: grid;
-  gap: 20px;
-  min-height: 400px;
-
-  .architecture-zone {
-    background: var(--color-main-background);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 200px;
-
-    .zone-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--color-border);
-      background: var(--color-background-dark);
-      color: var(--color-text-lighter);
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-
-      .zone-title {
-        flex: 1;
-      }
-
-      .zone-count {
-        background: var(--color-background-hover);
-        padding: 1px 8px;
-        border-radius: 10px;
-        font-size: 11px;
-      }
-    }
-
-    .zone-content {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      min-height: 100px;
-    }
-
-    .zone-empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 32px 20px;
-      min-height: 140px;
-      color: var(--color-text-lighter);
-
-      .empty-icon {
-        opacity: 0.25;
-        margin-bottom: 12px;
-      }
-
-      .empty-title {
-        margin: 0 0 4px 0;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--color-main-text);
-      }
-
-      .empty-hint {
-        margin: 0;
-        font-size: 13px;
-        color: var(--color-text-lighter);
-        max-width: 260px;
-      }
-    }
-
-    &.is-empty {
-      background: var(--color-background-dark);
-      border-style: dashed;
-    }
-  }
-}
-
-/* ============================================================ */
-/* STANDARD LAYOUT                                              */
-/* ============================================================ */
-.standard-layout {
-  display: flex;
-  gap: 24px;
-
-  &.layout-sidebar {
-    .layout-sidebar {
-      flex: 0 0 280px;
-      max-width: 280px;
-    }
-    .layout-main {
-      flex: 1;
-      min-width: 0;
-    }
-  }
-
-  &.layout-split {
-    .layout-main {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-  }
-
-  .layout-sidebar {
-    position: sticky;
-    top: 0;
-    height: fit-content;
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-    padding-right: 8px;
-  }
-
-  .layout-main {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    min-width: 0;
-  }
-}
-
-.layout-header {
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--color-border);
-
-  .layout-title {
-    margin: 0 0 8px 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--color-main-text);
-  }
-
-  .layout-description {
-    margin: 0 0 16px 0;
-    color: var(--color-text-lighter);
-    font-size: 16px;
-  }
-
-  .layout-stats {
-    display: flex;
-    gap: 24px;
-    padding-top: 12px;
-    border-top: 1px solid var(--color-border-light);
-
-    .stat-item {
-      .stat-value {
-        display: block;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--color-main-text);
-      }
-
-      .stat-label {
-        font-size: 12px;
-        color: var(--color-text-lighter);
-      }
-    }
-  }
-}
-
-.layout-content {
-  .inquiries-grid {
-    display: grid;
-    gap: 20px;
-
-    &.display-cards {
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    }
-
-    &.display-horizontal {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    &.display-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    &.display-compact {
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 12px;
-    }
-  }
-}
-
-.layout-comments,
-.layout-resources {
-  padding-top: 20px;
-  border-top: 2px solid var(--color-border);
-  margin-top: 8px;
-
-  .comments-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-
-    h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--color-main-text);
-    }
-
-    .comments-count {
-      font-size: 12px;
-      font-weight: 600;
-      background: var(--color-background-dark);
-      padding: 2px 10px;
-      border-radius: 12px;
-      color: var(--color-text-lighter);
-    }
-  }
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  text-align: center;
-
-  svg {
-    color: var(--color-text-lighter);
-    opacity: 0.3;
-    margin-bottom: 16px;
-  }
-
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--color-main-text);
-  }
-
-  p {
-    margin: 0 0 24px 0;
-    color: var(--color-text-lighter);
-  }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ============================================================ */
-/* RESPONSIVE - Adapt grid to available space                   */
-/* ============================================================ */
-@media (max-width: 1400px) {
-  .architecture-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-@media (max-width: 1024px) {
-  .architecture-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  .standard-layout {
-    &.layout-sidebar {
-      flex-direction: column;
-
-      .layout-sidebar {
-        flex: none;
-        max-width: 100%;
-        width: 100%;
-        position: static;
-        max-height: none;
-        padding-right: 0;
-      }
-    }
-
-    &.layout-split {
-      .layout-main {
-        grid-template-columns: 1fr;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .architecture-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .layout-content .inquiries-grid {
-    &.display-cards {
-      grid-template-columns: 1fr;
-    }
-  }
 
   .experience-controls {
-    flex-direction: column;
-    align-items: stretch;
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  padding: 12px 0 16px;
+	  border-bottom: 1px solid var(--color-border);
+	  margin-bottom: 20px;
+	  flex-wrap: wrap;
+	  gap: 12px;
 
-    .controls-left,
-    .controls-right {
-      justify-content: center;
-    }
+	  .controls-left {
+		  display: flex;
+		  align-items: center;
+		  gap: 12px;
+	  }
+
+	  .controls-right {
+		  display: flex;
+		  align-items: center;
+		  gap: 8px;
+	  }
   }
-}
+
+  /* ============================================================ */
+  /* LOADING & ERROR STATES                                       */
+  /* ============================================================ */
+  .loading-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+
+	  .spinner {
+		  width: 40px;
+		  height: 40px;
+		  border: 3px solid var(--color-border);
+		  border-top-color: var(--color-primary-element);
+		  border-radius: 50%;
+		  animation: spin 1s linear infinite;
+	  }
+
+	  p {
+		  margin-top: 16px;
+		  color: var(--color-text-lighter);
+	  }
+  }
+
+  .error-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+	  text-align: center;
+
+	  svg {
+		  color: var(--color-error);
+		  opacity: 0.5;
+		  margin-bottom: 16px;
+	  }
+
+	  h3 {
+		  margin: 0 0 8px 0;
+		  color: var(--color-main-text);
+	  }
+
+	  p {
+		  margin: 0 0 24px 0;
+		  color: var(--color-text-lighter);
+		  max-width: 400px;
+	  }
+  }
+
+  /* ============================================================ */
+  /* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
+  /* ============================================================ */
+  .architecture-grid {
+	  display: grid;
+	  gap: 20px;
+	  min-height: 400px;
+
+	  .architecture-zone {
+		  background: var(--color-main-background);
+		  border: 1px solid var(--color-border);
+		  border-radius: 12px;
+		  overflow: hidden;
+		  display: flex;
+		  flex-direction: column;
+		  min-height: 200px;
+
+		  .zone-header {
+			  display: flex;
+			  align-items: center;
+			  gap: 8px;
+			  padding: 10px 16px;
+			  border-bottom: 1px solid var(--color-border);
+			  background: var(--color-background-dark);
+			  color: var(--color-text-lighter);
+			  font-size: 12px;
+			  font-weight: 600;
+			  text-transform: uppercase;
+			  letter-spacing: 0.5px;
+
+			  .zone-title {
+				  flex: 1;
+			  }
+
+			  .zone-count {
+				  background: var(--color-background-hover);
+				  padding: 1px 8px;
+				  border-radius: 10px;
+				  font-size: 11px;
+			  }
+		  }
+
+		  .zone-content {
+			  flex: 1;
+			  padding: 16px;
+			  overflow-y: auto;
+			  min-height: 100px;
+		  }
+
+		  .zone-empty-state {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  justify-content: center;
+			  text-align: center;
+			  padding: 32px 20px;
+			  min-height: 140px;
+			  color: var(--color-text-lighter);
+
+			  .empty-icon {
+				  opacity: 0.25;
+				  margin-bottom: 12px;
+			  }
+
+			  .empty-title {
+				  margin: 0 0 4px 0;
+				  font-size: 14px;
+				  font-weight: 600;
+				  color: var(--color-main-text);
+			  }
+
+			  .empty-hint {
+				  margin: 0;
+				  font-size: 13px;
+				  color: var(--color-text-lighter);
+				  max-width: 260px;
+			  }
+		  }
+
+		  &.is-empty {
+			  background: var(--color-background-dark);
+			  border-style: dashed;
+		  }
+	  }
+  }
+
+  /* ============================================================ */
+  /* STANDARD LAYOUT                                              */
+  /* ============================================================ */
+  .standard-layout {
+	  display: flex;
+	  gap: 24px;
+
+	  &.layout-sidebar {
+		  .layout-sidebar {
+			  flex: 0 0 280px;
+			  max-width: 280px;
+		  }
+		  .layout-main {
+			  flex: 1;
+			  min-width: 0;
+		  }
+	  }
+
+	  &.layout-split {
+		  .layout-main {
+			  display: grid;
+			  grid-template-columns: 1fr 1fr;
+			  gap: 24px;
+		  }
+	  }
+
+	  .layout-sidebar {
+		  position: sticky;
+		  top: 0;
+		  height: fit-content;
+		  max-height: calc(100vh - 100px);
+		  overflow-y: auto;
+		  padding-right: 8px;
+	  }
+
+	  .layout-main {
+		  display: flex;
+		  flex-direction: column;
+		  gap: 24px;
+		  min-width: 0;
+	  }
+  }
+
+  .layout-header {
+	  padding-bottom: 16px;
+	  border-bottom: 2px solid var(--color-border);
+
+	  .layout-title {
+		  margin: 0 0 8px 0;
+		  font-size: 28px;
+		  font-weight: 700;
+		  color: var(--color-main-text);
+	  }
+
+	  .layout-description {
+		  margin: 0 0 16px 0;
+		  color: var(--color-text-lighter);
+		  font-size: 16px;
+	  }
+
+	  .layout-stats {
+		  display: flex;
+		  gap: 24px;
+		  padding-top: 12px;
+		  border-top: 1px solid var(--color-border-light);
+
+		  .stat-item {
+			  .stat-value {
+				  display: block;
+				  font-size: 20px;
+				  font-weight: 700;
+				  color: var(--color-main-text);
+			  }
+
+			  .stat-label {
+				  font-size: 12px;
+				  color: var(--color-text-lighter);
+			  }
+		  }
+	  }
+  }
+
+  .layout-content {
+	  .inquiries-grid {
+		  display: grid;
+		  gap: 20px;
+
+		  &.display-cards {
+			  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		  }
+
+		  &.display-horizontal {
+			  grid-template-columns: 1fr;
+			  gap: 16px;
+		  }
+
+		  &.display-list {
+			  display: flex;
+			  flex-direction: column;
+			  gap: 8px;
+		  }
+
+		  &.display-compact {
+			  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+			  gap: 12px;
+		  }
+	  }
+  }
+
+  .layout-comments,
+  .layout-resources {
+	  padding-top: 20px;
+	  border-top: 2px solid var(--color-border);
+	  margin-top: 8px;
+
+	  .comments-header {
+		  display: flex;
+		  align-items: center;
+		  gap: 12px;
+		  margin-bottom: 16px;
+
+		  h3 {
+			  margin: 0;
+			  font-size: 18px;
+			  font-weight: 600;
+			  color: var(--color-main-text);
+		  }
+
+		  .comments-count {
+			  font-size: 12px;
+			  font-weight: 600;
+			  background: var(--color-background-dark);
+			  padding: 2px 10px;
+			  border-radius: 12px;
+			  color: var(--color-text-lighter);
+		  }
+	  }
+  }
+
+  .empty-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+	  text-align: center;
+
+	  svg {
+		  color: var(--color-text-lighter);
+		  opacity: 0.3;
+		  margin-bottom: 16px;
+	  }
+
+	  h3 {
+		  margin: 0 0 8px 0;
+		  color: var(--color-main-text);
+	  }
+
+	  p {
+		  margin: 0 0 24px 0;
+		  color: var(--color-text-lighter);
+	  }
+  }
+
+  @keyframes spin {
+	  to { transform: rotate(360deg); }
+  }
+
+  /* ============================================================ */
+  /* RESPONSIVE - Adapt grid to available space                   */
+  /* ============================================================ */
+  @media (max-width: 1400px) {
+	  .architecture-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+  }
+
+  @media (max-width: 1024px) {
+	  .architecture-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+
+	  .standard-layout {
+		  &.layout-sidebar {
+			  flex-direction: column;
+
+			  .layout-sidebar {
+				  flex: none;
+				  max-width: 100%;
+				  width: 100%;
+				  position: static;
+				  max-height: none;
+				  padding-right: 0;
+			  }
+		  }
+
+		  &.layout-split {
+			  .layout-main {
+				  grid-template-columns: 1fr;
+			  }
+		  }
+	  }
+  }
+
+  @media (max-width: 768px) {
+	  .architecture-grid {
+		  grid-template-columns: 1fr !important;
+	  }
+
+	  .layout-content .inquiries-grid {
+		  &.display-cards {
+			  grid-template-columns: 1fr;
+		  }
+	  }
+
+	  .experience-controls {
+		  flex-direction: column;
+		  align-items: stretch;
+
+		  .controls-left,
+		  .controls-right {
+			  justify-content: center;
+		  }
+	  }
+  }
 </style>

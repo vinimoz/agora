@@ -41,6 +41,7 @@
       :current-star="currentStar"
       @update:star="(id, val) => $emit('update:star', id, val)"
     />
+
     <!-- Score -->
     <VoteInputScore
       v-else-if="engineId === 'score'"
@@ -49,6 +50,7 @@
       :current-score="currentScore"
       @update:score="(id, val) => $emit('update:score', id, val)"
     />
+
     <!-- Approval -->
     <VoteInputApproval
       v-else-if="engineId === 'approval'"
@@ -58,6 +60,7 @@
       :disabled="disabled"
       @toggle="handleApprovalToggle"
     />
+
     <!-- Ranking -->
     <VoteInputRanking
       v-else-if="engineId === 'ranking'"
@@ -68,6 +71,7 @@
       :total-items="totalItems"
       @change-rank="(rank) => $emit('changeRank', rank)"
     />
+
     <!-- Majority Judgment -->
     <VoteInputMajorityJudgment
       v-else-if="engineId === 'majority_judgment'"
@@ -77,6 +81,7 @@
       :disabled="disabled"
       @change-grade="(grade) => $emit('changeGrade', grade)"
     />
+
     <!-- Quadratic -->
     <VoteInputQuadratic
       v-else-if="engineId === 'quadratic'"
@@ -86,6 +91,7 @@
       :disabled="disabled"
       @update:quadratic="(id, val) => $emit('update:quadratic', id, val)"
     />
+
     <!-- Token Weighted -->
     <VoteInputTokenWeighted
       v-else-if="engineId === 'token_weighted'"
@@ -94,6 +100,7 @@
       :current-weight="currentTokenWeight"
       @update:token_weight="(id, val) => $emit('update:token_weight', id, val)"
     />
+
     <!-- Condorcet -->
     <VoteInputCondorcet
       v-else-if="engineId === 'condorcet'"
@@ -104,6 +111,7 @@
       :total-items="totalItems"
       @change-rank="(rank) => $emit('changeRank', rank)"
     />
+
     <!-- Borda -->
     <VoteInputBorda
       v-else-if="engineId === 'borda'"
@@ -114,6 +122,7 @@
       :total-items="totalItems"
       @change-rank="(rank) => $emit('changeRank', rank)"
     />
+
     <!-- Phased Voting -->
     <VoteInputPhasedVoting
       v-else-if="engineId === 'phased_voting'"
@@ -123,16 +132,17 @@
       :disabled="disabled"
       @vote="handleVote"
     />
-    <!-- None -->
+
+    <!-- None (last-resort fallback; unlikely to ever render) -->
     <VoteInputNone v-else-if="engineId === 'none'" />
 
-    <!-- Reset vote button for single-choice engines -->
+    <!-- Reset/remove vote button for engines that support it -->
     <NcButton
-      v-if="userVote && !isMultiEngine && canResetVote"
+      v-if="userVote && canRemoveVote"
       type="tertiary"
       size="small"
       class="reset-vote-btn"
-      @click="handleResetVote"
+      @click="handleRemoveVote"
     >
       <X :size="14" />
       {{ t('agora', 'Reset') }}
@@ -173,18 +183,25 @@ const props = defineProps<{
   currentGrade?: string | null
   currentScore?: number | null
   currentStar?: number | null
+  currentReaction?: string[] | null
   currentQuadraticVotes?: number | null
   currentTokenWeight?: number | null
-  canResetVote?: boolean
+  /**
+   * Renamed from `canResetVote` — matches the prop name used by VoteCard.vue.
+   */
+  canRemoveVote?: boolean
   totalItems?: number
 }>()
 
 const emit = defineEmits<{
   vote: [value: SupportValue]
-  'approvalToggle': [itemId: number]
-  'changeRank': [rank: number | null]
-  'changeGrade': [grade: string | null]
-  'resetVote': []
+  approvalToggle: [itemId: number]
+  changeRank: [rank: number | null]
+  changeGrade: [grade: string | null]
+  /**
+   * Renamed from `resetVote` — matches the listener used by VoteCard.vue.
+   */
+  removeVote: []
   'update:score': [itemId: number, score: number | null]
   'update:star': [itemId: number, star: number | null]
   'update:reaction': [itemId: number, reaction: string[] | null]
@@ -195,12 +212,13 @@ const emit = defineEmits<{
 function handleVote(value: SupportValue) {
   emit('vote', value)
 }
+
 function handleApprovalToggle() {
   emit('approvalToggle', props.item.id)
 }
 
-function handleResetVote() {
-  if (!props.disabled) emit('resetVote')
+function handleRemoveVote() {
+  if (!props.disabled) emit('removeVote')
 }
 </script>
 

@@ -61,24 +61,21 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     return engines.value.filter((engine) => engine.inquiry_id === inquiryId)
   })
   
-  /**
-   * Get support engines that target inquiries in a group
-   */
+/**
+ * Get engines for the given target.
+ *
+ * @param targetType  `'option'` engines are scoped to an inquiry, `'inquiry'`
+ *                    engines are scoped to an **inquiry group**. See the
+ *                    comment on `useVoteContext` and `FamilyLayoutVote`.
+ * @param parentId    The inquiry id (`option` mode) or the **group id**
+ *                    (`inquiry` mode).
+ */
 const getEnginesByTarget = computed(
   () => (targetType: 'inquiry' | 'option', parentId: number) => {
-    if (!engines.value || !Array.isArray(engines.value)) return []
-    
     if (targetType === 'option') {
-      // For options, return engines where inquiry_id === parentId
-      return engines.value.filter(
-        (engine) => engine.inquiry_id === parentId
-      )
-    } 
-      // For inquiries, return engines where inquiry_group_id === targetId
-      return engines.value.filter(
-        (engine) => engine.inquiry_group_id === parentId
-      )
-    
+      return engines.value.filter((engine) => engine.inquiry_id === parentId)
+    }
+    return engines.value.filter((engine) => engine.inquiry_group_id === parentId)
   })
 
 const getEnginesByGroup = computed(() => (groupId: number) => {
@@ -198,283 +195,293 @@ const getEnginesByGroup = computed(() => (groupId: number) => {
     loading.value = true
     error.value = null
     try {
-      const response = await SupportEngineAPI.createEngine(engine)
-      const newEngine = response.data
-      if (!engines.value) engines.value = []
-      engines.value.push(newEngine)
-
-      emit(Event.UpdateSupports, { action: 'engine-created', engine: newEngine })
-      return newEngine
+	    const response = await SupportEngineAPI.createEngine(engine)
+	    // API wraps the payload as `{ engine: SupportEngine }` (see supportEngine.types.ts)
+	    const newEngine =
+		    (response.data as { engine?: SupportEngine }).engine ?? (response.data as SupportEngine)
+	    if (!newEngine) {
+		    Logger.error('createEngine: response contained no engine', { response })
+		    return null
+	    }
+	    if (!engines.value) engines.value = []
+		    engines.value.push(newEngine)
+	    emit(Event.UpdateSupports, { action: 'engine-created', engine: newEngine })
+	    return newEngine
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to create engine'
-      Logger.error('Error creating support engine:', { error: err, engine })
-      return null
+	    error.value = err instanceof Error ? err.message : 'Failed to create engine'
+	    Logger.error('Error creating support engine:', { error: err, engine })
+	    return null
     } finally {
-      loading.value = false
+	    loading.value = false
     }
   }
 
   async function updateEngine(
-    id: number,
-    data: Partial<SupportEngine>
+	  id: number,
+	  data: Partial<SupportEngine>
   ): Promise<SupportEngine | null> {
-    if (!engines.value || !Array.isArray(engines.value)) return null
+	  if (!engines.value || !Array.isArray(engines.value)) return null
 
-    const engine = engines.value.find((e) => e.id === id)
-    if (!engine) return null
+		  const engine = engines.value.find((e) => e.id === id)
+		  if (!engine) return null
 
-    const hasExistingSupports = await hasSupports(id)
-    const allowedUpdatesForActive = ['status']
-    const requestedKeys = Object.keys(data)
+			  const hasExistingSupports = await hasSupports(id)
+			  const allowedUpdatesForActive = ['status']
+			  const requestedKeys = Object.keys(data)
 
-    if (hasExistingSupports && !requestedKeys.every((k) => allowedUpdatesForActive.includes(k))) {
-      error.value =
-        'Cannot modify engine configuration after votes have been cast. Only status changes are allowed.'
-      return null
-    }
-    loading.value = true
-    error.value = null
-    try {
-      const response = await SupportEngineAPI.updateEngine(id, data)
-      const updatedEngine = response.data
+			  if (hasExistingSupports && !requestedKeys.every((k) => allowedUpdatesForActive.includes(k))) {
+				  error.value =
+					  'Cannot modify engine configuration after votes have been cast. Only status changes are allowed.'
+				  return null
+			  }
+			  loading.value = true
+			  error.value = null
+			  try {
+				  const response = await SupportEngineAPI.updateEngine(id, data)
+const updatedEngine =
+  (response.data as { engine?: SupportEngine }).engine ?? (response.data as SupportEngine)
 
-      const index = engines.value.findIndex((e) => e.id === id)
-      if (index !== -1) {
-        engines.value[index] = updatedEngine
-      }
+if (!updatedEngine) {
+  Logger.error('updateEngine: response contained no engine', { response })
+  return null
+}
 
-      if (currentEngine.value?.id === id) {
-        currentEngine.value = updatedEngine
-      }
+const index = engines.value.findIndex((e) => e.id === id)
+				  if (index !== -1) {
+					  engines.value[index] = updatedEngine
+				  }
 
-      emit(Event.UpdateSupports, { action: 'engine-updated', engine: updatedEngine })
-      return updatedEngine
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to update engine'
-      Logger.error('Error updating support engine:', { error: err, id, data })
-      return null
-    } finally {
-      loading.value = false
-    }
+				  if (currentEngine.value?.id === id) {
+					  currentEngine.value = updatedEngine
+				  }
+
+				  emit(Event.UpdateSupports, { action: 'engine-updated', engine: updatedEngine })
+				  return updatedEngine
+			  } catch (err) {
+				  error.value = err instanceof Error ? err.message : 'Failed to update engine'
+				  Logger.error('Error updating support engine:', { error: err, id, data })
+				  return null
+			  } finally {
+				  loading.value = false
+			  }
   }
 
   async function hasSupports(engineId: number): Promise<boolean> {
-    const { supports } = useSupportsStore()
-    if (!supports.value) return false
-    return supports.value.some((s) => s.supportEngineId === engineId)
+	  const { supports } = useSupportsStore()
+	  if (!supports.value) return false
+		  return supports.value.some((s) => s.supportEngineId === engineId)
   }
 
   async function deleteEngine(id: number): Promise<boolean> {
-    loading.value = true
-    error.value = null
-    try {
-      await SupportEngineAPI.deleteEngine(id)
-      if (engines.value && Array.isArray(engines.value)) {
-        engines.value = engines.value.filter((e) => e.id !== id)
-      }
+	  loading.value = true
+	  error.value = null
+	  try {
+		  await SupportEngineAPI.deleteEngine(id)
+		  if (engines.value && Array.isArray(engines.value)) {
+			  engines.value = engines.value.filter((e) => e.id !== id)
+		  }
 
-      if (currentEngine.value?.id === id) {
-        currentEngine.value = null
-      }
+		  if (currentEngine.value?.id === id) {
+			  currentEngine.value = null
+		  }
 
-      emit(Event.UpdateSupports, { action: 'engine-deleted', id })
-      return true
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to delete engine'
-      Logger.error('Error deleting support engine:', { error: err, id })
-      return false
-    } finally {
-      loading.value = false
-    }
+		  emit(Event.UpdateSupports, { action: 'engine-deleted', id })
+		  return true
+	  } catch (err) {
+		  error.value = err instanceof Error ? err.message : 'Failed to delete engine'
+		  Logger.error('Error deleting support engine:', { error: err, id })
+		  return false
+	  } finally {
+		  loading.value = false
+	  }
   }
 
 
 
   function clearEngines(): void {
-    engines.value = []
-    currentEngine.value = null
-    initialized.value = false
+	  engines.value = []
+	  currentEngine.value = null
+	  initialized.value = false
   }
 
   function setEngines(enginesList: SupportEngine[] | []): void {
-    engines.value = enginesList || []
-    initialized.value = true
+	  engines.value = enginesList || []
+	  initialized.value = true
   }
 
   async function initializeFromInquiry(
-    inquiryId: number,
-    enginesList: SupportEngine[] | null
+	  inquiryId: number,
+	  enginesList: SupportEngine[] | null
   ): Promise<void> {
-    if (!enginesList) {
-      await loadEnginesByInquiry(inquiryId)
-      return
-    }
+	  if (!enginesList) {
+		  await loadEnginesByInquiry(inquiryId)
+		  return
+	  }
 
-    engines.value = enginesList || []
-    initialized.value = true
+	  engines.value = enginesList || []
+	  initialized.value = true
 
-    if (engines.value.length > 0) {
-      const active = engines.value.find((e) => e.status === 'active')
-      currentEngine.value = active || engines.value[0]
-    } else {
-      currentEngine.value = null
-    }
-    // await loadActiveEngineResults()
+	  if (engines.value.length > 0) {
+		  const active = engines.value.find((e) => e.status === 'active')
+		  currentEngine.value = active || engines.value[0]
+	  } else {
+		  currentEngine.value = null
+	  }
+	  // await loadActiveEngineResults()
   }
 
   async function activateEngine(engine: SupportEngine): Promise<void> {
-    if (engine.status !== 'active') {
-      await updateEngine(engine.id, { status: 'active' })
-    }
+	  if (engine.status !== 'active') {
+		  await updateEngine(engine.id, { status: 'active' })
+	  }
 
-    setCurrentEngine(engine)
-    /*
-        if (resultStore.needsRecalculation(engine.id)) {
-            await resultStore.calculateAndGetResults(engine.id)
-        } else {
-            await resultStore.loadEngineResults(engine.id)
-        */
+	  setCurrentEngine(engine)
+	  /*
+	     if (resultStore.needsRecalculation(engine.id)) {
+	     await resultStore.calculateAndGetResults(engine.id)
+	     } else {
+	     await resultStore.loadEngineResults(engine.id)
+	     */
   }
 
   function getCurrentEngine(): SupportEngine | null {
-    return currentEngine.value
+	  return currentEngine.value
   }
 
   async function calculateAllActiveResults(): Promise<void> {
-    const active = activeEngines.value
-    for (const engine of active) {
-      if (resultStore.needsRecalculation(engine.id)) {
-        await resultStore.calculateAndGetResults(engine.id)
-      }
-    }
+	  const active = activeEngines.value
+		  for (const engine of active) {
+			  if (resultStore.needsRecalculation(engine.id)) {
+				  await resultStore.calculateAndGetResults(engine.id)
+			  }
+		  }
   }
 
   async function loadActiveEngineResults(): Promise<void> {
-    if (!engines.value || !Array.isArray(engines.value)) return
-    const active = activeEngines.value
-    for (const engine of active) {
-      await resultStore.loadEngineResults(engine.id)
-    }
+	  if (!engines.value || !Array.isArray(engines.value)) return
+		  const active = activeEngines.value
+			  for (const engine of active) {
+				  await resultStore.loadEngineResults(engine.id)
+			  }
   }
 
   async function cloneEngine(engineId: number, targetIds: number[]): Promise<SupportEngine | null> {
-    if (!engines.value || !Array.isArray(engines.value)) return null
+	  if (!engines.value || !Array.isArray(engines.value)) return null
 
-    const source = engines.value.find((e) => e.id === engineId)
-    if (!source) return null
+		  const source = engines.value.find((e) => e.id === engineId)
+			  if (!source) return null
 
-    const cloned = {
-      engine: source.engine,
-      type: source.type,
-      title: source.title,
-      description: source.description,
-      inquiry_id: source.inquiry_id,
-      inquiry_group_id: source.inquiry_group_id,
-      status: 'draft' as const,
-      config: { ...source.config },
-      target_type: source.target_type,
-      target_ids: targetIds,
-      metadata: source.metadata ? { ...source.metadata } : undefined,
-    }
+const cloned: Omit<SupportEngine, 'id' | 'created'> = {
+  engine: source.engine,
+  purpose: source.purpose,
+  title: source.title,
+  description: source.description,
+  inquiry_id: source.inquiry_id,
+  inquiry_group_id: source.inquiry_group_id,
+  status: 'draft',
+  config: { ...source.config },
+  target_type: source.target_type,
+  target_ids: targetIds,
+  metadata: source.metadata ? { ...source.metadata } : undefined,
+}
 
-    return await createEngine(cloned)
+return await createEngine(cloned)
   }
-
   async function duplicateForPhase(engineId: number, phase: Phase): Promise<SupportEngine | null> {
-    if (!engines.value || !Array.isArray(engines.value)) return null
+	  if (!engines.value || !Array.isArray(engines.value)) return null
 
-    const source = engines.value.find((e) => e.id === engineId)
-    if (!source) return null
-
-    return await createEngine({
-      ...source,
-      status: 'draft',
-      metadata: {
-        ...source.metadata,
-        phase,
-      },
-    })
+		  const source = engines.value.find((e) => e.id === engineId)
+			  if (!source) return null
+	const { id: _id, created: _created, ...rest } = source
+return await createEngine({
+  ...rest,
+  status: 'draft',
+  metadata: {
+    ...source.metadata,
+    phase,
+  },
+})
   }
 
   function validateEngineConfig(
-    engineType: string,
-    config: Record<string, unknown>
-  ): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
+		  engineType: string,
+		  config: Record<string, unknown>
+		  ): { valid: boolean; errors: string[] } {
+	  const errors: string[] = []
 
-    switch (engineType) {
-      case 'quadratic':
-        if (config.credits_per_user && (config.credits_per_user as number) <= 0) {
-          errors.push('Credits per user must be positive')
-        }
-        break
-      case 'phased_voting':
-        if (config.rounds && (config.rounds as number) < 2) {
-          errors.push('Phased voting requires at least 2 rounds')
-        }
-        break
-      case 'token_weighted':
-        if (!config.weight_source) {
-          errors.push('Token-weighted voting requires a weight source')
-        }
-        break
-    }
+		  switch (engineType) {
+			  case 'quadratic':
+				  if (config.credits_per_user && (config.credits_per_user as number) <= 0) {
+					  errors.push('Credits per user must be positive')
+				  }
+				  break
+			  case 'phased_voting':
+					  if (config.rounds && (config.rounds as number) < 2) {
+						  errors.push('Phased voting requires at least 2 rounds')
+					  }
+					  break
+			  case 'token_weighted':
+						  if (!config.weight_source) {
+							  errors.push('Token-weighted voting requires a weight source')
+						  }
+						  break
+		  }
 
-    return { valid: errors.length === 0, errors }
+	  return { valid: errors.length === 0, errors }
   }
 
   function getEngineDefinition(engineType: string): EngineDefinition | null {
-    return ENGINE_DEFINITIONS[engineType] || null
+	  return ENGINE_DEFINITIONS[engineType] || null
   }
 
   function reset(): void {
-    engines.value = []
-    currentEngine.value = null
-    loading.value = false
-    error.value = null
-    initialized.value = false
-    isLoadingEngines.value = false
+	  engines.value = []
+		  currentEngine.value = null
+		  loading.value = false
+		  error.value = null
+		  initialized.value = false
+		  isLoadingEngines.value = false
   }
 
   return {
-    // State
-    engines,
-    currentEngine,
-    loading,
-    error,
-    initialized,
-    // Getters
-    activeEngines,
-    draftEngines,
-    closedEngines,
-    getEngineById,
-    getCurrentEngine,
-    getEngineByType,
-    getEnginesByInquiry,
-    getEnginesByInquiryGroup,
-    getEnginesByTarget,
-    getActiveEngineForTarget,
-    isEngineActive,
-    getEngineConfig,
-    hasActiveEngine,
-    // Actions
-    loadEnginesByInquiry,
-    loadEnginesByInquiryGroup,
-    createEngine,
-    updateEngine,
-    deleteEngine,
-    setCurrentEngine,
-    activateEngine,
-    // getCurrentEngineResults,
-    calculateAllActiveResults,
-    loadActiveEngineResults,
-    validateEngineConfig,
-    getEngineDefinition,
-    cloneEngine,
-    setEngines,
-    initializeFromInquiry,
-    duplicateForPhase,
-    clearEngines,
-    reset,
+	  // State
+	  engines,
+	  currentEngine,
+	  loading,
+	  error,
+	  initialized,
+	  // Getters
+	  activeEngines,
+	  draftEngines,
+	  closedEngines,
+	  getEngineById,
+	  getCurrentEngine,
+	  getEngineByType,
+	  getEnginesByInquiry,
+	  getEnginesByInquiryGroup,
+	  getEnginesByTarget,
+	  getActiveEngineForTarget,
+	  isEngineActive,
+	  getEngineConfig,
+	  hasActiveEngine,
+	  // Actions
+	  loadEnginesByInquiry,
+	  loadEnginesByInquiryGroup,
+	  createEngine,
+	  updateEngine,
+	  deleteEngine,
+	  setCurrentEngine,
+	  activateEngine,
+	  // getCurrentEngineResults,
+	  calculateAllActiveResults,
+	  loadActiveEngineResults,
+	  validateEngineConfig,
+	  getEngineDefinition,
+	  cloneEngine,
+	  setEngines,
+	  initializeFromInquiry,
+	  duplicateForPhase,
+	  clearEngines,
+	  reset,
   }
-})
+  })

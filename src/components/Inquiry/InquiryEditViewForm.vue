@@ -40,6 +40,7 @@ import {
   canSupport,
   canComment,
   canEdit,
+  canView,
   createInquiryContext,
 } from '../../utils/permissions.ts'
 
@@ -329,7 +330,7 @@ watch(
 
 // Event subscriptions
 onMounted(async () => {
-  if (!inquiryStore.isCurrentUserInOwnedGroup) { 
+  if (!canView) { 
         hasAccess.value = false
   	showError("Error you cannot view this inquiry !")
 	router.push({ name: 'list', params: { type: 'relevant' } })
@@ -753,7 +754,7 @@ return isPublicRoute
             </div>
         </div>
 
-        <OptionEditView v-if="hasVisibleFamilies && inquiryStore.status.moderationStatus !== 'rejected' " :has-visible-families="hasVisibleFamilies"/>
+        <OptionEditView v-if="canEditInquiry" :has-visible-families="hasVisibleFamilies"/>
     </div>
 </template>
 

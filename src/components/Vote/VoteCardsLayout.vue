@@ -25,7 +25,7 @@
         :total-items="items.length"
         :hide-results="hideResults"
         :get-user-vote-value-for-item="getUserVoteValueForItem"
-        @vote="(item, value) => $emit('vote', item, value)"
+        @vote="(rawItem, value) => $emit('vote', rawItem, value)"
         @approval-toggle="(itemId) => $emit('toggleSelection', itemId)"
         @change-rank="(itemId, rank) => $emit('update:rankings', { ...rankings, [itemId]: rank })"
         @change-grade="(itemId, grade) => $emit('update:grades', { ...grades, [itemId]: grade })"
@@ -38,10 +38,9 @@
       />
     </div>
 
-
     <!-- Empty state -->
     <div v-if="items.length === 0" class="empty-state">
-      <component :is="InquiryOptionIcons.Inbox" :size="48" />
+      <component :is="emptyIcon" :size="48" />
       <p>{{ t('agora', 'No items available') }}</p>
     </div>
 
@@ -55,12 +54,11 @@
           @click="$emit('submitMultiVote')"
         >
           <template #icon>
-            <Vote :size="18" />
+            <VoteIcon :size="18" />
           </template>
           {{ getSubmitButtonText() }}
         </NcButton>
-        
-        <!-- Global remove button -->
+
         <NcButton
           v-if="hasUserVoted"
           type="tertiary"
@@ -72,7 +70,7 @@
         </NcButton>
 
         <div v-if="voteSelectionInfo" class="selection-info">
-          <component :is="InquiryOptionIcons.Info" :size="14" />
+          <component :is="infoIcon" :size="14" />
           <span>{{ voteSelectionInfo }}</span>
         </div>
       </div>
@@ -84,13 +82,17 @@
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import { Vote , X } from 'lucide-vue-next'
+import { Vote as VoteIcon, X } from 'lucide-vue-next'
 import VoteCard from './VoteCard.vue'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { InquiryOptionIcons, InquiryGeneralIcons } from '../../utils/icons.ts'
 import type { Item, SupportEngine } from '../../Types/index'
 import type { SupportValue } from '../../Types/votingType'
 
 const props = defineProps<{
+  /**
+   * Required — this is the list of full Item wrappers (not the trimmed
+   * `VotableItem` shape from useVoteContext).
+   */
   items: Item[]
   effectiveEngineId: string
   activeEngine?: SupportEngine
@@ -106,7 +108,11 @@ const props = defineProps<{
   canSubmitMultiVote: boolean
   voteSelectionInfo: string | null
   getItemVoteCount: (itemId: number) => number
-  getPercentage: (item: Item) => number
+  /**
+   * Accepts either a full Item or a trimmed VotableItem — `getPercentage`
+   * only needs `id`.
+   */
+  getPercentage: (item: Item | { id: number }) => number
   hasUserVotedFor: (itemId: number) => boolean
   isSelectedForVote: (itemId: number) => boolean
   getUserVoteValueForItem: (itemId: number) => SupportValue | null
@@ -114,26 +120,36 @@ const props = defineProps<{
   hideResults?: boolean
 }>()
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  'toggleSelection': [itemId: number]
+  toggleSelection: [itemId: number]
   'update:rankings': [rankings: Record<number, number>]
   'update:scores': [scores: Record<number, number>]
   'update:grades': [grades: Record<number, string | null>]
   'update:reactions': [reactions: Record<number, string[] | null>]
   'update:quadraticVotes': [votes: Record<number, number>]
   'update:tokenWeights': [weights: Record<number, number>]
-  'vote': [item: Item, value: unknown]
-  'removeMyVote': []
-  'openSupportsModal': [itemId: number]
-  'submitMultiVote': []
+  vote: [item: Item, value: unknown]
+  removeMyVote: []
+  openSupportsModal: [itemId: number]
+  submitMultiVote: []
+  selectItem: [item: Item]
 }>()
 
-const showSubmitButton = computed(() =>
-  props.canVote &&
-  props.activeEngine?.status === 'active' &&
-  props.effectiveEngineId !== 'trending' &&
-  props.items.length > 0
+void emit
+
+const emptyIcon = computed(
+  () => InquiryOptionIcons.Inbox ?? InquiryGeneralIcons.File,
+)
+const infoIcon = computed(
+  () => InquiryOptionIcons.Info ?? InquiryGeneralIcons.Info ?? InquiryGeneralIcons.File,
+)
+
+const showSubmitButton = computed(
+  () =>
+    props.canVote &&
+    props.activeEngine?.status === 'active' &&
+    props.effectiveEngineId !== 'trending' &&
+    props.items.length > 0,
 )
 
 const getSubmitButtonText = (): string => {
@@ -143,11 +159,10 @@ const getSubmitButtonText = (): string => {
     score: t('agora', 'Submit scores'),
     star: t('agora', 'Submit ratings'),
     condorcet: t('agora', 'Submit ranking'),
-    borda: t('agora', 'Submit ranking')
+    borda: t('agora', 'Submit ranking'),
   }
   return texts[props.effectiveEngineId] || t('agora', 'Submit vote')
 }
-
 </script>
 
 <style scoped lang="scss">

@@ -47,14 +47,15 @@
                 />
                 <VoteEngineBlock
                     ref="blocks"
-                    :inquiry-id="parentId ?? 0"
+                    :inquiry-id="effectiveParentId ?? 0"
+                    :target-type="props.targetType"
                     :engine-id="engine.id"
                     :layout="currentLayout"
                     :time-remaining="timeRemaining"
                     :enqueue-save="enqueueSave"
                     :hide-results="hidesResults(engine)"
                     @open-supports-modal="openSupportsModal"
-                    @select-option="$emit('selectOption', $event)"
+                    @select-item="$emit('selectItem', $event)"
                     @progress="onProgress"
                 />
 
@@ -73,7 +74,7 @@
                     v-else-if="votableItems.length === 0"
                     :can-manage-vote="canManageVote"
                     :is-readonly="isReadonly"
-                    @add-option="$emit('addOption')"
+                    @add-item="$emit('addItem')"
                 />
             </section>
 
@@ -149,13 +150,13 @@
                 v-else-if="votableItems.length === 0"
                 :can-manage-vote="canManageVote"
                 :is-readonly="isReadonly"
-                @add-option="$emit('addOption')"
+                @add-item="$emit('addItem')"
             />
 
             <!-- Cards Layout -->
             <div v-else-if="currentLayout === 'cards'" class="cards-layout">
                 <VoteCardsLayout
-                    :ranked-items="rankedItems"
+                    :items="votableFullItems"
                     :effective-engine-id="effectiveEngineId"
                     :active-engine="currentEngine"
                     :can-vote="canVote"
@@ -181,10 +182,10 @@
                     @update:reactions="updateReactions"
                     @update:quadratic-votes="updateQuadraticVotes"
                     @update:token-weights="updateTokenWeights"
-                    @vote="(item, value) => submitSingleVote(parentId, item, value)"
+                    @vote="(item, value) => submitSingleVote(effectiveParentId ?? 0, item, value)"
                     @submit-multi-vote="onSubmitMultiVote"
                     @remove-my-vote="removeMyVote"
-                    @select-option="(opt) => emit('selectOption', toItem(opt))"
+                    @select-item="$emit('selectItem', $event)"
                     @open-supports-modal="openSupportsModal"
                 />
 
@@ -245,10 +246,11 @@
                     :reactions="reactions"
                     :quadratic-votes="quadraticVotes"
                     :token-weights="tokenWeights"
-                    :selected-options="selectedOptions"
+                    :selected-items="selectedItems"
                     :can-submit-multi-vote="canSubmitMultiVote"
                     :vote-selection-info="voteSelectionInfo"
                     :get-item-vote-count="getItemVoteCount"
+                    :get-item-rank="getItemRank"
                     :get-percentage="(item) => getPercentage(item)"
                     :has-user-voted-for="hasUserVotedFor"
                     :is-selected-for-vote="isSelectedForVote"
@@ -256,15 +258,15 @@
                     :winner-percentage="winnerPercentage"
                     :time-remaining="timeRemaining"
                     @toggle-selection="toggleSelection"
-                    @update:rankings="rankings = $event"
-                    @update:scores="scores = $event"
-                    @update:grades="grades = $event"
-                    @update:reactions="reactions = $event"
-                    @update:quadratic-votes="quadraticVotes = $event"
-                    @update:token-weights="tokenWeights = $event"
-                    @vote="(item, value) => submitSingleVote(parentId, item, value)"
-                    @submit-multi-vote="submitMultiVote"
-                    @select-option="(opt) => emit('selectOption', toItem(opt))"
+                    @update:rankings="updateRankings"
+                    @update:scores="updateScores"
+                    @update:grades="updateGrades"
+                    @update:reactions="updateReactions"
+                    @update:quadratic-votes="updateQuadraticVotes"
+                    @update:token-weights="updateTokenWeights"
+                    @vote="(item, value) => submitSingleVote(effectiveParentId ?? 0, item, value)"
+                    @submit-multi-vote="onSubmitMultiVote"
+                    @select-item="$emit('selectItem', $event)"
                 />
             </div>
         </div>
@@ -276,14 +278,14 @@
             :can-manage-vote="canManageVote"
             :is-readonly="isReadonly"
             @configure="showCreateEngineModal = true"
-            @add-option="$emit('addOption')"
+            @add-item="$emit('addItem')"
         />
 
         <!-- Supports Modal -->
         <SupportsDetailModal
             v-if="showSupportsModal"
-            :option-id="selectedItemId"
-            :inquiry-id="parentId ?? 0"
+            :item-id="selectedItemId"
+            :inquiry-id="effectiveParentId ?? 0"
             :display-vote="true"
             @close="showSupportsModal = false"
         />
@@ -303,14 +305,14 @@
         <!-- Add Items to Vote Modal -->
         <AddItemToFamily
             v-if="showAddToVoteModal"
-            :inquiry-id="parentId ?? 0"
             :family-type="'vote'"
-            :current-engine="currentEngine"
-            :available-items="allItems"
+            :target-type="props.targetType"
+            :inquiry-id="effectiveParentId ?? 0"
+	    :engine-id="targetEngineId ?? undefined"
             :already-linked-item-ids="votableItemIds"
             @close="showAddToVoteModal = false"
             @success="onItemsAdded"
-            @option-family-changed="handleOptionFamilyChanged"
+            @option-family-changed="handleItemFamilyChanged"
         />
 
         <!-- Delete Confirmation -->
@@ -347,6 +349,7 @@ import { useOptionsStore } from '../../stores/options'
 import { useInquiriesStore } from '../../stores/inquiries'
 import { useSupportEngineStore } from '../../stores/supportEngine'
 import { useSupportsStore } from '../../stores/supports'
+import { useInquiryGroupsStore } from '../../stores/inquiryGroups'
 
 import VoteHeader from '../Vote/VoteHeader.vue'
 import VoteEmptyState from '../Vote/VoteEmptyState.vue'
@@ -358,7 +361,6 @@ import AddItemToFamily from '../Modals/AddItemToFamily.vue'
 import SupportsDetailModal from '../Modals/SupportsDetailModal.vue'
 import { ENGINE_DEFINITIONS } from '../../Types/votingType'
 import { showSuccess } from '@nextcloud/dialogs'
-import { toItem } from '../../helpers/modules/itemHelpers'
 
 const props = defineProps<{
     items: Item[]
@@ -370,9 +372,9 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     configureEngine: []
-    addOption: []
+    addItem: []
     addToVote: []
-    selectOption: [item: Item]
+    selectItem: [item: Item]
     itemFamilyChanged: [payload: { itemId: number; familyKey: string; action: string }]
 }>()
 
@@ -384,6 +386,42 @@ const optionsStore = useOptionsStore()
 const inquiriesStore = useInquiriesStore()
 const engineStore = useSupportEngineStore()
 const supportsStore = useSupportsStore()
+const inquiryGroupsStore = useInquiryGroupsStore()
+
+const targetEngineId = ref<number | null>(null)
+
+const onAddToVote = (engine: SupportEngine) => {
+  selectEngine(engine.id)
+  targetEngineId.value = engine.id          
+  showAddToVoteModal.value = true
+}
+
+// ---------------------------------------------------------------
+// Effective parent id
+// ---------------------------------------------------------------
+/**
+ * Engines for `option` targets are scoped to the inquiry (`engine.inquiry_id`).
+ * Engines for `inquiry` targets are scoped to the inquiry **group**
+ * (`engine.inquiry_group_id`). See `getEnginesByTarget` in supportEngine.ts.
+ *
+ * Whatever we hand to `useVoteContext` must match that rule.
+ */
+const effectiveParentId = computed<number | null>(() => {
+    if (props.targetType === 'inquiry') {
+        const groupId =
+            inquiryGroupsStore.currentInquiryGroup?.id ??
+            (inquiryStore.inquiryGroups?.[0] ?? null)
+
+        if (!groupId) {
+            console.warn(
+                '[FamilyLayoutVote] inquiry mode without a group id — engines cannot be scoped',
+            )
+            return null
+        }
+        return groupId
+    }
+    return props.parentId
+})
 
 // ---------------------------------------------------------------
 // All items
@@ -413,7 +451,7 @@ const {
     reactions,
     quadraticVotes,
     tokenWeights,
-    selectedOptions,
+    selectedItems,
     hasUserVoted,
     canVote,
     canSubmitMultiVote,
@@ -425,6 +463,7 @@ const {
     submitMultiVote,
     totalVotes,
     getItemVoteCount,
+    getItemRank,
     getPercentage,
     getRankedItems,
     getWinner,
@@ -434,10 +473,10 @@ const {
     effectiveEngineId,
     selectEngine,
     removeMyVote,
-} = useVoteContext(props.parentId, props.targetType)
+} = useVoteContext(effectiveParentId.value, props.targetType)
 
 // ---------------------------------------------------------------
-// Stacked engines (from main)
+// Stacked engines
 // ---------------------------------------------------------------
 const stackedEngines = computed<SupportEngine[]>(() => {
     const active = availableEngines.value.filter((e) => e.status === 'active')
@@ -548,14 +587,18 @@ const engineToEdit = ref<SupportEngine | null>(null)
 const engineToDelete = ref<SupportEngine | null>(null)
 const selectedItemId = ref<number | null>(null)
 const currentEngineHasVotes = ref(false)
-const voteSession = ref({ start_date: null, end_date: null, quorum: null })
+const voteSession = ref<{ start_date: string | null; end_date: string | null; quorum: number | null }>({
+    start_date: null,
+    end_date: null,
+    quorum: null,
+})
 
 // ---------------------------------------------------------------
 // Engine helpers
 // ---------------------------------------------------------------
 const engineHasVotes = (engineId: number): boolean => {
-    const supports = supportsStore.getSupportsByParent(props.parentId, props.targetType)
-    return supports?.some((s) => s.support_engine_id === engineId) ?? false
+    const supports = supportsStore.getSupportsByParent(effectiveParentId.value, props.targetType)
+    return supports?.some((s) => s.supportEngineId === engineId) ?? false
 }
 
 const availableEnginesSelector = computed(() => {
@@ -586,6 +629,16 @@ const winner = computed(() => getWinner(votableItems.value))
 const winnerPercentage = computed(() => getWinnerPercentage(votableItems.value))
 const rankedItems = computed(() => getRankedItems(votableItems.value))
 const votableItemIds = computed(() => votableItems.value.map((item) => item.id))
+
+/**
+ * `VoteCardsLayout` expects an `Item[]` (the wrapper type), not the trimmed
+ * `{ id, title }` shape that `votableItems` exposes. Re-project onto the
+ * original `props.items` and keep only the ones the engine targets.
+ */
+const votableFullItems = computed<Item[]>(() => {
+    const ids = new Set(votableItems.value.map((v) => v.id))
+    return (props.items ?? []).filter((it) => ids.has(it.id))
+})
 
 // ---------------------------------------------------------------
 // Supports modal
@@ -684,7 +737,8 @@ const onEngineSaved = async (data: {
 }) => {
     if (engineModalMode.value === 'create') {
         await engineStore.createEngine({
-            inquiry_id: props.parentId,
+            inquiry_id: effectiveParentId.value ?? 0,
+            inquiry_group_id: props.targetType === 'inquiry' ? (effectiveParentId.value ?? 0) : 0,
             title: data.title,
             description: data.description,
             engine: data.engine,
@@ -733,16 +787,31 @@ const onItemsAdded = () => {
     showAddToVoteModal.value = false
 }
 
-const handleOptionFamilyChanged = (payload: {
-    optionId: number
-    familyKey: string
-    action: string
+/**
+ * `AddItemToFamily` emits `{ optionId, familyKey, action }`.
+ * Normalize to `{ itemId, familyKey, action }` for our parent.
+ */
+const handleItemFamilyChanged = async (payload: {
+  optionId: number
+  familyKey: string
+  action: string
 }) => {
-    emit('itemFamilyChanged', {
-        itemId: payload.optionId,
-        familyKey: payload.familyKey,
-        action: payload.action,
-    })
+  emit('itemFamilyChanged', {
+    itemId: payload.optionId,
+    familyKey: payload.familyKey,
+    action: payload.action,
+  })
+
+  // Mirror OptionEditView: keep the active engine's target_ids in sync
+  if (payload.familyKey !== 'vote' || payload.action !== 'added') return
+
+  const activeEngine = currentEngine.value
+  if (!activeEngine) return
+  if (activeEngine.target_ids.includes(payload.optionId)) return
+
+  await engineStore.updateEngine(activeEngine.id, {
+    target_ids: [...activeEngine.target_ids, payload.optionId],
+  })
 }
 
 // ---------------------------------------------------------------

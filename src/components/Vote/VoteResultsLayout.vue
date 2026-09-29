@@ -117,7 +117,7 @@ import { ref, watch, nextTick, onUnmounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import Chart from 'chart.js/auto'
 import { Users, Trophy, TrendingUp, Clock } from 'lucide-vue-next'
-import type { Option, Inquiry } from '../../Types/index'
+import type { Item, Option, Inquiry } from '../../Types/index'
 
 const props = defineProps<{
     rankedItems: (Option | Inquiry)[]
@@ -126,7 +126,7 @@ const props = defineProps<{
     winnerPercentage: number
     timeRemaining: string
     getItemVoteCount: (itemId: number) => number
-    getPercentage: (item: Item) => number
+    getPercentage: (item: { id: number }, total?: number) => number
     getItemRank?: (itemId: number) => number | null
 }>()
 
@@ -161,7 +161,7 @@ const createCharts = (): void => {
                 hoverOffset: 10
             }]
         },
-        items: {
+        options: {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
@@ -201,7 +201,7 @@ const createCharts = (): void => {
                 categoryPercentage: 0.8
             }]
         },
-        items: {
+        options: {
             responsive: true,
             maintainAspectRatio: true,
             scales: { 

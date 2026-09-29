@@ -36,7 +36,7 @@ import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { useSupportResultStore } from './supportResult.ts'
 
 // Type definitions matching PHP constants
-export type VisibilityType = 'private' | 'groups' | 'participants' | 'everyone' 
+export type VisibilityType = 'private' | 'groups' | 'participants' | 'everyone' | 'users' | 'moderate'
 export type PublicationStatus = 'draft' | 'pending' | 'published' | 'archived' | 'deleted' 
 export type ShowResultsType = 'always' | 'closed' | 'never'
 export type ModerationWorkflowStatus = 'draft' | 'pending' | 'accepted' | 'rejected'
@@ -262,7 +262,7 @@ isClosed(state): boolean {
 },
 
 		isGroupRestricted(state): boolean {
-			return state.configuration.visibilitiy === 'groups' && state.ownedGroup !== ''
+			return state.configuration.visibility === 'groups' && state.ownedGroup !== ''
 		},
 
 
@@ -442,7 +442,7 @@ isClosed(state): boolean {
 			type?: string
 			family: string
 			ownedGroup?: string
-			access?: AccessType
+			visibility?: VisibilityType
 			description?: string
 			parentId?: number
 			locationId?: number
@@ -458,7 +458,7 @@ isClosed(state): boolean {
 					family: payload.family,
 					parentId: payload.parentId,
 					locationId: payload.locationId,
-					access: payload.access,
+					VisibilityType: payload.VisibilityType,
 					categoryId: payload.categoryId,
 					description: payload.description,
 					owner: payload.owner,

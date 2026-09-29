@@ -212,7 +212,7 @@ group: {
   filterCondition: (inquiry: Inquiry) =>
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
-    inquiry.configuration.access === 'group' &&
+    inquiry.configuration.visibility === 'groups' &&
     inquiry.ownedGroup &&
     (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
 },
@@ -242,7 +242,7 @@ group: {
       }
 
       const sessionStore = useSessionStore()
-      const visibilty = inquiry.configuration.visibility
+      const visibility = inquiry.configuration.visibility
 
       // Open and public are always visible
       if (visibility === 'everyone') {
@@ -311,7 +311,7 @@ group: {
   moderate: {
     id: 'moderate',
     title: t('agora', 'To moderate'),
-    titleExt: t('agora', 'Moderator access'),
+    titleExt: t('agora', 'Moderator visibility'),
     description: t('agora', 'All new inquiries who required validation.'),
     pinned: true,
     showInNavigation: () => {
@@ -663,17 +663,38 @@ export const useInquiriesStore = defineStore('inquiries', {
       }
     },
 
-    addInquiryToStore(inquiry: Inquiry): void {
-      
-      const existingIndex = this.inquiries.findIndex((inq) => inq.id === inquiry.id)
+    /**
+     * Persist a miscFields patch on an inquiry and keep the local list in sync.
+     * Additive — does not replace existing misc fields, only merges.
+     */
+    async updateInquiryMiscFields(
+	    inquiryId: number,
+	    patch: Record<string, unknown>,
+    ): Promise<void> {
+	    const inquiry = this.inquiries.find((i) => i.id === inquiryId)
+	    if (!inquiry) {
+		    throw new Error(`Inquiry ${inquiryId} not found in store`)
+	    }
 
-      if (existingIndex === -1) {
-	      this.inquiries = [inquiry, ...this.inquiries]
-      } else {
-	      const updatedInquiries = [...this.inquiries]
-	      updatedInquiries[existingIndex] = inquiry
-	      this.inquiries = updatedInquiries
-      }
+	    const merged = { ...(inquiry.miscFields || {}), ...patch }
+	    await InquiriesAPI.updateMiscField(inquiryId, { miscFields: merged })
+
+	    // Reassign to trigger reactivity reliably
+	    inquiry.miscFields = merged
+	    this.inquiries = [...this.inquiries]
+    },
+
+    addInquiryToStore(inquiry: Inquiry): void {
+
+	    const existingIndex = this.inquiries.findIndex((inq) => inq.id === inquiry.id)
+
+	    if (existingIndex === -1) {
+		    this.inquiries = [inquiry, ...this.inquiries]
+	    } else {
+		    const updatedInquiries = [...this.inquiries]
+		    updatedInquiries[existingIndex] = inquiry
+		    this.inquiries = updatedInquiries
+	    }
 
     },
 

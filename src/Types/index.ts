@@ -168,7 +168,6 @@ export interface Item {
   family: string
   owner: User
   statusKey: string
-  /** Original object, untouched */
   raw: Option | Inquiry
 }
 

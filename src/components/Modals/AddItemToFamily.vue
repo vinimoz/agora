@@ -1,93 +1,75 @@
 <!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
-  <NcModal
-    size="normal"
-    :name="modalTitle"
-    @close="$emit('close')"
-  >
+  <NcModal size="normal" :name="modalTitle" @close="$emit('close')">
     <div class="add-option-to-family-modal">
       <div class="modal-header">
         <div class="header-icon" :class="{ 'vote-icon': familyType === 'vote' }">
           <component :is="headerIcon" :size="32" />
         </div>
         <h3>{{ modalTitle }}</h3>
-        <p class="modal-description">
-          {{ modalDescription }}
-        </p>
+        <p class="modal-description">{{ modalDescription }}</p>
       </div>
 
       <div class="modal-content">
         <div class="search-section">
-          <label>{{ t('agora', 'Select an option') }}</label>
+          <label>
+            {{ targetType === 'inquiry'
+                ? t('agora', 'Select an inquiry from this group')
+                : t('agora', 'Select an option') }}
+          </label>
           <SearchSelect
-            v-model="selectedOption"
-            type="options"
+            v-model="selectedItem"
+            :type="targetType === 'inquiry' ? 'inquiries' : 'options'"
             :inquiry-id="inquiryId"
+            :available-item-ids="availableItemIds"
             :placeholder="t('agora', 'Search by title or #id …')"
             class="search-select"
           />
+          <p v-if="targetType === 'inquiry' && availableItemIds.length === 0" class="hint">
+            {{ t('agora', 'Only inquiries in the same group can be added to this vote.') }}
+          </p>
         </div>
 
         <!-- Date range selection for timeline -->
-        <div v-if="familyType === 'timeline' && selectedOption" class="timeline-config-section">
+        <div v-if="familyType === 'timeline' && selectedItem" class="timeline-config-section">
           <div class="config-header">
             <Clock :size="18" />
             <h4>{{ t('agora', 'Date range') }}</h4>
           </div>
-          
           <div class="date-selector">
             <div class="date-field">
               <label>{{ t('agora', 'Start date') }} *</label>
-              <NcDateTimePickerNative
-                v-model="startDate"
-                type="date"
-                :placeholder="t('agora', 'Select start date')"
-                :clearable="false"
-                required
-              />
+              <NcDateTimePickerNative v-model="startDate" type="date" :clearable="false" required />
             </div>
-            
             <div class="date-field">
               <label>{{ t('agora', 'End date (optional)') }}</label>
-              <NcDateTimePickerNative
-                v-model="endDate"
-                type="date"
-                :placeholder="t('agora', 'Select end date')"
-                :clearable="true"
-              />
+              <NcDateTimePickerNative v-model="endDate" type="date" :clearable="true" />
             </div>
           </div>
         </div>
 
         <!-- Column selection for kanban -->
-        <div v-if="familyType === 'kanban' && selectedOption" class="kanban-config-section">
+        <div v-if="familyType === 'kanban' && selectedItem" class="kanban-config-section">
           <div class="config-header">
             <LayoutGrid :size="18" />
             <h4>{{ t('agora', 'Select column') }}</h4>
           </div>
-          
-          <div class="column-selector">
-            <div class="column-options">
-              <button
-                v-for="column in statusColumns"
-                :key="column.value"
-                class="column-option"
-                :class="{ selected: targetStatus === column.value }"
-                @click="targetStatus = column.value"
-              >
-                <span class="column-color" :style="{ backgroundColor: column.color }" />
-                <span class="column-label">{{ column.label }}</span>
-                <span v-if="targetStatus === column.value" class="check-icon">
-                  <Check :size="14" />
-                </span>
-              </button>
-            </div>
+          <div class="column-options">
+            <button
+              v-for="column in statusColumns"
+              :key="column.value"
+              class="column-option"
+              :class="{ selected: targetStatus === column.value }"
+              @click="targetStatus = column.value"
+            >
+              <span class="column-color" :style="{ backgroundColor: column.color }" />
+              <span class="column-label">{{ column.label }}</span>
+              <span v-if="targetStatus === column.value" class="check-icon">
+                <Check :size="14" />
+              </span>
+            </button>
           </div>
-        </div>
-
-        <!-- Configuration section for vote family -->
-        <div v-if="familyType === 'vote' && selectedOption" class="vote-config-section">
         </div>
       </div>
 
@@ -95,10 +77,10 @@
         <button class="btn-secondary" @click="$emit('close')">
           {{ t('agora', 'Cancel') }}
         </button>
-        <button 
-          class="btn-primary" 
+        <button
+          class="btn-primary"
           :disabled="!canAdd"
-          :class="{ loading: loading }"
+          :class="{ loading }"
           @click="add"
         >
           <component :is="actionIcon" :size="16" />
@@ -116,323 +98,293 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchSelect from '../Base/modules/SearchSelect.vue'
+
 import { useInquiryStore } from '../../stores/inquiry'
+import { useInquiriesStore } from '../../stores/inquiries'
 import { useOptionsStore } from '../../stores/options'
-import type { Option,  MiscField, FamilyType } from '../../Types/index'
+import { useInquiryGroupsStore } from '../../stores/inquiryGroups'
+import { InquiriesAPI } from '../../Api/index.ts'
+import { getForceLayouts } from '../../helpers/modules/GenericItemHelper'
 
-import {
-  Plus,
-  Vote,
-  LayoutGrid,
-  Clock,
-  Check
-} from 'lucide-vue-next'
+import type { Option, Inquiry, FamilyType } from '../../Types/index'
+import { Plus, Vote, LayoutGrid, Clock, Check } from 'lucide-vue-next'
 
-// Types
+// ---------------------------------------------------------------------------
+// Props / emits
+// ---------------------------------------------------------------------------
+type TargetType = 'option' | 'inquiry'
+type VotableItem = Option | Inquiry
+type MiscUpdateMap = Record<string, unknown>
 
-// Props
-const props = defineProps<{
-  familyType: FamilyType
-}>()
+const props = withDefaults(
+  defineProps<{
+    familyType: FamilyType
+    /** 'option' (default) or 'inquiry' */
+    targetType?: TargetType
+    /**
+     * In `option` mode: the inquiry id.
+     * In `inquiry` mode: the inquiry *group* id (see useVoteContext docs).
+     */
+    inquiryId?: number
+    /** Items already linked to this engine (hidden from the picker). */
+    alreadyLinkedItemIds?: number[]
+  }>(),
+  {
+    targetType: 'option',
+    inquiryId: undefined,
+    alreadyLinkedItemIds: () => [],
+  },
+)
 
 const emit = defineEmits<{
   close: []
   success: []
-   optionFamilyChanged: [payload: { optionId: number, familyKey: string, action: 'added' }]
+  optionFamilyChanged: [payload: { optionId: number; familyKey: string; action: 'added' }]
 }>()
 
-
+// ---------------------------------------------------------------------------
+// Stores
+// ---------------------------------------------------------------------------
 const inquiryStore = useInquiryStore()
+const inquiriesStore = useInquiriesStore()
 const optionsStore = useOptionsStore()
-const inquiryId = computed(() => {
-  // Ensure we have a valid inquiry ID
-  const id = inquiryStore.id
-  if (!id || id === 0) {
-    console.warn('Invalid inquiry ID in AddOptionToFamily:', id)
-    return null
+const inquiryGroupsStore = useInquiryGroupsStore()
+
+// ---------------------------------------------------------------------------
+// Which items may be selected?
+// ---------------------------------------------------------------------------
+/**
+ * Options: every option of the current inquiry, minus already-linked ones.
+ * Inquiries: **only** the ones in the current inquiry group.
+ *
+ * The "only group" rule is a hard product constraint: votes for inquiries are
+ * scoped to a group. See `getEnginesByTarget` in supportEngine.ts.
+ */
+const availableItemIds = computed<number[]>(() => {
+  const linked = new Set(props.alreadyLinkedItemIds ?? [])
+
+  if (props.targetType === 'inquiry') {
+    // Priority 1: resolved current group
+    const currentGroup = inquiryGroupsStore.currentInquiryGroup
+    const groupIds = currentGroup?.inquiryIds ?? []
+
+    // Priority 2: any group the current inquiry belongs to
+    let fallbackIds: number[] = []
+    if (!groupIds.length) {
+      const currentInquiryGroups =
+        (inquiriesStore.byId[inquiryStore.id]?.inquiryGroups as number[] | undefined) ?? []
+      fallbackIds = currentInquiryGroups.flatMap(
+        (gid) => inquiryGroupsStore.byId(gid)?.inquiryIds ?? [],
+      )
+    }
+
+    const ids = groupIds.length ? groupIds : fallbackIds
+    return ids.filter((id) => !linked.has(id))
   }
-  return id
+
+  return (optionsStore.options ?? [])
+    .map((o) => o.id)
+    .filter((id) => !linked.has(id))
 })
 
-const selectedOption = ref<Option | null>(null)
+// ---------------------------------------------------------------------------
+// Local state
+// ---------------------------------------------------------------------------
+const selectedItem = ref<VotableItem | null>(null)
 const startDate = ref<Date | null>(null)
 const endDate = ref<Date | null>(null)
 const targetStatus = ref<string | null>(null)
 const loading = ref(false)
 
-// Status columns for kanban
 const statusColumns = [
   { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
   { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
   { value: 'completed', label: t('agora', 'Completed'), color: '#27ae60' },
-  { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' }
+  { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' },
 ]
 
-// Modal content based on family type
+// ---------------------------------------------------------------------------
+// Labels
+// ---------------------------------------------------------------------------
 const modalTitle = computed(() => {
+  const noun = props.targetType === 'inquiry' ? t('agora', 'inquiry') : t('agora', 'option')
   switch (props.familyType) {
-    case 'vote':
-      return t('agora', 'Add option to vote')
-    case 'timeline':
-      return t('agora', 'Add option to timeline')
-    case 'kanban':
-      return t('agora', 'Add option to board')
-    default:
-      return t('agora', 'Add option')
+    case 'vote':     return t('agora', 'Add {noun} to vote', { noun })
+    case 'timeline': return t('agora', 'Add {noun} to timeline', { noun })
+    case 'kanban':   return t('agora', 'Add {noun} to board', { noun })
+    default:         return t('agora', 'Add {noun}', { noun })
   }
 })
 
 const modalDescription = computed(() => {
+  if (props.familyType === 'vote' && props.targetType === 'inquiry') {
+    return t('agora', 'Add an inquiry from this group to become a voting candidate.')
+  }
+  const noun = props.targetType === 'inquiry' ? t('agora', 'inquiry') : t('agora', 'option')
   switch (props.familyType) {
-    case 'vote':
-      return t('agora', 'Add an existing option to become a voting candidate.')
-    case 'timeline':
-      return t('agora', 'Add an existing option to the timeline view. Set the date range for when this option should appear.')
-    case 'kanban':
-      return t('agora', 'Add an existing option to the kanban board. Choose which column to place it in.')
-    default:
-      return t('agora', 'Add an existing option to this view.')
+    case 'vote':     return t('agora', 'Add an existing {noun} to become a voting candidate.', { noun })
+    case 'timeline': return t('agora', 'Add an existing {noun} to the timeline view.', { noun })
+    case 'kanban':   return t('agora', 'Add an existing {noun} to the kanban board.', { noun })
+    default:         return t('agora', 'Add an existing {noun} to this view.', { noun })
   }
 })
 
 const headerIcon = computed(() => {
   switch (props.familyType) {
-    case 'vote': return Vote
+    case 'vote':     return Vote
     case 'timeline': return Clock
-    case 'kanban': return LayoutGrid
-    default: return Plus
+    case 'kanban':   return LayoutGrid
+    default:         return Plus
   }
 })
-
-const actionIcon = computed(() => {
-  switch (props.familyType) {
-    case 'vote': return Vote
-    case 'timeline': return Clock
-    case 'kanban': return LayoutGrid
-    default: return Plus
-  }
-})
+const actionIcon = headerIcon
 
 const actionButtonText = computed(() => {
   switch (props.familyType) {
-    case 'vote':
-      return t('agora', 'Add to vote')
-    case 'timeline':
-      return t('agora', 'Add to timeline')
-    case 'kanban':
-      return t('agora', 'Add to board')
-    default:
-      return t('agora', 'Add')
+    case 'vote':     return t('agora', 'Add to vote')
+    case 'timeline': return t('agora', 'Add to timeline')
+    case 'kanban':   return t('agora', 'Add to board')
+    default:         return t('agora', 'Add')
   }
 })
 
+// ---------------------------------------------------------------------------
 // Validation
+// ---------------------------------------------------------------------------
 const canAdd = computed(() => {
-  if (!selectedOption.value) return false
-  
+  if (!selectedItem.value) return false
   switch (props.familyType) {
-    case 'timeline':
-      return startDate.value !== null
-    case 'kanban':
-      return targetStatus.value !== null
-    case 'vote':
-      return true
-    default:
-      return true
+    case 'timeline': return startDate.value !== null
+    case 'kanban':   return targetStatus.value !== null
+    default:         return true
   }
 })
 
-// Helper to get force_layouts from miscFields
-function getForceLayouts(option: Option): string[] {
-  const miscFields = option.miscFields || {}
-  const forceLayouts = miscFields.force_layouts
-  if (Array.isArray(forceLayouts)) return forceLayouts
-  if (typeof forceLayouts === 'string') {
-    try {
-      return JSON.parse(forceLayouts)
-    } catch {
-      return []
-    }
-  }
-  return []
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+function buildForceLayoutsUpdate(
+  item: VotableItem,
+  layout: 'vote' | 'timeline' | 'kanban',
+): string[] {
+  const current = getForceLayouts(item)
+  return current.includes(layout) ? current : [...current, layout]
 }
 
-
-async function addToKanban(): Promise<void> {
-  if (!selectedOption.value || !targetStatus.value) return
-
-  try {
-    // Check if option already has kanban in force_layouts
-    const forceLayouts = getForceLayouts(selectedOption.value)
-    if (forceLayouts.includes('kanban')) {
-      showError(t('agora', 'Option already added to kanban board'))
-      return
+function currentStatusOf(item: VotableItem): string {
+  if ('status' in item && item.status) {
+    if (typeof item.status === 'object' && 'optionStatus' in item.status) {
+      return (item.status as { optionStatus?: string }).optionStatus || 'draft'
     }
-
-    // Add kanban to force_layouts
-    const updatedLayouts = [...forceLayouts, 'kanban']
-
-    // Prepare miscFields update
-    const currentMiscFields = selectedOption.value.miscFields || {}
-    const miscFieldsUpdate: Record<string, MiscField> = {
-      ...currentMiscFields,
-      force_layouts: JSON.stringify(updatedLayouts)
-    }
-
-    // Update the option - first update the status, then the misc fields
-    // If updateOptionFromModal expects (id, status, miscFields)
-    await optionsStore.updateOptionFromModal(
-      selectedOption.value.id,
-      targetStatus.value,  // Update the status to the selected column
-      miscFieldsUpdate
-    )
-  } catch (error) {
-    console.error('Error in addToKanban:', error)
-    throw error
+    if (typeof item.status === 'string') return item.status
   }
+  return 'draft'
+}
+
+async function patchOption(item: Option, patch: MiscUpdateMap, status?: string): Promise<void> {
+  const merged = { ...(item.miscFields || {}), ...patch }
+  await optionsStore.updateOptionFromModal(
+    item.id,
+    status || currentStatusOf(item),
+    merged as never,
+  )
+}
+
+/**
+ * Persist a miscFields patch on an Inquiry.
+ * `inquiriesStore` has no action for this — call the API and refresh the list.
+ */
+async function patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
+  await inquiriesStore.updateInquiryMiscFields(item.id, patch)
+}
+
+async function patchItem(item: VotableItem, patch: MiscUpdateMap, status?: string): Promise<void> {
+  if (props.targetType === 'inquiry') {
+    await patchInquiry(item as Inquiry, patch)
+  } else {
+    await patchOption(item as Option, patch, status)
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Family actions
+// ---------------------------------------------------------------------------
+async function addToVote(): Promise<void> {
+  const item = selectedItem.value
+  if (!item) return
+  const updatedLayouts = buildForceLayoutsUpdate(item, 'vote')
+  await patchItem(item, { force_layouts: JSON.stringify(updatedLayouts) })
+  emit('optionFamilyChanged', { optionId: item.id, familyKey: 'vote', action: 'added' })
 }
 
 async function addToTimeline(): Promise<void> {
-  if (!selectedOption.value || !startDate.value) return
-
-  try {
-    // Check if option already has timeline in force_layouts
-    const forceLayouts = getForceLayouts(selectedOption.value)
-    if (forceLayouts.includes('timeline')) {
-      showError(t('agora', 'Option already added to timeline'))
-      return
-    }
-
-    // Add timeline to force_layouts
-    const updatedLayouts = [...forceLayouts, 'timeline']
-    
-    // Prepare miscFields with timeline dates
-    const currentMiscFields = selectedOption.value.miscFields || {}
-    const miscFieldsUpdate: Record<string, MiscField> = {
-      ...currentMiscFields,
-      force_layouts: JSON.stringify(updatedLayouts),
-      start_date: startDate.value.toISOString()
-    }
-    
-    if (endDate.value) {
-      miscFieldsUpdate.end_date = endDate.value.toISOString()
-    }
-
-    // Update the option
-    await optionsStore.updateOptionFromModal(
-      selectedOption.value.id,
-      selectedOption.value.status?.optionStatus || 'draft',
-      miscFieldsUpdate
-    )
-  } catch (error) {
-    console.error('Error in addToTimeline:', error)
-    throw error
+  const item = selectedItem.value
+  if (!item || !startDate.value) return
+  const updatedLayouts = buildForceLayoutsUpdate(item, 'timeline')
+  const patch: MiscUpdateMap = {
+    force_layouts: JSON.stringify(updatedLayouts),
+    start_date: startDate.value.toISOString(),
   }
+  if (endDate.value) patch.end_date = endDate.value.toISOString()
+  await patchItem(item, patch)
+  emit('optionFamilyChanged', { optionId: item.id, familyKey: 'timeline', action: 'added' })
 }
 
-async function addToVote(): Promise<void> {
-  if (!selectedOption.value) return
-
-  try {
-    // Check if option already has vote in force_layouts
-    const forceLayouts = getForceLayouts(selectedOption.value)
-    let updatedLayouts = null
-
-   if (forceLayouts.includes('vote')) {
-      updatedLayouts = forceLayouts
-    }
-    else {
-      updatedLayouts = [...forceLayouts, 'vote']
-
-    }
-
-    // Prepare miscFields with vote
-    const currentMiscFields = selectedOption.value.miscFields || {}
-    const miscFieldsUpdate: Record<string, MiscFields> = {
-      ...currentMiscFields,
-      force_layouts: JSON.stringify(updatedLayouts),
-      start_date: currentMiscFields.start_date || new Date().toISOString() 
-    }
-    
-    await optionsStore.updateOptionFromModal(
-      selectedOption.value.id,
-      selectedOption.value.status?.optionStatus || 'draft',
-      miscFieldsUpdate
-    )
-    emit('optionFamilyChanged', {
-  optionId: selectedOption.value.id,
-  familyKey: 'vote',
-  action: 'added'
-})
-
-  } catch (error) {
-    console.error('Error in addToVote:', error)
-    throw error
-  }
+async function addToKanban(): Promise<void> {
+  const item = selectedItem.value
+  if (!item || !targetStatus.value) return
+  const updatedLayouts = buildForceLayoutsUpdate(item, 'kanban')
+  await patchItem(
+    item,
+    { force_layouts: JSON.stringify(updatedLayouts) },
+    targetStatus.value,
+  )
+  emit('optionFamilyChanged', { optionId: item.id, familyKey: 'kanban', action: 'added' })
 }
-
 
 async function add(): Promise<void> {
-  if (!selectedOption.value) return
-
-  // Check if we have a valid inquiry ID before proceeding
-  if (!inquiryId.value) {
-    showError(t('agora', 'Invalid inquiry context. Please refresh the page and try again.'))
-    return
-  }
+  if (!selectedItem.value) return
 
   loading.value = true
   try {
     switch (props.familyType) {
-      case 'kanban':
-        await addToKanban()
-        break
-      case 'timeline':
-        await addToTimeline()
-        break
-      case 'vote':
-        await addToVote()
-       break 
+      case 'kanban':   await addToKanban(); break
+      case 'timeline': await addToTimeline(); break
+      case 'vote':     await addToVote(); break
     }
 
-    // Refresh data - but only if we have a valid inquiry ID
-    if (inquiryId.value && inquiryId.value !== 0) {
-      try {
-        await inquiryStore.load()
-        await optionsStore.load()
-      } catch (refreshError) {
-        console.warn('Could not refresh data after adding option:', refreshError)
-        // Don't throw here - the operation succeeded, just refresh failed
-      }
+    try {
+      await inquiryStore.load()
+      await optionsStore.load()
+      await inquiriesStore.load(true)
+    } catch (refreshError) {
+      console.warn('Refresh after add failed (non-fatal):', refreshError)
     }
 
-    showSuccess(t('agora', 'Option added to {family} successfully!', {
-      family: props.familyType === 'timeline' ? t('agora', 'timeline') : t('agora', 'board')
-    }))
-
+    showSuccess(
+      t('agora', '{noun} added successfully!', {
+        noun: props.targetType === 'inquiry' ? t('agora', 'Inquiry') : t('agora', 'Option'),
+      }),
+    )
     emit('success')
     emit('close')
   } catch (error) {
-    console.error(`Error adding option to ${props.familyType}:`, error)
-    showError(t('agora', 'Failed to add option to {family}', {
-      family: props.familyType === 'timeline' ? t('agora', 'timeline') : t('agora', 'board')
-    }))
+    console.error(`Error adding ${props.targetType} to ${props.familyType}:`, error)
+    showError(t('agora', 'Failed to add to {family}', { family: props.familyType }))
   } finally {
     loading.value = false
   }
 }
 
-// Watch for changes in selected option to validate
-watch(selectedOption, (newOption) => {
-  if (newOption && !inquiryId.value) {
-    console.warn('Selected option but inquiry ID is invalid')
+watch(selectedItem, (v) => {
+  if (v && !props.inquiryId) {
+    console.warn('Selected item but no inquiry id was provided')
   }
 })
 
-// Log on mount for debugging
 onMounted(() => {
-  if (!inquiryId.value || inquiryId.value === 0) {
-    console.warn('AddOptionToFamily mounted with invalid inquiry ID:', inquiryId.value)
+  if (!props.inquiryId) {
+    console.warn('AddItemToFamily mounted without an inquiry id')
   }
 })
 </script>

@@ -45,7 +45,6 @@
     <!-- Results Layout -->
     <div v-else class="results-layout">
         <VoteResultsLayout
-                :items="votableItems"
                 :total-votes="totalVotes"
                 :ranked-items="rankedItems"
                 :current-engine="currentEngine"
@@ -97,6 +96,7 @@ import VoteResultsLayout from './VoteResultsLayout.vue'
 const props = defineProps<{
   inquiryId: number
   engineId: number
+  targetType: 'option' | 'inquiry'  
   layout: 'cards' | 'results'
   timeRemaining: string
   enqueueSave?: (engineId: number, task: () => Promise<boolean>) => Promise<boolean>
@@ -105,7 +105,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'openSupportsModal': [itemId: number]
-  'selectItem': [item: Option]
+  'selectItem': [item: Item]
   'progress': [engineId: number, answered: number, total: number]
 }>()
 
@@ -140,12 +140,12 @@ const {
   reactions,
   quadraticVotes,
   tokenWeights,
-} = useVoteContext(props.inquiryId, props.engineId)
+  } = useVoteContext(props.inquiryId, props.targetType, props.engineId)
 
 const winner = computed(() => getWinner(votableItems.value))
 const winnerPercentage = computed(() => getWinnerPercentage(votableItems.value))
 
-const rankedItems = computed(() => getRankedItems(votableOptions.value))
+const rankedItems = computed(() => getRankedItems(votableItems.value))
 
 const answered = computed(() => votableItems.value.filter((o) => isSelectedForVote(o.id)).length)
 watch(
@@ -207,15 +207,21 @@ function scheduleSave() {
   waiting.value = true
 }
 
-function onRemoveMyVote() {
+async function onRemoveMyVote() {
   clearTimeout(timer)
   timer = undefined
   waiting.value = false
-  pending = write(() => removeAll(true))
+  const success = await write(() => removeAll(true))
+  if (success) {
+    showSuccess(t('agora', 'Your vote has been removed.'))
+  }
 }
 
 // Every answer of this block is stored or on its way to the page queue.
-const settled = computed(() => autoSave.value && !waiting.value)
+const settled = computed(() => {
+  if (!autoSave.value) return hasLocalAnswers() === false || !!props.enqueueSave
+  return !waiting.value
+})
 
 defineExpose({ flush, settled })
 

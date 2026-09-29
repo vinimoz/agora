@@ -12,23 +12,17 @@ import { useSessionStore } from '../stores/session'
 import { useInquiryStore } from '../stores/inquiry'
 import { useInquiriesStore } from '../stores/inquiries'
 import type { SupportResultData } from './index.ts'
-import type { Option, Inquiry, SupportEngine, SupportValue } from '../Types/index'
-// import { useTrending } from './useTrending'
+import type { SupportValue } from '../Types/index'
 import { ENGINE_DEFINITIONS } from '../Types/votingType'
+import type { TargetType, VotableItem } from '../Types/voteContext.types'
 
-export type TargetType = 'option' | 'inquiry'
-
-export interface VotableItem {
-  id: number
-  title: string
-  [key: string]: unknown
-}
+export type { TargetType, VotableItem } from '../Types/voteContext.types'
 
 export interface VoteContext {
   loadingEngines: Ref<boolean>
-  availableEngines: ComputedRef<SupportEngine[]>
+  availableEngines: ComputedRef<import('../Types/index').SupportEngine[]>
   selectedEngineId: Ref<number | null>
-  currentEngine: ComputedRef<SupportEngine | null>
+  currentEngine: ComputedRef<import('../Types/index').SupportEngine | null>
   votableItems: ComputedRef<VotableItem[]>
   hasActiveEngine: ComputedRef<boolean>
 
@@ -48,7 +42,7 @@ export interface VoteContext {
 
   totalVotes: ComputedRef<number>
   getItemVoteCount: (itemId: number) => number
-  getPercentage: (item: VotableItem, total?: number) => number
+  getPercentage: (item: { id: number }, total?: number) => number
   getRankedItems: (items: VotableItem[]) => VotableItem[]
   getWinner: (items: VotableItem[]) => VotableItem | null
   getWinnerPercentage: (items: VotableItem[]) => number
@@ -70,19 +64,46 @@ export interface VoteContext {
   updateQuadratic: (itemId: number, votes: number | null) => void
   updateTokenWeight: (itemId: number, weight: number | null) => void
   submitSingleVote: (parentId: number, item: VotableItem, value: SupportValue) => Promise<boolean>
-  submitMultiVote: () => Promise<boolean>
+  submitMultiVote: (reload?: boolean) => Promise<boolean>
   removeMyVote: (reload?: boolean) => Promise<boolean>
   loadUserVotesForEngine: (engineId: number) => void
   resetSelections: () => void
   hasUserVotedFor: (itemId: number) => boolean
   isSelectedForVote: (itemId: number) => boolean
-  removeMyVote: () => Promise<boolean>
 }
+
+/**
+ * Engines that cast **one vote per user per option** — the user cannot change
+ * their mind and the input is locked after the first save.
+ *
+ * Everything not in this list is treated as a "multi" engine, where the ballot
+ * is editable and can be re-submitted.
+ */
+const SINGLE_VOTE_ENGINES = [
+  'binary',
+  'ternary',
+  'score',
+  'star',
+  'majority_judgment',
+  'reaction',
+  'approval_delib',
+]
+
+const PER_OPTION_RESULT_ENGINES = [
+  'binary',
+  'ternary',
+  'score',
+  'star',
+  'majority_judgment',
+  'reaction',
+]
+
+const POINT_BASED_ENGINES = ['borda', 'condorcet']
 
 export function useVoteContext(
   parentId: number | null,
   targetType: TargetType,
-  engineId?: number
+  engineId?: number,
 ): VoteContext {
   const engineStore = useSupportEngineStore()
   const supportsStore = useSupportsStore()
@@ -92,13 +113,26 @@ export function useVoteContext(
   const inquiriesStore = useInquiriesStore()
 
   // ---------- Engine management ----------
+  const loadingEngines = ref(false)
+
+  // Mirror the store's loading flag into our local ref so callers can use
+  // `loadingEngines` without reaching into the store directly.
+  watch(
+    () => engineStore.loading,
+    (v) => {
+      loadingEngines.value = v
+    },
+    { immediate: true },
+  )
+
   const selectedEngineId = ref<number | null>(engineId ?? null)
-  const availableEngines = computed<SupportEngine[]>(() => {
+
+  const availableEngines = computed(() => {
     if (!parentId) return []
     return engineStore.getEnginesByTarget(targetType, parentId)
   })
 
-  const currentEngine = computed<SupportEngine | null>(() => {
+  const currentEngine = computed(() => {
     const engines = availableEngines.value
     if (engineId !== undefined) {
       return engines.find((e) => e.id === engineId) ?? null
@@ -123,10 +157,10 @@ export function useVoteContext(
         selectedEngineId.value = engines[0].id
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
-  // Get votable items based on target type
+  // ---------- Votable items ----------
   const votableItems = computed<VotableItem[]>(() => {
     const engine = currentEngine.value
     if (!engine?.target_ids) return []
@@ -134,22 +168,26 @@ export function useVoteContext(
     if (targetType === 'option') {
       const allOptions = optionsStore.options || []
       return allOptions.filter((opt) => engine.target_ids.includes(opt.id))
-    } else {
-      // targetType === 'inquiry'
-      const allInquiries = inquiriesStore.inquiries || []
-      return allInquiries.filter((inq) => engine.target_ids.includes(inq.id))
     }
+    const allInquiries = inquiriesStore.inquiries || []
+    return allInquiries.filter((inq) => engine.target_ids.includes(inq.id))
   })
 
   const hasActiveEngine = computed(() => availableEngines.value.length > 0)
 
   const refreshEngines = async () => {
-    // Implementation if needed
+    loadingEngines.value = true
+    try {
+      // Delegated to the store — nothing to do here yet.
+      // Kept as an async function so callers can await.
+    } finally {
+      loadingEngines.value = false
+    }
   }
 
-  const selectEngine = (engineId: number) => {
-    if (availableEngines.value.some((e) => e.id === engineId)) {
-      selectedEngineId.value = engineId
+  const selectEngine = (id: number) => {
+    if (availableEngines.value.some((e) => e.id === id)) {
+      selectedEngineId.value = id
       resetSelections()
     }
   }
@@ -165,34 +203,46 @@ export function useVoteContext(
   const tokenWeights = ref<Record<number, number>>({})
   const selectedItems = ref<Set<number>>(new Set())
 
-const currentUserVotes = computed(() => {
-  const userId = sessionStore.currentUser?.id
-  // Check if parentId exists before proceeding
-  if (!userId || !parentId) return []
-  
-  const engineId = currentEngine.value?.id
-  if (!engineId) return []
-  
-  const votes = supportsStore.getSupportsByParent(parentId, targetType).filter((s) => s.userId === userId)
-  const exact = votes.filter((s) => s.supportEngineId === engineId)
-  return exact.length ? exact : votes.filter((s) => s.supportEngineId === null)
-})
+  /**
+   * The user's supports for this parent + target, filtered to the active engine
+   * when the engine id is set. Falls back to engine-id-null rows (legacy).
+   */
+  const currentUserVotes = computed(() => {
+    const userId = sessionStore.currentUser?.id
+    if (!userId || !parentId) return []
 
-const hasUserVoted = computed(() => {
-  const engineId = currentEngine.value?.id
-  // Check if parentId exists before proceeding
-  if (!engineId || !parentId) return false
-  const userId = sessionStore.currentUser?.id
-  if (!userId) return false
-  return supportsStore
-    .getSupportsByParent(parentId, targetType)
-    .some(s => s.userId === userId && s.supportEngineId === engineId)
-})
+    const engineIdValue = currentEngine.value?.id
+    if (!engineIdValue) return []
 
-  const isEngineMulti = computed(() => {
-    const def = ENGINE_DEFINITIONS[effectiveEngineId.value]
-    return def?.voteScope !== 'none'
+    const votes = supportsStore
+      .getSupportsByParent(parentId, targetType)
+      .filter((s) => s.userId === userId)
+    const exact = votes.filter((s) => s.supportEngineId === engineIdValue)
+    return exact.length ? exact : votes.filter((s) => s.supportEngineId === null)
   })
+
+  const hasUserVoted = computed(() => {
+    const engineIdValue = currentEngine.value?.id
+    if (!engineIdValue || !parentId) return false
+    const userId = sessionStore.currentUser?.id
+    if (!userId) return false
+
+    const votes = supportsStore
+      .getSupportsByParent(parentId, targetType)
+      .filter((s) => s.userId === userId)
+    const exact = votes.filter((s) => s.supportEngineId === engineIdValue)
+    const effective = exact.length
+      ? exact
+      : votes.filter((s) => s.supportEngineId === null)
+    return effective.length > 0
+  })
+
+  /**
+   * `true` when the current engine allows the user to keep editing their ballot
+   * (approval, ranking, quadratic, ...). `false` for engines that lock after
+   * the first save (binary, ternary, score, star, ...).
+   */
+  const isEngineMulti = computed(() => !SINGLE_VOTE_ENGINES.includes(effectiveEngineId.value))
 
   const canVote = computed(() => {
     const engine = currentEngine.value
@@ -204,57 +254,56 @@ const hasUserVoted = computed(() => {
   // ---------- Helper functions ----------
   const hasUserVotedFor = (itemId: number): boolean => {
     if (currentUserVotes.value.some((v) => v.optionId === itemId)) return true
-    
+
     const engineVote = currentUserVotes.value.find((v) => v.optionId === 0)
-    if (engineVote && typeof engineVote.value === 'object') {
-      const val = engineVote.value
-      if (val.scores && val.scores[itemId] !== undefined) return true
-      if (val.reactions && val.reactions[itemId] !== undefined) return true
-      if (val.ranking && val.ranking[itemId] !== undefined) return true
-      if (val.grades && val.grades[itemId] !== undefined) return true
-      if (val.selected && val.selected.includes(itemId)) return true
+    if (engineVote && typeof engineVote.value === 'object' && engineVote.value !== null) {
+      const val = engineVote.value as Record<string, unknown>
+      if (val.scores && typeof val.scores === 'object' && itemId in (val.scores as object)) return true
+      if (val.reactions && typeof val.reactions === 'object' && itemId in (val.reactions as object)) return true
+      if (val.ranking && typeof val.ranking === 'object' && itemId in (val.ranking as object)) return true
+      if (val.grades && typeof val.grades === 'object' && itemId in (val.grades as object)) return true
+      if (Array.isArray(val.selected) && (val.selected as number[]).includes(itemId)) return true
     }
     return false
   }
 
   const isSelectedForVote = (itemId: number): boolean => {
-    const engineId = effectiveEngineId.value
-    if (['binary', 'ternary', 'score', 'star'].includes(engineId)) {
+    const engine = effectiveEngineId.value
+    if (['binary', 'ternary', 'score', 'star'].includes(engine)) {
       return scores.value[itemId] !== undefined && scores.value[itemId] !== null
     }
-    if (engineId === 'reaction') {
-      return reactions.value[itemId] !== undefined && reactions.value[itemId].length > 0
+    if (engine === 'reaction') {
+      return reactions.value[itemId] !== undefined && (reactions.value[itemId]?.length ?? 0) > 0
     }
-    if (['ranking', 'condorcet', 'borda'].includes(engineId)) {
+    if (['ranking', 'condorcet', 'borda'].includes(engine)) {
       return rankings.value[itemId] !== undefined && rankings.value[itemId] !== null
     }
-    if (engineId === 'majority_judgment') {
+    if (engine === 'majority_judgment') {
       return grades.value[itemId] !== undefined && grades.value[itemId] !== null
     }
-    if (engineId === 'quadratic') {
+    if (engine === 'quadratic') {
       return quadraticVotes.value[itemId] !== undefined && quadraticVotes.value[itemId] > 0
     }
-    if (engineId === 'token_weighted') {
+    if (engine === 'token_weighted') {
       return tokenWeights.value[itemId] !== undefined && tokenWeights.value[itemId] > 0
     }
-    if (['approval', 'phased_voting'].includes(engineId)) {
+    if (['approval', 'phased_voting'].includes(engine)) {
       return selectedItems.value.has(itemId)
     }
     return false
   }
 
-  // Get the saved vote for the current engine (if any)
-const currentUserVoteForEngine = computed(() => {
-  const userId = sessionStore.currentUser?.id
-  // Check if parentId exists before proceeding
-  if (!userId || !parentId) return null
-  const engineId = currentEngine.value?.id
-  if (!engineId) return null
-  const votes = supportsStore.getSupportsByParent(parentId, targetType)
-  return votes.find(s => s.userId === userId && s.supportEngineId === engineId) || null
-})
+  const currentUserVoteForEngine = computed(() => {
+    const userId = sessionStore.currentUser?.id
+    if (!userId || !parentId) return null
+    const engineIdValue = currentEngine.value?.id
+    if (!engineIdValue) return null
+    const votes = supportsStore.getSupportsByParent(parentId, targetType)
+    return (
+      votes.find((s) => s.userId === userId && s.supportEngineId === engineIdValue) || null
+    )
+  })
 
-  // Compare current selections with saved vote
   const hasSelectionsChanged = computed(() => {
     const savedVote = currentUserVoteForEngine.value
     if (!savedVote) return true
@@ -265,7 +314,6 @@ const currentUserVoteForEngine = computed(() => {
     if (savedVote.optionId > 0) {
       return false
     }
-
     if (typeof saved !== 'object' || saved === null) return true
 
     const objectsEqual = (a: Record<string, unknown>, b: Record<string, unknown>) => {
@@ -283,13 +331,20 @@ const currentUserVoteForEngine = computed(() => {
       case 'ternary':
       case 'score':
       case 'star':
-        return !objectsEqual(scores.value, saved.scores || {})
+        return !objectsEqual(
+          scores.value,
+          ((saved as Record<string, unknown>).scores as Record<string, unknown>) || {},
+        )
       case 'reaction':
-        return !objectsEqual(reactions.value, saved.reactions || {})
+        return !objectsEqual(
+          reactions.value as unknown as Record<string, unknown>,
+          ((saved as Record<string, unknown>).reactions as Record<string, unknown>) || {},
+        )
       case 'approval':
       case 'phased_voting': {
         const currentSet = new Set(selectedItems.value)
-        const savedSet = new Set(saved.selected || [])
+        const savedArr = ((saved as Record<string, unknown>).selected as number[]) || []
+        const savedSet = new Set(savedArr)
         if (currentSet.size !== savedSet.size) return true
         for (const id of currentSet) {
           if (!savedSet.has(id)) return true
@@ -299,13 +354,25 @@ const currentUserVoteForEngine = computed(() => {
       case 'ranking':
       case 'condorcet':
       case 'borda':
-        return !objectsEqual(rankings.value, saved.ranking || {})
+        return !objectsEqual(
+          rankings.value,
+          ((saved as Record<string, unknown>).ranking as Record<string, unknown>) || {},
+        )
       case 'majority_judgment':
-        return !objectsEqual(grades.value, saved.grades || {})
+        return !objectsEqual(
+          grades.value as unknown as Record<string, unknown>,
+          ((saved as Record<string, unknown>).grades as Record<string, unknown>) || {},
+        )
       case 'quadratic':
-        return !objectsEqual(quadraticVotes.value, saved.scores || {})
+        return !objectsEqual(
+          quadraticVotes.value,
+          ((saved as Record<string, unknown>).scores as Record<string, unknown>) || {},
+        )
       case 'token_weighted':
-        return !objectsEqual(tokenWeights.value, saved.scores || {})
+        return !objectsEqual(
+          tokenWeights.value,
+          ((saved as Record<string, unknown>).scores as Record<string, unknown>) || {},
+        )
       default:
         return true
     }
@@ -314,16 +381,29 @@ const currentUserVoteForEngine = computed(() => {
   const getUserVoteValueForItem = (itemId: number): SupportValue | null => {
     const vote = currentUserVotes.value.find((v) => v.optionId === itemId)
     if (vote) return vote.value
-    
+
     const engineVote = currentUserVotes.value.find((v) => v.optionId === 0)
-    if (engineVote && typeof engineVote.value === 'object') {
-      const val = engineVote.value
-      if (val.scores && typeof val.scores === 'object') return val.scores[itemId] ?? null
-      if (val.reactions && typeof val.reactions === 'object') return val.reactions[itemId] ?? null
-      if (val.ranking && typeof val.ranking === 'object') return val.ranking[itemId] ?? null
-      if (val.grades && typeof val.grades === 'object') return val.grades[itemId] ?? null
-      if (val.selected && Array.isArray(val.selected))
-        return val.selected.includes(itemId) ? 1 : null
+    if (engineVote && typeof engineVote.value === 'object' && engineVote.value !== null) {
+      const val = engineVote.value as Record<string, unknown>
+      if (val.scores && typeof val.scores === 'object') {
+        const scoresMap = val.scores as Record<number, SupportValue>
+        return scoresMap[itemId] ?? null
+      }
+      if (val.reactions && typeof val.reactions === 'object') {
+        const reactionsMap = val.reactions as Record<number, SupportValue>
+        return reactionsMap[itemId] ?? null
+      }
+      if (val.ranking && typeof val.ranking === 'object') {
+        const rankingMap = val.ranking as Record<number, SupportValue>
+        return rankingMap[itemId] ?? null
+      }
+      if (val.grades && typeof val.grades === 'object') {
+        const gradesMap = val.grades as Record<number, SupportValue>
+        return gradesMap[itemId] ?? null
+      }
+      if (Array.isArray(val.selected)) {
+        return (val.selected as number[]).includes(itemId) ? 1 : null
+      }
     }
     return null
   }
@@ -405,7 +485,18 @@ const currentUserVoteForEngine = computed(() => {
   }
 
   // ---------- Submission ----------
-  const submitSingleVote = async (parentId: number, item: VotableItem, value: SupportValue) => {
+  /**
+   * Submit a single-item vote.
+   *
+   * The `_parentId` argument is kept for interface compatibility — the actual
+   * parent id is taken from the closure so callers cannot accidentally write
+   * a vote against the wrong parent.
+   */
+  const submitSingleVote = async (
+    _parentId: number,
+    item: VotableItem,
+    value: SupportValue,
+  ) => {
     if (!canVote.value || !parentId) return false
     try {
       await supportsStore.toggleSupport(
@@ -414,7 +505,7 @@ const currentUserVoteForEngine = computed(() => {
         sessionStore.currentUser?.id,
         item,
         targetType === 'option' ? 'option' : 'inquiry',
-        value
+        value,
       )
       return true
     } catch (error) {
@@ -424,11 +515,11 @@ const currentUserVoteForEngine = computed(() => {
   }
 
   const canSubmitMultiVote = computed(() => {
-    const engineId = effectiveEngineId.value
+    const engineType = effectiveEngineId.value
     const config = currentEngine.value?.config || {}
     let valid = false
 
-    switch (engineId) {
+    switch (engineType) {
       case 'binary':
       case 'ternary':
         valid = Object.values(scores.value).filter((v) => v !== null && v !== undefined).length > 0
@@ -438,7 +529,7 @@ const currentUserVoteForEngine = computed(() => {
         const min = (config.min_choices as number) || 1
         const max = config.max_choices as number | null
         const count = selectedItems.value.size
-        valid = count >= min && (max === null || count <= max) && count > 0
+        valid = count >= min && (max === null || max === undefined || count <= max) && count > 0
         break
       }
 
@@ -446,7 +537,7 @@ const currentUserVoteForEngine = computed(() => {
       case 'condorcet':
       case 'borda': {
         const ranked = Object.entries(rankings.value).filter(
-          ([, r]) => r !== null && r !== undefined
+          ([, r]) => r !== null && r !== undefined,
         )
         if (ranked.length < 2) {
           valid = false
@@ -477,8 +568,13 @@ const currentUserVoteForEngine = computed(() => {
 
       case 'score':
       case 'star': {
-        const scored = Object.entries(scores.value).filter(([, s]) => s !== null && s !== undefined)
-        if (scored.length === 0) { valid = false; break }
+        const scored = Object.entries(scores.value).filter(
+          ([, s]) => s !== null && s !== undefined,
+        )
+        if (scored.length === 0) {
+          valid = false
+          break
+        }
         let ok = true
         for (const [, s] of scored) {
           const num = Number(s)
@@ -490,6 +586,7 @@ const currentUserVoteForEngine = computed(() => {
         valid = ok
         break
       }
+
       case 'majority_judgment':
         valid = Object.values(grades.value).filter((g) => g !== null && g !== undefined).length > 0
         break
@@ -500,7 +597,7 @@ const currentUserVoteForEngine = computed(() => {
 
       case 'quadratic': {
         const votes = Object.values(quadraticVotes.value).filter(
-          (v) => v !== null && v !== undefined && v > 0
+          (v) => v !== null && v !== undefined && v > 0,
         )
         if (votes.length === 0) {
           valid = false
@@ -514,8 +611,9 @@ const currentUserVoteForEngine = computed(() => {
 
       case 'token_weighted':
         valid =
-          Object.values(tokenWeights.value).filter((w) => w !== null && w !== undefined && w > 0)
-            .length > 0
+          Object.values(tokenWeights.value).filter(
+            (w) => w !== null && w !== undefined && w > 0,
+          ).length > 0
         break
 
       case 'phased_voting':
@@ -529,39 +627,43 @@ const currentUserVoteForEngine = computed(() => {
   })
 
   const voteSelectionInfo = computed(() => {
-    const engineId = effectiveEngineId.value
+    const engineType = effectiveEngineId.value
     const config = currentEngine.value?.config || {}
 
-    if (['approval', 'phased_voting'].includes(engineId)) {
+    if (['approval', 'phased_voting'].includes(engineType)) {
       const min = (config.min_choices as number) || 1
       const max = config.max_choices as number | null
       const count = selectedItems.value.size
       if (max) return t('agora', '{count}/{max} selected (min: {min})', { count, max, min })
       return t('agora', '{count} selected (min: {min})', { count, min })
     }
-    if (['ranking', 'condorcet', 'borda'].includes(engineId)) {
+    if (['ranking', 'condorcet', 'borda'].includes(engineType)) {
       const count = Object.values(rankings.value).filter(
-        (v) => v !== null && v !== undefined
+        (v) => v !== null && v !== undefined,
       ).length
       return t('agora', '{count} options ranked', { count })
     }
-    if (['score', 'star'].includes(engineId)) {
-      const count = Object.values(scores.value).filter((v) => v !== null && v !== undefined).length
+    if (['score', 'star'].includes(engineType)) {
+      const count = Object.values(scores.value).filter(
+        (v) => v !== null && v !== undefined,
+      ).length
       return t('agora', '{count} options rated', { count })
     }
-    if (engineId === 'majority_judgment') {
-      const count = Object.values(grades.value).filter((v) => v !== null && v !== undefined).length
+    if (engineType === 'majority_judgment') {
+      const count = Object.values(grades.value).filter(
+        (v) => v !== null && v !== undefined,
+      ).length
       return t('agora', '{count} options graded', { count })
     }
-    if (engineId === 'reaction') {
+    if (engineType === 'reaction') {
       const count = Object.values(reactions.value).filter(
-        (v) => v !== null && v !== undefined
+        (v) => v !== null && v !== undefined,
       ).length
       return t('agora', '{count} reactions selected', { count })
     }
-    if (engineId === 'quadratic') {
+    if (engineType === 'quadratic') {
       const votes = Object.values(quadraticVotes.value).filter(
-        (v) => v !== null && v !== undefined && v > 0
+        (v) => v !== null && v !== undefined && v > 0,
       )
       const count = votes.length
       const totalCredits = votes.reduce((sum, v) => sum + (v as number) ** 2, 0)
@@ -570,13 +672,15 @@ const currentUserVoteForEngine = computed(() => {
         credits: totalCredits,
       })
     }
-    if (engineId === 'token_weighted') {
+    if (engineType === 'token_weighted') {
       const count = Object.values(tokenWeights.value).filter(
-        (v) => v !== null && v !== undefined && v > 0
+        (v) => v !== null && v !== undefined && v > 0,
       ).length
       return t('agora', '{count} options weighted', { count })
     }
-    const count = Object.values(scores.value).filter((v) => v !== null && v !== undefined).length
+    const count = Object.values(scores.value).filter(
+      (v) => v !== null && v !== undefined,
+    ).length
     return t('agora', '{count} options voted', { count })
   })
 
@@ -585,7 +689,7 @@ const currentUserVoteForEngine = computed(() => {
 
     const engine = currentEngine.value
     if (!engine) return false
-    const engineId = engine.id
+    const engineIdValue = engine.id
     const userId = sessionStore.currentUser?.id
     if (!userId) return false
 
@@ -679,16 +783,16 @@ const currentUserVoteForEngine = computed(() => {
         break
     }
 
-    const existing = supportsStore.getSupport(parentId, userId, 0, engineId)
+    const existing = supportsStore.getSupport(parentId, userId, 0, engineIdValue)
 
     try {
       if (existing) {
-        await supportsStore.updateSupport(parentId, userId, payload, 0, engineId)
+        await supportsStore.updateSupport(parentId, userId, payload, 0, engineIdValue)
       } else {
-        await supportsStore.addSupport(parentId, userId, payload, 0, engineId)
+        await supportsStore.addSupport(parentId, userId, payload, 0, engineIdValue)
       }
 
-      if (reload) await loadUserVotesForEngine(engineId)
+      if (reload) loadUserVotesForEngine(engineIdValue)
       await loadResults()
       return true
     } catch (error) {
@@ -706,11 +810,10 @@ const currentUserVoteForEngine = computed(() => {
       return getTrendingScore(itemId)
     }
 
-    const engineId = effectiveEngineId.value
-    const perOptionEngines = ['binary', 'ternary', 'score', 'star', 'majority_judgment', 'reaction']
+    const engineType = effectiveEngineId.value
 
-    if (perOptionEngines.includes(engineId)) {
-      const result = resultsMap.value.get(itemId)
+    if (PER_OPTION_RESULT_ENGINES.includes(engineType)) {
+      const result = resultsMap.value.get(itemId) as Record<string, any> | undefined
       if (result) {
         switch (result.type) {
           case 'binary':
@@ -722,14 +825,18 @@ const currentUserVoteForEngine = computed(() => {
             return result.options?.[itemId]?.total ?? result.totals?.total ?? 0
           case 'reaction': {
             const perOpt = result.options?.[itemId]
-            if (perOpt) return Object.values(perOpt).reduce((a, b) => a + b, 0)
-            return Object.values(result.counts || {}).reduce((a, b) => a + b, 0)
+            if (perOpt)
+              return Object.values(perOpt).reduce((a: number, b) => a + (b as number), 0)
+            return Object.values(result.counts || {}).reduce(
+              (a: number, b) => a + (b as number),
+              0,
+            )
           }
           case 'majority_judgment':
             return result.options?.[itemId]?.total_votes ?? 0
         }
       }
-      const res = engineResult.value
+      const res = engineResult.value as Record<string, any> | null
       if (res) {
         switch (res.type) {
           case 'binary':
@@ -741,8 +848,8 @@ const currentUserVoteForEngine = computed(() => {
             return res.options?.[itemId]?.total ?? res.totals?.total ?? 0
           case 'reaction': {
             const perOpt = res.options?.[itemId]
-            if (perOpt) return Object.values(perOpt).reduce((a, b) => a + b, 0)
-            return Object.values(res.counts || {}).reduce((a, b) => a + b, 0)
+            if (perOpt) return Object.values(perOpt).reduce((a: number, b) => a + (b as number), 0)
+            return Object.values(res.counts || {}).reduce((a: number, b) => a + (b as number), 0)
           }
           case 'majority_judgment':
             return res.options?.[itemId]?.total_votes ?? 0
@@ -751,10 +858,10 @@ const currentUserVoteForEngine = computed(() => {
       return 0
     }
 
-    const res = engineResult.value
+    const res = engineResult.value as Record<string, any> | null
     if (!res) return 0
 
-    switch (engineId) {
+    switch (engineType) {
       case 'approval':
         return res.counts?.[itemId] || 0
       case 'ranking':
@@ -777,14 +884,13 @@ const currentUserVoteForEngine = computed(() => {
   }
 
   /**
-   * Rank computed by the server, which shares a rank between tied options.
-   * Null when the engine does not publish one, the caller then falls back
-   * to the row position.
-   * @param optionId
+   * Rank published by the server, which shares a rank between tied items.
+   * `null` when the engine does not publish one; callers fall back to the
+   * row position.
    */
-  const getOptionRank = (optionId: number): number | null => {
-      const res = engineResult.value
-      return res?.ranking?.[optionId] ?? null
+  const getItemRank = (itemId: number): number | null => {
+    const res = engineResult.value as Record<string, any> | null
+    return res?.ranking?.[itemId] ?? null
   }
 
   const totalVotes = computed(() => {
@@ -794,11 +900,10 @@ const currentUserVoteForEngine = computed(() => {
       return total
     }
 
-    const engineId = effectiveEngineId.value
-    const perOptionEngines = ['binary', 'ternary', 'score', 'star', 'majority_judgment', 'reaction']
+    const engineType = effectiveEngineId.value
 
-    const res = engineResult.value
-    if (res && perOptionEngines.includes(engineId)) {
+    const res = engineResult.value as Record<string, any> | null
+    if (res && PER_OPTION_RESULT_ENGINES.includes(engineType)) {
       if (res.options) {
         let total = 0
         for (const optId in res.options) {
@@ -808,45 +913,52 @@ const currentUserVoteForEngine = computed(() => {
           } else if (res.type === 'score' || res.type === 'star') {
             total += opt.total || 0
           } else if (res.type === 'reaction') {
-            total += Object.values(opt).reduce((a, b) => a + b, 0)
+            total += Object.values(opt).reduce((a: number, b) => a + (b as number), 0)
           } else if (res.type === 'majority_judgment') {
             total += opt.total_votes || 0
           }
         }
         return total
-      } if (res.totals) {
+      }
+      if (res.totals) {
         if (res.type === 'binary') return (res.totals.yes || 0) + (res.totals.no || 0)
         if (res.type === 'ternary')
           return (res.totals.yes || 0) + (res.totals.no || 0) + (res.totals.abstain || 0)
         if (res.type === 'score' || res.type === 'star') return res.totals.total || 0
         if (res.type === 'reaction')
-          return Object.values(res.counts || {}).reduce((a, b) => a + b, 0)
+          return Object.values(res.counts || {}).reduce(
+            (a: number, b) => a + (b as number),
+            0,
+          )
         if (res.type === 'majority_judgment') return res.total_votes || 0
         return 0
       }
       return 0
     }
 
-    if (perOptionEngines.includes(engineId)) {
+    if (PER_OPTION_RESULT_ENGINES.includes(engineType)) {
       let total = 0
       for (const result of resultsMap.value.values()) {
-        switch (result.type) {
+        const r = result as Record<string, any>
+        switch (r.type) {
           case 'binary':
-            total += (result.totals?.yes || 0) + (result.totals?.no || 0)
+            total += (r.totals?.yes || 0) + (r.totals?.no || 0)
             break
           case 'ternary':
-            total +=
-              (result.totals?.yes || 0) + (result.totals?.no || 0) + (result.totals?.abstain || 0)
+            total += (r.totals?.yes || 0) + (r.totals?.no || 0) + (r.totals?.abstain || 0)
             break
           case 'score':
           case 'star':
-            total += result.totals?.total || 0
+            total += r.totals?.total || 0
             break
           case 'majority_judgment':
-            total += result.total_votes || 0
+            total += r.total_votes || 0
             break
           case 'reaction':
-            total += Object.values(result.counts || {}).reduce((a, b) => a + b, 0)
+            total += Object.values(r.counts || {}).reduce(
+              (a: number, b) => a + (b as number),
+              0,
+            )
             break
         }
       }
@@ -854,9 +966,12 @@ const currentUserVoteForEngine = computed(() => {
     }
 
     if (!res) return 0
-    switch (engineId) {
+    switch (engineType) {
       case 'approval':
-        return Object.values(res.counts || {}).reduce((a, b) => a + b, 0)
+        return Object.values(res.counts || {}).reduce(
+          (a: number, b) => a + (b as number),
+          0,
+        )
       case 'ranking':
         return res.total_voters || Object.keys(res.rankings || {}).length
       case 'condorcet':
@@ -867,43 +982,48 @@ const currentUserVoteForEngine = computed(() => {
       case 'token_weighted':
         return res.total_weight || 0
       case 'phased_voting':
-        return Object.values(res.counts || {}).reduce((a, b) => a + b, 0)
+        return Object.values(res.counts || {}).reduce(
+          (a: number, b) => a + (b as number),
+          0,
+        )
       default:
         return 0
     }
   })
 
-  // Borda spreads points across the options and Condorcet counts won duels, so
-  // an option scores on a scale that has nothing to do with the number of
-  // voters: two voters ranking three options give the winner six points, which
-  // totalVotes turned into 300%. Their share is of the points handed out.
-  const pointBasedEngines = ['borda', 'condorcet']
-
+  /**
+   * Borda spreads points across the options and Condorcet counts won duels,
+   * so an option scores on a scale that has nothing to do with the number of
+   * voters. Their share is of the points handed out, not of the votes.
+   */
   const percentageBase = computed(() => {
-      if (!pointBasedEngines.includes(effectiveEngineId.value)) {
-          return totalVotes.value
-      }
-      let total = 0
-      for (const opt of votableOptions.value) total += getOptionVoteCount(opt.id)
-          return total
+    if (!POINT_BASED_ENGINES.includes(effectiveEngineId.value)) {
+      return totalVotes.value
+    }
+    let total = 0
+    for (const item of votableItems.value) total += getItemVoteCount(item.id)
+    return total
   })
 
-  const getPercentage = (option: Option, total: number = percentageBase.value): number => {
-      const count = getOptionVoteCount(option.id)
-      if (total === 0) return 0
-          return Math.round((count / total) * 100)
+  const getPercentage = (
+    item: VotableItem,
+    total: number = percentageBase.value,
+  ): number => {
+    const count = getItemVoteCount(item.id)
+    if (total === 0) return 0
+    return Math.round((count / total) * 100)
   }
 
   const getRankedItems = (items: VotableItem[]): VotableItem[] => {
-    const engineId = effectiveEngineId.value
-    if (engineId === 'ranking') {
+    const engineType = effectiveEngineId.value
+    if (engineType === 'ranking') {
       return [...items].sort(
-        (a, b) => (getItemVoteCount(a.id) || Infinity) - (getItemVoteCount(b.id) || Infinity)
+        (a, b) => (getItemVoteCount(a.id) || Infinity) - (getItemVoteCount(b.id) || Infinity),
       )
     }
-    if (['condorcet', 'borda'].includes(engineId)) {
+    if (['condorcet', 'borda'].includes(engineType)) {
       return [...items].sort(
-        (a, b) => (getItemVoteCount(b.id) || 0) - (getItemVoteCount(a.id) || 0)
+        (a, b) => (getItemVoteCount(b.id) || 0) - (getItemVoteCount(a.id) || 0),
       )
     }
     return [...items].sort((a, b) => getItemVoteCount(b.id) - getItemVoteCount(a.id))
@@ -920,13 +1040,13 @@ const currentUserVoteForEngine = computed(() => {
   }
 
   // ---------- Load user votes ----------
-  function loadUserVotesForEngine(engineId: number) {
+  function loadUserVotesForEngine(engineIdArg: number) {
     const userId = sessionStore.currentUser?.id
     if (!userId || !parentId) return
 
     const userVotes = supportsStore
       .getSupportsByParent(parentId, targetType)
-      .filter((s) => s.userId === userId && s.supportEngineId === engineId)
+      .filter((s) => s.userId === userId && s.supportEngineId === engineIdArg)
 
     for (const vote of userVotes) {
       const value = vote.value
@@ -935,53 +1055,60 @@ const currentUserVoteForEngine = computed(() => {
       if (itemId > 0) {
         const engine = effectiveEngineId.value
         if (typeof value === 'number') {
-          if (['score', 'star'].includes(engine)) scores.value[itemId] = value
-          if (['binary', 'ternary'].includes(engine)) scores.value[itemId] = value
+          if (['score', 'star', 'binary', 'ternary'].includes(engine)) {
+            scores.value[itemId] = value
+          }
         } else if (typeof value === 'string' && engine === 'majority_judgment') {
           grades.value[itemId] = value
         } else if (Array.isArray(value) && engine === 'reaction') {
-          reactions.value[itemId] = value
+          reactions.value[itemId] = value as string[]
         }
       }
 
       if (itemId === 0 && value && typeof value === 'object') {
-        if (value.scores && typeof value.scores === 'object') {
+        const val = value as Record<string, unknown>
+
+        if (val.scores && typeof val.scores === 'object') {
           const engine = effectiveEngineId.value
+          const scoresMap = val.scores as Record<string, number>
           if (engine === 'quadratic') {
-            for (const [optId, votes] of Object.entries(value.scores)) {
-              quadraticVotes.value[Number(optId)] = votes as number
+            for (const [optId, votes] of Object.entries(scoresMap)) {
+              quadraticVotes.value[Number(optId)] = votes
             }
           } else if (engine === 'token_weighted') {
-            for (const [optId, weight] of Object.entries(value.scores)) {
-              tokenWeights.value[Number(optId)] = weight as number
+            for (const [optId, weight] of Object.entries(scoresMap)) {
+              tokenWeights.value[Number(optId)] = weight
             }
           } else if (['binary', 'ternary', 'score', 'star'].includes(engine)) {
-            for (const [optId, val] of Object.entries(value.scores)) {
-              scores.value[Number(optId)] = val as number
+            for (const [optId, val2] of Object.entries(scoresMap)) {
+              scores.value[Number(optId)] = val2
             }
           }
         }
 
-        if (value.reactions && typeof value.reactions === 'object') {
-          for (const [optId, arr] of Object.entries(value.reactions)) {
+        if (val.reactions && typeof val.reactions === 'object') {
+          const reactionsMap = val.reactions as Record<string, string[]>
+          for (const [optId, arr] of Object.entries(reactionsMap)) {
             if (Array.isArray(arr)) reactions.value[Number(optId)] = arr
           }
         }
 
-        if (value.ranking && typeof value.ranking === 'object') {
-          for (const [optId, rank] of Object.entries(value.ranking)) {
-            rankings.value[Number(optId)] = rank as number
+        if (val.ranking && typeof val.ranking === 'object') {
+          const rankingMap = val.ranking as Record<string, number>
+          for (const [optId, rank] of Object.entries(rankingMap)) {
+            rankings.value[Number(optId)] = rank
           }
         }
 
-        if (value.grades && typeof value.grades === 'object') {
-          for (const [optId, grade] of Object.entries(value.grades)) {
-            grades.value[Number(optId)] = grade as string
+        if (val.grades && typeof val.grades === 'object') {
+          const gradesMap = val.grades as Record<string, string>
+          for (const [optId, grade] of Object.entries(gradesMap)) {
+            grades.value[Number(optId)] = grade
           }
         }
 
-        if (value.selected && Array.isArray(value.selected)) {
-          value.selected.forEach((id: number) => selectedItems.value.add(id))
+        if (val.selected && Array.isArray(val.selected)) {
+          ;(val.selected as number[]).forEach((id: number) => selectedItems.value.add(id))
         }
       }
     }
@@ -989,18 +1116,17 @@ const currentUserVoteForEngine = computed(() => {
 
   /**
    * Remove all votes of the current user for the active engine.
-   * This handles both engine‑level (optionId = 0) and per‑option votes.
-   * @param reload reset and reload the selections after the removal
+   * Handles both engine-level (`optionId = 0`) and per-option votes.
    */
   const removeMyVote = async (reload = true): Promise<boolean> => {
-      const engine = currentEngine.value
-      if (!engine) return false
-          const userId = sessionStore.currentUser?.id
-      if (!userId) return false
+    const engine = currentEngine.value
+    if (!engine || !parentId) return false
+    const userId = sessionStore.currentUser?.id
+    if (!userId) return false
 
     const userVotes = supportsStore
       .getSupportsByParent(parentId, targetType)
-      .filter(s => s.userId === userId && s.supportEngineId === engine.id)
+      .filter((s) => s.userId === userId && s.supportEngineId === engine.id)
 
     if (userVotes.length === 0) return false
 
@@ -1008,32 +1134,29 @@ const currentUserVoteForEngine = computed(() => {
       await supportsStore.removeSupport(parentId, userId, support.optionId, engine.id)
     }
 
-              // Clear local selections and reload fresh state
-              if (reload) {
-                  resetSelections()
-                  await loadUserVotesForEngine(engine.id)
-              }
-              await loadResults()
+    if (reload) {
+      resetSelections()
+      loadUserVotesForEngine(engine.id)
+    }
+    await loadResults()
 
     return true
   }
 
   // ---------- Trending score (placeholder) ----------
-  const getTrendingScore = (itemId: number): number => 
-    // Implement trending score calculation if needed
-     0
-  
+  const getTrendingScore = (_itemId: number): number => 0
 
   const loadResults = () => {
     if (!parentId) return
     const inquiry = inquiryStore
     if (inquiry.status?.supportResult) {
       const results = inquiry.status.supportResult
+      const engineIdValue = currentEngine.value?.id
       const engineResultEntry = results.find(
-        (r) => r.support_engine_id === selectedEngineId.value && r.target_type === targetType
+        (r) => r.support_engine_id === engineIdValue && r.target_type === targetType,
       )
       if (engineResultEntry) {
-          engineResult.value = engineResultEntry?.result ?? null
+        engineResult.value = engineResultEntry?.result ?? null
       }
     }
   }
@@ -1047,7 +1170,7 @@ const currentUserVoteForEngine = computed(() => {
         loadResults()
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   // ---------- Dynamic engine config ----------
@@ -1063,20 +1186,32 @@ const currentUserVoteForEngine = computed(() => {
   const scoreMin = computed(() => {
     if (!['score', 'star'].includes(effectiveEngineId.value)) return 0
     const config = currentEngine.value?.config || {}
-    const min = effectiveEngineId.value === 'star' ? (config.min as number ?? 1) : (config.min as number ?? 0)
-    const max = effectiveEngineId.value === 'star' ? (config.max as number ?? 5) : (config.max as number ?? 10)
+    const min =
+      effectiveEngineId.value === 'star'
+        ? (config.min as number) ?? 1
+        : (config.min as number) ?? 0
+    const max =
+      effectiveEngineId.value === 'star'
+        ? (config.max as number) ?? 5
+        : (config.max as number) ?? 10
     return min > max ? (effectiveEngineId.value === 'star' ? 1 : 0) : min
   })
 
   const scoreMax = computed(() => {
     if (!['score', 'star'].includes(effectiveEngineId.value)) return 10
     const config = currentEngine.value?.config || {}
-    const min = effectiveEngineId.value === 'star' ? (config.min as number ?? 1) : (config.min as number ?? 0)
-    const max = effectiveEngineId.value === 'star' ? (config.max as number ?? 5) : (config.max as number ?? 10)
+    const min =
+      effectiveEngineId.value === 'star'
+        ? (config.min as number) ?? 1
+        : (config.min as number) ?? 0
+    const max =
+      effectiveEngineId.value === 'star'
+        ? (config.max as number) ?? 5
+        : (config.max as number) ?? 10
     return min > max ? (effectiveEngineId.value === 'star' ? 5 : 10) : max
   })
 
-  onMounted(async () => {
+  onMounted(() => {
     if (availableEngines.value.length > 0 && !selectedEngineId.value) {
       selectedEngineId.value = availableEngines.value[0].id
     }
@@ -1117,23 +1252,23 @@ const currentUserVoteForEngine = computed(() => {
     submitSingleVote,
     submitMultiVote,
 
-      totalVotes,
-      getItemVoteCount,
-      getItemRank,
-      getPercentage,
-      getRankedItems,
-      getWinner,
-      getUserVoteValueForItem,
-      getWinnerPercentage,
+    totalVotes,
+    getItemVoteCount,
+    getItemRank,
+    getPercentage,
+    getRankedItems,
+    getWinner,
+    getUserVoteValueForItem,
+    getWinnerPercentage,
 
     effectiveEngineId,
     maxRank,
     scoreMin,
     scoreMax,
 
-      selectEngine,
-      refreshEngines,
-      removeMyVote,
-      loadUserVotesForEngine,
+    selectEngine,
+    refreshEngines,
+    removeMyVote,
+    loadUserVotesForEngine,
   }
 }

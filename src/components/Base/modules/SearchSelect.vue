@@ -2,7 +2,6 @@
   - SPDX-FileCopyrightText: 2018 Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
 <template>
   <NcSelect
     v-model="selected"
@@ -52,7 +51,14 @@ const props = defineProps<{
   inquiryId?: number
   clearable?: boolean
   closeOnSelect?: boolean
-  availableOptions?: Option[] 
+  /** Legacy: restrict to these Options (ignored for `inquiries`). */
+  availableOptions?: Option[]
+  /**
+   * Restrict results to these ids. Works for both `options` and `inquiries`.
+   * Use this when the caller already computed the allowed set (e.g. the
+   * inquiries that belong to the current group).
+   */
+  availableItemIds?: number[]
 }>()
 
 const emit = defineEmits<{
@@ -68,16 +74,12 @@ const selected = ref<Option | Inquiry | null>(null)
 const isSearching = ref(false)
 const localOptions = ref<(Option | Inquiry)[]>([])
 
-// Load initial options if needed
 onMounted(() => {
-  if (props.type === 'options') {
-    localOptions.value = optionsStore.options
-  } else {
-    localOptions.value = inquiriesStore.inquiries
-  }
+  localOptions.value = props.type === 'options'
+    ? optionsStore.options
+    : inquiriesStore.inquiries
 })
 
-// Initialize selected value from modelValue
 const initSelected = () => {
   const val = props.modelValue
   if (!val) {
@@ -85,60 +87,58 @@ const initSelected = () => {
     return
   }
 
-  // If it's a string or number (ID), find the corresponding option/inquiry
   if (typeof val === 'string' || typeof val === 'number') {
     const id = typeof val === 'string' ? parseInt(val) : val
     if (props.type === 'options') {
-      selected.value = optionsStore.options.find(opt => opt.id === id) || null
+      selected.value = optionsStore.options.find((opt) => opt.id === id) || null
     } else {
-      selected.value = inquiriesStore.inquiries.find(inq => inq.id === id) || null
+      selected.value = inquiriesStore.inquiries.find((inq) => inq.id === id) || null
     }
   } else if (typeof val === 'object' && val !== null) {
-    // It's already an object
     selected.value = val as Option | Inquiry
   } else {
     selected.value = null
   }
 }
 
-// Watch for modelValue changes
 watch(() => props.modelValue, () => {
   initSelected()
 }, { immediate: true, deep: true })
 
-// Watch for store updates
-watch(() => props.type === 'options' ? optionsStore.options : inquiriesStore.inquiries, (newOptions) => {
-  localOptions.value = newOptions
-  initSelected() // Re-initialize selected in case the object changed
-}, { deep: true })
+watch(
+  () => props.type === 'options' ? optionsStore.options : inquiriesStore.inquiries,
+  (newOptions) => {
+    localOptions.value = newOptions
+    initSelected()
+  },
+  { deep: true },
+)
 
-// Filter results based on search query
 const filteredResults = computed(() => {
   const q = query.value.toLowerCase().trim()
-  
-  // Get search results from the composable
   let searchResults = results.value
-  
-  // If there's no search query, return empty array (don't show all options)
-  if (!q) {
-    return []
-  }
-  
-  // If availableOptions is provided, filter to only those
+
+  // No query → do not dump the full list (matches previous behavior)
+  if (!q) return []
+
+  // Legacy Options-only restriction
   if (props.availableOptions && props.type === 'options' && props.availableOptions.length > 0) {
-    const availableIds = new Set(props.availableOptions.map(opt => opt.id))
-    searchResults = searchResults.filter((item: Option | Inquiry) => 
-      availableIds.has((item as Option).id)
-    )
+    const allowed = new Set(props.availableOptions.map((opt) => opt.id))
+    searchResults = searchResults.filter((item) => allowed.has(item.id))
   }
-  
+
+  // Generic id restriction — works for options AND inquiries
+  if (props.availableItemIds && props.availableItemIds.length > 0) {
+    const allowed = new Set(props.availableItemIds)
+    searchResults = searchResults.filter((item) => allowed.has(item.id))
+  }
+
   return searchResults
 })
 
 const handleSearch = (searchQuery: string) => {
   isSearching.value = true
   query.value = searchQuery
-  // Simple loading indicator
   setTimeout(() => {
     isSearching.value = false
   }, 200)
@@ -150,12 +150,11 @@ const emitSelected = (item: Option | Inquiry) => {
   emit('selected', item)
 }
 
-// Expose for parent components
 defineExpose({
   clear: () => {
     selected.value = null
     query.value = ''
-  }
+  },
 })
 </script>
 
