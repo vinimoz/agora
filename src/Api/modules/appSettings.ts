@@ -6,6 +6,7 @@ import { AxiosResponse } from '@nextcloud/axios'
 import { AppSettings, Group } from '../../stores/appSettings.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { ISearchType, User , Category, Location, InquiryStatus, InquiryFamily, OptionFamily } from '../../Types/index.js'
+import type { InquiryGroupType } from '../stores/inquiryGroups.types.js'
 
 const appSettings = {
 	getAppSettings(): Promise<AxiosResponse<{ appSettings: AppSettings }>> {
@@ -153,7 +154,6 @@ const appSettings = {
 		})
 	},
 
-	// TYPES METHODS API
 	// Inquiry Type functions
 	addInquiryType(type: {
 		inquiry_type: string;
@@ -250,40 +250,112 @@ const appSettings = {
 		});
 	},
 
-     // Option Family functions
-    addOptionFamily(family: {
-        family_type: string;
-        label: string;
-        description?: string;
-        icon?: string;
-        sort_order?: number;
-        created: number;
-    }): Promise<AxiosResponse<{ family: OptionFamily }>> {
-        return httpInstance.request({
-            method: 'POST',
-            url: 'option/families',
-            data: { family },
-            cancelToken: cancelTokenHandlerObject[this.addOptionFamily.name].handleRequestCancellation().token,
-        });
-    },
+	// ============================================================
+// OPTION TYPE METHODS API
+// ============================================================
 
-    updateOptionFamily(
-        familyId: number,
-        familyData: {
-            family_type?: string;
-            label?: string;
-            description?: string;
-            icon?: string;
-            sort_order?: number;
-        }
-    ): Promise<AxiosResponse<{ family: OptionFamily }>> {
-        return httpInstance.request({
-            method: 'PUT',
-            url: `option/families/${familyId}`,
-            data: { familyData },
-            cancelToken: cancelTokenHandlerObject[this.updateOptionFamily.name].handleRequestCancellation().token,
-        });
-    },
+addOptionType(type: {
+    option_type: string
+    family: string
+    label: string
+    icon?: string
+    description?: string
+    fields?: unknown[]
+    allowed_response?: unknown[]
+    statuses?: unknown[]
+    allow_comment?: boolean
+    support_feature?: string
+    use_title?: boolean
+    created: number
+}): Promise<AxiosResponse<{ optionType: InquiryOptionType }>> {
+    return httpInstance.request({
+        method: 'POST',
+        url: 'option/types',
+        data: { type },
+        cancelToken:
+            cancelTokenHandlerObject[this.addOptionType.name].handleRequestCancellation().token,
+    })
+},
+
+updateOptionType(
+    typeId: number,
+    typeData: {
+        option_type?: string
+        family?: string
+        label?: string
+        icon?: string
+        description?: string
+        fields?: unknown[]
+        allowed_response?: unknown[]
+        statuses?: unknown[]
+        allow_comment?: boolean
+        support_feature?: string
+        use_title?: boolean
+    }
+): Promise<AxiosResponse<{ optionType: InquiryOptionType }>> {
+    return httpInstance.request({
+        method: 'PUT',
+        url: `option/types/${typeId}`,
+        data: { typeData },
+        cancelToken:
+            cancelTokenHandlerObject[this.updateOptionType.name].handleRequestCancellation().token,
+    })
+},
+
+deleteOptionType(typeId: number): Promise<AxiosResponse> {
+    return httpInstance.request({
+        method: 'DELETE',
+        url: `option/types/${typeId}`,
+        cancelToken:
+            cancelTokenHandlerObject[this.deleteOptionType.name].handleRequestCancellation().token,
+    })
+},
+
+     // Option Family functions
+addOptionFamily(family: {
+    family_type: string
+    label: string
+    description?: string
+    icon?: string
+    sort_order?: number
+    ui?: Record<string, unknown>
+    rules?: Record<string, unknown>
+    features?: string[]
+    actions?: Array<{ key: string; label: string; icon?: string }>
+    created: number
+}): Promise<AxiosResponse<{ family: OptionFamily }>> {
+    return httpInstance.request({
+        method: 'POST',
+        url: 'option/families',
+        data: { family },
+        cancelToken:
+            cancelTokenHandlerObject[this.addOptionFamily.name].handleRequestCancellation().token,
+    })
+},
+
+updateOptionFamily(
+    familyId: number,
+    familyData: {
+        family_type?: string
+        label?: string
+        description?: string
+        icon?: string
+        sort_order?: number
+        ui?: Record<string, unknown>
+        rules?: Record<string, unknown>
+        features?: string[]
+        actions?: Array<{ key: string; label: string; icon?: string }>
+    }
+): Promise<AxiosResponse<{ family: OptionFamily }>> {
+    return httpInstance.request({
+        method: 'PUT',
+        url: `option/families/${familyId}`,
+        data: { familyData },
+        cancelToken:
+            cancelTokenHandlerObject[this.updateOptionFamily.name].handleRequestCancellation().token,
+    })
+},
+
 
     deleteOptionFamily(familyId: number): Promise<AxiosResponse> {
         return httpInstance.request({
@@ -292,7 +364,77 @@ const appSettings = {
             cancelToken: cancelTokenHandlerObject[this.deleteOptionFamily.name].handleRequestCancellation().token,
         });
     },
+// ============================================================
+// INQUIRY GROUP TYPE METHODS API
+// ============================================================
 
+addInquiryGroupType(type: {
+    group_type: string
+    family: string
+    label: string
+    icon?: string
+    description?: string
+    fields?: unknown[]
+    allowed_inquiry_types?: string[]
+    allowed_response?: string[]
+    ui?: Record<string, unknown>
+    rules?: Record<string, unknown>
+    features?: string[]
+    actions?: Array<{ key: string; label: string; icon?: string }>
+    is_root?: boolean
+    sort_order?: number
+    created: number
+}): Promise<AxiosResponse<{ groupType: InquiryGroupType }>> {
+	console.log(" INQUIRY GROUP TYPE DATA ",type['family'])
+
+    return httpInstance.request({
+        method: 'POST',
+        url: 'inquiry/group-types',
+        data: { type },
+        cancelToken:
+            cancelTokenHandlerObject[this.addInquiryGroupType.name]
+                .handleRequestCancellation().token,
+    })
+},
+
+updateInquiryGroupType(
+    typeId: number,
+    typeData: {
+        group_type?: string
+        family?: string
+        label?: string
+        icon?: string
+        description?: string
+        fields?: unknown[]
+        allowed_inquiry_types?: string[]
+        allowed_response?: string[]
+        ui?: Record<string, unknown>
+        rules?: Record<string, unknown>
+        features?: string[]
+        actions?: Array<{ key: string; label: string; icon?: string }>
+        is_root?: boolean
+        sort_order?: number
+    }
+): Promise<AxiosResponse<{ groupType: InquiryGroupType }>> {
+    return httpInstance.request({
+        method: 'PUT',
+        url: `inquiry/group-types/${typeId}`,
+        data: { typeData },
+        cancelToken:
+            cancelTokenHandlerObject[this.updateInquiryGroupType.name]
+                .handleRequestCancellation().token,
+    })
+},
+
+deleteInquiryGroupType(typeId: number): Promise<AxiosResponse> {
+    return httpInstance.request({
+        method: 'DELETE',
+        url: `inquiry/group-types/${typeId}`,
+        cancelToken:
+            cancelTokenHandlerObject[this.deleteInquiryGroupType.name]
+                .handleRequestCancellation().token,
+    })
+},
 
 
 }

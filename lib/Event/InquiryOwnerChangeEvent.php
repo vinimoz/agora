@@ -13,7 +13,7 @@ use OCA\Agora\Notification\Notifier;
 class InquiryOwnerChangeEvent extends InquiryEvent
 {
     public function __construct(
-        protected Inquiry $inquiry,
+        Inquiry $inquiry,
         protected string $oldOwner,
         protected string $newOwner,
     ) {

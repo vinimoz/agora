@@ -16,14 +16,14 @@ use OCP\AppFramework\Db\Entity;
  * @psalm-suppress UnusedProperty
  * @method         int getId()
  * @method         void setId(int $value)
- * @method         string getType()
- * @method         void setType(string $value)
  * @method         string getGroupType()
  * @method         void setGroupType(string $value)
  * @method         string getFamily()
  * @method         void setFamily(string $value)
  * @method         string getLabel()
  * @method         void setLabel(string $value)
+ * @method         string getIcon()
+ * @method         void setIcon(string $value)
  * @method         ?string getDescription()
  * @method         void setDescription(?string $value)
  * @method         ?array getFields()
@@ -47,7 +47,6 @@ use OCP\AppFramework\Db\Entity;
  * @method         ?array getActions()
  * @method         void setActions(?array $value)
  */
-
 class InquiryGroupType extends Entity implements JsonSerializable
 {
     public const TABLE = 'agora_inq_group_type';
@@ -57,13 +56,13 @@ class InquiryGroupType extends Entity implements JsonSerializable
     protected string $groupType = '';
     protected string $label = '';
     protected string $icon = '';
-    protected string $family = 'deliberative';
+    protected ?string $family = null;
     protected ?string $description = null;
     protected ?array $fields = null;
     protected ?array $allowedInquiryTypes = null;
     protected ?array $allowedResponse = null;
-    protected ?bool $isRoot = false;
-    protected int $created = 0;
+    protected ?bool $isRoot = null;
+    protected ?int $created = null;
     protected int $sortOrder = 0;
     protected ?array $ui = null;
     protected ?array $rules = null;
@@ -91,6 +90,19 @@ class InquiryGroupType extends Entity implements JsonSerializable
     }
 
     /**
+     * Compatibility alias — many callers use getType()/setType().
+     */
+    public function getType(): string
+    {
+        return $this->getGroupType();
+    }
+
+    public function setType(string $value): void
+    {
+        $this->setGroupType($value);
+    }
+
+    /**
      * @return array
      *
      * @psalm-suppress PossiblyUnusedMethod
@@ -105,7 +117,7 @@ class InquiryGroupType extends Entity implements JsonSerializable
             'icon' => $this->getIcon(),
             'description' => $this->getDescription(),
             'fields' => $this->getFields(),
-            'allowedInquiryTypes' => $this->getAllowedInquiryTypes(),
+            'allowed_inquiry_types' => $this->getAllowedInquiryTypes(),
             'allowed_response' => $this->getAllowedResponse(),
             'sort_order' => $this->getSortOrder(),
             'is_root' => $this->getIsRoot() ?? false,
