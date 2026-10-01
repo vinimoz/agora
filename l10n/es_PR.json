@@ -19,7 +19,6 @@
     "Allow comments" : "Permitir comentarios",
     "Cancel" : "Cancel",
     "Ok" : "Ok",
-    "Select groups" : "Seleccionar grupos",
     "Title" : "Título",
     "URL" : "URL",
     "Link" : "Liga",
@@ -31,6 +30,9 @@
     "Location" : "Ubicación",
     "Category" : "Categoría",
     "Expires" : "Expira",
+    "Never" : "Nunca",
+    "Expiration date" : "Fecha de expiración",
+    "Access" : "Acceso",
     "Type" : "Tipo",
     "Search" : "Buscar",
     "Calendar" : "Calendario",
@@ -81,7 +83,6 @@
     "Share label" : "Share label",
     "Shares" : "Elementos compartido",
     "No activity yet" : "Aún no hay actividades",
-    "Never" : "Nunca",
     "Change" : "Cambiar",
     "Expiration" : "Expiración",
     "File" : "Archivo",
@@ -105,7 +106,6 @@
     "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
     "_%n month ago_::_%n months ago_" : ["Hace %n mes","Hace %n meses","Hace %n meses"],
     "_%n year ago_::_%n years ago_" : ["hace %n año","hace %n años","hace %n años"],
-    "Access" : "Acceso",
     "Owner" : "Dueño",
     "Administration" : "Administración"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
