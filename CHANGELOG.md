@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 # [1.7.13] - 2026-09-24
 Fix:
+    - Bug #66: keep others' votes hidden on engines closed to results
+    - Bug #65: pass family and access to InquiryDto again
     - Bug #64: do not touch the description editor once destroyed
     - Bug #63: check permissions on votes and support engines
     - Bug #62: show voters only what they need to vote
@@ -25,6 +27,10 @@ Fix:
     - Bug #45: make the ballot usable again
     - Bug #44: Bug in template creation
     - Fix group inquiry owner display
+
+Features: 
+    - Implemented group restricted view, formal and informal group creation.
+    - Add family/type for option and inquiry group modification in admin center.
 
 
 # [1.7.12] - 2026-09-20
