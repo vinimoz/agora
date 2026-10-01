@@ -76,12 +76,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     public const TABLE = 'agora_inquiries';
     
     // Access types
-    public const ACCESS_HIDDEN = 'hidden';
-    public const ACCESS_PUBLIC = 'public';
+    public const ACCESS_INVITATION = 'invitation';
     public const ACCESS_MODERATE = 'moderate';
     public const ACCESS_PRIVATE = 'private';
     public const ACCESS_OPEN = 'open';
-    public const ACCESS_GROUP = 'group';
+    public const ACCESS_GROUP = 'groups';
     
     // Show results types
     public const SHOW_RESULTS_ALWAYS = 'always';
@@ -797,75 +796,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             || $this->userSession->getCurrentUser()->getIsAdmin();
     }
 
-    /*
-    private function getAllowAccessInquiry(): bool
-    {
-        $log = \OCP\Server::get(\Psr\Log\LoggerInterface::class);
-
-        $log->error('AGORA-DEBUG getAllowAccessInquiry ENTER', [
-            'id'          => $this->getId(),
-            'access'      => $this->getAccess(),
-            'ownedGroup'  => $this->getOwnedGroup(),
-            'owner'       => $this->getOwner(),
-            'deleted'     => $this->getDeleted(),
-            'archived'    => $this->getArchived(),
-            'userId'      => $this->userSession->getCurrentUserId(),
-            'userGroups'  => $this->userSession->getCurrentUser()->getGroups(),
-            'isAdmin'     => $this->userSession->getCurrentUser()->getIsAdmin(),
-            'userRole'    => $this->getUserRole(),
-        ]);
-
-        if ($this->getAllowEditInquiry()) {
-            $log->error('AGORA-DEBUG branch: EDIT');
-            return true;
-        }
-
-        if ($this->getDeleted()) {
-            $log->error('AGORA-DEBUG branch: DELETED');
-            return false;
-        }
-
-        if ($this->getArchived()) {
-            $log->error('AGORA-DEBUG branch: ARCHIVED');
-            return false;
-        }
-
-        if ($this->getAccess() === self::ACCESS_GROUP) {
-            $ownedGroup = $this->getOwnedGroup();
-
-            if ($ownedGroup !== '' && $ownedGroup !== null) {
-                $user = $this->userSession->getCurrentUser();
-
-                $isOwner   = $this->getOwner() === $user->getId();
-                $isInGroup = in_array($ownedGroup, $user->getGroups(), true);
-                $isAdmin   = $user->getIsAdmin();
-
-                $log->error('AGORA-DEBUG branch: GROUP', [
-                    'ownedGroup' => $ownedGroup,
-                    'isAdmin'    => $isAdmin,
-                    'isOwner'    => $isOwner,
-                    'isInGroup'  => $isInGroup,
-                    'result'     => ($isAdmin || $isOwner || $isInGroup),
-                ]);
-
-                return $isAdmin || $isOwner || $isInGroup;
-            }
-        }
-
-        if ($this->getIsOpenInquiry()) {
-            $log->error('AGORA-DEBUG branch: OPEN');
-            return true;
-        }
-
-        $share = $this->userSession->getShare();
-        $log->error('AGORA-DEBUG branch: SHARE', [
-            'shareId'   => $share->getId(),
-            'inquiryId' => $share->getInquiryId(),
-        ]);
-
-        return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
-    }
-     */
     private function getAllowAccessInquiry(): bool
     {
         if ($this->getAllowEditInquiry()) {

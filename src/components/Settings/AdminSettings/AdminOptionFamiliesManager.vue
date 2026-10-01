@@ -9,7 +9,6 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { useAppSettingsStore } from '../../../stores/appSettings.ts'
@@ -94,7 +93,7 @@ const familiesWithStats = computed(() => {
       if (typeof parsedFeatures === 'string') parsedFeatures = JSON.parse(parsedFeatures || '[]')
       if (typeof parsedActions === 'string') parsedActions = JSON.parse(parsedActions || '[]')
     } catch (e) {
-      // keep raw
+        showError(t('agora', 'Failed with family stats : {msg}', { msg: e?.message ?? '' }))
     }
 
     return {
@@ -631,20 +630,21 @@ watch(
           <p class="help-text">
             {{ t('agora', 'UI configuration as JSON. Defines the layout and display options for this family.') }}
           </p>
-          <textarea
-            v-model="editingFamily.uiRaw"
-            class="json-editor"
-            rows="12"
-            @input="
-              (e) => {
-                try {
-                  editingFamily.ui = JSON.parse(e.target.value)
-                } catch (_) {
-                  /* keep raw */
-                }
-              }
-            "
-          >{{ JSON.stringify(editingFamily.ui, null, 2) }}</textarea>
+	  <textarea
+  v-model="editingFamily.uiRaw"
+  class="json-editor"
+  rows="12"
+  @input="
+    (e) => {
+      try {
+        editingFamily.ui = JSON.parse(e.target.value)
+      } catch (_) {
+        /* keep raw */
+      }
+    }
+  "
+></textarea>
+
         </div>
 
         <!-- RULES TAB -->
@@ -665,7 +665,7 @@ watch(
                 }
               }
             "
-          >{{ JSON.stringify(editingFamily.rules, null, 2) }}</textarea>
+          ></textarea>
         </div>
 
         <!-- FEATURES TAB -->

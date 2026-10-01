@@ -305,7 +305,7 @@ class InquiryService
         $this->inquiry->setLocationId($dto->locationId);
 	$this->inquiry->setCategoryId($dto->categoryId);
 	// By default, access group are accepted there is no moderation
-        if ($dto->access == 'group' ) $this->inquiry->setModerationStatus('accepted');
+        if ($dto->access === 'group' ) $this->inquiry->setModerationStatus('accepted');
 
         // Optional fields with defaults
         $this->inquiry->setDescription($dto->description ?? '');

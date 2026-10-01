@@ -28,7 +28,7 @@ import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
 import { AxiosError } from '@nextcloud/axios'
 
-export type OptionAccessType = 'private' | 'public' | 'open' | 'hidden'
+export type OptionAccessType = 'private' | 'public' | 'open' | 'group' | 'invitation'
 export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'
 
 export type OptionConfiguration = {

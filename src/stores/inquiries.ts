@@ -136,7 +136,8 @@ const inquiryCategories: InquiryCategoryList = {
     (inquiry.configuration.access === 'open' ||
      inquiry.configuration.access === 'public' ||
      inquiry.configuration.access === 'private' ||
-     inquiry.configuration.access === 'group'),
+     inquiry.configuration.access === 'invitation' ||
+     inquiry.configuration.access === 'groups'),
   },
   reject: {
     id: 'reject',
@@ -213,7 +214,7 @@ group: {
   filterCondition: (inquiry: Inquiry) =>
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
-    inquiry.configuration.access === 'group' &&
+    inquiry.configuration.access === 'groups' &&
     inquiry.ownedGroup &&
     (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
 },
@@ -261,7 +262,7 @@ group: {
       }
 
       // Group inquiries are visible if the user is in the owning group
-      if (access === 'group') {
+      if (access === 'groups') {
         return !!(
           inquiry.ownedGroup &&
           (sessionStore.currentUser?.groups ?? []).includes(inquiry.ownedGroup)

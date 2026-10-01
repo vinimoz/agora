@@ -70,10 +70,10 @@ use OCP\IURLGenerator;
 class Option extends EntityWithUser implements JsonSerializable
 {
     public const TABLE = 'agora_options';
-    public const ACCESS_HIDDEN = 'hidden';
-    public const ACCESS_PUBLIC = 'public';
+    public const ACCESS_INVITATION = 'invitation';
     public const ACCESS_PRIVATE = 'private';
     public const ACCESS_OPEN = 'open';
+    public const ACCESS_GROUP = 'group';
     public const SHOW_RESULTS_ALWAYS = 'always';
     public const SHOW_RESULTS_CLOSED = 'closed';
     public const SHOW_RESULTS_NEVER = 'never';

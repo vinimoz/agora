@@ -117,12 +117,6 @@ class InquiryMapper extends QBMapper
                 self::TABLE . '.family'
             ]);
 	}
-	/*
-	$this->logger->error('AGORA-DEBUG get() SQL', [
-    'id'     => $id,
-    'sql'    => $qb->getSQL(),
-    'params' => $qb->getParameters(),
-	]);*/
 
         return $this->findEntity($qb);
     }
@@ -906,12 +900,6 @@ private function castValueByType($value, array $fieldDef)
     {
         $user = $this->userSession->getCurrentUser();
 
-
-	/*        $this->logger->error('AGORA-DEBUG applyGroupAccessFilter', [
-            'userId'     => $this->userSession->getCurrentUserId(),
-            'isAdmin'    => $user->getIsAdmin(),
-            'userGroups' => $user->getGroups(),
-	]);*/
 
         // Admin bypasses entirely
         if ($user->getIsAdmin()) {

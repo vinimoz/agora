@@ -68,7 +68,8 @@ export enum AccessLevel {
   Private = 'private',
   Moderate = 'moderate',
   Open = 'open',
-  Group = 'group',
+  Group = 'groups',
+  Invitation = 'invitation',
 }
 
 /**
@@ -286,7 +287,7 @@ export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: unk
     userType: getCurrentUserType(),
     contentType: ContentType.Inquiry,
     isOwner: isContentOwner(inquiry.owner.id),
-    isPublic: inquiry.configuration.access === 'public',
+    isPublic: inquiry.configuration.access === 'invitation',
     isLocked: inquiry.currentUserStatus.isLocked || false,
     isExpired: inquiry.status.isExpired || false,
     isDeleted: inquiry.status.deletionDate > 0,

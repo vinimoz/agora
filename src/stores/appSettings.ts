@@ -176,7 +176,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
   actions: {
     getFirstStatusKeyByInquiryType(inquiryType: string): string | null {
       if (!this.inquiryStatusTab.length) {
-        console.warn('🔧 [SettingsStore] No statuses available')
+        console.warn('[SettingsStore] No statuses available')
       }
 
       const statuses = this.inquiryStatusTab.filter((status) => status.inquiryType === inquiryType)
@@ -603,7 +603,6 @@ export const useAppSettingsStore = defineStore('appSettings', {
       const newId = maxId + 1
 
       try {
-	console.log(" INQUIRY GROUP TYPE DATA ",typeData['family'])
         const response = await AppSettingsAPI.addInquiryGroupType({
           ...typeData,
           created: Date.now(),
@@ -613,7 +612,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
           ...typeData,
           created: Date.now(),
         }
-        this.inquiryGroupTypeTab.push(saved as any)
+        this.inquiryGroupTypeTab.push(saved as unknown)
       } catch (error) {
         Logger.error('Error adding inquiry group type', { error })
         throw error
@@ -698,7 +697,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
           ...typeData,
           created: Date.now(),
         }
-        this.inquiryOptionTypeTab.push(saved as any)
+        this.inquiryOptionTypeTab.push(saved as unknown)
       } catch (error) {
         Logger.error('Error adding option type', { error })
         throw error
@@ -765,7 +764,7 @@ async addOptionFamily(familyData: {
       ...familyData,
       created: Date.now(),
     }
-    this.optionFamilyTab.push(saved as any)
+    this.optionFamilyTab.push(saved as unknown)
   } catch (error) {
     Logger.error('Error adding option family', { error })
     throw error

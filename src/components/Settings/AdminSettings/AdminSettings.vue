@@ -33,9 +33,6 @@ const settingsModalOpen = ref(false)
 // ============================================================
 // COMPUTED
 // ============================================================
-const activeDomain = computed(
-  () => domains.find((d) => d.id === activeDomainId.value) ?? domains[0],
-)
 
 /** Sub-tabs available once a family is selected */
 const subTabs = computed(() => {

@@ -36,7 +36,7 @@ const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.valu
 // STATE
 // ============================================================
 const searchQuery = ref('')
-const editingType = ref<any>(null)
+const editingType = ref<unknown>(null)
 const savingType = ref(false)
 const editTab = ref('basic')
 const expandedTypeId = ref<number | null>(null)
@@ -52,7 +52,7 @@ function emptyType() {
     inquiry_type: '',
     label: '',
     family: familyKey.value,
-    icon: null as any,
+    icon: null as unknown,
     description: '',
     fields: [] as string[],
     allowed_response: [] as string[],
@@ -73,18 +73,18 @@ const availableIcons = computed(() =>
     })),
 )
 
-const getIconComponent = (iconName: any) => {
+const getIconComponent = (iconName: unknown) => {
   const id = typeof iconName === 'object' ? iconName?.id : iconName
   return InquiryGeneralIcons[id] || InquiryGeneralIcons.default
 }
 
-const findIconById = (iconId: any) => {
+const findIconById = (iconId: unknown) => {
   if (!iconId) return null
   if (typeof iconId === 'object') return iconId
   return availableIcons.value.find((i) => i.id === iconId) || null
 }
 
-const extractIconId = (icon: any) => {
+const extractIconId = (icon: unknown) => {
   if (!icon) return ''
   if (typeof icon === 'string') return icon
   if (typeof icon === 'object') return icon.id || ''
@@ -94,7 +94,7 @@ const extractIconId = (icon: any) => {
 // ============================================================
 // NORMALIZATION
 // ============================================================
-const normalizeArray = (value: any): string[] => {
+const normalizeArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
     return value.map((v) => (typeof v === 'string' ? v : (v?.key ?? String(v))))
   }
@@ -114,11 +114,11 @@ const normalizeArray = (value: any): string[] => {
 // ============================================================
 // COMPUTED
 // ============================================================
-const allTypes = computed<any[]>(() => appSettingsStore.inquiryTypeTab ?? [])
+const allTypes = computed<unknown[]>(() => appSettingsStore.inquiryTypeTab ?? [])
 
 const familyTypes = computed(() =>
   familyKey.value
-    ? allTypes.value.filter((type: any) => type.family === familyKey.value)
+    ? allTypes.value.filter((type: unknown) => type.family === familyKey.value)
     : allTypes.value,
 )
 
@@ -127,13 +127,13 @@ const filteredTypes = computed(() => {
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase()
     list = list.filter(
-      (type: any) =>
+      (type: unknown) =>
         type.inquiry_type?.toLowerCase().includes(q) ||
         type.label?.toLowerCase().includes(q) ||
         type.description?.toLowerCase().includes(q),
     )
   }
-  return list.map((type: any) => ({
+  return list.map((type: unknown) => ({
     ...type,
     fields: normalizeArray(type.fields),
     allowed_response: normalizeArray(type.allowed_response),
@@ -143,22 +143,25 @@ const filteredTypes = computed(() => {
 })
 
 /** All inquiry group types attached to the current family */
-const groupTypesInFamily = computed<any[]>(() => {
+const groupTypesInFamily = computed<unknown[]>(() => {
   const all = appSettingsStore.inquiryGroupTypeTab ?? []
   if (!familyKey.value) return all
-  return all.filter((gt: any) => gt.family === familyKey.value)
+  return all.filter((gt: unknown) => gt.family === familyKey.value)
 })
 
-/** How many group types reference a given inquiry type */
+/**
+ * How munknown group types reference a given inquiry type
+ * @param inquiryType
+ */
 const getUsageCount = (inquiryType: string): number =>
-  groupTypesInFamily.value.filter((gt: any) =>
+  groupTypesInFamily.value.filter((gt: unknown) =>
     normalizeArray(gt.allowed_inquiry_types).includes(inquiryType),
   ).length
 
 // ============================================================
 // VALIDATION
 // ============================================================
-const validateType = (type: any, isEdit = false) => {
+const validateType = (type: unknown, isEdit = false) => {
   if (!type.inquiry_type?.trim()) {
     showError(t('agora', 'Inquiry type key is mandatory'))
     return false
@@ -175,7 +178,7 @@ const validateType = (type: any, isEdit = false) => {
   }
   if (!isEdit) {
     const exists = allTypes.value.some(
-      (existing: any) => existing.inquiry_type === type.inquiry_type,
+      (existing: unknown) => existing.inquiry_type === type.inquiry_type,
     )
     if (exists) {
       showError(t('agora', 'An inquiry type with this key already exists'))
@@ -205,14 +208,14 @@ const addType = async () => {
     })
     showSuccess(t('agora', 'Inquiry type added'))
     newType.value = emptyType()
-  } catch (e: any) {
+  } catch (e: unknown) {
     showError(t('agora', 'Failed to add inquiry type: {msg}', { msg: e?.message ?? '' }))
   } finally {
     savingType.value = false
   }
 }
 
-const startEditing = (type: any) => {
+const startEditing = (type: unknown) => {
   editingType.value = {
     ...JSON.parse(JSON.stringify(type)),
     icon: findIconById(type.icon),
@@ -229,7 +232,7 @@ const cancelEditing = () => {
   editTab.value = 'basic'
 }
 
-const updateType = async (type: any) => {
+const updateType = async (type: unknown) => {
   if (!type || !validateType(type, true)) return
   savingType.value = true
   try {
@@ -244,14 +247,14 @@ const updateType = async (type: any) => {
     })
     showSuccess(t('agora', 'Inquiry type updated'))
     editingType.value = null
-  } catch (e: any) {
+  } catch (e: unknown) {
     showError(t('agora', 'Failed to update inquiry type: {msg}', { msg: e?.message ?? '' }))
   } finally {
     savingType.value = false
   }
 }
 
-const deleteType = async (type: any) => {
+const deleteType = async (type: unknown) => {
   if (
     !confirm(
       t('agora', 'Are you sure you want to delete the inquiry type "{label}"?', {
@@ -264,7 +267,7 @@ const deleteType = async (type: any) => {
   try {
     await appSettingsStore.deleteType(type.id)
     showSuccess(t('agora', 'Inquiry type deleted'))
-  } catch (e: any) {
+  } catch (e: unknown) {
     showError(t('agora', 'Failed to delete inquiry type: {msg}', { msg: e?.message ?? '' }))
   }
 }
@@ -281,12 +284,12 @@ type ArrayKey = 'fields' | 'allowed_response' | 'allowed_transformation' | 'allo
 const addArrayItem = (target: 'new' | 'edit', key: ArrayKey, value: string) => {
   const val = value?.trim()
   if (!val) return
-  const arr = target === 'new' ? (newType.value as any)[key] : (editingType.value as any)[key]
+  const arr = target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
   if (!arr.includes(val)) arr.push(val)
 }
 
 const removeArrayItem = (target: 'new' | 'edit', key: ArrayKey, index: number) => {
-  const arr = target === 'new' ? (newType.value as any)[key] : (editingType.value as any)[key]
+  const arr = target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
   arr.splice(index, 1)
 }
 
