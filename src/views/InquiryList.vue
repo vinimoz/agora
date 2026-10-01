@@ -39,7 +39,7 @@ const router = useRouter()
 
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
-  set: (value) => inquiriesStore.setFamilyType(value || '')
+  set: (value) => inquiriesStore.setFamilyType(value || null)
 })
 
 // Main mode (create/view) and sub mode (table/list/reel)
@@ -88,11 +88,10 @@ function handleMainModeChange(mode: string) {
 }
 
 // Handle sub mode change
-function handleSubModeChange(mode: ViewMode) {
+async function handleSubModeChange(mode: ViewMode) {
   subMode.value = mode
-  // Save preference
   if (preferencesStore.user) {
-    preferencesStore.setUserPreference('defaultViewInquiry', mode)
+    await preferencesStore.setUserPreference('defaultViewInquiry', mode)
   }
 }
 
@@ -144,7 +143,6 @@ const emptyInquiryListnoInquiries = computed(
 
 const loadingOverlayProps = {
   name: t('agora', 'Loading overview'),
-  teleportTo: '#content-vue',
   loadingTexts: [
     t('agora', 'Fetching inquiries'),
     t('agora', 'Checking access'),

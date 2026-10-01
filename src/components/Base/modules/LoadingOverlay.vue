@@ -8,13 +8,11 @@ import { t } from '@nextcloud/l10n'
 import { Spinner } from '../../AppIcons/index.ts'
 import { onMounted, ref, watch } from 'vue'
 
-const description = ref(t('agora', 'Please wait'))
-
 const {
   show = false,
   name = t('agora', 'Loading'),
   loadingTexts = '',
-  teleportTo = '#content-vue',
+  teleportTo = '',            // no implicit '#content-vue'
 } = defineProps<{
   show: boolean
   name: string
@@ -22,9 +20,22 @@ const {
   teleportTo?: string
 }>()
 
+// ✅ top-level ref → visible to the template
+const description = ref(t('agora', 'Please wait'))
+
+// null = don't teleport; string/HTMLElement = resolved target
+const resolvedTarget = ref<string | HTMLElement | null>(null)
+
+function resolveTarget() {
+  resolvedTarget.value = teleportTo
+    ? document.querySelector(teleportTo)
+    : null
+}
+
 const sequentialDescriptionOutput = () => {
-  if (loadingTexts instanceof String) {
-    description.value = loadingTexts as string
+  // primitive string check
+  if (typeof loadingTexts === 'string') {
+    description.value = loadingTexts
     return
   }
 
@@ -39,14 +50,11 @@ const sequentialDescriptionOutput = () => {
   }
 
   let index = 0
-
   const showDescription = () => {
+    if (show === false) return
     if (index < loadingTexts.length) {
-      if (show === false) {
-        return
-      }
       description.value = loadingTexts[index]
-      index = index + 1
+      index++
       const delay = 1500 + Math.floor(Math.random() * 1001) - 500
       setTimeout(showDescription, delay)
     } else {
@@ -59,33 +67,39 @@ const sequentialDescriptionOutput = () => {
 watch(
   () => show,
   (newValue) => {
-    if (newValue === true && loadingTexts.length > 0) {
-      sequentialDescriptionOutput()
+    if (newValue === true) {
+      resolveTarget()
+      if (loadingTexts.length > 0) sequentialDescriptionOutput()
     }
   }
 )
 
 onMounted(() => {
-  if (show) {
-    sequentialDescriptionOutput()
-  }
+  resolveTarget()
+  if (show) sequentialDescriptionOutput()
 })
 </script>
 
 <template>
-  <Teleport :to="teleportTo">
+  <!-- Teleport only when a real target is available -->
+  <Teleport v-if="resolvedTarget" :to="resolvedTarget">
     <div v-show="show" class="loading-overlay">
       <div class="loading-overlay__inner">
         <Spinner class="loading-overlay__spinner" :size="70" />
-        <span class="loading-overlay__name">
-          {{ name }}
-        </span>
-        <p class="loading-overlay__description">
-          {{ description }}
-        </p>
+        <span class="loading-overlay__name">{{ name }}</span>
+        <p class="loading-overlay__description">{{ description }}</p>
       </div>
     </div>
   </Teleport>
+
+  <!-- Fallback: render in place if no valid target -->
+  <div v-else v-show="show" class="loading-overlay">
+    <div class="loading-overlay__inner">
+      <Spinner class="loading-overlay__spinner" :size="70" />
+      <span class="loading-overlay__name">{{ name }}</span>
+      <p class="loading-overlay__description">{{ description }}</p>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">

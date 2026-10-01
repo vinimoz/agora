@@ -36,7 +36,7 @@ import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { useSupportResultStore } from './supportResult.ts'
 
 // Type definitions matching PHP constants
-export type AccessType = 'invitation' | 'moderate' | 'private' | 'open' | 'groups'
+export type AccessType = 'invitation' | 'private' | 'open' | 'groups'
 export type ShowResultsType = 'always' | 'closed' | 'never'
 export type ModerationWorkflowStatus = 'draft' | 'pending' | 'accepted' | 'rejected'
 export type InquiryWorkflowStatus = 'draft' | 'waiting_approval' | 'active' | 'closed' | 'rejected'
@@ -322,7 +322,7 @@ export const useInquiryStore = defineStore('inquiry', {
 				} else if (action === 'submit_for_moderate') {
 					this.status.moderationStatus = 'pending'
 					this.status.inquiryStatus = 'waiting_approval'
-    					this.configuration.access = this.ownedGroup ? 'groups' : 'moderate'
+    					this.configuration.access = this.ownedGroup ? 'groups' : 'private'
 				}
 
 				const response = await InquiriesAPI.submitInquiry(this.id, action)

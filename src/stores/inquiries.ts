@@ -256,11 +256,6 @@ group: {
         return inquiry.currentUserStatus.isOwner
       }
 
-      // Moderate inquiries are visible to moderators and admins
-      if (access === 'moderate') {
-        return !!(sessionStore.currentUser?.isModerator || sessionStore.currentUser?.isAdmin)
-      }
-
       // Group inquiries are visible if the user is in the owning group
       if (access === 'groups') {
         return !!(
@@ -323,7 +318,7 @@ group: {
   filterCondition: (inquiry: Inquiry) =>
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
-    inquiry.configuration.access === 'moderate',
+    inquiry.configuration.moderationStatus === 'pending',
 },
 }
 
@@ -635,7 +630,7 @@ export const useInquiriesStore = defineStore('inquiries', {
         } else if (action === 'submit_for_moderate') {
           inquiry.status.moderationStatus = 'pending'
           inquiry.status.inquiryStatus = 'waiting_approval'
-          inquiry.configuration.access = 'moderate'
+          inquiry.configuration.access = 'private'
         }
       }
     },
