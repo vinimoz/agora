@@ -125,18 +125,13 @@ export const usePreferencesStore = defineStore('preferences', {
       }
     },
 
-    async getCalendars() {
-      try {
-        const response = await CalendarAPI.getCalendars()
-        // this.availableCalendars = response.data.calendars
-        this.setCalendars({ calendars: response.data.calendars })
-        return response
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        throw error
-      }
-    },
+    async setUserPreference<K extends keyof UserPreferences>(
+  key: K,
+  value: UserPreferences[K],
+): Promise<void> {
+  this.user[key] = value
+  await this.write()
+},
+
   },
 })

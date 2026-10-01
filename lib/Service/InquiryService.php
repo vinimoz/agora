@@ -305,7 +305,7 @@ class InquiryService
         $this->inquiry->setLocationId($dto->locationId);
 	$this->inquiry->setCategoryId($dto->categoryId);
 	// By default, access group are accepted there is no moderation
-        if ($dto->access === 'group' ) $this->inquiry->setModerationStatus('accepted');
+        if ($dto->access === 'groups' ) $this->inquiry->setModerationStatus('accepted');
 
         // Optional fields with defaults
         $this->inquiry->setDescription($dto->description ?? '');
@@ -935,7 +935,7 @@ public function getWithTrending(int $inquiryId): array
             break;
 
         case 'submit_for_accepted':
-		if ($inquiry->getOwnedGroup() ) $inquiry->setAccess('group');
+		if ($inquiry->getOwnedGroup() ) $inquiry->setAccess('groups');
 		else $inquiry->setAccess('open');
             $inquiry->setModerationStatus('accepted');
             //We find the first status available in inquiry type status definition
