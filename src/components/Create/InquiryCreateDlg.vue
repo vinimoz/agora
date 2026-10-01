@@ -128,6 +128,8 @@ interface InquiryData {
   description?: string
 }
 
+
+
 async function addInquiry() {
   try {
     adding.value = true

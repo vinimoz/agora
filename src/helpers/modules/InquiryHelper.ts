@@ -151,10 +151,139 @@ export function getFilteredInquiryTypes(
     ) || []
   })
 }
+
+
+
+// ============================================================================
+// INQUIRY GROUP TYPE — FAMILY FILTERING
+// ============================================================================
+
+/**
+ * Get the family key of an inquiry group type.
+ * Falls back to 'default' if the type is not found.
+ */
+export function getInquiryGroupTypeFamily(
+  groupType: string | null | undefined,
+  groupTypes: InquiryGroupType[],
+): string {
+  if (!groupType) return 'default'
+  const found = groupTypes.find(t => t.group_type === groupType)
+  return found?.family || 'default'
+}
+
+/**
+ * Group inquiry group types by their family.
+ * FIXED: the original checked `grouped[familyKey].is_root` (on the array).
+ *
+ * @returns Record<familyKey, InquiryGroupType[]>
+ */
+export function getInquiryGroupTypesByFamily(
+  groupTypes: InquiryGroupType[],
+): Record<string, InquiryGroupType[]> {
+  const grouped: Record<string, InquiryGroupType[]> = {}
+
+  for (const type of groupTypes ?? []) {
+    const familyKey = type.family || 'default'
+    if (!grouped[familyKey]) grouped[familyKey] = []
+    grouped[familyKey].push(type)
+  }
+
+  return grouped
+}
+
+/**
+ * Only the root group types (is_root === true) for a given family.
+export function getRootGroupTypesForFamily(
+  groupTypes: InquiryGroupType[],
+  family: string,
+): InquiryGroupType[] {
+  return (groupTypes ?? []).filter(
+    t => t.family === family && t.is_root === true,
+  )
+}
+ */
+
+/**
+ * Only the child group types (is_root === false) for a given family.
+export function getChildGroupTypesForFamily(
+  groupTypes: InquiryGroupType[],
+  family: string,
+): InquiryGroupType[] {
+  return (groupTypes ?? []).filter(
+    t => t.family === family && t.is_root !== true,
+  )
+}
+ */
+
+/**
+ * Root group types whose `allowed_response` includes the given type key —
+ * useful for building parent → children trees.
+export function getGroupTypesAllowedAsResponse(
+  allTypes: InquiryGroupType[],
+  parentTypeKey: string,
+): InquiryGroupType[] {
+  const parent = allTypes.find(t => t.group_type === parentTypeKey)
+  if (!parent?.allowed_response) return []
+
+  const allowed = Array.isArray(parent.allowed_response)
+    ? parent.allowed_response
+    : safeJsonParse<string[]>(parent.allowed_response as unknown as string, [])
+
+  const allowedSet = new Set(allowed)
+  return allTypes.filter(t => allowedSet.has(t.group_type))
+}
+ */
+
+/**
+ * Count group types per family.
+export function countGroupTypesByFamily(
+  groupTypes: InquiryGroupType[],
+): Record<string, number> {
+  const counts: Record<string, number> = {}
+  for (const type of groupTypes ?? []) {
+    const family = type.family || 'default'
+    counts[family] = (counts[family] || 0) + 1
+  }
+  return counts
+}
+ */
+
+/**
+ * Filter an arbitrary list of inquiry groups (instances, not types) by family.
+ * `groups` must be the actual group entities — typically from the
+ * `useInquiryGroupsStore`. It relies on each group having a `groupType` field.
+ */
+export function filterInquiryGroupsByFamily<T extends { groupType?: string }>(
+  groups: T[],
+  groupTypes: InquiryGroupType[],
+  family: string | null | undefined,
+): T[] {
+  if (!family) return groups ?? []
+  const allowedKeys = new Set(
+    (groupTypes ?? [])
+      .filter(t => t.family === family)
+      .map(t => t.group_type),
+  )
+  return (groups ?? []).filter(g => g.groupType && allowedKeys.has(g.groupType))
+}
+
+// ============================================================================
+// SMALL INTERNAL HELPER — safe JSON parsing
+// ============================================================================
+function safeJsonParse<T>(value: unknown, fallback: T): T {
+  if (value == null) return fallback
+  if (typeof value !== 'string') return value as T
+  try {
+    return JSON.parse(value) as T
+  } catch {
+    return fallback
+  }
+}
+
+
 /**
  * Group inquiry group types by family
  * @param inquiryGroupTypes
- */
 export function getInquiryGroupTypesByFamily(inquiryGroupTypes: InquiryGroupType[]) {
   const grouped: Record<string, InquiryGroupType[]> = {}
 
@@ -169,6 +298,7 @@ export function getInquiryGroupTypesByFamily(inquiryGroupTypes: InquiryGroupType
 
   return grouped
 }
+ */
 
 
 /**
@@ -187,6 +317,25 @@ export function getInquiryTypesByFamily(inquiryTypes: InquiryType[]) {
   })
 
   return grouped
+}
+
+/**
+ * Get available response group types for a group type,
+ * based on its `allowed_response` array.
+ */
+export function getAvailableResponseGroupTypes(
+  allTypes: InquiryGroupType[],
+  parentTypeKey: string,
+): InquiryGroupType[] {
+  const parent = allTypes.find(t => t.group_type === parentTypeKey)
+  if (!parent?.allowed_response) return []
+
+  const allowed = Array.isArray(parent.allowed_response)
+    ? parent.allowed_response
+    : safeJsonParse<string[]>(parent.allowed_response as unknown as string, [])
+
+  const allowedSet = new Set(allowed)
+  return allTypes.filter(t => allowedSet.has(t.group_type))
 }
 
 /**
@@ -231,7 +380,7 @@ export function getAllowedResponseGroupTypes(
   let allowedResponses: string[] = []
   if (typeof currentType.allowed_response === 'string') {
     try {
-      allowedResponses = JSON.parse(currentType.allowed_response)
+     allowedResponses = JSON.parse(currentType.allowed_response)
     } catch {
   	console.log(" INTO GET ALLOWED RESPONSE CATCH ",allowedResponses )
       allowedResponses = []

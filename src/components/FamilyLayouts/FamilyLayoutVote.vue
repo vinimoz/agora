@@ -769,10 +769,6 @@ const closeEngineModal = () => {
     engineModalMode.value = 'create'
 }
 
-const onAddToVote = (engine: SupportEngine) => {
-    selectEngine(engine.id)
-    showAddToVoteModal.value = true
-}
 
 const handleEngineUpdate = (engineId: number | null) => {
     if (engineId) {

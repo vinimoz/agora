@@ -214,6 +214,7 @@ group: {
     inquiry.permissions.view &&
     inquiry.configuration.visibility === 'groups' &&
     inquiry.ownedGroup &&
+
     (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
 },
   open: {

@@ -261,10 +261,10 @@ isClosed(state): boolean {
     )
 },
 
-		isGroupRestricted(state): boolean {
-			return state.configuration.visibility === 'groups' && state.ownedGroup !== ''
-		},
-
+isGroupRestricted(state): boolean {
+  return state.configuration.visibility === 'groups'
+      && (state.configuration.visibilityGroups?.length ?? 0) > 0
+},
 
 
 	/**
@@ -272,13 +272,12 @@ isClosed(state): boolean {
 	 * Returns true if no ownedGroup is set (no restriction),
 	 * otherwise checks if the current user's groups include the ownedGroup.
 	 */
-	isCurrentUserInOwnedGroup(): boolean {
-	if (!this.ownedGroup) {
-		return true
-	}
-	const sessionStore = useSessionStore()
-	return (sessionStore.currentUser?.groups ?? []).includes(this.ownedGroup)
-	},
+isCurrentUserInAnyVisibilityGroup(): boolean {
+  const groups = this.configuration.visibilityGroups ?? []
+  if (groups.length === 0) return true
+  const userGroups = useSessionStore().currentUser?.groups ?? []
+  return groups.some(g => userGroups.includes(g))
+},
 
 		descriptionMarkDown(state): string {
 			marked.use(gfmHeadingId(markedPrefix))

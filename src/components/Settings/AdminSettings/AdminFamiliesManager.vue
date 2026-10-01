@@ -24,6 +24,25 @@ const newFamily = ref({
   sort_order: 0
 })
 
+// Calculate types + group types count for each family
+const familiesWithStats = computed(() =>
+  appSettingsStore.inquiryFamilyTab.map((family) => {
+    const typesCount = appSettingsStore.inquiryTypeTab.filter(
+      (type) => type.family === family.family_type,
+    ).length
+
+    const groupTypesCount = (appSettingsStore.inquiryGroupTypeTab ?? []).filter(
+      (groupType) => groupType.family === family.family_type,
+    ).length
+
+    return {
+      ...family,
+      typesCount,
+      groupTypesCount,
+    }
+  }),
+)
+
 // Helper to find icon object by id
 const findIconById = (iconId) => {
   if (!iconId) return null
@@ -49,17 +68,6 @@ const availableIcons = computed(() =>
 
 const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default
 
-// Calculate types count for each family
-const familiesWithStats = computed(() => appSettingsStore.inquiryFamilyTab.map(family => {
-    const typesCount = appSettingsStore.inquiryTypeTab.filter(
-      type => type.family === family.family_type
-    ).length
-    
-    return {
-      ...family,
-      typesCount
-    }
-  }))
 
 const extractIconId = (icon) => {
   if (!icon) return ''
@@ -136,9 +144,12 @@ const selectFamily = (family) => {
               {{ family.description }}
             </p>
             <div class="family-stats">
-              <span class="types-count">
-                {{ t('agora', '{count} types', { count: family.typesCount }) }}
-              </span>
+  <span class="types-count">
+    {{ t('agora', '{count} types', { count: family.typesCount }) }}
+  </span>
+  <span class="group-types-count">
+    {{ t('agora', '{count} group types', { count: family.groupTypesCount }) }}
+  </span>
             </div>
           </div>
         </div>
@@ -174,15 +185,17 @@ const selectFamily = (family) => {
            class="form-field"
           />
           
-          <NcSelect
-            v-model="newFamily.icon"
-            :options="availableIcons"
-	    :clearable="false"
-	    track-by="id"
-            :placeholder="t('agora', 'Select an icon')"
-            class="form-field"
-          />
-        </div>
+        <NcSelect
+  v-model="newFamily.icon"
+  :input-label="t('agora', 'Icon')"
+  :label-outside="true"
+  :options="availableIcons"
+  :clearable="false"
+  track-by="id"
+  :placeholder="t('agora', 'Select an icon')"
+  class="form-field"
+/>
+	</div>
         
         <NcInputField
 	  v-model="newFamily.description"
@@ -230,14 +243,16 @@ const selectFamily = (family) => {
               required
               class="form-field"
             />
-            <NcSelect
-              v-model="editingFamily.icon"
-              :options="availableIcons"
-	      track-by="id"
-	      :clearable="false"
-              :placeholder="t('agora', 'Select an icon')"
-              class="form-field"
-          />
+	    <NcSelect
+  v-model="editingFamily.icon"
+  :input-label="t('agora', 'Icon')"
+  :label-outside="true"
+  :options="availableIcons"
+  track-by="id"
+  :clearable="false"
+  :placeholder="t('agora', 'Select an icon')"
+  class="form-field"
+/>
         </div>
         </div>
 	<div>
@@ -333,12 +348,23 @@ const selectFamily = (family) => {
 
 .family-stats {
   margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .types-count {
   font-size: 0.8em;
   color: var(--color-primary);
   background: var(--color-primary-element-light);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.group-types-count {
+  font-size: 0.8em;
+  background: #d4f5e1;
+  color: #1b7a45;
   padding: 2px 8px;
   border-radius: 12px;
 }

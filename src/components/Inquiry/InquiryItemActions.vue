@@ -35,6 +35,8 @@ const sessionStore= useSessionStore()
 
 const { inquiry } = defineProps<{ inquiry: Inquiry }>()
 
+defineOptions({ inheritAttrs: false })
+
 const inquiriesStore = useInquiriesStore()
 const isNavigating = ref(false)
 const showDeleteDialog = ref(false)
@@ -74,7 +76,7 @@ async function toggleArchive() {
 </script>
 
 <template>
-  <NcActions force-menu>
+  <NcActions force-menu v-bind="$attrs">
     <template v-if="subMenu">
       <NcActionButton
         :aria-label="t('agora', 'Back')"

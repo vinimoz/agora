@@ -286,7 +286,6 @@ import ActivityFeed from '../InquiryGroup/ActivityFeed.vue'
 // TYPES & HELPERS
 // ============================================================
 import type { InquiryGroup, InquiryGroupUIConfig } from '../stores/inquiryGroups.types'
-import type { Inquiry } from '../../Types/index.ts'
 import type { DisplayZone, GridPosition, InteractionAction, InteractionTarget } from '../Types/experience.types'
 import { useSessionStore } from '../../stores/session'
 import { useCommentsStore } from '../../stores/comments'
@@ -307,7 +306,7 @@ import {
 } from '../Types/experience.types'
 
 import type { Inquiry, Option, Item } from '../../Types/index.ts'
-import { toItems } from '../../helpers/modules/itemAdapter'
+import { toItems } from '../../helpers/modules/itemHelpers'
 
 // ============================================================
 // PROPS

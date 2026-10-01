@@ -50,14 +50,14 @@ class InquiryOptionType extends EntityWithUser implements JsonSerializable
     protected string $optionType = '';
     protected string $label = '';
     protected string $icon = '';
-    protected string $family = 'debate';
+    protected ?string $family = null;
     protected ?string $description = null;
     protected ?array $fields = null;
     protected ?array $allowedResponse = null;
     protected ?int $allowComment = null;
     protected string $supportFeature = '';
     protected ?array $statuses = null;
-    protected int $useTitle = 0;
+    protected ?int $useTitle = null;
     protected int $created = 0;
 
     public function __construct()
