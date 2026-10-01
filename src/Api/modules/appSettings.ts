@@ -385,7 +385,6 @@ addInquiryGroupType(type: {
     sort_order?: number
     created: number
 }): Promise<AxiosResponse<{ groupType: InquiryGroupType }>> {
-	console.log(" INQUIRY GROUP TYPE DATA ",type['family'])
 
     return httpInstance.request({
         method: 'POST',

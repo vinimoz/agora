@@ -188,11 +188,12 @@ class SupportResultService
      */
     public function getResultsByTarget(string $targetType, int $targetId, ?int $engineId = null): array
     {
-        $this->logger->debug('Getting results by target', [
+
+        /*$this->logger->debug('Getting results by target', [
             'targetType' => $targetType,
             'targetId' => $targetId,
             'engineId' => $engineId
-        ]);
+	]);*/
 
         // Use the mapper method that already exists
         $results = $this->resultMapper->findResultsByTarget($targetType, $targetId);
@@ -485,16 +486,16 @@ class SupportResultService
      */
     private function calculateByType(string $type, array $supports, ?int $inquiryId = null, ?int $optionId = null, ?int $engineId=null,array $optionIds = [] ): array
     {
-        $this->debug('calculateByType called', [
+        /*$this->debug('calculateByType called', [
             'type' => $type,
             'supportsCount' => count($supports),
             'inquiryId' => $inquiryId,
             'optionId' => $optionId
-        ]);
+	]);*/
 
         if (empty($supports)) {
             $emptyResult = $this->getEmptyResult($type);
-            $this->debug('No supports, returning empty result', ['result' => $emptyResult]);
+            // $this->debug('No supports, returning empty result', ['result' => $emptyResult]);
             return $emptyResult;
         }
 
@@ -503,7 +504,7 @@ class SupportResultService
             foreach ($supports as $support) {
                 if ($support->getInquiryId() > 0) {
                     $inquiryId = $support->getInquiryId();
-                    $this->debug('Retrieved inquiryId from support', ['inquiryId' => $inquiryId]);
+                    // $this->debug('Retrieved inquiryId from support', ['inquiryId' => $inquiryId]);
                     break;
                 }
             }
@@ -527,7 +528,7 @@ class SupportResultService
             'majority_judgment' => $this->calculateMajorityJudgmentResults($supports, $inquiryId, $optionId, $engineId, $optionIds),
             default => $this->calculateBinaryResults($supports),
         };
-        $this->debug('calculateByType result', ['result' => $result]);
+        // $this->debug('calculateByType result', ['result' => $result]);
 
         return $result;
     }
@@ -1047,7 +1048,7 @@ class SupportResultService
                 if ($engine) {
                     $config = $engine->getConfig();
                     if (isset($config['grades']) && is_array($config['grades'])) {
-                        $this->debug('Got grades from engine config', ['grades' => $config['grades']]);
+                        // $this->debug('Got grades from engine config', ['grades' => $config['grades']]);
                         return $config['grades'];
                     }
                 }
@@ -1122,11 +1123,11 @@ class SupportResultService
         foreach ($supports as $support) {
             $value = $support->getValue();
 
-            $this->debug('Processing deliberative support', [
+            /* $this->debug('Processing deliberative support', [
                 'user_id' => $support->getUserId(),
                 'raw_value' => $value,
                 'value_type' => gettype($value)
-            ]);
+	    ]); */
 
             // Check if value is 1 (approved)
             $isApproved = false;
@@ -1150,7 +1151,7 @@ class SupportResultService
 
             if ($isApproved) {
                 $totalApproved++;
-                $this->debug('Approved', ['user_id' => $support->getUserId()]);
+                // $this->debug('Approved', ['user_id' => $support->getUserId()]);
             }
         }
 
@@ -1467,7 +1468,7 @@ class SupportResultService
      */
     public function getResultsByInquiry(int $inquiryId): array
     {
-        $this->logger->debug('Getting results by inquiry', ['inquiryId' => $inquiryId]);
+        // $this->logger->debug('Getting results by inquiry', ['inquiryId' => $inquiryId]);
         $results = $this->resultMapper->findResultsByTarget('inquiry', $inquiryId);
         return $this->filterHidden(array_filter($results, fn($r) => $r !== null), $inquiryId);
     }

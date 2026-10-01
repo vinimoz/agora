@@ -29,6 +29,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import NcDateTimePicker from '@nextcloud/vue/components/NcDateTimePicker'
 
 import { NcTextArea } from '@nextcloud/vue'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
@@ -40,7 +41,6 @@ import {
   canSupport,
   canComment,
   canEdit,
-  canView,
   createInquiryContext,
 } from '../../utils/permissions.ts'
 
@@ -66,10 +66,10 @@ const triggerImageUpload = () => {
   imageFileInput.value?.click()
 }
 
-const isStoreReady = computed(() => inquiryStore && 
-         inquiryStore.id && 
-         sessionStore && 
-         sessionStore.appSettings && 
+const isStoreReady = computed(() => inquiryStore &&
+         inquiryStore.id &&
+         sessionStore &&
+         sessionStore.appSettings &&
          Object.keys(sessionStore.appSettings).length > 0)
 
 
@@ -166,7 +166,7 @@ const currentInquiryStatus = computed(
 
     return availableInquiryStatuses.value.find(
       (status) => status.statusKey === currentStatus
-    ) || specialStatuses.draft; 
+    ) || specialStatuses.draft;
   }
 )
 
@@ -196,7 +196,7 @@ const onStatusChange = async (newStatus: string) => {
   }
 }
 
-const statusInquiryOptions = computed(() => 
+const statusInquiryOptions = computed(() =>
   availableInquiryStatuses.value.map(status => ({
     id: status.statusKey,
     label: t('agora', status.label),
@@ -330,18 +330,18 @@ watch(
 
 // Event subscriptions
 onMounted(async () => {
-  if (!canView) { 
+  if (inquiryStore.configuration.access === 'groups' && !inquiryStore.isCurrentUserInOwnedGroup) {
         hasAccess.value = false
   	showError("Error you cannot view this inquiry !")
 	router.push({ name: 'list', params: { type: 'relevant' } })
 	return
 }
-  
-  if (inquiryStore.coverId) { 
+
+  if (inquiryStore.coverId) {
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
    }
 
-   if (inquiriesStore.inquiries.length === 0 ) { 
+   if (inquiriesStore.inquiries.length === 0 ) {
   	inquiriesStore.setFamilyType(inquiryStore.family)
    	inquiriesStore.load()
    }
@@ -447,6 +447,48 @@ const viewOnlySupportInquiry = computed(() => {
 return isPublicRoute
 })
 
+// ============================================================
+// ACCESS LEVEL EDITING (only Open / Private / Invitation)
+// ============================================================
+const accessOptions = computed(() => [
+  { id: 'open', label: t('agora', 'Open') },
+  { id: 'private', label: t('agora', 'Private') },
+  { id: 'group', label: t('agora', 'Invitation') },
+])
+
+const selectedAccess = computed({
+  get: () =>
+    accessOptions.value.find((o) => o.id === inquiryStore.configuration.access) ??
+    accessOptions.value[0],
+  set: (newValue) => {
+    if (!newValue || newValue.id === inquiryStore.configuration.access) return
+    inquiryStore.configuration.access = newValue.id as typeof inquiryStore.configuration.access
+    inquiryStore.write()
+    showSuccess(t('agora', 'Access level updated'))
+  },
+})
+
+const currentAccessLabel = computed(() => {
+  const opt = accessOptions.value.find((o) => o.id === inquiryStore.configuration.access)
+  return opt?.label ?? inquiryStore.configuration.access
+})
+
+// ============================================================
+// EXPIRATION DATE EDITING (uses NcDateTimePicker)
+// ============================================================
+const expirationDate = computed({
+  get: () => {
+    const expire = inquiryStore.configuration.expire
+    return expire && expire > 0 ? new Date(expire * 1000) : null
+  },
+  set: (newDate: Date | null) => {
+    const newExpire = newDate ? Math.floor(newDate.getTime() / 1000) : 0
+    if (newExpire === inquiryStore.configuration.expire) return
+    inquiryStore.configuration.expire = newExpire
+    inquiryStore.write()
+  },
+})
+
 
 </script>
 
@@ -465,8 +507,8 @@ return isPublicRoute
 				@change="handleImageUpload"
 			/>
 
-			<div 
-				v-if="currentCoverUrl" 
+			<div
+				v-if="currentCoverUrl"
 				class="cover-image-container"
 				@click="triggerImageUpload"
 			>
@@ -485,8 +527,8 @@ return isPublicRoute
 				</div>
 			</div>
 
-			<div 
-				v-else 
+			<div
+				v-else
 				class="cover-image-placeholder"
 				@click="triggerImageUpload"
 			>
@@ -602,10 +644,12 @@ return isPublicRoute
                     </div>
                 </div>
             </div>
+
             <!-- Metadata section -->
             <div class="metadata-section">
                 <h3 class="section-subtitle">{{ t('agora', 'INQUIRY DETAILS') }}</h3>
                 <div class="metadata-grid">
+                    <!-- Row 1 -->
                     <div class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="InquiryGeneralIcons.Location" :size="18" />
@@ -660,6 +704,7 @@ return isPublicRoute
                         </div>
                     </div>
 
+                    <!-- Row 2 -->
                     <div class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="StatusIcons.Updated" :size="18" />
@@ -694,13 +739,51 @@ return isPublicRoute
                         </div>
                     </div>
 
-                    <div v-if="inquiryStore.configuration.expire" class="metadata-item">
+                    <div v-if="canEditInquiry || inquiryStore.configuration.expire" class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="InquiryGeneralIcons.Expiration" :size="18" />
                         </div>
                         <div class="metadata-content">
                             <span class="metadata-label">{{ t('agora', 'Expires') }}</span>
-                            <span class="metadata-value">{{ timeExpirationRelative }}</span>
+                            <template v-if="canEditInquiry">
+                                <div class="select-container">
+                                    <NcDateTimePicker
+                                            v-model="expirationDate"
+                                            type="datetime"
+                                            :clearable="true"
+                                            :placeholder="t('agora', 'Never')"
+                                            :aria-label="t('agora', 'Expiration date')"
+                                            class="expiration-picker"
+                                            />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <span class="metadata-value">{{ timeExpirationRelative }}</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 (Access) -->
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Lock" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Access') }}</span>
+                            <template v-if="canEditInquiry">
+                                <div class="select-container">
+                                    <NcSelect
+                                            v-model="selectedAccess"
+                                            :options="accessOptions"
+                                            :clearable="false"
+                                            class="access-select"
+                                            :label-outside="true"
+                                            />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <span class="metadata-value">{{ t('agora', currentAccessLabel) }}</span>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -754,10 +837,9 @@ return isPublicRoute
             </div>
         </div>
 
-        <OptionEditView v-if="canEditInquiry" :has-visible-families="hasVisibleFamilies"/>
+        <OptionEditView v-if="hasVisibleFamilies && inquiryStore.status.moderationStatus !== 'rejected' " :has-visible-families="hasVisibleFamilies"/>
     </div>
 </template>
-
 <style scoped lang="scss">
 :root {
     --squareux-primary: #0078d4;
@@ -769,6 +851,10 @@ return isPublicRoute
     --squareux-card-shadow: 0 2.4px 7.2px rgba(0, 0, 0, .08), 0 0.2px 0.6px rgba(0, 0, 0, .04);
     --squareux-elevation-shadow: 0 6.4px 28.8px rgba(0, 0, 0, .12), 0 1.2px 3.6px rgba(0, 0, 0, .08);
 }
+
+/* ============================================================
+   ROOT LAYOUT
+   ============================================================ */
 
 .inquiry-edit-view {
     padding: 24px;
@@ -784,13 +870,13 @@ return isPublicRoute
     padding: 32px;
     margin-bottom: 32px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    position: relative; 
+    position: relative;
 }
 
 .section-id-badge {
     position: absolute;
     top: 16px;
-    right: 24px; 
+    right: 24px;
     z-index: 5;
     font-family: 'Monaco', 'Consolas', monospace;
     font-size: 13px;
@@ -806,22 +892,9 @@ return isPublicRoute
     background-color: rgba(var(--color-background-darker-rgb), 0.9);
 }
 
-@media (max-width: 768px) {
-    .inquiry-edit-view {
-        padding: 16px;
-    }
-
-    .main-content-section {
-        padding: 24px;
-    }
-
-    .section-id-badge {
-        top: 12px;
-        right: 16px;
-        padding: 4px 12px;
-        font-size: 12px;
-    }
-}
+/* ============================================================
+   COVER IMAGE
+   ============================================================ */
 
 .cover-image-section {
     position: relative;
@@ -830,7 +903,6 @@ return isPublicRoute
     margin-bottom: 32px;
     border-radius: 24px;
     overflow: hidden;
-    position: relative;
     transition: all 0.3s ease;
 
     &:not(.readonly) {
@@ -943,6 +1015,10 @@ return isPublicRoute
     display: none;
 }
 
+/* ============================================================
+   USER INFO
+   ============================================================ */
+
 .user-info-section {
     display: flex;
     align-items: center;
@@ -985,7 +1061,10 @@ return isPublicRoute
     }
 }
 
-// Title section with counters
+/* ============================================================
+   TITLE SECTION
+   ============================================================ */
+
 .title-section {
     margin-bottom: 32px;
     padding-bottom: 24px;
@@ -1101,7 +1180,6 @@ return isPublicRoute
         }
     }
 
-    // Counters section
     .counters-section {
         display: flex;
         flex-direction: row;
@@ -1129,7 +1207,7 @@ return isPublicRoute
 
             &.supports {
                 border-left: 3px solid var(--squareux-success);
-                
+
                 &:deep(.support-feature) {
                     display: flex;
                     align-items: center;
@@ -1217,93 +1295,9 @@ return isPublicRoute
     }
 }
 
-// Mobile responsiveness for title
-@media (max-width: 768px) {
-    .title-section {
-        .title-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-
-            .title-field-container {
-                width: 100%;
-
-                :deep(.nc-input) {
-                    .input-field {
-                        input {
-                            font-size: 24px;
-                            padding: 10px 12px;
-                            min-height: 48px;
-                        }
-
-                        .input-field__icon svg {
-                            width: 18px;
-                            height: 18px;
-                        }
-                    }
-                }
-            }
-
-            .inquiry-title {
-                font-size: 26px;
-                width: 100%;
-            }
-
-            .inquiry-id {
-                align-self: flex-start;
-                font-size: 12px;
-                padding: 3px 8px;
-            }
-        }
-
-        .counters-section {
-            flex-direction: column;
-            width: 100%;
-            gap: 12px;
-
-            .counter-item {
-                width: 100%;
-                min-width: auto;
-                justify-content: flex-start;
-            }
-        }
-    }
-}
-
-@media (max-width: 480px) {
-    .title-section {
-        .counters-section {
-            .counter-item {
-                padding: 8px 12px;
-                
-                .counter-content {
-                    .counter-value {
-                        font-size: 14px;
-                    }
-                    
-                    .counter-label {
-                        font-size: 12px;
-                    }
-                }
-                
-                :deep(.support-feature) {
-                    .support-count {
-                        font-size: 14px;
-                    }
-                    
-                    .support-label {
-                        font-size: 12px;
-                    }
-                }
-            }
-        }
-    }
-}
-
-// Metadata section
-// ============================================================
-// METADATA SECTION - IMPROVED DESIGN
-// ============================================================
+/* ============================================================
+   METADATA SECTION — FIXED (no overlap, adaptive to box size)
+   ============================================================ */
 
 .metadata-section {
     margin-bottom: 32px;
@@ -1312,7 +1306,7 @@ return isPublicRoute
     border-radius: 16px;
     padding: 24px 28px;
     box-shadow: var(--squareux-card-shadow);
-    overflow: visible !important; // Allow dropdown overflow
+    overflow: visible !important;
     position: relative;
 
     .section-subtitle {
@@ -1335,12 +1329,20 @@ return isPublicRoute
         }
     }
 
+    /* ---------------------------------------------------------
+       3-column adaptive grid.
+       minmax(0, 1fr) is CRITICAL — without the 0 the tracks
+       refuse to shrink and the NcSelect/NcDateTimePicker
+       intrinsic widths blow out of their cells (the overlap bug).
+       --------------------------------------------------------- */
     .metadata-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
         overflow: visible !important;
         position: relative;
+        min-width: 0;
+        width: 100%;
 
         .metadata-item {
             display: flex;
@@ -1354,6 +1356,11 @@ return isPublicRoute
             overflow: visible !important;
             position: relative;
             min-height: 68px;
+
+            /* Critical: without min-width:0 a grid item refuses to
+               shrink below the intrinsic width of its content. */
+            min-width: 0;
+            max-width: 100%;
 
             &:hover {
                 border-color: var(--color-primary-element);
@@ -1369,7 +1376,7 @@ return isPublicRoute
 
                 .metadata-icon {
                     background: var(--color-primary-element);
-                    
+
                     :deep(svg) {
                         color: white;
                     }
@@ -1398,7 +1405,7 @@ return isPublicRoute
 
             &:hover .metadata-icon {
                 background: var(--color-primary-element);
-                
+
                 :deep(svg) {
                     color: white;
                 }
@@ -1407,6 +1414,7 @@ return isPublicRoute
             .metadata-content {
                 flex: 1;
                 min-width: 0;
+                max-width: 100%;
                 position: relative;
                 overflow: visible !important;
 
@@ -1419,6 +1427,8 @@ return isPublicRoute
                     margin-bottom: 4px;
                     font-weight: 600;
                     white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .metadata-value {
@@ -1428,17 +1438,33 @@ return isPublicRoute
                     font-weight: 500;
                     line-height: 1.4;
                     word-break: break-word;
+                    overflow-wrap: anywhere;
                 }
 
+                /* -------------------------------------------------
+                   Select / date picker container.
+                   Every layer must allow min-width:0 or the
+                   NcSelect internal ~15em min-width pushes the
+                   control out of its card and onto its neighbour.
+                   ------------------------------------------------- */
                 .select-container {
                     width: 100%;
+                    max-width: 100%;
+                    min-width: 0;
                     position: relative;
                     z-index: 10;
                     margin-top: 2px;
 
-                    // Override NcSelect styles for better integration
+                    /* ---- NcSelect (vue-select) ---- */
                     :deep(.v-select) {
+                        width: 100% !important;
+                        min-width: 0 !important;
+                        max-width: 100% !important;
+
                         .vs__dropdown-toggle {
+                            width: 100% !important;
+                            min-width: 0 !important;
+                            max-width: 100% !important;
                             min-height: 36px !important;
                             padding: 2px 8px !important;
                             border-radius: 8px !important;
@@ -1455,27 +1481,46 @@ return isPublicRoute
                             }
                         }
 
+                        /* Stop the selected chip from forcing the box wider */
+                        .vs__selected-options {
+                            flex-wrap: nowrap !important;
+                            min-width: 0 !important;
+                            overflow: hidden !important;
+                        }
+
                         .vs__selected {
                             font-size: 13px !important;
                             padding: 2px 6px !important;
                             margin: 1px 2px !important;
                             background: var(--color-background-dark) !important;
                             border-radius: 6px !important;
+                            max-width: 100% !important;
+                            overflow: hidden !important;
+                            text-overflow: ellipsis !important;
+                            white-space: nowrap !important;
                         }
 
                         .vs__search {
                             font-size: 13px !important;
                             min-height: 28px !important;
+                            min-width: 0 !important;
                             padding: 2px 4px !important;
                         }
 
+                        .vs__actions {
+                            padding: 0 !important;
+                            flex-shrink: 0;
+                        }
+
+                        /* Dropdown menu — clamp to cell so it can't
+                           visually overlap the next column. */
                         .vs__dropdown-menu {
                             position: absolute !important;
                             top: 100% !important;
                             left: 0 !important;
                             right: auto !important;
                             min-width: 100% !important;
-                            max-width: 320px !important;
+                            max-width: min(320px, 100%) !important;
                             width: auto !important;
                             margin-top: 4px !important;
                             border-radius: 10px !important;
@@ -1499,22 +1544,55 @@ return isPublicRoute
                             }
                         }
                     }
+
+                    /* ---- NcDateTimePicker ---- */
+                    :deep(.nc-datetime-picker) {
+                        width: 100% !important;
+                        min-width: 0 !important;
+                        max-width: 100% !important;
+
+                        .mx-input-wrapper {
+                            width: 100% !important;
+                            min-width: 0 !important;
+                        }
+
+                        .mx-input {
+                            width: 100% !important;
+                            min-width: 0 !important;
+                            max-width: 100% !important;
+                        }
+                    }
+
+                    /* Optional: cap the Access / Expiration control
+                       so they visually match the other value boxes.
+                       Remove if you want them to always fill the cell. */
+                    .access-select,
+                    .expiration-picker {
+                        max-width: 100%;
+                    }
+                }
+
+                /* Vertically center when the field is a select/picker */
+                &:has(.select-container) {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
                 }
             }
         }
     }
 }
 
-// ============================================================
-// RESPONSIVE METADATA SECTION
-// ============================================================
+/* ============================================================
+   METADATA RESPONSIVE
+   ============================================================ */
 
 @media (max-width: 1024px) {
     .metadata-section {
         padding: 20px;
 
         .metadata-grid {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
 
             .metadata-item {
@@ -1539,7 +1617,7 @@ return isPublicRoute
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .metadata-section {
         padding: 16px;
         border-radius: 12px;
@@ -1598,6 +1676,9 @@ return isPublicRoute
                                 min-height: 24px !important;
                             }
 
+                            /* On mobile we let the dropdown
+                               detach and go full-screen-width so it's
+                               still usable without clipping. */
                             .vs__dropdown-menu {
                                 position: fixed !important;
                                 left: 16px !important;
@@ -1700,36 +1781,33 @@ return isPublicRoute
     }
 }
 
-// ============================================================
+/* ============================================================
+   Z-INDEX / OVERFLOW HELPERS FOR DROPDOWNS
+   ============================================================ */
 
-// High z-index for select containers in metadata
 .metadata-item .select-container {
     z-index: 20 !important;
 }
 
-// Ensure dropdowns can overflow their container
 .metadata-section {
     overflow: visible !important;
     position: relative !important;
     z-index: 1 !important;
 }
 
-// On mobile, dropdowns are fixed position, so we need to ensure
-// they appear above all other content
 @media (max-width: 768px) {
     .metadata-item .select-container {
         z-index: 100 !important;
     }
 
-    // Allow dropdown container to be visible
     .metadata-item {
         overflow: visible !important;
     }
 }
 
-// ============================================================
-// ADDITIONAL: STATUS SELECT SPECIAL STYLES
-// ============================================================
+/* ============================================================
+   STATUS SELECT SPECIAL STYLES
+   ============================================================ */
 
 .metadata-item.highlight {
     .select-container {
@@ -1757,8 +1835,10 @@ return isPublicRoute
     }
 }
 
+/* ============================================================
+   DESCRIPTION SECTION
+   ============================================================ */
 
-// Description section
 .description-section {
     background: white;
     border: 1px solid var(--squareux-border);
@@ -1866,9 +1946,9 @@ return isPublicRoute
     }
 }
 
-// ============================================================
-// RESPONSIVE MEDIA QUERIES
-// ============================================================
+/* ============================================================
+   GLOBAL RESPONSIVE MEDIA QUERIES
+   ============================================================ */
 
 @media (max-width: 1024px) {
     .inquiry-edit-view {
@@ -1882,21 +1962,70 @@ return isPublicRoute
     .title-section .counters-section {
         flex-wrap: wrap;
     }
-
-    .metadata-section .metadata-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 @media (max-width: 768px) {
+    .inquiry-edit-view {
+        padding: 16px;
+    }
+
+    .main-content-section {
+        padding: 24px;
+    }
+
+    .section-id-badge {
+        top: 12px;
+        right: 16px;
+        padding: 4px 12px;
+        font-size: 12px;
+    }
+
     .title-section {
         .title-header {
             flex-direction: column;
             align-items: flex-start;
             gap: 12px;
 
+            .title-field-container {
+                width: 100%;
+
+                :deep(.nc-input) {
+                    .input-field {
+                        input {
+                            font-size: 24px;
+                            padding: 10px 12px;
+                            min-height: 48px;
+                        }
+
+                        .input-field__icon svg {
+                            width: 18px;
+                            height: 18px;
+                        }
+                    }
+                }
+            }
+
             .inquiry-title {
-                font-size: 24px;
+                font-size: 26px;
+                width: 100%;
+            }
+
+            .inquiry-id {
+                align-self: flex-start;
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+        }
+
+        .counters-section {
+            flex-direction: column;
+            width: 100%;
+            gap: 12px;
+
+            .counter-item {
+                width: 100%;
+                min-width: auto;
+                justify-content: flex-start;
             }
         }
     }
@@ -1932,85 +2061,6 @@ return isPublicRoute
             min-height: 200px;
         }
     }
-
-    .metadata-section .metadata-grid .metadata-item {
-        overflow: visible !important;
-        
-        &:has(.select-container) {
-            min-height: auto; /* Allow dropdown to expand */
-            overflow: visible !important;
-            
-            .metadata-content {
-                .select-container {
-                    position: relative;
-                    z-index: 20; /* Higher z-index on mobile */
-                }
-            }
-        }
-    }
-}
-
-@media (max-width: 767px) {
-    .metadata-section .metadata-grid {
-        .metadata-item {
-            &:has(.select-container) {
-                min-height: auto;
-                overflow: visible !important;
-
-                .metadata-content {
-                    .select-container {
-                        position: relative;
-                        z-index: 20;
-                    }
-                }
-            }
-        }
-    }
-}
-
-@media (min-width: 768px) {
-    .metadata-section .metadata-grid {
-        .metadata-item {
-            overflow: visible !important;
-            
-            &:has(.select-container) {
-                grid-column: span 2;
-                min-height: 100px;
-                overflow: visible !important;
-            }
-        }
-    }
-}
-
-@media (min-width: 1024px) {
-    .metadata-section .metadata-grid {
-        grid-template-columns: repeat(2, 1fr);
-
-        .metadata-item {
-            overflow: visible !important;
-            
-            &:has(.select-container) {
-                grid-column: span 1;
-                min-height: 100px;
-                overflow: visible !important;
-            }
-        }
-    }
-}
-
-@media (min-width: 1400px) {
-    .metadata-section .metadata-grid {
-        grid-template-columns: repeat(3, 1fr);
-
-        .metadata-item {
-            overflow: visible !important;
-            
-            &:has(.select-container) {
-                grid-column: span 1;
-                overflow: visible !important;
-            }
-        }
-    }
 }
 
 @media (max-width: 480px) {
@@ -2020,6 +2070,30 @@ return isPublicRoute
 
     .title-section .counters-section {
         flex-direction: column;
+
+        .counter-item {
+            padding: 8px 12px;
+
+            .counter-content {
+                .counter-value {
+                    font-size: 14px;
+                }
+
+                .counter-label {
+                    font-size: 12px;
+                }
+            }
+
+            :deep(.support-feature) {
+                .support-count {
+                    font-size: 14px;
+                }
+
+                .support-label {
+                    font-size: 12px;
+                }
+            }
+        }
     }
 }
 </style>

@@ -76,6 +76,7 @@ class Option extends EntityWithUser implements JsonSerializable
     public const VISIBILITY_EVERYONE = 'everyone';
     public const VISIBILITY_GROUPS = 'groups';
     public const VISIBILITY_USERS = 'users';
+    public const VISIBILITY_INVITATION = 'invitation';
     public const VISIBILITY_PARTICIPANTS = 'participants';
 
     // PublicationStatus types

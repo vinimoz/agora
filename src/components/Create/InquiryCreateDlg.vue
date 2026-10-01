@@ -10,6 +10,8 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 
 import { ConfigBox, RadioGroupDiv, InputDiv } from '../Base/index.ts'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
@@ -59,6 +61,10 @@ const inquiryId = ref<number | null>(null)
 const adding = ref(false)
 const accessType = ref<'user' | 'groups'>('user')
 const selectedGroup = ref<string | null>(null)
+// Distinguishes what the selected group actually controls:
+// - 'open'       → access: 'private',  ownedGroup: <group>  (everyone can see/participate, group is owner)
+// - 'restricted' → access: 'group', ownedGroup: <group>  (only group members can see/participate)
+const groupAccessMode = ref<'open' | 'restricted'>('restricted')
 
 // Get inquiry types from app settings
 const inquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || [])
@@ -120,7 +126,7 @@ interface InquiryData {
   type: string
   title: string
   family: string
-  access?: 'private'|'group'
+  access?: 'private' | 'groups' | 'open'
   parentId?: string | number | null
   locationId?: number | string | null
   categoryId?: number | string | null
@@ -146,7 +152,7 @@ async function addInquiry() {
     if (inquiryStore.locationId) {
       inquiryData.locationId = inquiryStore.locationId
     }
-    
+
     if (inquiryStore.categoryId) {
       inquiryData.categoryId = inquiryStore.categoryId
     }
@@ -155,22 +161,22 @@ async function addInquiry() {
       inquiryData.family = props.family
     }
 
-      
     // Add groups if groups access is selected
     if (accessType.value === 'groups' && selectedGroup.value) {
       inquiryData.ownedGroup = selectedGroup.value
-      inquiryData.access = 'group'
+      // 'open'       → accessible to everyone, group is just the owner
+      // 'restricted' → only members of the group can access
+      inquiryData.access = groupAccessMode.value === 'private' ? 'private' : 'groups'
+    } else {
+      inquiryData.access = 'private'
     }
-    else
-    {
-    inquiryData.access = 'private'
-    }
+
     if (props.selectedMode === 'transform') {
       inquiryData.description = inquiryStore.description
       // Clone the inquiry with the new mode.
       // Archive the old one
     }
-    
+
     // Add the inquiry
     const inquiry = await inquiryStore.add(inquiryData)
 
@@ -187,7 +193,7 @@ async function addInquiry() {
       })
       resetInquiry()
     }
-  } catch  {
+  } catch {
     showError(
       t('agora', 'Error while creating Inquiry "{inquiryTitle}"', {
         inquiryTitle: inquiryTitle.value,
@@ -203,6 +209,7 @@ function resetInquiry() {
   inquiryTitle.value = ''
   accessType.value = 'user'
   selectedGroup.value = null
+  groupAccessMode.value = 'restricted'
   emit('update:selected-groups', [])
 }
 </script>
@@ -240,13 +247,13 @@ function resetInquiry() {
           <!-- Group Selection -->
           <div v-if="accessType === 'groups'" class="groups-selection">
             <h4 class="groups-title">
-              {{ t('agora', 'Select groups') }}
+              {{ t('agora', 'Select group') }}
             </h4>
             <div class="groups-list">
               <NcRadioGroup
                 :model-value="selectedGroup"
-                :label="t('agora','Choose the group to which your enquiry is assigned')"
-                :description="t('agora', 'Choose which of your groups can access this inquiry')"
+                :label="t('agora', 'Choose the group that will own this inquiry')"
+                :description="t('agora', 'Choose which of your groups is responsible for this inquiry')"
                 @update:model-value="selectGroup($event)"
               >
                 <div
@@ -263,6 +270,88 @@ function resetInquiry() {
                   </NcCheckboxRadioSwitch>
                 </div>
               </NcRadioGroup>
+            </div>
+
+            <!-- Group access mode: only meaningful once a group is selected -->
+            <div
+              v-if="selectedGroup"
+              class="group-mode-selection"
+            >
+              <NcRadioGroup
+                :model-value="groupAccessMode"
+                :label="t('agora', 'How should this group access the inquiry?')"
+                @update:model-value="groupAccessMode = $event"
+              >
+                <div class="mode-option">
+                  <NcCheckboxRadioSwitch value="open">
+                    <span class="mode-label">
+                      {{ t('agora', 'Open, owned by the group') }}
+                      <NcPopover
+                        :triggers="['hover', 'focus']"
+                        :delay="200"
+                        placement="top"
+                        popover-base-class="agora-tooltip-popover"
+                      >
+                        <template #trigger>
+                          <span
+                            class="mode-help-icon"
+                            role="button"
+                            tabindex="0"
+                            :aria-label="t('agora', 'More information about this option')"
+                          >ⓘ</span>
+                        </template>
+                        <div class="tooltip-content">
+                          {{ t('agora', 'Everyone can see and participate in this inquiry. The selected group is recorded as the owner (useful for reporting, moderation and follow-up).') }}
+                        </div>
+                      </NcPopover>
+                    </span>
+                  </NcCheckboxRadioSwitch>
+                  <p class="mode-description">
+                    {{ t('agora', 'Access: open · Owner: {group}', { group: selectedGroup }) }}
+                  </p>
+                </div>
+
+                <div class="mode-option">
+                  <NcCheckboxRadioSwitch value="restricted">
+                    <span class="mode-label">
+                      {{ t('agora', 'Restricted to group members') }}
+                      <NcPopover
+                        :triggers="['hover', 'focus']"
+                        :delay="200"
+                        placement="top"
+                        popover-base-class="agora-tooltip-popover"
+                      >
+                        <template #trigger>
+                          <span
+                            class="mode-help-icon"
+                            role="button"
+                            tabindex="0"
+                            :aria-label="t('agora', 'More information about this option')"
+                          >ⓘ</span>
+                        </template>
+                        <div class="tooltip-content">
+                          {{ t('agora', 'Only members of the selected group can see and participate in this inquiry. It will not be visible to other users.') }}
+                        </div>
+                      </NcPopover>
+                    </span>
+                  </NcCheckboxRadioSwitch>
+                  <p class="mode-description">
+                    {{ t('agora', 'Access: group · Owner: {group}', { group: selectedGroup }) }}
+                  </p>
+                </div>
+              </NcRadioGroup>
+
+              <NcNoteCard
+                type="info"
+                class="group-mode-help"
+              >
+                <template v-if="groupAccessMode === 'open'">
+                  {{ t('agora', 'The inquiry is public; the group is only the owner. Choose this if you want the group to be credited or responsible for the inquiry, but everyone can still take part.') }}
+                </template>
+                <template v-else>
+                  {{ t('agora', 'The inquiry is private to the group. Choose this if only members of the selected group should see and take part in the inquiry.') }}
+                </template>
+              </NcNoteCard>
             </div>
           </div>
         </div>
@@ -425,5 +514,57 @@ function resetInquiry() {
   display: flex;
   align-items: center;
   padding: 4px 0;
+}
+
+.group-mode-selection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.mode-option {
+  padding: 6px 0;
+}
+
+.mode-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mode-help-icon {
+  cursor: help;
+  color: var(--color-text-lighter);
+  font-size: 0.9em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.mode-help-icon:focus-visible {
+  color: var(--color-primary-element);
+}
+
+.mode-description {
+  margin: 2px 0 0 26px;
+  color: var(--color-text-lighter);
+  font-size: 0.85em;
+}
+
+.group-mode-help {
+  margin-top: 12px;
+}
+</style>
+
+<style lang="css">
+/* Unscoped because NcPopover mounts its content outside the component tree */
+.agora-tooltip-popover .tooltip-content,
+.tooltip-content {
+  max-width: 280px;
+  padding: 8px 10px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: var(--color-main-text);
 }
 </style>

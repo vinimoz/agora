@@ -31,7 +31,7 @@ import { AxiosError } from '@nextcloud/axios'
 export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'
 
 export type OptionConfiguration = {
-	visibility: 'private' | 'everyone' | 'groups' | 'participants'
+	visibility: 'private' | 'everyone' | 'groups' | 'participants' | 'invitation'
 	showResults: string
 	allowComment: number
 	supportFeature: string

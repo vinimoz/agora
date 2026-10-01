@@ -76,13 +76,6 @@ const FIELD_TYPES = [
 // ============================================================
 // COMPUTED
 // ============================================================
-const familyOptions = computed(() =>
-  (appSettingsStore.inquiryFamilyTab ?? []).map((f) => ({
-    id: f.family_type,
-    label: `${f.label} (${f.family_type})`,
-  })),
-)
-
 const inquiryTypeOptions = computed(() =>
   (appSettingsStore.inquiryTypeTab ?? []).map((t) => ({
     id: t.inquiry_type,

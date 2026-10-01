@@ -318,17 +318,17 @@ const removeAllowedResponse = (target, index) => {
 // STATUS MANAGEMENT
 // ============================================================
 const addStatus = (target) => {
-  const { status_key, label } = newStatus.value
-  if (!status_key?.trim()) {
+  const { statusKey, label } = newStatus.value
+  if (!statusKey?.trim()) {
     showError(t('agora', 'Status key is required'))
     return
   }
   const arr = target === 'new' ? newType.value.statuses : editingType.value.statuses
   arr.push({
-    status_key: status_key.trim(),
-    label: (label || status_key).trim(),
+    statusKey: statusKey.trim(),
+    label: (label || statusKey).trim(),
   })
-  newStatus.value = { status_key: '', label: '' }
+  newStatus.value = { statusKey: '', label: '' }
 }
 
 const removeStatus = (target, index) => {

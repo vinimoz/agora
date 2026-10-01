@@ -36,7 +36,7 @@ import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { useSupportResultStore } from './supportResult.ts'
 
 // Type definitions matching PHP constants
-export type VisibilityType = 'private' | 'groups' | 'participants' | 'everyone' | 'users' | 'moderate'
+export type VisibilityType = 'private' | 'groups' | 'participants' | 'everyone' | 'users' | 'invitation'
 export type PublicationStatus = 'draft' | 'pending' | 'published' | 'archived' | 'deleted' 
 export type ShowResultsType = 'always' | 'closed' | 'never'
 export type ModerationWorkflowStatus = 'draft' | 'pending' | 'accepted' | 'rejected'
@@ -313,7 +313,6 @@ isCurrentUserInAnyVisibilityGroup(): boolean {
 			// subscriptionStore.$reset()
 		},
 
-    async submitInquiry(
       action: 'submit_for_accepted' | 'submit_for_rejected' | 'submit_for_moderate'
     ): Promise<void> {
       const appSettingsStore = useAppSettingsStore()

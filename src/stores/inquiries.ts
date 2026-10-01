@@ -135,7 +135,8 @@ const inquiryCategories: InquiryCategoryList = {
       inquiry.permissions.view &&
       (inquiry.configuration.visibility === 'everyone' ||
      inquiry.configuration.visibility === 'groups' ||
-        inquiry.configuration.visibility === 'private'),
+     inquiry.configuration.visibility === 'invitation' ||
+     inquiry.configuration.visibility === 'private'),
   },
   reject: {
     id: 'reject',

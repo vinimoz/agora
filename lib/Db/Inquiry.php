@@ -76,9 +76,11 @@ use OCP\IURLGenerator;
  */
 class Inquiry extends EntityWithUser implements JsonSerializable
 {
-	public const TABLE = 'agora_inquiries';
+    public const TABLE = 'agora_inquiries';
+    
 
 	// Visibility types
+    	public const VISIBILITY_INVITATION = 'invitation';
 	public const VISIBILITY_PRIVATE = 'private';
 	public const VISIBILITY_EVERYONE = 'everyone';
 	public const VISIBILITY_GROUPS = 'groups';
@@ -972,7 +974,6 @@ private function getAllowVisibilityInquiry(): bool
 		if ($this->getAllowEditInquiry()) {
 			return true;
 		}
-
 		return $this->userSession->getCurrentUser()->getIsAdmin();
 	}
 
