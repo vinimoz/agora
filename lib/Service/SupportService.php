@@ -891,9 +891,9 @@ public function batchAddSupports(
     return $results;
 }
     /**
-     * Filter support rows so a user cannot see the individual values
-     * of other users' supports unless they are allowed to. Other users'
-     * rows on engines hiding results until close are dropped.
+     * Filter support rows so a user cannot see other users' supports
+     * unless they are allowed to. Other users' rows are dropped, not
+     * emptied: their user and option ids would still tell who chose what.
      *
      * @param  Support[] $supports
      * @return Support[]
@@ -912,7 +912,6 @@ public function batchAddSupports(
         }
 
         $currentUserId = $this->userSession->getCurrentUserId();
-        $isLoggedIn    = $this->userSession->getIsLoggedIn();
 
         $maySeeAll = false;
         if ($inquiry !== null) {
@@ -921,7 +920,9 @@ public function batchAddSupports(
 
         // Engines hiding results until close: drop other users' rows,
         // their user and option ids would still tell who chose what.
-        $hiddenEngineIds = $this->supportResultService->getHiddenEngineIds($inquiryId);
+        $hiddenEngineIds = $maySeeAll
+            ? $this->supportResultService->getHiddenEngineIds($inquiryId)
+            : [];
 
         $filtered = [];
         foreach ($supports as $support) {
@@ -933,49 +934,11 @@ public function batchAddSupports(
                 continue;
             }
 
-            if (in_array($support->getSupportEngineId(), $hiddenEngineIds, true)) {
-                continue;
-            }
-
-            if ($maySeeAll) {
+            if ($maySeeAll && !in_array($support->getSupportEngineId(), $hiddenEngineIds, true)) {
                 $filtered[] = $support;
-                continue;
             }
-
-            if (!$isLoggedIn) {
-                $filtered[] = $this->stripSupportValue($support);
-                continue;
-            }
-
-            if ($inquiry !== null) {
-                $showResults = $inquiry->getShowResults();
-                $isExpired   = $inquiry->getExpired();
-
-                if ($showResults === Inquiry::SHOW_RESULTS_NEVER) {
-                    $filtered[] = $this->stripSupportValue($support);
-                    continue;
-                }
-
-                if ($showResults === Inquiry::SHOW_RESULTS_CLOSED && !$isExpired) {
-                    $filtered[] = $this->stripSupportValue($support);
-                    continue;
-                }
-            }
-
-            $filtered[] = $support;
         }
 
         return $filtered;
-    }
-
-    /**
-     * Return a clone of the support with its value hidden.
-     */
-    private function stripSupportValue(Support $support): Support
-    {
-        $copy = clone $support;
-        $copy->setHidden(true);
-        $copy->setValue(null);
-        return $copy;
     }
 }
