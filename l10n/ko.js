@@ -216,6 +216,7 @@ OC.L10N.register(
     "Sort order" : "정렬 순서",
     "Save changes" : "설정 저장",
     "Hide" : "비공개",
+    "Key" : "열쇠",
     "Label" : "이름표",
     "Required" : "필요함",
     "Actions" : "동작",

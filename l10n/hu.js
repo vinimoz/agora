@@ -507,6 +507,7 @@ OC.L10N.register(
     "Sort order" : "Rendezési sorrend",
     "Save changes" : "Változások mentése",
     "Hide" : "Elrejtés",
+    "Key" : "Kulcs",
     "Label" : "Címke",
     "Required" : "Kötelező",
     "Features" : "Funkciók",

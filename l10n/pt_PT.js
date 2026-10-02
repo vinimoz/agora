@@ -993,6 +993,7 @@ OC.L10N.register(
     "Enable \"long inquirying\" for instant updates" : "Ativar \"solicitação longa\" para atualizações instantâneas",
     "Enable periodic requests of inquiry updates from the client" : "Ativar solicitações periódicas de atualizações de consultas do cliente",
     "Inquiry Families" : "Famílias de Consultas",
+    "Inquiry Types" : "Tipos de Consultas",
     "Inquiry Group Types" : "Tipos de grupos de consulta",
     "Option Types" : "Tipos de opções",
     "Settings - {type}" : "Configurações - {type}",

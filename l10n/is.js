@@ -179,6 +179,7 @@ OC.L10N.register(
     "Select an icon" : "Veldu tákn",
     "Save changes" : "Vista breytingar",
     "Hide" : "Fela",
+    "Key" : "Lykill",
     "Label" : "Skýring",
     "Required" : "þetta þarf",
     "Features" : "Eiginleikar",
