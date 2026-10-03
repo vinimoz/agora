@@ -1278,6 +1278,7 @@ OC.L10N.register(
     "Type key" : "Type key",
     "Support feature" : "Support feature",
     "Status key" : "Status key",
+    "status_key" : "key_status",
     "Enable \"long inquirying\" for instant updates" : "Enable \"long inquirying\" for instant updates",
     "Enable periodic requests of inquiry updates from the client" : "Enable periodic requests of inquiry updates from the client",
     "Disable automatic updates (inquiry must be reloaded to get updates)" : "Disable automatic updates (inquiry must be reloaded to get updates)",
