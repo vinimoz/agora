@@ -268,7 +268,6 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
         </div>
       </div>
 
-      <!-- Modal d'édition -->
       <div v-if="editingItem" class="modal">
         <div class="modal-content">
           <h3>

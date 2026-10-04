@@ -41,6 +41,7 @@ import {
   canSupport,
   canComment,
   canEdit,
+  canView,
   createInquiryContext,
 } from '../../utils/permissions.ts'
 
@@ -330,18 +331,18 @@ watch(
 
 // Event subscriptions
 onMounted(async () => {
-  if (inquiryStore.configuration.access === 'groups' && !inquiryStore.isCurrentUserInOwnedGroup) {
+  if (!canView) { 
         hasAccess.value = false
   	showError("Error you cannot view this inquiry !")
 	router.push({ name: 'list', params: { type: 'relevant' } })
 	return
 }
-
-  if (inquiryStore.coverId) {
+  
+  if (inquiryStore.coverId) { 
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
    }
 
-   if (inquiriesStore.inquiries.length === 0 ) {
+   if (inquiriesStore.inquiries.length === 0 ) { 
   	inquiriesStore.setFamilyType(inquiryStore.family)
    	inquiriesStore.load()
    }
@@ -448,11 +449,12 @@ return isPublicRoute
 })
 
 // ============================================================
-// ACCESS LEVEL EDITING (only Open / Private )
+// ACCESS LEVEL EDITING (only Open / Private / Invitation)
 // ============================================================
 const accessOptions = computed(() => [
   { id: 'open', label: t('agora', 'Open') },
   { id: 'private', label: t('agora', 'Private') },
+  { id: 'group', label: t('agora', 'Invitation') },
 ])
 
 const selectedAccess = computed({
@@ -466,7 +468,6 @@ const selectedAccess = computed({
     showSuccess(t('agora', 'Access level updated'))
   },
 })
-
 
 const currentAccessLabel = computed(() => {
   const opt = accessOptions.value.find((o) => o.id === inquiryStore.configuration.access)
@@ -739,7 +740,7 @@ const expirationDate = computed({
                         </div>
                     </div>
 
-                    <div v-if="canEditInquiry || inquiryStore.configuration.expire" class="metadata-item">
+                    <div v-if="inquiryStore.configuration.expire" class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="InquiryGeneralIcons.Expiration" :size="18" />
                         </div>
@@ -764,7 +765,7 @@ const expirationDate = computed({
                     </div>
 
                     <!-- Row 3 (Access) -->
-                    <div if="inquiryStore.configuration.access === 'open' || inquiryStore.configuration.access === 'private'" class="metadata-item">
+                    <div class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="InquiryGeneralIcons.Lock" :size="18" />
                         </div>
@@ -837,9 +838,10 @@ const expirationDate = computed({
             </div>
         </div>
 
-        <OptionEditView v-if="hasVisibleFamilies && inquiryStore.status.moderationStatus !== 'rejected' " :has-visible-families="hasVisibleFamilies"/>
+        <OptionEditView v-if="canEditInquiry" :has-visible-families="hasVisibleFamilies"/>
     </div>
 </template>
+
 <style scoped lang="scss">
 :root {
     --squareux-primary: #0078d4;

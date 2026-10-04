@@ -37,11 +37,12 @@ export type SortDirection = 'asc' | 'desc'
 export type FilterType =
   | 'relevant'
   | 'my'
-  | 'reject'
   | 'private'
-  | 'participated'
-  | 'group'
+  | 'reject'
   | 'open'
+  | 'participated'
+  | 'shared'
+  | 'group'
   | 'all'
   | 'closed'
   | 'archived'
@@ -197,11 +198,23 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived && inquiry.status.countParticipants > 0,
   },
+shared: {
+  id: 'shared' as FilterType,
+  title: t('agora', 'Shared'),
+  titleExt: t('agora', 'Shared'),
+  description: t('agora', 'Inquiries that were explicitly shared with you or one of your groups.'),
+  pinned: false,
+  showInNavigation: () => true,
+  filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    inquiry.currentUserStatus.isShared,
+},
 
 group: {
   id: 'group' as FilterType,
   title: t('agora', 'Group inquiries'),
-  titleExt: t('agora', 'Inquiries shared with my groups'),
+  titleExt: t('agora', 'Groups inquiries'),
   description: t('agora', 'Inquiries visible to the groups you belong to.'),
   pinned: false,
   showInNavigation: () => {
@@ -213,7 +226,6 @@ group: {
     inquiry.permissions.view &&
     inquiry.configuration.visibility === 'groups' &&
     inquiry.ownedGroup &&
-
     (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
 },
   open: {
@@ -243,16 +255,13 @@ group: {
 
       const sessionStore = useSessionStore()
       const visibility = inquiry.configuration.visibility
+     if (inquiry.status.isArchived ) return false
 
       // Open and public are always visible
-      if (visibility === 'everyone') {
+      if (visibility === 'everyone' || visibility === 'private') {
         return true
       }
 
-      // Private inquiries are only visible to the owner
-      if (visibility === 'private') {
-        return inquiry.currentUserStatus.isOwner
-      }
 
       // Moderate inquiries are visible to moderators and admins
       if (visibility === 'moderate') {
@@ -321,7 +330,8 @@ group: {
     filterCondition: (inquiry: Inquiry) => 
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
-    inquiry.status.publicationStatus === 'pending',
+    inquiry.configuration.visibility === 'private' && 
+    inquiry.status.moderationStatus === 'pending',
   },
 }
 

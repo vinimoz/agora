@@ -359,6 +359,7 @@ OC.L10N.register(
     "Enable only for the following groups" : "Abilita solo per i seguenti gruppi",
     "Leave empty to disable globally" : "Lascia vuoto per disabilitare globalmente",
     "Hide" : "Nascondi",
+    "Key" : "Chiave",
     "Label" : "Etichetta",
     "Required" : "Richiesto",
     "Features" : "Funzionalità",

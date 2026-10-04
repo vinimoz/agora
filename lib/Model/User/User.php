@@ -121,17 +121,11 @@ class User extends UserBase
      */
     public function getIsInGroup(string $groupName): bool
     {
-        $group = $this->groupManager->get($groupName);
-        if ($group === null) {
-            return false;
-        }
-
-        $user = \OC::$server->getUserManager()->get($this->id);
-        if ($user === null) {
-            return false;
-        }
-
-        return $group->inGroup($user);
+	    if ($groupName === '') {
+		    return false;
+	    }
+	    // $this->groupManager is injected via UserBase's constructor
+	    return $this->groupManager->isInGroup($this->getId(), $groupName);
     }
 
     /**
@@ -142,12 +136,12 @@ class User extends UserBase
      */
     public function getIsInGroupArray(array $groupNames): bool
     {
-        foreach ($groupNames as $groupName) {
-            if ($this->getIsInGroup($groupName)) {
-                return true;
-            }
-        }
-        return false;
+	    foreach ($groupNames as $groupName) {
+		    if ($this->getIsInGroup($groupName)) {
+			    return true;
+		    }
+	    }
+	    return false;
     }
 
     /**
@@ -158,44 +152,44 @@ class User extends UserBase
      */
     public function hasRole(string $role): bool
     {
-        return $this->getIsInGroup($role);
+	    return $this->getIsInGroup($role);
     }
     public function getInternalUserId(): ?string
     {
-        return $this->getId();
+	    return $this->getId();
     }
 
     public function isEnabled(): bool
     {
-        return $this->user->isEnabled();
+	    return $this->user->isEnabled();
     }
 
     public function getDescription(): string
     {
-        if ($this->getEmailAddress()) {
-            return $this->getEmailAddress();
-        }
-        return $this->description;
+	    if ($this->getEmailAddress()) {
+		    return $this->getEmailAddress();
+	    }
+	    return $this->description;
     }
 
     public function getPrincipalUri(): string
     {
-        return self::PRINCIPAL_PREFIX . $this->getId();
+	    return self::PRINCIPAL_PREFIX . $this->getId();
     }
 
     public function getIsUnrestrictedInquiryOwner(): bool
     {
-        // Unrestricted owner setting enabled globally?
-        if ($this->appSettings->getBooleanSetting(AppSettings::SETTING_UNRESTRICTED_INQUIRY_OWNER)) {
-            return true;
-        }
+	    // Unrestricted owner setting enabled globally?
+	    if ($this->appSettings->getBooleanSetting(AppSettings::SETTING_UNRESTRICTED_INQUIRY_OWNER)) {
+		    return true;
+	    }
 
-        // Unrestricted owner setting enabled for groups this user is member of?
-        $groups = $this->appSettings->getGroupSetting(AppSettings::SETTING_UNRESTRICTED_INQUIRY_OWNER_GROUPS);
-        if ($this->getIsInGroupArray($groups)) {
-            return true;
-        }
-        return false;
+	    // Unrestricted owner setting enabled for groups this user is member of?
+	    $groups = $this->appSettings->getGroupSetting(AppSettings::SETTING_UNRESTRICTED_INQUIRY_OWNER_GROUPS);
+	    if ($this->getIsInGroupArray($groups)) {
+		    return true;
+	    }
+	    return false;
     }
 
     /**
@@ -203,7 +197,7 @@ class User extends UserBase
      */
     public function getIsGroupEditor(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_GROUP_EDITOR);
+	    return $this->groupManager->isInGroup($this->getId(), Group::GROUP_GROUP_EDITOR);
     }
 
 
@@ -213,7 +207,7 @@ class User extends UserBase
      */
     public function getIsLegislative(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_LEGISLATIVE);
+	    return $this->groupManager->isInGroup($this->getId(), Group::GROUP_LEGISLATIVE);
     }
 
 
@@ -222,7 +216,7 @@ class User extends UserBase
      */
     public function getIsModerator(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_MODERATOR);
+	    return $this->groupManager->isInGroup($this->getId(), Group::GROUP_MODERATOR);
     }
 
     /**
@@ -230,12 +224,12 @@ class User extends UserBase
      */
     public function getIsOfficial(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_OFFICIAL);
+	    return $this->groupManager->isInGroup($this->getId(), Group::GROUP_OFFICIAL);
     }
 
     public function getIsAdmin(): bool
     {
-        return $this->groupManager->isAdmin($this->getId());
+	    return $this->groupManager->isAdmin($this->getId());
     }
 
 
@@ -246,13 +240,13 @@ class User extends UserBase
      */
     public static function search(string $query = '', array $skip = []): array
     {
-        $users = [];
+	    $users = [];
 
-        foreach (Container::queryClass(IUserManager::class)->search($query) as $user) {
-            if (!in_array($user->getUID(), $skip)) {
-                $users[] = new self($user->getUID());
-            }
-        }
-        return $users;
+	    foreach (Container::queryClass(IUserManager::class)->search($query) as $user) {
+		    if (!in_array($user->getUID(), $skip)) {
+			    $users[] = new self($user->getUID());
+		    }
+	    }
+	    return $users;
     }
 }

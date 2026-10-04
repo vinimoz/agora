@@ -205,6 +205,7 @@ OC.L10N.register(
     "Sort order" : "Redoslijed razvrstavanja",
     "Save changes" : "Spremi promjene",
     "Hide" : "Sakrij",
+    "Key" : "Ključ",
     "Label" : "Oznaka",
     "Required" : "Obvezno",
     "Features" : "Značajke",

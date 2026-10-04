@@ -149,8 +149,6 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $family = 'debate';
     protected int $sortOrder = 0;
 
-    // ─── REMOVED: $visibility, $visibilityGroups, $visibilityUsers ───
-
     // Joined columns from inquiry (read-only; computed in joinInquiryContext)
     protected ?string $inquiryVisibility = '';
     protected ?string $inquiryPublicationStatus = '';

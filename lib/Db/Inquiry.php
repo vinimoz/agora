@@ -17,7 +17,7 @@ use OCA\Agora\Model\Settings\AppSettings;
 use OCA\Agora\Model\Settings\SystemSettings;
 use OCA\Agora\UserSession;
 use OCA\Agora\Db\SupportEngine;
-use OCP\IGroupManager; 
+use OCP\IGroupManager;
 use OCP\IURLGenerator;
 
 /**
@@ -78,8 +78,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 {
 	public const TABLE = 'agora_inquiries';
 
-
-	// Visibility types
+	// Visibility types (1.8 — replaces ACCESS_*)
 	public const VISIBILITY_INVITATION = 'invitation';
 	public const VISIBILITY_PRIVATE = 'private';
 	public const VISIBILITY_EVERYONE = 'everyone';
@@ -87,19 +86,23 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	public const VISIBILITY_USERS = 'users';
 	public const VISIBILITY_PARTICIPANTS = 'participants';
 
+	// Legacy access types (kept for backwards compatibility with main)
+	public const ACCESS_PRIVATE = 'private';
+	public const ACCESS_OPEN = 'open';
+	public const ACCESS_GROUP = 'groups';
+
 	// PublicationStatus types
 	public const PUBLICATION_STATUS_DRAFT = 'draft';
 	public const PUBLICATION_STATUS_PENDING = 'pending';
 	public const PUBLICATION_STATUS_PUBLISHED = 'published';
 	public const PUBLICATION_STATUS_ARCHIVED = 'archived';
 	public const PUBLICATION_STATUS_DELETED = 'deleted';
-	
+
 	// ModerationStatus types
 	public const MODERATION_STATUS_DRAFT = 'draft';
 	public const MODERATION_STATUS_PENDING = 'pending';
 	public const MODERATION_STATUS_PUBLISHED = 'published';
 	public const MODERATION_STATUS_REJECTED = 'rejected';
-
 
 	// Show results types
 	public const SHOW_RESULTS_ALWAYS = 'always';
@@ -108,6 +111,10 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
 	// URI prefix
 	public const URI_PREFIX = 'inquiry/';
+
+	// Inquiry types (from main)
+	public const TYPE_DEBATE = 'debate';
+	public const TYPE_PROPOSAL = 'proposal';
 
 	// User roles
 	public const ROLE_USER = 'user';
@@ -181,6 +188,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	protected bool $hasSupported = false;
 	protected mixed $supportValue = null;
 	protected string $family = '';
+
+	// 1.8 visibility model
 	protected string $visibility = 'private';
 	protected ?array $visibilityGroups = [];
 	protected ?array $visibilityUsers = [];
@@ -200,8 +209,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	protected ?string $inquiryGroupUserShares = '';
 	protected ?string $miscSettingsConcat = '';
 	protected ?string $supportResult = null;
-	protected ?string $supportEngine = null; 
+	protected ?string $supportEngine = null;
 	protected array $childs = [];
+
+	// From main: share flag
+	protected bool $isShared = false;
 
 	// Dynamic fields for inquiry types
 	protected array $miscFields = [];
@@ -226,6 +238,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$this->addType('forceConfidentialComments', 'integer');
 
 		// Joined Attributes
+		$this->addType('isShared', 'boolean');
 		$this->addType('currentUserSupports', 'integer');
 		$this->addType('countParticipants', 'integer');
 		$this->addType('countComments', 'integer');
@@ -234,9 +247,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$this->addType('maxDate', 'integer');
 		$this->addType('hasSupported', 'boolean');
 		$this->addType('supportValue', 'string');
-		$this->addType('supportResult', 'string');  
-		$this->addType('supportEngine', 'string'); 
+		$this->addType('supportResult', 'string');
+		$this->addType('supportEngine', 'string');
+
 		$this->urlGenerator = Container::queryClass(IURLGenerator::class);
+		$this->groupManager = Container::queryClass(IGroupManager::class);
 		$this->systemSettings = Container::queryClass(SystemSettings::class);
 		$this->appSettings = Container::queryClass(AppSettings::class);
 		$this->userSession = Container::queryClass(UserSession::class);
@@ -271,7 +286,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			'participation' => $this->getParticipationPolicy()?->jsonSerialize(),
 			'canParticipate' => $this->canParticipate(),
 			'viewableByUser' => $this->isViewableByUser(),
-
 		];
 	}
 
@@ -285,32 +299,26 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			return null;
 		}
 
-		// If it's already an integer (from MySQL or SQLite)
 		if (is_int($this->supportValue)) {
 			return $this->supportValue;
 		}
 
-		// If it's a JSON string from PostgreSQL or JSON column
 		if (is_string($this->supportValue)) {
 			$decoded = json_decode($this->supportValue, true);
 			if (json_last_error() === JSON_ERROR_NONE) {
-				// Extract the actual value from {"value": N} format
 				if (is_array($decoded) && isset($decoded['value'])) {
-					return $decoded['value'];  // Return just the number, not the array
+					return $decoded['value'];
 				}
-				// Handle array with single element (old format)
 				if (is_array($decoded) && count($decoded) === 1) {
 					return reset($decoded);
 				}
 				return $decoded;
 			}
-			// If it's a simple numeric string
 			if (is_numeric($this->supportValue)) {
 				return (int)$this->supportValue;
 			}
 		}
 
-		// If it's already an array (from MySQL JSON column)
 		if (is_array($this->supportValue)) {
 			if (isset($this->supportValue['value'])) {
 				return $this->supportValue['value'];
@@ -324,6 +332,16 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this->supportValue;
 	}
 
+	// ── From main: share flag accessors ──
+	public function getIsShared(): bool
+	{
+		return $this->isShared;
+	}
+
+	public function setIsShared(bool $value): void
+	{
+		$this->isShared = $value;
+	}
 
 	public function getTrendingScore(): ?float
 	{
@@ -335,27 +353,16 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$this->trendingScore = $score;
 	}
 
-	/**
-	 * Get miscellaneous fields array
-	 */
 	public function getMiscArray(): array
 	{
 		return $this->miscFields;
 	}
 
-	/**
-	 * Get safe HTML description
-	 */
 	public function getDescriptionSafe(): string
 	{
-		// This should be implemented with proper sanitization
-		// For now, returning raw description - sanitize before use
 		return $this->getDescription() ?? '';
 	}
 
-	/**
-	 * Get support result as array (decoded from JSON string)
-	 */
 	public function getSupportResult(): ?array
 	{
 		if ($this->supportResult === null || $this->supportResult === '') {
@@ -364,9 +371,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$decoded = json_decode($this->supportResult, true);
 		return is_array($decoded) ? $decoded : [];
 	}
-	/**
-	 * Support results without those of engines hidden until close
-	 */
+
 	private function getVisibleSupportResult(): ?array
 	{
 		$results = $this->getSupportResult();
@@ -386,9 +391,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		));
 	}
 
-	/**
-	 * Get support engine as array (decoded from JSON string)
-	 */
 	public function getSupportEngine(): array
 	{
 		if ($this->supportEngine === null || $this->supportEngine === '') {
@@ -398,10 +400,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return is_array($decoded) ? $decoded : [];
 	}
 
-
-	/**
-	 * Get inquiry status array - matching TypeScript InquiryStatus interface
-	 */
 	public function getStatusArray(): array
 	{
 		return [
@@ -418,23 +416,21 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			'archivedDate' => $this->getArchived(),
 			'supportResult' => $this->getVisibleSupportResult(),
 			'countSupports' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) ? $this->getCountSupports() : 0,
-			'countParticipants' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) 
-			? $this->getCountParticipants() 
-			: 0,
-			'countComments' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) 
-			? $this->getCountComments() 
-			: 0,
+			'countParticipants' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW)
+				? $this->getCountParticipants()
+				: 0,
+			'countComments' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW)
+				? $this->getCountComments()
+				: 0,
 		];
 	}
 
-	/**
-	 * Get current user status - matching TypeScript CurrentUserStatus interface
-	 */
 	public function getCurrentUserStatus(): array
 	{
 		return [
 			'groupInvitations' => $this->getGroupShares(),
 			'isInvolved' => $this->getIsInvolved(),
+			'isShared' => $this->getIsShared(),       // ← from main
 			'hasSupported' => $this->hasSupported(),
 			'supportValue' => $this->supportValue(),
 			'isLocked' => $this->getIsLocked(),
@@ -447,9 +443,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		];
 	}
 
-	/**
-	 * Get configuration array - matching TypeScript InquiryConfiguration interface
-	 */
 	public function getConfigurationArray(): array
 	{
 		return [
@@ -464,9 +457,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		];
 	}
 
-	/**
-	 * Get permissions array - matching TypeScript InquiryPermissions interface
-	 */
 	public function getPermissionsArray(): array
 	{
 		return [
@@ -492,9 +482,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		];
 	}
 
-	/**
-	 * Deserialize configuration array
-	 */
 	public function deserializeArray(array $inquiryConfiguration): self
 	{
 		$this->setPublicationStatus($inquiryConfiguration['publicationStatus'] ?? $this->getPublicationStatus());
@@ -507,6 +494,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this;
 	}
 
+	// ── 1.8 participation policy ──
 	public function getParticipationPolicy(): ?Participation
 	{
 		return $this->participationPolicy;
@@ -515,19 +503,13 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	public function setParticipationPolicy(?Participation $policy): void
 	{
 		$this->participationPolicy = $policy;
-		// Update canParticipate based on policy
 		$this->canParticipate = $this->evaluateCanParticipate();
 	}
 
 	public function canParticipate(): bool
 	{
 		if ($this->participationPolicy === null) {
-			return true; // No policy = everyone can participate
-		}
-
-		$userId = $this->userSession->getCurrentUserId();
-		if ($userId === null) {
-			return $this->participationPolicy->isEveryone();
+			return true;
 		}
 
 		$userId = $this->userSession->getCurrentUserId();
@@ -538,29 +520,28 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$policy = $this->participationPolicy;
 
 		switch ($policy->getPolicyType()) {
-		case Participation::POLICY_EVERYONE:
-			return true;
+			case Participation::POLICY_EVERYONE:
+				return true;
 
-		case Participation::POLICY_USERS:
-			$config = $policy->getPolicyConfig();
-			$allowedUsers = $config['user_ids'] ?? [];
-			return in_array($userId, $allowedUsers);
+			case Participation::POLICY_USERS:
+				$config = $policy->getPolicyConfig();
+				$allowedUsers = $config['user_ids'] ?? [];
+				return in_array($userId, $allowedUsers);
 
-		case Participation::POLICY_GROUPS:
-			$config = $policy->getPolicyConfig();
-			$allowedGroups = $config['group_ids'] ?? [];
-			return $this->userIsInGroups($userId, $allowedGroups);
+			case Participation::POLICY_GROUPS:
+				$config = $policy->getPolicyConfig();
+				$allowedGroups = $config['group_ids'] ?? [];
+				return $this->userIsInGroups($userId, $allowedGroups);
 
-		default:
-			return false;
+			default:
+				return false;
 		}
 	}
 
 	private function userIsInGroups(string $userId, array $groupIds): bool
 	{
 		try {
-
-			$user=$this->userSession->getCurrentUser();
+			$user = $this->userSession->getCurrentUser();
 			if ($user === null || !$user instanceof \OCP\IUser) {
 				return false;
 			}
@@ -580,41 +561,37 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	{
 		$userId = $this->userSession->getCurrentUserId();
 
-		// If no policy, everyone can participate
 		if (!$this->participationPolicy) {
 			return true;
 		}
 
 		$policy = $this->participationPolicy;
 
-		// Check if user has required role/status
 		switch ($policy->getPolicyType()) {
-		case Participation::POLICY_EVERYONE:
-			return true;
+			case Participation::POLICY_EVERYONE:
+				return true;
 
-		case Participation::POLICY_USERS:
-			$config = $policy->getPolicyConfig();
-			$allowedUsers = $config['user_ids'] ?? [];
-			return in_array($userId, $allowedUsers);
+			case Participation::POLICY_USERS:
+				$config = $policy->getPolicyConfig();
+				$allowedUsers = $config['user_ids'] ?? [];
+				return in_array($userId, $allowedUsers);
 
-		case Participation::POLICY_GROUPS:
-			$config = $policy->getPolicyConfig();
-			$allowedGroups = $config['group_ids'] ?? [];
-			return $this->userIsInGroups($userId, $allowedGroups);
+			case Participation::POLICY_GROUPS:
+				$config = $policy->getPolicyConfig();
+				$allowedGroups = $config['group_ids'] ?? [];
+				return $this->userIsInGroups($userId, $allowedGroups);
 
-		case Participation::POLICY_LOTTERY:
-			$config = $policy->getLotteryConfig();
-			return $this->userIsInLotteryPool($userId, $config);
+			case Participation::POLICY_LOTTERY:
+				$config = $policy->getLotteryConfig();
+				return $this->userIsInLotteryPool($userId, $config);
 
-		default:
-			return false;
+			default:
+				return false;
 		}
 	}
 
-
 	private function userIsInLotteryPool(string $userId, array $config): bool
 	{
-		// Check if user is in the lottery pool
 		$pool = $config['pool'] ?? [];
 		return in_array($userId, $pool);
 	}
@@ -628,17 +605,14 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
 	public function getIsAnonymous(): bool
 	{
-		// Implement based on your anonymity logic
 		return false;
 	}
 
 	public function getIsLocked(): bool
 	{
-		// Implement based on your locking logic
 		return false;
 	}
 
-	// User role determination
 	public function getUserRole(): string
 	{
 		if ($this->getCurrentUserIsEntityUser()) {
@@ -669,11 +643,9 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
 	public function getOrphanedInquiries(): int
 	{
-		// Implement based on your logic
 		return 0;
 	}
 
-	// Date helpers
 	private function getMaxDate(): int
 	{
 		if ($this->maxDate === null) {
@@ -682,7 +654,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this->maxDate;
 	}
 
-	// Misc field management
 	public function setMiscFields(array $misc): void
 	{
 		foreach ($misc as $field) {
@@ -709,7 +680,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$this->miscFields[$key] = $value;
 	}
 
-	// URL generation
 	public function getInquiryUrl(): string
 	{
 		return $this->urlGenerator->linkToRouteAbsolute(
@@ -718,7 +688,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		);
 	}
 
-	// Child management
 	public function setChilds(array $childs): void
 	{
 		$this->childs = $childs;
@@ -729,7 +698,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this->childs;
 	}
 
-	// User identification
 	public function getInquiryId(): int
 	{
 		return (int)$this->getId();
@@ -745,7 +713,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$this->setOwner($userId);
 	}
 
-	// Group shares
 	private function getGroupShares(): array
 	{
 		if ($this->groupShares !== null && $this->groupShares !== '') {
@@ -770,7 +737,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return explode(InquiryGroup::CONCAT_SEPARATOR, $this->inquiryGroupUserShares);
 	}
 
-	// Threshold calculation
 	private function getRelevantThreshold(): int
 	{
 		return max(
@@ -781,7 +747,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		);
 	}
 
-	// Misc field accessors
 	private function getAutoReminder(): bool
 	{
 		return (bool)($this->getMiscField('autoReminder') ?? false);
@@ -802,7 +767,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return (bool)($this->getMiscField('forceConfidentialComments') ?? false);
 	}
 
-	// Permission checking
 	public function request(string $permission): bool
 	{
 		if (!$this->getIsAllowed($permission)) {
@@ -839,7 +803,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		};
 	}
 
-	// Permission implementations
 	private function getAllowClone(): bool
 	{
 		return $this->getAllowEditInquiry() && !$this->getExpired();
@@ -852,6 +815,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			|| $this->getIsParticipant()
 			|| $this->getIsPersonallyInvited()
 			|| $this->getIsInvitedViaGroupShare()
+			|| $this->getIsShared()          // ← from main
 		);
 	}
 
@@ -859,7 +823,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	{
 		$visibility = $this->getVisibility();
 		$publicationStatus = $this->getPublicationStatus();
-		return ($visibility === self::VISIBILITY_EVERYONE || $publicationStatus === self::PUBLICATION_STATUS_PUBLISHED) 
+		return ($visibility === self::VISIBILITY_EVERYONE
+				|| $publicationStatus === self::PUBLICATION_STATUS_PUBLISHED)
 			&& $this->userSession->getIsLoggedIn();
 	}
 
@@ -910,6 +875,9 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this->getUserRole() === self::ROLE_ADMIN;
 	}
 
+	/**
+	 * Merged: main added the `getIsOpenInquiry()` short-circuit; keep it.
+	 */
 	private function getAllowEditInquiry(): bool
 	{
 		if (defined('OC_CONSOLE')) {
@@ -942,32 +910,53 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			|| $this->userSession->getCurrentUser()->getIsAdmin();
 	}
 
+	/**
+	 * Merged logic: 1.8 visibility checks + main's OC_CONSOLE,
+	 * moderator-pending, draft/rejected, archived guards.
+	 */
 	private function getAllowVisibilityInquiry(): bool
 	{
+		if (defined('OC_CONSOLE')) {
+			return true;
+		}
+
 		if ($this->getAllowEditInquiry()) {
 			return true;
 		}
 
-		if ($this->getDeleted()) {
+		if ($this->getDeleted() || $this->getArchived()) {
 			return false;
 		}
 
+		$user = $this->userSession->getCurrentUser();
+
+		if ($user->getIsModerator()
+			&& $this->getModerationStatus() === self::MODERATION_STATUS_PENDING) {
+			return true;
+		}
+
+		if (in_array($this->getModerationStatus(), [
+			self::MODERATION_STATUS_DRAFT,
+			self::MODERATION_STATUS_REJECTED,
+		], true)) {
+			return false;
+		}
 
 		if ($this->getVisibility() === self::VISIBILITY_GROUPS) {
 			$ownedGroup = $this->getOwnedGroup();
 
-			// Group-scoped: decide here and return, do not fall through.
 			if ($ownedGroup !== '' && $ownedGroup !== null) {
-				$user = $this->userSession->getCurrentUser();
-
 				$isOwner = $this->getOwner() === $user->getId();
 				$isInGroup = in_array($ownedGroup, $user->getGroups(), true);
-
 				return $user->getIsAdmin() || $isOwner || $isInGroup;
 			}
 		}
 
 		if ($this->getIsOpenInquiry()) {
+			return true;
+		}
+
+		if ($this->getIsPersonallyInvited() || $this->getIsInvitedViaGroupShare()) {
 			return true;
 		}
 
@@ -1115,10 +1104,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$this->visibilityUsers = $visibilityUsers;
 	}
 
-
 	/**
-	 * Get visibility groups from relation table
-	 *
 	 * @return string[]
 	 */
 	public function getVisibilityGroups(): array
@@ -1127,8 +1113,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	}
 
 	/**
-	 * Set visibility groups (from relation table)
-	 *
 	 * @param string[] $visibilityGroups
 	 */
 	public function setVisibilityGroups(array $visibilityGroups): void
@@ -1136,45 +1120,21 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$this->visibilityGroups = $visibilityGroups;
 	}
 
-	/**
-	 * Get visibility groups as comma-separated string
-	 * Used for display purposes only
-	 */
 	public function getVisibilityGroupsString(): string
 	{
 		return implode(',', $this->visibilityGroups ?? []);
 	}
 
-	/**
-	 * Check if a specific group can see this inquiry
-	 *
-	 * @param string $groupId
-	 * @return bool
-	 */
 	public function isVisibleToGroup(string $groupId): bool
 	{
-		return in_array($groupId, $this->visibilityGroups ??  [], true);
+		return in_array($groupId, $this->visibilityGroups ?? [], true);
 	}
 
-	/**
-	 * Check if any of the given groups can see this inquiry
-	 *
-	 * @param string[] $groupIds
-	 * @return bool
-	 */
 	public function isVisibleToAnyGroup(array $groupIds): bool
 	{
 		return !empty(array_intersect($groupIds, $this->visibilityGroups));
 	}
 
-
-	/**
-	 * Check if a specific group has a relation to this inquiry
-	 *
-	 * @param string $groupId
-	 * @param string $relationType
-	 * @return bool
-	 */
 	public function hasGroupRelation(string $groupId, string $relationType = 'visibility'): bool
 	{
 		if ($relationType === 'visibility') {
@@ -1183,20 +1143,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return false;
 	}
 
-
-	/**
-	 * Get groups for a specific relation type
-	 *
-	 * @param string $relationType
-	 * @return string[]
-	 */
 	public function getGroupsForRelation(string $relationType): array
 	{
 		if ($relationType === 'visibility') {
 			return $this->getVisibilityGroups();
 		}
-		// For other relation types, we'd need to fetch them from the mapper
-		// This is just a placeholder - actual implementation would use GroupRelationMapper
 		return [];
 	}
 
@@ -1210,5 +1161,4 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	{
 		return $this->family;
 	}
-
 }

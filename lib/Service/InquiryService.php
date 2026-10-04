@@ -42,7 +42,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Search\ISearchQuery;
-use OCP\IGroupManager; 
+use OCP\IGroupManager;
 use Psr\Log\LoggerInterface;
 
 class InquiryService
@@ -61,7 +61,7 @@ class InquiryService
 		private SettingsService $settings,
 		private TrendingService $trendingService,
 		private ParticipationService $participationService,
-		private IGroupManager $groupManager, 
+		private IGroupManager $groupManager,
 		private OptionService $optionService,
 		private LoggerInterface $logger,
 	) {}
@@ -73,8 +73,6 @@ class InquiryService
 	{
 		$inquiryList = $this->inquiryMapper->findForMe($this->userSession->getCurrentUserId());
 
-		
-
 		if ($this->userSession->getCurrentUser()->getIsAdmin()) {
 			return $inquiryList;
 		}
@@ -85,7 +83,7 @@ class InquiryService
 				function (Inquiry $inquiry): bool {
 					return $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW);
 				}
-		)
+			)
 		);
 	}
 
@@ -93,20 +91,22 @@ class InquiryService
 	{
 		try {
 			if ($lightweight) {
-				$this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+				$this->inquiry = $this->inquiryMapper->get($inquiryId, false, withRoles: true);
 			} else {
 				$this->inquiry = $this->inquiryMapper->find($inquiryId);
 			}
 
 			$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
-			/*
-			// No more setting family here - it's already joined in the query!
-			if ($inquiry->getParticipationPolicy() === null) {
-				$participation = $this->participationMapper->findByTarget('inquiry', $inquiryId);
-				if ($participation !== null) {
-					$inquiry->setParticipationPolicy($participation);
-				}
-			}*/
+
+			// Participation policy loading is handled by the mapper's joins.
+			// Kept commented for reference:
+			// if ($inquiry->getParticipationPolicy() === null) {
+			//     $participation = $this->participationMapper->findByTarget('inquiry', $inquiryId);
+			//     if ($participation !== null) {
+			//         $inquiry->setParticipationPolicy($participation);
+			//     }
+			// }
+
 			return $this->inquiry;
 		} catch (DoesNotExistException $e) {
 			throw new NotFoundException('Inquiry not found');
@@ -121,7 +121,6 @@ class InquiryService
 			$children = [];
 			foreach ($childInquiryIds as $childId) {
 				$childInquiry = $this->inquiryMapper->find($childId, true);
-				// No more setting family here either!
 				$children[] = $childInquiry;
 			}
 
@@ -130,7 +129,6 @@ class InquiryService
 			throw new NotFoundException('Inquiry children not found for inquiry parent');
 		}
 	}
-
 
 	/**
 	 * Get list of inquiries
@@ -291,7 +289,6 @@ class InquiryService
 	 */
 	public function createFromDto(InquiryDto $dto): Inquiry
 	{
-
 		if (!$this->appSettings->getInquiryCreationAllowed()) {
 			throw new ForbiddenException('Inquiry creation is disabled');
 		}
@@ -299,7 +296,6 @@ class InquiryService
 		if (!$dto->title) {
 			throw new EmptyTitleException('Title must not be empty');
 		}
-
 
 		$timestamp = time();
 		$this->inquiry = new Inquiry();
@@ -313,20 +309,23 @@ class InquiryService
 		$this->inquiry->setParentId($dto->parentId);
 		$this->inquiry->setLocationId($dto->locationId);
 		$this->inquiry->setCategoryId($dto->categoryId);
+
 		// Optional fields with defaults
 		$this->inquiry->setDescription($dto->description ?? '');
+
 		if ($this->appSettings->getAutoExpireEnabled()) {
 			$expireDays = $this->appSettings->getAutoExpireOffsetDays();
 			$expireTimestamp = $timestamp + ($expireDays * 24 * 60 * 60);
 		} else {
 			$expireTimestamp = 0;
 		}
-		$this->inquiry->setDescription($dto->description ?? '');
+		$this->inquiry->setExpire($expireTimestamp);
+		$this->inquiry->setShowResults(Inquiry::SHOW_RESULTS_ALWAYS);
 
+		// ── Visibility (1.8) ──
 		$this->inquiry->setVisibility($dto->visibility);
 
 		if ($dto->visibility === Inquiry::VISIBILITY_GROUPS) {
-			// Read from the DTO, not from $this->inquiry
 			$groups = $dto->visibilityGroups ?? [];
 
 			// Fallback to owned group if client sent nothing
@@ -337,25 +336,18 @@ class InquiryService
 				}
 			}
 
-			// Optional: validate group IDs exist
 			$groups = $this->validateGroups($groups);
 
 			$this->inquiry->setVisibilityGroups($groups);
 			$this->inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PUBLISHED);
 			$this->inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PUBLISHED);
 		} else {
-			// Default statuses for non-group visibility
 			$this->inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_DRAFT);
 			$this->inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_DRAFT);
-			// Ensure no stale groups from the entity
 			$this->inquiry->setVisibilityGroups([]);
 		}
 
-		$this->inquiry->setExpire($expireTimestamp);
-		$this->inquiry->setShowResults(Inquiry::SHOW_RESULTS_ALWAYS);
-
 		$this->inquiry = $this->inquiryMapper->insert($this->inquiry);
-
 
 		if ($this->inquiry->getVisibility() === Inquiry::VISIBILITY_GROUPS) {
 			$this->inquiryMapper->saveVisibilityGroups($this->inquiry);
@@ -367,7 +359,6 @@ class InquiryService
 
 		// Get fields configuration for this inquiry type
 		$fieldsDefinition = $this->getFields($dto->type);
-		$inquiryId = $this->inquiry->getId();
 
 		if (!empty($fieldsDefinition) && is_array($fieldsDefinition) && !empty($dto->miscFields)) {
 			foreach ($fieldsDefinition as &$fieldDef) {
@@ -378,7 +369,6 @@ class InquiryService
 			}
 			unset($fieldDef);
 		}
-
 
 		$this->inquiryMapper->saveDynamicFields($this->inquiry, $fieldsDefinition);
 
@@ -401,7 +391,9 @@ class InquiryService
 		return $validGroups;
 	}
 
-
+	/**
+	 * Change only visibility of an inquiry
+	 */
 	public function updateVisibility(int $inquiryId, string $visibility, ?array $groups = null): Inquiry
 	{
 		$this->inquiry = $this->inquiryMapper->find($inquiryId);
@@ -494,9 +486,8 @@ class InquiryService
 		return $this->inquiry;
 	}
 
-
 	/**
-	 * Get valid values for visibility - FIXED
+	 * Get valid values for visibility
 	 */
 	private function getValidVisibility(): array
 	{
@@ -504,7 +495,7 @@ class InquiryService
 			Inquiry::VISIBILITY_PRIVATE,
 			Inquiry::VISIBILITY_EVERYONE,
 			Inquiry::VISIBILITY_GROUPS,
-			Inquiry::VISIBILITY_PARTICIPANTS
+			Inquiry::VISIBILITY_PARTICIPANTS,
 		];
 	}
 
@@ -516,7 +507,7 @@ class InquiryService
 		return [
 			Inquiry::SHOW_RESULTS_ALWAYS,
 			Inquiry::SHOW_RESULTS_CLOSED,
-			Inquiry::SHOW_RESULTS_NEVER
+			Inquiry::SHOW_RESULTS_NEVER,
 		];
 	}
 
@@ -535,9 +526,9 @@ class InquiryService
 			throw new InvalidShowResultsException('Invalid value for prop showResults');
 		}
 
-
-		if (isset($inquiryConfiguration['visibility'])) {
-			$visibility = $inquiryConfiguration['visibility'];
+		// Visibility block (1.8)
+		$visibility = $inquiryConfiguration['visibility'] ?? null;
+		if ($visibility !== null) {
 			if (!in_array($visibility, $this->getValidVisibility())) {
 				throw new InvalidAccessException('Invalid value for prop visibility: ' . $visibility);
 			}
@@ -547,12 +538,11 @@ class InquiryService
 		if ($visibility === Inquiry::VISIBILITY_GROUPS && isset($inquiryConfiguration['visibilityGroups'])) {
 			$groups = $inquiryConfiguration['visibilityGroups'];
 			if (is_array($groups)) {
-				// Validate group IDs exist
 				$validGroups = $this->validateGroups($groups);
 				$this->inquiry->setVisibilityGroups($validGroups);
 				$this->inquiryMapper->saveVisibilityGroups($this->inquiry);
 			}
-		} elseif ($visibility !== Inquiry::VISIBILITY_GROUPS) {
+		} elseif ($visibility !== null && $visibility !== Inquiry::VISIBILITY_GROUPS) {
 			// Clear groups if visibility is not 'groups'
 			$this->inquiry->setVisibilityGroups([]);
 			$this->inquiryMapper->saveVisibilityGroups($this->inquiry);
@@ -575,16 +565,13 @@ class InquiryService
 			}
 		}
 
-
 		if (isset($inquiryConfiguration['expire'])) {
 			$this->inquiry->setExpire($inquiryConfiguration['expire']);
 		}
 
-
 		if (isset($inquiryConfiguration['forceConfidentialComments'])) {
 			$this->inquiry->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ? 1 : 0);
 		}
-
 
 		if (isset($inquiryConfiguration['supportFeature'])) {
 			$this->inquiry->setSupportFeature($inquiryConfiguration['supportFeature']);
@@ -593,7 +580,6 @@ class InquiryService
 		if (isset($inquiryConfiguration['showResults'])) {
 			$this->inquiry->setShowResults($inquiryConfiguration['showResults']);
 		}
-
 
 		$this->inquiry = $this->inquiryMapper->update($this->inquiry);
 
@@ -638,11 +624,12 @@ class InquiryService
 	}
 
 	/**
-	 * Move to archive or restore with optional recursive functionality
+	 * Move to archive or restore with recursive functionality.
+	 * Uses simple recursion: calls itself on each child.
 	 *
 	 * @return array [inquiry: Inquiry, archivedCount: int]
 	 */
-	public function toggleArchiveRecursive(int $inquiryId, bool $archiveState = null): array
+	public function toggleArchiveRecursive(int $inquiryId, ?bool $archiveState = null): array
 	{
 		// Get the inquiry
 		$this->inquiry = $this->inquiryMapper->find($inquiryId);
@@ -708,11 +695,14 @@ class InquiryService
 	/**
 	 * Get inquiry with trending scores included
 	 */
+		/**
+	 * Get inquiry with trending scores included
+	 */
 	public function getWithTrending(int $inquiryId): array
 	{
 		$inquiry = $this->get($inquiryId);
 
-		// Get trending scores with fallback
+		// Trending is independent of supportFeature — always include it.
 		$trendingScores = $this->trendingService->getTrendingScoresWithFallback($inquiryId);
 
 		$inquiryData = $inquiry->jsonSerialize();
@@ -722,14 +712,14 @@ class InquiryService
 		if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
 			foreach ($inquiryData['childs'] as &$option) {
 				if (isset($option['id']) && isset($trendingScores[$option['id']])) {
-					$option['trendingScore'] = $trendingScores[$option['id']]['score'] ?? $trendingScores[$option['id']];
+					$option['trendingScore'] = $trendingScores[$option['id']]['score']
+						?? $trendingScores[$option['id']];
 				}
 			}
 		}
 
 		return $inquiryData;
 	}
-
 
 	/**
 	 * Move to archive or restore
@@ -756,13 +746,8 @@ class InquiryService
 	}
 
 	/**
-	 * Delete inquiry
-	 *
-	 * @return Inquiry
-	 */
-	/**
 	 * Delete inquiry with recursive deletion
-	 * Simple recursion: calls itself on each child
+	 * Wrapped in a transaction — either everything is removed or nothing.
 	 *
 	 * @return Inquiry
 	 */
@@ -771,7 +756,12 @@ class InquiryService
 		$this->inquiryMapper->beginTransaction();
 
 		try {
-			$this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+			try {
+				$this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+			} catch (DoesNotExistException $e) {
+				throw new AlreadyDeletedException('Inquiry not found, assume already deleted');
+			}
+
 			$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
 
 			// RECURSION with permission checks
@@ -847,7 +837,7 @@ class InquiryService
 	 */
 	public function findById(int $inquiryId): Inquiry
 	{
-		return    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+		return $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
 	}
 
 	/**
@@ -857,7 +847,7 @@ class InquiryService
 	 */
 	public function updateFormId(int $inquiryId, int $formId): bool
 	{
-		return    $this->inquiryMapper->updateFormById($inquiryId, $formId);
+		return $this->inquiryMapper->updateFormById($inquiryId, $formId);
 	}
 
 	/**
@@ -884,8 +874,6 @@ class InquiryService
 
 	/**
 	 * Set status of inquiry
-	 *
-	 * @return Inquiry
 	 */
 	public function setInquiryStatus(int $inquiryId, string $mstatus): void
 	{
@@ -894,8 +882,6 @@ class InquiryService
 
 	/**
 	 * Set Moderation status of inquiry
-	 *
-	 * @return Inquiry
 	 */
 	public function setModerationStatus(int $inquiryId, string $mstatus): void
 	{
@@ -936,9 +922,8 @@ class InquiryService
 		return $this->inquiry;
 	}
 
-
 	/**
-	 * Collect email addresses from particitipants
+	 * Collect email addresses from participants
 	 */
 	public function getParticipantsEmailAddresses(int $inquiryId): array
 	{
@@ -962,17 +947,18 @@ class InquiryService
 	 * Get valid values for configuration options
 	 *
 	 * @return array
-	 *
-	 * @psalm-return array{inquiryType: mixed, access: mixed, showResults: mixed}
 	 */
 	public function getValidEnum(): array
 	{
 		return [
 			'visibility' => $this->getValidVisibility(),
-			'showResults' => $this->getValidShowResults()
+			'showResults' => $this->getValidShowResults(),
 		];
 	}
 
+	/**
+	 * Run a moderation/status action on an inquiry.
+	 */
 	public function applyAction(int $inquiryId, string $action): Inquiry
 	{
 		$inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
@@ -981,19 +967,18 @@ class InquiryService
 			throw new \Exception('Inquiry not found');
 		}
 
-		// The author saves and submits; moderators accept or reject. The
-		// author may also accept when moderation is off or an official
-		// may bypass it.
 		$user = $this->userSession->getCurrentUser();
 		$selfAccept = !$this->appSettings->getUseModeration()
 			|| ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
+
 		$allowed = match ($action) {
 			'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
 			'submit_for_accepted' => $user->getIsModerator()
-			|| ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
+				|| ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
 			'submit_for_rejected' => $user->getIsModerator(),
 			default => true,
 		};
+
 		if (!$allowed) {
 			throw new ForbiddenException('denied action ' . $action);
 		}
@@ -1001,55 +986,74 @@ class InquiryService
 		$timestamp = time();
 
 		switch ($action) {
-		case 'save_draft':
-			$inquiry->setPublicationStatus('pending');
-			$inquiry->setInquiryStatus('waiting_approval');
-			$inquiry->setModerationStatus('pending');
-			$inquiry->setLastInteraction($timestamp);
-			$inquiry = $this->inquiryMapper->update($inquiry);
-			break;
+			case 'save_draft':
+				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PENDING);
+				$inquiry->setInquiryStatus('waiting_approval');
+				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PENDING);
+				$inquiry->setLastInteraction($timestamp);
+				$inquiry = $this->inquiryMapper->update($inquiry);
+				break;
 
-		case 'submit_for_moderate':
-			$inquiry->setPublicationStatus('pending');
-			$inquiry->setInquiryStatus('waiting_approval');
-			$inquiry->setModerationStatus('pending');
-			$inquiry->setLastInteraction($timestamp);
-			$inquiry = $this->inquiryMapper->update($inquiry);
-			break;
+			case 'submit_for_moderate':
+				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PENDING);
+				$inquiry->setInquiryStatus('waiting_approval');
+				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PENDING);
+				$inquiry->setLastInteraction($timestamp);
+				$inquiry = $this->inquiryMapper->update($inquiry);
+				break;
 
-		case 'submit_for_accepted':
-			$inquiry->setVisibility('everyone');
-			$inquiry->setPublicationStatus('published');
-			$inquiry->setModerationStatus('accepted');
-			$inquiry->setLastInteraction($timestamp);
-			//We find the first status available in inquiry type status definition
-			$statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
-			if (!empty($statuses)) {
-				usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
-				$firstStatus = $statuses[0] ?? null;
-			}
-			if ($firstStatus) {
-				$inquiry->setInquiryStatus($firstStatus->getStatusKey());
-			}
-			$inquiry = $this->inquiryMapper->update($inquiry);
-			break;
+			case 'submit_for_accepted':
+				$inquiry->setVisibility(Inquiry::VISIBILITY_EVERYONE);
+				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PUBLISHED);
+				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PUBLISHED);
+				$inquiry->setLastInteraction($timestamp);
+				// Find the first status available in inquiry type status definition
+				$statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
+				if (!empty($statuses)) {
+					usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
+					$firstStatus = $statuses[0] ?? null;
+				}
+				if (!empty($firstStatus)) {
+					$inquiry->setInquiryStatus($firstStatus->getStatusKey());
+				}
+				$inquiry = $this->inquiryMapper->update($inquiry);
+				break;
 
-		case 'submit_for_rejected':
-			$inquiry->setVisibility('private');
-			$inquiry->setPublicationStatus('draft');
-			$inquiry->setModerationStatus('rejected');
-			$inquiry->setInquiryStatus('rejected');
-			$inquiry->setLastInteraction($timestamp);
-			$inquiry = $this->inquiryMapper->update($inquiry);
-			break;
+			case 'submit_for_rejected':
+				$inquiry->setVisibility(Inquiry::VISIBILITY_PRIVATE);
+				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_DRAFT);
+				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_REJECTED);
+				$inquiry->setInquiryStatus('rejected');
+				$inquiry->setLastInteraction($timestamp);
+				$inquiry = $this->inquiryMapper->update($inquiry);
+				break;
 
-		default:
-			throw new \InvalidArgumentException("Unknown action '$action'");
+			default:
+				throw new \InvalidArgumentException("Unknown action '$action'");
 		}
 
 		return $inquiry;
 	}
 
+	// ─────────────────────────────────────────────────────────────
+	// Legacy access helpers (kept for backward compatibility with
+	// any callers still using the access API). Prefer visibility.
+	// ─────────────────────────────────────────────────────────────
 
+	/**
+	 * @deprecated use getValidVisibility()
+	 */
+	private function getValidAccess(): array
+	{
+		return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN, Inquiry::ACCESS_GROUP];
+	}
+
+	/**
+	 * @deprecated use updateVisibility()
+	 */
+	public function setInquiryAccess(int $inquiryId, $access): string
+	{
+		$this->inquiryMapper->setInquiryAccess($inquiryId, $access);
+		return $access;
+	}
 }
-

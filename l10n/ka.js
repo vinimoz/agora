@@ -179,6 +179,7 @@ OC.L10N.register(
     "Select an icon" : "Select an icon",
     "Save changes" : "Save changes",
     "Hide" : "Hide",
+    "Key" : "Key",
     "Label" : "Label",
     "Actions" : "Actions",
     "Custom fields" : "Custom fields",

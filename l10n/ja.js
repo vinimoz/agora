@@ -276,6 +276,7 @@ OC.L10N.register(
     "Sort order" : "ソート順",
     "Save changes" : "変更を保存",
     "Hide" : "隠す",
+    "Key" : "キー",
     "Label" : "ラベル",
     "Required" : "必須",
     "Actions" : "アクション",

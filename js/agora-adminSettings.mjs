@@ -3,7 +3,7 @@
   try {
     if (typeof document != "undefined") {
       var elementStyle = document.createElement("style");
-      elementStyle.appendChild(document.createTextNode('@charset "UTF-8";\n.use-case-selection[data-v-cbe6b281] {\n  padding: 20px;\n}\n.use-case-header[data-v-cbe6b281] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.use-case-header h2[data-v-cbe6b281] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.use-case-header .subtitle[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.use-case-grid[data-v-cbe6b281] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 20px;\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.use-case-card[data-v-cbe6b281] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.use-case-card[data-v-cbe6b281]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.use-case-card.selected[data-v-cbe6b281] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.card-icon[data-v-cbe6b281] {\n  font-size: 48px;\n  margin-bottom: 16px;\n  text-align: center;\n}\n.card-title[data-v-cbe6b281] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.card-description[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.card-examples[data-v-cbe6b281] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.card-examples li[data-v-cbe6b281] {\n  padding: 4px 0;\n  padding-left: 20px;\n  position: relative;\n}\n.card-examples li[data-v-cbe6b281]::before {\n  content: "•";\n  position: absolute;\n  left: 8px;\n  color: var(--color-primary-element);\n}\n.selected-indicator[data-v-cbe6b281] {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-indicator .check-icon[data-v-cbe6b281] {\n  font-size: 14px;\n}.template-selection[data-v-4e395d60] {\n  padding: 20px;\n}\n.template-header[data-v-4e395d60] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.template-header h2[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.template-header .subtitle[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.upload-section[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 20px;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n}\n.upload-section .upload-error[data-v-4e395d60],\n.upload-section .upload-success[data-v-4e395d60] {\n  width: 100%;\n  max-width: 600px;\n}\n.help-section[data-v-4e395d60] {\n  width: 100%;\n  max-width: 700px;\n  margin-top: 20px;\n}\n.help-content[data-v-4e395d60] {\n  margin-top: 16px;\n  padding: 20px;\n  background: var(--color-main-background);\n  border-radius: var(--border-radius-large);\n  border: 1px solid var(--color-border);\n}\n.help-actions[data-v-4e395d60] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  margin: 16px 0;\n}\n.help-instructions[data-v-4e395d60] {\n  text-align: left;\n  margin-top: 20px;\n}\n.help-instructions h4[data-v-4e395d60] {\n  font-size: 14px;\n  font-weight: 600;\n  margin: 16px 0 8px 0;\n  color: var(--color-main-text);\n}\n.help-instructions ol[data-v-4e395d60], .help-instructions ul[data-v-4e395d60] {\n  margin: 8px 0;\n  padding-left: 24px;\n}\n.help-instructions ol li[data-v-4e395d60], .help-instructions ul li[data-v-4e395d60] {\n  margin: 6px 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.help-instructions .ai-list[data-v-4e395d60] {\n  list-style: none;\n  padding-left: 0;\n}\n.help-instructions .ai-list li[data-v-4e395d60] {\n  margin: 10px 0;\n  padding-left: 12px;\n}\n.help-instructions .ai-list li strong[data-v-4e395d60] {\n  color: var(--color-main-text);\n}\n.divider[data-v-4e395d60] {\n  text-align: center;\n  margin: 30px 0;\n  position: relative;\n}\n.divider[data-v-4e395d60]::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 50%;\n  height: 1px;\n  background: var(--color-border);\n  z-index: 0;\n}\n.divider span[data-v-4e395d60] {\n  background: var(--color-main-background);\n  padding: 0 16px;\n  color: var(--color-text-maxcontrast);\n  font-size: 13px;\n  position: relative;\n  z-index: 1;\n}\n.template-list[data-v-4e395d60] {\n  display: grid;\n  gap: 16px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.template-card[data-v-4e395d60] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.template-card[data-v-4e395d60]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n}\n.template-card.selected[data-v-4e395d60] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.template-card-header[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 12px;\n}\n.template-name[data-v-4e395d60] {\n  font-size: 18px;\n  font-weight: 600;\n  margin: 0;\n}\n.template-version[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  background: var(--color-background-dark);\n  padding: 2px 8px;\n  border-radius: var(--border-radius-pill);\n}\n.template-description[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.template-meta[data-v-4e395d60] {\n  margin-bottom: 16px;\n  padding-bottom: 16px;\n  border-bottom: 1px solid var(--color-border);\n}\n.meta-item[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 8px;\n  font-size: 13px;\n}\n.meta-label[data-v-4e395d60] {\n  font-weight: 600;\n  margin-right: 8px;\n  min-width: 80px;\n}\n.meta-value[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n}\n.template-stats[data-v-4e395d60] {\n  display: flex;\n  gap: 20px;\n  justify-content: space-around;\n}\n.stat-item[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  text-align: center;\n}\n.stat-value[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  color: var(--color-primary-element);\n}\n.stat-label[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 4px;\n}\n.selected-badge[data-v-4e395d60] {\n  position: absolute;\n  top: 16px;\n  right: 16px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-badge .check-icon[data-v-4e395d60] {\n  font-size: 14px;\n}.language-selection[data-v-e6e1081e] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.language-header[data-v-e6e1081e] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.language-header h2[data-v-e6e1081e] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.language-header .subtitle[data-v-e6e1081e] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.language-note[data-v-e6e1081e] {\n  margin-bottom: 30px;\n}\n.language-grid[data-v-e6e1081e] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n  gap: 16px;\n  margin-bottom: 30px;\n}\n.language-card[data-v-e6e1081e] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.language-card[data-v-e6e1081e]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.language-card.selected[data-v-e6e1081e] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  background: var(--color-primary-element-light);\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.language-flag[data-v-e6e1081e] {\n  font-size: 32px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n  margin-bottom: 8px;\n}\n.language-name[data-v-e6e1081e] {\n  font-size: 14px;\n  font-weight: 600;\n}\n.selected-check[data-v-e6e1081e] {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  width: 24px;\n  height: 24px;\n  background: var(--color-primary-element);\n  color: white;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 14px;\n}\n.selection-summary[data-v-e6e1081e] {\n  text-align: center;\n  padding: 16px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  font-size: 16px;\n}\n.selection-summary strong[data-v-e6e1081e] {\n  margin-right: 8px;\n}.preview-step[data-v-1aff519f] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.preview-header[data-v-1aff519f] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.preview-header h2[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.preview-header .subtitle[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.loading-state[data-v-1aff519f] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-loading[data-v-1aff519f] {\n  text-align: center;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n  margin-bottom: 20px;\n}\n.analysis-loading p[data-v-1aff519f] {\n  margin-top: 12px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-error[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.duplicate-notice[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.summary-card[data-v-1aff519f] {\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 24px;\n}\n.summary-card h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n  color: var(--color-primary-element);\n}\n.summary-stats[data-v-1aff519f] {\n  display: flex;\n  gap: 32px;\n  justify-content: center;\n}\n.stat-item[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 4px;\n}\n.stat-icon[data-v-1aff519f] {\n  font-size: 32px;\n}\n.stat-value[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n}\n.stat-value.stat-new[data-v-1aff519f] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-new[data-v-1aff519f] {\n    color: #3fb950;\n}\n}\n.stat-value.stat-existing[data-v-1aff519f] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-existing[data-v-1aff519f] {\n    color: #e09b13;\n}\n}\n.stat-label[data-v-1aff519f] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  text-transform: uppercase;\n}\n.sections-container[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.section-block[data-v-1aff519f] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n}\n.section-header[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 16px 20px;\n  cursor: pointer;\n  background: var(--color-background-hover);\n  transition: background 0.2s ease;\n}\n.section-header[data-v-1aff519f]:hover {\n  background: var(--color-background-dark);\n}\n.section-title[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.section-title h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin: 0;\n}\n.section-icon[data-v-1aff519f] {\n  font-size: 20px;\n}\n.section-count[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.section-status[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  margin-left: auto;\n}\n.status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 8px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.status-badge.status-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.status-badge.status-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.expand-icon[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 12px;\n}\n.section-content[data-v-1aff519f] {\n  padding: 12px;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.item-row[data-v-1aff519f] {\n  background: var(--color-background-hover);\n  border: 1px solid var(--color-border);\n  border-radius: var(--border-radius);\n  padding: 12px 16px;\n}\n.item-view[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 16px;\n}\n.item-info[data-v-1aff519f] {\n  flex: 1;\n}\n.item-header-row[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 4px;\n}\n.item-label[data-v-1aff519f] {\n  font-size: 15px;\n  font-weight: 600;\n  flex: 1;\n}\n.item-status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 10px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.item-status-badge.badge-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.item-status-badge.badge-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.item-type[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  font-family: monospace;\n  margin-bottom: 4px;\n}\n.item-description[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 8px;\n}\n.item-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n}\n.item-edit[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n.edit-form[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.edit-field[data-v-1aff519f] {\n  width: 100%;\n}\n.edit-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  justify-content: flex-end;\n}.summary-step[data-v-13b1c365] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.summary-header[data-v-13b1c365] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.summary-header h2[data-v-13b1c365] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.summary-header .subtitle[data-v-13b1c365] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.warning-note[data-v-13b1c365] {\n  margin-bottom: 30px;\n}\n.summary-box[data-v-13b1c365] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n}\n.summary-box h3[data-v-13b1c365] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 20px;\n  text-align: center;\n  color: var(--color-primary-element);\n}\n.summary-item[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 12px 0;\n}\n.summary-item .label[data-v-13b1c365] {\n  font-weight: 600;\n  color: var(--color-text-maxcontrast);\n}\n.summary-item .value[data-v-13b1c365] {\n  font-weight: 500;\n}\n.summary-divider[data-v-13b1c365] {\n  height: 1px;\n  background: var(--color-border);\n  margin: 16px 0;\n}\n.summary-total[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 16px;\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius);\n  font-size: 18px;\n  font-weight: 600;\n}\n.summary-total .value[data-v-13b1c365] {\n  color: var(--color-primary-element);\n}.importing-step[data-v-38620be8] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 400px;\n  padding: 40px;\n}\n.importing-content[data-v-38620be8] {\n  text-align: center;\n  max-width: 500px;\n}\n.importing-content h2[data-v-38620be8] {\n  font-size: 24px;\n  font-weight: 600;\n  margin: 24px 0 16px;\n}\n.importing-content .importing-message[data-v-38620be8] {\n  font-size: 16px;\n  color: var(--color-text-maxcontrast);\n  margin-bottom: 8px;\n}\n.importing-content .importing-submessage[data-v-38620be8] {\n  font-size: 14px;\n  color: var(--color-text-maxcontrast);\n}.results-step[data-v-0e206bd8] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.results-header[data-v-0e206bd8] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.results-header .success-icon[data-v-0e206bd8],\n.results-header .warning-icon[data-v-0e206bd8] {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 48px;\n  margin: 0 auto 20px;\n}\n.results-header .success-icon[data-v-0e206bd8] {\n  background: #1a7f37;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .success-icon[data-v-0e206bd8] {\n    background: #3fb950;\n}\n}\n.results-header .warning-icon[data-v-0e206bd8] {\n  background: #9a6700;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .warning-icon[data-v-0e206bd8] {\n    background: #e09b13;\n}\n}\n.results-header h2[data-v-0e206bd8] {\n  font-size: 28px;\n  font-weight: 600;\n}\n.result-section[data-v-0e206bd8] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 20px;\n}\n.result-section h3[data-v-0e206bd8] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n}\n.result-section.success-section[data-v-0e206bd8] {\n  border-color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section[data-v-0e206bd8] {\n    border-color: #3fb950;\n}\n}\n.result-section.success-section h3[data-v-0e206bd8] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section h3[data-v-0e206bd8] {\n    color: #3fb950;\n}\n}\n.result-section.skipped-section[data-v-0e206bd8] {\n  border-color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section[data-v-0e206bd8] {\n    border-color: #e09b13;\n}\n}\n.result-section.skipped-section h3[data-v-0e206bd8] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section h3[data-v-0e206bd8] {\n    color: #e09b13;\n}\n}\n.result-section.error-section[data-v-0e206bd8] {\n  border-color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section[data-v-0e206bd8] {\n    border-color: #f85149;\n}\n}\n.result-section.error-section h3[data-v-0e206bd8] {\n  color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section h3[data-v-0e206bd8] {\n    color: #f85149;\n}\n}\n.result-list[data-v-0e206bd8] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  max-height: 200px;\n  overflow-y: auto;\n}\n.result-list li[data-v-0e206bd8] {\n  padding: 8px 12px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  margin-bottom: 8px;\n  font-size: 14px;\n  font-family: monospace;\n}\n.result-list li[data-v-0e206bd8]:last-child {\n  margin-bottom: 0;\n}\n.results-actions[data-v-0e206bd8] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  padding-top: 30px;\n  border-top: 1px solid var(--color-border);\n}.wizard-container[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  min-height: 500px;\n  padding: 20px;\n}\n.wizard-progress[data-v-d2f4206c] {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 40px;\n  padding: 0 20px;\n}\n.progress-step[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex: 1;\n  position: relative;\n}\n.progress-step[data-v-d2f4206c]:not(:last-child)::after {\n  content: "";\n  position: absolute;\n  top: 18px;\n  left: 50%;\n  right: -50%;\n  height: 2px;\n  background-color: var(--color-border-dark);\n  z-index: -1;\n}\n.progress-step.completed[data-v-d2f4206c]::after {\n  background-color: var(--color-primary-element);\n}\n.progress-dot[data-v-d2f4206c] {\n  width: 36px;\n  height: 36px;\n  border-radius: 50%;\n  background-color: var(--color-background-dark);\n  border: 2px solid var(--color-border-dark);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: 600;\n  margin-bottom: 8px;\n  position: relative;\n  z-index: 1;\n}\n.progress-step.active .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-step.completed .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-label[data-v-d2f4206c] {\n  font-size: 12px;\n  text-align: center;\n  color: var(--color-text-maxcontrast);\n}\n.progress-step.active .progress-label[data-v-d2f4206c] {\n  color: var(--color-main-text);\n  font-weight: 600;\n}\n.wizard-content[data-v-d2f4206c] {\n  flex: 1;\n  overflow-y: auto;\n  padding: 20px 0;\n}\n.wizard-actions[data-v-d2f4206c] {\n  display: flex;\n  gap: 12px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.spacer[data-v-d2f4206c] {\n  flex: 1;\n}.disclaimer_group {\n  display: flex;\n  align-items: center;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.disclaimer_group .grow_title {\n  display: flex;\n  flex-grow: 1;\n  margin-inline-end: 12px;\n}\n.disclaimer_group .grow_title .material-design-icon {\n  margin-inline-start: 4px;\n}.user_settings {\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.user_settings .job_buttons_section {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n}\n.user_settings .job_hints p {\n  margin-bottom: 0.5em;\n}\n.families-manager[data-v-b0578289] {\n  padding: 20px;\n}\n.families-list[data-v-b0578289] {\n  margin-bottom: 30px;\n}\n.families-list h3[data-v-b0578289] {\n  margin-bottom: 15px;\n  color: var(--color-text-lighter);\n}\n.family-item[data-v-b0578289] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  margin-bottom: 10px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  cursor: pointer;\n  transition: background-color 0.2s ease;\n}\n.family-item[data-v-b0578289]:hover {\n  background: var(--color-background-hover);\n}\n.family-content[data-v-b0578289] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  flex: 1;\n}\n.family-icon[data-v-b0578289] {\n  width: 50px;\n  height: 50px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 10px;\n  font-size: 24px;\n  flex-shrink: 0;\n}\n.family-info h4[data-v-b0578289] {\n  margin: 0 0 5px 0;\n  color: var(--color-text-light);\n}\n.family-type[data-v-b0578289] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.family-description[data-v-b0578289] {\n  margin: 5px 0 0 0;\n  color: var(--color-text-lighter);\n}\n.family-stats[data-v-b0578289] {\n  margin-top: 8px;\n}\n.types-count[data-v-b0578289] {\n  font-size: 0.8em;\n  color: var(--color-primary);\n  background: var(--color-primary-element-light);\n  padding: 2px 8px;\n  border-radius: 12px;\n}\n.family-actions[data-v-b0578289] {\n  display: flex;\n  gap: 10px;\n}\n.add-family-form[data-v-b0578289] {\n  padding: 20px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-b0578289] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.form-row[data-v-b0578289] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 15px;\n  align-items: start;\n}\n.form-field[data-v-b0578289] {\n  margin: 0;\n}\n.full-width[data-v-b0578289] {\n  grid-column: 1 / -1;\n}\n.form-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-start;\n}\n.modal-overlay[data-v-b0578289] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-b0578289] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 800px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-b0578289] {\n  width: 900px;\n  max-width: 95vw;\n}\n.modal-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 20px;\n}\n\n.types-manager[data-v-f2f32798] {\n  padding: 20px;\n}\n.header[data-v-f2f32798] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-f2f32798] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.types-list[data-v-f2f32798] {\n  margin-bottom: 30px;\n}\n.list-description[data-v-f2f32798] {\n  color: var(--color-text-lighter);\n  margin-bottom: 20px;\n}\n.types-grid[data-v-f2f32798] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));\n  gap: 20px;\n}\n.type-card[data-v-f2f32798] {\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  padding: 20px;\n  cursor: pointer;\n  transition: all 0.3s ease;\n  border: 2px solid transparent;\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.type-card[data-v-f2f32798]:hover {\n  background: var(--color-background-hover);\n  border-color: var(--color-primary);\n  transform: translateY(-2px);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n}\n.type-card-content[data-v-f2f32798] {\n  display: flex;\n  align-items: flex-start;\n  gap: 15px;\n  flex: 1;\n  margin-bottom: 15px;\n}\n.type-icon[data-v-f2f32798] {\n  width: 50px;\n  height: 50px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 10px;\n  font-size: 24px;\n  flex-shrink: 0;\n}\n.type-info[data-v-f2f32798] {\n  flex: 1;\n}\n.type-info h4[data-v-f2f32798] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-light);\n  font-size: 1.1em;\n}\n.type-key[data-v-f2f32798] {\n  margin: 0 0 10px 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n  background: var(--color-background-darker);\n  padding: 4px 8px;\n  border-radius: 4px;\n  display: inline-block;\n}\n.type-description[data-v-f2f32798] {\n  margin: 0 0 10px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.95em;\n  line-height: 1.4;\n}\n.type-badge[data-v-f2f32798] {\n  display: inline-block;\n  padding: 4px 10px;\n  border-radius: 12px;\n  font-size: 0.8em;\n  font-weight: 600;\n}\n.type-badge.option[data-v-f2f32798] {\n  background: var(--color-warning);\n  color: white;\n}\n.type-actions[data-v-f2f32798] {\n  display: flex;\n  flex-direction: column;\n  gap: 10px;\n}\n.configure-btn[data-v-f2f32798] {\n  width: 100%;\n}\n.secondary-actions[data-v-f2f32798] {\n  display: flex;\n  gap: 8px;\n}\n.edit-btn[data-v-f2f32798], .delete-btn[data-v-f2f32798] {\n  flex: 1;\n}\n.empty-state[data-v-f2f32798] {\n  text-align: center;\n  padding: 60px 40px;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  grid-column: 1 / -1;\n}\n.empty-state p[data-v-f2f32798] {\n  margin: 0;\n  font-size: 1.1em;\n}\n.add-type-form[data-v-f2f32798] {\n  padding: 25px;\n  background: var(--color-background-dark);\n  border-radius: 12px;\n}\n.form-grid[data-v-f2f32798] {\n  display: flex;\n  flex-direction: column;\n  gap: 25px;\n}\n.form-row[data-v-f2f32798] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 20px;\n  align-items: start;\n}\n.form-field[data-v-f2f32798] {\n  margin: 0;\n}\n.full-width[data-v-f2f32798] {\n  grid-column: 1 / -1;\n}\n.checkbox-field[data-v-f2f32798] {\n  grid-column: 1 / -1;\n  padding: 15px;\n  background: var(--color-background-darker);\n  border-radius: 8px;\n}\n.field-description[data-v-f2f32798] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n}\n.form-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-start;\n}\n.modal-overlay[data-v-f2f32798] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-f2f32798] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-f2f32798] {\n  width: 1000px;\n  max-width: 95vw;\n}\n.modal-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 15px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n\n.type-rights[data-v-60290e39] {\n    padding: 20px;\n}\n.header[data-v-60290e39] {\n    display: flex;\n    align-items: center;\n    gap: 15px;\n    margin-bottom: 25px;\n}\n.header h2[data-v-60290e39] {\n    margin: 0;\n    color: var(--color-text-light);\n}\n.description[data-v-60290e39] {\n    color: var(--color-text-lighter);\n    margin-bottom: 25px;\n}\n.settings-container[data-v-60290e39] {\n    padding: 20px;\n    background-color: var(--color-background-dark);\n    border-radius: 8px;\n}\n.settings-list[data-v-60290e39] {\n    display: flex;\n    flex-direction: column;\n    gap: 20px;\n}\n.setting-item[data-v-60290e39] {\n    padding: 15px;\n    background-color: var(--color-background-darker);\n    border-radius: 8px;\n}\n.setting-item label[data-v-60290e39] {\n    display: block;\n    margin-bottom: 8px;\n    font-weight: bold;\n}\n.editor-select[data-v-60290e39] {\n    max-width: 250px;\n    margin-top: 8px;\n}\n.setting-description[data-v-60290e39] {\n    margin: 8px 0 0 0;\n    font-size: 0.9em;\n    color: var(--color-text-lighter);\n    padding-left: 36px;\n}\n.no-selection[data-v-60290e39] {\n    text-align: center;\n    padding: 40px;\n    color: var(--color-text-lighter);\n}\n.ternary-mode-setting[data-v-60290e39] {\n    margin-left: 24px;\n    border-left: 2px solid var(--color-border);\n    padding-left: 16px;\n}\n.setting-label[data-v-60290e39] {\n    font-weight: 600;\n    margin-bottom: 12px;\n    color: var(--color-text-lighter);\n}\n.mode-options[data-v-60290e39] {\n    margin-bottom: 16px;\n    padding: 8px 0;\n}\n.mode-description[data-v-60290e39] {\n    margin: 4px 0 0 24px;\n    font-size: 0.9em;\n    color: var(--color-text-maxcontrast);\n    line-height: 1.4;\n}\n\n.type-status[data-v-832d89d2] {\n  padding: 20px;\n}\n.header[data-v-832d89d2] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-832d89d2] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.description[data-v-832d89d2] {\n  margin-bottom: 25px;\n  color: var(--color-text-lighter);\n}\n.status-management[data-v-832d89d2] {\n  max-width: 1000px;\n}\n.status-list[data-v-832d89d2] {\n  margin-bottom: 30px;\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.empty-state[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n.status-items[data-v-832d89d2] {\n  display: flex;\n  flex-direction: column;\n  gap: 15px;\n}\n.status-item[data-v-832d89d2] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  background-color: var(--color-background-darker);\n  border-radius: 8px;\n  border-left: 4px solid var(--color-primary);\n}\n.status-content[data-v-832d89d2] {\n  display: flex;\n  align-items: flex-start;\n  gap: 15px;\n  flex: 1;\n}\n.status-icon[data-v-832d89d2] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background-color: var(--color-primary);\n  color: white;\n  border-radius: 8px;\n  flex-shrink: 0;\n}\n.status-icon[data-v-832d89d2] svg {\n  fill: white;\n}\n.status-info h4[data-v-832d89d2] {\n  margin: 0 0 5px 0;\n  font-weight: 600;\n}\n.status-key[data-v-832d89d2] {\n  margin: 0 0 8px 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  font-family: monospace;\n}\n.status-description[data-v-832d89d2] {\n  margin: 0 0 10px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.95em;\n}\n.status-properties[data-v-832d89d2] {\n  display: flex;\n  gap: 10px;\n}\n.status-badge[data-v-832d89d2] {\n  padding: 4px 8px;\n  border-radius: 12px;\n  font-size: 0.8em;\n  font-weight: 600;\n}\n.status-badge.final[data-v-832d89d2] {\n  background-color: var(--color-success);\n  color: white;\n}\n.status-badge.non-final[data-v-832d89d2] {\n  background-color: var(--color-warning);\n  color: white;\n}\n.status-actions[data-v-832d89d2] {\n  display: flex;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.add-status-form[data-v-832d89d2] {\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-832d89d2] {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 20px;\n  align-items: start;\n}\n.checkbox-field[data-v-832d89d2] {\n  grid-column: span 2;\n}\n.field-description[data-v-832d89d2] {\n  margin: 5px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n}\n.modal-overlay[data-v-832d89d2] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 1000;\n}\n.modal-content[data-v-832d89d2] {\n  background-color: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 600px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-actions[data-v-832d89d2] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.no-selection[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n@media (max-width: 768px) {\n.form-grid[data-v-832d89d2] {\n    grid-template-columns: 1fr;\n}\n.status-item[data-v-832d89d2] {\n    flex-direction: column;\n    align-items: stretch;\n    gap: 15px;\n}\n.status-actions[data-v-832d89d2] {\n    justify-content: center;\n}\n}\n\n.type-settings-modal[data-v-077dce28] {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  min-height: 600px;\n  width: 100%;\n}\n.modal-header[data-v-077dce28] {\n  padding: 25px;\n  border-bottom: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  flex-shrink: 0;\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.type-info[data-v-077dce28] {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n}\n.type-icon[data-v-077dce28] {\n  width: 60px;\n  height: 60px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 12px;\n  font-size: 28px;\n  flex-shrink: 0;\n}\n.type-details h3[data-v-077dce28] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-light);\n  font-size: 1.5em;\n  font-weight: 600;\n}\n.type-key[data-v-077dce28] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 1em;\n  background: var(--color-background-darker);\n  padding: 4px 8px;\n  border-radius: 4px;\n  display: inline-block;\n}\n.close-button[data-v-077dce28] {\n  background: var(--color-background-darker);\n  border: 1px solid var(--color-border);\n  padding: 8px 16px;\n  border-radius: 4px;\n  cursor: pointer;\n  color: var(--color-text-light);\n}\n.close-button[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n}\n\n/* Menu simple */\n.simple-menu[data-v-077dce28] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n}\n.menu-item[data-v-077dce28] {\n  flex: 1;\n  background: none;\n  border: none;\n  padding: 16px 20px;\n  color: var(--color-text-lighter);\n  cursor: pointer;\n  transition: all 0.2s ease;\n  border-bottom: 3px solid transparent;\n  font-size: 1em;\n  font-weight: 500;\n}\n.menu-item[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n}\n.menu-item.active[data-v-077dce28] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  background: var(--color-background-darker);\n}\n\n/* Contenu */\n.settings-content[data-v-077dce28] {\n  flex: 1;\n  padding: 30px;\n  overflow-y: auto;\n  background: var(--color-main-background);\n}\n\n.admin-settings-container[data-v-cd782848] {\n  min-height: 600px;\n  background: var(--color-main-background);\n  padding: 20px;\n}\n.breadcrumb[data-v-cd782848] {\n  margin-bottom: 25px;\n  padding: 15px 20px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  font-size: 1em;\n}\n.breadcrumb-item[data-v-cd782848] {\n  display: inline-flex;\n  align-items: center;\n}\n.breadcrumb-link[data-v-cd782848] {\n  background: none;\n  border: none;\n  color: var(--color-primary);\n  cursor: pointer;\n  padding: 4px 8px;\n  border-radius: 4px;\n  transition: background-color 0.2s ease;\n}\n.breadcrumb-link[data-v-cd782848]:hover {\n  background: var(--color-background-hover);\n}\n.breadcrumb-current[data-v-cd782848] {\n  color: var(--color-text-light);\n  font-weight: 600;\n  padding: 4px 8px;\n}\n.breadcrumb-separator[data-v-cd782848] {\n  margin: 0 10px;\n  color: var(--color-text-lighter);\n}\n.settings-content[data-v-cd782848] {\n  flex: 1;\n  overflow-y: auto;\n}\n[data-v-cd782848] .large-modal {\n  --width: 95vw;\n  --height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n[data-v-cd782848] .large-modal .modal-container {\n  width: 95vw;\n  height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n\n.tree-item[data-v-37a5142a] {\n  margin-bottom: 8px;\n}\n.tree-node[data-v-37a5142a] {\n  display: flex;\n  align-items: center;\n  padding: 8px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.tree-label[data-v-37a5142a] {\n  flex-grow: 1;\n  font-weight: bold;\n}\n.tree-actions[data-v-37a5142a] {\n  display: flex;\n  gap: 8px;\n}\n.tree-children[data-v-37a5142a] {\n  margin-left: 20px;\n  margin-top: 8px;\n}\n\n.category-location-manager[data-v-da2e3bfe] {\n  padding: 0;\n  max-width: 1200px;\n  margin: 0 auto;\n  height: auto;\n  min-height: 80vh;\n  background: var(--color-main-background);\n  border-radius: 12px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n}\n\n/* Menu simple appliqué aux tabs - Style forcé */\n.tabs[data-v-da2e3bfe] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n  border-radius: 12px 12px 0 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n  flex: 1 !important;\n  background: none !important;\n  border: none !important;\n  padding: 16px 20px !important;\n  color: var(--color-text-lighter) !important;\n  cursor: pointer;\n  transition: all 0.2s ease !important;\n  border-bottom: 3px solid transparent !important;\n  font-size: 1em !important;\n  font-weight: 500 !important;\n  margin: 0 !important;\n  border-radius: 0 !important;\n  box-shadow: none !important;\n  min-height: auto !important;\n  display: flex !important;\n  align-items: center !important;\n  justify-content: center !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue:hover {\n  background: var(--color-background-hover) !important;\n  color: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n  color: var(--color-primary) !important;\n  border-bottom-color: var(--color-primary) !important;\n  background: var(--color-background-darker) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary {\n  --button-background-hover: var(--color-background-hover) !important;\n  --button-color-hover: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary.active {\n  --button-background: var(--color-background-darker) !important;\n  --button-color: var(--color-primary) !important;\n  --button-border-color: transparent !important;\n}\n.tab-content[data-v-da2e3bfe] {\n  margin-top: 0;\n  background: var(--color-main-background);\n  border-radius: 0 0 12px 12px;\n  padding: 30px;\n  height: auto;\n  overflow: visible;\n  flex: 1;\n}\n.add-form[data-v-da2e3bfe] {\n  margin-bottom: 30px;\n  padding: 25px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  border: 1px solid var(--color-border);\n}\n.add-form h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n}\n.form-fields[data-v-da2e3bfe] {\n  display: flex;\n  gap: 15px;\n  align-items: end;\n  flex-wrap: wrap;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n.form-fields .nc-select[data-v-da2e3bfe] {\n  flex: 1;\n  min-width: 200px;\n}\n.tree-view[data-v-da2e3bfe] {\n  margin-top: 30px;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tree-view h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n  padding-bottom: 10px;\n  border-bottom: 2px solid var(--color-border);\n}\n.tree-container[data-v-da2e3bfe] {\n  margin-top: 15px;\n  border: 1px solid var(--color-border);\n  border-radius: 8px;\n  padding: 20px;\n  background: var(--color-background-dark);\n  max-height: 500px;\n  overflow-y: auto;\n  flex: 1;\n}\n.loading[data-v-da2e3bfe],\n.error[data-v-da2e3bfe] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n  font-size: 16px;\n}\n.error[data-v-da2e3bfe] {\n  color: var(--color-error);\n  background: var(--color-error-background);\n  border: 1px solid var(--color-error-border);\n  border-radius: 8px;\n  margin: 20px 0;\n}\n.modal[data-v-da2e3bfe] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n  backdrop-filter: blur(4px);\n}\n.modal-content[data-v-da2e3bfe] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  min-width: 400px;\n  max-width: 500px;\n  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);\n  border: 1px solid var(--color-border);\n  max-height: 80vh;\n  overflow-y: auto;\n}\n.modal-content h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 20px;\n}\n.modal-actions[data-v-da2e3bfe] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 12px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  max-height: calc(100vh - 100px);\n  overflow-y: auto;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n/* Responsive design */\n@media (max-width: 768px) {\n.category-location-manager[data-v-da2e3bfe] {\n    padding: 0;\n    min-height: auto;\n    margin: 10px;\n}\n.tabs[data-v-da2e3bfe] {\n    flex-direction: column;\n    gap: 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n    padding: 16px 20px !important;\n    border-bottom: 2px solid transparent !important;\n    border-right: 3px solid transparent !important;\n    text-align: left !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n    border-bottom-color: transparent !important;\n    border-right-color: var(--color-primary) !important;\n}\n.tab-content[data-v-da2e3bfe] {\n    padding: 20px;\n}\n.form-fields[data-v-da2e3bfe] {\n    flex-direction: column;\n    align-items: stretch;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n  .form-fields .nc-select[data-v-da2e3bfe] {\n    min-width: auto;\n}\n.modal-content[data-v-da2e3bfe] {\n    min-width: auto;\n    margin: 20px;\n    padding: 20px;\n    max-height: 70vh;\n}\n.tree-container[data-v-da2e3bfe] {\n    max-height: 400px;\n}\n}\n.tab-content[data-v-da2e3bfe] {\n  animation: fadeIn-da2e3bfe 0.3s ease-in-out;\n}\n@keyframes fadeIn-da2e3bfe {\nfrom {\n    opacity: 0;\n    transform: translateY(10px);\n}\nto {\n    opacity: 1;\n    transform: translateY(0);\n}\n}\n.category-location-manager[data-v-da2e3bfe] {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tab-content[data-v-da2e3bfe] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n.rights-management[data-v-fb7cbc5e] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-fb7cbc5e] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-fb7cbc5e] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-fb7cbc5e] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-fb7cbc5e] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n\n.rights-management[data-v-14c25bb2] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-14c25bb2] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-14c25bb2] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-14c25bb2] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-14c25bb2] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n.clean-instance-section[data-v-ee1ac32d] {\n  margin-top: 24px;\n  border: 2px solid var(--color-error);\n}\n.clean-instance-section .danger-warning[data-v-ee1ac32d] {\n  background-color: var(--color-background-darker);\n  padding: 16px;\n  border-radius: 8px;\n}\n.clean-instance-section .danger-warning .warning-title[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  font-size: 1.2em;\n  margin-bottom: 12px;\n}\n.clean-instance-section .danger-warning .warning-highlight[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  margin: 8px 0;\n}\n.clean-instance-section .job_buttons_section[data-v-ee1ac32d] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n  padding: 0 16px 16px 16px;\n}\n.clean-instance-section .danger-icon[data-v-ee1ac32d] {\n  margin-right: 4px;\n}'));
+      elementStyle.appendChild(document.createTextNode('@charset "UTF-8";\n.use-case-selection[data-v-cbe6b281] {\n  padding: 20px;\n}\n.use-case-header[data-v-cbe6b281] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.use-case-header h2[data-v-cbe6b281] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.use-case-header .subtitle[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.use-case-grid[data-v-cbe6b281] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 20px;\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.use-case-card[data-v-cbe6b281] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.use-case-card[data-v-cbe6b281]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.use-case-card.selected[data-v-cbe6b281] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.card-icon[data-v-cbe6b281] {\n  font-size: 48px;\n  margin-bottom: 16px;\n  text-align: center;\n}\n.card-title[data-v-cbe6b281] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.card-description[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.card-examples[data-v-cbe6b281] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.card-examples li[data-v-cbe6b281] {\n  padding: 4px 0;\n  padding-left: 20px;\n  position: relative;\n}\n.card-examples li[data-v-cbe6b281]::before {\n  content: "•";\n  position: absolute;\n  left: 8px;\n  color: var(--color-primary-element);\n}\n.selected-indicator[data-v-cbe6b281] {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-indicator .check-icon[data-v-cbe6b281] {\n  font-size: 14px;\n}.template-selection[data-v-4e395d60] {\n  padding: 20px;\n}\n.template-header[data-v-4e395d60] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.template-header h2[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.template-header .subtitle[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.upload-section[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 20px;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n}\n.upload-section .upload-error[data-v-4e395d60],\n.upload-section .upload-success[data-v-4e395d60] {\n  width: 100%;\n  max-width: 600px;\n}\n.help-section[data-v-4e395d60] {\n  width: 100%;\n  max-width: 700px;\n  margin-top: 20px;\n}\n.help-content[data-v-4e395d60] {\n  margin-top: 16px;\n  padding: 20px;\n  background: var(--color-main-background);\n  border-radius: var(--border-radius-large);\n  border: 1px solid var(--color-border);\n}\n.help-actions[data-v-4e395d60] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  margin: 16px 0;\n}\n.help-instructions[data-v-4e395d60] {\n  text-align: left;\n  margin-top: 20px;\n}\n.help-instructions h4[data-v-4e395d60] {\n  font-size: 14px;\n  font-weight: 600;\n  margin: 16px 0 8px 0;\n  color: var(--color-main-text);\n}\n.help-instructions ol[data-v-4e395d60], .help-instructions ul[data-v-4e395d60] {\n  margin: 8px 0;\n  padding-left: 24px;\n}\n.help-instructions ol li[data-v-4e395d60], .help-instructions ul li[data-v-4e395d60] {\n  margin: 6px 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.help-instructions .ai-list[data-v-4e395d60] {\n  list-style: none;\n  padding-left: 0;\n}\n.help-instructions .ai-list li[data-v-4e395d60] {\n  margin: 10px 0;\n  padding-left: 12px;\n}\n.help-instructions .ai-list li strong[data-v-4e395d60] {\n  color: var(--color-main-text);\n}\n.divider[data-v-4e395d60] {\n  text-align: center;\n  margin: 30px 0;\n  position: relative;\n}\n.divider[data-v-4e395d60]::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 50%;\n  height: 1px;\n  background: var(--color-border);\n  z-index: 0;\n}\n.divider span[data-v-4e395d60] {\n  background: var(--color-main-background);\n  padding: 0 16px;\n  color: var(--color-text-maxcontrast);\n  font-size: 13px;\n  position: relative;\n  z-index: 1;\n}\n.template-list[data-v-4e395d60] {\n  display: grid;\n  gap: 16px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.template-card[data-v-4e395d60] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.template-card[data-v-4e395d60]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n}\n.template-card.selected[data-v-4e395d60] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.template-card-header[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 12px;\n}\n.template-name[data-v-4e395d60] {\n  font-size: 18px;\n  font-weight: 600;\n  margin: 0;\n}\n.template-version[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  background: var(--color-background-dark);\n  padding: 2px 8px;\n  border-radius: var(--border-radius-pill);\n}\n.template-description[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.template-meta[data-v-4e395d60] {\n  margin-bottom: 16px;\n  padding-bottom: 16px;\n  border-bottom: 1px solid var(--color-border);\n}\n.meta-item[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 8px;\n  font-size: 13px;\n}\n.meta-label[data-v-4e395d60] {\n  font-weight: 600;\n  margin-right: 8px;\n  min-width: 80px;\n}\n.meta-value[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n}\n.template-stats[data-v-4e395d60] {\n  display: flex;\n  gap: 20px;\n  justify-content: space-around;\n}\n.stat-item[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  text-align: center;\n}\n.stat-value[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  color: var(--color-primary-element);\n}\n.stat-label[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 4px;\n}\n.selected-badge[data-v-4e395d60] {\n  position: absolute;\n  top: 16px;\n  right: 16px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-badge .check-icon[data-v-4e395d60] {\n  font-size: 14px;\n}.language-selection[data-v-e6e1081e] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.language-header[data-v-e6e1081e] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.language-header h2[data-v-e6e1081e] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.language-header .subtitle[data-v-e6e1081e] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.language-note[data-v-e6e1081e] {\n  margin-bottom: 30px;\n}\n.language-grid[data-v-e6e1081e] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n  gap: 16px;\n  margin-bottom: 30px;\n}\n.language-card[data-v-e6e1081e] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.language-card[data-v-e6e1081e]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.language-card.selected[data-v-e6e1081e] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  background: var(--color-primary-element-light);\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.language-flag[data-v-e6e1081e] {\n  font-size: 32px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n  margin-bottom: 8px;\n}\n.language-name[data-v-e6e1081e] {\n  font-size: 14px;\n  font-weight: 600;\n}\n.selected-check[data-v-e6e1081e] {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  width: 24px;\n  height: 24px;\n  background: var(--color-primary-element);\n  color: white;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 14px;\n}\n.selection-summary[data-v-e6e1081e] {\n  text-align: center;\n  padding: 16px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  font-size: 16px;\n}\n.selection-summary strong[data-v-e6e1081e] {\n  margin-right: 8px;\n}.preview-step[data-v-1aff519f] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.preview-header[data-v-1aff519f] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.preview-header h2[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.preview-header .subtitle[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.loading-state[data-v-1aff519f] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-loading[data-v-1aff519f] {\n  text-align: center;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n  margin-bottom: 20px;\n}\n.analysis-loading p[data-v-1aff519f] {\n  margin-top: 12px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-error[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.duplicate-notice[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.summary-card[data-v-1aff519f] {\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 24px;\n}\n.summary-card h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n  color: var(--color-primary-element);\n}\n.summary-stats[data-v-1aff519f] {\n  display: flex;\n  gap: 32px;\n  justify-content: center;\n}\n.stat-item[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 4px;\n}\n.stat-icon[data-v-1aff519f] {\n  font-size: 32px;\n}\n.stat-value[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n}\n.stat-value.stat-new[data-v-1aff519f] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-new[data-v-1aff519f] {\n    color: #3fb950;\n}\n}\n.stat-value.stat-existing[data-v-1aff519f] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-existing[data-v-1aff519f] {\n    color: #e09b13;\n}\n}\n.stat-label[data-v-1aff519f] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  text-transform: uppercase;\n}\n.sections-container[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.section-block[data-v-1aff519f] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n}\n.section-header[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 16px 20px;\n  cursor: pointer;\n  background: var(--color-background-hover);\n  transition: background 0.2s ease;\n}\n.section-header[data-v-1aff519f]:hover {\n  background: var(--color-background-dark);\n}\n.section-title[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.section-title h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin: 0;\n}\n.section-icon[data-v-1aff519f] {\n  font-size: 20px;\n}\n.section-count[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.section-status[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  margin-left: auto;\n}\n.status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 8px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.status-badge.status-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.status-badge.status-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.expand-icon[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 12px;\n}\n.section-content[data-v-1aff519f] {\n  padding: 12px;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.item-row[data-v-1aff519f] {\n  background: var(--color-background-hover);\n  border: 1px solid var(--color-border);\n  border-radius: var(--border-radius);\n  padding: 12px 16px;\n}\n.item-view[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 16px;\n}\n.item-info[data-v-1aff519f] {\n  flex: 1;\n}\n.item-header-row[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 4px;\n}\n.item-label[data-v-1aff519f] {\n  font-size: 15px;\n  font-weight: 600;\n  flex: 1;\n}\n.item-status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 10px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.item-status-badge.badge-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.item-status-badge.badge-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.item-type[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  font-family: monospace;\n  margin-bottom: 4px;\n}\n.item-description[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 8px;\n}\n.item-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n}\n.item-edit[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n.edit-form[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.edit-field[data-v-1aff519f] {\n  width: 100%;\n}\n.edit-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  justify-content: flex-end;\n}.summary-step[data-v-13b1c365] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.summary-header[data-v-13b1c365] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.summary-header h2[data-v-13b1c365] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.summary-header .subtitle[data-v-13b1c365] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.warning-note[data-v-13b1c365] {\n  margin-bottom: 30px;\n}\n.summary-box[data-v-13b1c365] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n}\n.summary-box h3[data-v-13b1c365] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 20px;\n  text-align: center;\n  color: var(--color-primary-element);\n}\n.summary-item[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 12px 0;\n}\n.summary-item .label[data-v-13b1c365] {\n  font-weight: 600;\n  color: var(--color-text-maxcontrast);\n}\n.summary-item .value[data-v-13b1c365] {\n  font-weight: 500;\n}\n.summary-divider[data-v-13b1c365] {\n  height: 1px;\n  background: var(--color-border);\n  margin: 16px 0;\n}\n.summary-total[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 16px;\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius);\n  font-size: 18px;\n  font-weight: 600;\n}\n.summary-total .value[data-v-13b1c365] {\n  color: var(--color-primary-element);\n}.importing-step[data-v-38620be8] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 400px;\n  padding: 40px;\n}\n.importing-content[data-v-38620be8] {\n  text-align: center;\n  max-width: 500px;\n}\n.importing-content h2[data-v-38620be8] {\n  font-size: 24px;\n  font-weight: 600;\n  margin: 24px 0 16px;\n}\n.importing-content .importing-message[data-v-38620be8] {\n  font-size: 16px;\n  color: var(--color-text-maxcontrast);\n  margin-bottom: 8px;\n}\n.importing-content .importing-submessage[data-v-38620be8] {\n  font-size: 14px;\n  color: var(--color-text-maxcontrast);\n}.results-step[data-v-0e206bd8] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.results-header[data-v-0e206bd8] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.results-header .success-icon[data-v-0e206bd8],\n.results-header .warning-icon[data-v-0e206bd8] {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 48px;\n  margin: 0 auto 20px;\n}\n.results-header .success-icon[data-v-0e206bd8] {\n  background: #1a7f37;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .success-icon[data-v-0e206bd8] {\n    background: #3fb950;\n}\n}\n.results-header .warning-icon[data-v-0e206bd8] {\n  background: #9a6700;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .warning-icon[data-v-0e206bd8] {\n    background: #e09b13;\n}\n}\n.results-header h2[data-v-0e206bd8] {\n  font-size: 28px;\n  font-weight: 600;\n}\n.result-section[data-v-0e206bd8] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 20px;\n}\n.result-section h3[data-v-0e206bd8] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n}\n.result-section.success-section[data-v-0e206bd8] {\n  border-color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section[data-v-0e206bd8] {\n    border-color: #3fb950;\n}\n}\n.result-section.success-section h3[data-v-0e206bd8] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section h3[data-v-0e206bd8] {\n    color: #3fb950;\n}\n}\n.result-section.skipped-section[data-v-0e206bd8] {\n  border-color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section[data-v-0e206bd8] {\n    border-color: #e09b13;\n}\n}\n.result-section.skipped-section h3[data-v-0e206bd8] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section h3[data-v-0e206bd8] {\n    color: #e09b13;\n}\n}\n.result-section.error-section[data-v-0e206bd8] {\n  border-color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section[data-v-0e206bd8] {\n    border-color: #f85149;\n}\n}\n.result-section.error-section h3[data-v-0e206bd8] {\n  color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section h3[data-v-0e206bd8] {\n    color: #f85149;\n}\n}\n.result-list[data-v-0e206bd8] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  max-height: 200px;\n  overflow-y: auto;\n}\n.result-list li[data-v-0e206bd8] {\n  padding: 8px 12px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  margin-bottom: 8px;\n  font-size: 14px;\n  font-family: monospace;\n}\n.result-list li[data-v-0e206bd8]:last-child {\n  margin-bottom: 0;\n}\n.results-actions[data-v-0e206bd8] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  padding-top: 30px;\n  border-top: 1px solid var(--color-border);\n}.wizard-container[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  min-height: 500px;\n  padding: 20px;\n}\n.wizard-progress[data-v-d2f4206c] {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 40px;\n  padding: 0 20px;\n}\n.progress-step[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex: 1;\n  position: relative;\n}\n.progress-step[data-v-d2f4206c]:not(:last-child)::after {\n  content: "";\n  position: absolute;\n  top: 18px;\n  left: 50%;\n  right: -50%;\n  height: 2px;\n  background-color: var(--color-border-dark);\n  z-index: -1;\n}\n.progress-step.completed[data-v-d2f4206c]::after {\n  background-color: var(--color-primary-element);\n}\n.progress-dot[data-v-d2f4206c] {\n  width: 36px;\n  height: 36px;\n  border-radius: 50%;\n  background-color: var(--color-background-dark);\n  border: 2px solid var(--color-border-dark);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: 600;\n  margin-bottom: 8px;\n  position: relative;\n  z-index: 1;\n}\n.progress-step.active .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-step.completed .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-label[data-v-d2f4206c] {\n  font-size: 12px;\n  text-align: center;\n  color: var(--color-text-maxcontrast);\n}\n.progress-step.active .progress-label[data-v-d2f4206c] {\n  color: var(--color-main-text);\n  font-weight: 600;\n}\n.wizard-content[data-v-d2f4206c] {\n  flex: 1;\n  overflow-y: auto;\n  padding: 20px 0;\n}\n.wizard-actions[data-v-d2f4206c] {\n  display: flex;\n  gap: 12px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.spacer[data-v-d2f4206c] {\n  flex: 1;\n}.disclaimer_group {\n  display: flex;\n  align-items: center;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.disclaimer_group .grow_title {\n  display: flex;\n  flex-grow: 1;\n  margin-inline-end: 12px;\n}\n.disclaimer_group .grow_title .material-design-icon {\n  margin-inline-start: 4px;\n}.user_settings {\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.user_settings .job_buttons_section {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n}\n.user_settings .job_hints p {\n  margin-bottom: 0.5em;\n}\n.families-manager[data-v-b0578289] {\n  padding: 20px;\n}\n.families-list[data-v-b0578289] {\n  margin-bottom: 30px;\n}\n.families-list h3[data-v-b0578289] {\n  margin-bottom: 15px;\n  color: var(--color-text-lighter);\n}\n.family-item[data-v-b0578289] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  margin-bottom: 10px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  cursor: pointer;\n  transition: background-color 0.2s ease;\n}\n.family-item[data-v-b0578289]:hover {\n  background: var(--color-background-hover);\n}\n.family-content[data-v-b0578289] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  flex: 1;\n}\n.family-icon[data-v-b0578289] {\n  width: 50px;\n  height: 50px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 10px;\n  font-size: 24px;\n  flex-shrink: 0;\n}\n.family-info h4[data-v-b0578289] {\n  margin: 0 0 5px 0;\n  color: var(--color-text-light);\n}\n.family-type[data-v-b0578289] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.family-description[data-v-b0578289] {\n  margin: 5px 0 0 0;\n  color: var(--color-text-lighter);\n}\n.family-stats[data-v-b0578289] {\n  margin-top: 8px;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n}\n.types-count[data-v-b0578289] {\n  font-size: 0.8em;\n  color: var(--color-primary);\n  background: var(--color-primary-element-light);\n  padding: 2px 8px;\n  border-radius: 12px;\n}\n.group-types-count[data-v-b0578289] {\n  font-size: 0.8em;\n  background: #d4f5e1;\n  color: #1b7a45;\n  padding: 2px 8px;\n  border-radius: 12px;\n}\n.family-actions[data-v-b0578289] {\n  display: flex;\n  gap: 10px;\n}\n.add-family-form[data-v-b0578289] {\n  padding: 20px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-b0578289] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.form-row[data-v-b0578289] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 15px;\n  align-items: start;\n}\n.form-field[data-v-b0578289] {\n  margin: 0;\n}\n.full-width[data-v-b0578289] {\n  grid-column: 1 / -1;\n}\n.form-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-start;\n}\n.modal-overlay[data-v-b0578289] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-b0578289] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 800px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-b0578289] {\n  width: 900px;\n  max-width: 95vw;\n}\n.modal-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 20px;\n}\n\n.inquiry-types-manager[data-v-f2f32798] {\n  padding: 20px;\n  max-width: 1200px;\n}\n\n/* ============ HEADER ============ */\n.manager-header[data-v-f2f32798] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-end;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.header-text[data-v-f2f32798] {\n  flex: 1;\n  min-width: 280px;\n}\n.back-btn[data-v-f2f32798] {\n  margin-bottom: 12px;\n}\n.manager-header h2[data-v-f2f32798] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-f2f32798] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-f2f32798] {\n  display: flex;\n  align-items: flex-end;\n  gap: 16px;\n  flex-wrap: wrap;\n}\n.family-stats[data-v-f2f32798] {\n  display: flex;\n  gap: 10px;\n}\n.stat-block[data-v-f2f32798] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  min-width: 90px;\n  padding: 8px 14px;\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  border: 1px solid var(--color-border);\n}\n.stat-block.accent[data-v-f2f32798] {\n  background: var(--color-primary-element-light);\n  border-color: var(--color-primary-element);\n}\n.stat-value[data-v-f2f32798] {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: var(--color-primary);\n  line-height: 1.1;\n}\n.stat-block.accent .stat-value[data-v-f2f32798] {\n  color: var(--color-primary);\n}\n.stat-label[data-v-f2f32798] {\n  font-size: 0.72em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--color-text-lighter);\n}\n.search-field[data-v-f2f32798] {\n  width: 240px;\n}\n\n/* ============ TYPES LIST ============ */\n.types-list[data-v-f2f32798] {\n  margin-bottom: 40px;\n}\n.count-badge[data-v-f2f32798] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.type-card[data-v-f2f32798] {\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  margin-bottom: 10px;\n  overflow: hidden;\n  transition: background 0.2s;\n  border: 2px solid transparent;\n}\n.type-card[data-v-f2f32798]:hover {\n  background: var(--color-background-hover);\n}\n.type-card.expanded[data-v-f2f32798] {\n  border-color: var(--color-primary-element);\n}\n.type-row[data-v-f2f32798] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-f2f32798] {\n  width: 44px;\n  height: 44px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-f2f32798] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-f2f32798] {\n  margin: 0;\n}\n.type-key[data-v-f2f32798] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-f2f32798] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.usage-badge[data-v-f2f32798] {\n  font-size: 0.72em;\n  background: var(--color-success, #2ecc71);\n  color: white;\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.type-description[data-v-f2f32798] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-f2f32798] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.type-actions[data-v-f2f32798] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n}\n\n/* ============ DETAILS ============ */\n.type-details[data-v-f2f32798] {\n  padding: 0 16px 20px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));\n  gap: 18px;\n}\n.detail-section h5[data-v-f2f32798] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section.full-width[data-v-f2f32798] {\n  grid-column: 1 / -1;\n}\n.group-pill[data-v-f2f32798] {\n  background: var(--color-success, #2ecc71) !important;\n  color: white !important;\n}\n\n/* ============ ADD FORM ============ */\n.add-type-form[data-v-f2f32798] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 12px;\n}\n.form-grid[data-v-f2f32798] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-f2f32798] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-f2f32798] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-f2f32798] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-f2f32798] > * {\n  flex: 1;\n  min-width: 140px;\n}\n.inline-editor[data-v-f2f32798] .button-vue {\n  flex: 0 0 auto;\n}\n\n/* ============ PILLS ============ */\n.pill-list[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-f2f32798] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-f2f32798] {\n  cursor: pointer;\n}\n.pill.removable[data-v-f2f32798]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.form-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-f2f32798] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-f2f32798] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* ============ MODAL ============ */\n.modal-overlay[data-v-f2f32798] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-f2f32798] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-f2f32798] {\n  width: 1000px;\n}\n.modal-header[data-v-f2f32798] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-f2f32798] {\n  margin: 0;\n}\n.tabs[data-v-f2f32798] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n  flex-wrap: wrap;\n}\n.tab[data-v-f2f32798] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-f2f32798] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-f2f32798] {\n  min-height: 220px;\n}\n.modal-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n  padding-top: 16px;\n  border-top: 1px solid var(--color-border);\n}\n\n.option-families-manager[data-v-42dbd4d0] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n}\n.manager-header h2[data-v-42dbd4d0] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.search-field[data-v-42dbd4d0] {\n  width: 260px;\n}\n.count-badge[data-v-42dbd4d0] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.families-list[data-v-42dbd4d0] {\n  margin-bottom: 40px;\n}\n.family-card[data-v-42dbd4d0] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 12px;\n  overflow: hidden;\n  transition: background 0.15s ease;\n}\n.family-card[data-v-42dbd4d0]:hover {\n  background: var(--color-background-hover);\n}\n.family-row[data-v-42dbd4d0] {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  padding: 16px;\n  cursor: pointer;\n}\n.family-icon[data-v-42dbd4d0] {\n  width: 48px;\n  height: 48px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  border-radius: 12px;\n  flex-shrink: 0;\n}\n.family-info[data-v-42dbd4d0] {\n  flex: 1;\n  min-width: 0;\n}\n.family-title-row[data-v-42dbd4d0] {\n  display: flex;\n  align-items: baseline;\n  gap: 10px;\n}\n.family-title-row h4[data-v-42dbd4d0] {\n  margin: 0;\n}\n.family-type[data-v-42dbd4d0] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n}\n.family-description[data-v-42dbd4d0] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.family-stats[data-v-42dbd4d0] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-42dbd4d0] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.types[data-v-42dbd4d0] {\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n}\n.stat-chip.layout[data-v-42dbd4d0] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.family-actions[data-v-42dbd4d0] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.family-details[data-v-42dbd4d0] {\n  padding: 0 16px 16px 80px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-42dbd4d0] {\n  margin: 0 0 6px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section pre[data-v-42dbd4d0] {\n  background: var(--color-background-darker, #1a1a1a);\n  color: var(--color-text-light);\n  padding: 10px;\n  border-radius: 6px;\n  font-size: 0.8em;\n  overflow: auto;\n  max-height: 200px;\n  margin: 0;\n}\n.add-family-form[data-v-42dbd4d0] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 30px;\n}\n.form-grid[data-v-42dbd4d0] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.form-field[data-v-42dbd4d0] {\n  margin: 0;\n}\n.full-width[data-v-42dbd4d0] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-42dbd4d0] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-42dbd4d0] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n}\n.inline-editor .inline-input[data-v-42dbd4d0] {\n  flex: 1;\n}\n.inline-editor.action-editor[data-v-42dbd4d0] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr auto;\n  gap: 8px;\n}\n.pill-list[data-v-42dbd4d0] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-42dbd4d0] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-42dbd4d0] {\n  cursor: pointer;\n}\n.pill.removable[data-v-42dbd4d0]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.action-list[data-v-42dbd4d0] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.action-list li[data-v-42dbd4d0] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.action-list code[data-v-42dbd4d0] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-42dbd4d0] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* ============ MODAL ============ */\n.modal-overlay[data-v-42dbd4d0] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-42dbd4d0] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n}\n.modal-header[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-42dbd4d0] {\n  margin: 0;\n}\n.tabs[data-v-42dbd4d0] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n}\n.tab[data-v-42dbd4d0] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-42dbd4d0] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-42dbd4d0] {\n  min-height: 220px;\n}\n.help-text[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n  margin: 0 0 10px 0;\n}\n.json-editor[data-v-42dbd4d0] {\n  width: 100%;\n  font-family: monospace;\n  font-size: 0.85em;\n  padding: 12px;\n  border-radius: 6px;\n  border: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  color: var(--color-text-light);\n  resize: vertical;\n}\n.modal-actions[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.option-types-manager[data-v-0457f204] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-0457f204] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.manager-header h2[data-v-0457f204] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-0457f204] {\n  display: flex;\n  gap: 10px;\n  align-items: flex-end;\n}\n.filter-select[data-v-0457f204] {\n  min-width: 200px;\n}\n.search-field[data-v-0457f204] {\n  width: 240px;\n}\n.count-badge[data-v-0457f204] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.types-list[data-v-0457f204] {\n  margin-bottom: 40px;\n}\n.type-card[data-v-0457f204] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 10px;\n  overflow: hidden;\n}\n.type-card[data-v-0457f204]:hover {\n  background: var(--color-background-hover);\n}\n.type-row[data-v-0457f204] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-0457f204] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-0457f204] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-0457f204] {\n  margin: 0;\n}\n.type-key[data-v-0457f204] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-0457f204] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.type-description[data-v-0457f204] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-0457f204] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.support[data-v-0457f204] {\n  background: var(--color-success, #2ecc71);\n  color: white;\n}\n.stat-chip.title-flag[data-v-0457f204] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.type-actions[data-v-0457f204] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.type-details[data-v-0457f204] {\n  padding: 0 16px 16px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-0457f204] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.mini-table[data-v-0457f204] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.85em;\n}\n.mini-table th[data-v-0457f204],\n.mini-table td[data-v-0457f204] {\n  padding: 6px 8px;\n  text-align: left;\n  border-bottom: 1px solid var(--color-border);\n}\n.mini-table th[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  font-weight: 500;\n}\n.add-type-form[data-v-0457f204] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n}\n.form-grid[data-v-0457f204] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-0457f204] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-0457f204] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-0457f204] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-0457f204] > * {\n  flex: 1;\n  min-width: 120px;\n}\n.inline-editor.field-editor[data-v-0457f204] {\n  display: grid;\n  grid-template-columns: 1.2fr 1.2fr 1fr auto auto;\n  gap: 8px;\n  align-items: flex-end;\n}\n.pill-list[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-0457f204] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-0457f204] {\n  cursor: pointer;\n}\n.pill.removable[data-v-0457f204]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.field-list[data-v-0457f204] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.field-list li[data-v-0457f204] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list code[data-v-0457f204] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-0457f204] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-0457f204] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* MODAL */\n.modal-overlay[data-v-0457f204] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-0457f204] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-header[data-v-0457f204] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-0457f204] {\n  margin: 0;\n}\n.tabs[data-v-0457f204] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n}\n.tab[data-v-0457f204] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-0457f204] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-0457f204] {\n  min-height: 220px;\n}\n.modal-actions[data-v-0457f204] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.group-types-manager[data-v-2a51940c] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-2a51940c] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.manager-header h2[data-v-2a51940c] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-2a51940c] {\n  display: flex;\n  gap: 10px;\n  align-items: flex-end;\n}\n.filter-select[data-v-2a51940c] {\n  min-width: 200px;\n}\n.search-field[data-v-2a51940c] {\n  width: 240px;\n}\n.count-badge[data-v-2a51940c] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.types-list[data-v-2a51940c] {\n  margin-bottom: 40px;\n}\n.type-card[data-v-2a51940c] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 10px;\n  overflow: hidden;\n}\n.type-card[data-v-2a51940c]:hover {\n  background: var(--color-background-hover);\n}\n.type-row[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-2a51940c] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-2a51940c] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-2a51940c] {\n  margin: 0;\n}\n.type-key[data-v-2a51940c] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-2a51940c] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.root-badge[data-v-2a51940c] {\n  font-size: 0.72em;\n  background: var(--color-success, #2ecc71);\n  color: white;\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n}\n.type-description[data-v-2a51940c] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-2a51940c] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.layout[data-v-2a51940c] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.type-actions[data-v-2a51940c] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.type-details[data-v-2a51940c] {\n  padding: 0 16px 16px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-2a51940c] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section pre[data-v-2a51940c] {\n  background: var(--color-background-darker, #1a1a1a);\n  color: var(--color-text-light);\n  padding: 10px;\n  border-radius: 6px;\n  font-size: 0.8em;\n  overflow: auto;\n  max-height: 200px;\n  margin: 0;\n}\n.mini-table[data-v-2a51940c] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.85em;\n}\n.mini-table th[data-v-2a51940c],\n.mini-table td[data-v-2a51940c] {\n  padding: 6px 8px;\n  text-align: left;\n  border-bottom: 1px solid var(--color-border);\n}\n.mini-table th[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-weight: 500;\n}\n.add-type-form[data-v-2a51940c] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n}\n.form-grid[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-2a51940c] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-2a51940c] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-2a51940c] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-2a51940c] > * {\n  flex: 1;\n  min-width: 120px;\n}\n.inline-editor.field-editor[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: 1.2fr 1.2fr 1fr auto auto;\n  gap: 8px;\n  align-items: flex-end;\n}\n.inline-editor.action-editor[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr auto;\n  gap: 8px;\n}\n.pill-list[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-2a51940c] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-2a51940c] {\n  cursor: pointer;\n}\n.pill.removable[data-v-2a51940c]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.action-list[data-v-2a51940c] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.action-list li[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list[data-v-2a51940c] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.field-list li[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list code[data-v-2a51940c],\n.action-list code[data-v-2a51940c] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-2a51940c] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-2a51940c] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n.help-text[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n  margin: 0 0 10px 0;\n}\n\n/* MODAL */\n.modal-overlay[data-v-2a51940c] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-2a51940c] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-header[data-v-2a51940c] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-2a51940c] {\n  margin: 0;\n}\n.tabs[data-v-2a51940c] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n  flex-wrap: wrap;\n}\n.tab[data-v-2a51940c] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-2a51940c] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-2a51940c] {\n  min-height: 220px;\n}\n.json-editor[data-v-2a51940c] {\n  width: 100%;\n  font-family: monospace;\n  font-size: 0.85em;\n  padding: 12px;\n  border-radius: 6px;\n  border: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  color: var(--color-text-light);\n  resize: vertical;\n}\n.modal-actions[data-v-2a51940c] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.type-rights[data-v-60290e39] {\n  padding: 20px;\n}\n.header[data-v-60290e39] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-60290e39] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.description[data-v-60290e39] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.settings-container[data-v-60290e39] {\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.settings-list[data-v-60290e39] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.setting-item[data-v-60290e39] {\n  padding: 15px;\n  background-color: var(--color-background-darker);\n  border-radius: 8px;\n}\n.setting-item label[data-v-60290e39] {\n  display: block;\n  margin-bottom: 8px;\n  font-weight: bold;\n}\n.editor-select[data-v-60290e39] {\n  max-width: 250px;\n  margin-top: 8px;\n}\n.setting-description[data-v-60290e39] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n.engine-mode-setting[data-v-60290e39] {\n  margin-left: 24px;\n  border-left: 2px solid var(--color-border);\n  padding-left: 16px;\n}\n.setting-label[data-v-60290e39] {\n  font-weight: 600;\n  margin-bottom: 12px;\n  color: var(--color-text-lighter);\n}\n.engine-picker[data-v-60290e39] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  padding: 10px 12px;\n  background: var(--color-main-background);\n  border: 1px solid var(--color-border);\n  border-radius: 8px;\n}\n.engine-picker-info[data-v-60290e39] {\n  display: flex;\n  align-items: baseline;\n  gap: 6px;\n}\n.engine-name[data-v-60290e39] {\n  font-weight: 600;\n  color: var(--color-main-text);\n}\n.engine-id[data-v-60290e39] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n}\n\n.type-status[data-v-832d89d2] {\n  padding: 20px;\n}\n.header[data-v-832d89d2] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-832d89d2] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.description[data-v-832d89d2] {\n  margin-bottom: 25px;\n  color: var(--color-text-lighter);\n}\n.status-management[data-v-832d89d2] {\n  max-width: 1000px;\n}\n.status-list[data-v-832d89d2] {\n  margin-bottom: 30px;\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.empty-state[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n.status-items[data-v-832d89d2] {\n  display: flex;\n  flex-direction: column;\n  gap: 15px;\n}\n.status-item[data-v-832d89d2] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  background-color: var(--color-background-darker);\n  border-radius: 8px;\n  border-left: 4px solid var(--color-primary);\n}\n.status-content[data-v-832d89d2] {\n  display: flex;\n  align-items: flex-start;\n  gap: 15px;\n  flex: 1;\n}\n.status-icon[data-v-832d89d2] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background-color: var(--color-primary);\n  color: white;\n  border-radius: 8px;\n  flex-shrink: 0;\n}\n.status-icon[data-v-832d89d2] svg {\n  fill: white;\n}\n.status-info h4[data-v-832d89d2] {\n  margin: 0 0 5px 0;\n  font-weight: 600;\n}\n.status-key[data-v-832d89d2] {\n  margin: 0 0 8px 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  font-family: monospace;\n}\n.status-description[data-v-832d89d2] {\n  margin: 0 0 10px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.95em;\n}\n.status-properties[data-v-832d89d2] {\n  display: flex;\n  gap: 10px;\n}\n.status-badge[data-v-832d89d2] {\n  padding: 4px 8px;\n  border-radius: 12px;\n  font-size: 0.8em;\n  font-weight: 600;\n}\n.status-badge.final[data-v-832d89d2] {\n  background-color: var(--color-success);\n  color: white;\n}\n.status-badge.non-final[data-v-832d89d2] {\n  background-color: var(--color-warning);\n  color: white;\n}\n.status-actions[data-v-832d89d2] {\n  display: flex;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.add-status-form[data-v-832d89d2] {\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-832d89d2] {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 20px;\n  align-items: start;\n}\n.checkbox-field[data-v-832d89d2] {\n  grid-column: span 2;\n}\n.field-description[data-v-832d89d2] {\n  margin: 5px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n}\n.modal-overlay[data-v-832d89d2] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 1000;\n}\n.modal-content[data-v-832d89d2] {\n  background-color: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 600px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-actions[data-v-832d89d2] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.no-selection[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n@media (max-width: 768px) {\n.form-grid[data-v-832d89d2] {\n    grid-template-columns: 1fr;\n}\n.status-item[data-v-832d89d2] {\n    flex-direction: column;\n    align-items: stretch;\n    gap: 15px;\n}\n.status-actions[data-v-832d89d2] {\n    justify-content: center;\n}\n}\n\n.type-settings-modal[data-v-077dce28] {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  min-height: 600px;\n  width: 100%;\n}\n.modal-header[data-v-077dce28] {\n  padding: 25px;\n  border-bottom: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  flex-shrink: 0;\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.type-info[data-v-077dce28] {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n}\n.type-icon[data-v-077dce28] {\n  width: 60px;\n  height: 60px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 12px;\n  font-size: 28px;\n  flex-shrink: 0;\n}\n.type-details h3[data-v-077dce28] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-light);\n  font-size: 1.5em;\n  font-weight: 600;\n}\n.type-key[data-v-077dce28] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 1em;\n  background: var(--color-background-darker);\n  padding: 4px 8px;\n  border-radius: 4px;\n  display: inline-block;\n}\n.close-button[data-v-077dce28] {\n  background: var(--color-background-darker);\n  border: 1px solid var(--color-border);\n  padding: 8px 16px;\n  border-radius: 4px;\n  cursor: pointer;\n  color: var(--color-text-light);\n}\n.close-button[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n}\n\n/* Menu simple */\n.simple-menu[data-v-077dce28] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n}\n.menu-item[data-v-077dce28] {\n  flex: 1;\n  background: none;\n  border: none;\n  padding: 16px 20px;\n  color: var(--color-text-lighter);\n  cursor: pointer;\n  transition: all 0.2s ease;\n  border-bottom: 3px solid transparent;\n  font-size: 1em;\n  font-weight: 500;\n}\n.menu-item[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n}\n.menu-item.active[data-v-077dce28] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  background: var(--color-background-darker);\n}\n\n/* Contenu */\n.settings-content[data-v-077dce28] {\n  flex: 1;\n  padding: 30px;\n  overflow-y: auto;\n  background: var(--color-main-background);\n}\n\n.admin-settings-container[data-v-cd782848] {\n  min-height: 600px;\n  background: var(--color-main-background);\n  padding: 20px;\n}\n\n/* ---------- LEVEL 1 ---------- */\n.domain-tabs[data-v-cd782848] {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 24px;\n}\n.domain-tab[data-v-cd782848] {\n  flex: 1;\n  padding: 14px 20px;\n  background: var(--color-background-dark);\n  border: 2px solid transparent;\n  border-radius: 8px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  font-size: 1.05em;\n  font-weight: 600;\n  text-align: center;\n  transition: all 0.15s ease;\n}\n.domain-tab[data-v-cd782848]:hover {\n  background: var(--color-background-hover);\n  color: var(--color-main-text);\n}\n.domain-tab.active[data-v-cd782848] {\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  border-color: var(--color-primary);\n}\n\n/* ---------- LEVEL 2 — Family header ---------- */\n.family-header[data-v-cd782848] {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n  padding: 16px 20px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 16px;\n}\n.family-title[data-v-cd782848] {\n  display: flex;\n  align-items: baseline;\n  gap: 10px;\n  flex: 1;\n  min-width: 0;\n}\n.family-title h2[data-v-cd782848] {\n  margin: 0;\n  font-size: 1.15em;\n}\n.family-key[data-v-cd782848] {\n  font-size: 0.85em;\n  background: var(--color-background-hover);\n  padding: 2px 8px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n\n/* ---------- LEVEL 2 — Sub-tabs ---------- */\n.sub-tabs[data-v-cd782848] {\n  display: flex;\n  gap: 2px;\n  border-bottom: 2px solid var(--color-border);\n  margin-bottom: 24px;\n}\n.sub-tabs.single[data-v-cd782848] {\n  border-bottom: 1px solid var(--color-border);\n}\n.sub-tab[data-v-cd782848] {\n  background: transparent;\n  border: none;\n  padding: 12px 22px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 3px solid transparent;\n  font-size: 0.95em;\n  font-weight: 500;\n  margin-bottom: -2px;\n  transition: all 0.15s ease;\n}\n.sub-tab[data-v-cd782848]:hover:not(:disabled) {\n  color: var(--color-main-text);\n  background: var(--color-background-hover);\n}\n.sub-tab.active[data-v-cd782848] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.sub-tab[data-v-cd782848]:disabled {\n  cursor: default;\n  opacity: 1;\n}\n\n/* ---------- Content ---------- */\n.settings-content[data-v-cd782848] {\n  flex: 1;\n  overflow-y: auto;\n}\n[data-v-cd782848] .large-modal {\n  --width: 95vw;\n  --height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n[data-v-cd782848] .large-modal .modal-container {\n  width: 95vw;\n  height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n\n.tree-item[data-v-37a5142a] {\n  margin-bottom: 8px;\n}\n.tree-node[data-v-37a5142a] {\n  display: flex;\n  align-items: center;\n  padding: 8px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.tree-label[data-v-37a5142a] {\n  flex-grow: 1;\n  font-weight: bold;\n}\n.tree-actions[data-v-37a5142a] {\n  display: flex;\n  gap: 8px;\n}\n.tree-children[data-v-37a5142a] {\n  margin-left: 20px;\n  margin-top: 8px;\n}\n\n.category-location-manager[data-v-da2e3bfe] {\n  padding: 0;\n  max-width: 1200px;\n  margin: 0 auto;\n  height: auto;\n  min-height: 80vh;\n  background: var(--color-main-background);\n  border-radius: 12px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n}\n\n/* Menu simple appliqué aux tabs - Style forcé */\n.tabs[data-v-da2e3bfe] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n  border-radius: 12px 12px 0 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n  flex: 1 !important;\n  background: none !important;\n  border: none !important;\n  padding: 16px 20px !important;\n  color: var(--color-text-lighter) !important;\n  cursor: pointer;\n  transition: all 0.2s ease !important;\n  border-bottom: 3px solid transparent !important;\n  font-size: 1em !important;\n  font-weight: 500 !important;\n  margin: 0 !important;\n  border-radius: 0 !important;\n  box-shadow: none !important;\n  min-height: auto !important;\n  display: flex !important;\n  align-items: center !important;\n  justify-content: center !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue:hover {\n  background: var(--color-background-hover) !important;\n  color: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n  color: var(--color-primary) !important;\n  border-bottom-color: var(--color-primary) !important;\n  background: var(--color-background-darker) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary {\n  --button-background-hover: var(--color-background-hover) !important;\n  --button-color-hover: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary.active {\n  --button-background: var(--color-background-darker) !important;\n  --button-color: var(--color-primary) !important;\n  --button-border-color: transparent !important;\n}\n.tab-content[data-v-da2e3bfe] {\n  margin-top: 0;\n  background: var(--color-main-background);\n  border-radius: 0 0 12px 12px;\n  padding: 30px;\n  height: auto;\n  overflow: visible;\n  flex: 1;\n}\n.add-form[data-v-da2e3bfe] {\n  margin-bottom: 30px;\n  padding: 25px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  border: 1px solid var(--color-border);\n}\n.add-form h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n}\n.form-fields[data-v-da2e3bfe] {\n  display: flex;\n  gap: 15px;\n  align-items: end;\n  flex-wrap: wrap;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n.form-fields .nc-select[data-v-da2e3bfe] {\n  flex: 1;\n  min-width: 200px;\n}\n.tree-view[data-v-da2e3bfe] {\n  margin-top: 30px;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tree-view h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n  padding-bottom: 10px;\n  border-bottom: 2px solid var(--color-border);\n}\n.tree-container[data-v-da2e3bfe] {\n  margin-top: 15px;\n  border: 1px solid var(--color-border);\n  border-radius: 8px;\n  padding: 20px;\n  background: var(--color-background-dark);\n  max-height: 500px;\n  overflow-y: auto;\n  flex: 1;\n}\n.loading[data-v-da2e3bfe],\n.error[data-v-da2e3bfe] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n  font-size: 16px;\n}\n.error[data-v-da2e3bfe] {\n  color: var(--color-error);\n  background: var(--color-error-background);\n  border: 1px solid var(--color-error-border);\n  border-radius: 8px;\n  margin: 20px 0;\n}\n.modal[data-v-da2e3bfe] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n  backdrop-filter: blur(4px);\n}\n.modal-content[data-v-da2e3bfe] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  min-width: 400px;\n  max-width: 500px;\n  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);\n  border: 1px solid var(--color-border);\n  max-height: 80vh;\n  overflow-y: auto;\n}\n.modal-content h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 20px;\n}\n.modal-actions[data-v-da2e3bfe] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 12px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  max-height: calc(100vh - 100px);\n  overflow-y: auto;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n/* Responsive design */\n@media (max-width: 768px) {\n.category-location-manager[data-v-da2e3bfe] {\n    padding: 0;\n    min-height: auto;\n    margin: 10px;\n}\n.tabs[data-v-da2e3bfe] {\n    flex-direction: column;\n    gap: 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n    padding: 16px 20px !important;\n    border-bottom: 2px solid transparent !important;\n    border-right: 3px solid transparent !important;\n    text-align: left !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n    border-bottom-color: transparent !important;\n    border-right-color: var(--color-primary) !important;\n}\n.tab-content[data-v-da2e3bfe] {\n    padding: 20px;\n}\n.form-fields[data-v-da2e3bfe] {\n    flex-direction: column;\n    align-items: stretch;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n  .form-fields .nc-select[data-v-da2e3bfe] {\n    min-width: auto;\n}\n.modal-content[data-v-da2e3bfe] {\n    min-width: auto;\n    margin: 20px;\n    padding: 20px;\n    max-height: 70vh;\n}\n.tree-container[data-v-da2e3bfe] {\n    max-height: 400px;\n}\n}\n.tab-content[data-v-da2e3bfe] {\n  animation: fadeIn-da2e3bfe 0.3s ease-in-out;\n}\n@keyframes fadeIn-da2e3bfe {\nfrom {\n    opacity: 0;\n    transform: translateY(10px);\n}\nto {\n    opacity: 1;\n    transform: translateY(0);\n}\n}\n.category-location-manager[data-v-da2e3bfe] {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tab-content[data-v-da2e3bfe] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n.rights-management[data-v-fb7cbc5e] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-fb7cbc5e] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-fb7cbc5e] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-fb7cbc5e] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-fb7cbc5e] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n\n.rights-management[data-v-14c25bb2] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-14c25bb2] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-14c25bb2] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-14c25bb2] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-14c25bb2] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n.clean-instance-section[data-v-ee1ac32d] {\n  margin-top: 24px;\n  border: 2px solid var(--color-error);\n}\n.clean-instance-section .danger-warning[data-v-ee1ac32d] {\n  background-color: var(--color-background-darker);\n  padding: 16px;\n  border-radius: 8px;\n}\n.clean-instance-section .danger-warning .warning-title[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  font-size: 1.2em;\n  margin-bottom: 12px;\n}\n.clean-instance-section .danger-warning .warning-highlight[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  margin: 8px 0;\n}\n.clean-instance-section .job_buttons_section[data-v-ee1ac32d] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n  padding: 0 16px 16px 16px;\n}\n.clean-instance-section .danger-icon[data-v-ee1ac32d] {\n  margin-right: 4px;\n}'));
       document.head.appendChild(elementStyle);
     }
   } catch (e) {
@@ -12,12 +12,28 @@
 })();
 const appName = "agora";
 const appVersion = "1.8.0";
-import { G as defineStore, a4 as generateOcsUrl, a5 as cancelableClient, d as defineComponent, v as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, F as Fragment, L as renderList, K as normalizeClass, E as createTextVNode, k as createCommentVNode, b as computed, q as onMounted, s as ref, C as NcButton, a6 as NcEmptyContent, x as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, D as NcModal, h as resolveDynamicComponent, m as mergeProps, a7 as withDirectives, a8 as vShow, a9 as vModelText, H as purify, J as withModifiers, aa as resolveComponent, n as normalizeStyle, y as normalizeProps, z as guardReactiveProps, A as createApp, B as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-OKzysSa9.chunk.mjs";
-import { I as InputDiv, b as NcAppSettingsDialog, N as NcSettingsSection } from "./index-t0SVtQDb.chunk.mjs";
-import { L as Logger, i as useAppSettingsStore, j as gfmHeadingId, k, l as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons, a as showSuccess } from "./NcDashboardWidget-CvpYMKur-CYIHdgdM.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-B8vV-Rsn.chunk.mjs";
-import { _ as _sfc_main$B, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-D_ssz6sB-DNj6K9-f.chunk.mjs";
-import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-TaxAOBDY.chunk.mjs";
+import { G as defineStore, ab as generateOcsUrl, ac as cancelableClient, d as defineComponent, v as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, F as Fragment, L as renderList, K as normalizeClass, E as createTextVNode, k as createCommentVNode, b as computed, q as onMounted, s as ref, C as NcButton, ad as NcEmptyContent, x as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, D as NcModal, h as resolveDynamicComponent, m as mergeProps, a6 as withDirectives, ae as vShow, a7 as vModelText, H as purify_default, J as withModifiers, af as withKeys, ag as resolveComponent, n as normalizeStyle, y as normalizeProps, z as guardReactiveProps, A as createApp, B as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-C-yYeRXM.chunk.mjs";
+import { I as InputDiv, d as NcAppSettingsDialog, N as NcSettingsSection } from "./index-DAGUAe1W.chunk.mjs";
+import { L as Logger, j as useAppSettingsStore, k as gfmHeadingId, l as k, m as adminJobs, I as InquiryGeneralIcons, s as showError, a as showSuccess, n as InquiryOptionIcons, E as ENGINE_DEFINITIONS, S as StatusIcons } from "./NcDashboardWidget-CvpYMKur-CrNih8yo.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-G11anvGl.chunk.mjs";
+import { _ as _sfc_main$E, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-D_ssz6sB-DxKpx349.chunk.mjs";
+import { c as createLucideIcon, N as NcNoteCard, a as NcTextArea, E as EngineSelectorModal, R as RadioGroupDiv, b as CardDiv } from "./markdown-CtDZNxWy.chunk.mjs";
+/**
+ * @license lucide-vue-next v0.566.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const Pencil = createLucideIcon("pencil", [
+  [
+    "path",
+    {
+      d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
+      key: "1a8usu"
+    }
+  ],
+  ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
+]);
 const useTemplateWizardStore = defineStore("templateWizard", {
   state: () => ({
     isOpen: false,
@@ -333,7 +349,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     }
   }
 });
-const _sfc_main$A = /* @__PURE__ */ defineComponent({
+const _sfc_main$D = /* @__PURE__ */ defineComponent({
   __name: "StepUseCaseSelection",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -398,22 +414,22 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$A = { class: "use-case-selection" };
-const _hoisted_2$s = { class: "use-case-header" };
-const _hoisted_3$m = { class: "subtitle" };
-const _hoisted_4$k = { class: "use-case-grid" };
-const _hoisted_5$g = ["onClick"];
-const _hoisted_6$f = { class: "card-icon" };
-const _hoisted_7$e = { class: "card-title" };
-const _hoisted_8$e = { class: "card-description" };
-const _hoisted_9$d = { class: "card-examples" };
-const _hoisted_10$a = {
+const _hoisted_1$D = { class: "use-case-selection" };
+const _hoisted_2$v = { class: "use-case-header" };
+const _hoisted_3$p = { class: "subtitle" };
+const _hoisted_4$n = { class: "use-case-grid" };
+const _hoisted_5$j = ["onClick"];
+const _hoisted_6$i = { class: "card-icon" };
+const _hoisted_7$i = { class: "card-title" };
+const _hoisted_8$i = { class: "card-description" };
+const _hoisted_9$g = { class: "card-examples" };
+const _hoisted_10$d = {
   key: 0,
   class: "selected-indicator"
 };
-function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$A, [
-    createBaseVNode("div", _hoisted_2$s, [
+function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$D, [
+    createBaseVNode("div", _hoisted_2$v, [
       createBaseVNode(
         "h2",
         null,
@@ -423,13 +439,13 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$m,
+        _hoisted_3$p,
         toDisplayString($setup.t("agora", "Select the option that best matches your organization's needs")),
         1
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_4$k, [
+    createBaseVNode("div", _hoisted_4$n, [
       (openBlock(), createElementBlock(
         Fragment,
         null,
@@ -441,26 +457,26 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
           }, [
             createBaseVNode(
               "div",
-              _hoisted_6$f,
+              _hoisted_6$i,
               toDisplayString(useCase.icon),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "h3",
-              _hoisted_7$e,
+              _hoisted_7$i,
               toDisplayString(useCase.title),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "p",
-              _hoisted_8$e,
+              _hoisted_8$i,
               toDisplayString(useCase.description),
               1
               /* TEXT */
             ),
-            createBaseVNode("ul", _hoisted_9$d, [
+            createBaseVNode("ul", _hoisted_9$g, [
               (openBlock(true), createElementBlock(
                 Fragment,
                 null,
@@ -477,7 +493,7 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
                 /* KEYED_FRAGMENT */
               ))
             ]),
-            $setup.wizardStore.selectedUseCase === useCase.id ? (openBlock(), createElementBlock("div", _hoisted_10$a, [
+            $setup.wizardStore.selectedUseCase === useCase.id ? (openBlock(), createElementBlock("div", _hoisted_10$d, [
               _cache[0] || (_cache[0] = createBaseVNode(
                 "span",
                 { class: "check-icon" },
@@ -491,7 +507,7 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
                 /* TEXT */
               )
             ])) : createCommentVNode("v-if", true)
-          ], 10, _hoisted_5$g);
+          ], 10, _hoisted_5$j);
         }),
         64
         /* STABLE_FRAGMENT */
@@ -499,8 +515,8 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepUseCaseSelection = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$A], ["__scopeId", "data-v-cbe6b281"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepUseCaseSelection.vue"]]);
-const _sfc_main$z = /* @__PURE__ */ defineComponent({
+const StepUseCaseSelection = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$D], ["__scopeId", "data-v-cbe6b281"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepUseCaseSelection.vue"]]);
+const _sfc_main$C = /* @__PURE__ */ defineComponent({
   __name: "StepTemplateSelection",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -601,68 +617,68 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$z = { class: "template-selection" };
-const _hoisted_2$r = { class: "template-header" };
-const _hoisted_3$l = {
+const _hoisted_1$C = { class: "template-selection" };
+const _hoisted_2$u = { class: "template-header" };
+const _hoisted_3$o = {
   key: 0,
   class: "subtitle"
 };
-const _hoisted_4$j = {
+const _hoisted_4$m = {
   key: 1,
   class: "subtitle"
 };
-const _hoisted_5$f = {
+const _hoisted_5$i = {
   key: 0,
   class: "upload-section"
 };
-const _hoisted_6$e = { class: "help-section" };
-const _hoisted_7$d = {
+const _hoisted_6$h = { class: "help-section" };
+const _hoisted_7$h = {
   key: 0,
   class: "help-content"
 };
-const _hoisted_8$d = { class: "help-actions" };
-const _hoisted_9$c = { class: "help-instructions" };
-const _hoisted_10$9 = { class: "ai-list" };
-const _hoisted_11$9 = {
+const _hoisted_8$h = { class: "help-actions" };
+const _hoisted_9$f = { class: "help-instructions" };
+const _hoisted_10$c = { class: "ai-list" };
+const _hoisted_11$c = {
   key: 1,
   class: "divider"
 };
-const _hoisted_12$8 = {
+const _hoisted_12$b = {
   key: 4,
   class: "template-list"
 };
-const _hoisted_13$8 = ["onClick"];
-const _hoisted_14$8 = { class: "template-card-header" };
-const _hoisted_15$7 = { class: "template-name" };
-const _hoisted_16$7 = { class: "template-version" };
-const _hoisted_17$7 = { class: "template-description" };
-const _hoisted_18$6 = { class: "template-meta" };
-const _hoisted_19$6 = { class: "meta-item" };
-const _hoisted_20$6 = { class: "meta-label" };
-const _hoisted_21$6 = { class: "meta-value" };
-const _hoisted_22$4 = { class: "meta-item" };
-const _hoisted_23$4 = { class: "meta-label" };
-const _hoisted_24$4 = { class: "meta-value" };
-const _hoisted_25$4 = { class: "template-stats" };
-const _hoisted_26$2 = { class: "stat-item" };
-const _hoisted_27$2 = { class: "stat-value" };
-const _hoisted_28$2 = { class: "stat-label" };
-const _hoisted_29$2 = { class: "stat-item" };
-const _hoisted_30$2 = { class: "stat-value" };
-const _hoisted_31$2 = { class: "stat-label" };
-const _hoisted_32$2 = { class: "stat-item" };
-const _hoisted_33$2 = { class: "stat-value" };
-const _hoisted_34$2 = { class: "stat-label" };
-const _hoisted_35$2 = { class: "stat-item" };
-const _hoisted_36$1 = { class: "stat-value" };
-const _hoisted_37$1 = { class: "stat-label" };
-const _hoisted_38$1 = {
+const _hoisted_13$b = ["onClick"];
+const _hoisted_14$b = { class: "template-card-header" };
+const _hoisted_15$a = { class: "template-name" };
+const _hoisted_16$a = { class: "template-version" };
+const _hoisted_17$a = { class: "template-description" };
+const _hoisted_18$9 = { class: "template-meta" };
+const _hoisted_19$9 = { class: "meta-item" };
+const _hoisted_20$9 = { class: "meta-label" };
+const _hoisted_21$9 = { class: "meta-value" };
+const _hoisted_22$9 = { class: "meta-item" };
+const _hoisted_23$7 = { class: "meta-label" };
+const _hoisted_24$7 = { class: "meta-value" };
+const _hoisted_25$7 = { class: "template-stats" };
+const _hoisted_26$6 = { class: "stat-item" };
+const _hoisted_27$6 = { class: "stat-value" };
+const _hoisted_28$6 = { class: "stat-label" };
+const _hoisted_29$6 = { class: "stat-item" };
+const _hoisted_30$6 = { class: "stat-value" };
+const _hoisted_31$6 = { class: "stat-label" };
+const _hoisted_32$6 = { class: "stat-item" };
+const _hoisted_33$6 = { class: "stat-value" };
+const _hoisted_34$6 = { class: "stat-label" };
+const _hoisted_35$6 = { class: "stat-item" };
+const _hoisted_36$5 = { class: "stat-value" };
+const _hoisted_37$5 = { class: "stat-label" };
+const _hoisted_38$5 = {
   key: 0,
   class: "selected-badge"
 };
-function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$z, [
-    createBaseVNode("div", _hoisted_2$r, [
+function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$C, [
+    createBaseVNode("div", _hoisted_2$u, [
       createBaseVNode(
         "h2",
         null,
@@ -672,20 +688,20 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       $setup.wizardStore.selectedUseCase === "custom" ? (openBlock(), createElementBlock(
         "p",
-        _hoisted_3$l,
+        _hoisted_3$o,
         toDisplayString($setup.t("agora", "Choose a pre-configured template or upload your own")),
         1
         /* TEXT */
       )) : (openBlock(), createElementBlock(
         "p",
-        _hoisted_4$j,
+        _hoisted_4$m,
         toDisplayString($setup.t("agora", "Choose a pre-configured template for your use case")),
         1
         /* TEXT */
       ))
     ]),
     createCommentVNode(" Custom Template Upload Section - Only for Custom Setup "),
-    $setup.wizardStore.selectedUseCase === "custom" ? (openBlock(), createElementBlock("div", _hoisted_5$f, [
+    $setup.wizardStore.selectedUseCase === "custom" ? (openBlock(), createElementBlock("div", _hoisted_5$i, [
       createVNode($setup["NcButton"], {
         type: "secondary",
         onClick: $setup.triggerFileUpload
@@ -753,7 +769,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
       })) : createCommentVNode("v-if", true),
       createCommentVNode(" Help Section for Creating Templates "),
-      createBaseVNode("div", _hoisted_6$e, [
+      createBaseVNode("div", _hoisted_6$h, [
         createVNode($setup["NcButton"], {
           type: "tertiary",
           onClick: $setup.toggleHelp
@@ -779,7 +795,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
           _: 1
           /* STABLE */
         }),
-        $setup.showHelp ? (openBlock(), createElementBlock("div", _hoisted_7$d, [
+        $setup.showHelp ? (openBlock(), createElementBlock("div", _hoisted_7$h, [
           createVNode($setup["NcNoteCard"], { type: "info" }, {
             default: withCtx(() => [
               createBaseVNode(
@@ -793,7 +809,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
           }),
-          createBaseVNode("div", _hoisted_8$d, [
+          createBaseVNode("div", _hoisted_8$h, [
             createVNode($setup["NcButton"], {
               type: "primary",
               onClick: $setup.downloadSchema
@@ -841,7 +857,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
               /* STABLE */
             })
           ]),
-          createBaseVNode("div", _hoisted_9$c, [
+          createBaseVNode("div", _hoisted_9$f, [
             createBaseVNode(
               "h4",
               null,
@@ -893,7 +909,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
               1
               /* TEXT */
             ),
-            createBaseVNode("ul", _hoisted_10$9, [
+            createBaseVNode("ul", _hoisted_10$c, [
               createBaseVNode("li", null, [
                 _cache[3] || (_cache[3] = createBaseVNode(
                   "strong",
@@ -955,7 +971,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
         ])) : createCommentVNode("v-if", true)
       ])
     ])) : createCommentVNode("v-if", true),
-    $setup.wizardStore.selectedUseCase === "custom" && !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_11$9, [
+    $setup.wizardStore.selectedUseCase === "custom" && !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_11$c, [
       createBaseVNode(
         "span",
         null,
@@ -983,7 +999,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
       ])]),
       _: 1
       /* STABLE */
-    }, 8, ["name", "description"])) : !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_12$8, [
+    }, 8, ["name", "description"])) : !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_12$b, [
       (openBlock(true), createElementBlock(
         Fragment,
         null,
@@ -993,17 +1009,17 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
             class: normalizeClass(["template-card", { selected: $setup.wizardStore.selectedTemplate?.name === template.name }]),
             onClick: ($event) => $setup.selectTemplate(template)
           }, [
-            createBaseVNode("div", _hoisted_14$8, [
+            createBaseVNode("div", _hoisted_14$b, [
               createBaseVNode(
                 "h3",
-                _hoisted_15$7,
+                _hoisted_15$a,
                 toDisplayString(template.name),
                 1
                 /* TEXT */
               ),
               createBaseVNode(
                 "span",
-                _hoisted_16$7,
+                _hoisted_16$a,
                 "v" + toDisplayString(template.version),
                 1
                 /* TEXT */
@@ -1011,112 +1027,112 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
             ]),
             createBaseVNode(
               "p",
-              _hoisted_17$7,
+              _hoisted_17$a,
               toDisplayString(template.description),
               1
               /* TEXT */
             ),
-            createBaseVNode("div", _hoisted_18$6, [
-              createBaseVNode("div", _hoisted_19$6, [
+            createBaseVNode("div", _hoisted_18$9, [
+              createBaseVNode("div", _hoisted_19$9, [
                 createBaseVNode(
                   "span",
-                  _hoisted_20$6,
+                  _hoisted_20$9,
                   toDisplayString($setup.t("agora", "Author:")),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_21$6,
+                  _hoisted_21$9,
                   toDisplayString(template.author),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_22$4, [
+              createBaseVNode("div", _hoisted_22$9, [
                 createBaseVNode(
                   "span",
-                  _hoisted_23$4,
+                  _hoisted_23$7,
                   toDisplayString($setup.t("agora", "Languages:")),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_24$4,
+                  _hoisted_24$7,
                   toDisplayString(template.available_languages.join(", ")),
                   1
                   /* TEXT */
                 )
               ])
             ]),
-            createBaseVNode("div", _hoisted_25$4, [
-              createBaseVNode("div", _hoisted_26$2, [
+            createBaseVNode("div", _hoisted_25$7, [
+              createBaseVNode("div", _hoisted_26$6, [
                 createBaseVNode(
                   "span",
-                  _hoisted_27$2,
+                  _hoisted_27$6,
                   toDisplayString(template.counts.inquiry_families),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_28$2,
+                  _hoisted_28$6,
                   toDisplayString($setup.t("agora", "Families")),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_29$2, [
+              createBaseVNode("div", _hoisted_29$6, [
                 createBaseVNode(
                   "span",
-                  _hoisted_30$2,
+                  _hoisted_30$6,
                   toDisplayString(template.counts.inquiry_types),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_31$2,
+                  _hoisted_31$6,
                   toDisplayString($setup.t("agora", "Types")),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_32$2, [
+              createBaseVNode("div", _hoisted_32$6, [
                 createBaseVNode(
                   "span",
-                  _hoisted_33$2,
+                  _hoisted_33$6,
                   toDisplayString(template.counts.inquiry_statuses),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_34$2,
+                  _hoisted_34$6,
                   toDisplayString($setup.t("agora", "Statuses")),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_35$2, [
+              createBaseVNode("div", _hoisted_35$6, [
                 createBaseVNode(
                   "span",
-                  _hoisted_36$1,
+                  _hoisted_36$5,
                   toDisplayString(template.counts.categories),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_37$1,
+                  _hoisted_37$5,
                   toDisplayString($setup.t("agora", "Categories")),
                   1
                   /* TEXT */
                 )
               ])
             ]),
-            $setup.wizardStore.selectedTemplate?.name === template.name ? (openBlock(), createElementBlock("div", _hoisted_38$1, [
+            $setup.wizardStore.selectedTemplate?.name === template.name ? (openBlock(), createElementBlock("div", _hoisted_38$5, [
               _cache[8] || (_cache[8] = createBaseVNode(
                 "span",
                 { class: "check-icon" },
@@ -1130,7 +1146,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
                 /* TEXT */
               )
             ])) : createCommentVNode("v-if", true)
-          ], 10, _hoisted_13$8);
+          ], 10, _hoisted_13$b);
         }),
         128
         /* KEYED_FRAGMENT */
@@ -1138,8 +1154,8 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepTemplateSelection = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$z], ["__scopeId", "data-v-4e395d60"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepTemplateSelection.vue"]]);
-const _sfc_main$y = /* @__PURE__ */ defineComponent({
+const StepTemplateSelection = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$C], ["__scopeId", "data-v-4e395d60"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepTemplateSelection.vue"]]);
+const _sfc_main$B = /* @__PURE__ */ defineComponent({
   __name: "StepLanguageSelection",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -1168,24 +1184,24 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$y = { class: "language-selection" };
-const _hoisted_2$q = { class: "language-header" };
-const _hoisted_3$k = { class: "subtitle" };
-const _hoisted_4$i = { class: "language-grid" };
-const _hoisted_5$e = ["onClick"];
-const _hoisted_6$d = { class: "language-flag" };
-const _hoisted_7$c = { class: "language-name" };
-const _hoisted_8$c = {
+const _hoisted_1$B = { class: "language-selection" };
+const _hoisted_2$t = { class: "language-header" };
+const _hoisted_3$n = { class: "subtitle" };
+const _hoisted_4$l = { class: "language-grid" };
+const _hoisted_5$h = ["onClick"];
+const _hoisted_6$g = { class: "language-flag" };
+const _hoisted_7$g = { class: "language-name" };
+const _hoisted_8$g = {
   key: 0,
   class: "selected-check"
 };
-const _hoisted_9$b = {
+const _hoisted_9$e = {
   key: 0,
   class: "selection-summary"
 };
-function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$y, [
-    createBaseVNode("div", _hoisted_2$q, [
+function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$B, [
+    createBaseVNode("div", _hoisted_2$t, [
       createBaseVNode(
         "h2",
         null,
@@ -1195,7 +1211,7 @@ function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$k,
+        _hoisted_3$n,
         toDisplayString($setup.t("agora", "Select the language for your template content")),
         1
         /* TEXT */
@@ -1217,7 +1233,7 @@ function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }),
-    createBaseVNode("div", _hoisted_4$i, [
+    createBaseVNode("div", _hoisted_4$l, [
       (openBlock(true), createElementBlock(
         Fragment,
         null,
@@ -1229,26 +1245,26 @@ function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
           }, [
             createBaseVNode(
               "div",
-              _hoisted_6$d,
+              _hoisted_6$g,
               toDisplayString(lang.toUpperCase()),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "div",
-              _hoisted_7$c,
+              _hoisted_7$g,
               toDisplayString($setup.getLanguageName(lang)),
               1
               /* TEXT */
             ),
-            $setup.wizardStore.selectedLanguage === lang ? (openBlock(), createElementBlock("div", _hoisted_8$c, " ✓ ")) : createCommentVNode("v-if", true)
-          ], 10, _hoisted_5$e);
+            $setup.wizardStore.selectedLanguage === lang ? (openBlock(), createElementBlock("div", _hoisted_8$g, " ✓ ")) : createCommentVNode("v-if", true)
+          ], 10, _hoisted_5$h);
         }),
         128
         /* KEYED_FRAGMENT */
       ))
     ]),
-    $setup.wizardStore.selectedLanguage ? (openBlock(), createElementBlock("div", _hoisted_9$b, [
+    $setup.wizardStore.selectedLanguage ? (openBlock(), createElementBlock("div", _hoisted_9$e, [
       createBaseVNode(
         "strong",
         null,
@@ -1264,8 +1280,8 @@ function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepLanguageSelection = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$y], ["__scopeId", "data-v-e6e1081e"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepLanguageSelection.vue"]]);
-const _sfc_main$x = /* @__PURE__ */ defineComponent({
+const StepLanguageSelection = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$B], ["__scopeId", "data-v-e6e1081e"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepLanguageSelection.vue"]]);
+const _sfc_main$A = /* @__PURE__ */ defineComponent({
   __name: "StepPreview",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -1473,7 +1489,7 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
     }, get NcButton() {
       return NcButton;
     }, get NcTextField() {
-      return _sfc_main$B;
+      return _sfc_main$E;
     }, get NcTextArea() {
       return NcTextArea;
     }, get NcNoteCard() {
@@ -1485,89 +1501,89 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$x = { class: "preview-step" };
-const _hoisted_2$p = { class: "preview-header" };
-const _hoisted_3$j = { class: "subtitle" };
-const _hoisted_4$h = {
+const _hoisted_1$A = { class: "preview-step" };
+const _hoisted_2$s = { class: "preview-header" };
+const _hoisted_3$m = { class: "subtitle" };
+const _hoisted_4$k = {
   key: 0,
   class: "loading-state"
 };
-const _hoisted_5$d = {
+const _hoisted_5$g = {
   key: 1,
   class: "preview-content"
 };
-const _hoisted_6$c = {
+const _hoisted_6$f = {
   key: 0,
   class: "analysis-loading"
 };
-const _hoisted_7$b = { class: "summary-card" };
-const _hoisted_8$b = {
+const _hoisted_7$f = { class: "summary-card" };
+const _hoisted_8$f = {
   key: 0,
   class: "summary-stats"
 };
-const _hoisted_9$a = { class: "stat-item" };
-const _hoisted_10$8 = { class: "stat-value stat-new" };
-const _hoisted_11$8 = { class: "stat-label" };
-const _hoisted_12$7 = { class: "stat-item" };
-const _hoisted_13$7 = { class: "stat-value stat-existing" };
-const _hoisted_14$7 = { class: "stat-label" };
-const _hoisted_15$6 = { class: "stat-item" };
-const _hoisted_16$6 = { class: "stat-value" };
-const _hoisted_17$6 = { class: "stat-label" };
-const _hoisted_18$5 = { class: "stat-item" };
-const _hoisted_19$5 = { class: "stat-value" };
-const _hoisted_20$5 = { class: "stat-label" };
-const _hoisted_21$5 = {
+const _hoisted_9$d = { class: "stat-item" };
+const _hoisted_10$b = { class: "stat-value stat-new" };
+const _hoisted_11$b = { class: "stat-label" };
+const _hoisted_12$a = { class: "stat-item" };
+const _hoisted_13$a = { class: "stat-value stat-existing" };
+const _hoisted_14$a = { class: "stat-label" };
+const _hoisted_15$9 = { class: "stat-item" };
+const _hoisted_16$9 = { class: "stat-value" };
+const _hoisted_17$9 = { class: "stat-label" };
+const _hoisted_18$8 = { class: "stat-item" };
+const _hoisted_19$8 = { class: "stat-value" };
+const _hoisted_20$8 = { class: "stat-label" };
+const _hoisted_21$8 = {
   key: 1,
   class: "summary-stats"
 };
-const _hoisted_22$3 = { class: "stat-item" };
-const _hoisted_23$3 = { class: "stat-value" };
-const _hoisted_24$3 = { class: "stat-label" };
-const _hoisted_25$3 = { class: "stat-item" };
-const _hoisted_26$1 = { class: "stat-value" };
-const _hoisted_27$1 = { class: "stat-label" };
-const _hoisted_28$1 = { class: "sections-container" };
-const _hoisted_29$1 = ["onClick"];
-const _hoisted_30$1 = { class: "section-title" };
-const _hoisted_31$1 = { class: "section-icon" };
-const _hoisted_32$1 = { class: "section-count" };
-const _hoisted_33$1 = {
+const _hoisted_22$8 = { class: "stat-item" };
+const _hoisted_23$6 = { class: "stat-value" };
+const _hoisted_24$6 = { class: "stat-label" };
+const _hoisted_25$6 = { class: "stat-item" };
+const _hoisted_26$5 = { class: "stat-value" };
+const _hoisted_27$5 = { class: "stat-label" };
+const _hoisted_28$5 = { class: "sections-container" };
+const _hoisted_29$5 = ["onClick"];
+const _hoisted_30$5 = { class: "section-title" };
+const _hoisted_31$5 = { class: "section-icon" };
+const _hoisted_32$5 = { class: "section-count" };
+const _hoisted_33$5 = {
   key: 0,
   class: "section-status"
 };
-const _hoisted_34$1 = {
+const _hoisted_34$5 = {
   key: 0,
   class: "status-badge status-new"
 };
-const _hoisted_35$1 = {
+const _hoisted_35$5 = {
   key: 1,
   class: "status-badge status-existing"
 };
-const _hoisted_36 = { class: "expand-icon" };
-const _hoisted_37 = {
+const _hoisted_36$4 = { class: "expand-icon" };
+const _hoisted_37$4 = {
   key: 0,
   class: "section-content"
 };
-const _hoisted_38 = {
+const _hoisted_38$4 = {
   key: 0,
   class: "item-view"
 };
-const _hoisted_39 = { class: "item-info" };
-const _hoisted_40 = { class: "item-header-row" };
-const _hoisted_41 = { class: "item-label" };
-const _hoisted_42 = { class: "item-type" };
-const _hoisted_43 = {
+const _hoisted_39$4 = { class: "item-info" };
+const _hoisted_40$4 = { class: "item-header-row" };
+const _hoisted_41$4 = { class: "item-label" };
+const _hoisted_42$4 = { class: "item-type" };
+const _hoisted_43$4 = {
   key: 0,
   class: "item-description"
 };
-const _hoisted_44 = { class: "item-actions" };
-const _hoisted_45 = { class: "item-edit" };
-const _hoisted_46 = { class: "edit-form" };
-const _hoisted_47 = { class: "edit-actions" };
-function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$x, [
-    createBaseVNode("div", _hoisted_2$p, [
+const _hoisted_44$4 = { class: "item-actions" };
+const _hoisted_45$4 = { class: "item-edit" };
+const _hoisted_46$4 = { class: "edit-form" };
+const _hoisted_47$4 = { class: "edit-actions" };
+function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$A, [
+    createBaseVNode("div", _hoisted_2$s, [
       createBaseVNode(
         "h2",
         null,
@@ -1577,13 +1593,13 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$j,
+        _hoisted_3$m,
         toDisplayString($setup.t("agora", "Review and customize the template before import")),
         1
         /* TEXT */
       )
     ]),
-    !$setup.editableData ? (openBlock(), createElementBlock("div", _hoisted_4$h, [
+    !$setup.editableData ? (openBlock(), createElementBlock("div", _hoisted_4$k, [
       createBaseVNode(
         "p",
         null,
@@ -1591,9 +1607,9 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
         1
         /* TEXT */
       )
-    ])) : (openBlock(), createElementBlock("div", _hoisted_5$d, [
+    ])) : (openBlock(), createElementBlock("div", _hoisted_5$g, [
       createCommentVNode(" Duplicate Analysis Loading "),
-      $setup.isAnalyzing ? (openBlock(), createElementBlock("div", _hoisted_6$c, [
+      $setup.isAnalyzing ? (openBlock(), createElementBlock("div", _hoisted_6$f, [
         createVNode($setup["NcLoadingIcon"], { size: 32 }),
         createBaseVNode(
           "p",
@@ -1620,7 +1636,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
       })) : createCommentVNode("v-if", true),
       createCommentVNode(" Summary Card with Duplicate Analysis "),
-      createBaseVNode("div", _hoisted_7$b, [
+      createBaseVNode("div", _hoisted_7$f, [
         createBaseVNode(
           "h3",
           null,
@@ -1628,8 +1644,8 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        $setup.duplicateAnalysis ? (openBlock(), createElementBlock("div", _hoisted_8$b, [
-          createBaseVNode("div", _hoisted_9$a, [
+        $setup.duplicateAnalysis ? (openBlock(), createElementBlock("div", _hoisted_8$f, [
+          createBaseVNode("div", _hoisted_9$d, [
             _cache[1] || (_cache[1] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1639,20 +1655,20 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_10$8,
+              _hoisted_10$b,
               toDisplayString($setup.duplicateAnalysis.totals.new),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_11$8,
+              _hoisted_11$b,
               toDisplayString($setup.t("agora", "New items")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_12$7, [
+          createBaseVNode("div", _hoisted_12$a, [
             _cache[2] || (_cache[2] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1662,20 +1678,20 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_13$7,
+              _hoisted_13$a,
               toDisplayString($setup.duplicateAnalysis.totals.existing),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_14$7,
+              _hoisted_14$a,
               toDisplayString($setup.t("agora", "Existing (skipped)")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_15$6, [
+          createBaseVNode("div", _hoisted_15$9, [
             _cache[3] || (_cache[3] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1685,20 +1701,20 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_16$6,
+              _hoisted_16$9,
               toDisplayString($setup.totalItems),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_17$6,
+              _hoisted_17$9,
               toDisplayString($setup.t("agora", "Total items")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_18$5, [
+          createBaseVNode("div", _hoisted_18$8, [
             _cache[4] || (_cache[4] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1708,21 +1724,21 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_19$5,
+              _hoisted_19$8,
               toDisplayString($setup.wizardStore.selectedLanguage),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_20$5,
+              _hoisted_20$8,
               toDisplayString($setup.t("agora", "Language")),
               1
               /* TEXT */
             )
           ])
-        ])) : (openBlock(), createElementBlock("div", _hoisted_21$5, [
-          createBaseVNode("div", _hoisted_22$3, [
+        ])) : (openBlock(), createElementBlock("div", _hoisted_21$8, [
+          createBaseVNode("div", _hoisted_22$8, [
             _cache[5] || (_cache[5] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1732,20 +1748,20 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_23$3,
+              _hoisted_23$6,
               toDisplayString($setup.totalItems),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_24$3,
+              _hoisted_24$6,
               toDisplayString($setup.t("agora", "Total items")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_25$3, [
+          createBaseVNode("div", _hoisted_25$6, [
             _cache[6] || (_cache[6] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1755,14 +1771,14 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_26$1,
+              _hoisted_26$5,
               toDisplayString($setup.wizardStore.selectedLanguage),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_27$1,
+              _hoisted_27$5,
               toDisplayString($setup.t("agora", "Language")),
               1
               /* TEXT */
@@ -1787,7 +1803,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
       })) : createCommentVNode("v-if", true),
       createCommentVNode(" Sections "),
-      createBaseVNode("div", _hoisted_28$1, [
+      createBaseVNode("div", _hoisted_28$5, [
         (openBlock(true), createElementBlock(
           Fragment,
           null,
@@ -1800,10 +1816,10 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "section-header",
                 onClick: ($event) => $setup.toggleSection(section.key)
               }, [
-                createBaseVNode("div", _hoisted_30$1, [
+                createBaseVNode("div", _hoisted_30$5, [
                   createBaseVNode(
                     "span",
-                    _hoisted_31$1,
+                    _hoisted_31$5,
                     toDisplayString(section.icon),
                     1
                     /* TEXT */
@@ -1817,22 +1833,22 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
                   ),
                   createBaseVNode(
                     "span",
-                    _hoisted_32$1,
+                    _hoisted_32$5,
                     "(" + toDisplayString(section.count) + ")",
                     1
                     /* TEXT */
                   ),
-                  $setup.duplicateAnalysis ? (openBlock(), createElementBlock("span", _hoisted_33$1, [
+                  $setup.duplicateAnalysis ? (openBlock(), createElementBlock("span", _hoisted_33$5, [
                     $setup.getSectionStatus(section.key).new > 0 ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_34$1,
+                      _hoisted_34$5,
                       toDisplayString($setup.getSectionStatus(section.key).new) + " new ",
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     $setup.getSectionStatus(section.key).existing > 0 ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_35$1,
+                      _hoisted_35$5,
                       toDisplayString($setup.getSectionStatus(section.key).existing) + " exist ",
                       1
                       /* TEXT */
@@ -1841,13 +1857,13 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
                 ]),
                 createBaseVNode(
                   "span",
-                  _hoisted_36,
+                  _hoisted_36$4,
                   toDisplayString($setup.expandedSections[section.key] ? "▼" : "▶"),
                   1
                   /* TEXT */
                 )
-              ], 8, _hoisted_29$1),
-              $setup.expandedSections[section.key] ? (openBlock(), createElementBlock("div", _hoisted_37, [
+              ], 8, _hoisted_29$5),
+              $setup.expandedSections[section.key] ? (openBlock(), createElementBlock("div", _hoisted_37$4, [
                 (openBlock(true), createElementBlock(
                   Fragment,
                   null,
@@ -1857,12 +1873,12 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
                       class: "item-row"
                     }, [
                       createCommentVNode(" View Mode "),
-                      !$setup.isEditing(section.key, index) ? (openBlock(), createElementBlock("div", _hoisted_38, [
-                        createBaseVNode("div", _hoisted_39, [
-                          createBaseVNode("div", _hoisted_40, [
+                      !$setup.isEditing(section.key, index) ? (openBlock(), createElementBlock("div", _hoisted_38$4, [
+                        createBaseVNode("div", _hoisted_39$4, [
+                          createBaseVNode("div", _hoisted_40$4, [
                             createBaseVNode(
                               "div",
-                              _hoisted_41,
+                              _hoisted_41$4,
                               toDisplayString($setup.getItemLabel(item, section)),
                               1
                               /* TEXT */
@@ -1883,20 +1899,20 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
                           ]),
                           createBaseVNode(
                             "div",
-                            _hoisted_42,
+                            _hoisted_42$4,
                             toDisplayString($setup.getItemType(item, section)),
                             1
                             /* TEXT */
                           ),
                           item.description ? (openBlock(), createElementBlock(
                             "div",
-                            _hoisted_43,
+                            _hoisted_43$4,
                             toDisplayString(item.description),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true)
                         ]),
-                        createBaseVNode("div", _hoisted_44, [
+                        createBaseVNode("div", _hoisted_44$4, [
                           createVNode($setup["NcButton"], {
                             type: "tertiary",
                             onClick: ($event) => $setup.startEdit(section.key, index)
@@ -1931,8 +1947,8 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
                         { key: 1 },
                         [
                           createCommentVNode(" Edit Mode "),
-                          createBaseVNode("div", _hoisted_45, [
-                            createBaseVNode("div", _hoisted_46, [
+                          createBaseVNode("div", _hoisted_45$4, [
+                            createBaseVNode("div", _hoisted_46$4, [
                               createVNode($setup["NcTextField"], {
                                 modelValue: $setup.editingItemData[section.itemTypeKey],
                                 "onUpdate:modelValue": ($event) => $setup.editingItemData[section.itemTypeKey] = $event,
@@ -1954,7 +1970,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
                                 class: "edit-field"
                               }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
                             ]),
-                            createBaseVNode("div", _hoisted_47, [
+                            createBaseVNode("div", _hoisted_47$4, [
                               createVNode($setup["NcButton"], {
                                 type: "primary",
                                 onClick: $setup.saveEdit
@@ -2004,8 +2020,8 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
     ]))
   ]);
 }
-const StepPreview = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$x], ["__scopeId", "data-v-1aff519f"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepPreview.vue"]]);
-const _sfc_main$w = /* @__PURE__ */ defineComponent({
+const StepPreview = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$A], ["__scopeId", "data-v-1aff519f"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepPreview.vue"]]);
+const _sfc_main$z = /* @__PURE__ */ defineComponent({
   __name: "StepSummary",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2032,56 +2048,56 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$w = { class: "summary-step" };
-const _hoisted_2$o = { class: "summary-header" };
-const _hoisted_3$i = { class: "subtitle" };
-const _hoisted_4$g = {
+const _hoisted_1$z = { class: "summary-step" };
+const _hoisted_2$r = { class: "summary-header" };
+const _hoisted_3$l = { class: "subtitle" };
+const _hoisted_4$j = {
   key: 0,
   class: "summary-content"
 };
-const _hoisted_5$c = { class: "summary-box" };
-const _hoisted_6$b = { class: "summary-item" };
-const _hoisted_7$a = { class: "label" };
-const _hoisted_8$a = { class: "value" };
-const _hoisted_9$9 = { class: "summary-item" };
-const _hoisted_10$7 = { class: "label" };
-const _hoisted_11$7 = { class: "value" };
-const _hoisted_12$6 = { class: "summary-item" };
-const _hoisted_13$6 = { class: "label" };
-const _hoisted_14$6 = { class: "value" };
-const _hoisted_15$5 = { class: "summary-item" };
-const _hoisted_16$5 = { class: "label" };
-const _hoisted_17$5 = { class: "value" };
-const _hoisted_18$4 = { class: "summary-item" };
-const _hoisted_19$4 = { class: "label" };
-const _hoisted_20$4 = { class: "value" };
-const _hoisted_21$4 = {
+const _hoisted_5$f = { class: "summary-box" };
+const _hoisted_6$e = { class: "summary-item" };
+const _hoisted_7$e = { class: "label" };
+const _hoisted_8$e = { class: "value" };
+const _hoisted_9$c = { class: "summary-item" };
+const _hoisted_10$a = { class: "label" };
+const _hoisted_11$a = { class: "value" };
+const _hoisted_12$9 = { class: "summary-item" };
+const _hoisted_13$9 = { class: "label" };
+const _hoisted_14$9 = { class: "value" };
+const _hoisted_15$8 = { class: "summary-item" };
+const _hoisted_16$8 = { class: "label" };
+const _hoisted_17$8 = { class: "value" };
+const _hoisted_18$7 = { class: "summary-item" };
+const _hoisted_19$7 = { class: "label" };
+const _hoisted_20$7 = { class: "value" };
+const _hoisted_21$7 = {
   key: 0,
   class: "summary-item"
 };
-const _hoisted_22$2 = { class: "label" };
-const _hoisted_23$2 = { class: "value" };
-const _hoisted_24$2 = {
+const _hoisted_22$7 = { class: "label" };
+const _hoisted_23$5 = { class: "value" };
+const _hoisted_24$5 = {
   key: 1,
   class: "summary-item"
 };
-const _hoisted_25$2 = { class: "label" };
-const _hoisted_26 = { class: "value" };
-const _hoisted_27 = { class: "summary-item" };
-const _hoisted_28 = { class: "label" };
-const _hoisted_29 = { class: "value" };
-const _hoisted_30 = {
+const _hoisted_25$5 = { class: "label" };
+const _hoisted_26$4 = { class: "value" };
+const _hoisted_27$4 = { class: "summary-item" };
+const _hoisted_28$4 = { class: "label" };
+const _hoisted_29$4 = { class: "value" };
+const _hoisted_30$4 = {
   key: 2,
   class: "summary-item"
 };
-const _hoisted_31 = { class: "label" };
-const _hoisted_32 = { class: "value" };
-const _hoisted_33 = { class: "summary-total" };
-const _hoisted_34 = { class: "label" };
-const _hoisted_35 = { class: "value" };
-function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$w, [
-    createBaseVNode("div", _hoisted_2$o, [
+const _hoisted_31$4 = { class: "label" };
+const _hoisted_32$4 = { class: "value" };
+const _hoisted_33$4 = { class: "summary-total" };
+const _hoisted_34$4 = { class: "label" };
+const _hoisted_35$4 = { class: "value" };
+function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$z, [
+    createBaseVNode("div", _hoisted_2$r, [
       createBaseVNode(
         "h2",
         null,
@@ -2091,7 +2107,7 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$i,
+        _hoisted_3$l,
         toDisplayString($setup.t("agora", "Please review your selections before importing")),
         1
         /* TEXT */
@@ -2113,8 +2129,8 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }),
-    $setup.template ? (openBlock(), createElementBlock("div", _hoisted_4$g, [
-      createBaseVNode("div", _hoisted_5$c, [
+    $setup.template ? (openBlock(), createElementBlock("div", _hoisted_4$j, [
+      createBaseVNode("div", _hoisted_5$f, [
         createBaseVNode(
           "h3",
           null,
@@ -2122,33 +2138,33 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("div", _hoisted_6$b, [
+        createBaseVNode("div", _hoisted_6$e, [
           createBaseVNode(
             "span",
-            _hoisted_7$a,
+            _hoisted_7$e,
             toDisplayString($setup.t("agora", "Template:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_8$a,
+            _hoisted_8$e,
             toDisplayString($setup.template.name) + " (v" + toDisplayString($setup.template.version) + ")",
             1
             /* TEXT */
           )
         ]),
-        createBaseVNode("div", _hoisted_9$9, [
+        createBaseVNode("div", _hoisted_9$c, [
           createBaseVNode(
             "span",
-            _hoisted_10$7,
+            _hoisted_10$a,
             toDisplayString($setup.t("agora", "Language:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_11$7,
+            _hoisted_11$a,
             toDisplayString($setup.language),
             1
             /* TEXT */
@@ -2161,113 +2177,113 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
           -1
           /* CACHED */
         )),
-        createBaseVNode("div", _hoisted_12$6, [
+        createBaseVNode("div", _hoisted_12$9, [
           createBaseVNode(
             "span",
-            _hoisted_13$6,
+            _hoisted_13$9,
             toDisplayString($setup.t("agora", "Families:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_14$6,
+            _hoisted_14$9,
             toDisplayString($setup.counts.inquiry_families) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        createBaseVNode("div", _hoisted_15$5, [
+        createBaseVNode("div", _hoisted_15$8, [
           createBaseVNode(
             "span",
-            _hoisted_16$5,
+            _hoisted_16$8,
             toDisplayString($setup.t("agora", "Inquiry types:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_17$5,
+            _hoisted_17$8,
             toDisplayString($setup.counts.inquiry_types) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        createBaseVNode("div", _hoisted_18$4, [
+        createBaseVNode("div", _hoisted_18$7, [
           createBaseVNode(
             "span",
-            _hoisted_19$4,
+            _hoisted_19$7,
             toDisplayString($setup.t("agora", "Statuses:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_20$4,
+            _hoisted_20$7,
             toDisplayString($setup.counts.inquiry_statuses) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        $setup.counts.option_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_21$4, [
+        $setup.counts.option_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_21$7, [
           createBaseVNode(
             "span",
-            _hoisted_22$2,
+            _hoisted_22$7,
             toDisplayString($setup.t("agora", "Option types:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_23$2,
+            _hoisted_23$5,
             toDisplayString($setup.counts.option_types) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ])) : createCommentVNode("v-if", true),
-        $setup.counts.inquiry_group_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_24$2, [
+        $setup.counts.inquiry_group_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_24$5, [
           createBaseVNode(
             "span",
-            _hoisted_25$2,
+            _hoisted_25$5,
             toDisplayString($setup.t("agora", "Group types:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_26,
+            _hoisted_26$4,
             toDisplayString($setup.counts.inquiry_group_types) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ])) : createCommentVNode("v-if", true),
-        createBaseVNode("div", _hoisted_27, [
+        createBaseVNode("div", _hoisted_27$4, [
           createBaseVNode(
             "span",
-            _hoisted_28,
+            _hoisted_28$4,
             toDisplayString($setup.t("agora", "Categories:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_29,
+            _hoisted_29$4,
             toDisplayString($setup.counts.categories) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        $setup.counts.locations > 0 ? (openBlock(), createElementBlock("div", _hoisted_30, [
+        $setup.counts.locations > 0 ? (openBlock(), createElementBlock("div", _hoisted_30$4, [
           createBaseVNode(
             "span",
-            _hoisted_31,
+            _hoisted_31$4,
             toDisplayString($setup.t("agora", "Locations:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_32,
+            _hoisted_32$4,
             toDisplayString($setup.counts.locations) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
@@ -2280,17 +2296,17 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
           -1
           /* CACHED */
         )),
-        createBaseVNode("div", _hoisted_33, [
+        createBaseVNode("div", _hoisted_33$4, [
           createBaseVNode(
             "span",
-            _hoisted_34,
+            _hoisted_34$4,
             toDisplayString($setup.t("agora", "Total items:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_35,
+            _hoisted_35$4,
             toDisplayString($setup.totalItems),
             1
             /* TEXT */
@@ -2300,8 +2316,8 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepSummary = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$w], ["__scopeId", "data-v-13b1c365"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepSummary.vue"]]);
-const _sfc_main$v = /* @__PURE__ */ defineComponent({
+const StepSummary = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$z], ["__scopeId", "data-v-13b1c365"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepSummary.vue"]]);
+const _sfc_main$y = /* @__PURE__ */ defineComponent({
   __name: "StepImporting",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2314,13 +2330,13 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$v = { class: "importing-step" };
-const _hoisted_2$n = { class: "importing-content" };
-const _hoisted_3$h = { class: "importing-message" };
-const _hoisted_4$f = { class: "importing-submessage" };
-function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$v, [
-    createBaseVNode("div", _hoisted_2$n, [
+const _hoisted_1$y = { class: "importing-step" };
+const _hoisted_2$q = { class: "importing-content" };
+const _hoisted_3$k = { class: "importing-message" };
+const _hoisted_4$i = { class: "importing-submessage" };
+function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$y, [
+    createBaseVNode("div", _hoisted_2$q, [
       createVNode($setup["NcLoadingIcon"], { size: 80 }),
       createBaseVNode(
         "h2",
@@ -2331,14 +2347,14 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$h,
+        _hoisted_3$k,
         toDisplayString($setup.t("agora", "Please wait while the template is being imported …")),
         1
         /* TEXT */
       ),
       createBaseVNode(
         "p",
-        _hoisted_4$f,
+        _hoisted_4$i,
         toDisplayString($setup.t("agora", "This may take a few moments depending on the template size.")),
         1
         /* TEXT */
@@ -2346,8 +2362,8 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepImporting = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$v], ["__scopeId", "data-v-38620be8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepImporting.vue"]]);
-const _sfc_main$u = /* @__PURE__ */ defineComponent({
+const StepImporting = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$y], ["__scopeId", "data-v-38620be8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepImporting.vue"]]);
+const _sfc_main$x = /* @__PURE__ */ defineComponent({
   __name: "StepResults",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2374,59 +2390,59 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$u = { class: "results-step" };
-const _hoisted_2$m = { class: "results-header" };
-const _hoisted_3$g = {
+const _hoisted_1$x = { class: "results-step" };
+const _hoisted_2$p = { class: "results-header" };
+const _hoisted_3$j = {
   key: 0,
   class: "success-icon"
 };
-const _hoisted_4$e = {
+const _hoisted_4$h = {
   key: 1,
   class: "warning-icon"
 };
-const _hoisted_5$b = { key: 2 };
-const _hoisted_6$a = { key: 3 };
-const _hoisted_7$9 = {
+const _hoisted_5$e = { key: 2 };
+const _hoisted_6$d = { key: 3 };
+const _hoisted_7$d = {
   key: 0,
   class: "results-content"
 };
-const _hoisted_8$9 = {
+const _hoisted_8$d = {
   key: 0,
   class: "result-section success-section"
 };
-const _hoisted_9$8 = { class: "result-list" };
-const _hoisted_10$6 = {
+const _hoisted_9$b = { class: "result-list" };
+const _hoisted_10$9 = {
   key: 1,
   class: "result-section skipped-section"
 };
-const _hoisted_11$6 = { class: "result-list" };
-const _hoisted_12$5 = {
+const _hoisted_11$9 = { class: "result-list" };
+const _hoisted_12$8 = {
   key: 2,
   class: "result-section error-section"
 };
-const _hoisted_13$5 = { class: "result-list" };
-const _hoisted_14$5 = { class: "results-actions" };
-function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$u, [
-    createBaseVNode("div", _hoisted_2$m, [
-      !$setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_3$g, "✓")) : (openBlock(), createElementBlock("div", _hoisted_4$e, "⚠")),
+const _hoisted_13$8 = { class: "result-list" };
+const _hoisted_14$8 = { class: "results-actions" };
+function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$x, [
+    createBaseVNode("div", _hoisted_2$p, [
+      !$setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_3$j, "✓")) : (openBlock(), createElementBlock("div", _hoisted_4$h, "⚠")),
       !$setup.hasErrors ? (openBlock(), createElementBlock(
         "h2",
-        _hoisted_5$b,
+        _hoisted_5$e,
         toDisplayString($setup.t("agora", "Import complete!")),
         1
         /* TEXT */
       )) : (openBlock(), createElementBlock(
         "h2",
-        _hoisted_6$a,
+        _hoisted_6$d,
         toDisplayString($setup.t("agora", "Import completed with warnings")),
         1
         /* TEXT */
       ))
     ]),
-    $setup.importResult ? (openBlock(), createElementBlock("div", _hoisted_7$9, [
+    $setup.importResult ? (openBlock(), createElementBlock("div", _hoisted_7$d, [
       createCommentVNode(" Success Items "),
-      $setup.hasSuccess ? (openBlock(), createElementBlock("div", _hoisted_8$9, [
+      $setup.hasSuccess ? (openBlock(), createElementBlock("div", _hoisted_8$d, [
         createBaseVNode(
           "h3",
           null,
@@ -2434,7 +2450,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("ul", _hoisted_9$8, [
+        createBaseVNode("ul", _hoisted_9$b, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2453,7 +2469,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ])) : createCommentVNode("v-if", true),
       createCommentVNode(" Skipped Items "),
-      $setup.hasSkipped ? (openBlock(), createElementBlock("div", _hoisted_10$6, [
+      $setup.hasSkipped ? (openBlock(), createElementBlock("div", _hoisted_10$9, [
         createBaseVNode(
           "h3",
           null,
@@ -2461,7 +2477,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("ul", _hoisted_11$6, [
+        createBaseVNode("ul", _hoisted_11$9, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2480,7 +2496,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ])) : createCommentVNode("v-if", true),
       createCommentVNode(" Failed Items "),
-      $setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_12$5, [
+      $setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_12$8, [
         createBaseVNode(
           "h3",
           null,
@@ -2488,7 +2504,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("ul", _hoisted_13$5, [
+        createBaseVNode("ul", _hoisted_13$8, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2508,7 +2524,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
       ])) : createCommentVNode("v-if", true)
     ])) : createCommentVNode("v-if", true),
     createCommentVNode(" Action Buttons "),
-    createBaseVNode("div", _hoisted_14$5, [
+    createBaseVNode("div", _hoisted_14$8, [
       createVNode($setup["NcButton"], {
         type: "primary",
         onClick: $setup.goToAgora
@@ -2554,8 +2570,8 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepResults = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$u], ["__scopeId", "data-v-0e206bd8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepResults.vue"]]);
-const _sfc_main$t = /* @__PURE__ */ defineComponent({
+const StepResults = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$x], ["__scopeId", "data-v-0e206bd8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepResults.vue"]]);
+const _sfc_main$w = /* @__PURE__ */ defineComponent({
   __name: "TemplateSetupWizard",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2647,21 +2663,21 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$t = { class: "wizard-container" };
-const _hoisted_2$l = {
+const _hoisted_1$w = { class: "wizard-container" };
+const _hoisted_2$o = {
   key: 0,
   class: "wizard-progress"
 };
-const _hoisted_3$f = { class: "progress-dot" };
-const _hoisted_4$d = { key: 0 };
-const _hoisted_5$a = { key: 1 };
-const _hoisted_6$9 = { class: "progress-label" };
-const _hoisted_7$8 = { class: "wizard-content" };
-const _hoisted_8$8 = {
+const _hoisted_3$i = { class: "progress-dot" };
+const _hoisted_4$g = { key: 0 };
+const _hoisted_5$d = { key: 1 };
+const _hoisted_6$c = { class: "progress-label" };
+const _hoisted_7$c = { class: "wizard-content" };
+const _hoisted_8$c = {
   key: 1,
   class: "wizard-actions"
 };
-function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
   return $setup.isOpen ? (openBlock(), createBlock($setup["NcModal"], {
     key: 0,
     "can-close": !$setup.wizardStore.importing,
@@ -2671,9 +2687,9 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
   }, {
     default: withCtx(() => [
       createCommentVNode(" Step Content "),
-      createBaseVNode("div", _hoisted_1$t, [
+      createBaseVNode("div", _hoisted_1$w, [
         createCommentVNode(" Progress Indicator "),
-        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_2$l, [
+        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_2$o, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2688,10 +2704,10 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
                   }])
                 },
                 [
-                  createBaseVNode("div", _hoisted_3$f, [
-                    index < $setup.wizardStore.currentStepIndex ? (openBlock(), createElementBlock("span", _hoisted_4$d, "✓")) : (openBlock(), createElementBlock(
+                  createBaseVNode("div", _hoisted_3$i, [
+                    index < $setup.wizardStore.currentStepIndex ? (openBlock(), createElementBlock("span", _hoisted_4$g, "✓")) : (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_5$a,
+                      _hoisted_5$d,
                       toDisplayString(index + 1),
                       1
                       /* TEXT */
@@ -2699,7 +2715,7 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   createBaseVNode(
                     "div",
-                    _hoisted_6$9,
+                    _hoisted_6$c,
                     toDisplayString($setup.getStepTitle(step)),
                     1
                     /* TEXT */
@@ -2714,11 +2730,11 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
           ))
         ])) : createCommentVNode("v-if", true),
         createCommentVNode(" Dynamic Step Component "),
-        createBaseVNode("div", _hoisted_7$8, [
+        createBaseVNode("div", _hoisted_7$c, [
           (openBlock(), createBlock(resolveDynamicComponent($setup.currentStepComponent)))
         ]),
         createCommentVNode(" Navigation Buttons "),
-        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_8$8, [
+        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_8$c, [
           $setup.wizardStore.canGoPrevious ? (openBlock(), createBlock($setup["NcButton"], {
             key: 0,
             type: "tertiary",
@@ -2777,8 +2793,8 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 8, ["can-close", "name"])) : createCommentVNode("v-if", true);
 }
-const TemplateSetupWizard = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$t], ["__scopeId", "data-v-d2f4206c"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/TemplateSetupWizard.vue"]]);
-const _sfc_main$s = {
+const TemplateSetupWizard = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$w], ["__scopeId", "data-v-d2f4206c"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/TemplateSetupWizard.vue"]]);
+const _sfc_main$v = {
   __name: "AdminActivities",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2794,9 +2810,9 @@ const _sfc_main$s = {
     return __returned__;
   }
 };
-const _hoisted_1$s = { class: "user_settings" };
-function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$s, [
+const _hoisted_1$v = { class: "user_settings" };
+function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$v, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.useActivity,
       "onUpdate:modelValue": [
@@ -2817,8 +2833,8 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["modelValue"])
   ]);
 }
-const AdminActivities = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$s], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminActivities.vue"]]);
-const _sfc_main$r = {
+const AdminActivities = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$v], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminActivities.vue"]]);
+const _sfc_main$u = {
   __name: "AdminArchiveInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2836,9 +2852,9 @@ const _sfc_main$r = {
     return __returned__;
   }
 };
-const _hoisted_1$r = { class: "user_settings" };
-function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$r, [
+const _hoisted_1$u = { class: "user_settings" };
+function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$u, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.autoArchive,
       "onUpdate:modelValue": [
@@ -2870,8 +2886,8 @@ function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminArchiveInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminArchiveInquiries.vue"]]);
-const _sfc_main$q = {
+const AdminArchiveInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$u], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminArchiveInquiries.vue"]]);
+const _sfc_main$t = {
   __name: "AdminDeleteInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2889,9 +2905,9 @@ const _sfc_main$q = {
     return __returned__;
   }
 };
-const _hoisted_1$q = { class: "user_settings" };
-function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$q, [
+const _hoisted_1$t = { class: "user_settings" };
+function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$t, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.autoDelete,
       "onUpdate:modelValue": [
@@ -2923,8 +2939,8 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminDeleteInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminDeleteInquiries.vue"]]);
-const _sfc_main$p = {
+const AdminDeleteInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$t], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminDeleteInquiries.vue"]]);
+const _sfc_main$s = {
   __name: "AdminExpireInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2942,9 +2958,9 @@ const _sfc_main$p = {
     return __returned__;
   }
 };
-const _hoisted_1$p = { class: "user_settings" };
-function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$p, [
+const _hoisted_1$s = { class: "user_settings" };
+function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$s, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.autoExpire,
       "onUpdate:modelValue": [
@@ -2976,8 +2992,8 @@ function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminExpireInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminExpireInquiries.vue"]]);
-const _sfc_main$o = {
+const AdminExpireInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$s], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminExpireInquiries.vue"]]);
+const _sfc_main$r = {
   name: "LanguageMarkdownIcon",
   emits: ["click"],
   props: {
@@ -2994,11 +3010,11 @@ const _sfc_main$o = {
     }
   }
 };
-const _hoisted_1$o = ["aria-hidden", "aria-label"];
-const _hoisted_2$k = ["fill", "width", "height"];
-const _hoisted_3$e = { d: "M20.56 18H3.44C2.65 18 2 17.37 2 16.59V7.41C2 6.63 2.65 6 3.44 6H20.56C21.35 6 22 6.63 22 7.41V16.59C22 17.37 21.35 18 20.56 18M6.81 15.19V11.53L8.73 13.88L10.65 11.53V15.19H12.58V8.81H10.65L8.73 11.16L6.81 8.81H4.89V15.19H6.81M19.69 12H17.77V8.81H15.85V12H13.92L16.81 15.28L19.69 12Z" };
-const _hoisted_4$c = { key: 0 };
-function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$r = ["aria-hidden", "aria-label"];
+const _hoisted_2$n = ["fill", "width", "height"];
+const _hoisted_3$h = { d: "M20.56 18H3.44C2.65 18 2 17.37 2 16.59V7.41C2 6.63 2.65 6 3.44 6H20.56C21.35 6 22 6.63 22 7.41V16.59C22 17.37 21.35 18 20.56 18M6.81 15.19V11.53L8.73 13.88L10.65 11.53V15.19H12.58V8.81H10.65L8.73 11.16L6.81 8.81H4.89V15.19H6.81M19.69 12H17.77V8.81H15.85V12H13.92L16.81 15.28L19.69 12Z" };
+const _hoisted_4$f = { key: 0 };
+function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
@@ -3013,20 +3029,20 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
       height: $props.size,
       viewBox: "0 0 24 24"
     }, [
-      createBaseVNode("path", _hoisted_3$e, [
+      createBaseVNode("path", _hoisted_3$h, [
         $props.title ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_4$c,
+          _hoisted_4$f,
           toDisplayString($props.title),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
       ])
-    ], 8, _hoisted_2$k))
-  ], 16, _hoisted_1$o);
+    ], 8, _hoisted_2$n))
+  ], 16, _hoisted_1$r);
 }
-const LanguageMarkdownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__file", "/home/vini/Nextcloud/agora1.8.0/node_modules/vue-material-design-icons/LanguageMarkdown.vue"]]);
-const _sfc_main$n = {
+const LanguageMarkdownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r], ["__file", "/home/vini/Nextcloud/agora1.8.0/node_modules/vue-material-design-icons/LanguageMarkdown.vue"]]);
+const _sfc_main$q = {
   __name: "AdminEmail",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3037,14 +3053,14 @@ const _sfc_main$n = {
     const preview = ref(false);
     const markedDisclaimer = computed(() => {
       k.use(gfmHeadingId(markedPrefix));
-      return purify.sanitize(k.parse(appSettingsStore.disclaimer));
+      return purify_default.sanitize(k.parse(appSettingsStore.disclaimer));
     });
     const __returned__ = { appSettingsStore, markedPrefix, preview, markedDisclaimer, computed, ref, get marked() {
       return k;
     }, get gfmHeadingId() {
       return gfmHeadingId;
     }, get DOMPurify() {
-      return purify;
+      return purify_default;
     }, LanguageMarkdownIcon, get t() {
       return translate;
     }, get useAppSettingsStore() {
@@ -3056,12 +3072,12 @@ const _sfc_main$n = {
     return __returned__;
   }
 };
-const _hoisted_1$n = { class: "user_settings" };
-const _hoisted_2$j = { class: "disclaimer_group" };
-const _hoisted_3$d = { class: "grow_title" };
-const _hoisted_4$b = ["innerHTML"];
-function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$n, [
+const _hoisted_1$q = { class: "user_settings" };
+const _hoisted_2$m = { class: "disclaimer_group" };
+const _hoisted_3$g = { class: "grow_title" };
+const _hoisted_4$e = ["innerHTML"];
+function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$q, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.legalTermsInEmail,
       "onUpdate:modelValue": [
@@ -3080,8 +3096,8 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    createBaseVNode("div", _hoisted_2$j, [
-      createBaseVNode("div", _hoisted_3$d, [
+    createBaseVNode("div", _hoisted_2$m, [
+      createBaseVNode("div", _hoisted_3$g, [
         createBaseVNode(
           "span",
           null,
@@ -3125,13 +3141,13 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     withDirectives(createBaseVNode("div", {
       class: "inquiries-markdown",
       innerHTML: $setup.markedDisclaimer
-    }, null, 8, _hoisted_4$b), [
+    }, null, 8, _hoisted_4$e), [
       [vShow, $setup.preview]
     ])
   ]);
 }
-const AdminEmail = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminEmail.vue"]]);
-const _sfc_main$m = {
+const AdminEmail = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminEmail.vue"]]);
+const _sfc_main$p = {
   __name: "AdminModeration",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3147,13 +3163,13 @@ const _sfc_main$m = {
     return __returned__;
   }
 };
-const _hoisted_1$m = { class: "user_settings" };
-const _hoisted_2$i = {
+const _hoisted_1$p = { class: "user_settings" };
+const _hoisted_2$l = {
   key: 0,
   class: "settings_details"
 };
-function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$m, [
+function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$p, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.useModeration,
       "onUpdate:modelValue": [
@@ -3172,7 +3188,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    !$setup.appSettingsStore.allowModeration ? (openBlock(), createElementBlock("div", _hoisted_2$i, [
+    !$setup.appSettingsStore.allowModeration ? (openBlock(), createElementBlock("div", _hoisted_2$l, [
       createVNode($setup["NcCheckboxRadioSwitch"], {
         modelValue: $setup.appSettingsStore.officialBypassModeration,
         "onUpdate:modelValue": [
@@ -3194,8 +3210,8 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminModeration = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminModeration.vue"]]);
-const _sfc_main$l = {
+const AdminModeration = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminModeration.vue"]]);
+const _sfc_main$o = {
   __name: "AdminJobs",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3258,12 +3274,12 @@ const _sfc_main$l = {
     return __returned__;
   }
 };
-const _hoisted_1$l = { class: "user_settings" };
-const _hoisted_2$h = { class: "job_hints" };
-const _hoisted_3$c = { class: "job_buttons_section" };
-function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$l, [
-    createBaseVNode("div", _hoisted_2$h, [
+const _hoisted_1$o = { class: "user_settings" };
+const _hoisted_2$k = { class: "job_hints" };
+const _hoisted_3$f = { class: "job_buttons_section" };
+function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$o, [
+    createBaseVNode("div", _hoisted_2$k, [
       createBaseVNode(
         "p",
         null,
@@ -3291,7 +3307,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_3$c, [
+    createBaseVNode("div", _hoisted_3$f, [
       createVNode($setup["NcButton"], {
         variant: "primary",
         "aria-label": $setup.autoreminder.text,
@@ -3343,8 +3359,8 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminJobs = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminJobs.vue"]]);
-const _sfc_main$k = {
+const AdminJobs = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminJobs.vue"]]);
+const _sfc_main$n = {
   __name: "AdminLegal",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3376,18 +3392,18 @@ const _sfc_main$k = {
     return __returned__;
   }
 };
-const _hoisted_1$k = { class: "user_settings" };
-const _hoisted_2$g = {
+const _hoisted_1$n = { class: "user_settings" };
+const _hoisted_2$j = {
   key: 0,
   class: "user_settings"
 };
-const _hoisted_3$b = { class: "settings-description" };
-function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_3$e = { class: "settings-description" };
+function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     Fragment,
     null,
     [
-      createBaseVNode("div", _hoisted_1$k, [
+      createBaseVNode("div", _hoisted_1$n, [
         createVNode($setup["NcCheckboxRadioSwitch"], {
           modelValue: $setup.appSettingsStore.useSiteLegalTerms,
           "onUpdate:modelValue": [
@@ -3407,10 +3423,10 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
           /* STABLE */
         }, 8, ["modelValue"])
       ]),
-      !$setup.appSettingsStore.useSiteLegalTerms ? (openBlock(), createElementBlock("div", _hoisted_2$g, [
+      !$setup.appSettingsStore.useSiteLegalTerms ? (openBlock(), createElementBlock("div", _hoisted_2$j, [
         createBaseVNode(
           "p",
-          _hoisted_3$b,
+          _hoisted_3$e,
           toDisplayString($setup.t("agora", "If you want to use different terms for public inquiries, enter them below.")),
           1
           /* TEXT */
@@ -3438,8 +3454,8 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT */
   );
 }
-const AdminLegal = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminLegal.vue"]]);
-const _sfc_main$j = {
+const AdminLegal = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminLegal.vue"]]);
+const _sfc_main$m = {
   __name: "AdminFamiliesManager",
   emits: ["familySelected"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -3454,6 +3470,21 @@ const _sfc_main$j = {
       icon: null,
       sort_order: 0
     });
+    const familiesWithStats = computed(
+      () => appSettingsStore.inquiryFamilyTab.map((family) => {
+        const typesCount = appSettingsStore.inquiryTypeTab.filter(
+          (type) => type.family === family.family_type
+        ).length;
+        const groupTypesCount = (appSettingsStore.inquiryGroupTypeTab ?? []).filter(
+          (groupType) => groupType.family === family.family_type
+        ).length;
+        return {
+          ...family,
+          typesCount,
+          groupTypesCount
+        };
+      })
+    );
     const findIconById = (iconId) => {
       if (!iconId) return null;
       return availableIcons.value.find((icon) => icon.id === iconId) || null;
@@ -3472,15 +3503,6 @@ const _sfc_main$j = {
       }))
     );
     const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default;
-    const familiesWithStats = computed(() => appSettingsStore.inquiryFamilyTab.map((family) => {
-      const typesCount = appSettingsStore.inquiryTypeTab.filter(
-        (type) => type.family === family.family_type
-      ).length;
-      return {
-        ...family,
-        typesCount
-      };
-    }));
     const extractIconId = (icon) => {
       if (!icon) return "";
       if (typeof icon === "string") return icon;
@@ -3520,7 +3542,7 @@ const _sfc_main$j = {
     const selectFamily = (family) => {
       emit("familySelected", family);
     };
-    const __returned__ = { emit, appSettingsStore, editingFamily, newFamily, findIconById, startEditing, availableIcons, getIconComponent, familiesWithStats, extractIconId, addFamily, updateFamily, deleteFamily, selectFamily, computed, ref, get t() {
+    const __returned__ = { emit, appSettingsStore, editingFamily, newFamily, familiesWithStats, findIconById, startEditing, availableIcons, getIconComponent, extractIconId, addFamily, updateFamily, deleteFamily, selectFamily, computed, ref, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -3539,35 +3561,36 @@ const _sfc_main$j = {
     return __returned__;
   }
 };
-const _hoisted_1$j = { class: "families-manager" };
-const _hoisted_2$f = { class: "description" };
-const _hoisted_3$a = { class: "families-list" };
-const _hoisted_4$a = ["onClick"];
-const _hoisted_5$9 = { class: "family-content" };
-const _hoisted_6$8 = { class: "family-icon" };
-const _hoisted_7$7 = { class: "family-info" };
-const _hoisted_8$7 = { class: "family-type" };
-const _hoisted_9$7 = {
+const _hoisted_1$m = { class: "families-manager" };
+const _hoisted_2$i = { class: "description" };
+const _hoisted_3$d = { class: "families-list" };
+const _hoisted_4$d = ["onClick"];
+const _hoisted_5$c = { class: "family-content" };
+const _hoisted_6$b = { class: "family-icon" };
+const _hoisted_7$b = { class: "family-info" };
+const _hoisted_8$b = { class: "family-type" };
+const _hoisted_9$a = {
   key: 0,
   class: "family-description"
 };
-const _hoisted_10$5 = { class: "family-stats" };
-const _hoisted_11$5 = { class: "types-count" };
-const _hoisted_12$4 = { class: "family-actions" };
-const _hoisted_13$4 = { class: "add-family-form" };
-const _hoisted_14$4 = { class: "form-grid" };
-const _hoisted_15$4 = { class: "form-row" };
-const _hoisted_16$4 = { class: "form-actions" };
-const _hoisted_17$4 = {
+const _hoisted_10$8 = { class: "family-stats" };
+const _hoisted_11$8 = { class: "types-count" };
+const _hoisted_12$7 = { class: "group-types-count" };
+const _hoisted_13$7 = { class: "family-actions" };
+const _hoisted_14$7 = { class: "add-family-form" };
+const _hoisted_15$7 = { class: "form-grid" };
+const _hoisted_16$7 = { class: "form-row" };
+const _hoisted_17$7 = { class: "form-actions" };
+const _hoisted_18$6 = {
   key: 0,
   class: "modal-overlay"
 };
-const _hoisted_18$3 = { class: "modal-content large-modal" };
-const _hoisted_19$3 = { class: "form-grid" };
-const _hoisted_20$3 = { class: "form-row" };
-const _hoisted_21$3 = { class: "modal-actions" };
-function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$j, [
+const _hoisted_19$6 = { class: "modal-content large-modal" };
+const _hoisted_20$6 = { class: "form-grid" };
+const _hoisted_21$6 = { class: "form-row" };
+const _hoisted_22$6 = { class: "modal-actions" };
+function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$m, [
     createBaseVNode(
       "h2",
       null,
@@ -3577,13 +3600,13 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     ),
     createBaseVNode(
       "p",
-      _hoisted_2$f,
+      _hoisted_2$i,
       toDisplayString($setup.t("agora", "Manage inquiry families to organize different types of inquiries. Each family can contain multiple inquiry types.")),
       1
       /* TEXT */
     ),
     createCommentVNode(" Families List "),
-    createBaseVNode("div", _hoisted_3$a, [
+    createBaseVNode("div", _hoisted_3$d, [
       createBaseVNode(
         "h3",
         null,
@@ -3600,11 +3623,11 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
             class: "family-item",
             onClick: ($event) => $setup.selectFamily(family)
           }, [
-            createBaseVNode("div", _hoisted_5$9, [
-              createBaseVNode("div", _hoisted_6$8, [
+            createBaseVNode("div", _hoisted_5$c, [
+              createBaseVNode("div", _hoisted_6$b, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(family.icon)), { size: 20 }))
               ]),
-              createBaseVNode("div", _hoisted_7$7, [
+              createBaseVNode("div", _hoisted_7$b, [
                 createBaseVNode(
                   "h4",
                   null,
@@ -3614,30 +3637,37 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                 ),
                 createBaseVNode(
                   "p",
-                  _hoisted_8$7,
+                  _hoisted_8$b,
                   toDisplayString(family.family_type),
                   1
                   /* TEXT */
                 ),
                 family.description ? (openBlock(), createElementBlock(
                   "p",
-                  _hoisted_9$7,
+                  _hoisted_9$a,
                   toDisplayString(family.description),
                   1
                   /* TEXT */
                 )) : createCommentVNode("v-if", true),
-                createBaseVNode("div", _hoisted_10$5, [
+                createBaseVNode("div", _hoisted_10$8, [
                   createBaseVNode(
                     "span",
-                    _hoisted_11$5,
+                    _hoisted_11$8,
                     toDisplayString($setup.t("agora", "{count} types", { count: family.typesCount })),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "span",
+                    _hoisted_12$7,
+                    toDisplayString($setup.t("agora", "{count} group types", { count: family.groupTypesCount })),
                     1
                     /* TEXT */
                   )
                 ])
               ])
             ]),
-            createBaseVNode("div", _hoisted_12$4, [
+            createBaseVNode("div", _hoisted_13$7, [
               createVNode($setup["NcButton"], {
                 onClick: withModifiers(($event) => $setup.startEditing(family), ["stop"])
               }, {
@@ -3665,14 +3695,14 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                 /* STABLE */
               }, 8, ["onClick"])
             ])
-          ], 8, _hoisted_4$a);
+          ], 8, _hoisted_4$d);
         }),
         128
         /* KEYED_FRAGMENT */
       ))
     ]),
     createCommentVNode(" Add New Family Form "),
-    createBaseVNode("div", _hoisted_13$4, [
+    createBaseVNode("div", _hoisted_14$7, [
       createBaseVNode(
         "h3",
         null,
@@ -3680,8 +3710,8 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
         1
         /* TEXT */
       ),
-      createBaseVNode("div", _hoisted_14$4, [
-        createBaseVNode("div", _hoisted_15$4, [
+      createBaseVNode("div", _hoisted_15$7, [
+        createBaseVNode("div", _hoisted_16$7, [
           createVNode($setup["NcInputField"], {
             modelValue: $setup.newFamily.family_type,
             "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.newFamily.family_type = $event),
@@ -3701,12 +3731,14 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
           createVNode($setup["NcSelect"], {
             modelValue: $setup.newFamily.icon,
             "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newFamily.icon = $event),
+            "input-label": $setup.t("agora", "Icon"),
+            "label-outside": true,
             options: $setup.availableIcons,
             clearable: false,
             "track-by": "id",
             placeholder: $setup.t("agora", "Select an icon"),
             class: "form-field"
-          }, null, 8, ["modelValue", "options", "placeholder"])
+          }, null, 8, ["modelValue", "input-label", "options", "placeholder"])
         ]),
         createVNode($setup["NcInputField"], {
           modelValue: $setup.newFamily.description,
@@ -3724,7 +3756,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
           min: 0,
           class: "form-field"
         }, null, 8, ["modelValue", "label"]),
-        createBaseVNode("div", _hoisted_16$4, [
+        createBaseVNode("div", _hoisted_17$7, [
           createVNode($setup["NcButton"], {
             type: "primary",
             disabled: !$setup.newFamily.family_type || !$setup.newFamily.label,
@@ -3744,8 +3776,8 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
       ])
     ]),
     createCommentVNode(" Edit Family Modal "),
-    $setup.editingFamily ? (openBlock(), createElementBlock("div", _hoisted_17$4, [
-      createBaseVNode("div", _hoisted_18$3, [
+    $setup.editingFamily ? (openBlock(), createElementBlock("div", _hoisted_18$6, [
+      createBaseVNode("div", _hoisted_19$6, [
         createBaseVNode(
           "h3",
           null,
@@ -3753,8 +3785,8 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("div", _hoisted_19$3, [
-          createBaseVNode("div", _hoisted_20$3, [
+        createBaseVNode("div", _hoisted_20$6, [
+          createBaseVNode("div", _hoisted_21$6, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.editingFamily.family_type,
               "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.editingFamily.family_type = $event),
@@ -3772,12 +3804,14 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
             createVNode($setup["NcSelect"], {
               modelValue: $setup.editingFamily.icon,
               "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.editingFamily.icon = $event),
+              "input-label": $setup.t("agora", "Icon"),
+              "label-outside": true,
               options: $setup.availableIcons,
               "track-by": "id",
               clearable: false,
               placeholder: $setup.t("agora", "Select an icon"),
               class: "form-field"
-            }, null, 8, ["modelValue", "options", "placeholder"])
+            }, null, 8, ["modelValue", "input-label", "options", "placeholder"])
           ])
         ]),
         createBaseVNode("div", null, [
@@ -3788,7 +3822,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
             type: "textarea",
             class: "full-width"
           }, null, 8, ["modelValue", "label"]),
-          createBaseVNode("div", _hoisted_21$3, [
+          createBaseVNode("div", _hoisted_22$6, [
             createVNode($setup["NcButton"], {
               onClick: _cache[9] || (_cache[9] = ($event) => $setup.editingFamily = null)
             }, {
@@ -3822,11 +3856,11 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-b0578289"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminFamiliesManager.vue"]]);
-const _sfc_main$i = /* @__PURE__ */ defineComponent({
+const AdminFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__scopeId", "data-v-b0578289"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminFamiliesManager.vue"]]);
+const _sfc_main$l = /* @__PURE__ */ defineComponent({
   __name: "AdminTypesManager",
   props: {
-    selectedFamily: { type: Object, required: false }
+    selectedFamily: { type: [Object, null], required: false }
   },
   emits: ["typeSelected", "backToFamilies"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -3834,92 +3868,228 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
     const props = __props;
     const emit = __emit;
     const appSettingsStore = useAppSettingsStore();
+    const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
+    const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value);
+    const searchQuery = ref("");
     const editingType = ref(null);
-    const newType = ref({
-      inquiry_type: "",
-      label: "",
-      family: props.selectedFamily?.family_type || "",
-      icon: "",
-      description: "",
-      fields: "[]",
-      allowed_response: "[]",
-      allowed_transformation: "[]",
-      allowed_option_type: "[]"
-    });
-    const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default;
+    const savingType = ref(false);
+    const editTab = ref("basic");
+    const expandedTypeId = ref(null);
+    const newType = ref(emptyType());
+    const newField = ref("");
+    const newAllowedResponse = ref("");
+    const newAllowedTransformation = ref("");
+    const newAllowedOptionType = ref("");
+    function emptyType() {
+      return {
+        inquiry_type: "",
+        label: "",
+        family: familyKey.value,
+        icon: null,
+        description: "",
+        fields: [],
+        allowed_response: [],
+        allowed_transformation: [],
+        allowed_option_type: []
+      };
+    }
     const availableIcons = computed(
       () => Object.keys(InquiryGeneralIcons).filter((key) => key !== "default").map((iconId) => ({
         id: iconId,
         label: translate("agora", iconId.replace(/([A-Z])/g, " $1").trim())
       }))
     );
+    const getIconComponent = (iconName) => {
+      const id = typeof iconName === "object" ? iconName?.id : iconName;
+      return InquiryGeneralIcons[id] || InquiryGeneralIcons.default;
+    };
+    const findIconById = (iconId) => {
+      if (!iconId) return null;
+      if (typeof iconId === "object") return iconId;
+      return availableIcons.value.find((i) => i.id === iconId) || null;
+    };
     const extractIconId = (icon) => {
       if (!icon) return "";
       if (typeof icon === "string") return icon;
       if (typeof icon === "object") return icon.id || "";
       return String(icon);
     };
+    const normalizeArray = (value) => {
+      if (Array.isArray(value)) {
+        return value.map((v) => typeof v === "string" ? v : v?.key ?? String(v));
+      }
+      if (typeof value === "string" && value) {
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed.map((v) => typeof v === "string" ? v : v?.key ?? String(v)) : [];
+        } catch {
+          return [];
+        }
+      }
+      return [];
+    };
+    const allTypes = computed(() => appSettingsStore.inquiryTypeTab ?? []);
     const familyTypes = computed(
-      () => appSettingsStore.inquiryTypeTab.filter(
-        (type) => type.family === props.selectedFamily?.family_type
-      )
+      () => familyKey.value ? allTypes.value.filter((type) => type.family === familyKey.value) : allTypes.value
     );
-    const convertToJsonString = (value) => {
-      if (typeof value === "string") return value;
-      return JSON.stringify(value || []);
+    const filteredTypes = computed(() => {
+      let list = familyTypes.value;
+      if (searchQuery.value.trim()) {
+        const q = searchQuery.value.toLowerCase();
+        list = list.filter(
+          (type) => type.inquiry_type?.toLowerCase().includes(q) || type.label?.toLowerCase().includes(q) || type.description?.toLowerCase().includes(q)
+        );
+      }
+      return list.map((type) => ({
+        ...type,
+        fields: normalizeArray(type.fields),
+        allowed_response: normalizeArray(type.allowed_response),
+        allowed_transformation: normalizeArray(type.allowed_transformation),
+        allowed_option_type: normalizeArray(type.allowed_option_type)
+      }));
+    });
+    const groupTypesInFamily = computed(() => {
+      const all = appSettingsStore.inquiryGroupTypeTab ?? [];
+      if (!familyKey.value) return all;
+      return all.filter((gt) => gt.family === familyKey.value);
+    });
+    const getUsageCount = (inquiryType) => groupTypesInFamily.value.filter(
+      (gt) => normalizeArray(gt.allowed_inquiry_types).includes(inquiryType)
+    ).length;
+    const validateType = (type, isEdit = false) => {
+      if (!type.inquiry_type?.trim()) {
+        showError(translate("agora", "Inquiry type key is mandatory"));
+        return false;
+      }
+      if (!/^[a-z][a-z0-9_]*$/i.test(type.inquiry_type)) {
+        showError(
+          translate("agora", "Inquiry type key must be alphanumeric (underscores allowed), starting with a letter")
+        );
+        return false;
+      }
+      if (!type.label?.trim()) {
+        showError(translate("agora", "Label is mandatory"));
+        return false;
+      }
+      if (!isEdit) {
+        const exists = allTypes.value.some(
+          (existing) => existing.inquiry_type === type.inquiry_type
+        );
+        if (exists) {
+          showError(translate("agora", "An inquiry type with this key already exists"));
+          return false;
+        }
+      }
+      return true;
     };
     const addType = async () => {
-      if (!newType.value.inquiry_type) {
-        showError(translate("agora", "Inquiry type is mandatory"), { timeout: 2e3 });
-        return;
+      if (!validateType(newType.value, false)) return;
+      savingType.value = true;
+      try {
+        await appSettingsStore.addInquiryType({
+          ...newType.value,
+          family: familyKey.value,
+          created: Date.now(),
+          icon: extractIconId(newType.value.icon),
+          description: newType.value.description || "",
+          fields: JSON.stringify(newType.value.fields),
+          allowed_response: JSON.stringify(newType.value.allowed_response),
+          allowed_transformation: JSON.stringify(newType.value.allowed_transformation),
+          allowed_option_type: JSON.stringify(newType.value.allowed_option_type)
+        });
+        showSuccess(translate("agora", "Inquiry type added"));
+        newType.value = emptyType();
+      } catch (e) {
+        showError(translate("agora", "Failed to add inquiry type: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingType.value = false;
       }
-      await appSettingsStore.addInquiryType({
-        ...newType.value,
-        family: props.selectedFamily.family_type,
-        created: Date.now(),
-        icon: extractIconId(newType.value.icon),
-        description: newType.value.description || "",
-        fields: convertToJsonString(newType.value.fields),
-        allowed_response: convertToJsonString(newType.value.allowed_response),
-        allowed_transformation: convertToJsonString(newType.value.allowed_transformation),
-        allowed_option_type: convertToJsonString(newType.value.allowed_option_type)
-      });
-      newType.value = {
-        inquiry_type: "",
-        label: "",
-        family: props.selectedFamily.family_type,
-        icon: "",
-        description: "",
-        fields: "[]",
-        allowed_response: "[]",
-        allowed_transformation: "[]",
-        allowed_option_type: "[]"
+    };
+    const startEditing = (type) => {
+      editingType.value = {
+        ...JSON.parse(JSON.stringify(type)),
+        icon: findIconById(type.icon),
+        fields: normalizeArray(type.fields),
+        allowed_response: normalizeArray(type.allowed_response),
+        allowed_transformation: normalizeArray(type.allowed_transformation),
+        allowed_option_type: normalizeArray(type.allowed_option_type)
       };
+      editTab.value = "basic";
+    };
+    const cancelEditing = () => {
+      editingType.value = null;
+      editTab.value = "basic";
     };
     const updateType = async (type) => {
-      if (!type.inquiry_type) {
-        showError(translate("agora", "Inquiry type is mandatory"), { timeout: 2e3 });
+      if (!type || !validateType(type, true)) return;
+      savingType.value = true;
+      try {
+        await appSettingsStore.updateInquiryType(type.id, {
+          ...type,
+          family: familyKey.value,
+          icon: extractIconId(type.icon),
+          fields: JSON.stringify(type.fields),
+          allowed_response: JSON.stringify(type.allowed_response),
+          allowed_transformation: JSON.stringify(type.allowed_transformation),
+          allowed_option_type: JSON.stringify(type.allowed_option_type)
+        });
+        showSuccess(translate("agora", "Inquiry type updated"));
+        editingType.value = null;
+      } catch (e) {
+        showError(translate("agora", "Failed to update inquiry type: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingType.value = false;
+      }
+    };
+    const deleteType = async (type) => {
+      if (!confirm(
+        translate("agora", 'Are you sure you want to delete the inquiry type "{label}"?', {
+          label: type.label || type.inquiry_type
+        })
+      )) {
         return;
       }
-      await appSettingsStore.updateInquiryType(type.id, {
-        ...type,
-        icon: extractIconId(type.icon),
-        fields: convertToJsonString(type.fields),
-        allowed_response: convertToJsonString(type.allowed_response),
-        allowed_transformation: convertToJsonString(type.allowed_transformation),
-        allowed_option_type: convertToJsonString(type.allowed_option_type)
-      });
-      editingType.value = null;
-    };
-    const deleteType = async (typeId) => {
-      if (confirm(translate("agora", "Are you sure you want to delete this inquiry type?"))) {
-        await appSettingsStore.deleteType(typeId);
+      try {
+        await appSettingsStore.deleteType(type.id);
+        showSuccess(translate("agora", "Inquiry type deleted"));
+      } catch (e) {
+        showError(translate("agora", "Failed to delete inquiry type: {msg}", { msg: e?.message ?? "" }));
       }
     };
-    const openTypeSettings = (type) => {
-      emit("typeSelected", type);
+    const toggleExpand = (id) => {
+      expandedTypeId.value = expandedTypeId.value === id ? null : id;
     };
-    const __returned__ = { props, emit, appSettingsStore, editingType, newType, getIconComponent, availableIcons, extractIconId, familyTypes, convertToJsonString, addType, updateType, deleteType, openTypeSettings, get t() {
+    const addArrayItem = (target, key, value) => {
+      const val = value?.trim();
+      if (!val) return;
+      const arr = target === "new" ? newType.value[key] : editingType.value[key];
+      if (!arr.includes(val)) arr.push(val);
+    };
+    const removeArrayItem = (target, key, index) => {
+      const arr = target === "new" ? newType.value[key] : editingType.value[key];
+      arr.splice(index, 1);
+    };
+    const addField = (target) => {
+      addArrayItem(target, "fields", newField.value);
+      newField.value = "";
+    };
+    const removeField = (target, index) => removeArrayItem(target, "fields", index);
+    const addAllowedResponse = (target) => {
+      addArrayItem(target, "allowed_response", newAllowedResponse.value);
+      newAllowedResponse.value = "";
+    };
+    const removeAllowedResponse = (target, index) => removeArrayItem(target, "allowed_response", index);
+    const addAllowedTransformation = (target) => {
+      addArrayItem(target, "allowed_transformation", newAllowedTransformation.value);
+      newAllowedTransformation.value = "";
+    };
+    const removeAllowedTransformation = (target, index) => removeArrayItem(target, "allowed_transformation", index);
+    const addAllowedOptionType = (target) => {
+      addArrayItem(target, "allowed_option_type", newAllowedOptionType.value);
+      newAllowedOptionType.value = "";
+    };
+    const removeAllowedOptionType = (target, index) => removeArrayItem(target, "allowed_option_type", index);
+    const __returned__ = { props, emit, appSettingsStore, familyKey, familyLabel, searchQuery, editingType, savingType, editTab, expandedTypeId, newType, newField, newAllowedResponse, newAllowedTransformation, newAllowedOptionType, emptyType, availableIcons, getIconComponent, findIconById, extractIconId, normalizeArray, allTypes, familyTypes, filteredTypes, groupTypesInFamily, getUsageCount, validateType, addType, startEditing, cancelEditing, updateType, deleteType, toggleExpand, addArrayItem, removeArrayItem, addField, removeField, addAllowedResponse, removeAllowedResponse, addAllowedTransformation, removeAllowedTransformation, addAllowedOptionType, removeAllowedOptionType, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -3927,149 +4097,414 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
       return NcInputField;
     }, get NcSelect() {
       return NcSelect;
+    }, get NcLoadingIcon() {
+      return NcLoadingIcon;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
 });
-const _hoisted_1$i = { class: "types-manager" };
-const _hoisted_2$e = { class: "header" };
-const _hoisted_3$9 = { class: "types-list" };
-const _hoisted_4$9 = { class: "list-description" };
-const _hoisted_5$8 = { class: "types-grid" };
-const _hoisted_6$7 = ["onClick"];
-const _hoisted_7$6 = { class: "type-card-content" };
-const _hoisted_8$6 = { class: "type-icon" };
-const _hoisted_9$6 = { class: "type-info" };
-const _hoisted_10$4 = { class: "type-key" };
-const _hoisted_11$4 = {
-  key: 0,
-  class: "type-description"
-};
-const _hoisted_12$3 = { class: "type-actions" };
-const _hoisted_13$3 = { class: "secondary-actions" };
-const _hoisted_14$3 = {
+const _hoisted_1$l = { class: "inquiry-types-manager" };
+const _hoisted_2$h = { class: "manager-header" };
+const _hoisted_3$c = { class: "header-text" };
+const _hoisted_4$c = { class: "description" };
+const _hoisted_5$b = { class: "header-actions" };
+const _hoisted_6$a = { class: "family-stats" };
+const _hoisted_7$a = { class: "stat-block" };
+const _hoisted_8$a = { class: "stat-value" };
+const _hoisted_9$9 = { class: "stat-label" };
+const _hoisted_10$7 = { class: "stat-block accent" };
+const _hoisted_11$7 = { class: "stat-value" };
+const _hoisted_12$6 = { class: "stat-label" };
+const _hoisted_13$6 = { class: "types-list" };
+const _hoisted_14$6 = { class: "count-badge" };
+const _hoisted_15$6 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_15$3 = { class: "add-type-form" };
-const _hoisted_16$3 = { class: "form-grid" };
-const _hoisted_17$3 = { class: "form-row" };
-const _hoisted_18$2 = { class: "form-row" };
-const _hoisted_19$2 = { class: "form-actions" };
-const _hoisted_20$2 = {
+const _hoisted_16$6 = ["onClick"];
+const _hoisted_17$6 = { class: "type-icon" };
+const _hoisted_18$5 = { class: "type-info" };
+const _hoisted_19$5 = { class: "type-title-row" };
+const _hoisted_20$5 = { class: "type-key" };
+const _hoisted_21$5 = { class: "family-badge" };
+const _hoisted_22$5 = ["title"];
+const _hoisted_23$4 = {
   key: 0,
-  class: "modal-overlay"
+  class: "type-description"
 };
-const _hoisted_21$2 = { class: "modal-content large-modal" };
-const _hoisted_22$1 = { class: "form-grid" };
-const _hoisted_23$1 = { class: "form-row" };
-const _hoisted_24$1 = { class: "form-row" };
-const _hoisted_25$1 = { class: "modal-actions" };
-function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$i, [
-    createBaseVNode("div", _hoisted_2$e, [
-      createVNode($setup["NcButton"], {
-        onClick: _cache[0] || (_cache[0] = ($event) => $setup.emit("backToFamilies"))
-      }, {
-        default: withCtx(() => [
-          createTextVNode(
-            " ← " + toDisplayString($setup.t("agora", "Back to families")),
-            1
-            /* TEXT */
-          )
-        ]),
-        _: 1
-        /* STABLE */
-      }),
-      createBaseVNode(
-        "h2",
-        null,
-        toDisplayString($setup.t("agora", "Types for {family}", { family: $props.selectedFamily?.label })),
-        1
-        /* TEXT */
-      )
-    ]),
-    createCommentVNode(" Types List "),
-    createBaseVNode("div", _hoisted_3$9, [
-      createBaseVNode(
-        "h3",
-        null,
-        toDisplayString($setup.t("agora", "Configured types")),
-        1
-        /* TEXT */
-      ),
-      createBaseVNode(
-        "p",
-        _hoisted_4$9,
-        toDisplayString($setup.t("agora", "Click on a type to configure its rights and status settings")),
-        1
-        /* TEXT */
-      ),
-      createBaseVNode("div", _hoisted_5$8, [
-        (openBlock(true), createElementBlock(
-          Fragment,
+const _hoisted_24$4 = { class: "type-stats" };
+const _hoisted_25$4 = { class: "stat-chip" };
+const _hoisted_26$3 = {
+  key: 0,
+  class: "stat-chip"
+};
+const _hoisted_27$3 = {
+  key: 1,
+  class: "stat-chip"
+};
+const _hoisted_28$3 = {
+  key: 2,
+  class: "stat-chip"
+};
+const _hoisted_29$3 = {
+  key: 0,
+  class: "type-details"
+};
+const _hoisted_30$3 = { class: "detail-section" };
+const _hoisted_31$3 = { class: "pill-list" };
+const _hoisted_32$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_33$3 = { class: "detail-section" };
+const _hoisted_34$3 = { class: "pill-list" };
+const _hoisted_35$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_36$3 = { class: "detail-section" };
+const _hoisted_37$3 = { class: "pill-list" };
+const _hoisted_38$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_39$3 = { class: "detail-section" };
+const _hoisted_40$3 = { class: "pill-list" };
+const _hoisted_41$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_42$3 = { class: "detail-section full-width" };
+const _hoisted_43$3 = { class: "pill-list" };
+const _hoisted_44$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_45$3 = { class: "add-type-form" };
+const _hoisted_46$3 = { class: "form-grid" };
+const _hoisted_47$3 = { class: "full-width" };
+const _hoisted_48$3 = { class: "field-label" };
+const _hoisted_49$3 = { class: "inline-editor" };
+const _hoisted_50$3 = { class: "pill-list" };
+const _hoisted_51$3 = ["onClick"];
+const _hoisted_52$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_53$3 = { class: "full-width" };
+const _hoisted_54$3 = { class: "field-label" };
+const _hoisted_55$3 = { class: "inline-editor" };
+const _hoisted_56$3 = { class: "pill-list" };
+const _hoisted_57$3 = ["onClick"];
+const _hoisted_58$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_59$3 = { class: "full-width" };
+const _hoisted_60$2 = { class: "field-label" };
+const _hoisted_61$2 = { class: "inline-editor" };
+const _hoisted_62$2 = { class: "pill-list" };
+const _hoisted_63$2 = ["onClick"];
+const _hoisted_64$2 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_65$2 = { class: "full-width" };
+const _hoisted_66$2 = { class: "field-label" };
+const _hoisted_67$1 = { class: "inline-editor" };
+const _hoisted_68$1 = { class: "pill-list" };
+const _hoisted_69$1 = ["onClick"];
+const _hoisted_70$1 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_71$1 = { class: "form-actions full-width" };
+const _hoisted_72$1 = { key: 1 };
+const _hoisted_73$1 = { class: "modal-content large-modal" };
+const _hoisted_74$1 = { class: "modal-header" };
+const _hoisted_75$1 = { class: "tabs" };
+const _hoisted_76$1 = ["onClick"];
+const _hoisted_77$1 = {
+  key: 0,
+  class: "tab-panel form-grid"
+};
+const _hoisted_78$1 = {
+  key: 1,
+  class: "tab-panel"
+};
+const _hoisted_79$1 = { class: "inline-editor" };
+const _hoisted_80$1 = { class: "pill-list" };
+const _hoisted_81$1 = ["onClick"];
+const _hoisted_82$1 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_83$1 = {
+  key: 2,
+  class: "tab-panel"
+};
+const _hoisted_84$1 = { class: "inline-editor" };
+const _hoisted_85$1 = { class: "pill-list" };
+const _hoisted_86$1 = ["onClick"];
+const _hoisted_87$1 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_88$1 = {
+  key: 3,
+  class: "tab-panel"
+};
+const _hoisted_89$1 = { class: "inline-editor" };
+const _hoisted_90$1 = { class: "pill-list" };
+const _hoisted_91$1 = ["onClick"];
+const _hoisted_92$1 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_93$1 = {
+  key: 4,
+  class: "tab-panel"
+};
+const _hoisted_94$1 = { class: "inline-editor" };
+const _hoisted_95$1 = { class: "pill-list" };
+const _hoisted_96$1 = ["onClick"];
+const _hoisted_97$1 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_98$1 = { class: "modal-actions" };
+const _hoisted_99$1 = { key: 1 };
+function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$l, [
+    createCommentVNode(" ==================== HEADER ==================== "),
+    createBaseVNode("header", _hoisted_2$h, [
+      createBaseVNode("div", _hoisted_3$c, [
+        createVNode($setup["NcButton"], {
+          class: "back-btn",
+          onClick: _cache[0] || (_cache[0] = ($event) => $setup.emit("backToFamilies"))
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              " ← " + toDisplayString($setup.t("agora", "Back to families")),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        }),
+        createBaseVNode(
+          "h2",
           null,
-          renderList($setup.familyTypes, (type) => {
-            return openBlock(), createElementBlock("div", {
+          toDisplayString($setup.t("agora", "Inquiry types — {family}", { family: $setup.familyLabel })),
+          1
+          /* TEXT */
+        ),
+        createBaseVNode(
+          "p",
+          _hoisted_4$c,
+          toDisplayString($setup.t(
+            "agora",
+            'Configure inquiry types available in the "{family}" family (fields, allowed responses, transformations and option types).',
+            { family: $setup.familyLabel }
+          )),
+          1
+          /* TEXT */
+        )
+      ]),
+      createBaseVNode("div", _hoisted_5$b, [
+        createBaseVNode("div", _hoisted_6$a, [
+          createBaseVNode("div", _hoisted_7$a, [
+            createBaseVNode(
+              "span",
+              _hoisted_8$a,
+              toDisplayString($setup.filteredTypes.length),
+              1
+              /* TEXT */
+            ),
+            createBaseVNode(
+              "span",
+              _hoisted_9$9,
+              toDisplayString($setup.t("agora", "inquiry types")),
+              1
+              /* TEXT */
+            )
+          ]),
+          createBaseVNode("div", _hoisted_10$7, [
+            createBaseVNode(
+              "span",
+              _hoisted_11$7,
+              toDisplayString($setup.groupTypesInFamily.length),
+              1
+              /* TEXT */
+            ),
+            createBaseVNode(
+              "span",
+              _hoisted_12$6,
+              toDisplayString($setup.t("agora", "group types")),
+              1
+              /* TEXT */
+            )
+          ])
+        ]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.searchQuery,
+          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.searchQuery = $event),
+          type: "text",
+          label: $setup.t("agora", "Search"),
+          "label-outside": true,
+          placeholder: $setup.t("agora", "Search inquiry types…"),
+          class: "search-field"
+        }, null, 8, ["modelValue", "label", "placeholder"])
+      ])
+    ]),
+    createCommentVNode(" ==================== EXISTING TYPES ==================== "),
+    createBaseVNode("section", _hoisted_13$6, [
+      createBaseVNode("h3", null, [
+        createTextVNode(
+          toDisplayString($setup.t("agora", "Existing inquiry types")) + " ",
+          1
+          /* TEXT */
+        ),
+        createBaseVNode(
+          "span",
+          _hoisted_14$6,
+          toDisplayString($setup.filteredTypes.length),
+          1
+          /* TEXT */
+        )
+      ]),
+      !$setup.filteredTypes.length ? (openBlock(), createElementBlock(
+        "div",
+        _hoisted_15$6,
+        toDisplayString($setup.t("agora", "No inquiry types match your filters.")),
+        1
+        /* TEXT */
+      )) : createCommentVNode("v-if", true),
+      (openBlock(true), createElementBlock(
+        Fragment,
+        null,
+        renderList($setup.filteredTypes, (type) => {
+          return openBlock(), createElementBlock(
+            "div",
+            {
               key: type.id,
-              class: "type-card",
-              onClick: ($event) => $setup.openTypeSettings(type)
-            }, [
-              createBaseVNode("div", _hoisted_7$6, [
-                createBaseVNode("div", _hoisted_8$6, [
+              class: normalizeClass(["type-card", { expanded: $setup.expandedTypeId === type.id }])
+            },
+            [
+              createBaseVNode("div", {
+                class: "type-row",
+                onClick: ($event) => $setup.emit("typeSelected", type)
+              }, [
+                createBaseVNode("div", _hoisted_17$6, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(type.icon)), { size: 20 }))
                 ]),
-                createBaseVNode("div", _hoisted_9$6, [
-                  createBaseVNode(
-                    "h4",
-                    null,
-                    toDisplayString(type.label),
-                    1
-                    /* TEXT */
-                  ),
-                  createBaseVNode(
-                    "p",
-                    _hoisted_10$4,
-                    toDisplayString(type.inquiry_type),
-                    1
-                    /* TEXT */
-                  ),
+                createBaseVNode("div", _hoisted_18$5, [
+                  createBaseVNode("div", _hoisted_19$5, [
+                    createBaseVNode(
+                      "h4",
+                      null,
+                      toDisplayString(type.label || type.inquiry_type),
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "code",
+                      _hoisted_20$5,
+                      toDisplayString(type.inquiry_type),
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "span",
+                      _hoisted_21$5,
+                      toDisplayString(type.family),
+                      1
+                      /* TEXT */
+                    ),
+                    $setup.getUsageCount(type.inquiry_type) > 0 ? (openBlock(), createElementBlock("span", {
+                      key: 0,
+                      class: "usage-badge",
+                      title: $setup.t("agora", "Used by {count} group type(s) in this family", {
+                        count: $setup.getUsageCount(type.inquiry_type)
+                      })
+                    }, toDisplayString($setup.t("agora", "{n} groups", { n: $setup.getUsageCount(type.inquiry_type) })), 9, _hoisted_22$5)) : createCommentVNode("v-if", true)
+                  ]),
                   type.description ? (openBlock(), createElementBlock(
                     "p",
-                    _hoisted_11$4,
+                    _hoisted_23$4,
                     toDisplayString(type.description),
                     1
                     /* TEXT */
-                  )) : createCommentVNode("v-if", true)
-                ])
-              ]),
-              createBaseVNode("div", _hoisted_12$3, [
-                createVNode($setup["NcButton"], {
-                  type: "primary",
-                  class: "configure-btn",
-                  onClick: withModifiers(($event) => $setup.openTypeSettings(type), ["stop"])
-                }, {
-                  default: withCtx(() => [
-                    createTextVNode(
-                      toDisplayString($setup.t("agora", "Configure")),
+                  )) : createCommentVNode("v-if", true),
+                  createBaseVNode("div", _hoisted_24$4, [
+                    createBaseVNode(
+                      "span",
+                      _hoisted_25$4,
+                      toDisplayString($setup.t("agora", "{count} fields", { count: type.fields.length })),
                       1
                       /* TEXT */
-                    )
-                  ]),
-                  _: 1
-                  /* STABLE */
-                }, 8, ["onClick"]),
-                createBaseVNode("div", _hoisted_13$3, [
+                    ),
+                    type.allowed_response.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_26$3,
+                      toDisplayString($setup.t("agora", "{count} responses", { count: type.allowed_response.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    type.allowed_transformation.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_27$3,
+                      toDisplayString($setup.t("agora", "{count} transformations", {
+                        count: type.allowed_transformation.length
+                      })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    type.allowed_option_type.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_28$3,
+                      toDisplayString($setup.t("agora", "{count} option types", { count: type.allowed_option_type.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", {
+                  class: "type-actions",
+                  onClick: _cache[2] || (_cache[2] = withModifiers(() => {
+                  }, ["stop"]))
+                }, [
                   createVNode($setup["NcButton"], {
-                    class: "edit-btn",
-                    onClick: withModifiers(($event) => $setup.editingType = {
-                      ...type,
-                      fields: JSON.stringify(type.fields || []),
-                      allowed_response: JSON.stringify(type.allowed_response || []),
-                      allowed_transformation: JSON.stringify(type.allowed_transformation || []),
-                      allowed_option_type: JSON.stringify(type.allowed_option_type || [])
-                    }, ["stop"])
+                    onClick: ($event) => $setup.toggleExpand(type.id)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.expandedTypeId === type.id ? $setup.t("agora", "Hide") : $setup.t("agora", "Details")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 2
+                    /* DYNAMIC */
+                  }, 1032, ["onClick"]),
+                  createVNode($setup["NcButton"], {
+                    type: "primary",
+                    onClick: ($event) => $setup.emit("typeSelected", type)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Configure")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"]),
+                  createVNode($setup["NcButton"], {
+                    onClick: ($event) => $setup.startEditing(type)
                   }, {
                     default: withCtx(() => [
                       createTextVNode(
@@ -4082,8 +4517,8 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     /* STABLE */
                   }, 8, ["onClick"]),
                   createVNode($setup["NcButton"], {
-                    class: "delete-btn",
-                    onClick: withModifiers(($event) => $setup.deleteType(type.id), ["stop"])
+                    type: "error",
+                    onClick: ($event) => $setup.deleteType(type)
                   }, {
                     default: withCtx(() => [
                       createTextVNode(
@@ -4096,213 +4531,276 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     /* STABLE */
                   }, 8, ["onClick"])
                 ])
-              ])
-            ], 8, _hoisted_6$7);
-          }),
-          128
-          /* KEYED_FRAGMENT */
-        ))
-      ]),
-      $setup.familyTypes.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_14$3, [
-        createBaseVNode(
-          "p",
-          null,
-          toDisplayString($setup.t("agora", "No types configured for this family yet")),
-          1
-          /* TEXT */
-        )
-      ])) : createCommentVNode("v-if", true)
+              ], 8, _hoisted_16$6),
+              createCommentVNode(" ============ EXPANDED DETAILS ============ "),
+              $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_29$3, [
+                createBaseVNode("div", _hoisted_30$3, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Fields")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_31$3, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.fields, (f, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(f),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.fields.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_32$3,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_33$3, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Allowed responses")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_34$3, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.allowed_response, (r, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(r),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.allowed_response.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_35$3,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_36$3, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Allowed transformations")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_37$3, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.allowed_transformation, (r, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(r),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.allowed_transformation.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_38$3,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_39$3, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Allowed option types")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_40$3, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.allowed_option_type, (r, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(r),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.allowed_option_type.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_41$3,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_42$3, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Used by group types")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_43$3, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList($setup.groupTypesInFamily.filter(
+                        (g) => $setup.normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
+                      ), (gt) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: gt.id,
+                            class: "pill group-pill"
+                          },
+                          toDisplayString(gt.label || gt.group_type),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !$setup.groupTypesInFamily.some(
+                      (g) => $setup.normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
+                    ) ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_44$3,
+                      toDisplayString($setup.t("agora", "No group types reference this inquiry type yet")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ])
+              ])) : createCommentVNode("v-if", true)
+            ],
+            2
+            /* CLASS */
+          );
+        }),
+        128
+        /* KEYED_FRAGMENT */
+      ))
     ]),
-    createCommentVNode(" Add New Type Form "),
-    createBaseVNode("div", _hoisted_15$3, [
+    createCommentVNode(" ==================== ADD NEW TYPE ==================== "),
+    createBaseVNode("section", _hoisted_45$3, [
       createBaseVNode(
         "h3",
         null,
-        toDisplayString($setup.t("agora", "Add New Type to {family}", { family: $props.selectedFamily?.label })),
+        toDisplayString($setup.t("agora", "Add new inquiry type to {family}", { family: $setup.familyLabel })),
         1
         /* TEXT */
       ),
-      createBaseVNode("div", _hoisted_16$3, [
-        createBaseVNode("div", _hoisted_17$3, [
-          createVNode($setup["NcInputField"], {
-            modelValue: $setup.newType.inquiry_type,
-            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.newType.inquiry_type = $event),
-            label: $setup.t("agora", "Type key"),
-            placeholder: $setup.t("agora", "E.g., petition, survey, poll"),
-            required: "",
-            class: "form-field"
-          }, null, 8, ["modelValue", "label", "placeholder"]),
-          createVNode($setup["NcInputField"], {
-            modelValue: $setup.newType.label,
-            "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newType.label = $event),
-            label: $setup.t("agora", "Display label"),
-            placeholder: $setup.t("agora", "E.g., public petition, survey"),
-            required: "",
-            class: "form-field"
-          }, null, 8, ["modelValue", "label", "placeholder"]),
-          createVNode($setup["NcSelect"], {
-            modelValue: $setup.newType.icon,
-            "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.newType.icon = $event),
-            options: $setup.availableIcons,
-            clearable: false,
-            placeholder: $setup.t("agora", "Select an icon"),
-            label: "label",
-            class: "form-field"
-          }, null, 8, ["modelValue", "options", "placeholder"])
-        ]),
+      createBaseVNode("div", _hoisted_46$3, [
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newType.inquiry_type,
+          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.newType.inquiry_type = $event),
+          label: $setup.t("agora", "Type key"),
+          placeholder: $setup.t("agora", "e.g., petition"),
+          required: ""
+        }, null, 8, ["modelValue", "label", "placeholder"]),
+        createVNode($setup["NcInputField"], {
+          "model-value": $setup.familyLabel,
+          label: $setup.t("agora", "Family"),
+          disabled: "",
+          readonly: ""
+        }, null, 8, ["model-value", "label"]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newType.label,
+          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.newType.label = $event),
+          label: $setup.t("agora", "Display label"),
+          placeholder: $setup.t("agora", "e.g., Public petition"),
+          required: ""
+        }, null, 8, ["modelValue", "label", "placeholder"]),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.newType.icon,
+          "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.newType.icon = $event),
+          "input-label": $setup.t("agora", "Icon"),
+          "label-outside": true,
+          options: $setup.availableIcons,
+          label: "label",
+          "track-by": "id",
+          clearable: false,
+          placeholder: $setup.t("agora", "Select an icon")
+        }, null, 8, ["modelValue", "input-label", "options", "placeholder"]),
         createVNode($setup["NcInputField"], {
           modelValue: $setup.newType.description,
-          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.newType.description = $event),
+          "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.newType.description = $event),
           label: $setup.t("agora", "Description"),
           type: "textarea",
           class: "full-width"
         }, null, 8, ["modelValue", "label"]),
-        createBaseVNode("div", _hoisted_18$2, [
-          createVNode($setup["NcInputField"], {
-            modelValue: $setup.newType.fields,
-            "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.newType.fields = $event),
-            label: $setup.t("agora", "Fields configuration (json)"),
-            type: "textarea",
-            placeholder: `e.g., ["title", "description", "deadline"]`,
-            class: "form-field"
-          }, null, 8, ["modelValue", "label"]),
-          createVNode($setup["NcInputField"], {
-            modelValue: $setup.newType.allowed_response,
-            "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.newType.allowed_response = $event),
-            label: $setup.t("agora", "Allowed responses (json)"),
-            type: "textarea",
-            placeholder: `e.g., ["vote_yes_no", "comment"]`,
-            class: "form-field"
-          }, null, 8, ["modelValue", "label"]),
-          createVNode($setup["NcInputField"], {
-            modelValue: $setup.newType.allowed_transformation,
-            "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.newType.allowed_transformation = $event),
-            label: $setup.t("agora", "Allowed transformations (json)"),
-            type: "textarea",
-            placeholder: `e.g., ["official_proposal"]`,
-            class: "form-field"
-          }, null, 8, ["modelValue", "label"]),
-          createVNode($setup["NcInputField"], {
-            modelValue: $setup.newType.allowed_option_type,
-            "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.newType.allowed_option_type = $event),
-            label: $setup.t("agora", "Allowed option types (json)"),
-            type: "textarea",
-            placeholder: `e.g., ["official_proposal"]`,
-            class: "form-field"
-          }, null, 8, ["modelValue", "label"])
-        ]),
-        createBaseVNode("div", _hoisted_19$2, [
-          createVNode($setup["NcButton"], {
-            type: "primary",
-            disabled: !$setup.newType.inquiry_type || !$setup.newType.label,
-            onClick: $setup.addType
-          }, {
-            default: withCtx(() => [
-              createTextVNode(
-                toDisplayString($setup.t("agora", "Add type")),
-                1
-                /* TEXT */
-              )
-            ]),
-            _: 1
-            /* STABLE */
-          }, 8, ["disabled"])
-        ])
-      ])
-    ]),
-    createCommentVNode(" Edit Type Modal "),
-    $setup.editingType ? (openBlock(), createElementBlock("div", _hoisted_20$2, [
-      createBaseVNode("div", _hoisted_21$2, [
-        createBaseVNode(
-          "h3",
-          null,
-          toDisplayString($setup.t("agora", "Edit inquiry type")),
-          1
-          /* TEXT */
-        ),
-        createBaseVNode("div", _hoisted_22$1, [
-          createBaseVNode("div", _hoisted_23$1, [
+        createCommentVNode(" FIELDS "),
+        createBaseVNode("div", _hoisted_47$3, [
+          createBaseVNode(
+            "label",
+            _hoisted_48$3,
+            toDisplayString($setup.t("agora", "Fields")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_49$3, [
             createVNode($setup["NcInputField"], {
-              modelValue: $setup.editingType.inquiry_type,
-              "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $setup.editingType.inquiry_type = $event),
-              label: $setup.t("agora", "Type key"),
-              required: "",
-              class: "form-field"
-            }, null, 8, ["modelValue", "label"]),
-            createVNode($setup["NcInputField"], {
-              modelValue: $setup.editingType.label,
-              "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $setup.editingType.label = $event),
-              label: $setup.t("agora", "Display label"),
-              required: "",
-              class: "form-field"
-            }, null, 8, ["modelValue", "label"]),
-            createVNode($setup["NcSelect"], {
-              modelValue: $setup.editingType.icon,
-              "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $setup.editingType.icon = $event),
-              options: $setup.availableIcons,
-              clearable: false,
-              placeholder: $setup.t("agora", "Select an icon"),
-              class: "form-field"
-            }, null, 8, ["modelValue", "options", "placeholder"])
-          ]),
-          createVNode($setup["NcInputField"], {
-            modelValue: $setup.editingType.description,
-            "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => $setup.editingType.description = $event),
-            label: $setup.t("agora", "Description"),
-            type: "textarea",
-            class: "full-width"
-          }, null, 8, ["modelValue", "label"]),
-          createBaseVNode("div", _hoisted_24$1, [
-            createVNode($setup["NcInputField"], {
-              modelValue: $setup.editingType.fields,
-              "onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => $setup.editingType.fields = $event),
-              label: $setup.t("agora", "Fields configuration (json)"),
-              type: "textarea",
-              class: "form-field"
-            }, null, 8, ["modelValue", "label"]),
-            createVNode($setup["NcInputField"], {
-              modelValue: $setup.editingType.allowed_response,
-              "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $setup.editingType.allowed_response = $event),
-              label: $setup.t("agora", "Allowed responses (json)"),
-              type: "textarea",
-              class: "form-field"
-            }, null, 8, ["modelValue", "label"]),
-            createVNode($setup["NcInputField"], {
-              modelValue: $setup.editingType.allowed_transformation,
-              "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => $setup.editingType.allowed_transformation = $event),
-              label: $setup.t("agora", "Allowed transformations (json)"),
-              type: "textarea",
-              class: "form-field"
-            }, null, 8, ["modelValue", "label"]),
-            createVNode($setup["NcInputField"], {
-              modelValue: $setup.editingType.allowed_option_type,
-              "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => $setup.editingType.allowed_option_type = $event),
-              label: $setup.t("agora", "Allowed option types (json)"),
-              type: "textarea",
-              class: "form-field"
-            }, null, 8, ["modelValue", "label"])
-          ]),
-          createBaseVNode("div", _hoisted_25$1, [
+              modelValue: $setup.newField,
+              "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.newField = $event),
+              label: $setup.t("agora", "Field key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., deadline"),
+              onKeydown: _cache[8] || (_cache[8] = withKeys(withModifiers(($event) => $setup.addField("new"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
             createVNode($setup["NcButton"], {
-              onClick: _cache[17] || (_cache[17] = ($event) => $setup.editingType = null)
+              type: "secondary",
+              onClick: _cache[9] || (_cache[9] = ($event) => $setup.addField("new"))
             }, {
               default: withCtx(() => [
                 createTextVNode(
-                  toDisplayString($setup.t("agora", "Cancel")),
-                  1
-                  /* TEXT */
-                )
-              ]),
-              _: 1
-              /* STABLE */
-            }),
-            createVNode($setup["NcButton"], {
-              type: "primary",
-              onClick: _cache[18] || (_cache[18] = ($event) => $setup.updateType($setup.editingType))
-            }, {
-              default: withCtx(() => [
-                createTextVNode(
-                  toDisplayString($setup.t("agora", "Save")),
+                  toDisplayString($setup.t("agora", "Add")),
                   1
                   /* TEXT */
                 )
@@ -4310,13 +4808,5157 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
               _: 1
               /* STABLE */
             })
+          ]),
+          createBaseVNode("div", _hoisted_50$3, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.fields, (f, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeField("new", i)
+                }, toDisplayString(f) + " ✕ ", 9, _hoisted_51$3);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.newType.fields.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_52$3,
+              toDisplayString($setup.t("agora", "No fields added yet")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
           ])
+        ]),
+        createCommentVNode(" ALLOWED RESPONSES "),
+        createBaseVNode("div", _hoisted_53$3, [
+          createBaseVNode(
+            "label",
+            _hoisted_54$3,
+            toDisplayString($setup.t("agora", "Allowed responses")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_55$3, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAllowedResponse,
+              "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $setup.newAllowedResponse = $event),
+              label: $setup.t("agora", "Response key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., comment"),
+              onKeydown: _cache[11] || (_cache[11] = withKeys(withModifiers(($event) => $setup.addAllowedResponse("new"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[12] || (_cache[12] = ($event) => $setup.addAllowedResponse("new"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_56$3, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.allowed_response, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedResponse("new", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_57$3);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.newType.allowed_response.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_58$3,
+              toDisplayString($setup.t("agora", "None")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ])
+        ]),
+        createCommentVNode(" ALLOWED TRANSFORMATIONS "),
+        createBaseVNode("div", _hoisted_59$3, [
+          createBaseVNode(
+            "label",
+            _hoisted_60$2,
+            toDisplayString($setup.t("agora", "Allowed transformations")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_61$2, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAllowedTransformation,
+              "onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => $setup.newAllowedTransformation = $event),
+              label: $setup.t("agora", "Transformation key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., official_proposal"),
+              onKeydown: _cache[14] || (_cache[14] = withKeys(withModifiers(($event) => $setup.addAllowedTransformation("new"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[15] || (_cache[15] = ($event) => $setup.addAllowedTransformation("new"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_62$2, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.allowed_transformation, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedTransformation("new", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_63$2);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.newType.allowed_transformation.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_64$2,
+              toDisplayString($setup.t("agora", "None")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ])
+        ]),
+        createCommentVNode(" ALLOWED OPTION TYPES "),
+        createBaseVNode("div", _hoisted_65$2, [
+          createBaseVNode(
+            "label",
+            _hoisted_66$2,
+            toDisplayString($setup.t("agora", "Allowed option types")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_67$1, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAllowedOptionType,
+              "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => $setup.newAllowedOptionType = $event),
+              label: $setup.t("agora", "Option type key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., argument_for"),
+              onKeydown: _cache[17] || (_cache[17] = withKeys(withModifiers(($event) => $setup.addAllowedOptionType("new"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[18] || (_cache[18] = ($event) => $setup.addAllowedOptionType("new"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_68$1, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.allowed_option_type, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedOptionType("new", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_69$1);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.newType.allowed_option_type.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_70$1,
+              toDisplayString($setup.t("agora", "None")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ])
+        ]),
+        createBaseVNode("div", _hoisted_71$1, [
+          createVNode($setup["NcButton"], {
+            type: "primary",
+            disabled: $setup.savingType || !$setup.newType.inquiry_type || !$setup.newType.label || !$setup.familyKey,
+            onClick: $setup.addType
+          }, {
+            default: withCtx(() => [
+              $setup.savingType ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                key: 0,
+                size: 16
+              })) : (openBlock(), createElementBlock(
+                "span",
+                _hoisted_72$1,
+                toDisplayString($setup.t("agora", "Add inquiry type")),
+                1
+                /* TEXT */
+              ))
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["disabled"])
+        ])
+      ])
+    ]),
+    createCommentVNode(" ==================== EDIT MODAL ==================== "),
+    $setup.editingType ? (openBlock(), createElementBlock("div", {
+      key: 0,
+      class: "modal-overlay",
+      onClick: withModifiers($setup.cancelEditing, ["self"])
+    }, [
+      createBaseVNode("div", _hoisted_73$1, [
+        createBaseVNode("header", _hoisted_74$1, [
+          createBaseVNode(
+            "h3",
+            null,
+            toDisplayString($setup.t("agora", "Edit inquiry type")) + ": " + toDisplayString($setup.editingType.label),
+            1
+            /* TEXT */
+          ),
+          createVNode($setup["NcButton"], {
+            type: "tertiary",
+            onClick: $setup.cancelEditing
+          }, {
+            default: withCtx(() => [..._cache[36] || (_cache[36] = [
+              createTextVNode(
+                "✕",
+                -1
+                /* CACHED */
+              )
+            ])]),
+            _: 1
+            /* STABLE */
+          })
+        ]),
+        createBaseVNode("nav", _hoisted_75$1, [
+          (openBlock(), createElementBlock(
+            Fragment,
+            null,
+            renderList(["basic", "fields", "responses", "transformations", "option-types"], (tab) => {
+              return createBaseVNode("button", {
+                key: tab,
+                class: normalizeClass(["tab", { active: $setup.editTab === tab }]),
+                onClick: ($event) => $setup.editTab = tab
+              }, toDisplayString($setup.t("agora", tab)), 11, _hoisted_76$1);
+            }),
+            64
+            /* STABLE_FRAGMENT */
+          ))
+        ]),
+        createCommentVNode(" BASIC "),
+        $setup.editTab === "basic" ? (openBlock(), createElementBlock("div", _hoisted_77$1, [
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingType.inquiry_type,
+            "onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => $setup.editingType.inquiry_type = $event),
+            label: $setup.t("agora", "Type key"),
+            required: ""
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcInputField"], {
+            "model-value": $setup.familyLabel,
+            label: $setup.t("agora", "Family"),
+            disabled: "",
+            readonly: ""
+          }, null, 8, ["model-value", "label"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingType.label,
+            "onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => $setup.editingType.label = $event),
+            label: $setup.t("agora", "Display label"),
+            required: ""
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcSelect"], {
+            modelValue: $setup.editingType.icon,
+            "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => $setup.editingType.icon = $event),
+            "input-label": $setup.t("agora", "Icon"),
+            "label-outside": true,
+            options: $setup.availableIcons,
+            label: "label",
+            "track-by": "id",
+            clearable: false
+          }, null, 8, ["modelValue", "input-label", "options"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingType.description,
+            "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $setup.editingType.description = $event),
+            label: $setup.t("agora", "Description"),
+            type: "textarea",
+            class: "full-width"
+          }, null, 8, ["modelValue", "label"])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" FIELDS "),
+        $setup.editTab === "fields" ? (openBlock(), createElementBlock("div", _hoisted_78$1, [
+          createBaseVNode("div", _hoisted_79$1, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newField,
+              "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => $setup.newField = $event),
+              label: $setup.t("agora", "Field key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., deadline"),
+              onKeydown: _cache[24] || (_cache[24] = withKeys(withModifiers(($event) => $setup.addField("edit"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[25] || (_cache[25] = ($event) => $setup.addField("edit"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_80$1, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.fields, (f, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeField("edit", i)
+                }, toDisplayString(f) + " ✕ ", 9, _hoisted_81$1);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.editingType.fields.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_82$1,
+              toDisplayString($setup.t("agora", "No fields added yet")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" RESPONSES "),
+        $setup.editTab === "responses" ? (openBlock(), createElementBlock("div", _hoisted_83$1, [
+          createBaseVNode("div", _hoisted_84$1, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAllowedResponse,
+              "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => $setup.newAllowedResponse = $event),
+              label: $setup.t("agora", "Response key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., comment"),
+              onKeydown: _cache[27] || (_cache[27] = withKeys(withModifiers(($event) => $setup.addAllowedResponse("edit"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[28] || (_cache[28] = ($event) => $setup.addAllowedResponse("edit"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_85$1, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.allowed_response, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedResponse("edit", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_86$1);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.editingType.allowed_response.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_87$1,
+              toDisplayString($setup.t("agora", "None")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" TRANSFORMATIONS "),
+        $setup.editTab === "transformations" ? (openBlock(), createElementBlock("div", _hoisted_88$1, [
+          createBaseVNode("div", _hoisted_89$1, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAllowedTransformation,
+              "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => $setup.newAllowedTransformation = $event),
+              label: $setup.t("agora", "Transformation key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., official_proposal"),
+              onKeydown: _cache[30] || (_cache[30] = withKeys(withModifiers(($event) => $setup.addAllowedTransformation("edit"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[31] || (_cache[31] = ($event) => $setup.addAllowedTransformation("edit"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_90$1, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.allowed_transformation, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedTransformation("edit", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_91$1);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.editingType.allowed_transformation.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_92$1,
+              toDisplayString($setup.t("agora", "None")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" OPTION TYPES "),
+        $setup.editTab === "option-types" ? (openBlock(), createElementBlock("div", _hoisted_93$1, [
+          createBaseVNode("div", _hoisted_94$1, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAllowedOptionType,
+              "onUpdate:modelValue": _cache[32] || (_cache[32] = ($event) => $setup.newAllowedOptionType = $event),
+              label: $setup.t("agora", "Option type key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., argument_for"),
+              onKeydown: _cache[33] || (_cache[33] = withKeys(withModifiers(($event) => $setup.addAllowedOptionType("edit"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[34] || (_cache[34] = ($event) => $setup.addAllowedOptionType("edit"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_95$1, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.allowed_option_type, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedOptionType("edit", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_96$1);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            )),
+            !$setup.editingType.allowed_option_type.length ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_97$1,
+              toDisplayString($setup.t("agora", "None")),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createBaseVNode("footer", _hoisted_98$1, [
+          createVNode($setup["NcButton"], { onClick: $setup.cancelEditing }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Cancel")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }),
+          createVNode($setup["NcButton"], {
+            type: "primary",
+            disabled: $setup.savingType,
+            onClick: _cache[35] || (_cache[35] = ($event) => $setup.updateType($setup.editingType))
+          }, {
+            default: withCtx(() => [
+              $setup.savingType ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                key: 0,
+                size: 16
+              })) : (openBlock(), createElementBlock(
+                "span",
+                _hoisted_99$1,
+                toDisplayString($setup.t("agora", "Save changes")),
+                1
+                /* TEXT */
+              ))
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["disabled"])
         ])
       ])
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-f2f32798"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypesManager.vue"]]);
+const AdminTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__scopeId", "data-v-f2f32798"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypesManager.vue"]]);
+const _sfc_main$k = {
+  __name: "AdminOptionFamiliesManager",
+  emits: ["familySelected"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    __expose();
+    const emit = __emit;
+    const appSettingsStore = useAppSettingsStore();
+    const editingFamily = ref(null);
+    const savingFamily = ref(false);
+    const searchQuery = ref("");
+    const expandedFamilyId = ref(null);
+    const editTab = ref("basic");
+    const emptyFamily = () => ({
+      family_type: "",
+      label: "",
+      description: "",
+      icon: null,
+      sort_order: appSettingsStore.optionFamilyTab?.length ?? 0,
+      ui: {},
+      rules: {},
+      features: [],
+      actions: []
+    });
+    const newFamily = ref(emptyFamily());
+    const newFeature = ref("");
+    const newAction = ref({ key: "", label: "", icon: "" });
+    const availableIcons = computed(
+      () => Object.keys(InquiryOptionIcons).filter((key) => key !== "default").map((iconId) => ({
+        id: iconId,
+        label: translate("agora", iconId.replace(/([A-Z])/g, " $1").trim())
+      }))
+    );
+    const findIconById = (iconId) => {
+      if (!iconId) return null;
+      if (typeof iconId === "object") return iconId;
+      return availableIcons.value.find((icon) => icon.id === iconId) || null;
+    };
+    const getIconComponent = (iconName) => {
+      const id = typeof iconName === "object" ? iconName?.id : iconName;
+      return InquiryOptionIcons[id] || InquiryOptionIcons.default;
+    };
+    const extractIconId = (icon) => {
+      if (!icon) return "";
+      if (typeof icon === "string") return icon;
+      if (typeof icon === "object") return icon.id || "";
+      return String(icon);
+    };
+    const familiesWithStats = computed(() => {
+      const families = appSettingsStore.optionFamilyTab ?? [];
+      return families.map((family) => {
+        const typesCount = (appSettingsStore.optionTypeTab ?? []).filter(
+          (type) => type.family === family.family_type
+        ).length;
+        let parsedUi = family.ui;
+        let parsedRules = family.rules;
+        let parsedFeatures = family.features;
+        let parsedActions = family.actions;
+        try {
+          if (typeof parsedUi === "string") parsedUi = JSON.parse(parsedUi || "{}");
+          if (typeof parsedRules === "string") parsedRules = JSON.parse(parsedRules || "{}");
+          if (typeof parsedFeatures === "string") parsedFeatures = JSON.parse(parsedFeatures || "[]");
+          if (typeof parsedActions === "string") parsedActions = JSON.parse(parsedActions || "[]");
+        } catch (e) {
+          showError(translate("agora", "Failed with family stats : {msg}", { msg: e?.message ?? "" }));
+        }
+        return {
+          ...family,
+          typesCount,
+          parsedUi,
+          parsedRules,
+          parsedFeatures: Array.isArray(parsedFeatures) ? parsedFeatures : [],
+          parsedActions: Array.isArray(parsedActions) ? parsedActions : []
+        };
+      });
+    });
+    const filteredFamilies = computed(() => {
+      if (!searchQuery.value.trim()) return familiesWithStats.value;
+      const q = searchQuery.value.toLowerCase();
+      return familiesWithStats.value.filter(
+        (f) => f.family_type?.toLowerCase().includes(q) || f.label?.toLowerCase().includes(q) || f.description?.toLowerCase().includes(q)
+      );
+    });
+    const normalizeJsonField = (value, fallback) => {
+      if (value === null || value === void 0 || value === "") return fallback;
+      if (typeof value === "object") return value;
+      try {
+        return JSON.parse(value);
+      } catch {
+        return fallback;
+      }
+    };
+    const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+    const startEditing = (family) => {
+      editingFamily.value = {
+        ...deepClone(family),
+        icon: findIconById(family.icon),
+        ui: normalizeJsonField(family.ui, {}),
+        rules: normalizeJsonField(family.rules, {}),
+        features: normalizeJsonField(family.features, []),
+        actions: normalizeJsonField(family.actions, [])
+      };
+      editTab.value = "basic";
+    };
+    const cancelEditing = () => {
+      editingFamily.value = null;
+      editTab.value = "basic";
+    };
+    const validateFamily = (family, isEdit = false) => {
+      if (!family.family_type?.trim()) {
+        showError(translate("agora", "Family type key is mandatory"));
+        return false;
+      }
+      if (!family.label?.trim()) {
+        showError(translate("agora", "Display label is mandatory"));
+        return false;
+      }
+      if (!/^[a-z][a-z0-9_]*$/i.test(family.family_type)) {
+        showError(translate("agora", "Family type key must be alphanumeric (underscores allowed), starting with a letter"));
+        return false;
+      }
+      if (!isEdit) {
+        const exists = (appSettingsStore.optionFamilyTab ?? []).some(
+          (f) => f.family_type === family.family_type
+        );
+        if (exists) {
+          showError(translate("agora", "A family with this key already exists"));
+          return false;
+        }
+      }
+      return true;
+    };
+    const addFamily = async () => {
+      if (!validateFamily(newFamily.value, false)) return;
+      savingFamily.value = true;
+      try {
+        await appSettingsStore.addOptionFamily({
+          ...newFamily.value,
+          icon: extractIconId(newFamily.value.icon),
+          created: Date.now()
+        });
+        showSuccess(translate("agora", "Family added"));
+        newFamily.value = emptyFamily();
+      } catch (e) {
+        showError(translate("agora", "Failed to add family: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingFamily.value = false;
+      }
+    };
+    const updateFamily = async (family) => {
+      if (!family) return;
+      if (!validateFamily(family, true)) return;
+      savingFamily.value = true;
+      try {
+        await appSettingsStore.updateOptionFamily(family.id, {
+          ...family,
+          icon: extractIconId(family.icon),
+          ui: normalizeJsonField(family.ui, {}),
+          rules: normalizeJsonField(family.rules, {}),
+          features: normalizeJsonField(family.features, []),
+          actions: normalizeJsonField(family.actions, [])
+        });
+        showSuccess(translate("agora", "Family updated"));
+        editingFamily.value = null;
+      } catch (e) {
+        showError(translate("agora", "Failed to update family: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingFamily.value = false;
+      }
+    };
+    const deleteFamily = async (family) => {
+      const typesCount = family.typesCount ?? 0;
+      const message = typesCount > 0 ? translate("agora", "This family contains {count} option types. Delete anyway?", { count: typesCount }) : translate("agora", "Are you sure you want to delete this family?");
+      if (!confirm(message)) return;
+      try {
+        await appSettingsStore.deleteOptionFamily(family.id);
+        showSuccess(translate("agora", "Family deleted"));
+        if (expandedFamilyId.value === family.id) expandedFamilyId.value = null;
+      } catch (e) {
+        showError(translate("agora", "Failed to delete family: {msg}", { msg: e?.message ?? "" }));
+      }
+    };
+    const selectFamily = (family) => {
+      emit("familySelected", family);
+    };
+    const toggleExpand = (familyId) => {
+      expandedFamilyId.value = expandedFamilyId.value === familyId ? null : familyId;
+    };
+    const addFeature = () => {
+      const value = newFeature.value?.trim();
+      if (!value) return;
+      if (!Array.isArray(editingFamily.value.features)) editingFamily.value.features = [];
+      if (editingFamily.value.features.includes(value)) {
+        showError(translate("agora", "Feature already present"));
+        return;
+      }
+      editingFamily.value.features.push(value);
+      newFeature.value = "";
+    };
+    const removeFeature = (index) => {
+      editingFamily.value.features.splice(index, 1);
+    };
+    const addAction = () => {
+      const { key, label, icon } = newAction.value;
+      if (!key?.trim() || !label?.trim()) {
+        showError(translate("agora", "Action key and label are required"));
+        return;
+      }
+      if (!Array.isArray(editingFamily.value.actions)) editingFamily.value.actions = [];
+      editingFamily.value.actions.push({
+        key: key.trim(),
+        label: label.trim(),
+        icon: icon?.trim() || ""
+      });
+      newAction.value = { key: "", label: "", icon: "" };
+    };
+    const removeAction = (index) => {
+      editingFamily.value.actions.splice(index, 1);
+    };
+    const addNewFamilyFeature = () => {
+      const value = newFeature.value?.trim();
+      if (!value) return;
+      if (!Array.isArray(newFamily.value.features)) newFamily.value.features = [];
+      if (!newFamily.value.features.includes(value)) {
+        newFamily.value.features.push(value);
+      }
+      newFeature.value = "";
+    };
+    const removeNewFamilyFeature = (index) => {
+      newFamily.value.features.splice(index, 1);
+    };
+    const addNewFamilyAction = () => {
+      const { key, label, icon } = newAction.value;
+      if (!key?.trim() || !label?.trim()) {
+        showError(translate("agora", "Action key and label are required"));
+        return;
+      }
+      if (!Array.isArray(newFamily.value.actions)) newFamily.value.actions = [];
+      newFamily.value.actions.push({ key: key.trim(), label: label.trim(), icon: icon?.trim() || "" });
+      newAction.value = { key: "", label: "", icon: "" };
+    };
+    const removeNewFamilyAction = (index) => {
+      newFamily.value.actions.splice(index, 1);
+    };
+    watch(
+      () => appSettingsStore.optionFamilyTab,
+      () => {
+      },
+      { deep: true }
+    );
+    const __returned__ = { emit, appSettingsStore, editingFamily, savingFamily, searchQuery, expandedFamilyId, editTab, emptyFamily, newFamily, newFeature, newAction, availableIcons, findIconById, getIconComponent, extractIconId, familiesWithStats, filteredFamilies, normalizeJsonField, deepClone, startEditing, cancelEditing, validateFamily, addFamily, updateFamily, deleteFamily, selectFamily, toggleExpand, addFeature, removeFeature, addAction, removeAction, addNewFamilyFeature, removeNewFamilyFeature, addNewFamilyAction, removeNewFamilyAction, computed, ref, watch, get t() {
+      return translate;
+    }, get NcButton() {
+      return NcButton;
+    }, get NcInputField() {
+      return NcInputField;
+    }, get NcSelect() {
+      return NcSelect;
+    }, get NcLoadingIcon() {
+      return NcLoadingIcon;
+    }, get showError() {
+      return showError;
+    }, get showSuccess() {
+      return showSuccess;
+    }, get useAppSettingsStore() {
+      return useAppSettingsStore;
+    }, get InquiryOptionIcons() {
+      return InquiryOptionIcons;
+    } };
+    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+    return __returned__;
+  }
+};
+const _hoisted_1$k = { class: "option-families-manager" };
+const _hoisted_2$g = { class: "manager-header" };
+const _hoisted_3$b = { class: "description" };
+const _hoisted_4$b = { class: "header-actions" };
+const _hoisted_5$a = { class: "families-list" };
+const _hoisted_6$9 = { class: "count-badge" };
+const _hoisted_7$9 = {
+  key: 0,
+  class: "empty-state"
+};
+const _hoisted_8$9 = ["onClick"];
+const _hoisted_9$8 = { class: "family-icon" };
+const _hoisted_10$6 = { class: "family-info" };
+const _hoisted_11$6 = { class: "family-title-row" };
+const _hoisted_12$5 = { class: "family-type" };
+const _hoisted_13$5 = {
+  key: 0,
+  class: "family-description"
+};
+const _hoisted_14$5 = { class: "family-stats" };
+const _hoisted_15$5 = { class: "stat-chip types" };
+const _hoisted_16$5 = {
+  key: 0,
+  class: "stat-chip"
+};
+const _hoisted_17$5 = {
+  key: 1,
+  class: "stat-chip"
+};
+const _hoisted_18$4 = {
+  key: 2,
+  class: "stat-chip layout"
+};
+const _hoisted_19$4 = {
+  key: 0,
+  class: "family-details"
+};
+const _hoisted_20$4 = { class: "detail-section" };
+const _hoisted_21$4 = { class: "detail-section" };
+const _hoisted_22$4 = { class: "detail-section" };
+const _hoisted_23$3 = { class: "pill-list" };
+const _hoisted_24$3 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_25$3 = { class: "detail-section" };
+const _hoisted_26$2 = { class: "action-list" };
+const _hoisted_27$2 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_28$2 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_29$2 = { class: "add-family-form" };
+const _hoisted_30$2 = { class: "form-grid" };
+const _hoisted_31$2 = { class: "full-width" };
+const _hoisted_32$2 = { class: "field-label" };
+const _hoisted_33$2 = { class: "inline-editor" };
+const _hoisted_34$2 = { class: "pill-list" };
+const _hoisted_35$2 = ["onClick"];
+const _hoisted_36$2 = { class: "full-width" };
+const _hoisted_37$2 = { class: "field-label" };
+const _hoisted_38$2 = { class: "inline-editor action-editor" };
+const _hoisted_39$2 = { class: "action-list" };
+const _hoisted_40$2 = { class: "form-actions full-width" };
+const _hoisted_41$2 = { key: 1 };
+const _hoisted_42$2 = { class: "modal-content large-modal" };
+const _hoisted_43$2 = { class: "modal-header" };
+const _hoisted_44$2 = { class: "tabs" };
+const _hoisted_45$2 = ["onClick"];
+const _hoisted_46$2 = {
+  key: 0,
+  class: "tab-panel form-grid"
+};
+const _hoisted_47$2 = {
+  key: 1,
+  class: "tab-panel"
+};
+const _hoisted_48$2 = { class: "help-text" };
+const _hoisted_49$2 = {
+  key: 2,
+  class: "tab-panel"
+};
+const _hoisted_50$2 = { class: "help-text" };
+const _hoisted_51$2 = {
+  key: 3,
+  class: "tab-panel"
+};
+const _hoisted_52$2 = { class: "inline-editor" };
+const _hoisted_53$2 = { class: "pill-list" };
+const _hoisted_54$2 = ["onClick"];
+const _hoisted_55$2 = {
+  key: 4,
+  class: "tab-panel"
+};
+const _hoisted_56$2 = { class: "inline-editor action-editor" };
+const _hoisted_57$2 = { class: "action-list" };
+const _hoisted_58$2 = { class: "modal-actions" };
+const _hoisted_59$2 = { key: 1 };
+function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$k, [
+    createBaseVNode("header", _hoisted_2$g, [
+      createBaseVNode("div", null, [
+        createBaseVNode(
+          "h2",
+          null,
+          toDisplayString($setup.t("agora", "Option families management")),
+          1
+          /* TEXT */
+        ),
+        createBaseVNode(
+          "p",
+          _hoisted_3$b,
+          toDisplayString($setup.t(
+            "agora",
+            "Manage option families that group different types of options (e.g., debate, vote, proposal). Each family defines layout, rules, features and actions shared by its option types."
+          )),
+          1
+          /* TEXT */
+        )
+      ]),
+      createBaseVNode("div", _hoisted_4$b, [
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.searchQuery,
+          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.searchQuery = $event),
+          type: "text",
+          label: $setup.t("agora", "Search"),
+          "label-outside": true,
+          placeholder: $setup.t("agora", "Filter families…"),
+          class: "search-field"
+        }, null, 8, ["modelValue", "label", "placeholder"])
+      ])
+    ]),
+    createCommentVNode(" ==================== EXISTING FAMILIES ==================== "),
+    createBaseVNode("section", _hoisted_5$a, [
+      createBaseVNode("h3", null, [
+        createTextVNode(
+          toDisplayString($setup.t("agora", "Existing families")) + " ",
+          1
+          /* TEXT */
+        ),
+        createBaseVNode(
+          "span",
+          _hoisted_6$9,
+          toDisplayString($setup.filteredFamilies.length),
+          1
+          /* TEXT */
+        )
+      ]),
+      !$setup.filteredFamilies.length ? (openBlock(), createElementBlock(
+        "div",
+        _hoisted_7$9,
+        toDisplayString($setup.t("agora", "No families found.")),
+        1
+        /* TEXT */
+      )) : createCommentVNode("v-if", true),
+      (openBlock(true), createElementBlock(
+        Fragment,
+        null,
+        renderList($setup.filteredFamilies, (family) => {
+          return openBlock(), createElementBlock(
+            "div",
+            {
+              key: family.id,
+              class: normalizeClass(["family-card", { expanded: $setup.expandedFamilyId === family.id }])
+            },
+            [
+              createBaseVNode("div", {
+                class: "family-row",
+                onClick: ($event) => $setup.selectFamily(family)
+              }, [
+                createBaseVNode("div", _hoisted_9$8, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(family.icon)), { size: 22 }))
+                ]),
+                createBaseVNode("div", _hoisted_10$6, [
+                  createBaseVNode("div", _hoisted_11$6, [
+                    createBaseVNode(
+                      "h4",
+                      null,
+                      toDisplayString(family.label || family.family_type),
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "code",
+                      _hoisted_12$5,
+                      toDisplayString(family.family_type),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  family.description ? (openBlock(), createElementBlock(
+                    "p",
+                    _hoisted_13$5,
+                    toDisplayString(family.description),
+                    1
+                    /* TEXT */
+                  )) : createCommentVNode("v-if", true),
+                  createBaseVNode("div", _hoisted_14$5, [
+                    createBaseVNode(
+                      "span",
+                      _hoisted_15$5,
+                      toDisplayString($setup.t("agora", "{count} types", { count: family.typesCount })),
+                      1
+                      /* TEXT */
+                    ),
+                    family.parsedFeatures?.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_16$5,
+                      toDisplayString($setup.t("agora", "{count} features", { count: family.parsedFeatures.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    family.parsedActions?.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_17$5,
+                      toDisplayString($setup.t("agora", "{count} actions", { count: family.parsedActions.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    family.parsedUi?.layout ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_18$4,
+                      toDisplayString($setup.t("agora", "layout: {layout}", { layout: family.parsedUi.layout })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", {
+                  class: "family-actions",
+                  onClick: _cache[1] || (_cache[1] = withModifiers(() => {
+                  }, ["stop"]))
+                }, [
+                  createVNode($setup["NcButton"], {
+                    "aria-label": $setup.t("agora", "Show details"),
+                    onClick: ($event) => $setup.toggleExpand(family.id)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.expandedFamilyId === family.id ? $setup.t("agora", "Hide") : $setup.t("agora", "Details")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 2
+                    /* DYNAMIC */
+                  }, 1032, ["aria-label", "onClick"]),
+                  createVNode($setup["NcButton"], {
+                    onClick: ($event) => $setup.startEditing(family)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Edit")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"]),
+                  createVNode($setup["NcButton"], {
+                    type: "error",
+                    onClick: ($event) => $setup.deleteFamily(family)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Delete")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ])
+              ], 8, _hoisted_8$9),
+              createCommentVNode(" Expanded details "),
+              $setup.expandedFamilyId === family.id ? (openBlock(), createElementBlock("div", _hoisted_19$4, [
+                createBaseVNode("div", _hoisted_20$4, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "UI")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "pre",
+                    null,
+                    toDisplayString(JSON.stringify(family.parsedUi, null, 2)),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                createBaseVNode("div", _hoisted_21$4, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Rules")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "pre",
+                    null,
+                    toDisplayString(JSON.stringify(family.parsedRules, null, 2)),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                createBaseVNode("div", _hoisted_22$4, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Features")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_23$3, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(family.parsedFeatures, (f, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(f),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !family.parsedFeatures?.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_24$3,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_25$3, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Actions")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_26$2, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(family.parsedActions, (a, i) => {
+                        return openBlock(), createElementBlock("li", { key: i }, [
+                          createBaseVNode(
+                            "code",
+                            null,
+                            toDisplayString(a.key),
+                            1
+                            /* TEXT */
+                          ),
+                          createTextVNode(
+                            " — " + toDisplayString(a.label) + " ",
+                            1
+                            /* TEXT */
+                          ),
+                          a.icon ? (openBlock(), createElementBlock(
+                            "span",
+                            _hoisted_27$2,
+                            " (" + toDisplayString(a.icon) + ")",
+                            1
+                            /* TEXT */
+                          )) : createCommentVNode("v-if", true)
+                        ]);
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !family.parsedActions?.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_28$2,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ])
+              ])) : createCommentVNode("v-if", true)
+            ],
+            2
+            /* CLASS */
+          );
+        }),
+        128
+        /* KEYED_FRAGMENT */
+      ))
+    ]),
+    createCommentVNode(" ==================== ADD NEW FAMILY ==================== "),
+    createBaseVNode("section", _hoisted_29$2, [
+      createBaseVNode(
+        "h3",
+        null,
+        toDisplayString($setup.t("agora", "Add new family")),
+        1
+        /* TEXT */
+      ),
+      createBaseVNode("div", _hoisted_30$2, [
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newFamily.family_type,
+          "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newFamily.family_type = $event),
+          label: $setup.t("agora", "Family type key"),
+          placeholder: $setup.t("agora", "E.g., debate, vote, proposal"),
+          required: "",
+          class: "form-field"
+        }, null, 8, ["modelValue", "label", "placeholder"]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newFamily.label,
+          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.newFamily.label = $event),
+          label: $setup.t("agora", "Display label"),
+          placeholder: $setup.t("agora", "E.g., Debate options"),
+          required: "",
+          class: "form-field"
+        }, null, 8, ["modelValue", "label", "placeholder"]),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.newFamily.icon,
+          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.newFamily.icon = $event),
+          "input-label": $setup.t("agora", "Icon"),
+          "label-outside": true,
+          options: $setup.availableIcons,
+          "track-by": "id",
+          clearable: false,
+          placeholder: $setup.t("agora", "Select an icon"),
+          class: "form-field"
+        }, null, 8, ["modelValue", "input-label", "options", "placeholder"]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newFamily.sort_order,
+          "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.newFamily.sort_order = $event),
+          label: $setup.t("agora", "Sort order"),
+          type: "number",
+          min: 0,
+          class: "form-field"
+        }, null, 8, ["modelValue", "label"]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newFamily.description,
+          "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.newFamily.description = $event),
+          label: $setup.t("agora", "Description"),
+          placeholder: $setup.t("agora", "Optional description"),
+          type: "textarea",
+          class: "full-width"
+        }, null, 8, ["modelValue", "label", "placeholder"]),
+        createCommentVNode(" Features inline editor "),
+        createBaseVNode("div", _hoisted_31$2, [
+          createBaseVNode(
+            "label",
+            _hoisted_32$2,
+            toDisplayString($setup.t("agora", "Features")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_33$2, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newFeature,
+              "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.newFeature = $event),
+              label: $setup.t("agora", "Feature"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., argument_rating"),
+              class: "inline-input",
+              onKeydown: withKeys(withModifiers($setup.addNewFamilyFeature, ["prevent"]), ["enter"])
+            }, null, 8, ["modelValue", "label", "placeholder", "onKeydown"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: $setup.addNewFamilyFeature
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_34$2, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newFamily.features, (f, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeNewFamilyFeature(i)
+                }, toDisplayString(f) + " ✕ ", 9, _hoisted_35$2);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ]),
+        createCommentVNode(" Actions inline editor "),
+        createBaseVNode("div", _hoisted_36$2, [
+          createBaseVNode(
+            "label",
+            _hoisted_37$2,
+            toDisplayString($setup.t("agora", "Actions")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_38$2, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.key,
+              "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.newAction.key = $event),
+              label: $setup.t("agora", "Action key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "key (e.g., export_thread)")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.label,
+              "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $setup.newAction.label = $event),
+              label: $setup.t("agora", "Action label"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Label")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.icon,
+              "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $setup.newAction.icon = $event),
+              label: $setup.t("agora", "Action icon"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Icon name")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: $setup.addNewFamilyAction
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add action")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("ul", _hoisted_39$2, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newFamily.actions, (a, i) => {
+                return openBlock(), createElementBlock("li", { key: i }, [
+                  createBaseVNode(
+                    "code",
+                    null,
+                    toDisplayString(a.key),
+                    1
+                    /* TEXT */
+                  ),
+                  createTextVNode(
+                    " — " + toDisplayString(a.label) + " ",
+                    1
+                    /* TEXT */
+                  ),
+                  createVNode($setup["NcButton"], {
+                    type: "tertiary",
+                    onClick: ($event) => $setup.removeNewFamilyAction(i)
+                  }, {
+                    default: withCtx(() => [..._cache[25] || (_cache[25] = [
+                      createTextVNode(
+                        "✕",
+                        -1
+                        /* CACHED */
+                      )
+                    ])]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ]),
+        createBaseVNode("div", _hoisted_40$2, [
+          createVNode($setup["NcButton"], {
+            type: "primary",
+            disabled: $setup.savingFamily || !$setup.newFamily.family_type || !$setup.newFamily.label,
+            onClick: $setup.addFamily
+          }, {
+            default: withCtx(() => [
+              $setup.savingFamily ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                key: 0,
+                size: 16
+              })) : (openBlock(), createElementBlock(
+                "span",
+                _hoisted_41$2,
+                toDisplayString($setup.t("agora", "Add family")),
+                1
+                /* TEXT */
+              ))
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["disabled"])
+        ])
+      ])
+    ]),
+    createCommentVNode(" ==================== EDIT FAMILY MODAL ==================== "),
+    $setup.editingFamily ? (openBlock(), createElementBlock("div", {
+      key: 0,
+      class: "modal-overlay",
+      onClick: withModifiers($setup.cancelEditing, ["self"])
+    }, [
+      createBaseVNode("div", _hoisted_42$2, [
+        createBaseVNode("header", _hoisted_43$2, [
+          createBaseVNode(
+            "h3",
+            null,
+            toDisplayString($setup.t("agora", "Edit family")) + ": " + toDisplayString($setup.editingFamily.label),
+            1
+            /* TEXT */
+          ),
+          createVNode($setup["NcButton"], {
+            type: "tertiary",
+            onClick: $setup.cancelEditing
+          }, {
+            default: withCtx(() => [..._cache[26] || (_cache[26] = [
+              createTextVNode(
+                "✕",
+                -1
+                /* CACHED */
+              )
+            ])]),
+            _: 1
+            /* STABLE */
+          })
+        ]),
+        createBaseVNode("nav", _hoisted_44$2, [
+          (openBlock(), createElementBlock(
+            Fragment,
+            null,
+            renderList(["basic", "ui", "rules", "features", "actions"], (tab) => {
+              return createBaseVNode("button", {
+                key: tab,
+                class: normalizeClass(["tab", { active: $setup.editTab === tab }]),
+                onClick: ($event) => $setup.editTab = tab
+              }, toDisplayString($setup.t("agora", tab)), 11, _hoisted_45$2);
+            }),
+            64
+            /* STABLE_FRAGMENT */
+          ))
+        ]),
+        createCommentVNode(" BASIC TAB "),
+        $setup.editTab === "basic" ? (openBlock(), createElementBlock("div", _hoisted_46$2, [
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingFamily.family_type,
+            "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $setup.editingFamily.family_type = $event),
+            label: $setup.t("agora", "Family type key"),
+            required: "",
+            class: "form-field"
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingFamily.label,
+            "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => $setup.editingFamily.label = $event),
+            label: $setup.t("agora", "Display label"),
+            required: "",
+            class: "form-field"
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcSelect"], {
+            modelValue: $setup.editingFamily.icon,
+            "onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => $setup.editingFamily.icon = $event),
+            options: $setup.availableIcons,
+            "track-by": "id",
+            clearable: false,
+            placeholder: $setup.t("agora", "Select an icon"),
+            class: "form-field"
+          }, null, 8, ["modelValue", "options", "placeholder"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingFamily.sort_order,
+            "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $setup.editingFamily.sort_order = $event),
+            label: $setup.t("agora", "Sort order"),
+            type: "number",
+            min: 0,
+            class: "form-field"
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingFamily.description,
+            "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => $setup.editingFamily.description = $event),
+            label: $setup.t("agora", "Description"),
+            type: "textarea",
+            class: "full-width"
+          }, null, 8, ["modelValue", "label"])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" UI TAB "),
+        $setup.editTab === "ui" ? (openBlock(), createElementBlock("div", _hoisted_47$2, [
+          createBaseVNode(
+            "p",
+            _hoisted_48$2,
+            toDisplayString($setup.t("agora", "UI configuration as JSON. Defines the layout and display options for this family.")),
+            1
+            /* TEXT */
+          ),
+          withDirectives(createBaseVNode(
+            "textarea",
+            {
+              "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => $setup.editingFamily.uiRaw = $event),
+              class: "json-editor",
+              rows: "12",
+              onInput: _cache[17] || (_cache[17] = (e) => {
+                try {
+                  $setup.editingFamily.ui = JSON.parse(e.target.value);
+                } catch (_) {
+                }
+              })
+            },
+            null,
+            544
+            /* NEED_HYDRATION, NEED_PATCH */
+          ), [
+            [vModelText, $setup.editingFamily.uiRaw]
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" RULES TAB "),
+        $setup.editTab === "rules" ? (openBlock(), createElementBlock("div", _hoisted_49$2, [
+          createBaseVNode(
+            "p",
+            _hoisted_50$2,
+            toDisplayString($setup.t("agora", "Rules configuration as JSON. Defines validation and behavior constraints.")),
+            1
+            /* TEXT */
+          ),
+          withDirectives(createBaseVNode(
+            "textarea",
+            {
+              "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => $setup.editingFamily.rulesRaw = $event),
+              class: "json-editor",
+              rows: "12",
+              onInput: _cache[19] || (_cache[19] = (e) => {
+                try {
+                  $setup.editingFamily.rules = JSON.parse(e.target.value);
+                } catch (_) {
+                }
+              })
+            },
+            null,
+            544
+            /* NEED_HYDRATION, NEED_PATCH */
+          ), [
+            [vModelText, $setup.editingFamily.rulesRaw]
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" FEATURES TAB "),
+        $setup.editTab === "features" ? (openBlock(), createElementBlock("div", _hoisted_51$2, [
+          createBaseVNode("div", _hoisted_52$2, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newFeature,
+              "onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => $setup.newFeature = $event),
+              label: $setup.t("agora", "Feature"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Feature identifier"),
+              onKeydown: withKeys(withModifiers($setup.addFeature, ["prevent"]), ["enter"])
+            }, null, 8, ["modelValue", "label", "placeholder", "onKeydown"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: $setup.addFeature
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_53$2, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingFamily.features, (f, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeFeature(i)
+                }, toDisplayString(f) + " ✕ ", 9, _hoisted_54$2);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" ACTIONS TAB "),
+        $setup.editTab === "actions" ? (openBlock(), createElementBlock("div", _hoisted_55$2, [
+          createBaseVNode("div", _hoisted_56$2, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.key,
+              "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => $setup.newAction.key = $event),
+              label: $setup.t("agora", "Action key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "key")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.label,
+              "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $setup.newAction.label = $event),
+              label: $setup.t("agora", "Action label"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Label")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.icon,
+              "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => $setup.newAction.icon = $event),
+              label: $setup.t("agora", "Action icon"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Icon")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: $setup.addAction
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("ul", _hoisted_57$2, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingFamily.actions, (a, i) => {
+                return openBlock(), createElementBlock("li", { key: i }, [
+                  createBaseVNode(
+                    "code",
+                    null,
+                    toDisplayString(a.key),
+                    1
+                    /* TEXT */
+                  ),
+                  createTextVNode(
+                    " — " + toDisplayString(a.label) + " ",
+                    1
+                    /* TEXT */
+                  ),
+                  createVNode($setup["NcButton"], {
+                    type: "tertiary",
+                    onClick: ($event) => $setup.removeAction(i)
+                  }, {
+                    default: withCtx(() => [..._cache[27] || (_cache[27] = [
+                      createTextVNode(
+                        "✕",
+                        -1
+                        /* CACHED */
+                      )
+                    ])]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createBaseVNode("footer", _hoisted_58$2, [
+          createVNode($setup["NcButton"], { onClick: $setup.cancelEditing }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Cancel")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }),
+          createVNode($setup["NcButton"], {
+            type: "primary",
+            disabled: $setup.savingFamily,
+            onClick: _cache[24] || (_cache[24] = ($event) => $setup.updateFamily($setup.editingFamily))
+          }, {
+            default: withCtx(() => [
+              $setup.savingFamily ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                key: 0,
+                size: 16
+              })) : (openBlock(), createElementBlock(
+                "span",
+                _hoisted_59$2,
+                toDisplayString($setup.t("agora", "Save changes")),
+                1
+                /* TEXT */
+              ))
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["disabled"])
+        ])
+      ])
+    ])) : createCommentVNode("v-if", true)
+  ]);
+}
+const AdminOptionFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__scopeId", "data-v-42dbd4d0"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOptionFamiliesManager.vue"]]);
+const _sfc_main$j = {
+  __name: "AdminOptionTypesManager",
+  props: {
+    selectedFamily: { type: Object, default: null }
+  },
+  emits: ["typeSelected"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const emit = __emit;
+    const appSettingsStore = useAppSettingsStore();
+    const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
+    const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value);
+    const searchQuery = ref("");
+    const editingType = ref(null);
+    const savingType = ref(false);
+    const editTab = ref("basic");
+    const expandedTypeId = ref(null);
+    const newType = ref(emptyType());
+    const newField = ref(emptyField());
+    const newStatus = ref({ status_key: "", label: "" });
+    const newAllowedResponse = ref("");
+    function emptyType() {
+      return {
+        option_type: "",
+        family: familyKey.value,
+        icon: null,
+        label: "",
+        description: "",
+        fields: [],
+        allowed_response: [],
+        allow_comment: true,
+        support_feature: "none",
+        statuses: [],
+        use_title: false
+      };
+    }
+    function emptyField() {
+      return {
+        key: "",
+        label: "",
+        type: "string",
+        required: false,
+        default: null
+      };
+    }
+    const FIELD_TYPES = [
+      "string",
+      "text",
+      "textarea",
+      "rich_text",
+      "integer",
+      "boolean",
+      "datetime",
+      "date",
+      "enum",
+      "array",
+      "json",
+      "users",
+      "groups",
+      "files",
+      "location",
+      "inquiry"
+    ];
+    const SUPPORT_FEATURES = [
+      "none",
+      "binary",
+      "ternary",
+      "score",
+      "reaction",
+      "majority_judgment",
+      "approval",
+      "ranking",
+      "borda",
+      "condorcet",
+      "quadratic",
+      "token_weighted"
+    ];
+    const fieldTypeOptions = computed(
+      () => FIELD_TYPES.map((ft) => ({ id: ft, label: ft }))
+    );
+    const supportFeatureOptions = computed(
+      () => SUPPORT_FEATURES.map((s) => ({ id: s, label: s }))
+    );
+    const availableIcons = computed(
+      () => Object.keys(InquiryOptionIcons).filter((key) => key !== "default").map((iconId) => ({
+        id: iconId,
+        label: translate("agora", iconId.replace(/([A-Z])/g, " $1").trim())
+      }))
+    );
+    const getIconComponent = (iconName) => {
+      const id = typeof iconName === "object" ? iconName?.id : iconName;
+      return InquiryOptionIcons[id] || InquiryOptionIcons.default;
+    };
+    const findIconById = (iconId) => {
+      if (!iconId) return null;
+      if (typeof iconId === "object") return iconId;
+      return availableIcons.value.find((i) => i.id === iconId) || null;
+    };
+    const extractIconId = (icon) => {
+      if (!icon) return "";
+      if (typeof icon === "string") return icon;
+      if (typeof icon === "object") return icon.id || "";
+      return String(icon);
+    };
+    const normalizeArray = (value) => {
+      if (Array.isArray(value)) return value;
+      if (typeof value === "string" && value) {
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+      return [];
+    };
+    const toBool = (value) => value === true || value === 1 || value === "1" || value === "true";
+    const allTypes = computed(() => appSettingsStore.optionTypeTab ?? []);
+    const filteredTypes = computed(() => {
+      let list = familyKey.value ? allTypes.value.filter((type) => type.family === familyKey.value) : allTypes.value;
+      if (searchQuery.value.trim()) {
+        const q = searchQuery.value.toLowerCase();
+        list = list.filter(
+          (type) => type.option_type?.toLowerCase().includes(q) || type.label?.toLowerCase().includes(q) || type.description?.toLowerCase().includes(q) || type.family?.toLowerCase().includes(q)
+        );
+      }
+      return list.map((type) => ({
+        ...type,
+        fields: normalizeArray(type.fields),
+        allowed_response: normalizeArray(type.allowed_response),
+        statuses: normalizeArray(type.statuses)
+      }));
+    });
+    const validateType = (type, isEdit = false) => {
+      if (!type.option_type?.trim()) {
+        showError(translate("agora", "Option type key is mandatory"));
+        return false;
+      }
+      if (!/^[a-z][a-z0-9_]*$/i.test(type.option_type)) {
+        showError(
+          translate("agora", "Option type key must be alphanumeric (underscores allowed), starting with a letter")
+        );
+        return false;
+      }
+      if (!type.label?.trim()) {
+        showError(translate("agora", "Label is mandatory"));
+        return false;
+      }
+      if (!isEdit) {
+        const exists = allTypes.value.some((existing) => existing.option_type === type.option_type);
+        if (exists) {
+          showError(translate("agora", "An option type with this key already exists"));
+          return false;
+        }
+      }
+      return true;
+    };
+    const addType = async () => {
+      if (!validateType(newType.value, false)) return;
+      savingType.value = true;
+      try {
+        await appSettingsStore.addOptionType({
+          ...newType.value,
+          family: familyKey.value,
+          icon: extractIconId(newType.value.icon),
+          created: Date.now()
+        });
+        showSuccess(translate("agora", "Option type added"));
+        newType.value = emptyType();
+      } catch (e) {
+        showError(translate("agora", "Failed to add option type: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingType.value = false;
+      }
+    };
+    const startEditing = (type) => {
+      editingType.value = {
+        ...JSON.parse(JSON.stringify(type)),
+        icon: findIconById(type.icon),
+        fields: normalizeArray(type.fields),
+        allowed_response: normalizeArray(type.allowed_response),
+        statuses: normalizeArray(type.statuses),
+        allow_comment: toBool(type.allow_comment),
+        use_title: toBool(type.use_title)
+      };
+      editTab.value = "basic";
+    };
+    const cancelEditing = () => {
+      editingType.value = null;
+      editTab.value = "basic";
+    };
+    const updateType = async (type) => {
+      if (!type || !validateType(type, true)) return;
+      savingType.value = true;
+      try {
+        await appSettingsStore.updateOptionType(type.id, {
+          ...type,
+          family: familyKey.value,
+          icon: extractIconId(type.icon),
+          allow_comment: type.allow_comment ? 1 : 0,
+          use_title: type.use_title ? 1 : 0
+        });
+        showSuccess(translate("agora", "Option type updated"));
+        editingType.value = null;
+      } catch (e) {
+        showError(translate("agora", "Failed to update option type: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingType.value = false;
+      }
+    };
+    const deleteType = async (type) => {
+      if (!confirm(
+        translate("agora", 'Are you sure you want to delete the option type "{label}"?', {
+          label: type.label || type.option_type
+        })
+      )) {
+        return;
+      }
+      try {
+        await appSettingsStore.deleteOptionType(type.id);
+        showSuccess(translate("agora", "Option type deleted"));
+      } catch (e) {
+        showError(translate("agora", "Failed to delete option type: {msg}", { msg: e?.message ?? "" }));
+      }
+    };
+    const toggleExpand = (id) => {
+      expandedTypeId.value = expandedTypeId.value === id ? null : id;
+    };
+    const addField = (target) => {
+      const field = newField.value;
+      if (!field.key?.trim()) {
+        showError(translate("agora", "Field key is required"));
+        return;
+      }
+      if (!/^[a-z][a-z0-9_]*$/i.test(field.key)) {
+        showError(translate("agora", "Field key must be alphanumeric (underscores allowed)"));
+        return;
+      }
+      const arr = target === "new" ? newType.value.fields : editingType.value.fields;
+      if (arr.some((f) => f.key === field.key)) {
+        showError(translate("agora", "A field with this key already exists"));
+        return;
+      }
+      arr.push({ ...field });
+      newField.value = emptyField();
+    };
+    const removeField = (target, index) => {
+      const arr = target === "new" ? newType.value.fields : editingType.value.fields;
+      arr.splice(index, 1);
+    };
+    const addAllowedResponse = (target) => {
+      const val = newAllowedResponse.value?.trim();
+      if (!val) return;
+      const arr = target === "new" ? newType.value.allowed_response : editingType.value.allowed_response;
+      if (!arr.includes(val)) arr.push(val);
+      newAllowedResponse.value = "";
+    };
+    const removeAllowedResponse = (target, index) => {
+      const arr = target === "new" ? newType.value.allowed_response : editingType.value.allowed_response;
+      arr.splice(index, 1);
+    };
+    const addStatus = (target) => {
+      const { statusKey, label } = newStatus.value;
+      if (!statusKey?.trim()) {
+        showError(translate("agora", "Status key is required"));
+        return;
+      }
+      const arr = target === "new" ? newType.value.statuses : editingType.value.statuses;
+      arr.push({
+        statusKey: statusKey.trim(),
+        label: (label || statusKey).trim()
+      });
+      newStatus.value = { statusKey: "", label: "" };
+    };
+    const removeStatus = (target, index) => {
+      const arr = target === "new" ? newType.value.statuses : editingType.value.statuses;
+      arr.splice(index, 1);
+    };
+    __expose({ editingType, newType });
+    const __returned__ = { props, emit, appSettingsStore, familyKey, familyLabel, searchQuery, editingType, savingType, editTab, expandedTypeId, newType, newField, newStatus, newAllowedResponse, emptyType, emptyField, FIELD_TYPES, SUPPORT_FEATURES, fieldTypeOptions, supportFeatureOptions, availableIcons, getIconComponent, findIconById, extractIconId, normalizeArray, toBool, allTypes, filteredTypes, validateType, addType, startEditing, cancelEditing, updateType, deleteType, toggleExpand, addField, removeField, addAllowedResponse, removeAllowedResponse, addStatus, removeStatus, computed, ref, get t() {
+      return translate;
+    }, get NcButton() {
+      return NcButton;
+    }, get NcInputField() {
+      return NcInputField;
+    }, get NcSelect() {
+      return NcSelect;
+    }, get NcCheckboxRadioSwitch() {
+      return NcCheckboxRadioSwitch;
+    }, get NcLoadingIcon() {
+      return NcLoadingIcon;
+    }, get showError() {
+      return showError;
+    }, get showSuccess() {
+      return showSuccess;
+    }, get useAppSettingsStore() {
+      return useAppSettingsStore;
+    }, get InquiryOptionIcons() {
+      return InquiryOptionIcons;
+    } };
+    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+    return __returned__;
+  }
+};
+const _hoisted_1$j = { class: "option-types-manager" };
+const _hoisted_2$f = { class: "manager-header" };
+const _hoisted_3$a = { class: "description" };
+const _hoisted_4$a = { class: "header-actions" };
+const _hoisted_5$9 = { class: "types-list" };
+const _hoisted_6$8 = { class: "count-badge" };
+const _hoisted_7$8 = {
+  key: 0,
+  class: "empty-state"
+};
+const _hoisted_8$8 = ["onClick"];
+const _hoisted_9$7 = { class: "type-icon" };
+const _hoisted_10$5 = { class: "type-info" };
+const _hoisted_11$5 = { class: "type-title-row" };
+const _hoisted_12$4 = { class: "type-key" };
+const _hoisted_13$4 = { class: "family-badge" };
+const _hoisted_14$4 = {
+  key: 0,
+  class: "type-description"
+};
+const _hoisted_15$4 = { class: "type-stats" };
+const _hoisted_16$4 = { class: "stat-chip" };
+const _hoisted_17$4 = {
+  key: 0,
+  class: "stat-chip"
+};
+const _hoisted_18$3 = {
+  key: 1,
+  class: "stat-chip"
+};
+const _hoisted_19$3 = {
+  key: 2,
+  class: "stat-chip support"
+};
+const _hoisted_20$3 = {
+  key: 3,
+  class: "stat-chip title-flag"
+};
+const _hoisted_21$3 = {
+  key: 0,
+  class: "type-details"
+};
+const _hoisted_22$3 = { class: "detail-section" };
+const _hoisted_23$2 = {
+  key: 0,
+  class: "mini-table"
+};
+const _hoisted_24$2 = {
+  key: 1,
+  class: "muted"
+};
+const _hoisted_25$2 = { class: "detail-section" };
+const _hoisted_26$1 = { class: "pill-list" };
+const _hoisted_27$1 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_28$1 = { class: "detail-section" };
+const _hoisted_29$1 = { class: "pill-list" };
+const _hoisted_30$1 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_31$1 = { class: "add-type-form" };
+const _hoisted_32$1 = { class: "form-grid" };
+const _hoisted_33$1 = { class: "full-width" };
+const _hoisted_34$1 = { class: "field-label" };
+const _hoisted_35$1 = { class: "inline-editor field-editor" };
+const _hoisted_36$1 = { class: "field-list" };
+const _hoisted_37$1 = { class: "full-width" };
+const _hoisted_38$1 = { class: "field-label" };
+const _hoisted_39$1 = { class: "inline-editor" };
+const _hoisted_40$1 = { class: "pill-list" };
+const _hoisted_41$1 = ["onClick"];
+const _hoisted_42$1 = { class: "full-width" };
+const _hoisted_43$1 = { class: "field-label" };
+const _hoisted_44$1 = { class: "inline-editor" };
+const _hoisted_45$1 = { class: "pill-list" };
+const _hoisted_46$1 = ["onClick"];
+const _hoisted_47$1 = { class: "form-actions full-width" };
+const _hoisted_48$1 = { key: 1 };
+const _hoisted_49$1 = { class: "modal-content large-modal" };
+const _hoisted_50$1 = { class: "modal-header" };
+const _hoisted_51$1 = { class: "tabs" };
+const _hoisted_52$1 = ["onClick"];
+const _hoisted_53$1 = {
+  key: 0,
+  class: "tab-panel form-grid"
+};
+const _hoisted_54$1 = {
+  key: 1,
+  class: "tab-panel"
+};
+const _hoisted_55$1 = { class: "inline-editor field-editor" };
+const _hoisted_56$1 = { class: "field-list" };
+const _hoisted_57$1 = {
+  key: 2,
+  class: "tab-panel"
+};
+const _hoisted_58$1 = { class: "inline-editor" };
+const _hoisted_59$1 = { class: "pill-list" };
+const _hoisted_60$1 = ["onClick"];
+const _hoisted_61$1 = {
+  key: 3,
+  class: "tab-panel"
+};
+const _hoisted_62$1 = { class: "inline-editor" };
+const _hoisted_63$1 = { class: "pill-list" };
+const _hoisted_64$1 = ["onClick"];
+const _hoisted_65$1 = { class: "modal-actions" };
+const _hoisted_66$1 = { key: 1 };
+function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_EngineSelectorModal = resolveComponent("EngineSelectorModal");
+  return openBlock(), createElementBlock(
+    Fragment,
+    null,
+    [
+      createBaseVNode("div", _hoisted_1$j, [
+        createBaseVNode("header", _hoisted_2$f, [
+          createBaseVNode("div", null, [
+            createBaseVNode(
+              "h2",
+              null,
+              toDisplayString($setup.t("agora", "Option types — {family}", { family: $setup.familyLabel })),
+              1
+              /* TEXT */
+            ),
+            createBaseVNode(
+              "p",
+              _hoisted_3$a,
+              toDisplayString($setup.t(
+                "agora",
+                'Configure option types available in the "{family}" family (fields, allowed responses, support engines and statuses).',
+                { family: $setup.familyLabel }
+              )),
+              1
+              /* TEXT */
+            )
+          ]),
+          createBaseVNode("div", _hoisted_4$a, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.searchQuery,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.searchQuery = $event),
+              type: "text",
+              label: $setup.t("agora", "Search"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Search option types…"),
+              class: "search-field"
+            }, null, 8, ["modelValue", "label", "placeholder"])
+          ])
+        ]),
+        createCommentVNode(" ==================== EXISTING TYPES ==================== "),
+        createBaseVNode("section", _hoisted_5$9, [
+          createBaseVNode("h3", null, [
+            createTextVNode(
+              toDisplayString($setup.t("agora", "Existing option types")) + " ",
+              1
+              /* TEXT */
+            ),
+            createBaseVNode(
+              "span",
+              _hoisted_6$8,
+              toDisplayString($setup.filteredTypes.length),
+              1
+              /* TEXT */
+            )
+          ]),
+          !$setup.filteredTypes.length ? (openBlock(), createElementBlock(
+            "div",
+            _hoisted_7$8,
+            toDisplayString($setup.t("agora", "No option types match your filters.")),
+            1
+            /* TEXT */
+          )) : createCommentVNode("v-if", true),
+          (openBlock(true), createElementBlock(
+            Fragment,
+            null,
+            renderList($setup.filteredTypes, (type) => {
+              return openBlock(), createElementBlock(
+                "div",
+                {
+                  key: type.id,
+                  class: normalizeClass(["type-card", { expanded: $setup.expandedTypeId === type.id }])
+                },
+                [
+                  createBaseVNode("div", {
+                    class: "type-row",
+                    onClick: ($event) => $setup.emit("typeSelected", type)
+                  }, [
+                    createBaseVNode("div", _hoisted_9$7, [
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(type.icon)), { size: 20 }))
+                    ]),
+                    createBaseVNode("div", _hoisted_10$5, [
+                      createBaseVNode("div", _hoisted_11$5, [
+                        createBaseVNode(
+                          "h4",
+                          null,
+                          toDisplayString(type.label || type.option_type),
+                          1
+                          /* TEXT */
+                        ),
+                        createBaseVNode(
+                          "code",
+                          _hoisted_12$4,
+                          toDisplayString(type.option_type),
+                          1
+                          /* TEXT */
+                        ),
+                        createBaseVNode(
+                          "span",
+                          _hoisted_13$4,
+                          toDisplayString(type.family),
+                          1
+                          /* TEXT */
+                        )
+                      ]),
+                      type.description ? (openBlock(), createElementBlock(
+                        "p",
+                        _hoisted_14$4,
+                        toDisplayString(type.description),
+                        1
+                        /* TEXT */
+                      )) : createCommentVNode("v-if", true),
+                      createBaseVNode("div", _hoisted_15$4, [
+                        createBaseVNode(
+                          "span",
+                          _hoisted_16$4,
+                          toDisplayString($setup.t("agora", "{count} fields", { count: type.fields.length })),
+                          1
+                          /* TEXT */
+                        ),
+                        type.allowed_response?.length ? (openBlock(), createElementBlock(
+                          "span",
+                          _hoisted_17$4,
+                          toDisplayString($setup.t("agora", "{count} responses", { count: type.allowed_response.length })),
+                          1
+                          /* TEXT */
+                        )) : createCommentVNode("v-if", true),
+                        type.statuses?.length ? (openBlock(), createElementBlock(
+                          "span",
+                          _hoisted_18$3,
+                          toDisplayString($setup.t("agora", "{count} statuses", { count: type.statuses.length })),
+                          1
+                          /* TEXT */
+                        )) : createCommentVNode("v-if", true),
+                        type.support_feature && type.support_feature !== "none" ? (openBlock(), createElementBlock(
+                          "span",
+                          _hoisted_19$3,
+                          toDisplayString(type.support_feature),
+                          1
+                          /* TEXT */
+                        )) : createCommentVNode("v-if", true),
+                        type.use_title ? (openBlock(), createElementBlock(
+                          "span",
+                          _hoisted_20$3,
+                          toDisplayString($setup.t("agora", "uses title")),
+                          1
+                          /* TEXT */
+                        )) : createCommentVNode("v-if", true)
+                      ])
+                    ]),
+                    createBaseVNode("div", {
+                      class: "type-actions",
+                      onClick: _cache[1] || (_cache[1] = withModifiers(() => {
+                      }, ["stop"]))
+                    }, [
+                      createVNode($setup["NcButton"], {
+                        onClick: ($event) => $setup.toggleExpand(type.id)
+                      }, {
+                        default: withCtx(() => [
+                          createTextVNode(
+                            toDisplayString($setup.expandedTypeId === type.id ? $setup.t("agora", "Hide") : $setup.t("agora", "Details")),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        _: 2
+                        /* DYNAMIC */
+                      }, 1032, ["onClick"]),
+                      createVNode($setup["NcButton"], {
+                        onClick: ($event) => $setup.startEditing(type)
+                      }, {
+                        default: withCtx(() => [
+                          createTextVNode(
+                            toDisplayString($setup.t("agora", "Edit")),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }, 8, ["onClick"]),
+                      createVNode($setup["NcButton"], {
+                        type: "error",
+                        onClick: ($event) => $setup.deleteType(type)
+                      }, {
+                        default: withCtx(() => [
+                          createTextVNode(
+                            toDisplayString($setup.t("agora", "Delete")),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }, 8, ["onClick"])
+                    ])
+                  ], 8, _hoisted_8$8),
+                  $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_21$3, [
+                    createBaseVNode("div", _hoisted_22$3, [
+                      createBaseVNode(
+                        "h5",
+                        null,
+                        toDisplayString($setup.t("agora", "Fields")),
+                        1
+                        /* TEXT */
+                      ),
+                      type.fields.length ? (openBlock(), createElementBlock("table", _hoisted_23$2, [
+                        createBaseVNode("thead", null, [
+                          createBaseVNode("tr", null, [
+                            createBaseVNode(
+                              "th",
+                              null,
+                              toDisplayString($setup.t("agora", "Key")),
+                              1
+                              /* TEXT */
+                            ),
+                            createBaseVNode(
+                              "th",
+                              null,
+                              toDisplayString($setup.t("agora", "Label")),
+                              1
+                              /* TEXT */
+                            ),
+                            createBaseVNode(
+                              "th",
+                              null,
+                              toDisplayString($setup.t("agora", "Type")),
+                              1
+                              /* TEXT */
+                            ),
+                            createBaseVNode(
+                              "th",
+                              null,
+                              toDisplayString($setup.t("agora", "Required")),
+                              1
+                              /* TEXT */
+                            )
+                          ])
+                        ]),
+                        createBaseVNode("tbody", null, [
+                          (openBlock(true), createElementBlock(
+                            Fragment,
+                            null,
+                            renderList(type.fields, (f, i) => {
+                              return openBlock(), createElementBlock("tr", { key: i }, [
+                                createBaseVNode("td", null, [
+                                  createBaseVNode(
+                                    "code",
+                                    null,
+                                    toDisplayString(f.key),
+                                    1
+                                    /* TEXT */
+                                  )
+                                ]),
+                                createBaseVNode(
+                                  "td",
+                                  null,
+                                  toDisplayString(f.label),
+                                  1
+                                  /* TEXT */
+                                ),
+                                createBaseVNode(
+                                  "td",
+                                  null,
+                                  toDisplayString(f.type),
+                                  1
+                                  /* TEXT */
+                                ),
+                                createBaseVNode(
+                                  "td",
+                                  null,
+                                  toDisplayString(f.required ? "✓" : "—"),
+                                  1
+                                  /* TEXT */
+                                )
+                              ]);
+                            }),
+                            128
+                            /* KEYED_FRAGMENT */
+                          ))
+                        ])
+                      ])) : (openBlock(), createElementBlock(
+                        "p",
+                        _hoisted_24$2,
+                        toDisplayString($setup.t("agora", "No custom fields")),
+                        1
+                        /* TEXT */
+                      ))
+                    ]),
+                    createBaseVNode("div", _hoisted_25$2, [
+                      createBaseVNode(
+                        "h5",
+                        null,
+                        toDisplayString($setup.t("agora", "Allowed responses")),
+                        1
+                        /* TEXT */
+                      ),
+                      createBaseVNode("ul", _hoisted_26$1, [
+                        (openBlock(true), createElementBlock(
+                          Fragment,
+                          null,
+                          renderList(type.allowed_response, (r, i) => {
+                            return openBlock(), createElementBlock(
+                              "li",
+                              {
+                                key: i,
+                                class: "pill"
+                              },
+                              toDisplayString(r),
+                              1
+                              /* TEXT */
+                            );
+                          }),
+                          128
+                          /* KEYED_FRAGMENT */
+                        )),
+                        !type.allowed_response?.length ? (openBlock(), createElementBlock(
+                          "li",
+                          _hoisted_27$1,
+                          toDisplayString($setup.t("agora", "None")),
+                          1
+                          /* TEXT */
+                        )) : createCommentVNode("v-if", true)
+                      ])
+                    ]),
+                    createBaseVNode("div", _hoisted_28$1, [
+                      createBaseVNode(
+                        "h5",
+                        null,
+                        toDisplayString($setup.t("agora", "Statuses")),
+                        1
+                        /* TEXT */
+                      ),
+                      createBaseVNode("ul", _hoisted_29$1, [
+                        (openBlock(true), createElementBlock(
+                          Fragment,
+                          null,
+                          renderList(type.statuses, (s, i) => {
+                            return openBlock(), createElementBlock(
+                              "li",
+                              {
+                                key: i,
+                                class: "pill"
+                              },
+                              toDisplayString(s.label || s.status_key),
+                              1
+                              /* TEXT */
+                            );
+                          }),
+                          128
+                          /* KEYED_FRAGMENT */
+                        )),
+                        !type.statuses?.length ? (openBlock(), createElementBlock(
+                          "li",
+                          _hoisted_30$1,
+                          toDisplayString($setup.t("agora", "None")),
+                          1
+                          /* TEXT */
+                        )) : createCommentVNode("v-if", true)
+                      ])
+                    ])
+                  ])) : createCommentVNode("v-if", true)
+                ],
+                2
+                /* CLASS */
+              );
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          ))
+        ]),
+        createCommentVNode(" ==================== ADD NEW TYPE ==================== "),
+        createBaseVNode("section", _hoisted_31$1, [
+          createBaseVNode(
+            "h3",
+            null,
+            toDisplayString($setup.t("agora", "Add new option type to {family}", { family: $setup.familyLabel })),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_32$1, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newType.option_type,
+              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newType.option_type = $event),
+              label: $setup.t("agora", "Type key"),
+              placeholder: $setup.t("agora", "e.g., argument_for"),
+              required: ""
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createCommentVNode(" Family is fixed by parent: display only "),
+            createVNode($setup["NcInputField"], {
+              "model-value": $setup.familyLabel,
+              label: $setup.t("agora", "Family"),
+              disabled: "",
+              readonly: ""
+            }, null, 8, ["model-value", "label"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newType.label,
+              "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.newType.label = $event),
+              label: $setup.t("agora", "Label"),
+              placeholder: $setup.t("agora", "Argument For"),
+              required: ""
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newType.icon,
+              "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.newType.icon = $event),
+              "input-label": $setup.t("agora", "Icon"),
+              "label-outside": true,
+              options: $setup.availableIcons,
+              label: "label",
+              "track-by": "id",
+              clearable: false,
+              placeholder: $setup.t("agora", "Select an icon")
+            }, null, 8, ["modelValue", "input-label", "options", "placeholder"]),
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newType.support_feature,
+              "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.newType.support_feature = $event),
+              "input-label": $setup.t("agora", "Support feature"),
+              "label-outside": true,
+              options: $setup.supportFeatureOptions,
+              label: "label",
+              "track-by": "id",
+              clearable: false,
+              placeholder: $setup.t("agora", "Support feature")
+            }, null, 8, ["modelValue", "input-label", "options", "placeholder"]),
+            createVNode($setup["NcCheckboxRadioSwitch"], {
+              modelValue: $setup.newType.allow_comment,
+              "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.newType.allow_comment = $event),
+              type: "switch"
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Allow comments")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            }, 8, ["modelValue"]),
+            createVNode($setup["NcCheckboxRadioSwitch"], {
+              modelValue: $setup.newType.use_title,
+              "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.newType.use_title = $event),
+              type: "switch"
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Use title")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            }, 8, ["modelValue"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newType.description,
+              "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.newType.description = $event),
+              label: $setup.t("agora", "Description"),
+              type: "textarea",
+              class: "full-width"
+            }, null, 8, ["modelValue", "label"]),
+            createCommentVNode(" Inline fields editor "),
+            createBaseVNode("div", _hoisted_33$1, [
+              createBaseVNode(
+                "label",
+                _hoisted_34$1,
+                toDisplayString($setup.t("agora", "Custom fields")),
+                1
+                /* TEXT */
+              ),
+              createBaseVNode("div", _hoisted_35$1, [
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newField.key,
+                  "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $setup.newField.key = $event),
+                  label: $setup.t("agora", "Key"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "key")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newField.label,
+                  "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $setup.newField.label = $event),
+                  label: $setup.t("agora", "Label"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "Label")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcSelect"], {
+                  modelValue: $setup.newField.type,
+                  "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $setup.newField.type = $event),
+                  "input-label": $setup.t("agora", "Type"),
+                  "label-outside": true,
+                  options: $setup.fieldTypeOptions,
+                  label: "label",
+                  "track-by": "id",
+                  clearable: false
+                }, null, 8, ["modelValue", "input-label", "options"]),
+                createVNode($setup["NcCheckboxRadioSwitch"], {
+                  modelValue: $setup.newField.required,
+                  "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => $setup.newField.required = $event),
+                  type: "checkbox"
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Required")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                }, 8, ["modelValue"]),
+                createVNode($setup["NcButton"], {
+                  type: "secondary",
+                  onClick: _cache[13] || (_cache[13] = ($event) => $setup.addField("new"))
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Add")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                })
+              ]),
+              createBaseVNode("ul", _hoisted_36$1, [
+                (openBlock(true), createElementBlock(
+                  Fragment,
+                  null,
+                  renderList($setup.newType.fields, (f, i) => {
+                    return openBlock(), createElementBlock("li", { key: i }, [
+                      createBaseVNode(
+                        "code",
+                        null,
+                        toDisplayString(f.key),
+                        1
+                        /* TEXT */
+                      ),
+                      createTextVNode(
+                        " — " + toDisplayString(f.label) + " (" + toDisplayString(f.type) + ") ",
+                        1
+                        /* TEXT */
+                      ),
+                      createVNode($setup["NcButton"], {
+                        type: "tertiary",
+                        onClick: ($event) => $setup.removeField("new", i)
+                      }, {
+                        default: withCtx(() => [..._cache[40] || (_cache[40] = [
+                          createTextVNode(
+                            "✕",
+                            -1
+                            /* CACHED */
+                          )
+                        ])]),
+                        _: 1
+                        /* STABLE */
+                      }, 8, ["onClick"])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ]),
+            createCommentVNode(" Inline allowed responses "),
+            createBaseVNode("div", _hoisted_37$1, [
+              createBaseVNode(
+                "label",
+                _hoisted_38$1,
+                toDisplayString($setup.t("agora", "Allowed responses")),
+                1
+                /* TEXT */
+              ),
+              createBaseVNode("div", _hoisted_39$1, [
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newAllowedResponse,
+                  "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $setup.newAllowedResponse = $event),
+                  label: $setup.t("agora", "Response type key"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "e.g., message"),
+                  onKeydown: _cache[15] || (_cache[15] = withKeys(withModifiers(($event) => $setup.addAllowedResponse("new"), ["prevent"]), ["enter"]))
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcButton"], {
+                  type: "secondary",
+                  onClick: _cache[16] || (_cache[16] = ($event) => $setup.addAllowedResponse("new"))
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Add")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                })
+              ]),
+              createBaseVNode("div", _hoisted_40$1, [
+                (openBlock(true), createElementBlock(
+                  Fragment,
+                  null,
+                  renderList($setup.newType.allowed_response, (r, i) => {
+                    return openBlock(), createElementBlock("span", {
+                      key: i,
+                      class: "pill removable",
+                      onClick: ($event) => $setup.removeAllowedResponse("new", i)
+                    }, toDisplayString(r) + " ✕ ", 9, _hoisted_41$1);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ]),
+            createCommentVNode(" Inline statuses "),
+            createBaseVNode("div", _hoisted_42$1, [
+              createBaseVNode(
+                "label",
+                _hoisted_43$1,
+                toDisplayString($setup.t("agora", "Statuses")),
+                1
+                /* TEXT */
+              ),
+              createBaseVNode("div", _hoisted_44$1, [
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newStatus.status_key,
+                  "onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => $setup.newStatus.status_key = $event),
+                  label: $setup.t("agora", "Status key"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "status_key")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newStatus.label,
+                  "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => $setup.newStatus.label = $event),
+                  label: $setup.t("agora", "Status label"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "Label")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcButton"], {
+                  type: "secondary",
+                  onClick: _cache[19] || (_cache[19] = ($event) => $setup.addStatus("new"))
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Add")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                })
+              ]),
+              createBaseVNode("div", _hoisted_45$1, [
+                (openBlock(true), createElementBlock(
+                  Fragment,
+                  null,
+                  renderList($setup.newType.statuses, (s, i) => {
+                    return openBlock(), createElementBlock("span", {
+                      key: i,
+                      class: "pill removable",
+                      onClick: ($event) => $setup.removeStatus("new", i)
+                    }, toDisplayString(s.label || s.status_key) + " ✕ ", 9, _hoisted_46$1);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ]),
+            createBaseVNode("div", _hoisted_47$1, [
+              createVNode($setup["NcButton"], {
+                type: "primary",
+                disabled: $setup.savingType || !$setup.newType.option_type || !$setup.newType.label || !$setup.familyKey,
+                onClick: $setup.addType
+              }, {
+                default: withCtx(() => [
+                  $setup.savingType ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                    key: 0,
+                    size: 16
+                  })) : (openBlock(), createElementBlock(
+                    "span",
+                    _hoisted_48$1,
+                    toDisplayString($setup.t("agora", "Add option type")),
+                    1
+                    /* TEXT */
+                  ))
+                ]),
+                _: 1
+                /* STABLE */
+              }, 8, ["disabled"])
+            ])
+          ])
+        ]),
+        createCommentVNode(" ==================== EDIT MODAL ==================== "),
+        $setup.editingType ? (openBlock(), createElementBlock("div", {
+          key: 0,
+          class: "modal-overlay",
+          onClick: withModifiers($setup.cancelEditing, ["self"])
+        }, [
+          createBaseVNode("div", _hoisted_49$1, [
+            createBaseVNode("header", _hoisted_50$1, [
+              createBaseVNode(
+                "h3",
+                null,
+                toDisplayString($setup.t("agora", "Edit option type")) + ": " + toDisplayString($setup.editingType.label),
+                1
+                /* TEXT */
+              ),
+              createVNode($setup["NcButton"], {
+                type: "tertiary",
+                onClick: $setup.cancelEditing
+              }, {
+                default: withCtx(() => [..._cache[41] || (_cache[41] = [
+                  createTextVNode(
+                    "✕",
+                    -1
+                    /* CACHED */
+                  )
+                ])]),
+                _: 1
+                /* STABLE */
+              })
+            ]),
+            createBaseVNode("nav", _hoisted_51$1, [
+              (openBlock(), createElementBlock(
+                Fragment,
+                null,
+                renderList(["basic", "fields", "responses", "statuses"], (tab) => {
+                  return createBaseVNode("button", {
+                    key: tab,
+                    class: normalizeClass(["tab", { active: $setup.editTab === tab }]),
+                    onClick: ($event) => $setup.editTab = tab
+                  }, toDisplayString($setup.t("agora", tab)), 11, _hoisted_52$1);
+                }),
+                64
+                /* STABLE_FRAGMENT */
+              ))
+            ]),
+            createCommentVNode(" BASIC "),
+            $setup.editTab === "basic" ? (openBlock(), createElementBlock("div", _hoisted_53$1, [
+              createVNode($setup["NcInputField"], {
+                modelValue: $setup.editingType.option_type,
+                "onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => $setup.editingType.option_type = $event),
+                label: $setup.t("agora", "Type key"),
+                required: ""
+              }, null, 8, ["modelValue", "label"]),
+              createVNode($setup["NcInputField"], {
+                "model-value": $setup.familyLabel,
+                label: $setup.t("agora", "Family"),
+                disabled: "",
+                readonly: ""
+              }, null, 8, ["model-value", "label"]),
+              createVNode($setup["NcInputField"], {
+                modelValue: $setup.editingType.label,
+                "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => $setup.editingType.label = $event),
+                label: $setup.t("agora", "Label"),
+                required: ""
+              }, null, 8, ["modelValue", "label"]),
+              createVNode($setup["NcSelect"], {
+                modelValue: $setup.editingType.icon,
+                "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $setup.editingType.icon = $event),
+                "input-label": $setup.t("agora", "Icon"),
+                "label-outside": true,
+                options: $setup.availableIcons,
+                label: "label",
+                "track-by": "id",
+                clearable: false
+              }, null, 8, ["modelValue", "input-label", "options"]),
+              createVNode($setup["NcSelect"], {
+                modelValue: $setup.editingType.support_feature,
+                "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => $setup.editingType.support_feature = $event),
+                "input-label": $setup.t("agora", "Support feature"),
+                "label-outside": true,
+                options: $setup.supportFeatureOptions,
+                label: "label",
+                "track-by": "id",
+                clearable: false
+              }, null, 8, ["modelValue", "input-label", "options"]),
+              createVNode($setup["NcCheckboxRadioSwitch"], {
+                modelValue: $setup.editingType.allow_comment,
+                "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => $setup.editingType.allow_comment = $event),
+                type: "switch"
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(
+                    toDisplayString($setup.t("agora", "Allow comments")),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                _: 1
+                /* STABLE */
+              }, 8, ["modelValue"]),
+              createVNode($setup["NcCheckboxRadioSwitch"], {
+                modelValue: $setup.editingType.use_title,
+                "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => $setup.editingType.use_title = $event),
+                type: "switch"
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(
+                    toDisplayString($setup.t("agora", "Use title")),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                _: 1
+                /* STABLE */
+              }, 8, ["modelValue"]),
+              createVNode($setup["NcInputField"], {
+                modelValue: $setup.editingType.description,
+                "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => $setup.editingType.description = $event),
+                label: $setup.t("agora", "Description"),
+                type: "textarea",
+                class: "full-width"
+              }, null, 8, ["modelValue", "label"])
+            ])) : createCommentVNode("v-if", true),
+            createCommentVNode(" FIELDS "),
+            $setup.editTab === "fields" ? (openBlock(), createElementBlock("div", _hoisted_54$1, [
+              createBaseVNode("div", _hoisted_55$1, [
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newField.key,
+                  "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => $setup.newField.key = $event),
+                  label: $setup.t("agora", "Key"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "key")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newField.label,
+                  "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => $setup.newField.label = $event),
+                  label: $setup.t("agora", "Label"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "Label")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcSelect"], {
+                  modelValue: $setup.newField.type,
+                  "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => $setup.newField.type = $event),
+                  "input-label": $setup.t("agora", "Type"),
+                  "label-outside": true,
+                  options: $setup.fieldTypeOptions,
+                  label: "label",
+                  "track-by": "id",
+                  clearable: false
+                }, null, 8, ["modelValue", "input-label", "options"]),
+                createVNode($setup["NcCheckboxRadioSwitch"], {
+                  modelValue: $setup.newField.required,
+                  "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => $setup.newField.required = $event),
+                  type: "checkbox"
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Required")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                }, 8, ["modelValue"]),
+                createVNode($setup["NcButton"], {
+                  type: "secondary",
+                  onClick: _cache[31] || (_cache[31] = ($event) => $setup.addField("edit"))
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Add")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                })
+              ]),
+              createBaseVNode("ul", _hoisted_56$1, [
+                (openBlock(true), createElementBlock(
+                  Fragment,
+                  null,
+                  renderList($setup.editingType.fields, (f, i) => {
+                    return openBlock(), createElementBlock("li", { key: i }, [
+                      createBaseVNode(
+                        "code",
+                        null,
+                        toDisplayString(f.key),
+                        1
+                        /* TEXT */
+                      ),
+                      createTextVNode(
+                        " — " + toDisplayString(f.label) + " (" + toDisplayString(f.type) + ") ",
+                        1
+                        /* TEXT */
+                      ),
+                      createVNode($setup["NcButton"], {
+                        type: "tertiary",
+                        onClick: ($event) => $setup.removeField("edit", i)
+                      }, {
+                        default: withCtx(() => [..._cache[42] || (_cache[42] = [
+                          createTextVNode(
+                            "✕",
+                            -1
+                            /* CACHED */
+                          )
+                        ])]),
+                        _: 1
+                        /* STABLE */
+                      }, 8, ["onClick"])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ])) : createCommentVNode("v-if", true),
+            createCommentVNode(" RESPONSES "),
+            $setup.editTab === "responses" ? (openBlock(), createElementBlock("div", _hoisted_57$1, [
+              createBaseVNode("div", _hoisted_58$1, [
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newAllowedResponse,
+                  "onUpdate:modelValue": _cache[32] || (_cache[32] = ($event) => $setup.newAllowedResponse = $event),
+                  label: $setup.t("agora", "Response type key"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "Allowed response type"),
+                  onKeydown: _cache[33] || (_cache[33] = withKeys(withModifiers(($event) => $setup.addAllowedResponse("edit"), ["prevent"]), ["enter"]))
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcButton"], {
+                  type: "secondary",
+                  onClick: _cache[34] || (_cache[34] = ($event) => $setup.addAllowedResponse("edit"))
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Add")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                })
+              ]),
+              createBaseVNode("div", _hoisted_59$1, [
+                (openBlock(true), createElementBlock(
+                  Fragment,
+                  null,
+                  renderList($setup.editingType.allowed_response, (r, i) => {
+                    return openBlock(), createElementBlock("span", {
+                      key: i,
+                      class: "pill removable",
+                      onClick: ($event) => $setup.removeAllowedResponse("edit", i)
+                    }, toDisplayString(r) + " ✕ ", 9, _hoisted_60$1);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ])) : createCommentVNode("v-if", true),
+            createCommentVNode(" STATUSES "),
+            $setup.editTab === "statuses" ? (openBlock(), createElementBlock("div", _hoisted_61$1, [
+              createBaseVNode("div", _hoisted_62$1, [
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newStatus.status_key,
+                  "onUpdate:modelValue": _cache[35] || (_cache[35] = ($event) => $setup.newStatus.status_key = $event),
+                  label: $setup.t("agora", "Status key"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "status_key")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcInputField"], {
+                  modelValue: $setup.newStatus.label,
+                  "onUpdate:modelValue": _cache[36] || (_cache[36] = ($event) => $setup.newStatus.label = $event),
+                  label: $setup.t("agora", "Status label"),
+                  "label-outside": true,
+                  placeholder: $setup.t("agora", "Label")
+                }, null, 8, ["modelValue", "label", "placeholder"]),
+                createVNode($setup["NcButton"], {
+                  type: "secondary",
+                  onClick: _cache[37] || (_cache[37] = ($event) => $setup.addStatus("edit"))
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(
+                      toDisplayString($setup.t("agora", "Add")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                })
+              ]),
+              createBaseVNode("div", _hoisted_63$1, [
+                (openBlock(true), createElementBlock(
+                  Fragment,
+                  null,
+                  renderList($setup.editingType.statuses, (s, i) => {
+                    return openBlock(), createElementBlock("span", {
+                      key: i,
+                      class: "pill removable",
+                      onClick: ($event) => $setup.removeStatus("edit", i)
+                    }, toDisplayString(s.label || s.status_key) + " ✕ ", 9, _hoisted_64$1);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ])) : createCommentVNode("v-if", true),
+            createBaseVNode("footer", _hoisted_65$1, [
+              createVNode($setup["NcButton"], { onClick: $setup.cancelEditing }, {
+                default: withCtx(() => [
+                  createTextVNode(
+                    toDisplayString($setup.t("agora", "Cancel")),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                _: 1
+                /* STABLE */
+              }),
+              createVNode($setup["NcButton"], {
+                type: "primary",
+                disabled: $setup.savingType,
+                onClick: _cache[38] || (_cache[38] = ($event) => $setup.updateType($setup.editingType))
+              }, {
+                default: withCtx(() => [
+                  $setup.savingType ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                    key: 0,
+                    size: 16
+                  })) : (openBlock(), createElementBlock(
+                    "span",
+                    _hoisted_66$1,
+                    toDisplayString($setup.t("agora", "Save changes")),
+                    1
+                    /* TEXT */
+                  ))
+                ]),
+                _: 1
+                /* STABLE */
+              }, 8, ["disabled"])
+            ])
+          ])
+        ])) : createCommentVNode("v-if", true)
+      ]),
+      _ctx.showEngineSelector ? (openBlock(), createBlock(_component_EngineSelectorModal, {
+        key: 0,
+        mode: "deliberative",
+        "available-engines": _ctx.supportEngines,
+        "existing-engine": _ctx.existingSupportEngine,
+        onClose: _cache[39] || (_cache[39] = ($event) => _ctx.showEngineSelector = false),
+        onSave: _ctx.onSupportEngineSaved
+      }, null, 8, ["available-engines", "existing-engine", "onSave"])) : createCommentVNode("v-if", true)
+    ],
+    64
+    /* STABLE_FRAGMENT */
+  );
+}
+const AdminOptionTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-0457f204"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOptionTypesManager.vue"]]);
+const _sfc_main$i = {
+  __name: "AdminInquiryGroupTypesManager",
+  props: {
+    selectedFamily: { type: Object, default: null }
+  },
+  emits: ["groupTypeSelected"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    __expose();
+    const props = __props;
+    const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
+    const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value);
+    const emit = __emit;
+    const appSettingsStore = useAppSettingsStore();
+    const toBool = (value) => value === true || value === 1 || value === "1" || value === "true";
+    const searchQuery = ref("");
+    const editingType = ref(null);
+    const savingType = ref(false);
+    const editTab = ref("basic");
+    const expandedTypeId = ref(null);
+    const newType = ref(emptyType());
+    const newField = ref(emptyField());
+    const newAllowedResponse = ref("");
+    const newAllowedInquiryType = ref("");
+    function emptyType() {
+      return {
+        group_type: "",
+        family: familyKey.value,
+        icon: null,
+        label: "",
+        description: "",
+        fields: [],
+        allowed_inquiry_types: [],
+        allowed_response: [],
+        ui: {},
+        rules: {},
+        features: [],
+        actions: [],
+        is_root: false,
+        sort_order: 0
+      };
+    }
+    function emptyField() {
+      return { key: "", label: "", type: "string", required: false, default: null };
+    }
+    const FIELD_TYPES = [
+      "string",
+      "text",
+      "textarea",
+      "rich_text",
+      "integer",
+      "boolean",
+      "datetime",
+      "date",
+      "enum",
+      "array",
+      "json",
+      "users",
+      "groups",
+      "files",
+      "location",
+      "inquiry"
+    ];
+    const inquiryTypeOptions = computed(
+      () => (appSettingsStore.inquiryTypeTab ?? []).map((t) => ({
+        id: t.inquiry_type,
+        label: `${t.label || t.inquiry_type} (${t.inquiry_type})`
+      }))
+    );
+    const groupTypeOptions = computed(
+      () => (appSettingsStore.inquiryGroupTypeTab ?? []).map((t) => ({
+        id: t.group_type,
+        label: `${t.label || t.group_type} (${t.group_type})`
+      }))
+    );
+    const availableIcons = computed(
+      () => Object.keys(InquiryOptionIcons).filter((key) => key !== "default").map((iconId) => ({
+        id: iconId,
+        label: translate("agora", iconId.replace(/([A-Z])/g, " $1").trim())
+      }))
+    );
+    const getIconComponent = (iconName) => {
+      const id = typeof iconName === "object" ? iconName?.id : iconName;
+      return InquiryOptionIcons[id] || InquiryOptionIcons.default;
+    };
+    const findIconById = (iconId) => {
+      if (!iconId) return null;
+      if (typeof iconId === "object") return iconId;
+      return availableIcons.value.find((i) => i.id === iconId) || null;
+    };
+    const extractIconId = (icon) => {
+      if (!icon) return "";
+      if (typeof icon === "string") return icon;
+      if (typeof icon === "object") return icon.id || "";
+      return String(icon);
+    };
+    const normalizeArray = (value) => {
+      if (Array.isArray(value)) return value;
+      if (typeof value === "string" && value) {
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+      return [];
+    };
+    const normalizeObject = (value) => {
+      if (value && typeof value === "object" && !Array.isArray(value)) return value;
+      if (typeof value === "string" && value) {
+        try {
+          const parsed = JSON.parse(value);
+          return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+        } catch {
+          return {};
+        }
+      }
+      return {};
+    };
+    const allTypes = computed(() => appSettingsStore.inquiryGroupTypeTab ?? []);
+    const filteredTypes = computed(() => {
+      let list = familyKey.value ? allTypes.value.filter((t) => t.family === familyKey.value) : allTypes.value;
+      if (searchQuery.value.trim()) {
+        const q = searchQuery.value.toLowerCase();
+        list = list.filter(
+          (t) => t.group_type?.toLowerCase().includes(q) || t.label?.toLowerCase().includes(q) || t.description?.toLowerCase().includes(q) || t.family?.toLowerCase().includes(q)
+        );
+      }
+      return list.map((type) => ({
+        ...type,
+        fields: normalizeArray(type.fields),
+        allowed_inquiry_types: normalizeArray(type.allowed_inquiry_types),
+        allowed_response: normalizeArray(type.allowed_response),
+        features: normalizeArray(type.features),
+        actions: normalizeArray(type.actions),
+        ui: normalizeObject(type.ui),
+        rules: normalizeObject(type.rules),
+        is_root: toBool(type.is_root)
+        // ← convert 0/1 to Boolean
+      }));
+    });
+    const validateType = (type, isEdit = false) => {
+      if (!type.group_type?.trim()) {
+        showError(translate("agora", "Group type key is mandatory"));
+        return false;
+      }
+      if (!/^[a-z][a-z0-9_]*$/i.test(type.group_type)) {
+        showError(
+          translate("agora", "Group type key must be alphanumeric (underscores allowed), starting with a letter")
+        );
+        return false;
+      }
+      if (!type.family?.trim()) {
+        showError(translate("agora", "Family is mandatory"));
+        return false;
+      }
+      if (!type.label?.trim()) {
+        showError(translate("agora", "Label is mandatory"));
+        return false;
+      }
+      if (!isEdit) {
+        const exists = allTypes.value.some((t) => t.group_type === type.group_type);
+        if (exists) {
+          showError(translate("agora", "A group type with this key already exists"));
+          return false;
+        }
+      }
+      return true;
+    };
+    const addType = async () => {
+      if (!validateType(newType.value, false)) return;
+      savingType.value = true;
+      try {
+        await appSettingsStore.addInquiryGroupType({
+          ...newType.value,
+          family: familyKey.value,
+          icon: extractIconId(newType.value.icon),
+          is_root: newType.value.is_root ? 1 : 0,
+          created: Date.now()
+        });
+        showSuccess(translate("agora", "Group type added"));
+        newType.value = emptyType();
+      } catch (e) {
+        showError(translate("agora", "Failed to add group type: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingType.value = false;
+      }
+    };
+    const startEditing = (type) => {
+      editingType.value = {
+        ...JSON.parse(JSON.stringify(type)),
+        icon: findIconById(type.icon),
+        is_root: toBool(type.is_root),
+        fields: normalizeArray(type.fields),
+        allowed_inquiry_types: normalizeArray(type.allowed_inquiry_types),
+        allowed_response: normalizeArray(type.allowed_response),
+        ui: normalizeObject(type.ui),
+        rules: normalizeObject(type.rules),
+        features: normalizeArray(type.features),
+        actions: normalizeArray(type.actions)
+      };
+      editTab.value = "basic";
+    };
+    const cancelEditing = () => {
+      editingType.value = null;
+      editTab.value = "basic";
+    };
+    const updateType = async (type) => {
+      if (!type || !validateType(type, true)) return;
+      savingType.value = true;
+      try {
+        await appSettingsStore.updateInquiryGroupType(type.id, {
+          ...type,
+          family: familyKey.value,
+          icon: extractIconId(type.icon),
+          is_root: type.is_root ? 1 : 0
+        });
+        showSuccess(translate("agora", "Group type updated"));
+        editingType.value = null;
+      } catch (e) {
+        showError(translate("agora", "Failed to update group type: {msg}", { msg: e?.message ?? "" }));
+      } finally {
+        savingType.value = false;
+      }
+    };
+    const deleteType = async (type) => {
+      if (!confirm(
+        translate("agora", 'Are you sure you want to delete the group type "{label}"?', {
+          label: type.label || type.group_type
+        })
+      )) {
+        return;
+      }
+      try {
+        await appSettingsStore.deleteInquiryGroupType(type.id);
+        showSuccess(translate("agora", "Group type deleted"));
+      } catch (e) {
+        showError(translate("agora", "Failed to delete group type: {msg}", { msg: e?.message ?? "" }));
+      }
+    };
+    const toggleExpand = (id) => {
+      expandedTypeId.value = expandedTypeId.value === id ? null : id;
+    };
+    const addField = (target) => {
+      const field = newField.value;
+      if (!field.key?.trim()) {
+        showError(translate("agora", "Field key is required"));
+        return;
+      }
+      if (!/^[a-z][a-z0-9_]*$/i.test(field.key)) {
+        showError(translate("agora", "Field key must be alphanumeric (underscores allowed)"));
+        return;
+      }
+      const arr = target === "new" ? newType.value.fields : editingType.value.fields;
+      if (arr.some((f) => f.key === field.key)) {
+        showError(translate("agora", "A field with this key already exists"));
+        return;
+      }
+      arr.push({ ...field });
+      newField.value = emptyField();
+    };
+    const removeField = (target, index) => {
+      const arr = target === "new" ? newType.value.fields : editingType.value.fields;
+      arr.splice(index, 1);
+    };
+    const addAllowedResponse = (target, value) => {
+      const val = (value ?? "").trim();
+      if (!val) return;
+      const arr = target === "new" ? newType.value.allowed_response : editingType.value.allowed_response;
+      if (!arr.includes(val)) arr.push(val);
+      newAllowedResponse.value = "";
+    };
+    const removeAllowedResponse = (target, index) => {
+      const arr = target === "new" ? newType.value.allowed_response : editingType.value.allowed_response;
+      arr.splice(index, 1);
+    };
+    const addAllowedInquiryType = (target, value) => {
+      const val = (value ?? "").trim();
+      if (!val) return;
+      const arr = target === "new" ? newType.value.allowed_inquiry_types : editingType.value.allowed_inquiry_types;
+      if (!arr.includes(val)) arr.push(val);
+      newAllowedInquiryType.value = "";
+    };
+    const removeAllowedInquiryType = (target, index) => {
+      const arr = target === "new" ? newType.value.allowed_inquiry_types : editingType.value.allowed_inquiry_types;
+      arr.splice(index, 1);
+    };
+    const newFeature = ref("");
+    const addFeature = (target) => {
+      const value = newFeature.value?.trim();
+      if (!value) return;
+      const arr = target === "new" ? newType.value.features : editingType.value.features;
+      if (!arr.includes(value)) arr.push(value);
+      newFeature.value = "";
+    };
+    const removeFeature = (target, index) => {
+      const arr = target === "new" ? newType.value.features : editingType.value.features;
+      arr.splice(index, 1);
+    };
+    const newAction = ref({ key: "", label: "", icon: "" });
+    const addAction = (target) => {
+      const { key, label, icon } = newAction.value;
+      if (!key?.trim() || !label?.trim()) {
+        showError(translate("agora", "Action key and label are required"));
+        return;
+      }
+      const arr = target === "new" ? newType.value.actions : editingType.value.actions;
+      arr.push({ key: key.trim(), label: label.trim(), icon: icon?.trim() || "" });
+      newAction.value = { key: "", label: "", icon: "" };
+    };
+    const removeAction = (target, index) => {
+      const arr = target === "new" ? newType.value.actions : editingType.value.actions;
+      arr.splice(index, 1);
+    };
+    const __returned__ = { props, familyKey, familyLabel, emit, appSettingsStore, toBool, searchQuery, editingType, savingType, editTab, expandedTypeId, newType, newField, newAllowedResponse, newAllowedInquiryType, emptyType, emptyField, FIELD_TYPES, inquiryTypeOptions, groupTypeOptions, availableIcons, getIconComponent, findIconById, extractIconId, normalizeArray, normalizeObject, allTypes, filteredTypes, validateType, addType, startEditing, cancelEditing, updateType, deleteType, toggleExpand, addField, removeField, addAllowedResponse, removeAllowedResponse, addAllowedInquiryType, removeAllowedInquiryType, newFeature, addFeature, removeFeature, newAction, addAction, removeAction, computed, ref, get t() {
+      return translate;
+    }, get NcButton() {
+      return NcButton;
+    }, get NcInputField() {
+      return NcInputField;
+    }, get NcSelect() {
+      return NcSelect;
+    }, get NcCheckboxRadioSwitch() {
+      return NcCheckboxRadioSwitch;
+    }, get NcLoadingIcon() {
+      return NcLoadingIcon;
+    }, get showError() {
+      return showError;
+    }, get showSuccess() {
+      return showSuccess;
+    }, get useAppSettingsStore() {
+      return useAppSettingsStore;
+    }, get InquiryOptionIcons() {
+      return InquiryOptionIcons;
+    } };
+    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+    return __returned__;
+  }
+};
+const _hoisted_1$i = { class: "group-types-manager" };
+const _hoisted_2$e = { class: "manager-header" };
+const _hoisted_3$9 = { class: "description" };
+const _hoisted_4$9 = { class: "types-list" };
+const _hoisted_5$8 = { class: "count-badge" };
+const _hoisted_6$7 = {
+  key: 0,
+  class: "empty-state"
+};
+const _hoisted_7$7 = ["onClick"];
+const _hoisted_8$7 = { class: "type-icon" };
+const _hoisted_9$6 = { class: "type-info" };
+const _hoisted_10$4 = { class: "type-title-row" };
+const _hoisted_11$4 = { class: "type-key" };
+const _hoisted_12$3 = { class: "family-badge" };
+const _hoisted_13$3 = {
+  key: 0,
+  class: "root-badge"
+};
+const _hoisted_14$3 = {
+  key: 0,
+  class: "type-description"
+};
+const _hoisted_15$3 = { class: "type-stats" };
+const _hoisted_16$3 = { class: "stat-chip" };
+const _hoisted_17$3 = {
+  key: 0,
+  class: "stat-chip"
+};
+const _hoisted_18$2 = {
+  key: 1,
+  class: "stat-chip"
+};
+const _hoisted_19$2 = {
+  key: 2,
+  class: "stat-chip"
+};
+const _hoisted_20$2 = {
+  key: 3,
+  class: "stat-chip"
+};
+const _hoisted_21$2 = {
+  key: 4,
+  class: "stat-chip layout"
+};
+const _hoisted_22$2 = {
+  key: 0,
+  class: "type-details"
+};
+const _hoisted_23$1 = { class: "detail-section" };
+const _hoisted_24$1 = {
+  key: 0,
+  class: "mini-table"
+};
+const _hoisted_25$1 = {
+  key: 1,
+  class: "muted"
+};
+const _hoisted_26 = { class: "detail-section" };
+const _hoisted_27 = { class: "pill-list" };
+const _hoisted_28 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_29 = { class: "detail-section" };
+const _hoisted_30 = { class: "pill-list" };
+const _hoisted_31 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_32 = { class: "detail-section" };
+const _hoisted_33 = { class: "pill-list" };
+const _hoisted_34 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_35 = { class: "detail-section" };
+const _hoisted_36 = { class: "action-list" };
+const _hoisted_37 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_38 = {
+  key: 0,
+  class: "muted"
+};
+const _hoisted_39 = { class: "detail-section" };
+const _hoisted_40 = { class: "detail-section" };
+const _hoisted_41 = { class: "add-type-form" };
+const _hoisted_42 = { class: "form-grid" };
+const _hoisted_43 = { class: "full-width" };
+const _hoisted_44 = { class: "field-label" };
+const _hoisted_45 = { class: "inline-editor field-editor" };
+const _hoisted_46 = { class: "field-list" };
+const _hoisted_47 = { class: "full-width" };
+const _hoisted_48 = { class: "field-label" };
+const _hoisted_49 = { class: "inline-editor" };
+const _hoisted_50 = { class: "pill-list" };
+const _hoisted_51 = ["onClick"];
+const _hoisted_52 = { class: "full-width" };
+const _hoisted_53 = { class: "field-label" };
+const _hoisted_54 = { class: "inline-editor" };
+const _hoisted_55 = { class: "pill-list" };
+const _hoisted_56 = ["onClick"];
+const _hoisted_57 = { class: "full-width" };
+const _hoisted_58 = { class: "field-label" };
+const _hoisted_59 = { class: "inline-editor" };
+const _hoisted_60 = { class: "pill-list" };
+const _hoisted_61 = ["onClick"];
+const _hoisted_62 = { class: "full-width" };
+const _hoisted_63 = { class: "field-label" };
+const _hoisted_64 = { class: "inline-editor action-editor" };
+const _hoisted_65 = { class: "action-list" };
+const _hoisted_66 = { class: "full-width" };
+const _hoisted_67 = { class: "field-label" };
+const _hoisted_68 = ["value"];
+const _hoisted_69 = { class: "full-width" };
+const _hoisted_70 = { class: "field-label" };
+const _hoisted_71 = ["value"];
+const _hoisted_72 = { class: "form-actions full-width" };
+const _hoisted_73 = { key: 1 };
+const _hoisted_74 = { class: "modal-content large-modal" };
+const _hoisted_75 = { class: "modal-header" };
+const _hoisted_76 = { class: "tabs" };
+const _hoisted_77 = ["onClick"];
+const _hoisted_78 = {
+  key: 0,
+  class: "tab-panel form-grid"
+};
+const _hoisted_79 = {
+  key: 1,
+  class: "tab-panel"
+};
+const _hoisted_80 = { class: "inline-editor field-editor" };
+const _hoisted_81 = { class: "field-list" };
+const _hoisted_82 = {
+  key: 2,
+  class: "tab-panel"
+};
+const _hoisted_83 = { class: "field-label" };
+const _hoisted_84 = { class: "inline-editor" };
+const _hoisted_85 = { class: "pill-list" };
+const _hoisted_86 = ["onClick"];
+const _hoisted_87 = {
+  class: "field-label",
+  style: { "margin-top": "20px" }
+};
+const _hoisted_88 = { class: "inline-editor" };
+const _hoisted_89 = { class: "pill-list" };
+const _hoisted_90 = ["onClick"];
+const _hoisted_91 = {
+  key: 3,
+  class: "tab-panel"
+};
+const _hoisted_92 = { class: "help-text" };
+const _hoisted_93 = ["value"];
+const _hoisted_94 = {
+  key: 4,
+  class: "tab-panel"
+};
+const _hoisted_95 = { class: "help-text" };
+const _hoisted_96 = ["value"];
+const _hoisted_97 = {
+  key: 5,
+  class: "tab-panel"
+};
+const _hoisted_98 = { class: "inline-editor" };
+const _hoisted_99 = { class: "pill-list" };
+const _hoisted_100 = ["onClick"];
+const _hoisted_101 = {
+  key: 6,
+  class: "tab-panel"
+};
+const _hoisted_102 = { class: "inline-editor action-editor" };
+const _hoisted_103 = { class: "action-list" };
+const _hoisted_104 = { class: "modal-actions" };
+const _hoisted_105 = { key: 1 };
+function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$i, [
+    createBaseVNode("header", _hoisted_2$e, [
+      createBaseVNode("div", null, [
+        createBaseVNode(
+          "h2",
+          null,
+          toDisplayString($setup.t("agora", "Inquiry group types management")),
+          1
+          /* TEXT */
+        ),
+        createBaseVNode(
+          "p",
+          _hoisted_3$9,
+          toDisplayString($setup.t(
+            "agora",
+            "Configure inquiry group types (e.g., citizen_jury, investigation_case). Each group type belongs to an inquiry family and defines the UI layout, rules, features and actions shared by all groups of this type."
+          )),
+          1
+          /* TEXT */
+        )
+      ])
+    ]),
+    createCommentVNode(" ==================== EXISTING TYPES ==================== "),
+    createBaseVNode("section", _hoisted_4$9, [
+      createBaseVNode("h3", null, [
+        createTextVNode(
+          toDisplayString($setup.t("agora", "Existing group types")) + " ",
+          1
+          /* TEXT */
+        ),
+        createBaseVNode(
+          "span",
+          _hoisted_5$8,
+          toDisplayString($setup.filteredTypes.length),
+          1
+          /* TEXT */
+        )
+      ]),
+      !$setup.filteredTypes.length ? (openBlock(), createElementBlock(
+        "div",
+        _hoisted_6$7,
+        toDisplayString($setup.t("agora", "No group types match your filters.")),
+        1
+        /* TEXT */
+      )) : createCommentVNode("v-if", true),
+      (openBlock(true), createElementBlock(
+        Fragment,
+        null,
+        renderList($setup.filteredTypes, (type) => {
+          return openBlock(), createElementBlock(
+            "div",
+            {
+              key: type.id,
+              class: normalizeClass(["type-card", { expanded: $setup.expandedTypeId === type.id }])
+            },
+            [
+              createBaseVNode("div", {
+                class: "type-row",
+                onClick: ($event) => $setup.emit("groupTypeSelected", type)
+              }, [
+                createBaseVNode("div", _hoisted_8$7, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(type.icon)), { size: 20 }))
+                ]),
+                createBaseVNode("div", _hoisted_9$6, [
+                  createBaseVNode("div", _hoisted_10$4, [
+                    createBaseVNode(
+                      "h4",
+                      null,
+                      toDisplayString(type.label || type.group_type),
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "code",
+                      _hoisted_11$4,
+                      toDisplayString(type.group_type),
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "span",
+                      _hoisted_12$3,
+                      toDisplayString(type.family),
+                      1
+                      /* TEXT */
+                    ),
+                    type.is_root ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_13$3,
+                      toDisplayString($setup.t("agora", "root")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ]),
+                  type.description ? (openBlock(), createElementBlock(
+                    "p",
+                    _hoisted_14$3,
+                    toDisplayString(type.description),
+                    1
+                    /* TEXT */
+                  )) : createCommentVNode("v-if", true),
+                  createBaseVNode("div", _hoisted_15$3, [
+                    createBaseVNode(
+                      "span",
+                      _hoisted_16$3,
+                      toDisplayString($setup.t("agora", "{count} fields", { count: type.fields.length })),
+                      1
+                      /* TEXT */
+                    ),
+                    type.allowed_inquiry_types.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_17$3,
+                      toDisplayString($setup.t("agora", "{count} inquiry types", { count: type.allowed_inquiry_types.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    type.allowed_response.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_18$2,
+                      toDisplayString($setup.t("agora", "{count} responses", { count: type.allowed_response.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    type.features.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_19$2,
+                      toDisplayString($setup.t("agora", "{count} features", { count: type.features.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    type.actions.length ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_20$2,
+                      toDisplayString($setup.t("agora", "{count} actions", { count: type.actions.length })),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true),
+                    type.ui?.experience ? (openBlock(), createElementBlock(
+                      "span",
+                      _hoisted_21$2,
+                      toDisplayString(type.ui.experience),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", {
+                  class: "type-actions",
+                  onClick: _cache[0] || (_cache[0] = withModifiers(() => {
+                  }, ["stop"]))
+                }, [
+                  createVNode($setup["NcButton"], {
+                    onClick: ($event) => $setup.toggleExpand(type.id)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.expandedTypeId === type.id ? $setup.t("agora", "Hide") : $setup.t("agora", "Details")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 2
+                    /* DYNAMIC */
+                  }, 1032, ["onClick"]),
+                  createVNode($setup["NcButton"], {
+                    onClick: ($event) => $setup.startEditing(type)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Edit")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"]),
+                  createVNode($setup["NcButton"], {
+                    type: "error",
+                    onClick: ($event) => $setup.deleteType(type)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Delete")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ])
+              ], 8, _hoisted_7$7),
+              $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_22$2, [
+                createBaseVNode("div", _hoisted_23$1, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Fields")),
+                    1
+                    /* TEXT */
+                  ),
+                  type.fields.length ? (openBlock(), createElementBlock("table", _hoisted_24$1, [
+                    createBaseVNode("thead", null, [
+                      createBaseVNode("tr", null, [
+                        createBaseVNode(
+                          "th",
+                          null,
+                          toDisplayString($setup.t("agora", "Key")),
+                          1
+                          /* TEXT */
+                        ),
+                        createBaseVNode(
+                          "th",
+                          null,
+                          toDisplayString($setup.t("agora", "Label")),
+                          1
+                          /* TEXT */
+                        ),
+                        createBaseVNode(
+                          "th",
+                          null,
+                          toDisplayString($setup.t("agora", "Type")),
+                          1
+                          /* TEXT */
+                        ),
+                        createBaseVNode(
+                          "th",
+                          null,
+                          toDisplayString($setup.t("agora", "Required")),
+                          1
+                          /* TEXT */
+                        )
+                      ])
+                    ]),
+                    createBaseVNode("tbody", null, [
+                      (openBlock(true), createElementBlock(
+                        Fragment,
+                        null,
+                        renderList(type.fields, (f, i) => {
+                          return openBlock(), createElementBlock("tr", { key: i }, [
+                            createBaseVNode("td", null, [
+                              createBaseVNode(
+                                "code",
+                                null,
+                                toDisplayString(f.key),
+                                1
+                                /* TEXT */
+                              )
+                            ]),
+                            createBaseVNode(
+                              "td",
+                              null,
+                              toDisplayString(f.label),
+                              1
+                              /* TEXT */
+                            ),
+                            createBaseVNode(
+                              "td",
+                              null,
+                              toDisplayString(f.type),
+                              1
+                              /* TEXT */
+                            ),
+                            createBaseVNode(
+                              "td",
+                              null,
+                              toDisplayString(f.required ? "✓" : "—"),
+                              1
+                              /* TEXT */
+                            )
+                          ]);
+                        }),
+                        128
+                        /* KEYED_FRAGMENT */
+                      ))
+                    ])
+                  ])) : (openBlock(), createElementBlock(
+                    "p",
+                    _hoisted_25$1,
+                    toDisplayString($setup.t("agora", "No custom fields")),
+                    1
+                    /* TEXT */
+                  ))
+                ]),
+                createBaseVNode("div", _hoisted_26, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Allowed inquiry types")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_27, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.allowed_inquiry_types, (r, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(r),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.allowed_inquiry_types.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_28,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_29, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Allowed responses")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_30, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.allowed_response, (r, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(r),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.allowed_response.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_31,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_32, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Features")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_33, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.features, (f, i) => {
+                        return openBlock(), createElementBlock(
+                          "li",
+                          {
+                            key: i,
+                            class: "pill"
+                          },
+                          toDisplayString(f),
+                          1
+                          /* TEXT */
+                        );
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.features.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_34,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_35, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Actions")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("ul", _hoisted_36, [
+                    (openBlock(true), createElementBlock(
+                      Fragment,
+                      null,
+                      renderList(type.actions, (a, i) => {
+                        return openBlock(), createElementBlock("li", { key: i }, [
+                          createBaseVNode(
+                            "code",
+                            null,
+                            toDisplayString(a.key),
+                            1
+                            /* TEXT */
+                          ),
+                          createTextVNode(
+                            " — " + toDisplayString(a.label) + " ",
+                            1
+                            /* TEXT */
+                          ),
+                          a.icon ? (openBlock(), createElementBlock(
+                            "span",
+                            _hoisted_37,
+                            " (" + toDisplayString(a.icon) + ")",
+                            1
+                            /* TEXT */
+                          )) : createCommentVNode("v-if", true)
+                        ]);
+                      }),
+                      128
+                      /* KEYED_FRAGMENT */
+                    )),
+                    !type.actions.length ? (openBlock(), createElementBlock(
+                      "li",
+                      _hoisted_38,
+                      toDisplayString($setup.t("agora", "None")),
+                      1
+                      /* TEXT */
+                    )) : createCommentVNode("v-if", true)
+                  ])
+                ]),
+                createBaseVNode("div", _hoisted_39, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "UI")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "pre",
+                    null,
+                    toDisplayString(JSON.stringify(type.ui, null, 2)),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                createBaseVNode("div", _hoisted_40, [
+                  createBaseVNode(
+                    "h5",
+                    null,
+                    toDisplayString($setup.t("agora", "Rules")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "pre",
+                    null,
+                    toDisplayString(JSON.stringify(type.rules, null, 2)),
+                    1
+                    /* TEXT */
+                  )
+                ])
+              ])) : createCommentVNode("v-if", true)
+            ],
+            2
+            /* CLASS */
+          );
+        }),
+        128
+        /* KEYED_FRAGMENT */
+      ))
+    ]),
+    createCommentVNode(" ==================== ADD NEW TYPE ==================== "),
+    createBaseVNode("section", _hoisted_41, [
+      createBaseVNode(
+        "h3",
+        null,
+        toDisplayString($setup.t("agora", "Add new group type")),
+        1
+        /* TEXT */
+      ),
+      createBaseVNode("div", _hoisted_42, [
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newType.group_type,
+          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.newType.group_type = $event),
+          label: $setup.t("agora", "Group type key"),
+          placeholder: $setup.t("agora", "e.g., citizen_jury"),
+          required: ""
+        }, null, 8, ["modelValue", "label", "placeholder"]),
+        createVNode($setup["NcInputField"], {
+          "model-value": $setup.familyLabel,
+          label: $setup.t("agora", "Family"),
+          disabled: "",
+          readonly: ""
+        }, null, 8, ["model-value", "label"]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newType.label,
+          "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newType.label = $event),
+          label: $setup.t("agora", "Label"),
+          placeholder: $setup.t("agora", "Citizen Jury"),
+          required: ""
+        }, null, 8, ["modelValue", "label", "placeholder"]),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.newType.icon,
+          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.newType.icon = $event),
+          "input-label": $setup.t("agora", "Icon"),
+          "label-outside": true,
+          options: $setup.availableIcons,
+          "track-by": "id",
+          clearable: false,
+          placeholder: $setup.t("agora", "Select an icon")
+        }, null, 8, ["modelValue", "input-label", "options", "placeholder"]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newType.sort_order,
+          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.newType.sort_order = $event),
+          label: $setup.t("agora", "Sort order"),
+          type: "number",
+          min: 0
+        }, null, 8, ["modelValue", "label"]),
+        createVNode($setup["NcCheckboxRadioSwitch"], {
+          modelValue: $setup.newType.is_root,
+          "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.newType.is_root = $event),
+          type: "switch"
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              toDisplayString($setup.t("agora", "Is root group")),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["modelValue"]),
+        createVNode($setup["NcInputField"], {
+          modelValue: $setup.newType.description,
+          "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.newType.description = $event),
+          label: $setup.t("agora", "Description"),
+          type: "textarea",
+          class: "full-width"
+        }, null, 8, ["modelValue", "label"]),
+        createCommentVNode(" Fields "),
+        createBaseVNode("div", _hoisted_43, [
+          createBaseVNode(
+            "label",
+            _hoisted_44,
+            toDisplayString($setup.t("agora", "Custom fields")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_45, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newField.key,
+              "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.newField.key = $event),
+              label: $setup.t("agora", "Field key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "key")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newField.label,
+              "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.newField.label = $event),
+              label: $setup.t("agora", "Field label"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Label")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newField.type,
+              "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $setup.newField.type = $event),
+              "input-label": $setup.t("agora", "Field type"),
+              "label-outside": true,
+              options: $setup.FIELD_TYPES.map((ft) => ({ id: ft, label: ft })),
+              label: "label",
+              "track-by": "id",
+              clearable: false
+            }, null, 8, ["modelValue", "input-label", "options"]),
+            createVNode($setup["NcCheckboxRadioSwitch"], {
+              modelValue: $setup.newField.required,
+              "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $setup.newField.required = $event),
+              type: "checkbox"
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Req.")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            }, 8, ["modelValue"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[11] || (_cache[11] = ($event) => $setup.addField("new"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("ul", _hoisted_46, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.fields, (f, i) => {
+                return openBlock(), createElementBlock("li", { key: i }, [
+                  createBaseVNode(
+                    "code",
+                    null,
+                    toDisplayString(f.key),
+                    1
+                    /* TEXT */
+                  ),
+                  createTextVNode(
+                    " — " + toDisplayString(f.label) + " (" + toDisplayString(f.type) + ") ",
+                    1
+                    /* TEXT */
+                  ),
+                  createVNode($setup["NcButton"], {
+                    type: "tertiary",
+                    onClick: ($event) => $setup.removeField("new", i)
+                  }, {
+                    default: withCtx(() => [..._cache[50] || (_cache[50] = [
+                      createTextVNode(
+                        "✕",
+                        -1
+                        /* CACHED */
+                      )
+                    ])]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ]),
+        createCommentVNode(" Allowed inquiry types "),
+        createBaseVNode("div", _hoisted_47, [
+          createBaseVNode(
+            "label",
+            _hoisted_48,
+            toDisplayString($setup.t("agora", "Allowed inquiry types")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_49, [
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newAllowedInquiryType,
+              "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => $setup.newAllowedInquiryType = $event),
+              "input-label": $setup.t("agora", "Inquiry type"),
+              "label-outside": true,
+              options: $setup.inquiryTypeOptions,
+              label: "label",
+              "track-by": "id",
+              clearable: true,
+              placeholder: $setup.t("agora", "Pick an inquiry type"),
+              class: "inline-input"
+            }, null, 8, ["modelValue", "input-label", "options", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[13] || (_cache[13] = ($event) => $setup.addAllowedInquiryType("new", $setup.newAllowedInquiryType?.id))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_50, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.allowed_inquiry_types, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedInquiryType("new", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_51);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ]),
+        createCommentVNode(" Allowed responses "),
+        createBaseVNode("div", _hoisted_52, [
+          createBaseVNode(
+            "label",
+            _hoisted_53,
+            toDisplayString($setup.t("agora", "Allowed responses (group types)")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_54, [
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newAllowedResponse,
+              "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $setup.newAllowedResponse = $event),
+              "input-label": $setup.t("agora", "Group type"),
+              "label-outside": true,
+              options: $setup.groupTypeOptions,
+              label: "label",
+              "track-by": "id",
+              clearable: true,
+              placeholder: $setup.t("agora", "Pick a group type"),
+              class: "inline-input"
+            }, null, 8, ["modelValue", "input-label", "options", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[15] || (_cache[15] = ($event) => $setup.addAllowedResponse("new", $setup.newAllowedResponse?.id))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_55, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.allowed_response, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedResponse("new", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_56);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ]),
+        createCommentVNode(" Features "),
+        createBaseVNode("div", _hoisted_57, [
+          createBaseVNode(
+            "label",
+            _hoisted_58,
+            toDisplayString($setup.t("agora", "Features")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_59, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newFeature,
+              "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => $setup.newFeature = $event),
+              label: $setup.t("agora", "Feature"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "e.g., inquiry_selection"),
+              class: "inline-input",
+              onKeydown: _cache[17] || (_cache[17] = withKeys(withModifiers(($event) => $setup.addFeature("new"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[18] || (_cache[18] = ($event) => $setup.addFeature("new"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_60, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.features, (f, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeFeature("new", i)
+                }, toDisplayString(f) + " ✕ ", 9, _hoisted_61);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ]),
+        createCommentVNode(" Actions "),
+        createBaseVNode("div", _hoisted_62, [
+          createBaseVNode(
+            "label",
+            _hoisted_63,
+            toDisplayString($setup.t("agora", "Actions")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_64, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.key,
+              "onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => $setup.newAction.key = $event),
+              label: $setup.t("agora", "Action key"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "key")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.label,
+              "onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => $setup.newAction.label = $event),
+              label: $setup.t("agora", "Action label"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Label")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.icon,
+              "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => $setup.newAction.icon = $event),
+              label: $setup.t("agora", "Action icon"),
+              "label-outside": true,
+              placeholder: $setup.t("agora", "Icon")
+            }, null, 8, ["modelValue", "label", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[22] || (_cache[22] = ($event) => $setup.addAction("new"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add action")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("ul", _hoisted_65, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.newType.actions, (a, i) => {
+                return openBlock(), createElementBlock("li", { key: i }, [
+                  createBaseVNode(
+                    "code",
+                    null,
+                    toDisplayString(a.key),
+                    1
+                    /* TEXT */
+                  ),
+                  createTextVNode(
+                    " — " + toDisplayString(a.label) + " ",
+                    1
+                    /* TEXT */
+                  ),
+                  createVNode($setup["NcButton"], {
+                    type: "tertiary",
+                    onClick: ($event) => $setup.removeAction("new", i)
+                  }, {
+                    default: withCtx(() => [..._cache[51] || (_cache[51] = [
+                      createTextVNode(
+                        "✕",
+                        -1
+                        /* CACHED */
+                      )
+                    ])]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ]),
+        createCommentVNode(" UI / Rules JSON text areas "),
+        createBaseVNode("div", _hoisted_66, [
+          createBaseVNode(
+            "label",
+            _hoisted_67,
+            toDisplayString($setup.t("agora", "UI (JSON)")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("textarea", {
+            class: "json-editor",
+            rows: "6",
+            value: JSON.stringify($setup.newType.ui, null, 2),
+            onInput: _cache[23] || (_cache[23] = (e) => {
+              try {
+                $setup.newType.ui = JSON.parse(e.target.value);
+              } catch (_) {
+              }
+            })
+          }, null, 40, _hoisted_68)
+        ]),
+        createBaseVNode("div", _hoisted_69, [
+          createBaseVNode(
+            "label",
+            _hoisted_70,
+            toDisplayString($setup.t("agora", "Rules (JSON)")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("textarea", {
+            class: "json-editor",
+            rows: "6",
+            value: JSON.stringify($setup.newType.rules, null, 2),
+            onInput: _cache[24] || (_cache[24] = (e) => {
+              try {
+                $setup.newType.rules = JSON.parse(e.target.value);
+              } catch (_) {
+              }
+            })
+          }, null, 40, _hoisted_71)
+        ]),
+        createBaseVNode("div", _hoisted_72, [
+          createVNode($setup["NcButton"], {
+            type: "primary",
+            disabled: $setup.savingType || !$setup.newType.group_type || !$setup.newType.label || !$setup.newType.family,
+            onClick: $setup.addType
+          }, {
+            default: withCtx(() => [
+              $setup.savingType ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                key: 0,
+                size: 16
+              })) : (openBlock(), createElementBlock(
+                "span",
+                _hoisted_73,
+                toDisplayString($setup.t("agora", "Add group type")),
+                1
+                /* TEXT */
+              ))
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["disabled"])
+        ])
+      ])
+    ]),
+    createCommentVNode(" ==================== EDIT MODAL ==================== "),
+    $setup.editingType ? (openBlock(), createElementBlock("div", {
+      key: 0,
+      class: "modal-overlay",
+      onClick: withModifiers($setup.cancelEditing, ["self"])
+    }, [
+      createBaseVNode("div", _hoisted_74, [
+        createBaseVNode("header", _hoisted_75, [
+          createBaseVNode(
+            "h3",
+            null,
+            toDisplayString($setup.t("agora", "Edit group type")) + ": " + toDisplayString($setup.editingType.label),
+            1
+            /* TEXT */
+          ),
+          createVNode($setup["NcButton"], {
+            type: "tertiary",
+            onClick: $setup.cancelEditing
+          }, {
+            default: withCtx(() => [..._cache[52] || (_cache[52] = [
+              createTextVNode(
+                "✕",
+                -1
+                /* CACHED */
+              )
+            ])]),
+            _: 1
+            /* STABLE */
+          })
+        ]),
+        createBaseVNode("nav", _hoisted_76, [
+          (openBlock(), createElementBlock(
+            Fragment,
+            null,
+            renderList(["basic", "fields", "responses", "ui", "rules", "features", "actions"], (tab) => {
+              return createBaseVNode("button", {
+                key: tab,
+                class: normalizeClass(["tab", { active: $setup.editTab === tab }]),
+                onClick: ($event) => $setup.editTab = tab
+              }, toDisplayString($setup.t("agora", tab)), 11, _hoisted_77);
+            }),
+            64
+            /* STABLE_FRAGMENT */
+          ))
+        ]),
+        createCommentVNode(" BASIC "),
+        $setup.editTab === "basic" ? (openBlock(), createElementBlock("div", _hoisted_78, [
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingType.group_type,
+            "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => $setup.editingType.group_type = $event),
+            label: $setup.t("agora", "Group type key"),
+            required: ""
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcInputField"], {
+            "model-value": $setup.familyLabel,
+            label: $setup.t("agora", "Family"),
+            disabled: "",
+            readonly: ""
+          }, null, 8, ["model-value", "label"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingType.label,
+            "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => $setup.editingType.label = $event),
+            label: $setup.t("agora", "Label"),
+            required: ""
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcSelect"], {
+            modelValue: $setup.editingType.icon,
+            "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => $setup.editingType.icon = $event),
+            "input-label": $setup.t("agora", "Icon"),
+            "label-outside": true,
+            options: $setup.availableIcons,
+            "track-by": "id",
+            clearable: false
+          }, null, 8, ["modelValue", "input-label", "options"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingType.sort_order,
+            "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => $setup.editingType.sort_order = $event),
+            label: $setup.t("agora", "Sort order"),
+            type: "number",
+            min: 0
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcCheckboxRadioSwitch"], {
+            modelValue: $setup.editingType.is_root,
+            "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => $setup.editingType.is_root = $event),
+            type: "switch"
+          }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Is root group")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["modelValue"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.editingType.description,
+            "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => $setup.editingType.description = $event),
+            label: $setup.t("agora", "Description"),
+            type: "textarea",
+            class: "full-width"
+          }, null, 8, ["modelValue", "label"])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" FIELDS "),
+        $setup.editTab === "fields" ? (openBlock(), createElementBlock("div", _hoisted_79, [
+          createBaseVNode("div", _hoisted_80, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newField.key,
+              "onUpdate:modelValue": _cache[31] || (_cache[31] = ($event) => $setup.newField.key = $event),
+              placeholder: $setup.t("agora", "key")
+            }, null, 8, ["modelValue", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newField.label,
+              "onUpdate:modelValue": _cache[32] || (_cache[32] = ($event) => $setup.newField.label = $event),
+              placeholder: $setup.t("agora", "Label")
+            }, null, 8, ["modelValue", "placeholder"]),
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newField.type,
+              "onUpdate:modelValue": _cache[33] || (_cache[33] = ($event) => $setup.newField.type = $event),
+              options: $setup.FIELD_TYPES.map((ft) => ({ id: ft, label: ft })),
+              label: "label",
+              "track-by": "id",
+              clearable: false
+            }, null, 8, ["modelValue", "options"]),
+            createVNode($setup["NcCheckboxRadioSwitch"], {
+              modelValue: $setup.newField.required,
+              "onUpdate:modelValue": _cache[34] || (_cache[34] = ($event) => $setup.newField.required = $event),
+              type: "checkbox"
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Req.")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            }, 8, ["modelValue"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[35] || (_cache[35] = ($event) => $setup.addField("edit"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("ul", _hoisted_81, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.fields, (f, i) => {
+                return openBlock(), createElementBlock("li", { key: i }, [
+                  createBaseVNode(
+                    "code",
+                    null,
+                    toDisplayString(f.key),
+                    1
+                    /* TEXT */
+                  ),
+                  createTextVNode(
+                    " — " + toDisplayString(f.label) + " (" + toDisplayString(f.type) + ") ",
+                    1
+                    /* TEXT */
+                  ),
+                  createVNode($setup["NcButton"], {
+                    type: "tertiary",
+                    onClick: ($event) => $setup.removeField("edit", i)
+                  }, {
+                    default: withCtx(() => [..._cache[53] || (_cache[53] = [
+                      createTextVNode(
+                        "✕",
+                        -1
+                        /* CACHED */
+                      )
+                    ])]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" RESPONSES "),
+        $setup.editTab === "responses" ? (openBlock(), createElementBlock("div", _hoisted_82, [
+          createBaseVNode(
+            "label",
+            _hoisted_83,
+            toDisplayString($setup.t("agora", "Allowed inquiry types")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_84, [
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newAllowedInquiryType,
+              "onUpdate:modelValue": _cache[36] || (_cache[36] = ($event) => $setup.newAllowedInquiryType = $event),
+              options: $setup.inquiryTypeOptions,
+              label: "label",
+              "track-by": "id",
+              clearable: true,
+              class: "inline-input"
+            }, null, 8, ["modelValue", "options"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[37] || (_cache[37] = ($event) => $setup.addAllowedInquiryType("edit", $setup.newAllowedInquiryType?.id))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_85, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.allowed_inquiry_types, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedInquiryType("edit", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_86);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ]),
+          createBaseVNode(
+            "label",
+            _hoisted_87,
+            toDisplayString($setup.t("agora", "Allowed responses (group types)")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_88, [
+            createVNode($setup["NcSelect"], {
+              modelValue: $setup.newAllowedResponse,
+              "onUpdate:modelValue": _cache[38] || (_cache[38] = ($event) => $setup.newAllowedResponse = $event),
+              options: $setup.groupTypeOptions,
+              label: "label",
+              "track-by": "id",
+              clearable: true,
+              class: "inline-input"
+            }, null, 8, ["modelValue", "options"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[39] || (_cache[39] = ($event) => $setup.addAllowedResponse("edit", $setup.newAllowedResponse?.id))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_89, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.allowed_response, (r, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeAllowedResponse("edit", i)
+                }, toDisplayString(r) + " ✕ ", 9, _hoisted_90);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" UI "),
+        $setup.editTab === "ui" ? (openBlock(), createElementBlock("div", _hoisted_91, [
+          createBaseVNode(
+            "p",
+            _hoisted_92,
+            toDisplayString($setup.t("agora", "UI configuration as JSON (experience, layout, display_architecture…).")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("textarea", {
+            class: "json-editor",
+            rows: "14",
+            value: JSON.stringify($setup.editingType.ui, null, 2),
+            onInput: _cache[40] || (_cache[40] = (e) => {
+              try {
+                $setup.editingType.ui = JSON.parse(e.target.value);
+              } catch (_) {
+              }
+            })
+          }, null, 40, _hoisted_93)
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" RULES "),
+        $setup.editTab === "rules" ? (openBlock(), createElementBlock("div", _hoisted_94, [
+          createBaseVNode(
+            "p",
+            _hoisted_95,
+            toDisplayString($setup.t("agora", "Rules configuration as JSON.")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("textarea", {
+            class: "json-editor",
+            rows: "14",
+            value: JSON.stringify($setup.editingType.rules, null, 2),
+            onInput: _cache[41] || (_cache[41] = (e) => {
+              try {
+                $setup.editingType.rules = JSON.parse(e.target.value);
+              } catch (_) {
+              }
+            })
+          }, null, 40, _hoisted_96)
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" FEATURES "),
+        $setup.editTab === "features" ? (openBlock(), createElementBlock("div", _hoisted_97, [
+          createBaseVNode("div", _hoisted_98, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newFeature,
+              "onUpdate:modelValue": _cache[42] || (_cache[42] = ($event) => $setup.newFeature = $event),
+              placeholder: $setup.t("agora", "Feature identifier"),
+              onKeydown: _cache[43] || (_cache[43] = withKeys(withModifiers(($event) => $setup.addFeature("edit"), ["prevent"]), ["enter"]))
+            }, null, 8, ["modelValue", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[44] || (_cache[44] = ($event) => $setup.addFeature("edit"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("div", _hoisted_99, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.features, (f, i) => {
+                return openBlock(), createElementBlock("span", {
+                  key: i,
+                  class: "pill removable",
+                  onClick: ($event) => $setup.removeFeature("edit", i)
+                }, toDisplayString(f) + " ✕ ", 9, _hoisted_100);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" ACTIONS "),
+        $setup.editTab === "actions" ? (openBlock(), createElementBlock("div", _hoisted_101, [
+          createBaseVNode("div", _hoisted_102, [
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.key,
+              "onUpdate:modelValue": _cache[45] || (_cache[45] = ($event) => $setup.newAction.key = $event),
+              placeholder: $setup.t("agora", "key")
+            }, null, 8, ["modelValue", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.label,
+              "onUpdate:modelValue": _cache[46] || (_cache[46] = ($event) => $setup.newAction.label = $event),
+              placeholder: $setup.t("agora", "Label")
+            }, null, 8, ["modelValue", "placeholder"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.newAction.icon,
+              "onUpdate:modelValue": _cache[47] || (_cache[47] = ($event) => $setup.newAction.icon = $event),
+              placeholder: $setup.t("agora", "Icon")
+            }, null, 8, ["modelValue", "placeholder"]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: _cache[48] || (_cache[48] = ($event) => $setup.addAction("edit"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Add")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode("ul", _hoisted_103, [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.editingType.actions, (a, i) => {
+                return openBlock(), createElementBlock("li", { key: i }, [
+                  createBaseVNode(
+                    "code",
+                    null,
+                    toDisplayString(a.key),
+                    1
+                    /* TEXT */
+                  ),
+                  createTextVNode(
+                    " — " + toDisplayString(a.label) + " ",
+                    1
+                    /* TEXT */
+                  ),
+                  createVNode($setup["NcButton"], {
+                    type: "tertiary",
+                    onClick: ($event) => $setup.removeAction("edit", i)
+                  }, {
+                    default: withCtx(() => [..._cache[54] || (_cache[54] = [
+                      createTextVNode(
+                        "✕",
+                        -1
+                        /* CACHED */
+                      )
+                    ])]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createBaseVNode("footer", _hoisted_104, [
+          createVNode($setup["NcButton"], { onClick: $setup.cancelEditing }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Cancel")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }),
+          createVNode($setup["NcButton"], {
+            type: "primary",
+            disabled: $setup.savingType,
+            onClick: _cache[49] || (_cache[49] = ($event) => $setup.updateType($setup.editingType))
+          }, {
+            default: withCtx(() => [
+              $setup.savingType ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
+                key: 0,
+                size: 16
+              })) : (openBlock(), createElementBlock(
+                "span",
+                _hoisted_105,
+                toDisplayString($setup.t("agora", "Save changes")),
+                1
+                /* TEXT */
+              ))
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["disabled"])
+        ])
+      ])
+    ])) : createCommentVNode("v-if", true)
+  ]);
+}
+const AdminInquiryGroupTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-2a51940c"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminInquiryGroupTypesManager.vue"]]);
 const _sfc_main$h = /* @__PURE__ */ defineComponent({
   __name: "AdminTypeRights",
   props: {
@@ -4333,6 +9975,15 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
       { value: "textarea", label: translate("agora", "Simple text area") },
       { value: "texteditor", label: translate("agora", "Nextcloud text editor") }
     ];
+    const supportEngines = computed(() => {
+      const result = {};
+      for (const [id, engine] of Object.entries(ENGINE_DEFINITIONS)) {
+        if (engine.supportFeature && id !== "none") {
+          result[id] = engine;
+        }
+      }
+      return result;
+    });
     const typeRights = computed({
       get: () => {
         if (!props.selectedType) return {};
@@ -4347,34 +9998,60 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     const getDefaultRights = () => ({
       supportInquiry: true,
       supportFeature: "binary",
+      supportConfig: {},
       commentInquiry: true,
       useResourceInquiry: true,
       editorType: "wysiwyg"
     });
-    watch(() => props.selectedType, (newType) => {
-      if (newType && !appSettingsStore.inquiryTypeRights[newType.inquiry_type]) {
-        const defaultRights = getDefaultRights();
-        emit("updateRights", newType.inquiry_type, defaultRights);
-      }
-    }, { immediate: true });
+    watch(
+      () => props.selectedType,
+      (newType) => {
+        if (newType && !appSettingsStore.inquiryTypeRights[newType.inquiry_type]) {
+          emit("updateRights", newType.inquiry_type, getDefaultRights());
+        }
+      },
+      { immediate: true }
+    );
     const updateRights = () => {
       if (props.selectedType) {
         emit("updateRights", props.selectedType.inquiry_type, typeRights.value);
       }
     };
-    watch(() => typeRights.value.supportInquiry, (enabled) => {
-      if (!enabled) {
-        typeRights.value.supportFeature = "binary";
+    watch(
+      () => typeRights.value.supportInquiry,
+      (enabled) => {
+        if (!enabled) {
+          typeRights.value.supportFeature = "binary";
+          typeRights.value.supportConfig = {};
+        }
+        updateRights();
       }
-      updateRights();
+    );
+    const showEngineSelector = ref(false);
+    const currentEngineLabel = computed(() => {
+      const id = typeRights.value.supportFeature;
+      return id && ENGINE_DEFINITIONS[id]?.label || translate("agora", "None");
     });
-    const __returned__ = { props, emit, appSettingsStore, editorOptions, typeRights, getDefaultRights, updateRights, get t() {
+    const openEngineSelector = () => {
+      if (!typeRights.value.supportInquiry) return;
+      showEngineSelector.value = true;
+    };
+    const onEngineSelected = (data) => {
+      typeRights.value.supportFeature = data.engine;
+      typeRights.value.supportConfig = data.config ?? {};
+      updateRights();
+    };
+    const __returned__ = { props, emit, appSettingsStore, editorOptions, supportEngines, typeRights, getDefaultRights, updateRights, showEngineSelector, currentEngineLabel, openEngineSelector, onEngineSelected, get t() {
       return translate;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, get NcSelect() {
       return NcSelect;
-    } };
+    }, get NcButton() {
+      return NcButton;
+    }, get Pencil() {
+      return Pencil;
+    }, EngineSelectorModal };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
@@ -4391,24 +10068,25 @@ const _hoisted_4$8 = {
 };
 const _hoisted_5$7 = { class: "description" };
 const _hoisted_6$6 = { class: "settings-list" };
-const _hoisted_7$5 = { class: "setting-item" };
-const _hoisted_8$5 = { class: "setting-description" };
+const _hoisted_7$6 = { class: "setting-item" };
+const _hoisted_8$6 = { class: "setting-description" };
 const _hoisted_9$5 = {
   key: 0,
-  class: "setting-item ternary-mode-setting"
+  class: "setting-item engine-mode-setting"
 };
 const _hoisted_10$3 = { class: "setting-label" };
-const _hoisted_11$3 = { class: "mode-options" };
-const _hoisted_12$2 = { class: "mode-description" };
-const _hoisted_13$2 = { class: "mode-options" };
-const _hoisted_14$2 = { class: "mode-description" };
-const _hoisted_15$2 = { class: "setting-item" };
-const _hoisted_16$2 = { class: "setting-description" };
-const _hoisted_17$2 = { class: "setting-item" };
-const _hoisted_18$1 = { class: "setting-description" };
-const _hoisted_19$1 = { class: "setting-item" };
-const _hoisted_20$1 = { for: "editor-type-select" };
-const _hoisted_21$1 = { class: "setting-description" };
+const _hoisted_11$3 = { class: "engine-picker" };
+const _hoisted_12$2 = { class: "engine-picker-info" };
+const _hoisted_13$2 = { class: "engine-name" };
+const _hoisted_14$2 = { class: "engine-id" };
+const _hoisted_15$2 = { class: "setting-description" };
+const _hoisted_16$2 = { class: "setting-item" };
+const _hoisted_17$2 = { class: "setting-description" };
+const _hoisted_18$1 = { class: "setting-item" };
+const _hoisted_19$1 = { class: "setting-description" };
+const _hoisted_20$1 = { class: "setting-item" };
+const _hoisted_21$1 = { for: "editor-type-select" };
+const _hoisted_22$1 = { class: "setting-description" };
 function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$h, [
     createBaseVNode("div", _hoisted_2$d, [
@@ -4431,12 +10109,16 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
       createBaseVNode(
         "p",
         _hoisted_5$7,
-        toDisplayString($setup.t("agora", "Configure default rights and settings for this inquiry type")),
+        toDisplayString($setup.t(
+          "agora",
+          "Configure default rights and settings for this inquiry type"
+        )),
         1
         /* TEXT */
       ),
       createBaseVNode("div", _hoisted_6$6, [
-        createBaseVNode("div", _hoisted_7$5, [
+        createCommentVNode(" Support enable/disable "),
+        createBaseVNode("div", _hoisted_7$6, [
           createVNode($setup["NcCheckboxRadioSwitch"], {
             modelValue: $setup.typeRights.supportInquiry,
             "onUpdate:modelValue": [
@@ -4457,13 +10139,13 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
           }, 8, ["modelValue"]),
           createBaseVNode(
             "p",
-            _hoisted_8$5,
+            _hoisted_8$6,
             toDisplayString($setup.t("agora", "Allow users to support this inquiry type")),
             1
             /* TEXT */
           )
         ]),
-        createCommentVNode(" Ternary mode setting - only show when support is enabled "),
+        createCommentVNode(" Engine selector – replaces the old binary/ternary radio pair "),
         $setup.typeRights.supportInquiry ? (openBlock(), createElementBlock("div", _hoisted_9$5, [
           createBaseVNode(
             "div",
@@ -4473,148 +10155,156 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
             /* TEXT */
           ),
           createBaseVNode("div", _hoisted_11$3, [
-            createVNode($setup["NcCheckboxRadioSwitch"], {
-              modelValue: $setup.typeRights.supportFeature,
-              "onUpdate:modelValue": [
-                _cache[1] || (_cache[1] = ($event) => $setup.typeRights.supportFeature = $event),
-                $setup.updateRights
-              ],
-              type: "radio",
-              value: "binary",
-              name: "supportFeature"
+            createBaseVNode("div", _hoisted_12$2, [
+              createBaseVNode(
+                "span",
+                _hoisted_13$2,
+                toDisplayString($setup.currentEngineLabel),
+                1
+                /* TEXT */
+              ),
+              createBaseVNode(
+                "span",
+                _hoisted_14$2,
+                "(" + toDisplayString($setup.typeRights.supportFeature) + ")",
+                1
+                /* TEXT */
+              )
+            ]),
+            createVNode($setup["NcButton"], {
+              type: "secondary",
+              onClick: $setup.openEngineSelector
             }, {
               default: withCtx(() => [
-                createTextVNode(
-                  toDisplayString($setup.t("agora", "Simple mode")),
+                createVNode($setup["Pencil"], { size: 16 }),
+                createBaseVNode(
+                  "span",
+                  null,
+                  toDisplayString($setup.t("agora", "Change method")),
                   1
                   /* TEXT */
                 )
               ]),
               _: 1
               /* STABLE */
-            }, 8, ["modelValue"]),
-            createBaseVNode(
-              "p",
-              _hoisted_12$2,
-              toDisplayString($setup.t("agora", "People can support or not support")),
-              1
-              /* TEXT */
-            )
+            })
           ]),
-          createBaseVNode("div", _hoisted_13$2, [
-            createVNode($setup["NcCheckboxRadioSwitch"], {
-              modelValue: $setup.typeRights.supportFeature,
-              "onUpdate:modelValue": [
-                _cache[2] || (_cache[2] = ($event) => $setup.typeRights.supportFeature = $event),
-                $setup.updateRights
-              ],
-              type: "radio",
-              value: "ternary",
-              name: "supportFeature"
-            }, {
-              default: withCtx(() => [
-                createTextVNode(
-                  toDisplayString($setup.t("agora", "Ternary mode")),
-                  1
-                  /* TEXT */
-                )
-              ]),
-              _: 1
-              /* STABLE */
-            }, 8, ["modelValue"]),
-            createBaseVNode(
-              "p",
-              _hoisted_14$2,
-              toDisplayString($setup.t("agora", "People can support, be neutral, or oppose")),
-              1
-              /* TEXT */
-            )
-          ])
-        ])) : createCommentVNode("v-if", true)
-      ]),
-      createBaseVNode("div", _hoisted_15$2, [
-        createVNode($setup["NcCheckboxRadioSwitch"], {
-          modelValue: $setup.typeRights.commentInquiry,
-          "onUpdate:modelValue": [
-            _cache[3] || (_cache[3] = ($event) => $setup.typeRights.commentInquiry = $event),
-            $setup.updateRights
-          ],
-          type: "switch"
-        }, {
-          default: withCtx(() => [
-            createTextVNode(
-              toDisplayString($setup.t("agora", "Allow comments")),
-              1
-              /* TEXT */
-            )
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["modelValue"]),
-        createBaseVNode(
-          "p",
-          _hoisted_16$2,
-          toDisplayString($setup.t("agora", "Allow users to comment on this inquiry type")),
-          1
-          /* TEXT */
-        )
-      ]),
-      createBaseVNode("div", _hoisted_17$2, [
-        createVNode($setup["NcCheckboxRadioSwitch"], {
-          modelValue: $setup.typeRights.useResourceInquiry,
-          "onUpdate:modelValue": [
-            _cache[4] || (_cache[4] = ($event) => $setup.typeRights.useResourceInquiry = $event),
-            $setup.updateRights
-          ],
-          type: "switch"
-        }, {
-          default: withCtx(() => [
-            createTextVNode(
-              toDisplayString($setup.t("agora", "Allow using resources")),
-              1
-              /* TEXT */
-            )
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["modelValue"]),
-        createBaseVNode(
-          "p",
-          _hoisted_18$1,
-          toDisplayString($setup.t("agora", "Allow users to use resources for this inquiry type")),
-          1
-          /* TEXT */
-        )
-      ]),
-      createBaseVNode("div", _hoisted_19$1, [
-        createBaseVNode(
-          "label",
-          _hoisted_20$1,
-          toDisplayString($setup.t("agora", "Editor type")),
-          1
-          /* TEXT */
-        ),
-        createVNode($setup["NcSelect"], {
-          id: "editor-type-select",
-          modelValue: $setup.typeRights.editorType,
-          "onUpdate:modelValue": [
-            _cache[5] || (_cache[5] = ($event) => $setup.typeRights.editorType = $event),
-            $setup.updateRights
-          ],
-          options: $setup.editorOptions,
-          "option-value": "value",
-          "option-label": "label",
-          class: "editor-select"
-        }, null, 8, ["modelValue"]),
-        createBaseVNode(
-          "p",
-          _hoisted_21$1,
-          toDisplayString($setup.t("agora", "Select the editor type for this inquiry")),
-          1
-          /* TEXT */
-        )
+          createBaseVNode(
+            "p",
+            _hoisted_15$2,
+            toDisplayString($setup.t(
+              "agora",
+              "Choose which voting method users can use to support this inquiry."
+            )),
+            1
+            /* TEXT */
+          )
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" Comments "),
+        createBaseVNode("div", _hoisted_16$2, [
+          createVNode($setup["NcCheckboxRadioSwitch"], {
+            modelValue: $setup.typeRights.commentInquiry,
+            "onUpdate:modelValue": [
+              _cache[1] || (_cache[1] = ($event) => $setup.typeRights.commentInquiry = $event),
+              $setup.updateRights
+            ],
+            type: "switch"
+          }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Allow comments")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["modelValue"]),
+          createBaseVNode(
+            "p",
+            _hoisted_17$2,
+            toDisplayString($setup.t(
+              "agora",
+              "Allow users to comment on this inquiry type"
+            )),
+            1
+            /* TEXT */
+          )
+        ]),
+        createCommentVNode(" Resources "),
+        createBaseVNode("div", _hoisted_18$1, [
+          createVNode($setup["NcCheckboxRadioSwitch"], {
+            modelValue: $setup.typeRights.useResourceInquiry,
+            "onUpdate:modelValue": [
+              _cache[2] || (_cache[2] = ($event) => $setup.typeRights.useResourceInquiry = $event),
+              $setup.updateRights
+            ],
+            type: "switch"
+          }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Allow using resources")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["modelValue"]),
+          createBaseVNode(
+            "p",
+            _hoisted_19$1,
+            toDisplayString($setup.t(
+              "agora",
+              "Allow users to use resources for this inquiry type"
+            )),
+            1
+            /* TEXT */
+          )
+        ]),
+        createCommentVNode(" Editor type "),
+        createBaseVNode("div", _hoisted_20$1, [
+          createBaseVNode(
+            "label",
+            _hoisted_21$1,
+            toDisplayString($setup.t("agora", "Editor type")),
+            1
+            /* TEXT */
+          ),
+          createVNode($setup["NcSelect"], {
+            id: "editor-type-select",
+            modelValue: $setup.typeRights.editorType,
+            "onUpdate:modelValue": [
+              _cache[3] || (_cache[3] = ($event) => $setup.typeRights.editorType = $event),
+              $setup.updateRights
+            ],
+            options: $setup.editorOptions,
+            "option-value": "value",
+            "option-label": "label",
+            class: "editor-select"
+          }, null, 8, ["modelValue"]),
+          createBaseVNode(
+            "p",
+            _hoisted_22$1,
+            toDisplayString($setup.t("agora", "Select the editor type for this inquiry")),
+            1
+            /* TEXT */
+          )
+        ])
       ])
-    ])) : createCommentVNode("v-if", true)
+    ])) : createCommentVNode("v-if", true),
+    createCommentVNode(" The engine selector modal, in 'deliberative' mode "),
+    $setup.showEngineSelector ? (openBlock(), createBlock($setup["EngineSelectorModal"], {
+      key: 1,
+      mode: "deliberative",
+      "available-engines": $setup.supportEngines,
+      "existing-engine": {
+        engine: $setup.typeRights.supportFeature,
+        config: $setup.typeRights.supportConfig || {}
+      },
+      onClose: _cache[4] || (_cache[4] = ($event) => $setup.showEngineSelector = false),
+      onSave: $setup.onEngineSelected
+    }, null, 8, ["available-engines", "existing-engine"])) : createCommentVNode("v-if", true)
   ]);
 }
 const AdminTypeRights = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__scopeId", "data-v-60290e39"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypeRights.vue"]]);
@@ -4725,11 +10415,11 @@ const _hoisted_6$5 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_7$4 = {
+const _hoisted_7$5 = {
   key: 1,
   class: "status-items"
 };
-const _hoisted_8$4 = { class: "status-content" };
+const _hoisted_8$5 = { class: "status-content" };
 const _hoisted_9$4 = ["title"];
 const _hoisted_10$2 = { class: "status-info" };
 const _hoisted_11$2 = { class: "status-key" };
@@ -4794,7 +10484,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           )
-        ])) : (openBlock(), createElementBlock("div", _hoisted_7$4, [
+        ])) : (openBlock(), createElementBlock("div", _hoisted_7$5, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -4803,7 +10493,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
                 key: status.statusKey,
                 class: "status-item"
               }, [
-                createBaseVNode("div", _hoisted_8$4, [
+                createBaseVNode("div", _hoisted_8$5, [
                   createBaseVNode("div", {
                     class: "status-icon",
                     title: status.icon
@@ -5141,8 +10831,8 @@ const _hoisted_3$6 = { class: "type-info" };
 const _hoisted_4$6 = { class: "type-icon" };
 const _hoisted_5$5 = { class: "type-details" };
 const _hoisted_6$4 = { class: "type-key" };
-const _hoisted_7$3 = { class: "simple-menu" };
-const _hoisted_8$3 = ["onClick"];
+const _hoisted_7$4 = { class: "simple-menu" };
+const _hoisted_8$4 = ["onClick"];
 const _hoisted_9$3 = { class: "settings-content" };
 function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$f, [
@@ -5179,7 +10869,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_7$3, [
+    createBaseVNode("div", _hoisted_7$4, [
       (openBlock(), createElementBlock(
         Fragment,
         null,
@@ -5188,7 +10878,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
             key: tab.id,
             class: normalizeClass(["menu-item", { active: $setup.activeSettingsTab === tab.id }]),
             onClick: ($event) => $setup.activeSettingsTab = tab.id
-          }, toDisplayString(tab.label), 11, _hoisted_8$3);
+          }, toDisplayString(tab.label), 11, _hoisted_8$4);
         }),
         64
         /* STABLE_FRAGMENT */
@@ -5207,55 +10897,64 @@ const _sfc_main$e = {
   __name: "AdminSettings",
   setup(__props, { expose: __expose }) {
     __expose();
-    const currentView = ref("families");
+    const domains = [
+      { id: "inquiry", label: translate("agora", "Inquiry Families") },
+      { id: "option", label: translate("agora", "Option Families") }
+    ];
+    const activeDomainId = ref("inquiry");
     const selectedFamily = ref(null);
+    const activeSubTab = ref("types");
     const selectedType = ref(null);
     const settingsModalOpen = ref(false);
-    const breadcrumb = computed(() => {
-      const items = [
-        { label: translate("agora", "Inquiry families"), view: "families" }
-      ];
-      if (selectedFamily.value) {
-        items.push({
-          label: selectedFamily.value.label,
-          view: "types"
-        });
+    const subTabs = computed(() => {
+      if (activeDomainId.value === "inquiry") {
+        return [
+          { id: "types", label: translate("agora", "Inquiry Types") },
+          { id: "group-types", label: translate("agora", "Inquiry Group Types") }
+        ];
       }
-      return items;
+      return [
+        { id: "types", label: translate("agora", "Option Types") }
+      ];
     });
+    const currentComponent = computed(() => {
+      if (!selectedFamily.value) {
+        return activeDomainId.value === "inquiry" ? AdminFamiliesManager : AdminOptionFamiliesManager;
+      }
+      if (activeDomainId.value === "inquiry") {
+        return activeSubTab.value === "group-types" ? AdminInquiryGroupTypesManager : AdminTypesManager;
+      }
+      return AdminOptionTypesManager;
+    });
+    const switchDomain = (id) => {
+      if (activeDomainId.value === id) return;
+      activeDomainId.value = id;
+      selectedFamily.value = null;
+      activeSubTab.value = "types";
+    };
     const handleFamilySelected = (family) => {
       selectedFamily.value = family;
-      currentView.value = "types";
+      activeSubTab.value = "types";
+    };
+    const goBackToFamilies = () => {
+      selectedFamily.value = null;
+      activeSubTab.value = "types";
     };
     const handleTypeSelected = (type) => {
       selectedType.value = type;
       settingsModalOpen.value = true;
     };
-    const handleBreadcrumbClick = (view) => {
-      if (view === "families") {
-        selectedFamily.value = null;
-        selectedType.value = null;
-      }
-      currentView.value = view;
-    };
     const handleSettingsModalClose = () => {
       settingsModalOpen.value = false;
       selectedType.value = null;
     };
-    const currentComponent = computed(() => {
-      switch (currentView.value) {
-        case "types":
-          return AdminTypesManager;
-        case "families":
-        default:
-          return AdminFamiliesManager;
-      }
-    });
-    const __returned__ = { currentView, selectedFamily, selectedType, settingsModalOpen, breadcrumb, handleFamilySelected, handleTypeSelected, handleBreadcrumbClick, handleSettingsModalClose, currentComponent, ref, computed, get t() {
+    const __returned__ = { domains, activeDomainId, selectedFamily, activeSubTab, selectedType, settingsModalOpen, subTabs, currentComponent, switchDomain, handleFamilySelected, goBackToFamilies, handleTypeSelected, handleSettingsModalClose, ref, computed, get t() {
       return translate;
+    }, get NcButton() {
+      return NcButton;
     }, get NcAppSettingsDialog() {
       return NcAppSettingsDialog;
-    }, AdminFamiliesManager, AdminTypesManager, TypeSettingsModal };
+    }, AdminFamiliesManager, AdminTypesManager, AdminOptionFamiliesManager, AdminOptionTypesManager, AdminInquiryGroupTypesManager, TypeSettingsModal };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
@@ -5263,60 +10962,109 @@ const _sfc_main$e = {
 const _hoisted_1$e = { class: "admin-settings-container" };
 const _hoisted_2$a = {
   key: 0,
-  class: "breadcrumb"
+  class: "domain-tabs"
 };
 const _hoisted_3$5 = ["onClick"];
-const _hoisted_4$5 = {
-  key: 1,
-  class: "breadcrumb-current"
-};
-const _hoisted_5$4 = {
-  key: 2,
-  class: "breadcrumb-separator"
-};
-const _hoisted_6$3 = { class: "settings-content" };
+const _hoisted_4$5 = { class: "family-header" };
+const _hoisted_5$4 = { class: "family-title" };
+const _hoisted_6$3 = { class: "family-key" };
+const _hoisted_7$3 = ["disabled", "onClick"];
+const _hoisted_8$3 = { class: "settings-content" };
 function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$e, [
-    createCommentVNode(" Breadcrumb Navigation "),
-    $setup.breadcrumb.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_2$a, [
-      (openBlock(true), createElementBlock(
+    createCommentVNode(" ============================================================\n         LEVEL 1 — Domain tabs (hidden once you drill in)\n         ============================================================ "),
+    !$setup.selectedFamily ? (openBlock(), createElementBlock("nav", _hoisted_2$a, [
+      (openBlock(), createElementBlock(
         Fragment,
         null,
-        renderList($setup.breadcrumb, (item, index) => {
-          return openBlock(), createElementBlock("span", {
-            key: item.view,
-            class: "breadcrumb-item"
-          }, [
-            index < $setup.breadcrumb.length - 1 ? (openBlock(), createElementBlock("button", {
-              key: 0,
-              class: "breadcrumb-link",
-              onClick: ($event) => $setup.handleBreadcrumbClick(item.view)
-            }, toDisplayString(item.label), 9, _hoisted_3$5)) : (openBlock(), createElementBlock(
-              "span",
-              _hoisted_4$5,
-              toDisplayString(item.label),
-              1
-              /* TEXT */
-            )),
-            index < $setup.breadcrumb.length - 1 ? (openBlock(), createElementBlock("span", _hoisted_5$4, " / ")) : createCommentVNode("v-if", true)
-          ]);
+        renderList($setup.domains, (domain) => {
+          return createBaseVNode("button", {
+            key: domain.id,
+            class: normalizeClass(["domain-tab", { active: $setup.activeDomainId === domain.id }]),
+            onClick: ($event) => $setup.switchDomain(domain.id)
+          }, toDisplayString(domain.label), 11, _hoisted_3$5);
         }),
-        128
-        /* KEYED_FRAGMENT */
+        64
+        /* STABLE_FRAGMENT */
       ))
     ])) : createCommentVNode("v-if", true),
-    createCommentVNode(" Main Content "),
-    createBaseVNode("div", _hoisted_6$3, [
+    createCommentVNode(" ============================================================\n         LEVEL 2 — Family context + sub-tabs (only when drilled in)\n         ============================================================ "),
+    $setup.selectedFamily ? (openBlock(), createElementBlock(
+      Fragment,
+      { key: 1 },
+      [
+        createBaseVNode("div", _hoisted_4$5, [
+          createVNode($setup["NcButton"], { onClick: $setup.goBackToFamilies }, {
+            default: withCtx(() => [
+              createTextVNode(
+                " ← " + toDisplayString($setup.t("agora", "Back to families")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }),
+          createBaseVNode("div", _hoisted_5$4, [
+            createBaseVNode(
+              "h2",
+              null,
+              toDisplayString($setup.selectedFamily.label || $setup.selectedFamily.family_type),
+              1
+              /* TEXT */
+            ),
+            createBaseVNode(
+              "code",
+              _hoisted_6$3,
+              toDisplayString($setup.selectedFamily.family_type),
+              1
+              /* TEXT */
+            )
+          ])
+        ]),
+        createBaseVNode(
+          "nav",
+          {
+            class: normalizeClass(["sub-tabs", { single: $setup.subTabs.length === 1 }])
+          },
+          [
+            (openBlock(true), createElementBlock(
+              Fragment,
+              null,
+              renderList($setup.subTabs, (tab) => {
+                return openBlock(), createElementBlock("button", {
+                  key: tab.id,
+                  class: normalizeClass(["sub-tab", { active: $setup.activeSubTab === tab.id }]),
+                  disabled: $setup.subTabs.length === 1,
+                  onClick: ($event) => $setup.activeSubTab = tab.id
+                }, toDisplayString(tab.label), 11, _hoisted_7$3);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ],
+          2
+          /* CLASS */
+        )
+      ],
+      64
+      /* STABLE_FRAGMENT */
+    )) : createCommentVNode("v-if", true),
+    createCommentVNode(" ============================================================\n         ACTIVE COMPONENT\n         ============================================================ "),
+    createBaseVNode("div", _hoisted_8$3, [
       (openBlock(), createBlock(resolveDynamicComponent($setup.currentComponent), {
+        key: `${$setup.activeDomainId}-${$setup.selectedFamily?.family_type ?? "root"}-${$setup.activeSubTab}`,
         "selected-family": $setup.selectedFamily,
         onFamilySelected: $setup.handleFamilySelected,
         onTypeSelected: $setup.handleTypeSelected,
-        onBackToFamilies: _cache[0] || (_cache[0] = ($event) => $setup.handleBreadcrumbClick("families"))
+        onGroupTypeSelected: $setup.handleTypeSelected,
+        onBackToFamilies: $setup.goBackToFamilies
       }, null, 40, ["selected-family"]))
     ]),
+    createCommentVNode(" ============================================================\n         SETTINGS MODAL (existing flow)\n         ============================================================ "),
     createVNode($setup["NcAppSettingsDialog"], {
       open: $setup.settingsModalOpen,
-      "onUpdate:open": _cache[1] || (_cache[1] = ($event) => $setup.settingsModalOpen = $event),
+      "onUpdate:open": _cache[0] || (_cache[0] = ($event) => $setup.settingsModalOpen = $event),
       "show-navigation": false,
       name: $setup.t("agora", "Settings - {type}", { type: $setup.selectedType?.label || "" }),
       class: "large-modal",
@@ -5838,7 +11586,6 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ])
       ])) : createCommentVNode("v-if", true),
-      createCommentVNode(" Modal d'édition "),
       $setup.editingItem ? (openBlock(), createElementBlock("div", _hoisted_15, [
         createBaseVNode("div", _hoisted_16, [
           createBaseVNode(

@@ -114,6 +114,7 @@ export type InquiryPermissions = {
 export type CurrentUserStatus = {
   groupInvitations: string[]
   isInvolved: boolean
+  isShared: boolean
   hasSupported: boolean
   supportValue: string | null
   isLocked: boolean
@@ -205,6 +206,7 @@ export const useInquiryStore = defineStore('inquiry', {
     currentUserStatus: {
       groupInvitations: [],
       isInvolved: false,
+      isShared: false,
       hasSupported: false,
       supportValue: null,
       isLocked: false,

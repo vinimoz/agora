@@ -100,8 +100,9 @@ const sortedInquiries = computed(() =>
   [...inquiriesStore.inquiries]
     .filter(inquiry => 
       !inquiry.status.isArchived && // Exclude archived
-      inquiry.configuration.visibility === 'everyone' &&
-      inquiry.configuration.visibility === 'private' &&
+      inquiry.configuration.visibility === 'everyone' || 
+      inquiry.configuration.visibility === 'private' ||
+      inquiry.configuration.visibility === 'private' ||
       inquiry.permissions.view // User has view permission
     )
     .sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction))

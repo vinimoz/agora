@@ -74,17 +74,6 @@ export const usePreferencesStore = defineStore('preferences', {
       this.session.manualViewInquiry = viewMode
     },
 
-    // Add this method to set user preferences
-    setUserPreference(key: keyof UserPreferences, value: any) {
-      if (key in this.user) {
-        this.user[key] = value
-        // Optionally save to server
-        this.write().catch(() => {
-          Logger.debug('Failed to save preference:', key, value)
-        })
-      }
-    },
-
     async load(): Promise<void> {
       try {
         const response = await UserSettingsAPI.getUserSettings()
@@ -113,6 +102,14 @@ export const usePreferencesStore = defineStore('preferences', {
         throw error
       }
     },
+
+    async setUserPreference<K extends keyof UserPreferences>(
+  key: K,
+  value: UserPreferences[K],
+): Promise<void> {
+  this.user[key] = value
+  await this.write()
+},
 
   },
 })

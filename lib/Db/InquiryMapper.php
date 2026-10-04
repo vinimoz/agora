@@ -15,16 +15,16 @@ use OCA\Agora\Exceptions\ForbiddenException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Search\ISearchQuery;
-use OCA\Agora\Db\GroupRelation;  
+use OCA\Agora\Db\GroupRelation;
 use OCA\Agora\Db\GroupRelationMapper;
-use OCA\Agora\Db\UserRelation;  
+use OCA\Agora\Db\UserRelation;
 use OCA\Agora\Db\UserRelationMapper;
-use OCA\Agora\Db\Support;        
-use OCA\Agora\Db\SupportResult;        
-use OCA\Agora\Db\SupportEngine;        
+use OCA\Agora\Db\Support;
+use OCA\Agora\Db\SupportResult;
+use OCA\Agora\Db\SupportEngine;
 use OCA\Agora\Db\Participation;
 use OCA\Agora\Db\Trending;
-use OCP\IGroupManager; 
+use OCP\IGroupManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,17 +38,19 @@ class InquiryMapper extends QBMapper
 	public const PARTICIPATION_TABLE = Participation::TABLE;
 	public const CONCAT_SEPARATOR = ',';
 
+	/**
+	 * Merged constructor: 1.8 (with all share/group deps) + main's logger.
+	 */
 	public function __construct(
 		IDBConnection $db,
 		private UserSession $userSession,
-		private IGroupManager $groupManager, 
+		private IGroupManager $groupManager,
 		private GroupRelationMapper $groupRelationMapper,
 		private UserRelationMapper $userRelationMapper,
 		private LoggerInterface $logger,
 	) {
 		parent::__construct($db, Inquiry::TABLE, Inquiry::class);
 	}
-
 
 	/**
 	 * Get a single inquiry by ID with optional roles and visibility groups
@@ -82,8 +84,8 @@ class InquiryMapper extends QBMapper
 			self::TABLE . '.family',
 			self::TABLE . '.visibility',
 		])
-     ->from($this->getTableName(), self::TABLE)
-     ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+			->from($this->getTableName(), self::TABLE)
+			->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		if (!$getDeleted) {
 			$qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
@@ -92,6 +94,7 @@ class InquiryMapper extends QBMapper
 		if ($withRoles) {
 			$inquiryGroupsAlias = 'inquiry_groups';
 			$currentUserId = $this->userSession->getCurrentUserId();
+			$userGroups = $this->userSession->getCurrentUser()->getGroups();
 
 			$this->joinFamily($qb, self::TABLE);
 			$this->joinUserRole($qb, self::TABLE, $currentUserId);
@@ -106,6 +109,10 @@ class InquiryMapper extends QBMapper
 			$this->joinMiscs($qb, self::TABLE);
 			$this->joinSupportResult($qb, self::TABLE);
 			$this->joinSupportEngine($qb, self::TABLE);
+
+			// From main — share/visibility filters
+			$this->applyVisibilityFilter($qb, self::TABLE);
+			$this->joinIsShared($qb, self::TABLE, $currentUserId, $userGroups);
 
 			$qb->groupBy(self::TABLE . '.id');
 			$qb->addGroupBy(self::TABLE . '.cover_id');
@@ -132,7 +139,6 @@ class InquiryMapper extends QBMapper
 			$qb->addGroupBy(self::TABLE . '.visibility');
 		}
 
-		// $this->logger->error($qb->getSQL());
 		$inquiry = $this->findEntity($qb);
 
 		$inquiry->setVisibilityGroups(
@@ -174,7 +180,7 @@ class InquiryMapper extends QBMapper
 			self::TABLE . '.family',
 			self::TABLE . '.visibility',
 		])
-     ->from($this->getTableName(), self::TABLE);
+			->from($this->getTableName(), self::TABLE);
 
 		$currentUserId = $this->userSession->getCurrentUserId();
 		$this->applyVisibilityFilter($qb, $currentUserId);
@@ -194,6 +200,10 @@ class InquiryMapper extends QBMapper
 		$this->joinSupportResult($qb, self::TABLE);
 		$this->joinSupportEngine($qb, self::TABLE);
 		$this->joinTrendingScores($qb, self::TABLE);
+
+		// From main — share/visibility filters
+		$userGroups = $this->userSession->getCurrentUser()?->getGroups() ?? [];
+		$this->joinIsShared($qb, self::TABLE, $currentUserId, $userGroups);
 
 		$qb->groupBy(self::TABLE . '.id');
 		$qb->addGroupBy(self::TABLE . '.cover_id');
@@ -221,30 +231,27 @@ class InquiryMapper extends QBMapper
 		return $qb;
 	}
 
-
 	/**
- * Find all inquiries that have the 'trending' support feature enabled.
- * Used by the cron job - no user context available.
- *
- * @return Inquiry[]
- */
-public function findAllWithTrendingFeature(): array
-{
-    $qb = $this->db->getQueryBuilder();
-
-    $qb->select('*')
-        ->from($this->getTableName())
-        ->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-        ->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-        ->andWhere($qb->expr()->eq('support_feature', $qb->createNamedParameter('trending')));
-
-    return $this->findEntities($qb);
-}
-
-
-	/**
-	 * Get user IDs for an inquiry visibility
+	 * Find all inquiries that have the 'trending' support feature enabled.
+	 * Used by the cron job - no user context available.
+	 *
+	 * @return Inquiry[]
 	 */
+	public function findAllWithTrendingFeature(): array
+	{
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('support_feature', $qb->createNamedParameter('trending')));
+
+		return $this->findEntities($qb);
+	}
+
+	// ── User relation helpers ──
+
 	public function getUserIdsForVisibility(int $inquiryId): array
 	{
 		return $this->userRelationMapper->getUserIdsForTarget(
@@ -254,9 +261,6 @@ public function findAllWithTrendingFeature(): array
 		);
 	}
 
-	/**
-	 * Save user visibility for an inquiry
-	 */
 	public function saveUserVisibility(Inquiry $inquiry): void
 	{
 		$this->userRelationMapper->setUsersForTarget(
@@ -267,9 +271,6 @@ public function findAllWithTrendingFeature(): array
 		);
 	}
 
-	/**
-	 * Check if user has visibility access to an inquiry
-	 */
 	public function hasUserVisibility(int $inquiryId, string $userId): bool
 	{
 		return $this->userRelationMapper->hasUserForTarget(
@@ -280,9 +281,6 @@ public function findAllWithTrendingFeature(): array
 		);
 	}
 
-	/**
-	 * Get user IDs for participation on an inquiry
-	 */
 	public function getUserIdsForParticipation(int $inquiryId): array
 	{
 		return $this->userRelationMapper->getUserIdsForTarget(
@@ -292,15 +290,22 @@ public function findAllWithTrendingFeature(): array
 		);
 	}
 
+	// ── Visibility filter (1.8) merged with main's share/group logic ──
+
 	/**
-	 * Apply visibility filter using GroupRelationMapper and UserRelationMapper
+	 * Apply visibility filter using GroupRelationMapper and UserRelationMapper.
+	 * Merged: 1.8's visibility-based logic + main's owner override and share-expansion.
+	 */
 	protected function applyVisibilityFilter(
 		IQueryBuilder &$qb,
 		?string $currentUserId
 	): void {
 		if ($currentUserId === null) {
 			$qb->andWhere(
-				$qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE))
+				$qb->expr()->eq(
+					self::TABLE . '.visibility',
+					$qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)
+				)
 			);
 			return;
 		}
@@ -309,19 +314,25 @@ public function findAllWithTrendingFeature(): array
 
 		$orConditions = [];
 
-		// 1. Everyone
+		// 1. Owner override
 		$orConditions[] = $qb->expr()->eq(
-			self::TABLE . '.visibility', 
+			self::TABLE . '.owner',
+			$qb->createNamedParameter($currentUserId)
+		);
+
+		// 2. Everyone
+		$orConditions[] = $qb->expr()->eq(
+			self::TABLE . '.visibility',
 			$qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)
 		);
 
-		// 2. Private (owner only)
+		// 3. Private (owner only — already covered but kept for clarity)
 		$orConditions[] = $qb->expr()->andX(
 			$qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PRIVATE)),
 			$qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId))
 		);
 
-		// 3. Groups - use GroupRelationMapper
+		// 4. Groups — via GroupRelationMapper
 		if (!empty($userGroupIds)) {
 			$visibleInquiryIds = $this->groupRelationMapper->getTargetIdsForGroups(
 				GroupRelation::TARGET_INQUIRY,
@@ -340,7 +351,7 @@ public function findAllWithTrendingFeature(): array
 			}
 		}
 
-		// 4. Users - use UserRelationMapper
+		// 5. Users — via UserRelationMapper
 		$userVisibleInquiryIds = $this->userRelationMapper->getTargetIdsForUsers(
 			UserRelation::TARGET_INQUIRY,
 			UserRelation::RELATION_VISIBILITY,
@@ -357,95 +368,23 @@ public function findAllWithTrendingFeature(): array
 			);
 		}
 
-		// 5. Participants - Use the existing left join to Support table
+		// 6. Participants — via joined support table
 		$orConditions[] = $qb->expr()->andX(
 			$qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)),
 			$qb->expr()->isNotNull('current_user_support.user_id')
 		);
 
-		// Apply all conditions
+		// 7. From main: moderator pending — always visible
+		$user = $this->userSession->getCurrentUser();
+		if ($user !== null && $user->getIsModerator()) {
+			$orConditions[] = $qb->expr()->eq(
+				self::TABLE . '.moderation_status',
+				$qb->createNamedParameter(Inquiry::MODERATION_STATUS_PENDING, IQueryBuilder::PARAM_STR)
+			);
+		}
+
 		$qb->andWhere($qb->expr()->orX(...$orConditions));
 	}
-	 */
-	protected function applyVisibilityFilter(
-    IQueryBuilder &$qb,
-    ?string $currentUserId
-): void {
-    if ($currentUserId === null) {
-        // Non-logged-in users can only see public inquiries
-        $qb->andWhere(
-            $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE))
-        );
-        return;
-    }
-
-    $userGroupIds = $this->getUserGroupIds($currentUserId);
-
-    $orConditions = [];
-
-    // ✅ 1. OWNER OVERRIDE - Owner can always see their own inquiry
-    $orConditions[] = $qb->expr()->eq(
-        self::TABLE . '.owner',
-        $qb->createNamedParameter($currentUserId)
-    );
-
-    // 2. Everyone
-    $orConditions[] = $qb->expr()->eq(
-        self::TABLE . '.visibility',
-        $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)
-    );
-
-    // 3. Private (owner only - already covered by owner override, but keep for clarity)
-    $orConditions[] = $qb->expr()->andX(
-        $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PRIVATE)),
-        $qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId))
-    );
-
-    // 4. Groups
-    if (!empty($userGroupIds)) {
-        $visibleInquiryIds = $this->groupRelationMapper->getTargetIdsForGroups(
-            GroupRelation::TARGET_INQUIRY,
-            GroupRelation::RELATION_VISIBILITY,
-            $userGroupIds
-        );
-
-        if (!empty($visibleInquiryIds)) {
-            $orConditions[] = $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_GROUPS)),
-                $qb->expr()->in(
-                    self::TABLE . '.id',
-                    $qb->createNamedParameter($visibleInquiryIds, IQueryBuilder::PARAM_INT_ARRAY)
-                )
-            );
-        }
-    }
-
-    // 5. Users
-    $userVisibleInquiryIds = $this->userRelationMapper->getTargetIdsForUsers(
-        UserRelation::TARGET_INQUIRY,
-        UserRelation::RELATION_VISIBILITY,
-        [$currentUserId]
-    );
-
-    if (!empty($userVisibleInquiryIds)) {
-        $orConditions[] = $qb->expr()->andX(
-            $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_USERS)),
-            $qb->expr()->in(
-                self::TABLE . '.id',
-                $qb->createNamedParameter($userVisibleInquiryIds, IQueryBuilder::PARAM_INT_ARRAY)
-            )
-        );
-    }
-
-    // 6. Participants
-    $orConditions[] = $qb->expr()->andX(
-        $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)),
-        $qb->expr()->isNotNull('current_user_support.user_id')
-    );
-
-    // Apply all conditions
-    $qb->andWhere($qb->expr()->orX(...$orConditions));
-}
 
 	/**
 	 * Apply participation filter using ParticipationMapper, GroupRelationMapper, and UserRelationMapper
@@ -470,13 +409,11 @@ public function findAllWithTrendingFeature(): array
 			$qb->expr()->isNull('participation.id')
 		];
 
-		// EVERYONE
 		$orConditions[] = $qb->expr()->eq(
 			'participation.policy_type',
 			$qb->createNamedParameter(Participation::POLICY_EVERYONE)
 		);
 
-		// USERS - use UserRelationMapper
 		$allowedParticipationIds = $this->userRelationMapper->getTargetIdsForUsers(
 			Participation::TARGET_ENGINE,
 			UserRelation::RELATION_PARTICIPATION,
@@ -493,7 +430,6 @@ public function findAllWithTrendingFeature(): array
 			);
 		}
 
-		// GROUPS - use GroupRelationMapper
 		if (!empty($userGroupIds)) {
 			$allowedParticipationIds = $this->groupRelationMapper->getTargetIdsForGroups(
 				GroupRelation::TARGET_INQUIRY,
@@ -512,9 +448,6 @@ public function findAllWithTrendingFeature(): array
 			}
 		}
 
-		// LOTTERY - For filtering, lottery should allow access if user is a candidate
-		// Or we can handle it differently - this depends on business logic
-		// For now, we'll allow lottery policies to be visible to all
 		$orConditions[] = $qb->expr()->eq(
 			'participation.policy_type',
 			$qb->createNamedParameter(Participation::POLICY_LOTTERY)
@@ -523,9 +456,6 @@ public function findAllWithTrendingFeature(): array
 		$qb->andWhere($qb->expr()->orX(...$orConditions));
 	}
 
-	/**
-	 * Get user's group IDs using IGroupManager
-	 */
 	private function getUserGroupIds(string $userId): array
 	{
 		try {
@@ -534,7 +464,7 @@ public function findAllWithTrendingFeature(): array
 				return $this->groupManager->getUserGroupIds($user);
 			}
 		} catch (\Exception $e) {
-			\OC::$server->getLogger()->error('Could not get user groups: ' . $e->getMessage(), [
+			$this->logger->error('Could not get user groups: ' . $e->getMessage(), [
 				'app' => 'agora',
 				'userId' => $userId
 			]);
@@ -542,9 +472,6 @@ public function findAllWithTrendingFeature(): array
 		return [];
 	}
 
-	/**
-	 * Hydrate a list of inquiries with their dynamic fields and visibility groups
-	 */
 	private function hydrateInquiries(array $inquiries): void
 	{
 		if (empty($inquiries)) {
@@ -558,9 +485,7 @@ public function findAllWithTrendingFeature(): array
 		$this->loadVisibilityGroups($inquiries);
 	}
 
-	// ====================================================================
-	// QUERY METHODS
-	// ====================================================================
+	// ── Query methods ──
 
 	public function find(int $id): Inquiry
 	{
@@ -594,8 +519,8 @@ public function findAllWithTrendingFeature(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-     ->from($this->getTableName())
-     ->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+			->from($this->getTableName())
+			->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
 		$inquiries = $this->findEntities($qb);
 		$this->hydrateInquiries($inquiries);
@@ -667,13 +592,16 @@ public function findAllWithTrendingFeature(): array
 		$currentUserId = $this->userSession->getCurrentUserId();
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(self::TABLE . '.id')
-     ->from($this->getTableName(), self::TABLE)
-     ->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
-     ->andWhere($qb->expr()->neq(self::TABLE . '.visibility', $qb->createNamedParameter('private')));
+			->from($this->getTableName(), self::TABLE)
+			->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->neq(self::TABLE . '.visibility', $qb->createNamedParameter('private')));
 
 		if ($currentUserId !== null) {
 			$qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId)));
 		}
+
+		// From main — row-level visibility
+		$this->applyVisibilityFilter($qb, self::TABLE);
 
 		$stmt = $qb->executeQuery();
 		$rows = $stmt->fetchAll();
@@ -686,9 +614,7 @@ public function findAllWithTrendingFeature(): array
 		return array_map(static fn(array $row): int => (int)$row['id'], $rows);
 	}
 
-	// ====================================================================
-	// GROUP RELATIONS - DELEGATED TO GroupRelationMapper
-	// ====================================================================
+	// ── Group relations ──
 
 	public function getVisibilityGroupsForInquiry(int $inquiryId): array
 	{
@@ -769,9 +695,7 @@ public function findAllWithTrendingFeature(): array
 		}
 	}
 
-	// ====================================================================
-	// JOIN METHODS
-	// ====================================================================
+	// ── Joins ──
 
 	protected function joinSupportResult(
 		IQueryBuilder &$qb,
@@ -791,706 +715,731 @@ public function findAllWithTrendingFeature(): array
 						'target_id', sr.target_id,
 						'result', sr.result,
 						'updated', sr.updated
-			))
-			FROM $table sr
-			WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
-			'[]'::json
-			)::text AS support_result"
-	    ));
-	} else {
-	    $qb->addSelect($qb->createFunction(
-		"COALESCE(
-		    (SELECT CONCAT('[', GROUP_CONCAT(
-			JSON_OBJECT(
-			    'id', sr.id,
-			    'support_engine_id', sr.support_engine_id,
-			    'target_type', sr.target_type,
-			    'target_id', sr.target_id,
-			    'result', sr.result,
-			    'updated', sr.updated
-			) SEPARATOR ','
-		    ), ']')
-		    FROM $table sr
-		    WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
-		    '[]'
-		) AS support_result"
-	    ));
-	}
-    }
-
-    protected function joinSupportEngine(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $joinAlias = 'support_engine'
-    ): void {
-	$dbProvider = $this->db->getDatabaseProvider();
-	$table = '*PREFIX*' . self::SUPPORT_ENGINE_TABLE;
-
-	if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-	    $qb->addSelect($qb->createFunction(
-		"COALESCE(
-		    (SELECT json_agg(json_build_object(
-			'id', se.id,
-			'title', se.title,
-			'description', se.description,
-			'engine', se.engine,
-			'purpose', se.purpose,
-			'inquiry_id', se.inquiry_id,
-			'status', se.status,
-			'config', se.config,
-			'created', se.created,
-			'target_type', se.target_type,
-			'target_ids', se.target_ids
-		    ))
-		    FROM $table se
-		    WHERE se.target_type = 'option' AND se.inquiry_id = {$fromAlias}.id),
-		    '[]'::json
-		)::text AS support_engine"
-	    ));
-	} else {
-	    $qb->addSelect($qb->createFunction(
-		"COALESCE(
-		    (SELECT CONCAT('[', GROUP_CONCAT(
-			JSON_OBJECT(
-			    'id', se.id,
-			    'title', se.title,
-			    'description', se.description,
-			    'engine', se.engine,
-			    'purpose', se.purpose,
-			    'inquiry_id', se.inquiry_id,
-			    'status', se.status,
-			    'config', se.config,
-			    'created', se.created,
-			    'target_type', se.target_type,
-			    'target_ids', se.target_ids
-			) SEPARATOR ','
-		    ), ']')
-		    FROM $table se
-		    WHERE se.target_type = 'option' AND se.inquiry_id = {$fromAlias}.id),
-		    '[]'
-		) AS support_engine"
-	    ));
-	}
-    }
-
-    protected function joinFamily(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $joinAlias = 'inquiry_type_family'
-    ): void {
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-	    $qb->addSelect($qb->createFunction(
-		'MAX(COALESCE(' . $joinAlias . '.family, ' . $fromAlias . '.family)) AS family'
-	    ));
-	} else {
-	    $qb->addSelect($qb->createFunction(
-		'COALESCE(' . $joinAlias . '.family, ' . $fromAlias . '.family) AS family'
-	    ));
-	}
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    InquiryType::TABLE,
-	    $joinAlias,
-	    $qb->expr()->eq($joinAlias . '.inquiry_type', $fromAlias . '.type')
-	);
-    }
-
-    protected function joinSupportValue(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	?string $currentUserId,
-	string $joinAlias = 'current_user_support_value'
-    ): void {
-	if ($currentUserId === null) {
-	    $qb->addSelect($qb->createFunction('NULL AS support_value'));
-	    return;
-	}
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    Support::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-		$qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0)),
-		$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-		$qb->expr()->isNull($joinAlias . '.support_engine_id')
-	    )
-	);
-
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-	    $qb->addSelect($qb->createFunction(
-		'MAX(' . $joinAlias . '.value::text) AS support_value'
-	    ));
-	} else {
-	    $qb->addSelect($qb->createFunction(
-		$joinAlias . '.value AS support_value'
-	    ));
-	}
-    }
-
-    protected function joinMiscs(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $joinAlias = 'inquiry_misc_settings'
-    ): void {
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-	    $concatExpr = $joinAlias . '.key || \':\' || ' . $joinAlias . '.value';
-	} else {
-	    $concatExpr = 'CONCAT(' . $joinAlias . '.key, \':\', ' . $joinAlias . '.value)';
-	}
-
-	SqlHelper::getConcatenatedArray(
-	    qb: $qb,
-	    concatColumn: $concatExpr,
-	    asColumn: 'misc_settings_concat',
-	    dbProvider: $dbProvider,
-	    separator: ','
-	);
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    InquiryMisc::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-	    )
-	);
-    }
-
-    protected function joinUserRole(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $currentUserId,
-	string $joinAlias = 'user_shares',
-    ): void {
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-	    $qb->addSelect($qb->createFunction('MAX(coalesce(' . $joinAlias . '.type, \'\')) AS user_role'));
-	    $qb->addSelect($qb->createFunction('MAX(coalesce(' . $joinAlias . '.token, \'\')) AS share_token'));
-	} else {
-	    $emptyString = $qb->expr()->literal('');
-	    $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.type, ' . $emptyString . ') AS user_role'));
-	    $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.token, ' . $emptyString . ') AS share_token'));
-	}
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    Share::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-		$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-		$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-	    )
-	);
-    }
-
-    protected function joinHasSupported(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $currentUserId,
-	string $joinAlias = 'current_user_support'
-    ): void {
-	if ($currentUserId === null) {
-	    $qb->addSelect($qb->createFunction('0 AS has_supported'));
-	    return;
-	}
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    Support::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-		$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-		$qb->expr()->isNull($joinAlias . '.support_engine_id')
-	    )
-	);
-
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-	    $qb->addSelect(
-		$qb->createFunction('MAX(CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END) AS has_supported')
-	    );
-	} else {
-	    $qb->addSelect(
-		$qb->createFunction('CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END AS has_supported')
-	    );
-	}
-    }
-
-    protected function joinGroupShares(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $joinAlias = 'group_shares',
-    ): void {
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	SqlHelper::getConcatenatedArray(
-	    qb: $qb,
-	    concatColumn: $joinAlias . '.user_id',
-	    asColumn: 'group_shares',
-	    dbProvider: $dbProvider,
-	    separator: ','
-	);
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    Share::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-		$qb->expr()->eq($joinAlias . '.type', $qb->expr()->literal('group')),
-		$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-	    )
-	);
-    }
-
-    protected function joinInquiryGroups(
-	IQueryBuilder $qb,
-	string $fromAlias,
-	string $joinAlias = 'inquiry_groups',
-    ): void {
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	SqlHelper::getConcatenatedArray(
-	    qb: $qb,
-	    concatColumn: $joinAlias . '.group_id',
-	    asColumn: 'inquiry_groups',
-	    dbProvider: $dbProvider,
-	    separator: ','
-	);
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    InquiryGroup::RELATION_TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.inquiry_id'),
-	    )
-	);
-    }
-
-    protected function joinInquiryGroupShares(
-	IQueryBuilder $qb,
-	string $fromAlias,
-	string $currentUserId,
-	string $inquiryGroupsAlias,
-	string $joinAlias = 'inquiry_group_shares',
-    ): void {
-	$dbProvider = $this->db->getDatabaseProvider();
-
-	SqlHelper::getConcatenatedArray(
-	    qb: $qb,
-	    concatColumn: $joinAlias . '.type',
-	    asColumn: 'inquiry_group_user_shares',
-	    dbProvider: $dbProvider,
-	    separator: ','
-	);
-
-	$qb->leftJoin(
-	    $fromAlias,
-	    Share::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.group_id', $inquiryGroupsAlias . '.group_id'),
-		$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-		$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-	    )
-	);
-    }
-
-    protected function joinSupportsCount(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $joinAlias = 'supports',
-    ): void {
-	$qb->leftJoin(
-	    $fromAlias,
-	    Support::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-		$qb->expr()->isNull($joinAlias . '.support_engine_id')
-	    )
-	)
-	->addSelect(
-	    $qb->createFunction(
-		'COUNT(DISTINCT CASE WHEN ' . $joinAlias . '.option_id = 0 THEN ' . $joinAlias . '.user_id ELSE NULL END) AS count_supports'
-	    )
-	);
-    }
-
-    protected function joinParticipantsCount(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	string $joinAlias = 'participants',
-    ): void {
-	$qb->leftJoin(
-	    $fromAlias,
-	    Inquiry::TABLE,
-	    $joinAlias,
-	    $qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id')
-	);
-	$qb->addSelect(
-	    $qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_participants')
-	);
-    }
-
-    protected function joinCommentsCount(
-	IQueryBuilder $qb,
-	string $fromAlias,
-	string $joinAlias = 'comments',
-    ): void {
-	$qb->leftJoin(
-	    $fromAlias,
-	    Comment::TABLE,
-	    $joinAlias,
-	    $qb->expr()->andX(
-		$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-		$qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0)),
-		$qb->expr()->eq($joinAlias . '.deleted', $qb->createNamedParameter(0))
-	    )
-	);
-
-	$qb->addSelect(
-	    $qb->createFunction(
-		'COUNT(DISTINCT ' . $joinAlias . '.id) AS count_comments'
-	    )
-	);
-    }
-
-    protected function joinParticipation(
-	IQueryBuilder &$qb,
-	string $fromAlias,
-	?string $currentUserId
-    ): void {
-	$qb->leftJoin(
-	    $fromAlias,
-	    Participation::TABLE,
-	    'participation',
-	    $qb->expr()->andX(
-		$qb->expr()->eq('participation.target_type', $qb->expr()->literal('inquiry')),
-		$qb->expr()->eq('participation.target_id', $fromAlias . '.id')
-	    )
-	);
-
-	$qb->addSelect([
-	    'participation.id AS participation_id',
-	    'participation.policy_type AS participation_policy_type',
-	    'participation.policy_config AS participation_policy_config',
-	    'participation.created_at AS participation_created_at',
-	    'participation.updated_at AS participation_updated_at',
-	    'participation.created_by AS participation_created_by'
-	]);
-
-	$this->applyParticipationFilter($qb, $currentUserId);
-    }
-
-
-    // ====================================================================
-    // DYNAMIC FIELDS
-    // ====================================================================
-
-    private function loadDynamicFields(Inquiry $inquiry): void
-    {
-	$inquiryId = $inquiry->getId();
-
-	$qb = $this->db->getQueryBuilder();
-	$qb->select('*')
-	   ->from(InquiryMisc::TABLE)
-	   ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-
-	$stmt = $qb->executeQuery();
-	$storedData = $stmt->fetchAll();
-	$stmt->closeCursor();
-
-	foreach ($storedData as $data) {
-	    if (is_array($data) && isset($data['key'], $data['value'])) {
-		$inquiry->setMiscField((string)$data['key'], $data['value']);
-	    }
-	}
-    }
-
-    private function castValueByType($value, array $fieldDef)
-    {
-	$type = $fieldDef['type'] ?? 'string';
-
-	if ($value === null) {
-	    return null;
-	}
-
-	switch ($type) {
-	    case 'integer':
-	    case 'int':
-		return (int)$value;
-	    case 'boolean':
-	    case 'bool':
-		return (bool)$value;
-	    case 'float':
-	    case 'double':
-		return (float)$value;
-	    case 'datetime':
-		    return is_numeric($value) ? (int)$value : $value;
-		 case 'json':
-	    case 'object':
-	    case 'array':
-		    if (is_string($value)) {
-			    return $value;
-		    }
-		    if (is_array($value) || is_object($value)) {
-			    return json_encode($value, JSON_UNESCAPED_UNICODE);
-		    }
-		    return (string)$value;
-
-
-	    case 'enum':
-		$allowed = $fieldDef['allowed_values'] ?? [];
-		if (in_array($value, $allowed, true)) {
-		    return $value;
+					))
+					FROM $table sr
+					WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
+					'[]'::json
+				)::text AS support_result"
+			));
+		} else {
+			$qb->addSelect($qb->createFunction(
+				"COALESCE(
+					(SELECT CONCAT('[', GROUP_CONCAT(
+						JSON_OBJECT(
+							'id', sr.id,
+							'support_engine_id', sr.support_engine_id,
+							'target_type', sr.target_type,
+							'target_id', sr.target_id,
+							'result', sr.result,
+							'updated', sr.updated
+						) SEPARATOR ','
+					), ']')
+					FROM $table sr
+					WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
+					'[]'
+				) AS support_result"
+			));
 		}
-		return $fieldDef['default'] ?? null;
-	    case 'string':
-	    default:
-		return (string)$value;
-	}
-    }
-
-    public function saveDynamicFields(Inquiry $inquiry, array $fieldsDefinition): void
-    {
-	$inquiryId = $inquiry->getId();
-	if (empty($fieldsDefinition)) {
-	    return;
 	}
 
-	$qb = $this->db->getQueryBuilder();
+	protected function joinSupportEngine(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $joinAlias = 'support_engine'
+	): void {
+		$dbProvider = $this->db->getDatabaseProvider();
+		$table = '*PREFIX*' . self::SUPPORT_ENGINE_TABLE;
 
-	$qb->delete(InquiryMisc::TABLE)
-	   ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-	   ->executeStatement();
-
-	foreach ($fieldsDefinition as $fieldDef) {
-	    $key = $fieldDef['key'];
-	    $value = $this->castValueByType($fieldDef['default'] ?? null, $fieldDef);
-	    $stringValue = is_array($value) ? json_encode($value) : (string)$value;
-
-	    $qb->insert(InquiryMisc::TABLE)
-	       ->values([
-		   'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
-		   'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-		   'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
-	       ])
-	       ->executeStatement();
-
-	    $inquiry->setMiscField($key, $value);
+		if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
+			$qb->addSelect($qb->createFunction(
+				"COALESCE(
+					(SELECT json_agg(json_build_object(
+						'id', se.id,
+						'title', se.title,
+						'description', se.description,
+						'engine', se.engine,
+						'purpose', se.purpose,
+						'inquiry_id', se.inquiry_id,
+						'status', se.status,
+						'config', se.config,
+						'created', se.created,
+						'target_type', se.target_type,
+						'target_ids', se.target_ids
+					))
+					FROM $table se
+					WHERE se.target_type = 'option' AND se.inquiry_id = {$fromAlias}.id),
+					'[]'::json
+				)::text AS support_engine"
+			));
+		} else {
+			$qb->addSelect($qb->createFunction(
+				"COALESCE(
+					(SELECT CONCAT('[', GROUP_CONCAT(
+						JSON_OBJECT(
+							'id', se.id,
+							'title', se.title,
+							'description', se.description,
+							'engine', se.engine,
+							'purpose', se.purpose,
+							'inquiry_id', se.inquiry_id,
+							'status', se.status,
+							'config', se.config,
+							'created', se.created,
+							'target_type', se.target_type,
+							'target_ids', se.target_ids
+						) SEPARATOR ','
+					), ']')
+					FROM $table se
+					WHERE se.target_type = 'option' AND se.inquiry_id = {$fromAlias}.id),
+					'[]'
+				) AS support_engine"
+			));
+		}
 	}
-    }
 
-    public function updateDynamicFields(Inquiry $inquiry, array $fieldsToUpdate, array $fieldsDefinition): void
-    {
-	$inquiryId = $inquiry->getId();
-	if (empty($fieldsToUpdate)) {
-	    return;
+	protected function joinFamily(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $joinAlias = 'inquiry_type_family'
+	): void {
+		$dbProvider = $this->db->getDatabaseProvider();
+
+		if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
+			$qb->addSelect($qb->createFunction(
+				'MAX(COALESCE(' . $joinAlias . '.family, ' . $fromAlias . '.family)) AS family'
+			));
+		} else {
+			$qb->addSelect($qb->createFunction(
+				'COALESCE(' . $joinAlias . '.family, ' . $fromAlias . '.family) AS family'
+			));
+		}
+
+		$qb->leftJoin(
+			$fromAlias,
+			InquiryType::TABLE,
+			$joinAlias,
+			$qb->expr()->eq($joinAlias . '.inquiry_type', $fromAlias . '.type')
+		);
 	}
 
-	$qb = $this->db->getQueryBuilder();
+	protected function joinSupportValue(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		?string $currentUserId,
+		string $joinAlias = 'current_user_support_value'
+	): void {
+		if ($currentUserId === null) {
+			$qb->addSelect($qb->createFunction('NULL AS support_value'));
+			return;
+		}
 
-	foreach ($fieldsToUpdate as $key => $value) {
-	    $key = (string)$key;
+		$qb->leftJoin(
+			$fromAlias,
+			Support::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+				$qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0)),
+				$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+				$qb->expr()->isNull($joinAlias . '.support_engine_id')
+			)
+		);
 
-	    $fieldDef = array_filter($fieldsDefinition, fn($f) => $f['key'] === $key);
-	    $fieldDef = array_shift($fieldDef) ?: ['type' => 'string', 'default' => null];
+		$dbProvider = $this->db->getDatabaseProvider();
 
-	    $value = $this->castValueByType($value ?? $fieldDef['default'], $fieldDef);
-	    $stringValue = is_array($value) ? json_encode($value) : (string)$value;
-
-	    $existing = $qb->select('id')
-			   ->from(InquiryMisc::TABLE)
-			   ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-			   ->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
-			   ->executeQuery()
-			   ->fetchOne();
-
-	    if ($existing) {
-		$qb->update(InquiryMisc::TABLE)
-		   ->set('value', $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR))
-		   ->where($qb->expr()->eq('id', $qb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
-		   ->executeStatement();
-	    } else {
-		$qb->insert(InquiryMisc::TABLE)
-     ->values([
-	     'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
-	     'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-	     'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
-     ])
-     ->executeStatement();
-	    }
-
-	    $inquiry->setMiscField($key, $value);
+		if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
+			$qb->addSelect($qb->createFunction(
+				'MAX(' . $joinAlias . '.value::text) AS support_value'
+			));
+		} else {
+			$qb->addSelect($qb->createFunction(
+				$joinAlias . '.value AS support_value'
+			));
+		}
 	}
-    }
 
+	protected function joinMiscs(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $joinAlias = 'inquiry_misc_settings'
+	): void {
+		$dbProvider = $this->db->getDatabaseProvider();
 
+		if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
+			$concatExpr = $joinAlias . '.key || \':\' || ' . $joinAlias . '.value';
+		} else {
+			$concatExpr = 'CONCAT(' . $joinAlias . '.key, \':\', ' . $joinAlias . '.value)';
+		}
 
-    /**
-     * Join trending scores to the query
-     */
-protected function joinTrendingScores(
-    IQueryBuilder &$qb,
-    string $fromAlias,
-    string $joinAlias = 'trending_scores'
-): void {
-    // Join only the inquiry-level score (option_id = 0)
-    $qb->leftJoin(
-	$fromAlias,
-	TrendingScore::TABLE,
-	$joinAlias,
-	$qb->expr()->andX(
-	    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-	    $qb->expr()->eq($joinAlias . '.option_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
-	)
-    );
+		SqlHelper::getConcatenatedArray(
+			qb: $qb,
+			concatColumn: $concatExpr,
+			asColumn: 'misc_settings_concat',
+			dbProvider: $dbProvider,
+			separator: ','
+		);
 
-    // Since there's only one score per inquiry (option_id=0), MAX() returns that single value
-    $qb->addSelect(
-	$qb->createFunction('MAX(' . $joinAlias . '.score) AS trending_score')
-    );
-}
-    /**
-     * Get trending scores for multiple inquiries in a single query
-     * This is more efficient than loading them individually
-     */
-    public function loadTrendingScoresForInquiries(array $inquiries): array
-    {
-	    if (empty($inquiries)) {
-		    return $inquiries;
-	    }
+		$qb->leftJoin(
+			$fromAlias,
+			InquiryMisc::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			)
+		);
+	}
 
-	    // Extract inquiry IDs
-	    $inquiryIds = array_map(function($inquiry) {
-		    return $inquiry instanceof Inquiry ? $inquiry->getId() : (int)$inquiry;
-	    }, $inquiries);
+	protected function joinUserRole(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $currentUserId,
+		string $joinAlias = 'user_shares',
+	): void {
+		$dbProvider = $this->db->getDatabaseProvider();
 
-	    // Get all trending scores for these inquiries
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->select('*')
-	->from(TrendingScore::TABLE)
-	->where($qb->expr()->in('inquiry_id', $qb->createNamedParameter($inquiryIds, IQueryBuilder::PARAM_INT_ARRAY)))
-	->orderBy('updated_at', 'DESC');
+		if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
+			$qb->addSelect($qb->createFunction('MAX(coalesce(' . $joinAlias . '.type, \'\')) AS user_role'));
+			$qb->addSelect($qb->createFunction('MAX(coalesce(' . $joinAlias . '.token, \'\')) AS share_token'));
+		} else {
+			$emptyString = $qb->expr()->literal('');
+			$qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.type, ' . $emptyString . ') AS user_role'));
+			$qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.token, ' . $emptyString . ') AS share_token'));
+		}
 
-	    $stmt = $qb->executeQuery();
-	    $scores = [];
-	    while ($row = $stmt->fetch()) {
-		    $inquiryId = (int)$row['inquiry_id'];
-		    if (!isset($scores[$inquiryId])) {
-			    $scores[$inquiryId] = [];
-		    }
-		    $scores[$inquiryId][$row['option_id']] = [
-			    'score' => (float)$row['score'],
-			    'updated_at' => (int)$row['updated_at']
-		    ];
-	    }
-	    $stmt->closeCursor();
+		$qb->leftJoin(
+			$fromAlias,
+			Share::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+				$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+				$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+			)
+		);
+	}
 
-	    // Attach scores to inquiries
-	    foreach ($inquiries as $inquiry) {
-		    if ($inquiry instanceof Inquiry) {
-			    $id = $inquiry->getId();
-			    if (isset($scores[$id])) {
-				    $inquiry->setTrendingScores($scores[$id]);
-				    // Set the inquiry-level score
-				    if (isset($scores[$id][0])) {
-					    $inquiry->setTrendingScore($scores[$id][0]['score']);
-				    }
-			    }
-		    }
-	    }
+	protected function joinHasSupported(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $currentUserId,
+		string $joinAlias = 'current_user_support'
+	): void {
+		if ($currentUserId === null) {
+			$qb->addSelect($qb->createFunction('0 AS has_supported'));
+			return;
+		}
 
-	    return $inquiries;
-    }
+		$qb->leftJoin(
+			$fromAlias,
+			Support::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+				$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+				$qb->expr()->isNull($joinAlias . '.support_engine_id')
+			)
+		);
 
-    // ====================================================================
-    // CRUD OPERATIONS
-    // ====================================================================
+		$dbProvider = $this->db->getDatabaseProvider();
 
-    public function archiveExpiredInquiries(int $offset): int
-    {
-	    $archiveDate = time();
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->update($this->getTableName())
-	->set('archived', $qb->createNamedParameter($archiveDate))
-	->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
-	->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-	->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-	    return $qb->executeStatement();
-    }
+		if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
+			$qb->addSelect(
+				$qb->createFunction('MAX(CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END) AS has_supported')
+			);
+		} else {
+			$qb->addSelect(
+				$qb->createFunction('CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END AS has_supported')
+			);
+		}
+	}
 
-    public function setInquiryStatus(int $inquiryId, string $mstatus): void
-    {
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->update($this->getTableName())
-	->set('inquiry_status', $qb->createNamedParameter($mstatus))
-	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	    $qb->executeStatement();
-    }
+	protected function joinGroupShares(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $joinAlias = 'group_shares',
+	): void {
+		$dbProvider = $this->db->getDatabaseProvider();
 
-    public function setModerationStatus(int $inquiryId, string $mstatus): void
-    {
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->update($this->getTableName())
-	->set('moderation_status', $qb->createNamedParameter($mstatus))
-	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	    $qb->executeStatement();
-    }
+		SqlHelper::getConcatenatedArray(
+			qb: $qb,
+			concatColumn: $joinAlias . '.user_id',
+			asColumn: 'group_shares',
+			dbProvider: $dbProvider,
+			separator: ','
+		);
 
-    public function deleteArchivedInquiries(int $offset): int
-    {
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->delete($this->getTableName())
-	->where($qb->expr()->lt('archived', $qb->createNamedParameter($offset)))
-	->andWhere($qb->expr()->gt('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-	    return $qb->executeStatement();
-    }
+		$qb->leftJoin(
+			$fromAlias,
+			Share::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+				$qb->expr()->eq($joinAlias . '.type', $qb->expr()->literal('group')),
+				$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+			)
+		);
+	}
 
-    public function setLastInteraction(int $inquiryId): void
-    {
-	    $timestamp = time();
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->update($this->getTableName())
-	->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
-	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	    $qb->executeStatement();
-    }
+	protected function joinInquiryGroups(
+		IQueryBuilder $qb,
+		string $fromAlias,
+		string $joinAlias = 'inquiry_groups',
+	): void {
+		$dbProvider = $this->db->getDatabaseProvider();
 
-    public function deleteByUserId(string $userId): void
-    {
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->delete($this->getTableName())
-	->where('owner = :userId')
-	->setParameter('userId', $userId);
-	    $qb->executeStatement();
-    }
+		SqlHelper::getConcatenatedArray(
+			qb: $qb,
+			concatColumn: $joinAlias . '.group_id',
+			asColumn: 'inquiry_groups',
+			dbProvider: $dbProvider,
+			separator: ','
+		);
 
-    public function findParticipantsByInquiry(int $inquiryId): array {
-	    $qb = $this->db->getQueryBuilder();
+		$qb->leftJoin(
+			$fromAlias,
+			InquiryGroup::RELATION_TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.inquiry_id'),
+			)
+		);
+	}
 
-	    $qb->selectDistinct([self::TABLE . '.owner', self::TABLE . '.id'])
-	->from($this->getTableName(), self::TABLE)
-	->groupBy(self::TABLE . '.owner', self::TABLE . '.id')
-	->where(
-		$qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
-	);
+	protected function joinInquiryGroupShares(
+		IQueryBuilder $qb,
+		string $fromAlias,
+		string $currentUserId,
+		string $inquiryGroupsAlias,
+		string $joinAlias = 'inquiry_group_shares',
+	): void {
+		$dbProvider = $this->db->getDatabaseProvider();
 
-	    return $this->findEntities($qb);
-    }
+		SqlHelper::getConcatenatedArray(
+			qb: $qb,
+			concatColumn: $joinAlias . '.type',
+			asColumn: 'inquiry_group_user_shares',
+			dbProvider: $dbProvider,
+			separator: ','
+		);
+
+		$qb->leftJoin(
+			$fromAlias,
+			Share::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.group_id', $inquiryGroupsAlias . '.group_id'),
+				$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+				$qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+			)
+		);
+	}
+
+	protected function joinSupportsCount(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $joinAlias = 'supports',
+	): void {
+		$qb->leftJoin(
+			$fromAlias,
+			Support::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+				$qb->expr()->isNull($joinAlias . '.support_engine_id')
+			)
+		)
+			->addSelect(
+				$qb->createFunction(
+					'COUNT(DISTINCT CASE WHEN ' . $joinAlias . '.option_id = 0 THEN ' . $joinAlias . '.user_id ELSE NULL END) AS count_supports'
+				)
+			);
+	}
+
+	protected function joinParticipantsCount(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $joinAlias = 'participants',
+	): void {
+		$qb->leftJoin(
+			$fromAlias,
+			Inquiry::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id'),
+				// Merged: main's access guards → visibility equivalents
+				$qb->expr()->orX(
+					$qb->expr()->eq($joinAlias . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)),
+					$qb->expr()->eq($joinAlias . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_GROUPS))
+				),
+				$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+				$qb->expr()->eq($joinAlias . '.archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
+			)
+		);
+		$qb->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_participants'));
+	}
+
+	protected function joinCommentsCount(
+		IQueryBuilder $qb,
+		string $fromAlias,
+		string $joinAlias = 'comments',
+	): void {
+		$qb->leftJoin(
+			$fromAlias,
+			Comment::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+				$qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0)),
+				$qb->expr()->eq($joinAlias . '.deleted', $qb->createNamedParameter(0))
+			)
+		);
+
+		$qb->addSelect(
+			$qb->createFunction(
+				'COUNT(DISTINCT ' . $joinAlias . '.id) AS count_comments'
+			)
+		);
+	}
+
+	protected function joinParticipation(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		?string $currentUserId
+	): void {
+		$qb->leftJoin(
+			$fromAlias,
+			Participation::TABLE,
+			'participation',
+			$qb->expr()->andX(
+				$qb->expr()->eq('participation.target_type', $qb->expr()->literal('inquiry')),
+				$qb->expr()->eq('participation.target_id', $fromAlias . '.id')
+			)
+		);
+
+		$qb->addSelect([
+			'participation.id AS participation_id',
+			'participation.policy_type AS participation_policy_type',
+			'participation.policy_config AS participation_policy_config',
+			'participation.created_at AS participation_created_at',
+			'participation.updated_at AS participation_updated_at',
+			'participation.created_by AS participation_created_by'
+		]);
+
+		$this->applyParticipationFilter($qb, $currentUserId);
+	}
+
+	/**
+	 * From main: join a computed `is_shared` flag based on whether the current
+	 * user has any non-deleted Share row on this inquiry (directly or via groups).
+	 */
+	protected function joinIsShared(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		?string $currentUserId,
+		array $userGroups,
+	): void {
+		if ($currentUserId === null) {
+			$qb->addSelect($qb->createFunction('0 AS is_shared'));
+			return;
+		}
+
+		$sql = sprintf(
+			"CASE WHEN EXISTS (
+				SELECT 1 FROM `*PREFIX*%s` s
+				WHERE s.inquiry_id = %s.id
+				AND s.deleted = 0
+				AND s.type IN ('user','admin','group','email','contact','external')
+				AND (s.user_id = :is_shared_user OR s.user_id IN (:is_shared_groups))
+			) THEN 1 ELSE 0 END AS is_shared",
+			Share::TABLE,
+			$fromAlias
+		);
+
+		$qb->addSelect($qb->createFunction($sql));
+		$qb->setParameter('is_shared_user', $currentUserId, IQueryBuilder::PARAM_STR);
+		$qb->setParameter('is_shared_groups', $userGroups ?: [''], IQueryBuilder::PARAM_STR_ARRAY);
+	}
+
+	// ── Dynamic fields ──
+
+	private function loadDynamicFields(Inquiry $inquiry): void
+	{
+		$inquiryId = $inquiry->getId();
+
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from(InquiryMisc::TABLE)
+			->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+
+		$stmt = $qb->executeQuery();
+		$storedData = $stmt->fetchAll();
+		$stmt->closeCursor();
+
+		foreach ($storedData as $data) {
+			if (is_array($data) && isset($data['key'], $data['value'])) {
+				$inquiry->setMiscField((string)$data['key'], $data['value']);
+			}
+		}
+	}
+
+	private function castValueByType($value, array $fieldDef)
+	{
+		$type = $fieldDef['type'] ?? 'string';
+
+		if ($value === null) {
+			return null;
+		}
+
+		switch ($type) {
+			case 'integer':
+			case 'int':
+				return (int)$value;
+			case 'boolean':
+			case 'bool':
+				return (bool)$value;
+			case 'float':
+			case 'double':
+				return (float)$value;
+			case 'datetime':
+				return is_numeric($value) ? (int)$value : $value;
+			case 'json':
+			case 'object':
+			case 'array':
+				if (is_string($value)) {
+					return $value;
+				}
+				if (is_array($value) || is_object($value)) {
+					return json_encode($value, JSON_UNESCAPED_UNICODE);
+				}
+				return (string)$value;
+			case 'enum':
+				$allowed = $fieldDef['allowed_values'] ?? [];
+				if (in_array($value, $allowed, true)) {
+					return $value;
+				}
+				return $fieldDef['default'] ?? null;
+			case 'string':
+			default:
+				return (string)$value;
+		}
+	}
+
+	public function saveDynamicFields(Inquiry $inquiry, array $fieldsDefinition): void
+	{
+		$inquiryId = $inquiry->getId();
+		if (empty($fieldsDefinition)) {
+			return;
+		}
+
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete(InquiryMisc::TABLE)
+			->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
+
+		foreach ($fieldsDefinition as $fieldDef) {
+			$key = $fieldDef['key'];
+			$value = $this->castValueByType($fieldDef['default'] ?? null, $fieldDef);
+			$stringValue = is_array($value) ? json_encode($value) : (string)$value;
+
+			$qb->insert(InquiryMisc::TABLE)
+				->values([
+					'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
+					'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+					'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
+				])
+				->executeStatement();
+
+			$inquiry->setMiscField($key, $value);
+		}
+	}
+
+	public function updateDynamicFields(Inquiry $inquiry, array $fieldsToUpdate, array $fieldsDefinition): void
+	{
+		$inquiryId = $inquiry->getId();
+		if (empty($fieldsToUpdate)) {
+			return;
+		}
+
+		$qb = $this->db->getQueryBuilder();
+
+		foreach ($fieldsToUpdate as $key => $value) {
+			$key = (string)$key;
+
+			$fieldDef = array_filter($fieldsDefinition, fn($f) => $f['key'] === $key);
+			$fieldDef = array_shift($fieldDef) ?: ['type' => 'string', 'default' => null];
+
+			$value = $this->castValueByType($value ?? $fieldDef['default'], $fieldDef);
+			$stringValue = is_array($value) ? json_encode($value) : (string)$value;
+
+			$existing = $qb->select('id')
+				->from(InquiryMisc::TABLE)
+				->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+				->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
+				->executeQuery()
+				->fetchOne();
+
+			if ($existing) {
+				$qb->update(InquiryMisc::TABLE)
+					->set('value', $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR))
+					->where($qb->expr()->eq('id', $qb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
+					->executeStatement();
+			} else {
+				$qb->insert(InquiryMisc::TABLE)
+					->values([
+						'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
+						'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+						'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
+					])
+					->executeStatement();
+			}
+
+			$inquiry->setMiscField($key, $value);
+		}
+	}
+
+	/**
+	 * Join trending scores to the query
+	 */
+	protected function joinTrendingScores(
+		IQueryBuilder &$qb,
+		string $fromAlias,
+		string $joinAlias = 'trending_scores'
+	): void {
+		$qb->leftJoin(
+			$fromAlias,
+			TrendingScore::TABLE,
+			$joinAlias,
+			$qb->expr()->andX(
+				$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+				$qb->expr()->eq($joinAlias . '.option_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
+			)
+		);
+
+		$qb->addSelect(
+			$qb->createFunction('MAX(' . $joinAlias . '.score) AS trending_score')
+		);
+	}
+
+	/**
+	 * Get trending scores for multiple inquiries in a single query
+	 */
+	public function loadTrendingScoresForInquiries(array $inquiries): array
+	{
+		if (empty($inquiries)) {
+			return $inquiries;
+		}
+
+		$inquiryIds = array_map(function ($inquiry) {
+			return $inquiry instanceof Inquiry ? $inquiry->getId() : (int)$inquiry;
+		}, $inquiries);
+
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from(TrendingScore::TABLE)
+			->where($qb->expr()->in('inquiry_id', $qb->createNamedParameter($inquiryIds, IQueryBuilder::PARAM_INT_ARRAY)))
+			->orderBy('updated_at', 'DESC');
+
+		$stmt = $qb->executeQuery();
+		$scores = [];
+		while ($row = $stmt->fetch()) {
+			$inquiryId = (int)$row['inquiry_id'];
+			if (!isset($scores[$inquiryId])) {
+				$scores[$inquiryId] = [];
+			}
+			$scores[$inquiryId][$row['option_id']] = [
+				'score' => (float)$row['score'],
+				'updated_at' => (int)$row['updated_at']
+			];
+		}
+		$stmt->closeCursor();
+
+		foreach ($inquiries as $inquiry) {
+			if ($inquiry instanceof Inquiry) {
+				$id = $inquiry->getId();
+				if (isset($scores[$id])) {
+					$inquiry->setTrendingScores($scores[$id]);
+					if (isset($scores[$id][0])) {
+						$inquiry->setTrendingScore($scores[$id][0]['score']);
+					}
+				}
+			}
+		}
+
+		return $inquiries;
+	}
+
+	// ── CRUD ──
+
+	public function archiveExpiredInquiries(int $offset): int
+	{
+		$archiveDate = time();
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('archived', $qb->createNamedParameter($archiveDate))
+			->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
+			->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+		return $qb->executeStatement();
+	}
+
+	public function setInquiryStatus(int $inquiryId, string $mstatus): void
+	{
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('inquiry_status', $qb->createNamedParameter($mstatus))
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+		$qb->executeStatement();
+	}
+
+	public function setModerationStatus(int $inquiryId, string $mstatus): void
+	{
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('moderation_status', $qb->createNamedParameter($mstatus))
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+		$qb->executeStatement();
+	}
+
+	public function deleteArchivedInquiries(int $offset): int
+	{
+		$qb = $this->db->getQueryBuilder();
+		$qb->delete($this->getTableName())
+			->where($qb->expr()->lt('archived', $qb->createNamedParameter($offset)))
+			->andWhere($qb->expr()->gt('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+		return $qb->executeStatement();
+	}
+
+	public function setLastInteraction(int $inquiryId): void
+	{
+		$timestamp = time();
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+		$qb->executeStatement();
+	}
+
+	public function deleteByUserId(string $userId): void
+	{
+		$qb = $this->db->getQueryBuilder();
+		$qb->delete($this->getTableName())
+			->where('owner = :userId')
+			->setParameter('userId', $userId);
+		$qb->executeStatement();
+	}
+
+	public function findParticipantsByInquiry(int $inquiryId): array
+	{
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->selectDistinct([self::TABLE . '.owner', self::TABLE . '.id'])
+			->from($this->getTableName(), self::TABLE)
+			->groupBy(self::TABLE . '.owner', self::TABLE . '.id')
+			->where(
+				$qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
+			);
+
+		return $this->findEntities($qb);
+	}
 }
