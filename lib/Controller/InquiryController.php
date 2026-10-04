@@ -11,6 +11,7 @@ namespace OCA\Agora\Controller;
 
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Dto\InquiryDto;
+use OCA\Agora\Exceptions\Exception;
 use OCA\Agora\Model\Settings\AppSettings;
 use OCA\Agora\Service\CommentService;
 use OCA\Agora\Service\MailService;
@@ -25,6 +26,7 @@ use OCA\Agora\Service\InquiryMiscService;
 use OCA\Agora\Service\InquiryLinkService;
 use OCA\Agora\Service\ShareService;
 use OCA\Agora\Service\SubscriptionService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -369,6 +371,10 @@ class InquiryController extends BaseController
                 ['error' => $e->getMessage()],
                 Http::STATUS_BAD_REQUEST
             );
+        } catch (DoesNotExistException $e) {
+            return new JSONResponse(['message' => 'Not found'], Http::STATUS_NOT_FOUND);
+        } catch (Exception $e) {
+            return new JSONResponse(['message' => $e->getMessage()], $e->getStatus());
         } catch (\Exception $e) {
             return new JSONResponse(
                 ['error' => 'Internal server error in update'],
