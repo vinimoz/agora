@@ -1192,6 +1192,7 @@ OC.L10N.register(
     "Custom fields" : "Brugerdefineret felter",
     "Field key" : "Feltnøgle",
     "Field label" : "Felt mærkat",
+    "Add action" : "Tilføj handling",
     "Run autoreminder" : "Kør automatisk påmindelse",
     "Run janitor" : "Kør pedel",
     "Run notification" : "Kør meddelelse",
