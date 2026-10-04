@@ -111,7 +111,7 @@ class OptionMapper extends QBMapper
     // ====================================================================
     // QUERY BUILDING
     // ====================================================================
-/*
+
     protected function buildQuery(bool $withRoles = false): IQueryBuilder
     {
         $qb = $this->db->getQueryBuilder();
@@ -121,276 +121,143 @@ class OptionMapper extends QBMapper
            ->from($this->getTableName(), self::TABLE)
            ->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
-        // Join inquiry context
+        // Join inquiry context (also joins inquiry_current_user_support)
         $this->joinInquiryContext($qb, self::TABLE);
 
-        // Apply visibility filter
-        $this->applyVisibilityFilter($qb, $currentUserId);
+        // Filter by the *parent inquiry's* visibility
+        // ─── CHANGED: was applyVisibilityFilter (option-level) ───
+        $this->applyInquiryVisibilityFilter($qb, $currentUserId);
 
         if ($withRoles) {
-            $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
+            $this->joinHasSupported($qb, self::TABLE, $currentUserId);
             $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
             $this->addParticipantsCountSubquery($qb, self::TABLE);
             $this->addCommentsCountSubquery($qb, self::TABLE);
             $this->addSupportsCountSubquery($qb, self::TABLE);
             $this->addMiscsSubquery($qb, self::TABLE);
             $this->addSupportResultSubquery($qb, self::TABLE);
+
+            // Group by option columns for PostgreSQL
+            $qb->groupBy(self::TABLE . '.id');
+            $qb->addGroupBy(self::TABLE . '.target_id');
+            $qb->addGroupBy(self::TABLE . '.parent_id');
+            $qb->addGroupBy(self::TABLE . '.type');
+            $qb->addGroupBy(self::TABLE . '.title');
+            $qb->addGroupBy(self::TABLE . '.text');
+            $qb->addGroupBy(self::TABLE . '.owner');
+            $qb->addGroupBy(self::TABLE . '.created');
+            $qb->addGroupBy(self::TABLE . '.updated');
+            $qb->addGroupBy(self::TABLE . '.show_results');
+            $qb->addGroupBy(self::TABLE . '.deleted');
+            $qb->addGroupBy(self::TABLE . '.archived');
+            $qb->addGroupBy(self::TABLE . '.option_status');
+            $qb->addGroupBy(self::TABLE . '.allow_comment');
+            $qb->addGroupBy(self::TABLE . '.support_feature');
+            $qb->addGroupBy(self::TABLE . '.family');
+            $qb->addGroupBy(self::TABLE . '.sort_order');
+            // ─── REMOVED: addGroupBy('visibility') ───
+
+            // Group by inquiry columns added in joinInquiryContext
+            $qb->addGroupBy('inquiry.id');
+            $qb->addGroupBy('inquiry.visibility');
+            $qb->addGroupBy('inquiry.owner');
         }
 
         return $qb;
-    }*/
-
-
-	/**
- * Apply visibility filter - EXACTLY like InquiryMapper
- */
-protected function applyVisibilityFilter(
-    IQueryBuilder &$qb,
-    ?string $currentUserId
-): void {
-    if ($currentUserId === null) {
-        // Non-logged-in users can only see options with public visibility
-        // OR options from public inquiries that inherit
-        $qb->andWhere(
-            $qb->expr()->orX(
-                $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Option::VISIBILITY_EVERYONE)),
-                $qb->expr()->andX(
-                    $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter('inherit')),
-                    $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE))
-                )
-            )
-        );
-        return;
     }
 
-    $userGroupIds = $this->getUserGroupIds($currentUserId);
+    // ====================================================================
+    // VISIBILITY FILTER (delegated to parent inquiry)
+    // ====================================================================
 
-    $orConditions = [];
+    /**
+     * Filter options by the visibility of their parent inquiry.
+     * Mirrors InquiryMapper::applyVisibilityFilter(), but applied on
+     * the joined `inquiry` alias.
+     */
+    protected function applyInquiryVisibilityFilter(
+        IQueryBuilder &$qb,
+        ?string $currentUserId
+    ): void {
+        // If the parent inquiry is missing (orphaned option), hide it.
+        $qb->andWhere($qb->expr()->isNotNull('inquiry.id'));
 
-    // ✅ 1. OWNER OVERRIDE - Owner can always see their own option
-    $orConditions[] = $qb->expr()->eq(
-        self::TABLE . '.owner',
-        $qb->createNamedParameter($currentUserId)
-    );
+        if ($currentUserId === null) {
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    'inquiry.visibility',
+                    $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)
+                )
+            );
+            return;
+        }
 
-    // 2. Everyone (option itself is public)
-    $orConditions[] = $qb->expr()->eq(
-        self::TABLE . '.visibility',
-        $qb->createNamedParameter(Option::VISIBILITY_EVERYONE)
-    );
+        $userGroupIds = $this->getUserGroupIds($currentUserId);
 
-    // 3. Inherit from inquiry - check inquiry visibility
-    $inquiryOrConditions = [];
+        $orConditions = [];
 
-    // 3a. Inquiry is public
-    $inquiryOrConditions[] = $qb->expr()->eq(
-        'inquiry.visibility',
-        $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)
-    );
-
-    // 3b. User is inquiry owner (private inquiry)
-    $inquiryOrConditions[] = $qb->expr()->eq(
-        'inquiry.owner',
-        $qb->createNamedParameter($currentUserId)
-    );
-
-    // 3c. Inquiry groups - use GroupRelationMapper
-    if (!empty($userGroupIds)) {
-        $visibleInquiryIds = $this->groupRelationMapper->getTargetIdsForGroups(
-            GroupRelation::TARGET_INQUIRY,
-            GroupRelation::RELATION_VISIBILITY,
-            $userGroupIds
+        // 1. Owner of the inquiry can always see its options
+        $orConditions[] = $qb->expr()->eq(
+            'inquiry.owner',
+            $qb->createNamedParameter($currentUserId)
         );
 
-        if (!empty($visibleInquiryIds)) {
-            $inquiryOrConditions[] = $qb->expr()->andX(
-                $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_GROUPS)),
+        // 2. Everyone
+        $orConditions[] = $qb->expr()->eq(
+            'inquiry.visibility',
+            $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)
+        );
+
+        // 3. Private (owner already covered)
+        $orConditions[] = $qb->expr()->andX(
+            $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PRIVATE)),
+            $qb->expr()->eq('inquiry.owner', $qb->createNamedParameter($currentUserId))
+        );
+
+        // 4. Groups
+        if (!empty($userGroupIds)) {
+            $visibleInquiryIds = $this->groupRelationMapper->getTargetIdsForGroups(
+                GroupRelation::TARGET_INQUIRY,
+                GroupRelation::RELATION_VISIBILITY,
+                $userGroupIds
+            );
+
+            if (!empty($visibleInquiryIds)) {
+                $orConditions[] = $qb->expr()->andX(
+                    $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_GROUPS)),
+                    $qb->expr()->in(
+                        'inquiry.id',
+                        $qb->createNamedParameter($visibleInquiryIds, IQueryBuilder::PARAM_INT_ARRAY)
+                    )
+                );
+            }
+        }
+
+        // 5. Users
+        $userVisibleInquiryIds = $this->userRelationMapper->getTargetIdsForUsers(
+            UserRelation::TARGET_INQUIRY,
+            UserRelation::RELATION_VISIBILITY,
+            [$currentUserId]
+        );
+
+        if (!empty($userVisibleInquiryIds)) {
+            $orConditions[] = $qb->expr()->andX(
+                $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_USERS)),
                 $qb->expr()->in(
                     'inquiry.id',
-                    $qb->createNamedParameter($visibleInquiryIds, IQueryBuilder::PARAM_INT_ARRAY)
+                    $qb->createNamedParameter($userVisibleInquiryIds, IQueryBuilder::PARAM_INT_ARRAY)
                 )
             );
         }
-    }
 
-    // 3d. Inquiry users - use UserRelationMapper
-    $userVisibleInquiryIds = $this->userRelationMapper->getTargetIdsForUsers(
-        UserRelation::TARGET_INQUIRY,
-        UserRelation::RELATION_VISIBILITY,
-        [$currentUserId]
-    );
-
-    if (!empty($userVisibleInquiryIds)) {
-        $inquiryOrConditions[] = $qb->expr()->andX(
-            $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_USERS)),
-            $qb->expr()->in(
-                'inquiry.id',
-                $qb->createNamedParameter($userVisibleInquiryIds, IQueryBuilder::PARAM_INT_ARRAY)
-            )
-        );
-    }
-
-    // 3e. Inquiry participants - EXACTLY like InquiryMapper
-    $inquiryOrConditions[] = $qb->expr()->andX(
-        $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)),
-        $qb->expr()->isNotNull('inquiry_current_user_support.user_id')
-    );
-
-    // Combine all inquiry conditions
-    $orConditions[] = $qb->expr()->andX(
-        $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter('inherit')),
-        $qb->expr()->orX(...$inquiryOrConditions)
-    );
-
-    // 4. Option groups (option has its own groups)
-    if (!empty($userGroupIds)) {
-        $visibleOptionIds = $this->groupRelationMapper->getTargetIdsForGroups(
-            GroupRelation::TARGET_OPTION,
-            GroupRelation::RELATION_VISIBILITY,
-            $userGroupIds
-        );
-
-        if (!empty($visibleOptionIds)) {
-            $orConditions[] = $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Option::VISIBILITY_GROUPS)),
-                $qb->expr()->in(
-                    self::TABLE . '.id',
-                    $qb->createNamedParameter($visibleOptionIds, IQueryBuilder::PARAM_INT_ARRAY)
-                )
-            );
-        }
-    }
-
-    // 5. Option users (option has its own users)
-    $userVisibleOptionIds = $this->userRelationMapper->getTargetIdsForUsers(
-        UserRelation::TARGET_OPTION,
-        UserRelation::RELATION_VISIBILITY,
-        [$currentUserId]
-    );
-
-    if (!empty($userVisibleOptionIds)) {
+        // 6. Participants of the inquiry
         $orConditions[] = $qb->expr()->andX(
-            $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Option::VISIBILITY_USERS)),
-            $qb->expr()->in(
-                self::TABLE . '.id',
-                $qb->createNamedParameter($userVisibleOptionIds, IQueryBuilder::PARAM_INT_ARRAY)
-            )
+            $qb->expr()->eq('inquiry.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)),
+            $qb->expr()->isNotNull('inquiry_current_user_support.user_id')
         );
+
+        $qb->andWhere($qb->expr()->orX(...$orConditions));
     }
-
-    // 6. Option participants - EXACTLY like InquiryMapper
-    $orConditions[] = $qb->expr()->andX(
-        $qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Option::VISIBILITY_PARTICIPANTS)),
-        $qb->expr()->isNotNull('option_current_user_support.user_id')
-    );
-
-    // Apply all conditions
-    $qb->andWhere($qb->expr()->orX(...$orConditions));
-}
-
-
-
-/**
- * Join has_supported for the current user (similar to InquiryMapper)
- */
-
-
-protected function joinHasSupported(
-    IQueryBuilder &$qb,
-    string $fromAlias,
-    ?string $currentUserId,
-    string $joinAlias = 'current_user_support'
-): void {
-    if ($currentUserId === null) {
-        $qb->addSelect('0 AS has_supported');
-        return;
-    }
-
-    // Use subquery instead of join + MAX() to avoid GROUP BY issues
-    $userIdParam = $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR);
-
-    $qb->addSelect(
-        $qb->createFunction(
-            'COALESCE(' .
-            '(SELECT 1 FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
-            'WHERE s.option_id = ' . $fromAlias . '.id ' .
-            'AND s.user_id = ' . $userIdParam . ' ' .
-            'AND s.support_engine_id IS NULL ' .
-            'LIMIT 1), 0) AS has_supported'
-        )
-    );
-}
-
-protected function buildQuery(bool $withRoles = false): IQueryBuilder
-{
-    $qb = $this->db->getQueryBuilder();
-    $currentUserId = $this->userSession->getCurrentUserId();
-
-    $qb->select(self::TABLE . '.*')
-       ->from($this->getTableName(), self::TABLE)
-       ->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-
-    // Join inquiry context
-    $this->joinInquiryContext($qb, self::TABLE);
-
-    // Join for option participants (EXACTLY like InquiryMapper)
-    if ($currentUserId !== null) {
-        $qb->leftJoin(
-            self::TABLE,
-            Support::TABLE,
-            'option_current_user_support',
-            $qb->expr()->andX(
-                $qb->expr()->eq('option_current_user_support.option_id', self::TABLE . '.id'),
-                $qb->expr()->eq('option_current_user_support.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-                $qb->expr()->isNull('option_current_user_support.support_engine_id')
-            )
-        );
-    }
-
-    // Apply visibility filter
-    $this->applyVisibilityFilter($qb, $currentUserId);
-
-    if ($withRoles) {
-        $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-        $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
-        $this->addParticipantsCountSubquery($qb, self::TABLE);
-        $this->addCommentsCountSubquery($qb, self::TABLE);
-        $this->addSupportsCountSubquery($qb, self::TABLE);
-        $this->addMiscsSubquery($qb, self::TABLE);
-        $this->addSupportResultSubquery($qb, self::TABLE);
-        
-        // ✅ ADD GROUP BY for PostgreSQL (like InquiryMapper)
-        $qb->groupBy(self::TABLE . '.id');
-        $qb->addGroupBy(self::TABLE . '.target_id');
-        $qb->addGroupBy(self::TABLE . '.parent_id');
-        $qb->addGroupBy(self::TABLE . '.type');
-        $qb->addGroupBy(self::TABLE . '.title');
-        $qb->addGroupBy(self::TABLE . '.publication_status');
-        $qb->addGroupBy(self::TABLE . '.text');
-        $qb->addGroupBy(self::TABLE . '.owner');
-        $qb->addGroupBy(self::TABLE . '.owned_group');
-        $qb->addGroupBy(self::TABLE . '.created');
-        $qb->addGroupBy(self::TABLE . '.updated');
-        $qb->addGroupBy(self::TABLE . '.show_results');
-        $qb->addGroupBy(self::TABLE . '.deleted');
-        $qb->addGroupBy(self::TABLE . '.archived');
-        $qb->addGroupBy(self::TABLE . '.option_status');
-        $qb->addGroupBy(self::TABLE . '.allow_comment');
-        $qb->addGroupBy(self::TABLE . '.support_feature');
-        $qb->addGroupBy(self::TABLE . '.family');
-        $qb->addGroupBy(self::TABLE . '.sort_order');
-        $qb->addGroupBy(self::TABLE . '.visibility');
-        
-        // Also group by inquiry columns added in joinInquiryContext
-        $qb->addGroupBy('inquiry.id');
-        $qb->addGroupBy('inquiry.visibility');
-        $qb->addGroupBy('inquiry.publication_status');
-        $qb->addGroupBy('inquiry.owner');
-    }
-
-    return $qb;
-}
-
 
     private function getUserGroupIds(string $userId): array
     {
@@ -412,164 +279,40 @@ protected function buildQuery(bool $withRoles = false): IQueryBuilder
     // INQUIRY CONTEXT JOIN
     // ====================================================================
 
-protected function joinInquiryContext(
-    IQueryBuilder &$qb,
-    string $fromAlias,
-    string $joinAlias = 'inquiry'
-): void {
-    $currentUserId = $this->userSession->getCurrentUserId();
-    
-    $qb->addSelect([
-        $joinAlias . '.id AS target_id',
-        $joinAlias . '.visibility AS inquiry_visibility',
-        $joinAlias . '.publication_status AS inquiry_publication_status',
-    ]);
+    protected function joinInquiryContext(
+        IQueryBuilder &$qb,
+        string $fromAlias,
+        string $joinAlias = 'inquiry'
+    ): void {
+        $currentUserId = $this->userSession->getCurrentUserId();
 
-    $qb->leftJoin(
-        $fromAlias,
-        self::INQUIRY_TABLE,
-        $joinAlias,
-        $qb->expr()->andX(
-            $qb->expr()->eq($joinAlias . '.id', $fromAlias . '.target_id'),
-            $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
-        )
-    );
+        $qb->addSelect([
+            $joinAlias . '.id AS target_id',
+            $joinAlias . '.visibility AS inquiry_visibility',
+        ]);
 
-    // Join for inquiry participants (EXACTLY like InquiryMapper)
-    if ($currentUserId !== null) {
         $qb->leftJoin(
+            $fromAlias,
+            self::INQUIRY_TABLE,
             $joinAlias,
-            Support::TABLE,
-            'inquiry_current_user_support',
             $qb->expr()->andX(
-                $qb->expr()->eq('inquiry_current_user_support.inquiry_id', $joinAlias . '.id'),
-                $qb->expr()->eq('inquiry_current_user_support.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-                $qb->expr()->isNull('inquiry_current_user_support.support_engine_id')
+                $qb->expr()->eq($joinAlias . '.id', $fromAlias . '.target_id'),
+                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
             )
         );
-    }
-}
-    // ====================================================================
-    // VISIBILITY RELATIONS (GroupRelation/UserRelation)
-    // ====================================================================
 
-    public function getVisibilityGroupsForOption(int $optionId): array
-    {
-        return $this->groupRelationMapper->getGroupIdsForTarget(
-            GroupRelation::TARGET_OPTION,
-            $optionId,
-            GroupRelation::RELATION_VISIBILITY
-        );
-    }
-
-    public function getVisibilityUsersForOption(int $optionId): array
-    {
-        return $this->userRelationMapper->getUserIdsForTarget(
-            UserRelation::TARGET_OPTION,
-            $optionId,
-            UserRelation::RELATION_VISIBILITY
-        );
-    }
-
-    public function saveVisibilityGroups(Option $option): void
-    {
-        $this->groupRelationMapper->setGroupsForTarget(
-            GroupRelation::TARGET_OPTION,
-            $option->getId(),
-            GroupRelation::RELATION_VISIBILITY,
-            $option->getVisibilityGroups()
-        );
-    }
-
-    public function saveVisibilityUsers(Option $option): void
-    {
-        $this->userRelationMapper->setUsersForTarget(
-            UserRelation::TARGET_OPTION,
-            $option->getId(),
-            UserRelation::RELATION_VISIBILITY,
-            $option->getVisibilityUsers()
-        );
-    }
-
-    public function removeVisibilityGroup(int $optionId, string $groupId): int
-    {
-        return $this->groupRelationMapper->removeGroupRelation(
-            GroupRelation::TARGET_OPTION,
-            $optionId,
-            GroupRelation::RELATION_VISIBILITY,
-            $groupId
-        );
-    }
-
-    public function addVisibilityGroup(int $optionId, string $groupId): bool
-    {
-        return $this->groupRelationMapper->addGroupRelation(
-            GroupRelation::TARGET_OPTION,
-            $optionId,
-            GroupRelation::RELATION_VISIBILITY,
-            $groupId
-        );
-    }
-
-    public function removeVisibilityUser(int $optionId, string $userId): int
-    {
-        return $this->userRelationMapper->removeUserRelation(
-            UserRelation::TARGET_OPTION,
-            $optionId,
-            UserRelation::RELATION_VISIBILITY,
-            $userId
-        );
-    }
-
-    public function addVisibilityUser(int $optionId, string $userId): bool
-    {
-        return $this->userRelationMapper->addUserRelation(
-            UserRelation::TARGET_OPTION,
-            $optionId,
-            UserRelation::RELATION_VISIBILITY,
-            $userId
-        );
-    }
-
-    public function loadVisibilityRelations(Option $option): void
-    {
-        $optionId = $option->getId();
-        $option->setVisibilityGroups(
-            $this->getVisibilityGroupsForOption($optionId)
-        );
-        $option->setVisibilityUsers(
-            $this->getVisibilityUsersForOption($optionId)
-        );
-    }
-
-    public function loadVisibilityRelationsForOptions(array $options): void
-    {
-        if (empty($options)) {
-            return;
-        }
-
-        $optionIds = array_map(function ($option) {
-            return $option instanceof Option ? $option->getId() : (int)$option;
-        }, $options);
-
-        $groupsByTarget = $this->groupRelationMapper->getGroupsByTargets(
-            GroupRelation::TARGET_OPTION,
-            $optionIds,
-            GroupRelation::RELATION_VISIBILITY
-        );
-
-        $usersByTarget = $this->userRelationMapper->getUsersByTargets(
-            UserRelation::TARGET_OPTION,
-            $optionIds,
-            UserRelation::RELATION_VISIBILITY
-        );
-
-        foreach ($options as $option) {
-            if ($option instanceof Option) {
-                $id = $option->getId();
-                $option->setVisibilityGroups($groupsByTarget[$id] ?? []);
-                $option->setVisibilityUsers($usersByTarget[$id] ?? []);
-            }
+        // Join inquiry participants for VISIBILITY_PARTICIPANTS check
+        if ($currentUserId !== null) {
+            $qb->leftJoin(
+                $joinAlias,
+                Support::TABLE,
+                'inquiry_current_user_support',
+                $qb->expr()->andX(
+                    $qb->expr()->eq('inquiry_current_user_support.inquiry_id', $joinAlias . '.id'),
+                    $qb->expr()->eq('inquiry_current_user_support.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+                    $qb->expr()->isNull('inquiry_current_user_support.support_engine_id')
+                )
+            );
         }
     }
 
@@ -581,7 +324,6 @@ protected function joinInquiryContext(
     {
         $this->loadDynamicFields($option);
         $this->loadParentInquiry($option);
-        $this->loadVisibilityRelations($option);
     }
 
     protected function hydrateOptions(array $options): void
@@ -594,8 +336,6 @@ protected function joinInquiryContext(
             $this->loadDynamicFields($option);
             $this->loadParentInquiry($option);
         }
-
-        $this->loadVisibilityRelationsForOptions($options);
     }
 
     protected function loadParentInquiry(Option $option): void
@@ -618,10 +358,11 @@ protected function joinInquiryContext(
     // SUBQUERIES
     // ====================================================================
 
-    protected function addHasSupportedSubquery(
+    protected function joinHasSupported(
         IQueryBuilder &$qb,
-        string $tableAlias,
-        ?string $currentUserId
+        string $fromAlias,
+        ?string $currentUserId,
+        string $joinAlias = 'current_user_support'
     ): void {
         if ($currentUserId === null) {
             $qb->addSelect('0 AS has_supported');
@@ -634,7 +375,7 @@ protected function joinInquiryContext(
             $qb->createFunction(
                 'COALESCE(' .
                 '(SELECT 1 FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
-                'WHERE s.option_id = ' . $tableAlias . '.id ' .
+                'WHERE s.option_id = ' . $fromAlias . '.id ' .
                 'AND s.user_id = ' . $userIdParam . ' ' .
                 'AND s.support_engine_id IS NULL ' .
                 'LIMIT 1), 0) AS has_supported'
@@ -830,15 +571,15 @@ protected function joinInquiryContext(
             case 'datetime':
                 return is_numeric($value) ? (int)$value : $value;
             case 'json':
-	    case 'object':
-	    case 'array':
-		    if (is_string($value)) {
-			    return $value;
-		    }
-		    if (is_array($value) || is_object($value)) {
-			    return json_encode($value, JSON_UNESCAPED_UNICODE);
-		    }
-		    return (string)$value;
+            case 'object':
+            case 'array':
+                if (is_string($value)) {
+                    return $value;
+                }
+                if (is_array($value) || is_object($value)) {
+                    return json_encode($value, JSON_UNESCAPED_UNICODE);
+                }
+                return (string)$value;
             case 'enum':
                 $allowed = $fieldDef['allowed_values'] ?? [];
                 if (in_array($value, $allowed, true)) {

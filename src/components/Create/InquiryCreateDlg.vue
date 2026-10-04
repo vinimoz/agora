@@ -59,12 +59,14 @@ const sessionStore = useSessionStore()
 const inquiryTitle = ref('')
 const inquiryId = ref<number | null>(null)
 const adding = ref(false)
-const accessType = ref<'user' | 'groups'>('user')
+const visibilityType = ref<'user' | 'groups'>('user')
 const selectedGroup = ref<string | null>(null)
 // Distinguishes what the selected group actually controls:
-// - 'open'       → access: 'private',  ownedGroup: <group>  (everyone can see/participate, group is owner)
-// - 'restricted' → access: 'group', ownedGroup: <group>  (only group members can see/participate)
-const groupAccessMode = ref<'open' | 'restricted'>('restricted')
+// - 'open'       → visibility: 'private',  ownedGroup: <group>  (everyone can see/participate, group is owner)
+// - 'restricted' → visibility: 'group', ownedGroup: <group>  (only group members can see/participate)
+const groupVisibilityMode = ref<'open' | 'restricted'>('restricted')
+
+type CreateVisibilityType = Extract<VisibilityType, 'private' | 'groups'>
 
 // Get inquiry types from app settings
 const inquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || [])
@@ -126,15 +128,13 @@ interface InquiryData {
   type: string
   title: string
   family: string
-  access?: 'private' | 'groups' | 'open'
+  visibility?: 'private' | 'groups' | 'everyone'
   parentId?: string | number | null
   locationId?: number | string | null
   categoryId?: number | string | null
   ownedGroup?: string
   description?: string
 }
-
-
 
 async function addInquiry() {
   try {
@@ -161,14 +161,14 @@ async function addInquiry() {
       inquiryData.family = props.family
     }
 
-    // Add groups if groups access is selected
-    if (accessType.value === 'groups' && selectedGroup.value) {
+    // Add groups if groups visibility is selected
+    if (visibilityType.value === 'groups' && selectedGroup.value) {
       inquiryData.ownedGroup = selectedGroup.value
-      // 'open'       → accessible to everyone, group is just the owner
-      // 'restricted' → only members of the group can access
-      inquiryData.access = groupAccessMode.value === 'private' ? 'private' : 'groups'
+      // 'open'       → visibility: 'private'  (everyone can see/participate, group is just owner)
+      // 'restricted' → visibility: 'groups'   (only group members can see/participate)
+      inquiryData.visibility = groupVisibilityMode.value === 'open' ? 'private' : 'groups'
     } else {
-      inquiryData.access = 'private'
+      inquiryData.visibility = 'private'
     }
 
     if (props.selectedMode === 'transform') {
@@ -207,9 +207,9 @@ async function addInquiry() {
 function resetInquiry() {
   inquiryId.value = null
   inquiryTitle.value = ''
-  accessType.value = 'user'
+  visibilityType.value = 'user'
   selectedGroup.value = null
-  groupAccessMode.value = 'restricted'
+  groupVisibilityMode.value = 'restricted'
   emit('update:selected-groups', [])
 }
 </script>
@@ -229,11 +229,11 @@ function resetInquiry() {
         </template>
         <div class="access-settings">
           <NcRadioGroup
-            :model-value="accessType"
+            :model-value="visibilityType"
             :label="t('agora','Choose who is opening this inquiry')"
             class="access-radio-group"
             :description="t('agora', 'Choose who is opening this inquiry')"
-            @update:model-value="accessType = $event"
+            @update:model-value="visibilityType = $event"
           >
             <NcCheckboxRadioSwitch value="user">
               {{ t('agora', 'Only me (personal inquiry)') }}
@@ -245,7 +245,7 @@ function resetInquiry() {
           </NcRadioGroup>
 
           <!-- Group Selection -->
-          <div v-if="accessType === 'groups'" class="groups-selection">
+          <div v-if="visibilityType === 'groups'" class="groups-selection">
             <h4 class="groups-title">
               {{ t('agora', 'Select group') }}
             </h4>
@@ -272,15 +272,15 @@ function resetInquiry() {
               </NcRadioGroup>
             </div>
 
-            <!-- Group access mode: only meaningful once a group is selected -->
+            <!-- Group visibility mode: only meaningful once a group is selected -->
             <div
               v-if="selectedGroup"
               class="group-mode-selection"
             >
               <NcRadioGroup
-                :model-value="groupAccessMode"
+                :model-value="groupVisibilityMode"
                 :label="t('agora', 'How should this group access the inquiry?')"
-                @update:model-value="groupAccessMode = $event"
+                @update:model-value="groupVisibilityMode = $event"
               >
                 <div class="mode-option">
                   <NcCheckboxRadioSwitch value="open">
@@ -345,7 +345,7 @@ function resetInquiry() {
                 type="info"
                 class="group-mode-help"
               >
-                <template v-if="groupAccessMode === 'open'">
+                <template v-if="groupVisibilityMode === 'open'">
                   {{ t('agora', 'The inquiry is public; the group is only the owner. Choose this if you want the group to be credited or responsible for the inquiry, but everyone can still take part.') }}
                 </template>
                 <template v-else>

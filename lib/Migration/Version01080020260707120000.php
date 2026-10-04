@@ -5,6 +5,31 @@ declare(strict_types=1);
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Agora 1.8.0 — Sortition / Lottery system and new visibility system.
+ *
+ * Creates:
+ *   - agora_participation       (who can participate)
+ *   - agora_group_relations     (generic group relations)
+ *   - agora_user_relations      (generic user relations)
+ *   - agora_lottery_run         (executions)
+ *   - agora_lottery_selection   (who was selected)
+ *   - agora_trending_scores     (trending score cache)
+ *
+ * Modifies:
+ *   - agora_inquiries:  adds visibility, publication_status; drops access
+ *   - agora_inq_group:  adds visibility, publication_status; drops access, owned_group
+ *   - agora_options:    drops access, owned_group
+ *   - agora_comments:   adds parent_id
+ *   - agora_inq_status: adds family_type
+ *
+ * Access → visibility / publication_status mapping (inquiries + groups):
+ *   'open'       -> visibility 'everyone', publication_status 'published'
+ *   'public'     -> visibility 'everyone', publication_status 'published'
+ *   'private'    -> visibility 'private',  publication_status 'draft'
+ *   'moderate'   -> visibility 'private',  publication_status 'pending'
+ *   'hidden'     -> visibility 'private',  publication_status 'draft'
+ *   'groups'     -> visibility 'groups',   publication_status 'published'
  */
 
 namespace OCA\Agora\Migration;
@@ -18,32 +43,6 @@ use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-/**
- * Migration to add Sortition/Lottery system and new visibility system (version 1.8.0)
- *
- * Creates:
- * - agora_participation (who can participate)
- * - agora_group_relations (generic group relations for visibility, participation, etc.)
- * - agora_user_relations (generic user relations for visibility, participation, etc.)
- * - agora_lottery_run (executions)
- * - agora_lottery_selection (who was selected)
- * - agora_trending_scores (trending score cache)
- *
- * Modifies:
- * - agora_inquiries:      Adds visibility, publication_status; drops access
- * - agora_inq_group:      Adds visibility, publication_status; drops access, owned_group
- * - agora_options:        Adds visibility, publication_status; drops access, owned_group
- * - agora_comments:       Adds parent_id (threaded comments)
- * - agora_inq_status:     Adds family_type
- *
- * Old access values mapping (for existing data):
- * - 'open'       -> visibility: 'everyone', publication_status: 'published'
- * - 'public'     -> visibility: 'everyone', publication_status: 'published'
- * - 'private'    -> visibility: 'private',  publication_status: 'draft'
- * - 'moderate'   -> visibility: 'private',  publication_status: 'pending'
- * - 'hidden'     -> visibility: 'private',  publication_status: 'draft'
- * - 'restricted' -> visibility: 'groups',   publication_status: 'draft'
- */
 class Version01080020260707120000 extends SimpleMigrationStep
 {
     private ISchemaWrapper $schema;
@@ -53,17 +52,20 @@ class Version01080020260707120000 extends SimpleMigrationStep
     private bool $isSQLite = false;
     private ?IDBConnection $connection = null;
 
-    private const S_PARTICIPATION      = 'agora_participation';
-    private const S_LOTTERY_RUN        = 'agora_lottery_run';
-    private const S_LOTTERY_SELECTION  = 'agora_lottery_selection';
-    private const S_INQUIRIES          = 'agora_inquiries';
-    private const S_INQUIRIES_GROUP    = 'agora_inq_group';
-    private const S_OPTIONS            = 'agora_options';
-    private const S_GROUP_RELATIONS    = 'agora_group_relations';
-    private const S_USER_RELATIONS     = 'agora_user_relations';
-    private const S_TRENDING_SCORES    = 'agora_trending_scores';
-    private const S_COMMENTS           = 'agora_comments';
-    private const S_INQ_STATUS         = 'agora_inq_status';
+    /** @var array<string,string>|null cached unprefixed → real table name */
+    private ?array $prefixedNames = null;
+
+    private const S_PARTICIPATION     = 'agora_participation';
+    private const S_LOTTERY_RUN       = 'agora_lottery_run';
+    private const S_LOTTERY_SELECTION = 'agora_lottery_selection';
+    private const S_INQUIRIES         = 'agora_inquiries';
+    private const S_INQUIRIES_GROUP   = 'agora_inq_group';
+    private const S_OPTIONS           = 'agora_options';
+    private const S_GROUP_RELATIONS   = 'agora_group_relations';
+    private const S_USER_RELATIONS    = 'agora_user_relations';
+    private const S_TRENDING_SCORES   = 'agora_trending_scores';
+    private const S_COMMENTS          = 'agora_comments';
+    private const S_INQ_STATUS        = 'agora_inq_status';
 
     public function __construct(
         private ?IDBConnection $dbConnection = null
@@ -71,26 +73,31 @@ class Version01080020260707120000 extends SimpleMigrationStep
         $this->connection = $dbConnection;
     }
 
+    // ====================================================================
+    // SCHEMA
+    // ====================================================================
+
     public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper
     {
         $this->output = $output;
         $this->schema = $schemaClosure();
-        $platform = $this->schema->getDatabasePlatform();
-        $this->isMySQL = $platform instanceof MySQLPlatform;
-        $this->isPostgreSQL = $platform instanceof PostgreSQLPlatform;
-        $this->isSQLite = $platform instanceof SqlitePlatform;
 
-        $this->log('Agora 1.8.0 - Adding Sortition/Lottery and visibility systems');
+        $platform = $this->schema->getDatabasePlatform();
+        $this->isMySQL      = $platform instanceof MySQLPlatform;
+        $this->isPostgreSQL = $platform instanceof PostgreSQLPlatform;
+        $this->isSQLite     = $platform instanceof SqlitePlatform;
+
+        $this->log('Agora 1.8.0 - sortition / visibility / threaded comments');
         $this->log('Platform: ' . ($this->isMySQL ? 'MySQL' : ($this->isPostgreSQL ? 'PostgreSQL' : 'SQLite')));
 
-        // Modify existing tables
-        $this->modifyInquiriesTable();
-        $this->modifyInquiryGroupsTable();
-        $this->modifyOptionsTable();
-        $this->modifyCommentsTable();          // NEW: parent_id for threading
-        $this->modifyInquiryStatusTable();     // NEW: family_type
+        // --- Modifications (add columns only here) ---
+        $this->modifyInquiriesTable();          // + visibility, publication_status
+        $this->modifyInquiryGroupsTable();      // + visibility, publication_status
+        // agora_options: NO new columns — spec says drop access + owned_group only
+        $this->modifyCommentsTable();           // + parent_id
+        $this->modifyInquiryStatusTable();      // + family_type
 
-        // Create new tables
+        // --- New tables ---
         $this->createGroupRelationsTable();
         $this->createUserRelationsTable();
         $this->createParticipationTable();
@@ -102,6 +109,10 @@ class Version01080020260707120000 extends SimpleMigrationStep
         return $this->schema;
     }
 
+    // ====================================================================
+    // POST-SCHEMA
+    // ====================================================================
+
     public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
     {
         $this->output = $output;
@@ -111,228 +122,130 @@ class Version01080020260707120000 extends SimpleMigrationStep
             return;
         }
 
-        $this->log('POST-SCHEMA: Converting access data, adding indices and foreign keys...');
+        $this->log('POST-SCHEMA: starting');
 
         try {
-            // Convert access column data to new visibility system (for existing inquiries)
+            // 1. Convert `access` → (visibility, publication_status) on
+            //    inquiries and groups. Must run BEFORE the drop below.
             $this->convertAccessColumn();
 
-            // Add indices and foreign keys
+            // 2. Indices on the newly-created columns and tables
             $this->addIndices();
+
+            // 3. Foreign keys on the new tables
             $this->addForeignKeys();
 
-            // Drop obsolete columns (access, owned_group)
+            // 4. Drop obsolete columns
             $this->dropObsoleteColumns();
 
-            // Verify the access column was actually dropped everywhere
+            // 5. Loud-fail verification
             $this->verifyAccessColumnDropped();
+            $this->verifyOwnedGroupDropped();
 
-            $this->log('✅ Migration complete successfully!');
-        } catch (\Exception $e) {
+            $this->log('✅ Migration complete successfully');
+        } catch (\Throwable $e) {
             $this->log('❌ ERROR: ' . $e->getMessage());
             throw $e;
         }
     }
 
     // ====================================================================
-    // TABLE MODIFICATIONS - Add new columns
+    // TABLE MODIFICATIONS  (add columns only)
     // ====================================================================
 
     private function modifyInquiriesTable(): void
     {
-        $this->log("  Modification: " . self::S_INQUIRIES);
-        if ($this->schema->hasTable(self::S_INQUIRIES)) {
-            $table = $this->schema->getTable(self::S_INQUIRIES);
-
-            if (!$table->hasColumn('visibility')) {
-                $table->addColumn('visibility', Types::STRING, [
-                    'notnull' => true,
-                    'default' => 'private',
-                    'length' => 50,
-                ]);
-            }
-
-            if (!$table->hasColumn('publication_status')) {
-                $table->addColumn('publication_status', Types::STRING, [
-                    'notnull' => true,
-                    'default' => 'draft',
-                    'length' => 50,
-                ]);
-            }
-
-            $this->log("    ✓ Added visibility, publication_status columns");
+        if (!$this->schema->hasTable(self::S_INQUIRIES)) {
+            return;
         }
+        $t = $this->schema->getTable(self::S_INQUIRIES);
+
+        if (!$t->hasColumn('visibility')) {
+            $t->addColumn('visibility', Types::STRING, [
+                'notnull' => true, 'default' => 'private', 'length' => 50,
+            ]);
+        }
+        if (!$t->hasColumn('publication_status')) {
+            $t->addColumn('publication_status', Types::STRING, [
+                'notnull' => true, 'default' => 'draft', 'length' => 50,
+            ]);
+        }
+        $this->log('  + inquiries.visibility, inquiries.publication_status');
     }
 
     private function modifyInquiryGroupsTable(): void
     {
-        $this->log("  Modification: " . self::S_INQUIRIES_GROUP);
-        if ($this->schema->hasTable(self::S_INQUIRIES_GROUP)) {
-            $table = $this->schema->getTable(self::S_INQUIRIES_GROUP);
-
-            if (!$table->hasColumn('visibility')) {
-                $table->addColumn('visibility', Types::STRING, [
-                    'notnull' => true,
-                    'default' => 'everyone',
-                    'length' => 50,
-                ]);
-            }
-
-            if (!$table->hasColumn('publication_status')) {
-                $table->addColumn('publication_status', Types::STRING, [
-                    'notnull' => true,
-                    'default' => 'draft',
-                    'length' => 50,
-                ]);
-            }
-
-            $this->log("    ✓ Added visibility, publication_status columns");
+        if (!$this->schema->hasTable(self::S_INQUIRIES_GROUP)) {
+            return;
         }
+        $t = $this->schema->getTable(self::S_INQUIRIES_GROUP);
+
+        if (!$t->hasColumn('visibility')) {
+            $t->addColumn('visibility', Types::STRING, [
+                'notnull' => true, 'default' => 'everyone', 'length' => 50,
+            ]);
+        }
+        if (!$t->hasColumn('publication_status')) {
+            $t->addColumn('publication_status', Types::STRING, [
+                'notnull' => true, 'default' => 'draft', 'length' => 50,
+            ]);
+        }
+        $this->log('  + groups.visibility, groups.publication_status');
     }
 
-    private function modifyOptionsTable(): void
-    {
-        $this->log("  Modification: " . self::S_OPTIONS);
-        if ($this->schema->hasTable(self::S_OPTIONS)) {
-            $table = $this->schema->getTable(self::S_OPTIONS);
-
-            if (!$table->hasColumn('visibility')) {
-                $table->addColumn('visibility', Types::STRING, [
-                    'notnull' => true,
-                    'default' => 'everyone',
-                    'length' => 50,
-                ]);
-            }
-
-            if (!$table->hasColumn('publication_status')) {
-                $table->addColumn('publication_status', Types::STRING, [
-                    'notnull' => true,
-                    'default' => 'draft',
-                    'length' => 50,
-                ]);
-            }
-
-            $this->log("    ✓ Added visibility, publication_status columns");
-        }
-    }
-
-    /**
-     * NEW: add parent_id to agora_comments for threaded discussions.
-     * Mirrors the parent_id column present on inquiries, options, groups…
-     */
     private function modifyCommentsTable(): void
     {
-        $this->log("  Modification: " . self::S_COMMENTS);
         if (!$this->schema->hasTable(self::S_COMMENTS)) {
-            $this->log("    ⚠️ Table " . self::S_COMMENTS . " not found, skipping");
             return;
         }
+        $t = $this->schema->getTable(self::S_COMMENTS);
 
-        $table = $this->schema->getTable(self::S_COMMENTS);
-        if (!$table->hasColumn('parent_id')) {
-            $table->addColumn('parent_id', Types::BIGINT, [
-                'notnull'  => false,
-                'default'  => null,
-                'unsigned' => true,
-                'length'   => 20,
+        if (!$t->hasColumn('parent_id')) {
+            $t->addColumn('parent_id', Types::BIGINT, [
+                'notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20,
             ]);
-            $this->log("    ✓ Added parent_id column");
-        } else {
-            $this->log("    parent_id already present, skipping");
+            $this->log('  + comments.parent_id');
         }
     }
 
-    /**
-     * NEW: add family_type to agora_inq_status so statuses can be grouped per family
-     * (mirrors the family column on inquiries/options/types).
-     */
     private function modifyInquiryStatusTable(): void
     {
-        $this->log("  Modification: " . self::S_INQ_STATUS);
         if (!$this->schema->hasTable(self::S_INQ_STATUS)) {
-            $this->log("    ⚠️ Table " . self::S_INQ_STATUS . " not found, skipping");
             return;
         }
+        $t = $this->schema->getTable(self::S_INQ_STATUS);
 
-        $table = $this->schema->getTable(self::S_INQ_STATUS);
-        if (!$table->hasColumn('family_type')) {
-            $table->addColumn('family_type', Types::STRING, [
-                'notnull' => true,
-                'default' => 'deliberative',
-                'length'  => 64,
+        if (!$t->hasColumn('family_type')) {
+            $t->addColumn('family_type', Types::STRING, [
+                'notnull' => true, 'default' => 'deliberative', 'length' => 64,
             ]);
-            $this->log("    ✓ Added family_type column");
-        } else {
-            $this->log("    family_type already present, skipping");
+            $this->log('  + inq_status.family_type');
         }
     }
 
     // ====================================================================
-    // TABLE CREATION
+    // NEW TABLES
     // ====================================================================
-
-    private function createTrendingScoresTable(): void
-    {
-        if ($this->schema->hasTable(self::S_TRENDING_SCORES)) {
-            return;
-        }
-
-        $this->log("  Create: " . self::S_TRENDING_SCORES);
-        $table = $this->schema->createTable(self::S_TRENDING_SCORES);
-
-        $table->addColumn('id', Types::BIGINT, [
-            'autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('inquiry_id', Types::BIGINT, [
-            'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('option_id', Types::BIGINT, [
-            'notnull' => true, 'unsigned' => true, 'length' => 20, 'default' => 0
-        ]);
-        $table->addColumn('score', Types::FLOAT, [
-            'notnull' => true, 'default' => 0
-        ]);
-        $table->addColumn('updated_at', Types::BIGINT, [
-            'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
-        ]);
-
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['inquiry_id', 'option_id'], 'trending_inquiry_option_unique');
-        $table->addIndex(['inquiry_id'], 'trending_inquiry_idx');
-        $table->addIndex(['score'], 'trending_score_idx');
-        $table->addIndex(['updated_at'], 'trending_updated_idx');
-
-        $this->log("  ✓ Table created");
-    }
 
     private function createGroupRelationsTable(): void
     {
         if ($this->schema->hasTable(self::S_GROUP_RELATIONS)) {
             return;
         }
-
-        $this->log("  Create: " . self::S_GROUP_RELATIONS . " (generic group relations table)");
-        $table = $this->schema->createTable(self::S_GROUP_RELATIONS);
-
-        $table->addColumn('id', Types::BIGINT, [
-            'autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('target_type', Types::STRING, ['notnull' => true, 'length' => 50]);
-        $table->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('relation_type', Types::STRING, ['notnull' => true, 'length' => 50]);
-        $table->addColumn('group_id', Types::STRING, ['notnull' => true, 'length' => 255]);
-        $table->addColumn('created_at', Types::BIGINT, [
-            'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
-
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['target_type', 'target_id', 'relation_type', 'group_id'], 'group_relation_unique');
-        $table->addIndex(['target_type', 'target_id'], 'group_relation_target_idx');
-        $table->addIndex(['relation_type'], 'group_relation_type_idx');
-        $table->addIndex(['group_id'], 'group_relation_group_idx');
-
-        $this->log("  ✓ Table created");
+        $t = $this->schema->createTable(self::S_GROUP_RELATIONS);
+        $t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('target_type', Types::STRING, ['notnull' => true, 'length' => 50]);
+        $t->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('relation_type', Types::STRING, ['notnull' => true, 'length' => 50]);
+        $t->addColumn('group_id', Types::STRING, ['notnull' => true, 'length' => 255]);
+        $t->addColumn('created_at', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
+        $t->setPrimaryKey(['id']);
+        $t->addUniqueIndex(['target_type', 'target_id', 'relation_type', 'group_id'], 'group_relation_unique');
+        $t->addIndex(['target_type', 'target_id'], 'group_relation_target_idx');
+        $t->addIndex(['relation_type'], 'group_relation_type_idx');
+        $t->addIndex(['group_id'], 'group_relation_group_idx');
+        $this->log('  + table ' . self::S_GROUP_RELATIONS);
     }
 
     private function createUserRelationsTable(): void
@@ -340,29 +253,20 @@ class Version01080020260707120000 extends SimpleMigrationStep
         if ($this->schema->hasTable(self::S_USER_RELATIONS)) {
             return;
         }
-
-        $this->log("  Create: " . self::S_USER_RELATIONS . " (generic user relations table)");
-        $table = $this->schema->createTable(self::S_USER_RELATIONS);
-
-        $table->addColumn('id', Types::BIGINT, [
-            'autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('target_type', Types::STRING, ['notnull' => true, 'length' => 50]);
-        $table->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('relation_type', Types::STRING, ['notnull' => true, 'length' => 50]);
-        $table->addColumn('user_id', Types::STRING, ['notnull' => true, 'length' => 255]);
-        $table->addColumn('created_at', Types::BIGINT, [
-            'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
-
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['target_type', 'target_id', 'relation_type', 'user_id'], 'user_relation_unique');
-        $table->addIndex(['target_type', 'target_id'], 'user_relation_target_idx');
-        $table->addIndex(['relation_type'], 'user_relation_type_idx');
-        $table->addIndex(['user_id'], 'user_relation_user_idx');
-
-        $this->log("  ✓ Table created");
+        $t = $this->schema->createTable(self::S_USER_RELATIONS);
+        $t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('target_type', Types::STRING, ['notnull' => true, 'length' => 50]);
+        $t->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('relation_type', Types::STRING, ['notnull' => true, 'length' => 50]);
+        $t->addColumn('user_id', Types::STRING, ['notnull' => true, 'length' => 255]);
+        $t->addColumn('created_at', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
+        $t->setPrimaryKey(['id']);
+        $t->addUniqueIndex(['target_type', 'target_id', 'relation_type', 'user_id'], 'user_relation_unique');
+        $t->addIndex(['target_type', 'target_id'], 'user_relation_target_idx');
+        $t->addIndex(['relation_type'], 'user_relation_type_idx');
+        $t->addIndex(['user_id'], 'user_relation_user_idx');
+        $this->log('  + table ' . self::S_USER_RELATIONS);
     }
 
     private function createParticipationTable(): void
@@ -370,33 +274,18 @@ class Version01080020260707120000 extends SimpleMigrationStep
         if ($this->schema->hasTable(self::S_PARTICIPATION)) {
             return;
         }
-
-        $this->log("  Create: " . self::S_PARTICIPATION);
-        $table = $this->schema->createTable(self::S_PARTICIPATION);
-
-        $table->addColumn('id', Types::BIGINT, [
-            'autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('target_type', Types::STRING, ['notnull' => true, 'length' => 50]);
-        $table->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('policy_type', Types::STRING, [
-            'notnull' => true, 'default' => 'everyone', 'length' => 50
-        ]);
-        $table->addColumn('policy_config', Types::JSON, ['notnull' => false, 'default' => null]);
-        $table->addColumn('created_at', Types::BIGINT, [
-            'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('updated_at', Types::BIGINT, [
-            'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('created_by', Types::STRING, [
-            'notnull' => false, 'default' => null, 'length' => 256
-        ]);
-
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['target_type', 'target_id'], 'participation_unique_target');
-
-        $this->log("  ✓ Table created");
+        $t = $this->schema->createTable(self::S_PARTICIPATION);
+        $t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('target_type', Types::STRING, ['notnull' => true, 'length' => 50]);
+        $t->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('policy_type', Types::STRING, ['notnull' => true, 'default' => 'everyone', 'length' => 50]);
+        $t->addColumn('policy_config', Types::JSON, ['notnull' => false, 'default' => null]);
+        $t->addColumn('created_at', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('updated_at', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('created_by', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 256]);
+        $t->setPrimaryKey(['id']);
+        $t->addUniqueIndex(['target_type', 'target_id'], 'participation_unique_target');
+        $this->log('  + table ' . self::S_PARTICIPATION);
     }
 
     private function createLotteryRunTable(): void
@@ -404,35 +293,20 @@ class Version01080020260707120000 extends SimpleMigrationStep
         if ($this->schema->hasTable(self::S_LOTTERY_RUN)) {
             return;
         }
-
-        $this->log("  Create: " . self::S_LOTTERY_RUN);
-        $table = $this->schema->createTable(self::S_LOTTERY_RUN);
-
-        $table->addColumn('id', Types::BIGINT, [
-            'autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('participation_id', Types::BIGINT, [
-            'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('seed', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 255]);
-        $table->addColumn('status', Types::STRING, [
-            'notnull' => true, 'default' => 'pending', 'length' => 32
-        ]);
-        $table->addColumn('pool_size', Types::INTEGER, ['notnull' => true, 'default' => 0]);
-        $table->addColumn('selection_count', Types::INTEGER, ['notnull' => true, 'default' => 0]);
-        $table->addColumn('result_summary', Types::JSON, ['notnull' => false, 'default' => null]);
-        $table->addColumn('created_at', Types::BIGINT, [
-            'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('completed_at', Types::BIGINT, [
-            'notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
-
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['participation_id'], 'run_participation_idx');
-
-        $this->log("  ✓ Table created");
+        $t = $this->schema->createTable(self::S_LOTTERY_RUN);
+        $t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('participation_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('seed', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 255]);
+        $t->addColumn('status', Types::STRING, ['notnull' => true, 'default' => 'pending', 'length' => 32]);
+        $t->addColumn('pool_size', Types::INTEGER, ['notnull' => true, 'default' => 0]);
+        $t->addColumn('selection_count', Types::INTEGER, ['notnull' => true, 'default' => 0]);
+        $t->addColumn('result_summary', Types::JSON, ['notnull' => false, 'default' => null]);
+        $t->addColumn('created_at', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('completed_at', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
+        $t->setPrimaryKey(['id']);
+        $t->addIndex(['participation_id'], 'run_participation_idx');
+        $this->log('  + table ' . self::S_LOTTERY_RUN);
     }
 
     private function createLotterySelectionTable(): void
@@ -440,395 +314,464 @@ class Version01080020260707120000 extends SimpleMigrationStep
         if ($this->schema->hasTable(self::S_LOTTERY_SELECTION)) {
             return;
         }
+        $t = $this->schema->createTable(self::S_LOTTERY_SELECTION);
+        $t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('participation_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('run_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('selected_user_id', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 256]);
+        $t->addColumn('selected_group_id', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 256]);
+        $t->addColumn('rank', Types::INTEGER, ['notnull' => true, 'default' => 0]);
+        $t->addColumn('role', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 50]);
+        $t->addColumn('status', Types::STRING, ['notnull' => true, 'default' => 'pending', 'length' => 32]);
+        $t->addColumn('selected_at', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('expires_at', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('accepted_at', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
+        $t->setPrimaryKey(['id']);
+        $t->addIndex(['participation_id'], 'selection_participation_idx');
+        $t->addIndex(['run_id'], 'selection_run_idx');
+        $t->addIndex(['selected_user_id'], 'selection_user_idx');
+        $t->addIndex(['status'], 'selection_status_idx');
+        $this->log('  + table ' . self::S_LOTTERY_SELECTION);
+    }
 
-        $this->log("  Create: " . self::S_LOTTERY_SELECTION);
-        $table = $this->schema->createTable(self::S_LOTTERY_SELECTION);
-
-        $table->addColumn('id', Types::BIGINT, [
-            'autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('participation_id', Types::BIGINT, [
-            'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('run_id', Types::BIGINT, [
-            'notnull' => true, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('selected_user_id', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 256]);
-        $table->addColumn('selected_group_id', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 256]);
-        $table->addColumn('rank', Types::INTEGER, ['notnull' => true, 'default' => 0]);
-        $table->addColumn('role', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 50]);
-        $table->addColumn('status', Types::STRING, ['notnull' => true, 'default' => 'pending', 'length' => 32]);
-        $table->addColumn('selected_at', Types::BIGINT, [
-            'notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('expires_at', Types::BIGINT, [
-            'notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('accepted_at', Types::BIGINT, [
-            'notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20
-        ]);
-        $table->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
-
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['participation_id'], 'selection_participation_idx');
-        $table->addIndex(['run_id'], 'selection_run_idx');
-        $table->addIndex(['selected_user_id'], 'selection_user_idx');
-        $table->addIndex(['status'], 'selection_status_idx');
-
-        $this->log("  ✓ Table created");
+    private function createTrendingScoresTable(): void
+    {
+        if ($this->schema->hasTable(self::S_TRENDING_SCORES)) {
+            return;
+        }
+        $t = $this->schema->createTable(self::S_TRENDING_SCORES);
+        $t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $t->addColumn('option_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20, 'default' => 0]);
+        $t->addColumn('score', Types::FLOAT, ['notnull' => true, 'default' => 0]);
+        $t->addColumn('updated_at', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $t->setPrimaryKey(['id']);
+        $t->addUniqueIndex(['inquiry_id', 'option_id'], 'trending_inquiry_option_unique');
+        $t->addIndex(['inquiry_id'], 'trending_inquiry_idx');
+        $t->addIndex(['score'], 'trending_score_idx');
+        $t->addIndex(['updated_at'], 'trending_updated_idx');
+        $this->log('  + table ' . self::S_TRENDING_SCORES);
     }
 
     // ====================================================================
-    // POST-SCHEMA: Data Conversion
+    // DATA CONVERSION — access → visibility / publication_status
+    // Runs ONLY on tables that received the new columns:
+    //   - agora_inquiries
+    //   - agora_inq_group
+    // agora_options does NOT get visibility/publication_status, so no
+    // conversion is possible there — its `access` column is simply dropped.
     // ====================================================================
 
     private function convertAccessColumn(): void
     {
-        $this->log('Converting access column data...');
-
-        if (!$this->columnExists(self::S_INQUIRIES, 'access')) {
-            $this->log('  ⚠️ access column does not exist in ' . self::S_INQUIRIES . ' - skipping conversion');
-            return;
-        }
+        $this->log('Converting access → visibility / publication_status');
 
         $mappings = [
-            'open'       => ['visibility' => 'everyone', 'publication_status' => 'published'],
-            'public'     => ['visibility' => 'everyone', 'publication_status' => 'published'],
-            'private'    => ['visibility' => 'private',  'publication_status' => 'draft'],
-            'moderate'   => ['visibility' => 'private',  'publication_status' => 'pending'],
-            'hidden'     => ['visibility' => 'private',  'publication_status' => 'draft'],
-            'restricted' => ['visibility' => 'groups',   'publication_status' => 'draft'],
+            'open'     => ['visibility' => 'everyone', 'publication_status' => 'published'],
+            'public'   => ['visibility' => 'everyone', 'publication_status' => 'published'],
+            'private'  => ['visibility' => 'private',  'publication_status' => 'draft'],
+            'moderate' => ['visibility' => 'private',  'publication_status' => 'pending'],
+            'hidden'   => ['visibility' => 'private',  'publication_status' => 'draft'],
+            'groups'   => ['visibility' => 'groups',   'publication_status' => 'published'],
         ];
 
-        $this->convertTableAccess(self::S_INQUIRIES, $mappings);
+        // inquiries
+        if ($this->columnExists(self::S_INQUIRIES, 'access')) {
+            $this->convertTableAccess(self::S_INQUIRIES, $mappings);
+        } else {
+            $this->log('  ' . self::S_INQUIRIES . '.access not present — skipping');
+        }
 
+        // inquiry groups
         if ($this->columnExists(self::S_INQUIRIES_GROUP, 'access')) {
             $this->convertTableAccess(self::S_INQUIRIES_GROUP, $mappings);
+        } else {
+            $this->log('  ' . self::S_INQUIRIES_GROUP . '.access not present — skipping');
         }
 
-        if ($this->columnExists(self::S_OPTIONS, 'access')) {
-            $this->convertTableAccess(self::S_OPTIONS, $mappings);
-        }
-
-        $this->log('  ✓ Access data converted');
+        // agora_options: no target columns → nothing to convert; will just be dropped
+        $this->log('  ' . self::S_OPTIONS . ': no target columns — data will be discarded on drop');
     }
 
-    private function convertTableAccess(string $tableName, array $mappings): void
+    private function convertTableAccess(string $unprefixedTable, array $mappings): void
     {
-        $this->log("  Converting $tableName...");
+        // IQueryBuilder resolves dbtableprefix automatically.
         $totalUpdated = 0;
 
         foreach ($mappings as $access => $values) {
             $qb = $this->connection->getQueryBuilder();
-            $qb->update($tableName)
-                ->set('visibility', $qb->createNamedParameter($values['visibility']))
+            $qb->update($unprefixedTable)
+                ->set('visibility',         $qb->createNamedParameter($values['visibility']))
                 ->set('publication_status', $qb->createNamedParameter($values['publication_status']))
                 ->where($qb->expr()->eq('access', $qb->createNamedParameter($access)));
-
-            $count = $qb->executeStatement();
-            if ($count > 0) {
-                $this->log("    • $access → visibility: {$values['visibility']}, publication_status: {$values['publication_status']} ($count records)");
-                $totalUpdated += $count;
-            }
+            $totalUpdated += $qb->executeStatement();
         }
 
+        // NULL / '' → safest default
         $qb = $this->connection->getQueryBuilder();
-        $qb->update($tableName)
-            ->set('visibility', $qb->createNamedParameter('private'))
+        $qb->update($unprefixedTable)
+            ->set('visibility',         $qb->createNamedParameter('private'))
             ->set('publication_status', $qb->createNamedParameter('draft'))
             ->where($qb->expr()->isNull('access'))
             ->orWhere($qb->expr()->eq('access', $qb->createNamedParameter('')));
+        $totalUpdated += $qb->executeStatement();
 
-        $count = $qb->executeStatement();
-        if ($count > 0) {
-            $this->log("    • NULL/empty → visibility: private, publication_status: draft ($count records)");
-            $totalUpdated += $count;
-        }
-
-        $this->log("    ✓ Converted $totalUpdated records");
-    }
-
-    /**
-     * Drop obsolete columns after data conversion.
-     * - `access`    : replaced by (visibility, publication_status) on inquiries/group/option
-     * - `owned_group`: removed from inquiry-group and option
-     */
-    private function dropObsoleteColumns(): void
-    {
-        $this->log('Dropping obsolete columns (access, owned_group)...');
-
-        // inquiries: drop access (owned_group is still used there)
-        $this->dropColumnIfExists(self::S_INQUIRIES, 'access');
-
-        // inquiry groups: drop access AND owned_group
-        $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'access');
-        $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'owned_group');
-
-        // options: drop access AND owned_group
-        $this->dropColumnIfExists(self::S_OPTIONS, 'access');
-        $this->dropColumnIfExists(self::S_OPTIONS, 'owned_group');
-
-        $this->log('  ✓ Obsolete columns dropped');
-    }
-
-    /**
-     * Verify that the `access` column has actually been removed from every
-     * table where it used to exist. Logs a warning if it's still present.
-     */
-    private function verifyAccessColumnDropped(): void
-    {
-        $this->log('Verifying access column removal...');
-
-        $tables = [
-            self::S_INQUIRIES,
-            self::S_INQUIRIES_GROUP,
-            self::S_OPTIONS,
-        ];
-
-        foreach ($tables as $tableName) {
-            if ($this->columnExists($tableName, 'access')) {
-                $this->log("  ⚠️ WARNING: 'access' column still exists in $tableName");
-            } else {
-                $this->log("  ✓ 'access' column removed from $tableName");
-            }
-        }
-    }
-
-    private function dropColumnIfExists(string $tableName, string $columnName): void
-    {
-        try {
-            if ($this->isSQLite) {
-                $this->log("    ⚠️ SQLite: Cannot drop column $columnName from $tableName (not supported)");
-                return;
-            }
-
-            $schema = $this->connection->createSchema();
-            if (!$schema->hasTable($tableName)) {
-                return;
-            }
-
-            $table = $schema->getTable($tableName);
-            if (!$table->hasColumn($columnName)) {
-                return;
-            }
-
-            // Safety: explicitly drop any index that references this column
-            // (some DBs refuse ALTER TABLE ... DROP COLUMN when an index depends
-            //  on it; others silently drop the index, but let's be explicit).
-            foreach ($table->getIndexes() as $index) {
-                if (in_array($columnName, $index->getColumns(), true)) {
-                    try {
-                        $this->connection->executeStatement(
-                            "DROP INDEX " . $this->quoteIdentifier($index->getName()) .
-                            " ON " . $this->quoteIdentifier($tableName)
-                        );
-                        $this->log("    • dropped dependent index {$index->getName()}");
-                    } catch (\Exception $e) {
-                        // MySQL uses DROP INDEX ... ON, PostgreSQL uses DROP INDEX ...
-                        try {
-                            $this->connection->executeStatement(
-                                "DROP INDEX " . $this->quoteIdentifier($index->getName())
-                            );
-                            $this->log("    • dropped dependent index {$index->getName()}");
-                        } catch (\Exception $e2) {
-                            // ignore — column drop may still work
-                        }
-                    }
-                }
-            }
-
-            $sql = "ALTER TABLE " . $this->quoteIdentifier($tableName) .
-                   " DROP COLUMN " . $this->quoteIdentifier($columnName);
-
-            $this->connection->executeStatement($sql);
-            $this->log("    ✓ Dropped $columnName from $tableName");
-        } catch (\Exception $e) {
-            $this->log("    ⚠️ Could not drop $columnName from $tableName: " . $e->getMessage());
-        }
+        $this->log("  • {$unprefixedTable}: {$totalUpdated} rows converted");
     }
 
     // ====================================================================
-    // POST-SCHEMA: Indices and Foreign Keys
+    // DROP OBSOLETE COLUMNS
+    // ====================================================================
+
+    private function dropObsoleteColumns(): void
+    {
+        $this->log('Dropping obsolete columns');
+
+        // inquiries: drop access only (owned_group stays)
+        $this->dropColumnIfExists(self::S_INQUIRIES, 'access');
+
+        // inquiry groups: drop access + owned_group
+        $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'access');
+        $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'owned_group');
+
+        // options: drop access + owned_group
+        $this->dropColumnIfExists(self::S_OPTIONS, 'access');
+        $this->dropColumnIfExists(self::S_OPTIONS, 'owned_group');
+
+        $this->log('  ✓ obsolete columns processed');
+    }
+
+private function dropColumnIfExists(string $unprefixedTable, string $columnName): void
+{
+    if ($this->isSQLite) {
+        $this->log("    ⚠️ SQLite: cannot drop {$columnName} from {$unprefixedTable}; skipped");
+        return;
+    }
+
+    $realTable = $this->prefixed($unprefixedTable);
+
+    // Existence check via raw SQL — bypasses Doctrine's in-memory schema cache.
+    if (!$this->rawColumnExists($realTable, $columnName)) {
+        $this->log("    - {$unprefixedTable}.{$columnName} already absent");
+        return;
+    }
+
+    // 1. Drop any index that references the column (raw SQL, no cache).
+    foreach ($this->rawIndexesOnColumn($realTable, $columnName) as $idxName) {
+        $idxQuoted = $this->quoteIdentifier($idxName);
+        if ($this->isMySQL) {
+            $this->connection->executeStatement(
+                "DROP INDEX {$idxQuoted} ON " . $this->quoteIdentifier($realTable)
+            );
+        } else {
+            $this->connection->executeStatement("DROP INDEX {$idxQuoted}");
+        }
+        $this->log("    • dropped dependent index {$idxName}");
+    }
+
+    // 2. Drop any FK that references the column (raw SQL, no cache).
+    foreach ($this->rawForeignKeysOnColumn($realTable, $columnName) as $fkName) {
+        $fkQuoted = $this->quoteIdentifier($fkName);
+        if ($this->isMySQL) {
+            $this->connection->executeStatement(
+                "ALTER TABLE " . $this->quoteIdentifier($realTable) .
+                " DROP FOREIGN KEY {$fkQuoted}"
+            );
+        } else {
+            $this->connection->executeStatement(
+                "ALTER TABLE " . $this->quoteIdentifier($realTable) .
+                " DROP CONSTRAINT {$fkQuoted}"
+            );
+        }
+        $this->log("    • dropped dependent FK {$fkName}");
+    }
+
+    // 3. Drop the column.
+    $this->connection->executeStatement(
+        "ALTER TABLE " . $this->quoteIdentifier($realTable) .
+        " DROP COLUMN " . $this->quoteIdentifier($columnName)
+    );
+    $this->log("    ✓ dropped {$unprefixedTable}.{$columnName}");
+}
+
+    private function verifyAccessColumnDropped(): void
+    {
+        $stillPresent = [];
+        foreach ([self::S_INQUIRIES, self::S_INQUIRIES_GROUP, self::S_OPTIONS] as $t) {
+            if ($this->columnExists($t, 'access')) {
+                $stillPresent[] = $t;
+            }
+        }
+        if (!empty($stillPresent)) {
+            throw new \RuntimeException(
+                'access column still present in: ' . implode(', ', $stillPresent)
+            );
+        }
+        $this->log('  ✓ access removed everywhere');
+    }
+
+    private function verifyOwnedGroupDropped(): void
+    {
+        $stillPresent = [];
+        foreach ([self::S_INQUIRIES_GROUP, self::S_OPTIONS] as $t) {
+            if ($this->columnExists($t, 'owned_group')) {
+                $stillPresent[] = $t;
+            }
+        }
+        if (!empty($stillPresent)) {
+            throw new \RuntimeException(
+                'owned_group column still present in: ' . implode(', ', $stillPresent)
+            );
+        }
+        $this->log('  ✓ owned_group removed from groups and options');
+    }
+
+    // ====================================================================
+    // INDICES
+    // Only for columns/tables that actually exist per the spec:
+    //   inquiries:   + visibility, + publication_status  (new)
+    //   groups:      + visibility, + publication_status  (new)
+    //   comments:    + parent_id                          (new)
+    //   inq_status:  + family_type                        (new)
+    //   options:     NO new columns → no new indices
     // ====================================================================
 
     private function addIndices(): void
     {
-        $this->log('Adding indices...');
+        $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_visibility_idx', ['visibility']);
+        $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_pubstatus_idx',  ['publication_status']);
+        $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_visibility_idx',   ['visibility']);
+        $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_pubstatus_idx',    ['publication_status']);
 
-        // Group relations indices
-        $this->addIndexIfNotExists(self::S_GROUP_RELATIONS, 'gr_target_idx', ['target_type', 'target_id']);
-        $this->addIndexIfNotExists(self::S_GROUP_RELATIONS, 'gr_relation_idx', ['relation_type']);
-        $this->addIndexIfNotExists(self::S_GROUP_RELATIONS, 'gr_group_idx', ['group_id']);
+        $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_idx',     ['parent_id']);
+        $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_ts_idx',  ['parent_id', 'timestamp']);
 
-        // User relations indices
-        $this->addIndexIfNotExists(self::S_USER_RELATIONS, 'ur_target_idx', ['target_type', 'target_id']);
-        $this->addIndexIfNotExists(self::S_USER_RELATIONS, 'ur_relation_idx', ['relation_type']);
-        $this->addIndexIfNotExists(self::S_USER_RELATIONS, 'ur_user_idx', ['user_id']);
+        $this->addIndexIfNotExists(self::S_INQ_STATUS,      'status_family_idx',      ['family_type']);
 
-        // Participation indices
-        $this->addIndexIfNotExists(self::S_PARTICIPATION, 'participation_created_idx', ['created_at']);
-        $this->addIndexIfNotExists(self::S_PARTICIPATION, 'participation_policy_idx', ['policy_type']);
-
-        // Lottery run indices
-        $this->addIndexIfNotExists(self::S_LOTTERY_RUN, 'run_status_idx', ['status']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_RUN, 'run_created_idx', ['created_at']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_RUN, 'run_completed_idx', ['completed_at']);
-
-        // Lottery selection indices
-        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION, 'selection_rank_idx', ['rank']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION, 'selection_expires_idx', ['expires_at']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION, 'selection_role_idx', ['role']);
-
-        // Inquiry indices
-        $this->addIndexIfNotExists(self::S_INQUIRIES, 'inquiry_visibility_idx', ['visibility']);
-        $this->addIndexIfNotExists(self::S_INQUIRIES, 'inquiry_publication_status_idx', ['publication_status']);
-
-        // Inquiry group indices
-        $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_visibility_idx', ['visibility']);
-        $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_publication_status_idx', ['publication_status']);
-
-        // Option indices
-        $this->addIndexIfNotExists(self::S_OPTIONS, 'option_visibility_idx', ['visibility']);
-        $this->addIndexIfNotExists(self::S_OPTIONS, 'option_publication_status_idx', ['publication_status']);
-
-        // NEW: comment parent index (for threaded replies)
-        $this->addIndexIfNotExists(self::S_COMMENTS, 'comment_parent_idx', ['parent_id']);
-        $this->addIndexIfNotExists(self::S_COMMENTS, 'comment_parent_timestamp_idx', ['parent_id', 'timestamp']);
-
-        // NEW: status family_type index
-        $this->addIndexIfNotExists(self::S_INQ_STATUS, 'status_family_idx', ['family_type']);
-
-        $this->log('  ✓ Indices added');
+        // New tables
+        $this->addIndexIfNotExists(self::S_PARTICIPATION,      'participation_created_idx',   ['created_at']);
+        $this->addIndexIfNotExists(self::S_PARTICIPATION,      'participation_policy_idx',    ['policy_type']);
+        $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_status_idx',              ['status']);
+        $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_created_idx',             ['created_at']);
+        $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_completed_idx',           ['completed_at']);
+        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_rank_idx',          ['rank']);
+        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_expires_idx',       ['expires_at']);
+        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_role_idx',          ['role']);
     }
 
-    private function addIndexIfNotExists(string $table, string $indexName, array $columns): void
+    private function addIndexIfNotExists(string $unprefixedTable, string $indexName, array $columns): void
     {
         try {
-            $schema = $this->connection->createSchema();
-            if (!$schema->hasTable($table)) {
+            if (!$this->connection->tableExists($unprefixedTable)) {
                 return;
             }
-            $tableObj = $schema->getTable($table);
-            if ($tableObj->hasIndex($indexName)) {
+            $realTable = $this->prefixed($unprefixedTable);
+
+            $schema = $this->connection->createSchema();
+            if ($schema->hasTable($realTable) && $schema->getTable($realTable)->hasIndex($indexName)) {
                 return;
             }
 
             $colList = implode(', ', array_map([$this, 'quoteIdentifier'], $columns));
-            $sql = "CREATE INDEX " . $this->quoteIdentifier($indexName) .
-                    " ON " . $this->quoteIdentifier($table) . " (" . $colList . ")";
-            $this->connection->executeStatement($sql);
-            $this->log("  + " . $indexName);
-        } catch (\Exception $e) {
-            $this->log("  ⚠️ Could not create index " . $indexName . ": " . $e->getMessage());
+            $this->connection->executeStatement(
+                "CREATE INDEX " . $this->quoteIdentifier($indexName) .
+                " ON " . $this->quoteIdentifier($realTable) .
+                " (" . $colList . ")"
+            );
+            $this->log("  + index {$indexName} on {$unprefixedTable}");
+        } catch (\Throwable $e) {
+            $this->log("  ⚠️ index {$indexName}: " . $e->getMessage());
         }
     }
+
+    // ====================================================================
+    // FOREIGN KEYS
+    // ====================================================================
 
     private function addForeignKeys(): void
     {
-        $this->log('Adding foreign keys...');
-
         if ($this->isSQLite) {
-            $this->log('  ⚠️ SQLite: Foreign keys skipped (not supported in migrations)');
+            $this->log('  SQLite: FKs skipped');
             return;
         }
 
+        $this->addFkIfNotExists(self::S_LOTTERY_RUN,       'participation_id', self::S_PARTICIPATION, 'fk_run_participation',       'CASCADE');
+        $this->addFkIfNotExists(self::S_LOTTERY_SELECTION, 'participation_id', self::S_PARTICIPATION, 'fk_selection_participation', 'CASCADE');
+        $this->addFkIfNotExists(self::S_LOTTERY_SELECTION, 'run_id',           self::S_LOTTERY_RUN,   'fk_selection_run',           'CASCADE');
+        $this->addFkIfNotExists(self::S_COMMENTS,          'parent_id',        self::S_COMMENTS,      'fk_comment_parent',          'SET NULL');
+    }
+
+    private function addFkIfNotExists(
+        string $childTable, string $column,
+        string $parentTable, string $fkName, string $onDelete
+    ): void {
         try {
+            if (!$this->connection->tableExists($childTable)) {
+                return;
+            }
+            if (!$this->connection->tableExists($parentTable)) {
+                return;
+            }
+
+            $realChild  = $this->prefixed($childTable);
+            $realParent = $this->prefixed($parentTable);
+
             $schema = $this->connection->createSchema();
-
-            // FK: lottery_run → participation
-            if ($schema->hasTable(self::S_LOTTERY_RUN) && $schema->hasTable(self::S_PARTICIPATION)) {
-                $runTable = $schema->getTable(self::S_LOTTERY_RUN);
-                if (!$this->hasForeignKey($runTable, 'fk_run_participation')) {
-                    $this->connection->executeStatement(
-                        "ALTER TABLE " . $this->quoteIdentifier(self::S_LOTTERY_RUN) .
-                        " ADD CONSTRAINT " . $this->quoteIdentifier('fk_run_participation') .
-                        " FOREIGN KEY (" . $this->quoteIdentifier('participation_id') . ")" .
-                        " REFERENCES " . $this->quoteIdentifier(self::S_PARTICIPATION) . " (" . $this->quoteIdentifier('id') . ")" .
-                        " ON DELETE CASCADE"
-                    );
-                    $this->log("  + fk_run_participation (CASCADE)");
+            if ($schema->hasTable($realChild)) {
+                foreach ($schema->getTable($realChild)->getForeignKeys() as $fk) {
+                    if ($fk->getName() === $fkName) {
+                        return;
+                    }
                 }
             }
 
-            // FK: lottery_selection → participation
-            if ($schema->hasTable(self::S_LOTTERY_SELECTION) && $schema->hasTable(self::S_PARTICIPATION)) {
-                $selectionTable = $schema->getTable(self::S_LOTTERY_SELECTION);
-                if (!$this->hasForeignKey($selectionTable, 'fk_selection_participation')) {
-                    $this->connection->executeStatement(
-                        "ALTER TABLE " . $this->quoteIdentifier(self::S_LOTTERY_SELECTION) .
-                        " ADD CONSTRAINT " . $this->quoteIdentifier('fk_selection_participation') .
-                        " FOREIGN KEY (" . $this->quoteIdentifier('participation_id') . ")" .
-                        " REFERENCES " . $this->quoteIdentifier(self::S_PARTICIPATION) . " (" . $this->quoteIdentifier('id') . ")" .
-                        " ON DELETE CASCADE"
-                    );
-                    $this->log("  + fk_selection_participation (CASCADE)");
-                }
-            }
-
-            // FK: lottery_selection → lottery_run
-            if ($schema->hasTable(self::S_LOTTERY_SELECTION) && $schema->hasTable(self::S_LOTTERY_RUN)) {
-                $selectionTable = $schema->getTable(self::S_LOTTERY_SELECTION);
-                if (!$this->hasForeignKey($selectionTable, 'fk_selection_run')) {
-                    $this->connection->executeStatement(
-                        "ALTER TABLE " . $this->quoteIdentifier(self::S_LOTTERY_SELECTION) .
-                        " ADD CONSTRAINT " . $this->quoteIdentifier('fk_selection_run') .
-                        " FOREIGN KEY (" . $this->quoteIdentifier('run_id') . ")" .
-                        " REFERENCES " . $this->quoteIdentifier(self::S_LOTTERY_RUN) . " (" . $this->quoteIdentifier('id') . ")" .
-                        " ON DELETE CASCADE"
-                    );
-                    $this->log("  + fk_selection_run (CASCADE)");
-                }
-            }
-
-            // NEW: FK: comments.parent_id → comments.id (self-referencing, SET NULL)
-            if ($schema->hasTable(self::S_COMMENTS)) {
-                $commentsTable = $schema->getTable(self::S_COMMENTS);
-                if ($commentsTable->hasColumn('parent_id')
-                    && !$this->hasForeignKey($commentsTable, 'fk_comment_parent')) {
-                    $this->connection->executeStatement(
-                        "ALTER TABLE " . $this->quoteIdentifier(self::S_COMMENTS) .
-                        " ADD CONSTRAINT " . $this->quoteIdentifier('fk_comment_parent') .
-                        " FOREIGN KEY (" . $this->quoteIdentifier('parent_id') . ")" .
-                        " REFERENCES " . $this->quoteIdentifier(self::S_COMMENTS) . " (" . $this->quoteIdentifier('id') . ")" .
-                        " ON DELETE SET NULL"
-                    );
-                    $this->log("  + fk_comment_parent (SET NULL)");
-                }
-            }
-
-            $this->log('  ✓ Foreign keys added');
-        } catch (\Exception $e) {
-            $this->log('  ⚠️ Foreign keys error: ' . $e->getMessage());
+            $this->connection->executeStatement(
+                "ALTER TABLE " . $this->quoteIdentifier($realChild) .
+                " ADD CONSTRAINT " . $this->quoteIdentifier($fkName) .
+                " FOREIGN KEY (" . $this->quoteIdentifier($column) . ")" .
+                " REFERENCES " . $this->quoteIdentifier($realParent) . " (" . $this->quoteIdentifier('id') . ")" .
+                " ON DELETE {$onDelete}"
+            );
+            $this->log("  + FK {$fkName}");
+        } catch (\Throwable $e) {
+            $this->log("  ⚠️ FK {$fkName}: " . $e->getMessage());
         }
     }
 
-    private function hasForeignKey($table, string $fkName): bool
-    {
-        foreach ($table->getForeignKeys() as $fk) {
-            if ($fk->getName() === $fkName) {
-                return true;
-            }
-        }
+    // ====================================================================
+    // PREFIX-AWARE HELPERS
+    // ====================================================================
+
+    /**
+ * Column existence via information_schema — never uses Doctrine's cache.
+ */
+private function rawColumnExists(string $realTable, string $column): bool
+{
+    try {
+        if ($this->isMySQL) {
+            $sql = "SELECT 1 FROM information_schema.columns
+                    WHERE table_schema = DATABASE()
+                      AND table_name   = ?
+                      AND column_name  = ?";
+            return (bool)$this->connection->executeQuery($sql, [$realTable, $column])->fetchOne();
+	}
+	if ($this->isPostgreSQL) {
+    $sql = "SELECT 1
+            FROM information_schema.columns
+            WHERE table_schema = current_schema()
+              AND table_name = ?
+              AND column_name = ?";
+
+    return (bool)$this->connection
+        ->executeQuery($sql, [$realTable, $column])
+        ->fetchOne();
+}
+        // SQLite fallback (shouldn't be reached because we skip SQLite earlier)
+        $sql = "SELECT 1 FROM pragma_table_info(?) WHERE name = ?";
+        return (bool)$this->connection->executeQuery($sql, [$realTable, $column])->fetchOne();
+    } catch (\Throwable $e) {
         return false;
     }
+}
 
-    // ====================================================================
-    // HELPERS
-    // ====================================================================
-
-    private function columnExists(string $tableName, string $columnName): bool
-    {
-        try {
-            $schema = $this->connection->createSchema();
-            if (!$schema->hasTable($tableName)) {
-                return false;
+/**
+ * Names of indexes on $realTable that reference $column.
+ * @return string[]
+ */
+private function rawIndexesOnColumn(string $realTable, string $column): array
+{
+    $names = [];
+    try {
+        if ($this->isMySQL) {
+            $sql = "SELECT DISTINCT index_name
+                    FROM information_schema.statistics
+                    WHERE table_schema = DATABASE()
+                      AND table_name   = ?
+                      AND column_name  = ?
+                      AND index_name  <> 'PRIMARY'";
+            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+            while ($row = $res->fetch()) {
+                $names[] = $row['index_name'];
             }
-            $table = $schema->getTable($tableName);
-            return $table->hasColumn($columnName);
-        } catch (\Exception $e) {
-            return false;
+        } elseif ($this->isPostgreSQL) {
+            $sql = "SELECT i.relname AS index_name
+                    FROM pg_index ix
+                    JOIN pg_class i ON i.oid = ix.indexrelid
+                    JOIN pg_class t ON t.oid = ix.indrelid
+                    JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
+                    WHERE t.relname = ? AND a.attname = ?";
+            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+            while ($row = $res->fetch()) {
+                $names[] = $row['index_name'];
+            }
+        }
+    } catch (\Throwable $e) {
+        // ignore
+    }
+    return $names;
+}
+
+/**
+ * Names of foreign keys on $realTable that reference $column.
+ * @return string[]
+ */
+private function rawForeignKeysOnColumn(string $realTable, string $column): array
+{
+    $names = [];
+    try {
+        if ($this->isMySQL) {
+            $sql = "SELECT constraint_name
+                    FROM information_schema.key_column_usage
+                    WHERE table_schema    = DATABASE()
+                      AND table_name      = ?
+                      AND column_name     = ?
+                      AND referenced_table_name IS NOT NULL";
+            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+            while ($row = $res->fetch()) {
+                $names[] = $row['constraint_name'];
+            }
+        } elseif ($this->isPostgreSQL) {
+            $sql = "SELECT con.conname AS constraint_name
+                    FROM pg_constraint con
+                    JOIN pg_class rel ON rel.oid = con.conrelid
+                    JOIN pg_attribute a ON a.attrelid = rel.oid AND a.attnum = ANY(con.conkey)
+                    WHERE con.contype = 'f'
+                      AND rel.relname = ?
+                      AND a.attname   = ?";
+            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+            while ($row = $res->fetch()) {
+                $names[] = $row['constraint_name'];
+            }
+        }
+    } catch (\Throwable $e) {
+        // ignore
+    }
+    return $names;
+}
+
+private function prefixed(string $unprefixed): string
+{
+    foreach ($this->connection->createSchema()->getTables() as $table) {
+        $name = $table->getName();
+
+        if ($name === $unprefixed || str_ends_with($name, '_' . $unprefixed)) {
+            return $name;
         }
     }
+
+    return $unprefixed;
+}
+
+private function columnExists(string $unprefixedTable, string $column): bool
+{
+    try {
+        $real = $this->prefixed($unprefixedTable);
+        return $this->rawColumnExists($real, $column);
+    } catch (\Throwable $e) {
+        return false;
+    }
+}
 
     private function quoteIdentifier(string $identifier): string
     {
@@ -840,7 +783,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
 
     private function log(string $msg): void
     {
-        if ($this->output) {
+        if ($this->output !== null) {
             $this->output->info('Agora 1.8.0 - ' . $msg);
         }
     }

@@ -8,7 +8,7 @@ import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { Option } from '../../stores/options.ts'
 import { Support } from '../../stores/supports.ts'
 import { Share } from '../../stores/shares.ts'
-import { ApiEmailAdressList, Comment } from '../../Types/index.ts'
+import { ApiEmailAdressList, Comment, User } from '../../Types/index.ts'
 import { InquiryGroup } from '../../stores/inquiryGroups.types.ts'
 
 export type Confirmations = {
@@ -38,13 +38,16 @@ const inquiries = {
   },
 
   getChildInquiryIds(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-    return httpInstance.request({
-      method: 'GET',
-      url: `inquiry/${inquiryId}/childs`,
-      params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getInquiry.name].handleRequestCancellation().token,
-    })
-  },
+  return httpInstance.request({
+    method: 'GET',
+    url: `inquiry/${inquiryId}/childs`,
+    params: { time: +new Date() },
+    cancelToken:
+      cancelTokenHandlerObject[this.getChildInquiryIds.name]
+        .handleRequestCancellation().token,
+  })
+},
+
 
   getInquiry(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
@@ -90,15 +93,15 @@ const inquiries = {
     })
   },
 
-  updateAccess(
+  updateVisibility(
     inquiryId: number,
-    inquiryAccess: string
+    inquiryVisibility: string
   ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
       method: 'PUT',
-      url: `inquiry/updateaccess/${inquiryId}/${inquiryAccess}`,
+      url: `inquiry/updatevisibility/${inquiryId}/${inquiryVisibility}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateAccess.name].handleRequestCancellation()
+        cancelTokenHandlerObject[this.updateVisibility.name].handleRequestCancellation()
           .token,
     })
   },
@@ -148,24 +151,30 @@ const inquiries = {
   })
 },
 
+addInquiry(dataInquiry: {
+  type: string
+  title: string
+  family: string
+  owner: User | string
+  visibility: VisibilityType
+  ownedGroup?: string
+  configuration?: InquiryConfiguration
+  parentId?: number
+  locationId?: number
+  categoryId?: number
+  description?: string
+}): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+   console.log(" VISIIBILIT YYYYYY ",dataInquiry.visibility)
+  return httpInstance.request({
+    method: 'POST',
+    url: 'inquiry/add',
+    data: dataInquiry,
+    cancelToken:
+      cancelTokenHandlerObject[this.addInquiry.name]
+        .handleRequestCancellation().token,
+  })
+},
 
-  addInquiry(dataInquiry: {
-    type: string
-    title: string
-    family: string
-    owner: string
-    access: string
-    ownedGroup: string
-    configuration?: InquiryConfiguration
-    parentId?: number
-  }): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-    return httpInstance.request({
-      method: 'POST',
-      url: 'inquiry/add',
-      data: dataInquiry,
-      cancelToken: cancelTokenHandlerObject[this.addInquiry.name].handleRequestCancellation().token,
-    })
-  },
 
   updateInquiry(
     inquiryId: number,
@@ -302,23 +311,25 @@ const inquiries = {
     })
   },
 
-  getCategories(): Promise<AxiosResponse<{ categories: Category[] }>> {
-    return httpInstance.request({
-      method: 'GET',
-      url: `inquiry/${inquiryId}/categories`,
-      cancelToken:
-        cancelTokenHandlerObject[this.getCategories.name].handleRequestCancellation().token,
-    })
-  },
+getCategories(inquiryId: number): Promise<AxiosResponse<{ categories: Category[] }>> {
+  return httpInstance.request({
+    method: 'GET',
+    url: `inquiry/${inquiryId}/categories`,
+    cancelToken:
+      cancelTokenHandlerObject[this.getCategories.name]
+        .handleRequestCancellation().token,
+  })
+},
 
-  getLocations(): Promise<AxiosResponse<{ locations: Location[] }>> {
-    return httpInstance.request({
-      method: 'GET',
-      url: `inquiry/${inquiryId}/locations`,
-      cancelToken:
-        cancelTokenHandlerObject[this.getLocations.name].handleRequestCancellation().token,
-    })
-  },
+getLocations(inquiryId: number): Promise<AxiosResponse<{ locations: Location[] }>> {
+  return httpInstance.request({
+    method: 'GET',
+    url: `inquiry/${inquiryId}/locations`,
+    cancelToken:
+      cancelTokenHandlerObject[this.getLocations.name]
+        .handleRequestCancellation().token,
+  })
+},
 
 updateMiscField(inquiryId: number, updateData: { key: string, value: string }): Promise<AxiosResponse<{ miscField: string }>> {
     if (!updateData.key || updateData.key.trim() === '') {

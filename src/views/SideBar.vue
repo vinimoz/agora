@@ -99,6 +99,7 @@ function closeSideBar() {
         </NcAppSidebarTab>
         
         <NcAppSidebarTab
+                        v-if="canEdit(context) || canView(context)"
                         id="misc"
                         :order="2"
                         :name="t('agora', 'Settings')"

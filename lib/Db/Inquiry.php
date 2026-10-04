@@ -76,11 +76,11 @@ use OCP\IURLGenerator;
  */
 class Inquiry extends EntityWithUser implements JsonSerializable
 {
-    public const TABLE = 'agora_inquiries';
-    
+	public const TABLE = 'agora_inquiries';
+
 
 	// Visibility types
-    	public const VISIBILITY_INVITATION = 'invitation';
+	public const VISIBILITY_INVITATION = 'invitation';
 	public const VISIBILITY_PRIVATE = 'private';
 	public const VISIBILITY_EVERYONE = 'everyone';
 	public const VISIBILITY_GROUPS = 'groups';
@@ -93,6 +93,12 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	public const PUBLICATION_STATUS_PUBLISHED = 'published';
 	public const PUBLICATION_STATUS_ARCHIVED = 'archived';
 	public const PUBLICATION_STATUS_DELETED = 'deleted';
+	
+	// ModerationStatus types
+	public const MODERATION_STATUS_DRAFT = 'draft';
+	public const MODERATION_STATUS_PENDING = 'pending';
+	public const MODERATION_STATUS_PUBLISHED = 'published';
+	public const MODERATION_STATUS_REJECTED = 'rejected';
 
 
 	// Show results types
@@ -358,7 +364,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		$decoded = json_decode($this->supportResult, true);
 		return is_array($decoded) ? $decoded : [];
 	}
-		/**
+	/**
 	 * Support results without those of engines hidden until close
 	 */
 	private function getVisibleSupportResult(): ?array
@@ -936,38 +942,38 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			|| $this->userSession->getCurrentUser()->getIsAdmin();
 	}
 
-private function getAllowVisibilityInquiry(): bool
-{
-    if ($this->getAllowEditInquiry()) {
-        return true;
-    }
+	private function getAllowVisibilityInquiry(): bool
+	{
+		if ($this->getAllowEditInquiry()) {
+			return true;
+		}
 
-    if ($this->getDeleted()) {
-        return false;
-    }
+		if ($this->getDeleted()) {
+			return false;
+		}
 
 
-    if ($this->getVisibility() === self::VISIBILITY_GROUPS) {
-        $ownedGroup = $this->getOwnedGroup();
+		if ($this->getVisibility() === self::VISIBILITY_GROUPS) {
+			$ownedGroup = $this->getOwnedGroup();
 
-        // Group-scoped: decide here and return, do not fall through.
-        if ($ownedGroup !== '' && $ownedGroup !== null) {
-            $user = $this->userSession->getCurrentUser();
+			// Group-scoped: decide here and return, do not fall through.
+			if ($ownedGroup !== '' && $ownedGroup !== null) {
+				$user = $this->userSession->getCurrentUser();
 
-            $isOwner = $this->getOwner() === $user->getId();
-            $isInGroup = in_array($ownedGroup, $user->getGroups(), true);
+				$isOwner = $this->getOwner() === $user->getId();
+				$isInGroup = in_array($ownedGroup, $user->getGroups(), true);
 
-            return $user->getIsAdmin() || $isOwner || $isInGroup;
-        }
-    }
+				return $user->getIsAdmin() || $isOwner || $isInGroup;
+			}
+		}
 
-    if ($this->getIsOpenInquiry()) {
-        return true;
-    }
+		if ($this->getIsOpenInquiry()) {
+			return true;
+		}
 
-    $share = $this->userSession->getShare();
-    return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
-}
+		$share = $this->userSession->getShare();
+		return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
+	}
 
 	private function getAllowDeleteInquiry(): bool
 	{
@@ -1100,14 +1106,14 @@ private function getAllowVisibilityInquiry(): bool
 	}
 
 	public function getVisibilityUsers(): array
-{
-    return $this->visibilityUsers;
-}
+	{
+		return $this->visibilityUsers;
+	}
 
-public function setVisibilityUsers(array $visibilityUsers): void
-{
-    $this->visibilityUsers = $visibilityUsers;
-}
+	public function setVisibilityUsers(array $visibilityUsers): void
+	{
+		$this->visibilityUsers = $visibilityUsers;
+	}
 
 
 	/**
@@ -1162,37 +1168,37 @@ public function setVisibilityUsers(array $visibilityUsers): void
 	}
 
 
-/**
- * Check if a specific group has a relation to this inquiry
- *
- * @param string $groupId
- * @param string $relationType
- * @return bool
- */
-public function hasGroupRelation(string $groupId, string $relationType = 'visibility'): bool
-{
-    if ($relationType === 'visibility') {
-        return in_array($groupId, $this->visibilityGroups ?? [], true);
-    }
-    return false;
-}
+	/**
+	 * Check if a specific group has a relation to this inquiry
+	 *
+	 * @param string $groupId
+	 * @param string $relationType
+	 * @return bool
+	 */
+	public function hasGroupRelation(string $groupId, string $relationType = 'visibility'): bool
+	{
+		if ($relationType === 'visibility') {
+			return in_array($groupId, $this->visibilityGroups ?? [], true);
+		}
+		return false;
+	}
 
 
-/**
- * Get groups for a specific relation type
- *
- * @param string $relationType
- * @return string[]
- */
-public function getGroupsForRelation(string $relationType): array
-{
-    if ($relationType === 'visibility') {
-        return $this->getVisibilityGroups();
-    }
-    // For other relation types, we'd need to fetch them from the mapper
-    // This is just a placeholder - actual implementation would use GroupRelationMapper
-    return [];
-}
+	/**
+	 * Get groups for a specific relation type
+	 *
+	 * @param string $relationType
+	 * @return string[]
+	 */
+	public function getGroupsForRelation(string $relationType): array
+	{
+		if ($relationType === 'visibility') {
+			return $this->getVisibilityGroups();
+		}
+		// For other relation types, we'd need to fetch them from the mapper
+		// This is just a placeholder - actual implementation would use GroupRelationMapper
+		return [];
+	}
 
 	// Family management
 	public function setFamily(?string $family): void

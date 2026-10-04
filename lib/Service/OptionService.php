@@ -400,7 +400,6 @@ class OptionService
         $this->option->setTitle($data['title'] ?? '');
         $this->option->setTargetId($data['targetId'] ?? 0);
         $this->option->setParentId($data['parentId'] ?? 0);
-        $this->option->setOwnedGroup($data['ownedGroup'] ?? '');
         $this->option->setCreated($timestamp);
         $this->option->setUpdated($timestamp);
         $this->option->setAllowComment($data['allowComment'] ?? 1);
@@ -408,8 +407,6 @@ class OptionService
         $this->option->setOwner($this->userSession->getCurrentUserId());
 
         // Set defaults - using visibility and publicationStatus instead of access
-        $this->option->setVisibility($data['visibility'] ?? Option::VISIBILITY_EVERYONE);
-        $this->option->setPublicationStatus($data['publicationStatus'] ?? 'draft');
         $this->option->setShowResults($data['showResults'] ?? Option::SHOW_RESULTS_ALWAYS);
         $this->option->setFamily($data['family'] ?? 'debate');
         $this->option->setOptionStatus($data['status'] ?? Option::DEFAULT_STATUS_DRAFT);
@@ -485,17 +482,6 @@ class OptionService
             $this->option->setParentId($data['parentId']);
         }
 
-        if (isset($data['ownedGroup'])) {
-            $this->option->setOwnedGroup($data['ownedGroup']);
-        }
-
-        if (isset($data['visibility'])) {
-            $this->option->setVisibility($data['visibility']);
-        }
-
-        if (isset($data['publicationStatus'])) {
-            $this->option->setPublicationStatus($data['publicationStatus']);
-        }
 
         if (isset($data['showResults'])) {
             $this->option->setShowResults($data['showResults']);
@@ -801,8 +787,6 @@ public function delete(int $optionId): Option
         $this->option->setTargetId($origin->getTargetId());
         $this->option->setParentId($origin->getParentId());
         $this->option->setOwnedGroup($origin->getOwnedGroup());
-        $this->option->setVisibility($origin->getVisibility());
-        $this->option->setPublicationStatus($origin->getPublicationStatus());
         $this->option->setShowResults($origin->getShowResults());
         $this->option->setAllowComment($origin->getAllowComment());
         $this->option->setSupportFeature($origin->getSupportFeature());
@@ -852,8 +836,6 @@ public function delete(int $optionId): Option
     public function getValidEnum(): array
     {
         return [
-            'visibility' => $this->getValidVisibility(),
-            'publicationStatus' => $this->getValidPublicationStatus(),
             'showResults' => $this->getValidShowResults(),
             'types' => $this->getValidOptionTypes()
         ];
@@ -906,32 +888,6 @@ public function delete(int $optionId): Option
         return $this->supportResultService->redactOption($option);
     }
 
-    /**
-     * Get valid values for visibility
-     */
-    private function getValidVisibility(): array
-    {
-        return [
-            Option::VISIBILITY_PRIVATE,
-            Option::VISIBILITY_EVERYONE,
-            Option::VISIBILITY_GROUPS,
-            Option::VISIBILITY_PARTICIPANTS
-        ];
-    }
-
-    /**
-     * Get valid values for publicationStatus
-     */
-    private function getValidPublicationStatus(): array
-    {
-        return [
-            Option::PUBLICATION_STATUS_DRAFT,
-            Option::PUBLICATION_STATUS_PENDING,
-            Option::PUBLICATION_STATUS_PUBLISHED,
-            Option::PUBLICATION_STATUS_ARCHIVED,
-            Option::PUBLICATION_STATUS_DELETED
-        ];
-    }
 
     /**
      * Get valid values for showResult

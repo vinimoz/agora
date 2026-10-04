@@ -39,6 +39,7 @@ class InquiryStatus extends Entity implements JsonSerializable
     public const TABLE = 'agora_inq_status';
 
     protected string $inquiryType = '';
+    protected string $familyType = '';
     protected string $statusKey = '';
     protected string $label = '';
     protected ?string $description = null;
@@ -51,6 +52,7 @@ class InquiryStatus extends Entity implements JsonSerializable
     public function __construct()
     {
         $this->addType('inquiryType', 'string');
+        $this->addType('familyType', 'string');
         $this->addType('statusKey', 'string');
         $this->addType('label', 'string');
         $this->addType('description', 'string');
@@ -69,6 +71,7 @@ class InquiryStatus extends Entity implements JsonSerializable
         return [
             'id' => $this->getId(),
             'inquiryType' => $this->getInquiryType(),
+            'familyType' => $this->getFamilyType(),
             'statusKey' => $this->getStatusKey(),
             'label' => $this->getLabel(),
             'description' => $this->getDescription(),

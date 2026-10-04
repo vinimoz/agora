@@ -71,65 +71,57 @@ class Option extends EntityWithUser implements JsonSerializable
 {
     public const TABLE = 'agora_options';
 
-    // Visibility types (inherit from inquiry)
-    public const VISIBILITY_PRIVATE = 'private';
-    public const VISIBILITY_EVERYONE = 'everyone';
-    public const VISIBILITY_GROUPS = 'groups';
-    public const VISIBILITY_USERS = 'users';
-    public const VISIBILITY_INVITATION = 'invitation';
-    public const VISIBILITY_PARTICIPANTS = 'participants';
-
     // PublicationStatus types
-    public const PUBLICATION_STATUS_DRAFT = 'draft';
-    public const PUBLICATION_STATUS_PENDING = 'pending';
+    public const PUBLICATION_STATUS_DRAFT     = 'draft';
+    public const PUBLICATION_STATUS_PENDING   = 'pending';
     public const PUBLICATION_STATUS_PUBLISHED = 'published';
-    public const PUBLICATION_STATUS_ARCHIVED = 'archived';
-    public const PUBLICATION_STATUS_DELETED = 'deleted';
+    public const PUBLICATION_STATUS_ARCHIVED  = 'archived';
+    public const PUBLICATION_STATUS_DELETED   = 'deleted';
 
     public const SHOW_RESULTS_ALWAYS = 'always';
     public const SHOW_RESULTS_CLOSED = 'closed';
-    public const SHOW_RESULTS_NEVER = 'never';
+    public const SHOW_RESULTS_NEVER  = 'never';
     public const URI_PREFIX = 'option/';
 
     // Option types
-    public const TYPE_ARGUMENT_FOR = 'argument_for';
+    public const TYPE_ARGUMENT_FOR     = 'argument_for';
     public const TYPE_ARGUMENT_AGAINST = 'argument_against';
-    public const TYPE_PROPOSAL = 'proposal';
-    public const TYPE_QUESTION = 'question';
-    public const TYPE_IDEA = 'idea';
+    public const TYPE_PROPOSAL         = 'proposal';
+    public const TYPE_QUESTION         = 'question';
+    public const TYPE_IDEA             = 'idea';
 
     // User roles (delegated from inquiry)
-    public const ROLE_USER = 'user';
-    public const ROLE_ADMIN = 'admin';
-    public const ROLE_EMAIL = 'email';
-    public const ROLE_CONTACT = 'contact';
+    public const ROLE_USER     = 'user';
+    public const ROLE_ADMIN    = 'admin';
+    public const ROLE_EMAIL    = 'email';
+    public const ROLE_CONTACT  = 'contact';
     public const ROLE_EXTERNAL = 'external';
-    public const ROLE_OWNER = 'owner';
-    public const ROLE_NONE = 'none';
+    public const ROLE_OWNER    = 'owner';
+    public const ROLE_NONE     = 'none';
 
     // Permissions
-    public const PERMISSION_OVERRIDE = 'override_permission';
-    public const PERMISSION_OPTION_VIEW = 'view';
-    public const PERMISSION_OPTION_EDIT = 'edit';
-    public const PERMISSION_OPTION_CHANGE_OWNER = 'changeOwner';
-    public const PERMISSION_OPTION_DELETE = 'delete';
-    public const PERMISSION_OPTION_ARCHIVE = 'archive';
-    public const PERMISSION_OPTION_RESULTS_VIEW = 'seeResults';
+    public const PERMISSION_OVERRIDE              = 'override_permission';
+    public const PERMISSION_OPTION_VIEW           = 'view';
+    public const PERMISSION_OPTION_EDIT           = 'edit';
+    public const PERMISSION_OPTION_CHANGE_OWNER   = 'changeOwner';
+    public const PERMISSION_OPTION_DELETE         = 'delete';
+    public const PERMISSION_OPTION_ARCHIVE        = 'archive';
+    public const PERMISSION_OPTION_RESULTS_VIEW   = 'seeResults';
     public const PERMISSION_OPTION_USERNAMES_VIEW = 'seeUserNames';
-    public const PERMISSION_OPTION_TAKEOVER = 'takeOver';
-    public const PERMISSION_OPTION_SUBSCRIBE = 'subscribe';
-    public const PERMISSION_COMMENT_ADD = 'addComment';
-    public const PERMISSION_SUPPORT_ADD = 'addSupport';
-    public const PERMISSION_COMMENT_DELETE = 'deleteComment';
-    public const PERMISSION_SUPPORT_DELETE = 'deleteSupport';
-    public const PERMISSION_OPTION_ADD = 'addOption';
-    public const PERMISSION_OPTION_CONFIRM = 'confirmOption';
-    public const PERMISSION_OPTIONS_REORDER = 'reorderOptions';
-    public const PERMISSION_SUPPORT_EDIT = 'support';
+    public const PERMISSION_OPTION_TAKEOVER       = 'takeOver';
+    public const PERMISSION_OPTION_SUBSCRIBE      = 'subscribe';
+    public const PERMISSION_COMMENT_ADD           = 'addComment';
+    public const PERMISSION_SUPPORT_ADD           = 'addSupport';
+    public const PERMISSION_COMMENT_DELETE        = 'deleteComment';
+    public const PERMISSION_SUPPORT_DELETE        = 'deleteSupport';
+    public const PERMISSION_OPTION_ADD            = 'addOption';
+    public const PERMISSION_OPTION_CONFIRM        = 'confirmOption';
+    public const PERMISSION_OPTIONS_REORDER       = 'reorderOptions';
+    public const PERMISSION_SUPPORT_EDIT          = 'support';
     public const PERMISSION_SUPPORT_FOREIGN_CHANGE = 'changeForeignSupports';
-    public const PERMISSION_SHARE_ADD = 'shareCreate';
-    public const PERMISSION_SHARE_ADD_EXTERNAL = 'shareCreateExternal';
-    public const PERMISSION_DEANONYMIZE = 'deanonymize';
+    public const PERMISSION_SHARE_ADD             = 'shareCreate';
+    public const PERMISSION_SHARE_ADD_EXTERNAL    = 'shareCreateExternal';
+    public const PERMISSION_DEANONYMIZE           = 'deanonymize';
 
     public const DEFAULT_STATUS_DRAFT = 'draft';
 
@@ -143,11 +135,9 @@ class Option extends EntityWithUser implements JsonSerializable
     protected int $targetId = 0;
     protected int $parentId = 0;
     protected string $type = 'debate';
-    protected string $publicationStatus = 'draft';
     protected string $text = '';
     protected string $title = '';
     protected string $owner = '';
-    protected string $ownedGroup = '';
     protected int $created = 0;
     protected int $updated = 0;
     protected string $showResults = 'always';
@@ -158,14 +148,10 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $supportFeature = '';
     protected string $family = 'debate';
     protected int $sortOrder = 0;
-    protected string $visibility = 'inherit';
-    	
 
-    // Visibility relations (loaded from GroupRelation/UserRelation)
-    protected ?array $visibilityGroups = [];
-    protected ?array $visibilityUsers = [];
+    // ─── REMOVED: $visibility, $visibilityGroups, $visibilityUsers ───
 
-    // Joined columns from inquiry
+    // Joined columns from inquiry (read-only; computed in joinInquiryContext)
     protected ?string $inquiryVisibility = '';
     protected ?string $inquiryPublicationStatus = '';
 
@@ -179,7 +165,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $groupShares = '';
     protected string $optionGroups = '';
     protected string $optionGroupUserShares = '';
-    
+
     // Dynamic fields
     protected ?string $supportResult = null;
     protected array $miscFields = [];
@@ -203,10 +189,8 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('title', 'string');
         $this->addType('optionStatus', 'string');
         $this->addType('supportResult', 'string');
-        $this->addType('visibility', 'string');
-        $this->addType('visibilityGroups', 'json');
-        $this->addType('visibilityUsers', 'json');
-	$this->addType('publicationStatus', 'string'); 
+
+        // ─── REMOVED: addType('visibility'|'visibilityGroups'|'visibilityUsers') ───
 
         // Joined attributes
         $this->addType('currentUserSupports', 'integer');
@@ -215,15 +199,15 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('countSupports', 'integer');
         $this->addType('hasSupported', 'boolean');
         $this->addType('supportValue', 'string');
-        
+
         // Inquiry joined fields
         $this->addType('inquiryVisibility', 'string');
         $this->addType('inquiryPublicationStatus', 'string');
 
-        $this->urlGenerator = Container::queryClass(IURLGenerator::class);
-        $this->systemSettings = Container::queryClass(SystemSettings::class);
-        $this->appSettings = Container::queryClass(AppSettings::class);
-        $this->userSession = Container::queryClass(UserSession::class);
+        $this->urlGenerator    = Container::queryClass(IURLGenerator::class);
+        $this->systemSettings  = Container::queryClass(SystemSettings::class);
+        $this->appSettings     = Container::queryClass(AppSettings::class);
+        $this->userSession     = Container::queryClass(UserSession::class);
     }
 
     // ====================================================================
@@ -234,7 +218,7 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         $this->parentInquiry = $inquiry;
         if ($inquiry !== null) {
-            $this->inquiryVisibility = $inquiry->getVisibility();
+            $this->inquiryVisibility        = $inquiry->getVisibility();
             $this->inquiryPublicationStatus = $inquiry->getPublicationStatus();
         }
     }
@@ -244,69 +228,9 @@ class Option extends EntityWithUser implements JsonSerializable
         return $this->parentInquiry;
     }
 
-    // ====================================================================
-    // VISIBILITY RELATIONS (GroupRelation/UserRelation)
-    // ====================================================================
-
-    /**
-     * Get visibility groups from relation table
-     *
-     * @return string[]
-     */
-    public function getVisibilityGroups(): array
+    public function getInquiryId(): int
     {
-        return $this->visibilityGroups ?? [];
-    }
-
-    /**
-     * Set visibility groups (from relation table)
-     *
-     * @param string[] $visibilityGroups
-     */
-    public function setVisibilityGroups(array $visibilityGroups): void
-    {
-        $this->visibilityGroups = $visibilityGroups;
-    }
-
-public function getInquiryId(): int
-{
-    return $this->getTargetId();
-}
-
-    /**
-     * Get visibility users from relation table
-     *
-     * @return string[]
-     */
-    public function getVisibilityUsers(): array
-    {
-        return $this->visibilityUsers ?? [];
-    }
-
-    /**
-     * Set visibility users (from relation table)
-     *
-     * @param string[] $visibilityUsers
-     */
-    public function setVisibilityUsers(array $visibilityUsers): void
-    {
-        $this->visibilityUsers = $visibilityUsers;
-    }
-
-    /**
-     * Check if a specific group can see this option
-     */
-    public function isVisibleToGroup(string $groupId): bool
-    {
-        return in_array($groupId, $this->visibilityGroups ?? [], true);
-    }
-
-    /**
-     * Check if a specific user can see this option
-     */
-    public function isVisibleToUser(string $userId): bool
-    {
-        return in_array($userId, $this->visibilityUsers ?? [], true);
+        return $this->getTargetId();
     }
 
     // ====================================================================
@@ -316,31 +240,26 @@ public function getInquiryId(): int
     public function jsonSerialize(): array
     {
         return [
-            'id' => $this->getId(),
-            'targetId' => $this->getTargetId(),
-            'parentId' => $this->getParentId(),
-            'type' => $this->getType(),
-            'title' => $this->getTitle(),
-            'text' => $this->getText(),
-            'owner' => $this->getUser(),
-            'ownedGroup' => $this->getOwnedGroup(),
-            'showResults' => $this->getShowResults(),
-            'status' => $this->getStatusArray(),
-            'configuration' => $this->getConfigurationArray(),
-            'family' => $this->getFamily(),
-            'sortOrder' => $this->getSortOrder(),
+            'id'             => $this->getId(),
+            'targetId'       => $this->getTargetId(),
+            'parentId'       => $this->getParentId(),
+            'type'           => $this->getType(),
+            'title'          => $this->getTitle(),
+            'text'           => $this->getText(),
+            'owner'          => $this->getUser(),
+            'showResults'    => $this->getShowResults(),
+            'status'         => $this->getStatusArray(),
+            'configuration'  => $this->getConfigurationArray(),
+            'family'         => $this->getFamily(),
+            'sortOrder'      => $this->getSortOrder(),
             'currentUserStatus' => $this->getCurrentUserStatus(),
-            'permissions' => $this->getPermissionsArray(),
-            'optionGroups' => $this->getOptionGroups(),
-            'inquiryInfo' => $this->getInquiryInfoArray(),
-            'miscFields' => $this->getMiscArray(),
-            'childs' => $this->getChildren(),
-            'supportResult' => $this->getSupportResult(),
-            'trendingScore' => $this->getTrendingScore(),
-            // Visibility relations
-            'visibility' => $this->getInquiryVisibility(),
-            'visibilityGroups' => $this->getVisibilityGroups(),
-            'visibilityUsers' => $this->getVisibilityUsers(),
+            'permissions'    => $this->getPermissionsArray(),
+            'optionGroups'   => $this->getOptionGroups(),
+            'inquiryInfo'    => $this->getInquiryInfoArray(),
+            'miscFields'     => $this->getMiscArray(),
+            'childs'         => $this->getChildren(),
+            'supportResult'  => $this->getSupportResult(),
+            'trendingScore'  => $this->getTrendingScore(),
         ];
     }
 
@@ -351,35 +270,30 @@ public function getInquiryId(): int
     public function getStatusArray(): array
     {
         return [
-            'optionStatus' => $this->getOptionStatus(),
-            'updated' => $this->getUpdated(),
-            'created' => $this->getCreated(),
-            'archivedDate' => $this->getArchived(),
-            'supportResult' => $this->getSupportResult(),
-            'countSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountSupports() : 0,
-            'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW)
-                ? $this->getCountParticipants()
-                : 0,
-            'countComments' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW)
-                ? $this->getCountComments()
-                : 0,
+            'optionStatus'      => $this->getOptionStatus(),
+            'updated'           => $this->getUpdated(),
+            'created'           => $this->getCreated(),
+            'archivedDate'      => $this->getArchived(),
+            'supportResult'     => $this->getSupportResult(),
+            'countSupports'     => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountSupports() : 0,
+            'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountParticipants() : 0,
+            'countComments'     => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountComments() : 0,
         ];
     }
 
     public function getConfigurationArray(): array
     {
         return [
-            'publicationStatus' => $this->getPublicationStatus(),
-            'allowComment' => boolval($this->getAllowComment()),
-            'supportFeature' => $this->getSupportFeature(),
+            'allowComment'      => boolval($this->getAllowComment()),
+            'supportFeature'    => $this->getSupportFeature(),
         ];
     }
 
     public function getInquiryInfoArray(): array
     {
         return [
-            'targetId' => $this->getTargetId(),
-            'inquiryVisibility' => $this->inquiryVisibility ?: '',
+            'targetId'                 => $this->getTargetId(),
+            'inquiryVisibility'        => $this->inquiryVisibility ?: '',
             'inquiryPublicationStatus' => $this->inquiryPublicationStatus ?: '',
         ];
     }
@@ -394,11 +308,11 @@ public function getInquiryId(): int
             return $this->getIsOptionOwner();
         }
 
-        $inquiry = $this->parentInquiry;
+        $inquiry        = $this->parentInquiry;
         $canViewInquiry = $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW);
         $canEditInquiry = $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT);
         $canParticipate = $inquiry->canParticipate();
-        $isOptionOwner = $this->getIsOptionOwner();
+        $isOptionOwner  = $this->getIsOptionOwner();
 
         return match ($permission) {
             self::PERMISSION_OPTION_VIEW => $canViewInquiry,
@@ -411,13 +325,13 @@ public function getInquiryId(): int
 
             self::PERMISSION_OPTION_CONFIRM => ($canEditInquiry || $isOptionOwner) && $this->getExpired(),
 
-            self::PERMISSION_COMMENT_ADD => $canViewInquiry 
-                && $canParticipate 
+            self::PERMISSION_COMMENT_ADD => $canViewInquiry
+                && $canParticipate
                 && (bool)$this->getAllowComment()
                 && $this->userSession->getIsLoggedIn(),
 
-            self::PERMISSION_SUPPORT_ADD => $canViewInquiry 
-                && $canParticipate 
+            self::PERMISSION_SUPPORT_ADD => $canViewInquiry
+                && $canParticipate
                 && $this->getSupportFeature() !== 'none'
                 && $this->userSession->getIsLoggedIn(),
 
@@ -425,21 +339,21 @@ public function getInquiryId(): int
             self::PERMISSION_SUPPORT_DELETE,
             self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $canEditInquiry || $isOptionOwner,
 
-            self::PERMISSION_OPTION_RESULTS_VIEW => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_RESULTS_VIEW),
+            self::PERMISSION_OPTION_RESULTS_VIEW   => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_RESULTS_VIEW),
             self::PERMISSION_OPTION_USERNAMES_VIEW => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_USERNAMES_VIEW),
 
             self::PERMISSION_DEANONYMIZE => $canEditInquiry || $isOptionOwner,
 
             self::PERMISSION_OPTION_TAKEOVER => $this->userSession->getCurrentUser()->getIsAdmin(),
 
-            self::PERMISSION_OPTION_ADD => $canViewInquiry 
-                && $canParticipate 
+            self::PERMISSION_OPTION_ADD => $canViewInquiry
+                && $canParticipate
                 && $this->userSession->getIsLoggedIn(),
 
-            self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
+            self::PERMISSION_SHARE_ADD          => $this->systemSettings->getShareCreateAllowed(),
             self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
 
-            self::PERMISSION_OPTION_SUBSCRIBE => $canViewInquiry 
+            self::PERMISSION_OPTION_SUBSCRIBE => $canViewInquiry
                 && $this->userSession->getCurrentUser()->getHasEmail(),
 
             self::PERMISSION_SUPPORT_EDIT => $this->getIsAllowed(self::PERMISSION_SUPPORT_ADD),
@@ -465,37 +379,37 @@ public function getInquiryId(): int
     public function getCurrentUserStatus(): array
     {
         return [
-            'isInvolved' => $this->getIsInvolved(),
+            'isInvolved'   => $this->getIsInvolved(),
             'hasSupported' => $this->hasSupported(),
             'supportValue' => $this->getSupportValue(),
-            'isLoggedIn' => $this->userSession->getIsLoggedIn(),
-            'isOwner' => $this->getIsOptionOwner(),
-            'shareToken' => $this->getShareToken(),
-            'userId' => $this->userSession->getCurrentUserId(),
-            'userRole' => $this->getUserRole(),
+            'isLoggedIn'   => $this->userSession->getIsLoggedIn(),
+            'isOwner'      => $this->getIsOptionOwner(),
+            'shareToken'   => $this->getShareToken(),
+            'userId'       => $this->userSession->getCurrentUserId(),
+            'userRole'     => $this->getUserRole(),
         ];
     }
 
     public function getPermissionsArray(): array
     {
         return [
-            'addOption' => $this->getIsAllowed(self::PERMISSION_OPTION_ADD),
-            'addShares' => $this->getIsAllowed(self::PERMISSION_SHARE_ADD),
-            'addSharesExternal' => $this->getIsAllowed(self::PERMISSION_SHARE_ADD_EXTERNAL),
-            'archive' => $this->getIsAllowed(self::PERMISSION_OPTION_ARCHIVE),
+            'addOption'             => $this->getIsAllowed(self::PERMISSION_OPTION_ADD),
+            'addShares'             => $this->getIsAllowed(self::PERMISSION_SHARE_ADD),
+            'addSharesExternal'     => $this->getIsAllowed(self::PERMISSION_SHARE_ADD_EXTERNAL),
+            'archive'               => $this->getIsAllowed(self::PERMISSION_OPTION_ARCHIVE),
             'changeForeignSupports' => $this->getIsAllowed(self::PERMISSION_SUPPORT_FOREIGN_CHANGE),
-            'changeOwner' => $this->getIsAllowed(self::PERMISSION_OPTION_CHANGE_OWNER),
-            'comment' => $this->getIsAllowed(self::PERMISSION_COMMENT_ADD),
-            'support' => $this->getIsAllowed(self::PERMISSION_SUPPORT_ADD),
-            'confirmOption' => $this->getIsAllowed(self::PERMISSION_OPTION_CONFIRM),
-            'delete' => $this->getIsAllowed(self::PERMISSION_OPTION_DELETE),
-            'edit' => $this->getIsAllowed(self::PERMISSION_OPTION_EDIT),
-            'reorderOptions' => $this->getIsAllowed(self::PERMISSION_OPTIONS_REORDER),
-            'seeResults' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW),
-            'seeUsernames' => $this->getIsAllowed(self::PERMISSION_OPTION_USERNAMES_VIEW),
-            'subscribe' => $this->getIsAllowed(self::PERMISSION_OPTION_SUBSCRIBE),
-            'takeOver' => $this->getIsAllowed(self::PERMISSION_OPTION_TAKEOVER),
-            'view' => $this->getIsAllowed(self::PERMISSION_OPTION_VIEW),
+            'changeOwner'           => $this->getIsAllowed(self::PERMISSION_OPTION_CHANGE_OWNER),
+            'comment'               => $this->getIsAllowed(self::PERMISSION_COMMENT_ADD),
+            'support'               => $this->getIsAllowed(self::PERMISSION_SUPPORT_ADD),
+            'confirmOption'         => $this->getIsAllowed(self::PERMISSION_OPTION_CONFIRM),
+            'delete'                => $this->getIsAllowed(self::PERMISSION_OPTION_DELETE),
+            'edit'                  => $this->getIsAllowed(self::PERMISSION_OPTION_EDIT),
+            'reorderOptions'        => $this->getIsAllowed(self::PERMISSION_OPTIONS_REORDER),
+            'seeResults'            => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW),
+            'seeUsernames'          => $this->getIsAllowed(self::PERMISSION_OPTION_USERNAMES_VIEW),
+            'subscribe'             => $this->getIsAllowed(self::PERMISSION_OPTION_SUBSCRIBE),
+            'takeOver'              => $this->getIsAllowed(self::PERMISSION_OPTION_TAKEOVER),
+            'view'                  => $this->getIsAllowed(self::PERMISSION_OPTION_VIEW),
         ];
     }
 
@@ -754,7 +668,6 @@ public function getInquiryId(): int
 
     public function deserializeArray(array $optionConfiguration): self
     {
-        $this->setPublicationStatus($optionConfiguration['publicationStatus'] ?? $this->getPublicationStatus());
         $this->setAllowComment($optionConfiguration['allowComment'] ?? $this->getAllowComment());
         $this->setSupportFeature($optionConfiguration['supportFeature'] ?? $this->getSupportFeature());
         $this->setShowResults($optionConfiguration['showResults'] ?? $this->getShowResults());

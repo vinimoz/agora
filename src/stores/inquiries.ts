@@ -135,7 +135,6 @@ const inquiryCategories: InquiryCategoryList = {
       inquiry.permissions.view &&
       (inquiry.configuration.visibility === 'everyone' ||
      inquiry.configuration.visibility === 'groups' ||
-     inquiry.configuration.visibility === 'invitation' ||
      inquiry.configuration.visibility === 'private'),
   },
   reject: {
@@ -184,7 +183,6 @@ const inquiryCategories: InquiryCategoryList = {
     },
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived &&
-      inquiry.permissions.view &&
       inquiry.currentUserStatus.isOwner &&
       inquiry.configuration.visibility === 'private',
   },
@@ -718,10 +716,10 @@ export const useInquiriesStore = defineStore('inquiries', {
 	    }
     },
 
-    updateInquiryAccess(inquiryId, inquiryAccess) {
+    updateInquiryVisibility(inquiryId, inquiryVisibility) {
 	    const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
 	    if (inquiry) {
-		    inquiry.inquiryAccess = inquiryAccess
+		    inquiry.inquiryVisibility = inquiryVisibility
 	    }
     },
 

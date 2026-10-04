@@ -701,9 +701,16 @@ public function findAllWithTrendingFeature(): array
 
 	public function saveVisibilityGroups(Inquiry $inquiry): void
 	{
+		$id = $inquiry->getId();
+		if ($id === null) {
+			throw new \LogicException(
+				'Cannot save visibility groups: inquiry has no ID yet. Persist the inquiry first.'
+			);
+		}
+
 		$this->groupRelationMapper->setGroupsForTarget(
 			GroupRelation::TARGET_INQUIRY,
-			$inquiry->getId(),
+			(int)$id,
 			GroupRelation::RELATION_VISIBILITY,
 			$inquiry->getVisibilityGroups()
 		);
@@ -1235,16 +1242,16 @@ public function findAllWithTrendingFeature(): array
 		return (float)$value;
 	    case 'datetime':
 		    return is_numeric($value) ? (int)$value : $value;
-	         case 'json':
-            case 'object':
-            case 'array':
-                    if (is_string($value)) {
-                            return $value;
-                    }
-                    if (is_array($value) || is_object($value)) {
-                            return json_encode($value, JSON_UNESCAPED_UNICODE);
-                    }
-                    return (string)$value;
+		 case 'json':
+	    case 'object':
+	    case 'array':
+		    if (is_string($value)) {
+			    return $value;
+		    }
+		    if (is_array($value) || is_object($value)) {
+			    return json_encode($value, JSON_UNESCAPED_UNICODE);
+		    }
+		    return (string)$value;
 
 
 	    case 'enum':
@@ -1345,18 +1352,18 @@ protected function joinTrendingScores(
 ): void {
     // Join only the inquiry-level score (option_id = 0)
     $qb->leftJoin(
-        $fromAlias,
-        TrendingScore::TABLE,
-        $joinAlias,
-        $qb->expr()->andX(
-            $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-            $qb->expr()->eq($joinAlias . '.option_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
-        )
+	$fromAlias,
+	TrendingScore::TABLE,
+	$joinAlias,
+	$qb->expr()->andX(
+	    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+	    $qb->expr()->eq($joinAlias . '.option_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
+	)
     );
 
     // Since there's only one score per inquiry (option_id=0), MAX() returns that single value
     $qb->addSelect(
-        $qb->createFunction('MAX(' . $joinAlias . '.score) AS trending_score')
+	$qb->createFunction('MAX(' . $joinAlias . '.score) AS trending_score')
     );
 }
     /**

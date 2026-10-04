@@ -41,7 +41,6 @@ import {
   canSupport,
   canComment,
   canEdit,
-  canView,
   createInquiryContext,
 } from '../../utils/permissions.ts'
 
@@ -331,18 +330,18 @@ watch(
 
 // Event subscriptions
 onMounted(async () => {
-  if (!canView) { 
+  if (inquiryStore.configuration.access === 'groups' && !inquiryStore.isCurrentUserInOwnedGroup) {
         hasAccess.value = false
   	showError("Error you cannot view this inquiry !")
 	router.push({ name: 'list', params: { type: 'relevant' } })
 	return
 }
-  
-  if (inquiryStore.coverId) { 
+
+  if (inquiryStore.coverId) {
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
    }
 
-   if (inquiriesStore.inquiries.length === 0 ) { 
+   if (inquiriesStore.inquiries.length === 0 ) {
   	inquiriesStore.setFamilyType(inquiryStore.family)
    	inquiriesStore.load()
    }
@@ -740,7 +739,7 @@ const expirationDate = computed({
                         </div>
                     </div>
 
-                    <div v-if="inquiryStore.configuration.expire" class="metadata-item">
+                    <div v-if="canEditInquiry || inquiryStore.configuration.expire" class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="InquiryGeneralIcons.Expiration" :size="18" />
                         </div>
@@ -838,10 +837,9 @@ const expirationDate = computed({
             </div>
         </div>
 
-        <OptionEditView v-if="canEditInquiry" :has-visible-families="hasVisibleFamilies"/>
+        <OptionEditView v-if="hasVisibleFamilies && inquiryStore.status.moderationStatus !== 'rejected' " :has-visible-families="hasVisibleFamilies"/>
     </div>
 </template>
-
 <style scoped lang="scss">
 :root {
     --squareux-primary: #0078d4;

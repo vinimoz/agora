@@ -75,14 +75,19 @@ class Version01070520260104120000 extends SimpleMigrationStep
     }
 
     public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
-    {
-        $this->output = $output;
+{
+    $this->output = $output;
 
-        if (!$this->connection) {
-            $this->log('ERROR: No database connection!');
-            return;
+	 if (!$this->connection) {
+        $this->log('ERROR: No database connection!');
+        return;
         }
 
+        $liveSchema = $schemaClosure();
+    if (!$liveSchema->hasTable(self::S_SUPPORTS)) {
+        $this->log('Supports table does not exist – fresh install, skipping');
+        return;
+    }
         $this->log('POST-SCHEMA: Running data migration...');
 
         try {
@@ -1029,8 +1034,10 @@ class Version01070520260104120000 extends SimpleMigrationStep
         }
     }
 
+
     private function getTableNameWithPrefix(string $table): string
     {
+	
         try {
             $schema = $this->connection->createSchema();
             

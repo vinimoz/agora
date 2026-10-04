@@ -313,7 +313,6 @@ class InquiryService
 		$this->inquiry->setParentId($dto->parentId);
 		$this->inquiry->setLocationId($dto->locationId);
 		$this->inquiry->setCategoryId($dto->categoryId);
-		$this->inquiry->setVisibility(Inquiry::VISIBILITY_PRIVATE); 
 		// Optional fields with defaults
 		$this->inquiry->setDescription($dto->description ?? '');
 		if ($this->appSettings->getAutoExpireEnabled()) {
@@ -322,11 +321,49 @@ class InquiryService
 		} else {
 			$expireTimestamp = 0;
 		}
+		$this->inquiry->setDescription($dto->description ?? '');
+
+		$this->inquiry->setVisibility($dto->visibility);
+
+		if ($dto->visibility === Inquiry::VISIBILITY_GROUPS) {
+			// Read from the DTO, not from $this->inquiry
+			$groups = $dto->visibilityGroups ?? [];
+
+			// Fallback to owned group if client sent nothing
+			if (empty($groups)) {
+				$ownedGroup = $dto->ownedGroup;
+				if ($ownedGroup !== '' && $ownedGroup !== null) {
+					$groups = [$ownedGroup];
+				}
+			}
+
+			// Optional: validate group IDs exist
+			$groups = $this->validateGroups($groups);
+
+			$this->inquiry->setVisibilityGroups($groups);
+			$this->inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PUBLISHED);
+			$this->inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PUBLISHED);
+		} else {
+			// Default statuses for non-group visibility
+			$this->inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_DRAFT);
+			$this->inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_DRAFT);
+			// Ensure no stale groups from the entity
+			$this->inquiry->setVisibilityGroups([]);
+		}
+
 		$this->inquiry->setExpire($expireTimestamp);
 		$this->inquiry->setShowResults(Inquiry::SHOW_RESULTS_ALWAYS);
 
 		$this->inquiry = $this->inquiryMapper->insert($this->inquiry);
 
+
+		if ($this->inquiry->getVisibility() === Inquiry::VISIBILITY_GROUPS) {
+			$this->inquiryMapper->saveVisibilityGroups($this->inquiry);
+		}
+
+		if ($this->inquiry->getVisibility() === Inquiry::VISIBILITY_USERS) {
+			$this->inquiryMapper->saveUserVisibility($this->inquiry);
+		}
 
 		// Get fields configuration for this inquiry type
 		$fieldsDefinition = $this->getFields($dto->type);
@@ -521,497 +558,497 @@ class InquiryService
 			$this->inquiryMapper->saveVisibilityGroups($this->inquiry);
 		}
 
-	$this->logger->debug(
-		'DEBUG allowComment = ' . var_export($inquiryConfiguration['allowComment'] ?? 'KEY_MISSING', true),
-		['app' => 'agora']
-	);
+		$this->logger->debug(
+			'DEBUG allowComment = ' . var_export($inquiryConfiguration['allowComment'] ?? 'KEY_MISSING', true),
+			['app' => 'agora']
+		);
 
-	if (array_key_exists('allowComment', $inquiryConfiguration)) {
-		$value = $inquiryConfiguration['allowComment'];
+		if (array_key_exists('allowComment', $inquiryConfiguration)) {
+			$value = $inquiryConfiguration['allowComment'];
 
-		if ($value === null) {
-			$this->inquiry->setAllowComment(null);
-		} elseif (!$value) {
-			$this->inquiry->setAllowComment(0);
-		} else {
-			$this->inquiry->setAllowComment(1);
+			if ($value === null) {
+				$this->inquiry->setAllowComment(null);
+			} elseif (!$value) {
+				$this->inquiry->setAllowComment(0);
+			} else {
+				$this->inquiry->setAllowComment(1);
+			}
+		}
+
+
+		if (isset($inquiryConfiguration['expire'])) {
+			$this->inquiry->setExpire($inquiryConfiguration['expire']);
+		}
+
+
+		if (isset($inquiryConfiguration['forceConfidentialComments'])) {
+			$this->inquiry->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ? 1 : 0);
+		}
+
+
+		if (isset($inquiryConfiguration['supportFeature'])) {
+			$this->inquiry->setSupportFeature($inquiryConfiguration['supportFeature']);
+		}
+
+		if (isset($inquiryConfiguration['showResults'])) {
+			$this->inquiry->setShowResults($inquiryConfiguration['showResults']);
+		}
+
+
+		$this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+		$this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
+
+		return $this->inquiry;
+	}
+
+	/**
+	 * Manually lock anonymization
+	 *
+	 * @return Inquiry
+	 */
+	public function lockAnonymous(int $inquiryId): Inquiry
+	{
+		$this->inquiry = $this->inquiryMapper->find($inquiryId);
+
+		// Only possible, if inquiry is already anonymized
+		if ($this->inquiry->getAnonymous() < 1) {
+			throw new ForbiddenException('Anonymization is not allowed');
+		}
+
+		// Only possible, if user is allowed to deanonymize
+		$this->inquiry->request(Inquiry::PERMISSION_DEANONYMIZE);
+
+		$this->inquiry->setAnonymous(-1);
+		$this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+		$this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
+
+		return $this->inquiry;
+	}
+
+	/**
+	 * Update timestamp for last interaction with inquiries
+	 */
+	public function setLastInteraction(int $inquiryId): void
+	{
+		if ($inquiryId) {
+			$this->inquiryMapper->setLastInteraction($inquiryId);
 		}
 	}
 
+	/**
+	 * Move to archive or restore with optional recursive functionality
+	 *
+	 * @return array [inquiry: Inquiry, archivedCount: int]
+	 */
+	public function toggleArchiveRecursive(int $inquiryId, bool $archiveState = null): array
+	{
+		// Get the inquiry
+		$this->inquiry = $this->inquiryMapper->find($inquiryId);
+		$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
 
-	if (isset($inquiryConfiguration['expire'])) {
-		$this->inquiry->setExpire($inquiryConfiguration['expire']);
+		// Determine archive state if not provided
+		if ($archiveState === null) {
+			$archiveState = !$this->inquiry->getArchived();
+		}
+
+		$archivedTime = $archiveState ? time() : 0;
+		$archivedCount = 1;
+
+		try {
+			// Archive/restore this inquiry - ONLY set archived, NOT deleted!
+			$this->inquiry->setArchived($archivedTime);
+			// DO NOT setDeleted() - that's for permanent deletion
+			$this->inquiry->setLastInteraction(time());
+
+			if ($archiveState) {
+				$this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
+			} else {
+				$this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
+			}
+
+			$this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+			// Archive/restore all options for this inquiry
+			$options = $this->optionService->getByTargetId($inquiryId);
+			foreach ($options as $option) {
+				try {
+					$result = $this->optionService->toggleArchiveRecursive($option->getId(), $archiveState);
+					$archivedCount += $result['archivedCount'];
+				} catch (\Exception $e) {
+					$this->logger->error("Failed to archive/restore option {$option->getId()}: " . $e->getMessage());
+				}
+			}
+
+			// RECURSION: Call the same method on each child inquiry
+			$childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
+			foreach ($childIds as $childId) {
+				try {
+					$result = $this->toggleArchiveRecursive($childId, $archiveState);
+					$archivedCount += $result['archivedCount'];
+				} catch (ForbiddenException $e) {
+					$this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
+					continue;
+				} catch (\Exception $e) {
+					$this->logger->error("Error processing child inquiry {$childId}: " . $e->getMessage());
+					continue;
+				}
+			}
+
+			return [
+				'inquiry' => $this->inquiry,
+				'archivedCount' => $archivedCount
+			];
+		} catch (\Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * Get inquiry with trending scores included
+	 */
+	public function getWithTrending(int $inquiryId): array
+	{
+		$inquiry = $this->get($inquiryId);
+
+		// Get trending scores with fallback
+		$trendingScores = $this->trendingService->getTrendingScoresWithFallback($inquiryId);
+
+		$inquiryData = $inquiry->jsonSerialize();
+		$inquiryData['trending'] = $trendingScores;
+
+		// Add trending scores to each option
+		if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
+			foreach ($inquiryData['childs'] as &$option) {
+				if (isset($option['id']) && isset($trendingScores[$option['id']])) {
+					$option['trendingScore'] = $trendingScores[$option['id']]['score'] ?? $trendingScores[$option['id']];
+				}
+			}
+		}
+
+		return $inquiryData;
 	}
 
 
-	if (isset($inquiryConfiguration['forceConfidentialComments'])) {
-		$this->inquiry->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ? 1 : 0);
+	/**
+	 * Move to archive or restore
+	 *
+	 * @return Inquiry
+	 */
+	public function toggleArchive(int $inquiryId): Inquiry
+	{
+		$this->inquiry = $this->inquiryMapper->find($inquiryId);
+		$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+
+		$this->inquiry->setArchived($this->inquiry->getArchived() ? 0 : time());
+
+		if ($this->inquiry->getArchived()) {
+			$this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
+			$this->inquiry->setPublicationStatus('archived');
+		} else {
+			$this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
+			$this->inquiry->setPublicationStatus('published');
+		}
+		$this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+		return $this->inquiry;
+	}
+
+	/**
+	 * Delete inquiry
+	 *
+	 * @return Inquiry
+	 */
+	/**
+	 * Delete inquiry with recursive deletion
+	 * Simple recursion: calls itself on each child
+	 *
+	 * @return Inquiry
+	 */
+	public function delete(int $inquiryId): Inquiry
+	{
+		$this->inquiryMapper->beginTransaction();
+
+		try {
+			$this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+			$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+
+			// RECURSION with permission checks
+			$childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
+			foreach ($childIds as $childId) {
+				try {
+					// Check permission for child first
+					$childInquiry = $this->inquiryMapper->get($childId, withRoles: true);
+					$childInquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+					$this->delete($childId);
+				} catch (ForbiddenException $e) {
+					$this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
+					continue;
+				} catch (\Exception $e) {
+					$this->logger->error("Error deleting child inquiry {$childId}: " . $e->getMessage());
+					continue;
+				}
+			}
+
+			// Delete all options
+			$options = $this->optionService->getByTargetId($inquiryId);
+			foreach ($options as $option) {
+				try {
+					$this->optionService->delete($option->getId());
+				} catch (\Exception $e) {
+					$this->logger->error("Failed to delete option {$option->getId()}: " . $e->getMessage());
+				}
+			}
+
+			// Delete this inquiry
+			$this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
+			$this->inquiry->setDeleted(time());
+			$this->inquiry->setArchived(time());
+			$this->inquiry->setLastInteraction(time());
+
+			$this->inquiryMapper->delete($this->inquiry);
+
+			$this->inquiryMapper->commit();
+			return $this->inquiry;
+
+		} catch (\Exception $e) {
+			$this->inquiryMapper->rollBack();
+			throw $e;
+		}
+	}
+
+	/**
+	 * Close inquiry
+	 *
+	 * @return Inquiry
+	 */
+	public function close(int $inquiryId): Inquiry
+	{
+		$this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+		return $this->toggleClose($inquiryId, time() - 5);
+	}
+
+	/**
+	 * Reopen inquiry
+	 *
+	 * @return Inquiry
+	 */
+	public function reopen(int $inquiryId): Inquiry
+	{
+		$this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+		return $this->toggleClose($inquiryId, 0);
+	}
+
+	/**
+	 * Find  inquiry by id
+	 *
+	 * @return Inquiry
+	 */
+	public function findById(int $inquiryId): Inquiry
+	{
+		return    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+	}
+
+	/**
+	 * Update  Form id in inquiry
+	 *
+	 * @return Inquiry
+	 */
+	public function updateFormId(int $inquiryId, int $formId): bool
+	{
+		return    $this->inquiryMapper->updateFormById($inquiryId, $formId);
+	}
+
+	/**
+	 * Close inquiry
+	 *
+	 * @return Inquiry
+	 */
+	private function toggleClose(int $inquiryId, int $expiry): Inquiry
+	{
+		$this->inquiry = $this->inquiryMapper->find($inquiryId);
+		$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+
+		$this->inquiry->setExpire($expiry);
+		if ($expiry > 0) {
+			$this->eventDispatcher->dispatchTyped(new InquiryCloseEvent($this->inquiry));
+		} else {
+			$this->eventDispatcher->dispatchTyped(new InquiryReopenEvent($this->inquiry));
+		}
+
+		$this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+		return $this->inquiry;
+	}
+
+	/**
+	 * Set status of inquiry
+	 *
+	 * @return Inquiry
+	 */
+	public function setInquiryStatus(int $inquiryId, string $mstatus): void
+	{
+		$this->inquiryMapper->setInquiryStatus($inquiryId, $mstatus);
+	}
+
+	/**
+	 * Set Moderation status of inquiry
+	 *
+	 * @return Inquiry
+	 */
+	public function setModerationStatus(int $inquiryId, string $mstatus): void
+	{
+		$this->inquiryMapper->setModerationStatus($inquiryId, $mstatus);
+	}
+
+	/**
+	 * Clone inquiry
+	 *
+	 * @return Inquiry
+	 */
+	public function clone(int $inquiryId, string $inquiryType): Inquiry
+	{
+		$origin = $this->inquiryMapper->get($inquiryId, withRoles: true);
+		$origin->request(Inquiry::PERMISSION_INQUIRY_VIEW);
+		$this->appSettings->getInquiryCreationAllowed();
+
+		$this->inquiry = new Inquiry();
+		$this->inquiry->setCreated(time());
+		$this->inquiry->setOwner($this->userSession->getCurrentUserId());
+		$this->inquiry->setTitle('Clone of ' . $origin->getTitle());
+		$this->inquiry->setDeleted(0);
+		$this->inquiry->setVisibility(Inquiry::VISIBILITY_PRIVATE);
+
+		if ($inquiryType) {
+			$this->inquiry->setType($inquiryType);
+		} else {
+			$this->inquiry->setType($origin->getType());
+		}
+
+		$this->inquiry->setDescription($origin->getDescription());
+		$this->inquiry->setExpire($origin->getExpire());
+		// deanonymize cloned inquiries by default, to avoid locked anonymous inquiries
+		$this->inquiry->setShowResults($origin->getShowResults());
+
+		$this->inquiry = $this->inquiryMapper->insert($this->inquiry);
+		$this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
+		return $this->inquiry;
 	}
 
 
-	if (isset($inquiryConfiguration['supportFeature'])) {
-		$this->inquiry->setSupportFeature($inquiryConfiguration['supportFeature']);
+	/**
+	 * Collect email addresses from particitipants
+	 */
+	public function getParticipantsEmailAddresses(int $inquiryId): array
+	{
+		$this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+		$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+
+		$supports = $this->inquiryMapper->findParticipantsByInquiry($this->inquiry->getId());
+		$list = [];
+		foreach ($supports as $support) {
+			$user = $support->getUser();
+			$list[] = [
+				'displayName' => $user->getDisplayName(),
+				'emailAddress' => $user->getEmailAddress(),
+				'combined' => $user->getEmailAndDisplayName(),
+			];
+		}
+		return $list;
 	}
 
-	if (isset($inquiryConfiguration['showResults'])) {
-		$this->inquiry->setShowResults($inquiryConfiguration['showResults']);
-	}
-
-
-	$this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-	$this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
-
-	return $this->inquiry;
-}
-
-/**
- * Manually lock anonymization
- *
- * @return Inquiry
- */
-public function lockAnonymous(int $inquiryId): Inquiry
-{
-	$this->inquiry = $this->inquiryMapper->find($inquiryId);
-
-	// Only possible, if inquiry is already anonymized
-	if ($this->inquiry->getAnonymous() < 1) {
-		throw new ForbiddenException('Anonymization is not allowed');
-	}
-
-	// Only possible, if user is allowed to deanonymize
-	$this->inquiry->request(Inquiry::PERMISSION_DEANONYMIZE);
-
-	$this->inquiry->setAnonymous(-1);
-	$this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-	$this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
-
-	return $this->inquiry;
-}
-
-/**
- * Update timestamp for last interaction with inquiries
- */
-public function setLastInteraction(int $inquiryId): void
-{
-	if ($inquiryId) {
-		$this->inquiryMapper->setLastInteraction($inquiryId);
-	}
-}
-
-/**
- * Move to archive or restore with optional recursive functionality
- *
- * @return array [inquiry: Inquiry, archivedCount: int]
- */
-public function toggleArchiveRecursive(int $inquiryId, bool $archiveState = null): array
-{
-    // Get the inquiry
-    $this->inquiry = $this->inquiryMapper->find($inquiryId);
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-
-    // Determine archive state if not provided
-    if ($archiveState === null) {
-        $archiveState = !$this->inquiry->getArchived();
-    }
-
-    $archivedTime = $archiveState ? time() : 0;
-    $archivedCount = 1;
-
-    try {
-        // Archive/restore this inquiry - ONLY set archived, NOT deleted!
-        $this->inquiry->setArchived($archivedTime);
-        // DO NOT setDeleted() - that's for permanent deletion
-        $this->inquiry->setLastInteraction(time());
-
-        if ($archiveState) {
-            $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
-        } else {
-            $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
-        }
-
-        $this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-        // Archive/restore all options for this inquiry
-        $options = $this->optionService->getByTargetId($inquiryId);
-        foreach ($options as $option) {
-            try {
-                $result = $this->optionService->toggleArchiveRecursive($option->getId(), $archiveState);
-                $archivedCount += $result['archivedCount'];
-            } catch (\Exception $e) {
-                $this->logger->error("Failed to archive/restore option {$option->getId()}: " . $e->getMessage());
-            }
-        }
-
-        // RECURSION: Call the same method on each child inquiry
-        $childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
-        foreach ($childIds as $childId) {
-            try {
-                $result = $this->toggleArchiveRecursive($childId, $archiveState);
-                $archivedCount += $result['archivedCount'];
-            } catch (ForbiddenException $e) {
-                $this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
-                continue;
-            } catch (\Exception $e) {
-                $this->logger->error("Error processing child inquiry {$childId}: " . $e->getMessage());
-                continue;
-            }
-        }
-
-        return [
-            'inquiry' => $this->inquiry,
-            'archivedCount' => $archivedCount
-        ];
-    } catch (\Exception $e) {
-        throw $e;
-    }
-}
-
-/**
- * Get inquiry with trending scores included
- */
-public function getWithTrending(int $inquiryId): array
-{
-    $inquiry = $this->get($inquiryId);
-    
-    // Get trending scores with fallback
-    $trendingScores = $this->trendingService->getTrendingScoresWithFallback($inquiryId);
-    
-    $inquiryData = $inquiry->jsonSerialize();
-    $inquiryData['trending'] = $trendingScores;
-
-    // Add trending scores to each option
-    if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
-        foreach ($inquiryData['childs'] as &$option) {
-            if (isset($option['id']) && isset($trendingScores[$option['id']])) {
-                $option['trendingScore'] = $trendingScores[$option['id']]['score'] ?? $trendingScores[$option['id']];
-            }
-        }
-    }
-
-    return $inquiryData;
-}
-
-
-/**
- * Move to archive or restore
- *
- * @return Inquiry
- */
-public function toggleArchive(int $inquiryId): Inquiry
-{
-	$this->inquiry = $this->inquiryMapper->find($inquiryId);
-	$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-
-	$this->inquiry->setArchived($this->inquiry->getArchived() ? 0 : time());
-
-	if ($this->inquiry->getArchived()) {
-		$this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
-		$this->inquiry->setPublicationStatus('archived');
-	} else {
-		$this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
-		$this->inquiry->setPublicationStatus('published');
-	}
-	$this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-	return $this->inquiry;
-}
-
-/**
- * Delete inquiry
- *
- * @return Inquiry
- */
-/**
- * Delete inquiry with recursive deletion
- * Simple recursion: calls itself on each child
- *
- * @return Inquiry
- */
-public function delete(int $inquiryId): Inquiry
-{
-    $this->inquiryMapper->beginTransaction();
-    
-    try {
-        $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-
-        // RECURSION with permission checks
-        $childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
-        foreach ($childIds as $childId) {
-            try {
-                // Check permission for child first
-                $childInquiry = $this->inquiryMapper->get($childId, withRoles: true);
-                $childInquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-                $this->delete($childId);
-            } catch (ForbiddenException $e) {
-                $this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
-                continue;
-            } catch (\Exception $e) {
-                $this->logger->error("Error deleting child inquiry {$childId}: " . $e->getMessage());
-                continue;
-            }
-        }
-
-        // Delete all options
-        $options = $this->optionService->getByTargetId($inquiryId);
-        foreach ($options as $option) {
-            try {
-                $this->optionService->delete($option->getId());
-            } catch (\Exception $e) {
-                $this->logger->error("Failed to delete option {$option->getId()}: " . $e->getMessage());
-            }
-        }
-
-        // Delete this inquiry
-        $this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
-        $this->inquiry->setDeleted(time());
-        $this->inquiry->setArchived(time());
-        $this->inquiry->setLastInteraction(time());
-
-        $this->inquiryMapper->delete($this->inquiry);
-        
-        $this->inquiryMapper->commit();
-        return $this->inquiry;
-        
-    } catch (\Exception $e) {
-        $this->inquiryMapper->rollBack();
-        throw $e;
-    }
-}
-
-/**
- * Close inquiry
- *
- * @return Inquiry
- */
-public function close(int $inquiryId): Inquiry
-{
-	$this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-	return $this->toggleClose($inquiryId, time() - 5);
-}
-
-/**
- * Reopen inquiry
- *
- * @return Inquiry
- */
-public function reopen(int $inquiryId): Inquiry
-{
-	$this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-	return $this->toggleClose($inquiryId, 0);
-}
-
-/**
- * Find  inquiry by id
- *
- * @return Inquiry
- */
-public function findById(int $inquiryId): Inquiry
-{
-	return    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-}
-
-/**
- * Update  Form id in inquiry
- *
- * @return Inquiry
- */
-public function updateFormId(int $inquiryId, int $formId): bool
-{
-	return    $this->inquiryMapper->updateFormById($inquiryId, $formId);
-}
-
-/**
- * Close inquiry
- *
- * @return Inquiry
- */
-private function toggleClose(int $inquiryId, int $expiry): Inquiry
-{
-	$this->inquiry = $this->inquiryMapper->find($inquiryId);
-	$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-
-	$this->inquiry->setExpire($expiry);
-	if ($expiry > 0) {
-		$this->eventDispatcher->dispatchTyped(new InquiryCloseEvent($this->inquiry));
-	} else {
-		$this->eventDispatcher->dispatchTyped(new InquiryReopenEvent($this->inquiry));
-	}
-
-	$this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-	return $this->inquiry;
-}
-
-/**
- * Set status of inquiry
- *
- * @return Inquiry
- */
-public function setInquiryStatus(int $inquiryId, string $mstatus): void
-{
-	$this->inquiryMapper->setInquiryStatus($inquiryId, $mstatus);
-}
-
-/**
- * Set Moderation status of inquiry
- *
- * @return Inquiry
- */
-public function setModerationStatus(int $inquiryId, string $mstatus): void
-{
-	$this->inquiryMapper->setModerationStatus($inquiryId, $mstatus);
-}
-
-/**
- * Clone inquiry
- *
- * @return Inquiry
- */
-public function clone(int $inquiryId, string $inquiryType): Inquiry
-{
-	$origin = $this->inquiryMapper->get($inquiryId, withRoles: true);
-	$origin->request(Inquiry::PERMISSION_INQUIRY_VIEW);
-	$this->appSettings->getInquiryCreationAllowed();
-
-	$this->inquiry = new Inquiry();
-	$this->inquiry->setCreated(time());
-	$this->inquiry->setOwner($this->userSession->getCurrentUserId());
-	$this->inquiry->setTitle('Clone of ' . $origin->getTitle());
-	$this->inquiry->setDeleted(0);
-	$this->inquiry->setVisibility(Inquiry::VISIBILITY_PRIVATE);
-
-	if ($inquiryType) {
-		$this->inquiry->setType($inquiryType);
-	} else {
-		$this->inquiry->setType($origin->getType());
-	}
-
-	$this->inquiry->setDescription($origin->getDescription());
-	$this->inquiry->setExpire($origin->getExpire());
-	// deanonymize cloned inquiries by default, to avoid locked anonymous inquiries
-	$this->inquiry->setShowResults($origin->getShowResults());
-
-	$this->inquiry = $this->inquiryMapper->insert($this->inquiry);
-	$this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
-	return $this->inquiry;
-}
-
-
-/**
- * Collect email addresses from particitipants
- */
-public function getParticipantsEmailAddresses(int $inquiryId): array
-{
-	$this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-	$this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-
-	$supports = $this->inquiryMapper->findParticipantsByInquiry($this->inquiry->getId());
-	$list = [];
-	foreach ($supports as $support) {
-		$user = $support->getUser();
-		$list[] = [
-			'displayName' => $user->getDisplayName(),
-			'emailAddress' => $user->getEmailAddress(),
-			'combined' => $user->getEmailAndDisplayName(),
+	/**
+	 * Get valid values for configuration options
+	 *
+	 * @return array
+	 *
+	 * @psalm-return array{inquiryType: mixed, access: mixed, showResults: mixed}
+	 */
+	public function getValidEnum(): array
+	{
+		return [
+			'visibility' => $this->getValidVisibility(),
+			'showResults' => $this->getValidShowResults()
 		];
 	}
-	return $list;
-}
 
-/**
- * Get valid values for configuration options
- *
- * @return array
- *
- * @psalm-return array{inquiryType: mixed, access: mixed, showResults: mixed}
- */
-public function getValidEnum(): array
-{
-	return [
-		'visibility' => $this->getValidVisibility(),
-		'showResults' => $this->getValidShowResults()
-	];
-}
+	public function applyAction(int $inquiryId, string $action): Inquiry
+	{
+		$inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
 
-    public function applyAction(int $inquiryId, string $action): Inquiry
-    {
-        $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-
-	if (!$inquiry) {
-		throw new \Exception('Inquiry not found');
-	}
-
-        // The author saves and submits; moderators accept or reject. The
-        // author may also accept when moderation is off or an official
-        // may bypass it.
-        $user = $this->userSession->getCurrentUser();
-        $selfAccept = !$this->appSettings->getUseModeration()
-            || ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
-        $allowed = match ($action) {
-            'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
-            'submit_for_accepted' => $user->getIsModerator()
-                || ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
-            'submit_for_rejected' => $user->getIsModerator(),
-            default => true,
-        };
-        if (!$allowed) {
-            throw new ForbiddenException('denied action ' . $action);
-        }
-
-	$timestamp = time();
-
-	switch ($action) {
-	case 'save_draft':
-		$inquiry->setPublicationStatus('pending');
-		$inquiry->setInquiryStatus('waiting_approval');
-		$inquiry->setModerationStatus('pending');
-		$inquiry->setLastInteraction($timestamp);
-		$inquiry = $this->inquiryMapper->update($inquiry);
-		break;
-
-	case 'submit_for_moderate':
-		$inquiry->setPublicationStatus('pending');
-		$inquiry->setInquiryStatus('waiting_approval');
-		$inquiry->setModerationStatus('pending');
-		$inquiry->setLastInteraction($timestamp);
-		$inquiry = $this->inquiryMapper->update($inquiry);
-		break;
-
-	case 'submit_for_accepted':
-		$inquiry->setVisibility('everyone');
-		$inquiry->setPublicationStatus('published');
-		$inquiry->setModerationStatus('accepted');
-		$inquiry->setLastInteraction($timestamp);
-		//We find the first status available in inquiry type status definition
-		$statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
-		if (!empty($statuses)) {
-			usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
-			$firstStatus = $statuses[0] ?? null;
+		if (!$inquiry) {
+			throw new \Exception('Inquiry not found');
 		}
-		if ($firstStatus) {
-			$inquiry->setInquiryStatus($firstStatus->getStatusKey());
+
+		// The author saves and submits; moderators accept or reject. The
+		// author may also accept when moderation is off or an official
+		// may bypass it.
+		$user = $this->userSession->getCurrentUser();
+		$selfAccept = !$this->appSettings->getUseModeration()
+			|| ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
+		$allowed = match ($action) {
+			'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
+			'submit_for_accepted' => $user->getIsModerator()
+			|| ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
+			'submit_for_rejected' => $user->getIsModerator(),
+			default => true,
+		};
+		if (!$allowed) {
+			throw new ForbiddenException('denied action ' . $action);
 		}
-		$inquiry = $this->inquiryMapper->update($inquiry);
-		break;
 
-	case 'submit_for_rejected':
-		$inquiry->setVisibility('private');
-		$inquiry->setPublicationStatus('draft');
-		$inquiry->setModerationStatus('rejected');
-		$inquiry->setInquiryStatus('rejected');
-		$inquiry->setLastInteraction($timestamp);
-		$inquiry = $this->inquiryMapper->update($inquiry);
-		break;
+		$timestamp = time();
 
-	default:
-		throw new \InvalidArgumentException("Unknown action '$action'");
+		switch ($action) {
+		case 'save_draft':
+			$inquiry->setPublicationStatus('pending');
+			$inquiry->setInquiryStatus('waiting_approval');
+			$inquiry->setModerationStatus('pending');
+			$inquiry->setLastInteraction($timestamp);
+			$inquiry = $this->inquiryMapper->update($inquiry);
+			break;
+
+		case 'submit_for_moderate':
+			$inquiry->setPublicationStatus('pending');
+			$inquiry->setInquiryStatus('waiting_approval');
+			$inquiry->setModerationStatus('pending');
+			$inquiry->setLastInteraction($timestamp);
+			$inquiry = $this->inquiryMapper->update($inquiry);
+			break;
+
+		case 'submit_for_accepted':
+			$inquiry->setVisibility('everyone');
+			$inquiry->setPublicationStatus('published');
+			$inquiry->setModerationStatus('accepted');
+			$inquiry->setLastInteraction($timestamp);
+			//We find the first status available in inquiry type status definition
+			$statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
+			if (!empty($statuses)) {
+				usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
+				$firstStatus = $statuses[0] ?? null;
+			}
+			if ($firstStatus) {
+				$inquiry->setInquiryStatus($firstStatus->getStatusKey());
+			}
+			$inquiry = $this->inquiryMapper->update($inquiry);
+			break;
+
+		case 'submit_for_rejected':
+			$inquiry->setVisibility('private');
+			$inquiry->setPublicationStatus('draft');
+			$inquiry->setModerationStatus('rejected');
+			$inquiry->setInquiryStatus('rejected');
+			$inquiry->setLastInteraction($timestamp);
+			$inquiry = $this->inquiryMapper->update($inquiry);
+			break;
+
+		default:
+			throw new \InvalidArgumentException("Unknown action '$action'");
+		}
+
+		return $inquiry;
 	}
-
-	return $inquiry;
-    }
 
 
 }

@@ -25,7 +25,7 @@ export type VisibilityType =
 	| 'users'
 	| 'participants'
 	| 'everyone'
-	| 'moderate'
+	| 'invitation'
 
 export enum PublicationStatusLevel {
 	Draft = 'draft',
@@ -287,9 +287,6 @@ function hasGroupAccess(ctx: PermissionContext): boolean {
 		case 'private':
 			return ctx.isOwner
 
-		case 'moderate':
-			return user?.isModerator === true || user?.isAdmin === true
-
 		case 'groups': {
 			if (!user?.id) return false
 			const userGroups = user.groups ?? []
@@ -401,7 +398,6 @@ export function canComment(ctx: PermissionContext): boolean {
 export function canEdit(ctx: PermissionContext): boolean {
 	if (!ctx) return false
 
-	// --- InquiryGroup : pas de lock, pas de modération ---
 	if (ctx.contentType === ContentType.InquiryGroup) {
 		if (ctx.isArchived || ctx.isDeleted) return false
 		if (ctx.isOwner || ctx.userType === UserType.Admin) return true
@@ -521,8 +517,9 @@ export function canShare(ctx: PermissionContext): boolean {
 	const sessionStore = useSessionStore()
 
 	if (ctx.isArchived || ctx.isDeleted) return false
+	
+	if (ctx.moderationStatus  === 'pending' ) return false
 
-	// Seuls les contenus visibles peuvent être partagés
 	if (!hasGroupAccess(ctx)) return false
 
 	if (sessionStore.appPermissions.allAccess) return true
