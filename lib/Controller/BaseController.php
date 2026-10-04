@@ -12,6 +12,7 @@ namespace OCA\Agora\Controller;
 use Closure;
 use OCA\Agora\Exceptions\Exception;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\JSONResponse;
@@ -53,6 +54,9 @@ class BaseController extends Controller
 */
             $status = $e->getStatus();
             return new JSONResponse(['message' => $e->getMessage()], $status);
+        } catch (DoesNotExistException $e) {
+            // Missing, or hidden from the current user by the access filter
+            return new JSONResponse(['message' => 'Not found'], Http::STATUS_NOT_FOUND);
         }
     }
 }
