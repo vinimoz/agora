@@ -36,7 +36,7 @@ import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { useSupportResultStore } from './supportResult.ts'
 
 // Type definitions matching PHP constants
-export type AccessType = 'invitation' | 'private' | 'open' | 'groups'
+export type AccessType = 'private' | 'open' | 'groups'
 export type ShowResultsType = 'always' | 'closed' | 'never'
 export type ModerationWorkflowStatus = 'draft' | 'pending' | 'accepted' | 'rejected'
 export type InquiryWorkflowStatus = 'draft' | 'waiting_approval' | 'active' | 'closed' | 'rejected'
@@ -103,6 +103,7 @@ export type InquiryPermissions = {
 export type CurrentUserStatus = {
 	groupInvitations: string[]
 	isInvolved: boolean
+	isShared: boolean
 	hasSupported: boolean
 	supportValue: string | null
 	isLocked: boolean
@@ -190,6 +191,7 @@ export const useInquiryStore = defineStore('inquiry', {
 		currentUserStatus: {
 			groupInvitations: [],
 			isInvolved: false,
+			isShared: false,
 			hasSupported: false,
 			supportValue: null,
 			isLocked: false,

@@ -37,11 +37,12 @@ export type SortDirection = 'asc' | 'desc'
 export type FilterType =
   | 'relevant'
   | 'my'
-  | 'reject'
   | 'private'
-  | 'participated'
-  | 'group'
+  | 'reject'
   | 'open'
+  | 'participated'
+  | 'shared'
+  | 'group'
   | 'all'
   | 'closed'
   | 'archived'
@@ -134,9 +135,7 @@ const inquiryCategories: InquiryCategoryList = {
     DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -30 &&
     inquiry.permissions.view &&
     (inquiry.configuration.access === 'open' ||
-     inquiry.configuration.access === 'public' ||
      inquiry.configuration.access === 'private' ||
-     inquiry.configuration.access === 'invitation' ||
      inquiry.configuration.access === 'groups'),
   },
   reject: {
@@ -200,11 +199,23 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived && inquiry.status.countParticipants > 0,
   },
+shared: {
+  id: 'shared' as FilterType,
+  title: t('agora', 'Shared'),
+  titleExt: t('agora', 'Shared'),
+  description: t('agora', 'Inquiries that were explicitly shared with you or one of your groups.'),
+  pinned: false,
+  showInNavigation: () => true,
+  filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    inquiry.currentUserStatus.isShared,
+},
 
 group: {
   id: 'group' as FilterType,
   title: t('agora', 'Group inquiries'),
-  titleExt: t('agora', 'Inquiries shared with my groups'),
+  titleExt: t('agora', 'Groups inquiries'),
   description: t('agora', 'Inquiries visible to the groups you belong to.'),
   pinned: false,
   showInNavigation: () => {
@@ -215,7 +226,6 @@ group: {
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
     inquiry.configuration.access === 'groups' &&
-    inquiry.ownedGroup &&
     (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
 },
   open: {
@@ -246,17 +256,16 @@ group: {
       const sessionStore = useSessionStore()
       const access = inquiry.configuration.access
 
-      // Open and public are always visible
-      if (access === 'open' || access === 'public') {
+     if (inquiry.status.isArchived ) return false
+
+      if (access === 'open' || access === 'private') {
         return true
       }
 
-      // Private inquiries are only visible to the owner
       if (access === 'private') {
         return inquiry.currentUserStatus.isOwner
       }
 
-      // Group inquiries are visible if the user is in the owning group
       if (access === 'groups') {
         return !!(
           inquiry.ownedGroup &&
@@ -318,7 +327,8 @@ group: {
   filterCondition: (inquiry: Inquiry) =>
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
-    inquiry.configuration.moderationStatus === 'pending',
+    inquiry.configuration.access === 'private' && 
+    inquiry.status.moderationStatus === 'pending',
 },
 }
 

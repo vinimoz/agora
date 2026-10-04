@@ -119,6 +119,7 @@ const availableTransformTypes = computed(() => {
 })
 
 // Check if menus should be shown (just check if any types available)
+
 const showActionsMenu = computed(() => availableResponseTypes.value.length > 0)
 const showTransformActionsMenu = computed(() => availableTransformTypes.value.length > 0)
 
@@ -266,7 +267,7 @@ const handleAllowedTransformation = (transformType: string) => {
         <!-- Right: Access switch and item actions -->
         <div class="right-actions">
             <div class="moderation-controls">
-                <div v-if="inquiryStore.configuration.access === 'private' && inquiryStore.configuration.moderationStatus !== 'rejected'" class="access-control">
+                <div v-if="inquiryStore.configuration.access === 'private' && inquiryStore.status.moderationStatus === 'draft'" class="access-control">
                     <label class="control-label">{{ t('agora', 'Submit to moderation') }}</label>
                     <NcCheckboxRadioSwitch
                             v-model="inquiryAccess"
@@ -276,7 +277,7 @@ const handleAllowedTransformation = (transformType: string) => {
                 </div>
 
                 <div v-if="sessionStore.currentUser.isModerator">
-                    <div v-if="inquiryStore.configuration.access === 'moderate' && inquiryStore.status.moderationStatus === 'pending'" class="access-control">
+                    <div v-if="inquiryStore.status.moderationStatus === 'pending'" class="access-control">
                         <label class="control-label">{{ t('agora', 'Moderate') }}</label>
                         <NcSelect
                                 v-model="selectedStatus"

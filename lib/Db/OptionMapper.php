@@ -478,7 +478,7 @@ class OptionMapper extends QBMapper
                 'COALESCE(' .
                 '(SELECT COUNT(p.id) FROM ' . $this->getFullTableName(Option::TABLE) . ' p ' .
                 'WHERE p.parent_id = ' . $tableAlias . '.id ' .
-                'AND (p.access = \'' . Option::ACCESS_OPEN . '\' OR p.access = \'' . Option::ACCESS_INVITATION . '\')), 0) AS ' . $alias
+                'AND (p.access = \'' . Option::ACCESS_OPEN . '\')), 0) AS ' . $alias
             )
         );
     }

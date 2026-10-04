@@ -20,7 +20,6 @@ const {
   teleportTo?: string
 }>()
 
-// ✅ top-level ref → visible to the template
 const description = ref(t('agora', 'Please wait'))
 
 // null = don't teleport; string/HTMLElement = resolved target
@@ -54,7 +53,7 @@ const sequentialDescriptionOutput = () => {
     if (show === false) return
     if (index < loadingTexts.length) {
       description.value = loadingTexts[index]
-      index++
+      index =  index  + 1 
       const delay = 1500 + Math.floor(Math.random() * 1001) - 500
       setTimeout(showDescription, delay)
     } else {

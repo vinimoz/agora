@@ -913,7 +913,7 @@ public function delete(int $optionId): Option
                 break;
 
             case 'submit':
-                $option->setAccess(Option::ACCESS_INVITATION);
+                $option->setAccess(Option::ACCESS_PRIVATE);
                 $option->setOptionStatus('published');
                 $option->setUpdated($timestamp);
                 $option = $this->optionMapper->update($option);
@@ -945,7 +945,7 @@ public function delete(int $optionId): Option
      */
     private function getValidAccess(): array
     {
-        return [Option::ACCESS_PRIVATE, Option::ACCESS_INVITATION, Option::ACCESS_OPEN, Option::ACCESS_GROUP];
+        return [Option::ACCESS_PRIVATE, Option::ACCESS_OPEN, Option::ACCESS_GROUP];
     }
 
     /**

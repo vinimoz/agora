@@ -886,87 +886,84 @@ public function getWithTrending(int $inquiryId): array
     public function getValidEnum(): array
     {
         return [
-            'access' => $this->getValidAccess(),
-            'showResults' => $this->getValidShowResults()
-        ];
+		'access' => $this->getValidAccess(),
+		'showResults' => $this->getValidShowResults()
+	];
     }
 
     public function applyAction(int $inquiryId, string $action): Inquiry
     {
-        $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+	    $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+	    if (!$inquiry) {
+		    throw new \Exception('Inquiry not found');
+	    }
 
-        if (!$inquiry) {
-            throw new \Exception('Inquiry not found');
-	}
+	    $inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
 
-        // The author saves and submits; moderators accept or reject. The
-        // author may also accept when moderation is off or an official
-        // may bypass it.
-        $user = $this->userSession->getCurrentUser();
-        $selfAccept = !$this->appSettings->getUseModeration()
-            || ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
-        $allowed = match ($action) {
-            'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
-            'submit_for_accepted' => $user->getIsModerator()
-                || ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
-            'submit_for_rejected' => $user->getIsModerator(),
-            default => true,
-        };
-        if (!$allowed) {
-            throw new ForbiddenException('denied action ' . $action);
-        }
+	    $user = $this->userSession->getCurrentUser();
+	    $selfAccept = !$this->appSettings->getUseModeration()
+		    || ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
+	    $allowed = match ($action) {
+		    'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
+		    'submit_for_accepted' => $user->getIsModerator()
+		    || ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
+		    'submit_for_rejected' => $user->getIsModerator(),
+		    default => true,
+	    };
+	    if (!$allowed) {
+		    throw new ForbiddenException('denied action ' . $action);
+	    }
 
-	$timestamp = time();
+	    $timestamp = time();
 
 
-        switch ($action) {
-        case 'save_draft':
-            // $inquiry->setAccess('private');
-            $inquiry->setInquiryStatus('draft');
-            $inquiry->setModerationStatus('draft');
-	    $inquiry->setLastInteraction($timestamp);
-            $inquiry = $this->inquiryMapper->update($inquiry);
-            break;
+	    switch ($action) {
+	    case 'save_draft':
+		    // $inquiry->setAccess('private');
+		    $inquiry->setInquiryStatus('draft');
+		    $inquiry->setModerationStatus('draft');
+		    $inquiry->setLastInteraction($timestamp);
+		    $inquiry = $this->inquiryMapper->update($inquiry);
+		    break;
 
-        case 'submit_for_moderate':
-            $inquiry->setAccess('private');
-            $inquiry->setInquiryStatus('waiting_approval');
-            $inquiry->setModerationStatus('pending');
-	    $inquiry->setLastInteraction($timestamp);
-            $inquiry = $this->inquiryMapper->update($inquiry);
-            break;
+	    case 'submit_for_moderate':
+		    $inquiry->setAccess('private');
+		    $inquiry->setInquiryStatus('waiting_approval');
+		    $inquiry->setModerationStatus('pending');
+		    $inquiry->setLastInteraction($timestamp);
+		    $inquiry = $this->inquiryMapper->update($inquiry);
+		    break;
 
-        case 'submit_for_accepted':
-		if ($inquiry->getOwnedGroup() ) $inquiry->setAccess('groups');
-		else $inquiry->setAccess('open');
-            $inquiry->setModerationStatus('accepted');
-            //We find the first status available in inquiry type status definition
-            $firstStatus = null;
-            $statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
-            if (!empty($statuses)) {
-                usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
-                $firstStatus = $statuses[0] ?? null;
-            }
-            if ($firstStatus) {
-                $inquiry->setInquiryStatus($firstStatus->getStatusKey());
-            }
-	    $inquiry->setLastInteraction($timestamp);
-            $inquiry = $this->inquiryMapper->update($inquiry);
-            break;
+	    case 'submit_for_accepted':
+		    $inquiry->setAccess('private');
+		    $inquiry->setModerationStatus('accepted');
+		    //We find the first status available in inquiry type status definition
+		    $firstStatus = null;
+		    $statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
+		    if (!empty($statuses)) {
+			    usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
+			    $firstStatus = $statuses[0] ?? null;
+		    }
+		    if ($firstStatus) {
+			    $inquiry->setInquiryStatus($firstStatus->getStatusKey());
+		    }
+		    $inquiry->setLastInteraction($timestamp);
+		    $inquiry = $this->inquiryMapper->update($inquiry);
+		    break;
 
-        case 'submit_for_rejected':
-            $inquiry->setAccess('private');
-            $inquiry->setModerationStatus('rejected');
-	    $inquiry->setInquiryStatus('rejected');
-	    $inquiry->setLastInteraction($timestamp);
-            $inquiry = $this->inquiryMapper->update($inquiry);
-            break;
+	    case 'submit_for_rejected':
+		    $inquiry->setAccess('private');
+		    $inquiry->setModerationStatus('rejected');
+		    $inquiry->setInquiryStatus('rejected');
+		    $inquiry->setLastInteraction($timestamp);
+		    $inquiry = $this->inquiryMapper->update($inquiry);
+		    break;
 
-        default:
-            throw new \InvalidArgumentException("Unknown action '$action'");
-        }
+	    default:
+		    throw new \InvalidArgumentException("Unknown action '$action'");
+	    }
 
-        return $inquiry;
+	    return $inquiry;
     }
 
     /**
@@ -978,7 +975,7 @@ public function getWithTrending(int $inquiryId): array
      */
     private function getValidAccess(): array
     {
-        return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN,Inquiry::ACCESS_MODERATE,Inquiry::ACCESS_GROUP];
+	    return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN,Inquiry::ACCESS_GROUP];
     }
 
     /**
@@ -990,7 +987,7 @@ public function getWithTrending(int $inquiryId): array
      */
     private function getValidShowResults(): array
     {
-        return [Inquiry::SHOW_RESULTS_ALWAYS, Inquiry::SHOW_RESULTS_CLOSED, Inquiry::SHOW_RESULTS_NEVER];
+	    return [Inquiry::SHOW_RESULTS_ALWAYS, Inquiry::SHOW_RESULTS_CLOSED, Inquiry::SHOW_RESULTS_NEVER];
     }
 
     /**
@@ -1000,7 +997,7 @@ public function getWithTrending(int $inquiryId): array
      */
     public function setInquiryAccess(int $inquiryId, $access): string
     {
-        $this->inquiryMapper->setInquiryAccess($inquiryId, $access);
-        return $access;
+	    $this->inquiryMapper->setInquiryAccess($inquiryId, $access);
+	    return $access;
     }
 }

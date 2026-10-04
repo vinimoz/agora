@@ -1097,7 +1097,6 @@ export function canShare(context: PermissionContext): boolean {
             return false;
         }
 
-
     if (sessionStore.appPermissions.allAccess) {
         return true
     }

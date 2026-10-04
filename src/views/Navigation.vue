@@ -58,6 +58,10 @@ const icons = {
     id: 'group',
     iconComponent: NavigationIcons.Group,
   },
+  shared: {
+    id: 'shared',
+    iconComponent: NavigationIcons.Share,
+  },
   open: {
     id: 'open',
     iconComponent: NavigationIcons.Open,

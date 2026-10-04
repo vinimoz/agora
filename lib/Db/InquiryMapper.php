@@ -75,7 +75,10 @@ class InquiryMapper extends QBMapper
 
         if ($withRoles) {
             $inquiryGroupsAlias = 'inquiry_groups';
-            $currentUserId = $this->userSession->getCurrentUserId();
+	    $currentUserId = $this->userSession->getCurrentUserId();
+	    $userGroups    = $this->userSession->getCurrentUser()->getGroups();
+	
+
             $this->joinFamily($qb, self::TABLE);
             $this->joinUserRole($qb, self::TABLE, $currentUserId);
             $this->joinGroupShares($qb, self::TABLE);
@@ -89,9 +92,10 @@ class InquiryMapper extends QBMapper
             $this->joinMiscs($qb, self::TABLE);
             $this->joinSupportResult($qb, self::TABLE); 
 	    $this->joinSupportEngine($qb, self::TABLE); 
-	    $this->applyGroupAccessFilter($qb, self::TABLE);
-
-            // Add GROUP BY with all columns
+	    $this->applyAccessFilter($qb, self::TABLE);
+	    $this->joinIsShared($qb, self::TABLE, $currentUserId, $userGroups);
+	    
+	    // Add GROUP BY with all columns
             $qb->groupBy([
                 self::TABLE . '.id',
                 self::TABLE . '.cover_id',
@@ -152,7 +156,9 @@ class InquiryMapper extends QBMapper
         ])
            ->from($this->getTableName(), self::TABLE);
 
-        $currentUserId = $this->userSession->getCurrentUserId();
+	$currentUserId = $this->userSession->getCurrentUserId();
+	$userGroups    = $this->userSession->getCurrentUser()->getGroups();
+
         $inquiryGroupsAlias = 'inquiry_groups';
         $this->joinFamily($qb, self::TABLE);
         $this->joinUserRole($qb, self::TABLE, $currentUserId);
@@ -167,7 +173,8 @@ class InquiryMapper extends QBMapper
         $this->joinMiscs($qb, self::TABLE);
         $this->joinSupportResult($qb, self::TABLE);  
         $this->joinSupportEngine($qb, self::TABLE);
-	$this->applyGroupAccessFilter($qb, self::TABLE);
+	$this->applyAccessFilter($qb, self::TABLE);
+	$this->joinIsShared($qb, self::TABLE, $currentUserId, $userGroups);
 
         // Add GROUP BY with all inquiry table columns for PostgreSQL compatibility
         $qb->groupBy([
@@ -371,7 +378,7 @@ protected function joinFamily(
         }
 
         // Row-level visibility for access='group' inquiries
-        $this->applyGroupAccessFilter($qb, self::TABLE);
+        $this->applyAccessFilter($qb, self::TABLE);
 
         $stmt = $qb->executeQuery();
         $rows = $stmt->fetchAll();
@@ -883,212 +890,269 @@ private function castValueByType($value, array $fieldDef)
 
         if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
             // For PostgreSQL, use MAX() to make CASE an aggregate function
-            $qb->addSelect(
-                $qb->createFunction('MAX(CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END) AS has_supported')
-            );
-        } else {
-            // For MySQL, keep as is
-            $qb->addSelect(
-                $qb->createFunction('CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END AS has_supported')
-            );
-        }
+		$qb->addSelect(
+			$qb->createFunction('MAX(CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END) AS has_supported')
+		);
+	} else {
+		// For MySQL, keep as is
+		$qb->addSelect(
+			$qb->createFunction('CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END AS has_supported')
+		);
+	}
     }
 
-    /**
-     */
-    protected function applyGroupAccessFilter(IQueryBuilder $qb, string $alias = self::TABLE): void
+    protected function applyAccessFilter(IQueryBuilder $qb, string $alias = self::TABLE): void
     {
-        $user = $this->userSession->getCurrentUser();
+	    $user = $this->userSession->getCurrentUser();
 
+	    if ($user->getIsAdmin()) {
+		    return;
+	    }
 
-        // Admin bypasses entirely
-        if ($user->getIsAdmin()) {
-            return;
-        }
+	    $currentUserId = $this->userSession->getCurrentUserId();
+	    $userGroups    = $user->getGroups();
 
-        $currentUserId = $this->userSession->getCurrentUserId();
-        $userGroups    = $user->getGroups();   // string[] of GIDs
-	
-        // De Morgan complement of: access='group' AND owned_group IS NOT NULL AND owned_group <> ''
-        $notGroupScoped = $qb->expr()->orX(
-            $qb->expr()->neq(
-                $alias . '.access',
-                $qb->createNamedParameter(Inquiry::ACCESS_GROUP, IQueryBuilder::PARAM_STR)
-            ),
-            $qb->expr()->isNull($alias . '.owned_group'),
-            $qb->expr()->eq(
-                $alias . '.owned_group',
-                $qb->createNamedParameter('', IQueryBuilder::PARAM_STR)
-            )
-	);
-	        // (group-scoped AND allowed) — owner OR group membership.
-        $allowedPredicates = [
-            $notGroupScoped,
+	    $or = [];
 
-            // Owner
-            $qb->expr()->eq(
-                $alias . '.owner',
-                $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
-            ),
-        ];
+	    $or[] = $qb->expr()->eq(
+		    $alias . '.access',
+		    $qb->createNamedParameter(Inquiry::ACCESS_OPEN, IQueryBuilder::PARAM_STR)
+	    );
 
-        // Member of the owning group
-        if (!empty($userGroups)) {
-            $allowedPredicates[] = $qb->expr()->in(
-                $alias . '.owned_group',
-                $qb->createNamedParameter($userGroups, IQueryBuilder::PARAM_STR_ARRAY)
-            );
-        }
+	    // owner
+	    if ($currentUserId !== null) {
+		    $or[] = $qb->expr()->eq(
+			    $alias . '.owner',
+			    $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+		    );
+	    }
 
-        $qb->andWhere($qb->expr()->orX(...$allowedPredicates));
+	    $groupScoped = $qb->expr()->andX(
+		    $qb->expr()->eq($alias . '.access', $qb->createNamedParameter(Inquiry::ACCESS_GROUP, IQueryBuilder::PARAM_STR)),
+		    $qb->expr()->isNotNull($alias . '.owned_group'),
+		    $qb->expr()->neq($alias . '.owned_group', $qb->createNamedParameter('', IQueryBuilder::PARAM_STR)),
+	    );
 
+	    $groupMatch = [];
+	    if ($currentUserId !== null) {
+		    $groupMatch[] = $qb->expr()->eq(
+			    $alias . '.owner',
+			    $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+		    );
+	    }
+	    if (!empty($userGroups)) {
+		    $groupMatch[] = $qb->expr()->in(
+			    $alias . '.owned_group',
+			    $qb->createNamedParameter($userGroups, IQueryBuilder::PARAM_STR_ARRAY)
+		    );
+	    }
+	    if (!empty($groupMatch)) {
+		    $or[] = $qb->expr()->andX($groupScoped, $qb->expr()->orX(...$groupMatch));
+	    }
+
+	    if ($currentUserId !== null) {
+		    $shareExists = sprintf(
+			    'EXISTS (SELECT 1 FROM `*PREFIX*%s` s '
+			    . 'WHERE s.inquiry_id = %s.id AND s.deleted = 0 '
+			    . 'AND s.type IN (%s) '
+			    . 'AND (s.user_id = :share_user OR s.user_id IN (:share_groups)))',
+			    Share::TABLE,
+			    $alias,
+			    "'user','admin','group','email','contact','external'"
+		    );
+		    $or[] = $qb->createFunction($shareExists);
+		    $qb->setParameter('share_user', $currentUserId, IQueryBuilder::PARAM_STR);
+		    $qb->setParameter('share_groups', $userGroups ?: [''], IQueryBuilder::PARAM_STR_ARRAY);
+	    }
+
+	    // Moderator : file pending
+	    if ($user->getIsModerator()) {
+		    $or[] = $qb->expr()->eq(
+			    $alias . '.moderation_status',
+			    $qb->createNamedParameter(Inquiry::MODERATION_STATUS_PENDING, IQueryBuilder::PARAM_STR)
+		    );
+	    }
+
+	    $qb->andWhere($qb->expr()->orX(...$or));
     }
 
-    protected function joinGroupShares(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'group_shares',
+    protected function joinIsShared(
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    ?string $currentUserId,
+	    array $userGroups,
     ): void {
-        $dbProvider = $this->db->getDatabaseProvider();
+	    if ($currentUserId === null) {
+		    $qb->addSelect($qb->createFunction('0 AS is_shared'));
+		    return;
+	    }
 
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.user_id',
-            asColumn: 'group_shares',
-            dbProvider: $dbProvider,
-            separator: ','
-        );
+	    $sql = sprintf(
+		    "CASE WHEN EXISTS (
+			    SELECT 1 FROM `*PREFIX*%s` s
+			    WHERE s.inquiry_id = %s.id
+			    AND s.deleted = 0
+			    AND s.type IN ('user','admin','group','email','contact','external')
+			    AND (s.user_id = :is_shared_user OR s.user_id IN (:is_shared_groups))
+	    ) THEN 1 ELSE 0 END AS is_shared",
+	    Share::TABLE,
+	    $fromAlias
+	    );
 
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.type', $qb->expr()->literal('group')),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-            )
-        );
+	$qb->addSelect($qb->createFunction($sql));
+	$qb->setParameter('is_shared_user', $currentUserId, IQueryBuilder::PARAM_STR);
+	$qb->setParameter('is_shared_groups', $userGroups ?: [''], IQueryBuilder::PARAM_STR_ARRAY);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    protected function joinGroupShares(
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'group_shares',
+    ): void {
+	    $dbProvider = $this->db->getDatabaseProvider();
+
+	    SqlHelper::getConcatenatedArray(
+		    qb: $qb,
+		    concatColumn: $joinAlias . '.user_id',
+		    asColumn: 'group_shares',
+		    dbProvider: $dbProvider,
+		    separator: ','
+	    );
+
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Share::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			    $qb->expr()->eq($joinAlias . '.type', $qb->expr()->literal('group')),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+		    )
+	    );
     }
     protected function joinInquiryGroups(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $joinAlias = 'inquiry_groups',
+	    IQueryBuilder $qb,
+	    string $fromAlias,
+	    string $joinAlias = 'inquiry_groups',
     ): void {
-        $dbProvider = $this->db->getDatabaseProvider();
+	    $dbProvider = $this->db->getDatabaseProvider();
 
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.group_id',
-            asColumn: 'inquiry_groups',
-            dbProvider: $dbProvider,
-            separator: ','
-        );
+	    SqlHelper::getConcatenatedArray(
+		    qb: $qb,
+		    concatColumn: $joinAlias . '.group_id',
+		    asColumn: 'inquiry_groups',
+		    dbProvider: $dbProvider,
+		    separator: ','
+	    );
 
-        $qb->leftJoin(
-            $fromAlias,
-            InquiryGroup::RELATION_TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.inquiry_id'),
-            )
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    InquiryGroup::RELATION_TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.inquiry_id'),
+		    )
+	    );
     }
     protected function joinInquiryGroupShares(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $currentUserId,
-        string $inquiryGroupsAlias,
-        string $joinAlias = 'inquiry_group_shares',
+	    IQueryBuilder $qb,
+	    string $fromAlias,
+	    string $currentUserId,
+	    string $inquiryGroupsAlias,
+	    string $joinAlias = 'inquiry_group_shares',
     ): void {
-        $dbProvider = $this->db->getDatabaseProvider();
+	    $dbProvider = $this->db->getDatabaseProvider();
 
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.type',
-            asColumn: 'inquiry_group_user_shares',
-            dbProvider: $dbProvider,
-            separator: ','
-        );
+	    SqlHelper::getConcatenatedArray(
+		    qb: $qb,
+		    concatColumn: $joinAlias . '.type',
+		    asColumn: 'inquiry_group_user_shares',
+		    dbProvider: $dbProvider,
+		    separator: ','
+	    );
 
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.group_id', $inquiryGroupsAlias . '.group_id'),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-            )
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Share::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.group_id', $inquiryGroupsAlias . '.group_id'),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+			    $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+		    )
+	    );
     }
 
 
 
     protected function joinSupportsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'supports',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'supports',
     ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->isNull($joinAlias . '.support_engine_id')
-            )
-        )
-           ->addSelect(
-               $qb->createFunction(
-                   'COUNT(DISTINCT CASE WHEN ' . $joinAlias . '.option_id = 0  THEN ' . $joinAlias . '.user_id ELSE NULL END) AS count_supports'
-               )
-           );
-           // ->groupBy($fromAlias . '.id');
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Support::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			    $qb->expr()->isNull($joinAlias . '.support_engine_id')
+		    )
+	    )
+	->addSelect(
+		$qb->createFunction(
+			'COUNT(DISTINCT CASE WHEN ' . $joinAlias . '.option_id = 0  THEN ' . $joinAlias . '.user_id ELSE NULL END) AS count_supports'
+		)
+	);
+	    // ->groupBy($fromAlias . '.id');
     }
 
     // Comments of the inquiry
     protected function joinCommentsCount(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $joinAlias = 'comments',
+	    IQueryBuilder $qb,
+	    string $fromAlias,
+	    string $joinAlias = 'comments',
     ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Comment::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0)),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->createNamedParameter(0))
-            )
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Comment::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			    $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0)),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->createNamedParameter(0))
+		    )
+	    );
 
-        $qb->addSelect(
-            $qb->createFunction(
-                'COUNT(DISTINCT ' . $joinAlias . '.id) AS count_comments'
-            )
-        );
+	    $qb->addSelect(
+		    $qb->createFunction(
+			    'COUNT(DISTINCT ' . $joinAlias . '.id) AS count_comments'
+		    )
+	    );
     }
-
 
     protected function joinParticipantsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'participants',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'participants',
     ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Inquiry::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id'),
-                $qb->expr()->orX(
-                    $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter('open')),
-                    $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter('moderate'))
-                )
-            )
-        );
-        $qb->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_participants'));
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Inquiry::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id'),
+			    $qb->expr()->orX(
+				    $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter(Inquiry::ACCESS_OPEN)),
+				    $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter(Inquiry::ACCESS_GROUP))
+			    ),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+			    $qb->expr()->eq($joinAlias . '.archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
+		    )
+	    );
+	    $qb->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_participants'));
     }
+
+
 }

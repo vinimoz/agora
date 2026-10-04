@@ -70,7 +70,6 @@ use OCP\IURLGenerator;
 class Option extends EntityWithUser implements JsonSerializable
 {
     public const TABLE = 'agora_options';
-    public const ACCESS_INVITATION = 'invitation';
     public const ACCESS_PRIVATE = 'private';
     public const ACCESS_OPEN = 'open';
     public const ACCESS_GROUP = 'group';
@@ -144,10 +143,10 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $supportFeature = '';
     protected string $family = 'debate';
     protected int $sortOrder = 0;
-    protected bool $hasSupported = false;
-    protected mixed $supportValue = null;
 
     // joined columns
+    protected bool $hasSupported = false;
+    protected mixed $supportValue = null;
     protected string $userRole = '';
     protected string $shareToken = '';
     protected int $currentUserSupports = 0;

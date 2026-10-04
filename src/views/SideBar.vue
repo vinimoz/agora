@@ -122,7 +122,7 @@ function closeSideBar() {
         </NcAppSidebarTab>
         
         <NcAppSidebarTab
-                v-if="canShare(context)"
+                v-if="canEdit(context)"
                 id="sharing"
                 :order="5"
                 :name="t('agora', 'Sharing')"

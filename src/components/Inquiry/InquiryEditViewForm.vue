@@ -448,12 +448,11 @@ return isPublicRoute
 })
 
 // ============================================================
-// ACCESS LEVEL EDITING (only Open / Private / Invitation)
+// ACCESS LEVEL EDITING (only Open / Private )
 // ============================================================
 const accessOptions = computed(() => [
   { id: 'open', label: t('agora', 'Open') },
   { id: 'private', label: t('agora', 'Private') },
-  { id: 'group', label: t('agora', 'Invitation') },
 ])
 
 const selectedAccess = computed({
@@ -467,6 +466,7 @@ const selectedAccess = computed({
     showSuccess(t('agora', 'Access level updated'))
   },
 })
+
 
 const currentAccessLabel = computed(() => {
   const opt = accessOptions.value.find((o) => o.id === inquiryStore.configuration.access)
@@ -764,7 +764,7 @@ const expirationDate = computed({
                     </div>
 
                     <!-- Row 3 (Access) -->
-                    <div class="metadata-item">
+                    <div if="inquiryStore.configuration.access === 'open' || inquiryStore.configuration.access === 'private'" class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="InquiryGeneralIcons.Lock" :size="18" />
                         </div>
