@@ -129,7 +129,6 @@ OC.L10N.register(
     "never" : "nigdy",
     "Open" : "Otwórz",
     "Private" : "Prywatne",
-    "Invitation" : "Zaproszenie",
     "Comments" : "Komentarze",
     "Location" : "Lokalizacja",
     "Category" : "Kategoria",
@@ -412,6 +411,7 @@ OC.L10N.register(
     "Expired" : "Wygasł",
     "Relevant" : "Istotne",
     "Participated" : "Uczestniczył",
+    "Shared" : "Udostępnione",
     "Administration" : "Administracja",
     "Title must not be empty!" : "Tytuł nie może być pusty!"
 },

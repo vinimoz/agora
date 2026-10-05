@@ -361,6 +361,7 @@ OC.L10N.register(
     "Expired" : "Expirado",
     "Relevant" : "Relevante",
     "Participated" : "Participadas",
+    "Shared" : "Compartido",
     "Administration" : "Administración",
     "Title must not be empty!" : "¡El título no debe estar vacío!"
 },

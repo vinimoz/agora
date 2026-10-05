@@ -170,7 +170,6 @@
     "never" : "mai",
     "Open" : "Obert",
     "Private" : "Privat",
-    "Invitation" : "Invitació",
     "Comments" : "Comentaris",
     "Location" : "Ubicació",
     "Category" : "Categoria",
@@ -475,6 +474,7 @@
     "Expired" : "Caducat",
     "Relevant" : "Important",
     "Participated" : "Va participar",
+    "Shared" : "S'ha compartit",
     "Administration" : "Administració",
     "Title must not be empty!" : "El títol no pot estar buit!"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

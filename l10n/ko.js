@@ -98,7 +98,6 @@ OC.L10N.register(
     "never" : "하지 않음",
     "Open" : "열기",
     "Private" : "개인",
-    "Invitation" : "초대",
     "Comments" : "댓글",
     "Location" : "위치",
     "Category" : "분류",
@@ -309,6 +308,7 @@ OC.L10N.register(
     "Expired" : "만료됨",
     "Relevant" : "관련된",
     "Participated" : "참가한",
+    "Shared" : "공유됨",
     "Administration" : "관리",
     "Title must not be empty!" : "제목은 비울 수 없습니다!"
 },

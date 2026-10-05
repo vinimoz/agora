@@ -241,7 +241,6 @@ OC.L10N.register(
     "never" : "soha",
     "Open" : "Megnyitás",
     "Private" : "Privát",
-    "Invitation" : "Meghívó",
     "Select cover image" : "Válasszon borítóképet",
     "Inquiry cover image" : "Vizsgálat borítóképe",
     "Change cover image" : "Borítókép cseréje",
@@ -657,6 +656,7 @@ OC.L10N.register(
     "Expired" : "Elévült",
     "Relevant" : "Releváns",
     "Participated" : "Részt vett",
+    "Shared" : "Megosztva",
     "Administration" : "Adminisztráció",
     "Title must not be empty!" : "A cím nem lehet üres!"
 },

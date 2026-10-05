@@ -253,6 +253,7 @@ OC.L10N.register(
     "Owner" : "Bab-is",
     "Expired" : "Ad yekfu",
     "Relevant" : "Axatar",
+    "Shared" : "Yettwabḍa",
     "Administration" : "Tadbelt"
 },
 "nplurals=2; plural=(n != 1);");

@@ -246,7 +246,6 @@ OC.L10N.register(
     "never" : "никога",
     "Open" : "Отвори",
     "Private" : "Лично",
-    "Invitation" : "Покана",
     "Comments" : "Коментари",
     "Location" : "Местоположение",
     "Category" : "Категория",

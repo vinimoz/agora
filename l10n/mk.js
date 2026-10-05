@@ -51,7 +51,6 @@ OC.L10N.register(
     "never" : "никогаш",
     "Open" : "Отвори",
     "Private" : "Приватност",
-    "Invitation" : "Покани",
     "Comments" : "Коментари",
     "Location" : "Локација",
     "Status" : "Статус",
@@ -219,6 +218,7 @@ OC.L10N.register(
     "now" : "сега",
     "Owner" : "Сопственик",
     "Expired" : "Истечен",
+    "Shared" : "Споделено",
     "Administration" : "Администрација"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

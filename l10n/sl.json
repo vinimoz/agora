@@ -167,7 +167,6 @@
     "never" : "nikoli",
     "Open" : "Odpri",
     "Private" : "Zasebno",
-    "Invitation" : "Povabilo",
     "Comments" : "Opombe",
     "Location" : "Mesto",
     "Category" : "Kategorija",
@@ -421,6 +420,7 @@
     "Expired" : "Preteklo",
     "Relevant" : "Pomembne",
     "Participated" : "Izpolnjene ankete",
+    "Shared" : "V souporabi",
     "Administration" : "Skrbništvo",
     "Title must not be empty!" : "Polje naslova ne sme biti prazno!"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"

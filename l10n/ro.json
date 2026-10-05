@@ -175,6 +175,7 @@
     "_%n year ago_::_%n years ago_" : ["%n an în urmă","%n ani în urmâ","%n ani în urmâ"],
     "now" : "acum",
     "Owner" : "Proprietar",
+    "Shared" : "Partajat",
     "Administration" : "Administrare"
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"
 }

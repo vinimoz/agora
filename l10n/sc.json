@@ -55,7 +55,6 @@
     "Failed to upload {file}" : "No at fatu a agiornare {file}",
     "never" : "mai",
     "Open" : "Aberi",
-    "Invitation" : "Invitu",
     "Comments" : "Cummentos",
     "Location" : "Positzione",
     "Category" : "Categorias",
@@ -244,6 +243,7 @@
     "Expired" : "Iscadidu",
     "Relevant" : "Importante",
     "Participated" : "Partetzipadu",
+    "Shared" : "Cumpartziduras",
     "Administration" : "Amministratzione",
     "Title must not be empty!" : "Su tìtulu no depet abarrare bòidu!"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

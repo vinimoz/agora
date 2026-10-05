@@ -186,7 +186,6 @@ OC.L10N.register(
     "never" : "أبداً",
     "Open" : "فتح",
     "Private" : "خاصٌّ",
-    "Invitation" : "دعوة",
     "Comments" : "تعليقات",
     "Location" : "الموقع",
     "Category" : "التصنيف",

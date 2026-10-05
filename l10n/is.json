@@ -263,6 +263,7 @@
     "Owner" : "Eigandi",
     "Expired" : "Útrunnið",
     "Relevant" : "Tengt",
+    "Shared" : "Sameiginlegt",
     "Administration" : "Stjórnun",
     "Title must not be empty!" : "Titill getur ekki verið auður!"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"

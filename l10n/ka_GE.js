@@ -115,6 +115,7 @@ OC.L10N.register(
     "_%n month ago_::_%n months ago_" : ["%n თვის წინ","%n თვის წინ"],
     "_%n year ago_::_%n years ago_" : ["%n წლის წინ","%n წლის წინ"],
     "Expired" : "გაუქმდა",
+    "Shared" : "გაზიარებული",
     "Administration" : "ადმინისტრაცია"
 },
 "nplurals=2; plural=(n!=1);");

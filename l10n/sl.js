@@ -169,7 +169,6 @@ OC.L10N.register(
     "never" : "nikoli",
     "Open" : "Odpri",
     "Private" : "Zasebno",
-    "Invitation" : "Povabilo",
     "Comments" : "Opombe",
     "Location" : "Mesto",
     "Category" : "Kategorija",
@@ -423,6 +422,7 @@ OC.L10N.register(
     "Expired" : "Preteklo",
     "Relevant" : "Pomembne",
     "Participated" : "Izpolnjene ankete",
+    "Shared" : "V souporabi",
     "Administration" : "Skrbništvo",
     "Title must not be empty!" : "Polje naslova ne sme biti prazno!"
 },

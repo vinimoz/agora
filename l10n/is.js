@@ -265,6 +265,7 @@ OC.L10N.register(
     "Owner" : "Eigandi",
     "Expired" : "Útrunnið",
     "Relevant" : "Tengt",
+    "Shared" : "Sameiginlegt",
     "Administration" : "Stjórnun",
     "Title must not be empty!" : "Titill getur ekki verið auður!"
 },

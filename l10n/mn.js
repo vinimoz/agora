@@ -451,6 +451,7 @@ OC.L10N.register(
     "Expired" : "Дууссан",
     "Relevant" : "Холбогдох",
     "Participated" : "Оролцсон",
+    "Shared" : "–¢“Ø–≥—ç—ç—Å—ç–Ω",
     "Administration" : "Удирдлага",
     "Administrative access" : "Удирдлагын хандалт",
     "Title must not be empty!" : "Гарчиг хоосон байж болохгүй!",

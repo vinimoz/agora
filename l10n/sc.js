@@ -57,7 +57,6 @@ OC.L10N.register(
     "Failed to upload {file}" : "No at fatu a agiornare {file}",
     "never" : "mai",
     "Open" : "Aberi",
-    "Invitation" : "Invitu",
     "Comments" : "Cummentos",
     "Location" : "Positzione",
     "Category" : "Categorias",
@@ -246,6 +245,7 @@ OC.L10N.register(
     "Expired" : "Iscadidu",
     "Relevant" : "Importante",
     "Participated" : "Partetzipadu",
+    "Shared" : "Cumpartziduras",
     "Administration" : "Amministratzione",
     "Title must not be empty!" : "Su tìtulu no depet abarrare bòidu!"
 },

@@ -126,7 +126,6 @@ OC.L10N.register(
     "never" : "никогда",
     "Open" : "Открытые",
     "Private" : "Частное",
-    "Invitation" : "Приглашение",
     "Comments" : "Комментарии",
     "Location" : "Местоположение",
     "Category" : "Категория",
@@ -407,6 +406,7 @@ OC.L10N.register(
     "Expired" : "Истёкший",
     "Relevant" : "Актуальные",
     "Participated" : "Вы приняли участие",
+    "Shared" : "Опубликованное",
     "Administration" : "Администрирование",
     "Title must not be empty!" : "Заголовок не может быть пустым."
 },

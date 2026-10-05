@@ -146,7 +146,6 @@ OC.L10N.register(
     "Failed to upload {file}" : "{file}アップロードに失敗しました",
     "never" : "なし",
     "Open" : "開く",
-    "Invitation" : "招待",
     "Comments" : "コメント",
     "Location" : "場所",
     "Category" : "カテゴリー",
@@ -373,6 +372,7 @@ OC.L10N.register(
     "Owner" : "作成者",
     "Expired" : "有効期限切れ",
     "Relevant" : "関連",
+    "Shared" : "共有中",
     "Administration" : "管理",
     "Title must not be empty!" : "タイトルは空白にできません！"
 },

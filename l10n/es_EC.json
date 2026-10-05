@@ -359,6 +359,7 @@
     "Expired" : "Expirado",
     "Relevant" : "Relevante",
     "Participated" : "Participadas",
+    "Shared" : "Compartido",
     "Administration" : "Administración",
     "Title must not be empty!" : "¡El título no debe estar vacío!"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"

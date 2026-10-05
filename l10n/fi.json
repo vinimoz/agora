@@ -94,7 +94,6 @@
     "never" : "ei koskaan",
     "Open" : "Avoimet",
     "Private" : "Yksityinen",
-    "Invitation" : "Kutsu",
     "Comments" : "Kommentit",
     "Location" : "Sijainti",
     "Category" : "Kategoria",
@@ -344,6 +343,7 @@
     "Expired" : "Vanhentunut",
     "Relevant" : "Olennaiset",
     "Participated" : "Osallistunut",
+    "Shared" : "Jaettu",
     "Administration" : "Ylläpito",
     "Title must not be empty!" : "Otsikko ei voi olla tyhjä!"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

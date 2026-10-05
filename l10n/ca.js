@@ -172,7 +172,6 @@ OC.L10N.register(
     "never" : "mai",
     "Open" : "Obert",
     "Private" : "Privat",
-    "Invitation" : "Invitació",
     "Comments" : "Comentaris",
     "Location" : "Ubicació",
     "Category" : "Categoria",
@@ -477,6 +476,7 @@ OC.L10N.register(
     "Expired" : "Caducat",
     "Relevant" : "Important",
     "Participated" : "Va participar",
+    "Shared" : "S'ha compartit",
     "Administration" : "Administració",
     "Title must not be empty!" : "El títol no pot estar buit!"
 },

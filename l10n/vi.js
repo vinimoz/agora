@@ -187,6 +187,7 @@ OC.L10N.register(
     "now" : "bây giờ",
     "Owner" : "Người sở hữu",
     "Expired" : "Đã hết hạn",
+    "Shared" : "Đã chia sẻ",
     "Administration" : "Quản trị viên"
 },
 "nplurals=1; plural=0;");

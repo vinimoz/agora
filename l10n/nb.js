@@ -173,7 +173,6 @@ OC.L10N.register(
     "never" : "aldri",
     "Open" : "Åpne",
     "Private" : "Privat",
-    "Invitation" : "Invitasjon",
     "Comments" : "Kommentarer",
     "Location" : "Sted",
     "Category" : "Kategori",
@@ -482,6 +481,7 @@ OC.L10N.register(
     "Expired" : "Utløpt",
     "Relevant" : "Relevant",
     "Participated" : "Deltatt",
+    "Shared" : "Delt",
     "Administration" : "Administrasjon",
     "Title must not be empty!" : "Tittelen må ikke være tom!"
 },

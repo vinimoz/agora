@@ -85,7 +85,6 @@ OC.L10N.register(
     "never" : "enxamás",
     "Open" : "Abrir",
     "Private" : "Priváu",
-    "Invitation" : "Invitación",
     "Comments" : "Comentarios",
     "Location" : "Llocalización",
     "Category" : "Categoría",

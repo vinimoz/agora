@@ -96,7 +96,6 @@ OC.L10N.register(
     "never" : "ei koskaan",
     "Open" : "Avoimet",
     "Private" : "Yksityinen",
-    "Invitation" : "Kutsu",
     "Comments" : "Kommentit",
     "Location" : "Sijainti",
     "Category" : "Kategoria",
@@ -346,6 +345,7 @@ OC.L10N.register(
     "Expired" : "Vanhentunut",
     "Relevant" : "Olennaiset",
     "Participated" : "Osallistunut",
+    "Shared" : "Jaettu",
     "Administration" : "Ylläpito",
     "Title must not be empty!" : "Otsikko ei voi olla tyhjä!"
 },

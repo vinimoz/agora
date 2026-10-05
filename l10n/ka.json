@@ -234,6 +234,7 @@
     "now" : "now",
     "Owner" : "Owner",
     "Expired" : "Expired",
+    "Shared" : "Shared",
     "Administration" : "Administration"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }
