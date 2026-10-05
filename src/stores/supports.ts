@@ -821,20 +821,20 @@ function updateItemCount(inquiryId: number, optionId: number, delta: number) {
         const option = optionsStore.options.find(o => o.id === optionId)
         if (option) {
             if (!option.status) option.status = {}
-            option.status.countSupports = (option.status.countSupports || 0) + delta
+            option.status.countSupports = Math.max(0, (option.status.countSupports || 0) + delta)
         }
     } else {
         // It's the inquiry itself
         const inquiry = inquiriesStore.byId[inquiryId]
         if (inquiry) {
             if (!inquiry.status) inquiry.status = {}
-            inquiry.status.countSupports = (inquiry.status.countSupports || 0) + delta
+            inquiry.status.countSupports = Math.max(0, (inquiry.status.countSupports || 0) + delta)
         }
         // Also update the current inquiry store if it matches
         const currentInquiryStore = useInquiryStore()
         if (currentInquiryStore.id === inquiryId) {
             if (!currentInquiryStore.status) currentInquiryStore.status = {}
-            currentInquiryStore.status.countSupports = (currentInquiryStore.status.countSupports || 0) + delta
+            currentInquiryStore.status.countSupports = Math.max(0, (currentInquiryStore.status.countSupports || 0) + delta)
         }
     }
 }
