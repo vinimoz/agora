@@ -763,30 +763,6 @@ const expirationDate = computed({
                             </template>
                         </div>
                     </div>
-
-                    <!-- Row 3 (Access) -->
-                    <div class="metadata-item">
-                        <div class="metadata-icon">
-                            <component :is="InquiryGeneralIcons.Lock" :size="18" />
-                        </div>
-                        <div class="metadata-content">
-                            <span class="metadata-label">{{ t('agora', 'Access') }}</span>
-                            <template v-if="canEditInquiry">
-                                <div class="select-container">
-                                    <NcSelect
-                                            v-model="selectedAccess"
-                                            :options="accessOptions"
-                                            :clearable="false"
-                                            class="access-select"
-                                            :label-outside="true"
-                                            />
-                                </div>
-                            </template>
-                            <template v-else>
-                                <span class="metadata-value">{{ t('agora', currentAccessLabel) }}</span>
-                            </template>
-                        </div>
-                    </div>
                 </div>
             </div>
 

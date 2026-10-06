@@ -23,6 +23,9 @@ import GroupView from './views/InquiryGroupView.vue'
 import GroupList from './views/InquiryGroupList.vue'
 import Group from './views/InquiryGroup.vue'
 
+import HomeView from './views/HomeView.vue'
+import NavigationLanding from './views/NavigationLanding.vue'
+
 import SideBar from './views/SideBar.vue'
 import SideBarInquiryGroup from './views/SideBarInquiryGroup.vue'
 
@@ -108,6 +111,17 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+  name: 'home',
+  path: '/',
+  components: {
+    default: HomeView,
+    navigation: NavigationLanding,
+  },
+  props: { default: false, navigation: false },
+  meta: { listPage: true },
+},
+
+  {
     name: 'list',
     path: '/list/:type?',
     components: {
@@ -121,7 +135,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     name: 'menu',
-    path: '/',
+    path: '/menu/:family?',
     components: {
       default: Menu,
       navigation: NavigationMenu,

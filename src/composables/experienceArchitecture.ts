@@ -7,7 +7,127 @@ import type {
   ExperienceArchitecture,
 } from '../Types/experience.types'
 
+
 export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitecture> = {
+
+
+// ============================================================
+// HOME – Mockup layout: hero + 3 stacked sections + right rail
+// ============================================================
+home: {
+  experience: 'home',
+  defaultDisplay: 'banner',
+  layout: { type: 'grid', columns: 3, rows: 6, responsive: true },
+  context: { type: 'group', selection: 'all' },
+  features: ['hero', 'news', 'services', 'events', 'explore', 'promo', 'search'],
+    sections: [
+  { key: 'search',  label: '',                        order: 0, zones: ['search'] },
+  { key: 'hero',    label: '',                        order: 1, zones: ['hero'] },
+  { key: 'news',    label: 'City news',               order: 2, zones: ['news'] },
+  { key: 'current', label: 'Right now',               order: 3, zones: ['current_moment'] },
+  { key: 'spaces',  label: 'My spaces',               order: 4, zones: ['my_spaces'] },
+  { key: 'services',label: 'Your online services',    order: 5, zones: ['services'] },
+  { key: 'explore', label: 'Explore / Participate',   order: 6, zones: ['explore'] },
+  { key: 'agenda',  label: 'Upcoming',                order: 7, zones: ['upcoming'] },
+  { key: 'promo',   label: '',                        order: 8, zones: ['promo'] },
+],
+  displayArchitecture: {
+    // ---- Search bar (spans full width) ----
+    search: {
+      content: 'search',
+      scope: { source: 'all' },
+      display: { type: 'search_bar' },
+      position: { row: 1, column: 1, columnSpan: 3 },
+    },
+
+    // ---- HERO banner (main column, spans 2) ----
+    hero: {
+      content: 'hero',
+      scope: { source: 'all' },
+      display: { type: 'banner' },
+      position: { row: 2, column: 1, columnSpan: 2 },
+    },
+
+    // ---- Right rail: NEWS ----
+    news: {
+      content: 'news',
+      scope: { source: 'municipal', pagination: { limit: 5, offset: 0 } },
+      display: { type: 'news_list' },
+      position: { row: 2, column: 3, rowSpan: 2 },
+    },
+
+current_moment: {
+  content: 'inquiries',
+  scope: {
+    source: 'all',                                    // was 'featured'
+    sort: { field: 'lastInteraction', direction: 'desc' },
+    pagination: { limit: 4, offset: 0 },
+  },
+  display: {
+    type: 'cards',
+    options: { cardsPerRow: 4, compact: true, showStats: true, showSupport: true },
+  },
+  position: { row: 3, column: 1, columnSpan: 2 },
+  interaction: { action: 'open', target: 'page' },
+},
+
+my_spaces: {
+  content: 'inquiry_groups',
+  scope: {
+    source: 'all',                                    // was 'children'
+    sort: { field: 'title', direction: 'asc' },
+  },
+  display: {
+    type: 'cards',
+    options: { cardsPerRow: 5, showCover: true, showStats: true, showDescription: false },
+  },
+  position: { row: 4, column: 1, columnSpan: 2 },
+  interaction: { action: 'navigate', target: 'page' },
+},
+
+    // ---- Right rail: SERVICES ----
+    services: {
+      content: 'services',
+      scope: { source: 'all' },
+      display: { type: 'quick_actions' },
+      position: { row: 4, column: 3 },
+    },
+
+    my_spaces: {
+      content: 'inquiry_groups',
+      scope: { source: 'children', sort: { field: 'title', direction: 'asc' } },
+      display: {
+        type: 'cards',
+        options: { cardsPerRow: 5, showCover: true, showStats: true, showDescription: false },
+      },
+      position: { row: 4, column: 1, columnSpan: 2 },
+      interaction: { action: 'navigate', target: 'page' },
+    },
+
+    // ---- Right rail: UPCOMING EVENTS ----
+    upcoming: {
+      content: 'events',
+      scope: { source: 'all', sort: { field: 'date', direction: 'asc' }, pagination: { limit: 3, offset: 0 } },
+      display: { type: 'calendar' },
+      position: { row: 5, column: 3, rowSpan: 2 },
+    },
+
+    // ---- "Explorer / Participer" (main column) ----
+    explore: {
+      content: 'explore',
+      scope: { source: 'all' },
+      display: { type: 'category_grid' },
+      position: { row: 5, column: 1, columnSpan: 2 },
+    },
+    // ---- Promo card (main column, bottom) ----
+    promo: {
+      content: 'promo',
+      scope: { source: 'featured' },
+      display: { type: 'promo_card' },
+      position: { row: 6, column: 1, columnSpan: 2 },
+    },
+  },
+},
 
   // ============================================================
   // DASHBOARD – 2×2 grid

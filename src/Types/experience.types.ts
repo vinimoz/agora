@@ -6,11 +6,21 @@
 // Experience Architecture Types - Single Source of Truth
 // ============================================================
 
+
+export interface HomeSection {
+  key: string
+  label: string
+  order: number
+  enabled?: boolean
+  zones: string[]   // keys in displayArchitecture
+}
+
 // ---------- Vocabulary: EXPERIENCE ----------
 export const EXPERIENCE_VALUES = [
   'dashboard',
   'social',
   'marketplace',
+  'home',
   'kanban',
   'timeline',
   'wiki',
@@ -40,6 +50,13 @@ export const CONTENT_VALUES = [
   'messages',
   'statistics',
   'activity',
+   'hero',      
+  'news',          
+  'services',
+  'events',   
+  'explore',    
+  'promo',        
+  'search',           
 ] as const
 export type ContentValue = typeof CONTENT_VALUES[number]
 
@@ -52,18 +69,28 @@ export const SOURCE_VALUES = [
   'selected_group',
   'selected_inquiry',
   'all',
+  'municipal',
+  'featured',
 ] as const
 export type SourceValue = typeof SOURCE_VALUES[number]
 
 export const VALID_SOURCES_BY_CONTENT: Record<ContentValue, SourceValue[]> = {
   'inquiry_groups': ['children', 'selected_group', 'parent_group', 'group', 'all'],
-  'inquiries':      ['children', 'selected_group', 'group', 'all'],
+  'inquiries':      ['children', 'selected_group', 'group', 'all', 'featured'],
   'options':        ['selected_inquiry'],
   'resources':      ['selected_inquiry'],
   'messages':       ['selected_inquiry'],
   'statistics':     ['group', 'selected_group', 'selected_inquiry'],
   'activity':       ['group', 'children', 'all'],
+  'hero':           ['all'],
+  'news':           ['municipal', 'all', 'featured'],
+  'services':       ['all'],
+  'events':         ['all', 'featured'],
+  'explore':        ['all'],
+  'promo':          ['featured', 'all'],
+  'search':         ['all'],
 }
+
 
 // ---------- Vocabulary: DISPLAY ----------
 export const DISPLAY_TYPE_VALUES = [
@@ -77,19 +104,38 @@ export const DISPLAY_TYPE_VALUES = [
   'book',
   'widget',
   'tool',
+  'banner',        
+  'news_list',    
+  'quick_actions',    
+  'calendar',      
+  'category_grid',
+  'search_bar', 
+  'promo_card',
+  'current_moment',
+  'my_spaces',
+
 ] as const
 export type DisplayType = typeof DISPLAY_TYPE_VALUES[number]
+
+
 /** @deprecated alias kept for backwards compatibility – use `DisplayType`. */
 export type DisplayTypeValue = DisplayType
 
 export const VALID_DISPLAYS_BY_CONTENT: Record<ContentValue, DisplayType[]> = {
-  'inquiry_groups': ['list', 'cards', 'tree', 'navigation'],
-  'inquiries':      ['list', 'cards', 'book', 'tree', 'feed', 'timeline', 'kanban', 'tool'],
+  'inquiry_groups': ['list', 'cards', 'tree', 'navigation', 'my_spaces'],
+  'inquiries':      ['list', 'cards', 'book', 'tree', 'feed', 'timeline', 'kanban', 'tool', 'current_moment'],
   'options':        ['tool'],
   'resources':      ['list'],
-  'messages':       ['list'],
+  'messages':       ['list', 'feed'],                    
   'statistics':     ['widget', 'list', 'cards'],
   'activity':       ['feed', 'list'],
+  'hero':           ['banner'],
+  'news':           ['news_list', 'list'],
+  'services':       ['quick_actions', 'list'],
+  'events':         ['calendar', 'list'],
+  'explore':        ['category_grid'],
+  'promo':          ['promo_card'],
+  'search':         ['search_bar'],
 }
 
 // ---------- Vocabulary: TOOL ----------
@@ -118,12 +164,23 @@ export type ToolValue = ToolKey
 
 export const VALID_TOOLS_BY_CONTENT: Record<ContentValue, ToolKey[]> = {
   'inquiry_groups': [],
-  'inquiries':      [...INQUIRY_TOOLS, 'wiki', 'analytics', 'resources', 'quorum', 'support'],
+  'inquiries':      [
+    ...INQUIRY_TOOLS,
+    'wiki', 'analytics', 'resources', 'quorum', 'support',
+    'search', 'filter', 'compare',                          // marketplace needs these
+  ],
   'options':        [...OPTION_TOOLS, 'wiki', 'analytics', 'resources'],
   'resources':      [],
   'messages':       [],
   'statistics':     [],
   'activity':       [],
+  'hero':           [],
+  'news':           [],
+  'services':       [],
+  'events':         [],
+  'explore':        [],
+  'promo':          [],
+  'search':         ['search'],
 }
 
 // ---------- Vocabulary: INTERACTION ----------
@@ -244,6 +301,7 @@ export interface ExperienceArchitecture {
     rows?: number
     responsive?: boolean
   }
+  sections?: HomeSection[]
   /** Map of zone names to DisplayZone */
   displayArchitecture: Record<string, DisplayZone>
   /** Enabled features */

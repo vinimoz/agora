@@ -63,18 +63,15 @@
           `zone-${zoneKey}`,
           `content-${zone.content || 'inquiries'}`,
           `display-${zone.display?.type || 'cards'}`,
-          { 'is-empty': !hasZoneData(zone) || !isZoneRenderable(zone) }
+          { 'is-empty': !hasZoneData(zone) || !isZoneRenderable(zone) },
         ]"
         :style="getZoneStyle(zone)"
       >
         <!-- Zone header -->
         <div class="zone-header">
           <component :is="getContentIcon(zone.content)" :size="16" />
-          <span class="zone-title">{{ getZoneLabel(zone) }}</span>
-          <span
-            v-if="hasZoneData(zone) && isZoneRenderable(zone)"
-            class="zone-count"
-          >
+          <span class="zone-title">{{ getZoneLabel(zone , String(zoneKey)) }}</span>
+          <span v-if="hasZoneData(zone) && isZoneRenderable(zone)" class="zone-count">
             {{ getZoneCount(zone) }}
           </span>
         </div>
@@ -152,7 +149,11 @@
         <div class="layout-content">
           <slot>
             <!-- Inquiries Grid -->
-            <div v-if="displayedInquiries && displayedInquiries.length > 0" class="inquiries-grid" :class="displayModeClass">
+            <div
+              v-if="displayedInquiries && displayedInquiries.length > 0"
+              class="inquiries-grid"
+              :class="displayModeClass"
+            >
               <template v-for="inquiry in displayedInquiries" :key="inquiry.id">
                 <component
                   v-if="inquiry"
@@ -293,6 +294,17 @@ import { useInquiryGroupsStore } from '../../stores/inquiryGroups'
 import { getExperienceArchitecture } from '../../composables/experienceArchitecture'
 import { EXPERIENCE_DEFINITIONS, type ExperienceKey, type DisplayMode } from '../../composables/useExperience'
 import { processZoneData } from '../../helpers/modules/filterHelpers'
+import SearchBar from './Landing/SearchBar.vue'
+import WelcomeHero from './Landing/WelcomeHero.vue'
+import CurrentMomentWidget from './Landing/CurrentMomentWidget.vue'
+import MySpacesWidget from './Landing/MySpacesWidget.vue'
+import ExploreWidget from './Landing/ExploreWidget.vue'
+import NewsWidget from './Landing/NewsWidget.vue'
+import ServicesWidget from './Landing/ServicesWidget.vue'
+import UpcomingWidget from './Landing/UpcomingWidget.vue'
+import PromoCard from './Landing/PromoCard.vue'
+
+
 
 // ============================================================
 // IMPORT VOCABULARY
@@ -305,8 +317,13 @@ import {
   type ToolValue,
 } from '../Types/experience.types'
 
+import { useHomeConfig } from '../../composables/useHomeConfig'
+import { useRelevance } from '../../composables/useRelevance'
+
+
 import type { Inquiry, Option, Item } from '../../Types/index.ts'
 import { toItems } from '../../helpers/modules/itemHelpers'
+import { useUserContext } from '../../composables/useUserContext'
 
 // ============================================================
 // PROPS
@@ -340,6 +357,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   viewInquiry: [inquiry: Inquiry]
   viewOption: [option: any]
+
   viewGroup: [group: InquiryGroup]
   selectInquiry: [inquiry: Inquiry]
   selectGroup: [group: InquiryGroup]
@@ -380,6 +398,9 @@ const experience = computed(() => props.experience || 'dashboard')
 const displayArchitecture = computed(() => props.displayArchitecture || null)
 const layoutConfig = computed(() => props.layoutConfig || { type: 'grid', columns: 3, rows: 2, responsive: true })
 
+const { context } = useUserContext()
+const { config: homeConfig } = useHomeConfig()
+const { rank } = useRelevance()
 // ============================================================
 // COMPUTED - Grid Style using position row/column/span (camelCase)
 // ============================================================
@@ -489,6 +510,94 @@ const effectiveArchitecture = computed(() => {
 })
 
 // ============================================================
+// HELPER
+// ============================================================
+const heroStats = computed(() => {
+  const uid = context.value.userId
+  const list = props.inquiries || []
+  if (!uid) {
+    return { shared: 0, participated: 0, owned: 0, groupInquiries: 0 }
+  }
+  const spaceIds = new Set(context.value.spaces.map(s => s.id))
+
+  const owned = list.filter(i => i.owner?.id === uid).length
+  const participated = list.filter(i =>
+    (i as any).currentUserStatus?.isInvolved ||
+    (i as any).currentUserStatus?.hasSupported,
+  ).length
+  const groupInquiries = list.filter(i =>
+    i.inquiryGroups?.some(gid => spaceIds.has(gid)),
+  ).length
+  const shared = list.filter(i =>
+    (i.configuration as any)?.visibility === 'private' &&
+    i.owner?.id !== uid &&
+    ((i as any).sharedWith?.includes(uid) || false),
+  ).length
+
+  return { shared, participated, owned, groupInquiries }
+})
+
+function resolveIcon(icon: any): any {
+  if (!icon || typeof icon !== 'string') return icon
+  return (Icons as any)[icon] || Icons.CheckCircle
+}
+
+function resolveHeroActions(actions: any[]) {
+  return (actions || []).map(a => ({ ...a, icon: resolveIcon(a.icon) }))
+}
+function resolveServices(services: any[]) {
+  return (services || []).map(s => ({ ...s, icon: resolveIcon(s.icon) }))
+}
+
+function getNestedValue(obj: any, path: string): any {
+  if (!obj) return undefined
+  return path.split('.').reduce((a, k) => (a == null ? undefined : a[k]), obj)
+}
+
+function matchesFilter(item: any, filter: any): boolean {
+  if (!filter || typeof filter !== 'object') return true
+  for (const [key, value] of Object.entries(filter)) {
+    if (key === 'selection') continue
+    if (key === 'date') {
+      const t = getNestedValue(item, 'created') ?? getNestedValue(item, 'status.created')
+      const from = (value as any)?.from
+      if (typeof from === 'number' && typeof t === 'number') {
+        const absFrom = from < 0 ? Date.now() + from : from
+        if (t * 1000 < absFrom) return false
+      }
+      continue
+    }
+    const itemValue = getNestedValue(item, key)
+    if (Array.isArray(value)) { if (!value.includes(itemValue)) return false }
+    else if (value && typeof value === 'object') continue
+    else if (itemValue !== value) return false
+  }
+  return true
+}
+
+function applyScope(data: any[], scope: any): any[] {
+  if (!scope || !Array.isArray(data)) return data
+  let r = [...data]
+  if (scope.filter) r = r.filter(i => matchesFilter(i, scope.filter))
+  if (scope.sort?.field) {
+    const { field, direction } = scope.sort
+    const dir = direction === 'desc' ? -1 : 1
+    r.sort((a, b) => {
+      const av = getNestedValue(a, field), bv = getNestedValue(b, field)
+      if (av == null && bv == null) return 0
+      if (av == null) return 1
+      if (bv == null) return -1
+      return av < bv ? -1 * dir : av > bv ? 1 * dir : 0
+    })
+  }
+  if (scope.pagination) {
+    const { limit = r.length, offset = 0 } = scope.pagination
+    r = r.slice(offset, offset + limit)
+  }
+  return r
+}
+
+// ============================================================
 // ZONE GRID POSITION HELPER (camelCase)
 // ============================================================
 function getZoneGridPosition(zone: any): GridPosition | null {
@@ -511,61 +620,86 @@ function getColumns(zone: any): number {
 // ============================================================
 // ZONE DATA HELPERS
 // ============================================================
-function getZoneData(zone: any) {
+function getZoneData(zone: any): any[] {
   if (!zone) return []
-
   const content = zone.content || 'inquiries'
-  const scope = zone.scope || { source: 'all' }
-  const source = scope.source || 'all'
+  const scope   = zone.scope  || { source: 'all' }
+  const source  = scope.source || 'all'
+  const raw     = fetchRawData(content, source, scope)
 
-  const rawData = fetchRawData(content, source)
-
-  return rawData
+  // 'trending' pseudo-sort → use relevance ranking
+  if (scope.sort?.field === 'trending') {
+    const ranked = rank(raw).map((r: any) => r.inquiry)
+    const limit  = scope.pagination?.limit  ?? ranked.length
+    const offset = scope.pagination?.offset ?? 0
+    return ranked.slice(offset, offset + limit)
+  }
+  return applyScope(raw, scope)
 }
 
-function fetchRawData(content: string, source: string) {
-  switch (content) {
-    case 'inquiry_groups': {
-      const groupsStore = useInquiryGroupsStore()
-      if (source === 'children' && props.group) {
-        const children = groupsStore.byParentId(props.group.id)
-        return children || []
-      }
-      return groupsStore.inquiryGroups || []
-    }
+//// FETCH RAW DATA
 
-    case 'inquiries':
+function fetchRawData(content: string, source: string, scope: any = {}) {
+  switch (content) {
+case 'inquiry_groups': {
+  const store = useInquiryGroupsStore()
+  let groups: InquiryGroup[] = []
+
+  if (source === 'children' && props.group) {
+    groups = store.byParentId(props.group.id) || []
+  } else if (source === 'selected_group' || source === 'selected') {
+    const g = getSelectedGroup(); groups = g ? [g] : []
+  } else if (source === 'parent_group' && props.group?.parentId) {
+    groups = store.inquiryGroups.filter(g => g.id === props.group!.parentId)
+  } else {
+    // 'all' — at home, only root groups
+    groups = (store.inquiryGroupsSorted || store.inquiryGroups || [])
+      .filter(g => g.parentId === null || g.parentId === undefined || g.parentId === 0)
+  }
+  }
+
+    case 'inquiries': {
+      let list: Inquiry[] = []
       if (source === 'selected_inquiry') {
-        const selected = getSelectedInquiry()
-        return selected ? [selected] : []
+        const s = getSelectedInquiry(); list = s ? [s] : []
+      } else if (source === 'featured') {
+        list = (props.inquiries || []).filter(i => (i.status as any)?.isFeatured || (i.status as any)?.featured)
+      } else {
+        list = props.inquiries || []
       }
-      return props.inquiries || []
+      if (scope.family || scope.families) {
+        const fams = scope.families || [scope.family]
+        list = list.filter(i => fams.includes(i.type))
+      }
+      return list
+    }
 
     case 'inquiry': {
-      const selected = getSelectedInquiry()
-      return selected ? [selected] : []
+      const s = getSelectedInquiry(); return s ? [s] : []
     }
-
     case 'options': {
-      const sel = getSelectedInquiry()
-      if (!sel) return []
-      return (props.options || []).filter(opt => opt.inquiryId === sel.id)
+      const s = getSelectedInquiry(); if (!s) return []
+      let opts = (props.options || []).filter(o => o.inquiryId === s.id)
+      if (scope.family) opts = opts.filter(o => o.family === scope.family)
+      return opts
     }
+    case 'resources':   return getResourcesForInquiry(getSelectedInquiry())
+    case 'messages':
+    case 'comments':    return getCommentsForInquiry(getSelectedInquiry())
+    case 'statistics':  return props.inquiries || []
+    case 'activity':    return props.inquiries || []
 
-    case 'resources':
-      return getResourcesForInquiry(getSelectedInquiry())
-
-    case 'comments':
-      return getCommentsForInquiry(getSelectedInquiry())
-
-    case 'statistics':
-      return props.inquiries || []
-
-    case 'activity':
-      return props.inquiries || []
-
-    default:
+    // Landing widgets are self-contained: no external data source
+    case 'hero':
+    case 'search':
+    case 'news':
+    case 'services':
+    case 'events':
+    case 'explore':
+    case 'promo':
       return []
+
+    default: return []
   }
 }
 
@@ -602,21 +736,21 @@ function getSelectedGroup(): InquiryGroup | null {
 function hasZoneData(zone: any): boolean {
   if (!zone) return false
   const content = zone.content || 'inquiries'
+  if (['hero','search','news','services','events','explore','promo'].includes(content)) {
+    return true
+  }
   const data = getZoneData(zone)
-
   switch (content) {
     case 'inquiry_groups':
     case 'inquiries':
     case 'options':
     case 'resources':
+    case 'messages':
     case 'comments':
     case 'statistics':
-    case 'activity':
-      return data.length > 0
-    case 'inquiry':
-      return getSelectedInquiry() !== null
-    default:
-      return data.length > 0
+    case 'activity':      return data.length > 0
+    case 'inquiry':       return getSelectedInquiry() !== null
+    default:              return data.length > 0
   }
 }
 
@@ -655,24 +789,35 @@ function isZoneRenderable(zone: any): boolean {
 // ============================================================
 // EMPTY STATE HELPERS
 // ============================================================
+const sectionLabelByZone = computed<Record<string, string>>(() => {
+  const arch = getExperienceArchitecture(experience.value as ExperienceKey)
+  const map: Record<string, string> = {}
+  for (const sec of arch?.sections ?? []) {
+    for (const z of sec.zones ?? []) {
+      if (sec.label) map[z] = sec.label
+    }
+  }
+  return map
+})
 
-/**
- * Human-readable label for the zone's content type.
- */
-function getZoneLabel(zone: any): string {
+function getZoneLabel(zone: any, zoneKey?: string): string {
+  const custom = zoneKey ? sectionLabelByZone.value[zoneKey] : undefined
+  if (custom) return custom
+
   const content = zone?.content || 'inquiries'
   const labels: Record<string, string> = {
     inquiry_groups: t('agora', 'Groups'),
-    inquiries: t('agora', 'Inquiries'),
-    inquiry: t('agora', 'Inquiry'),
-    options: t('agora', 'Options'),
-    resources: t('agora', 'Resources'),
-    comments: t('agora', 'Comments'),
-    statistics: t('agora', 'Statistics'),
-    activity: t('agora', 'Activity'),
+    inquiries:      t('agora', 'Inquiries'),
+    inquiry:        t('agora', 'Inquiry'),
+    options:        t('agora', 'Options'),
+    resources:      t('agora', 'Resources'),
+    comments:       t('agora', 'Comments'),
+    statistics:     t('agora', 'Statistics'),
+    activity:       t('agora', 'Activity'),
   }
   return labels[content] || content
 }
+
 
 /**
  * Icon for the zone header, per content type.
@@ -797,11 +942,20 @@ function getZoneComponent(zone: any) {
 
   // COMPONENT MAP - using only valid DisplayType values
   const componentMap: Record<string, Record<string, any>> = {
+  	hero:     { banner: WelcomeHero },
+  	search:   { search_bar: SearchBar },
+  	news:     { news_list: NewsWidget, list: NewsWidget },
+  	services: { quick_actions: ServicesWidget, list: ServicesWidget },
+  	events:   { calendar: UpcomingWidget, list: UpcomingWidget },
+  	explore:  { category_grid: ExploreWidget },
+  	promo:    { promo_card: PromoCard },
+
     // ---- Inquiry Groups ----
     inquiry_groups: {
       'list': InquiryGroupCatalog,
       'cards': InquiryGroupCatalog,
       'tree': InquiryGroupTree,
+       'my_spaces': MySpacesWidget,
       'navigation': InquiryGroupNavigation,
     },
 
@@ -814,6 +968,7 @@ function getZoneComponent(zone: any) {
       'timeline': InquiryTimeline,
       'kanban': InquiryKanban,
       'book': BookDisplay,
+      'current_moment': CurrentMomentWidget,
       'navigation': InquiryListNavigation,
       'tool': getToolComponent(tool, content),
     },
@@ -821,6 +976,12 @@ function getZoneComponent(zone: any) {
     // ---- Options ----
     options: {
       'tool': getToolComponent(tool, content),
+    },
+
+    // ---- Messages ----
+    messages: {
+  	'feed': SideBarTabComments,
+  	'list': SideBarTabComments,
     },
 
     // ---- Resources ----
@@ -952,15 +1113,15 @@ function getZoneProps(zone: any) {
 
   const data = getZoneData(zone)
   const selectedInquiry = getSelectedInquiry()
-
-  switch (content) {
+	  switch (content) {
     case 'inquiry_groups': {
-      // Get groups from the store if data is empty
-      let groupsData = data
-      if (!groupsData || groupsData.length === 0) {
+      // Groups come from the store; scope decides which subset
+      let groupsData: InquiryGroup[] = Array.isArray(data) ? data : []
+
+      if (groupsData.length === 0) {
         const groupsStore = useInquiryGroupsStore()
         if (props.group?.id) {
-          groupsData = groupsStore.byParentId(props.group.id)
+          groupsData = groupsStore.byParentId(props.group.id) || []
         } else {
           groupsData = groupsStore.inquiryGroups || []
         }
@@ -969,9 +1130,9 @@ function getZoneProps(zone: any) {
       return {
         ...baseProps,
         groups: groupsData,
-        activeId: props.group?.id,
+        families: zone.scope?.families ?? [],
+        activeId: props.group?.id ?? null,
         showCreateButton: true,
-        families: zone.scope?.families || [],
         mode: type === 'list' ? 'list' : 'cards',
       }
     }
@@ -986,84 +1147,111 @@ function getZoneProps(zone: any) {
         inquiries: inquiriesData,
         group: props.group,
         displayMode: type === 'book' ? 'book' : type,
-	openMode: displayOptions.openMode || 'none',
+        openMode: displayOptions.openMode || 'none',
       }
     }
 
-case 'options': {
-  const optionsData = Array.isArray(data) ? (data as Option[]) : []
-  return {
-    ...baseProps,
-    items: toItems(optionsData),               
-    parentId: selectedInquiry?.id ?? 0,     
-    targetType: 'option' as const,         
-    optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
-    family: zone.scope?.family || null,
-    familyKey: zone.scope?.family || null,
-    tool,
-    families: zone.scope?.families || [],
-    inquiry: selectedInquiry,         
-    inquiryId: selectedInquiry?.id,            
-    options: optionsData,                  
-  }
-}
+    case 'options': {
+      const optionsData = Array.isArray(data) ? (data as Option[]) : []
+      return {
+        ...baseProps,
+        items: toItems(optionsData),
+        parentId: selectedInquiry?.id ?? 0,
+        targetType: 'option' as const,
+        optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
+        family: zone.scope?.family ?? null,
+        familyKey: zone.scope?.family ?? null,
+        tool,
+        families: zone.scope?.families ?? [],
+        inquiry: selectedInquiry,
+        inquiryId: selectedInquiry?.id,
+        options: optionsData,
+      }
+    }
 
-case 'inquiries': {
-  const inquiriesData = data.length > 0 ? data : props.inquiries || []
-  const itemList = toItems(inquiriesData as Inquiry[])
-  return {
-    ...baseProps,
-    items: itemList,                                 
-    inquiries: inquiriesData,                   
-    parentId: props.group?.id ?? 0,        
-    targetType: 'inquiry' as const,      
-    optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
-    family: zone.scope?.family || null,
-    familyKey: zone.scope?.family || null,
-    tool,
-    families: zone.scope?.families || [],
-    group: props.group,
-    columns: display.cardsPerRow || 3,
-    selectedInquiry,
-    inquiry: inquiriesData.length === 1 ? inquiriesData[0] : null,
-    initialInquiry: inquiriesData[0] ?? null,
-  }
-}
+    case 'inquiries': {
+      const inquiriesData = data.length > 0 ? data : props.inquiries || []
+      const itemList = toItems(inquiriesData as Inquiry[])
+      return {
+        ...baseProps,
+        items: itemList,
+        inquiries: inquiriesData,
+        parentId: props.group?.id ?? 0,
+        targetType: 'inquiry' as const,
+        optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
+        family: zone.scope?.family ?? null,
+        familyKey: zone.scope?.family ?? null,
+        tool,
+        families: zone.scope?.families ?? [],
+        group: props.group,
+        columns: display.options?.cardsPerRow || display.cardsPerRow || 3,
+        selectedInquiry,
+        inquiry: inquiriesData.length === 1 ? inquiriesData[0] : null,
+        initialInquiry: inquiriesData[0] ?? null,
+      }
+    }
+
     case 'resources':
       return {
-	...baseProps,
-	inquiry: selectedInquiry,
-	inquiryId: selectedInquiry?.id,
-	showResources: true,
+        ...baseProps,
+        inquiry: selectedInquiry,
+        inquiryId: selectedInquiry?.id,
+        showResources: true,
       }
 
+    case 'messages':
     case 'comments':
       return {
-	...baseProps,
-	inquiry: selectedInquiry,
-	inquiryId: selectedInquiry?.id,
+        ...baseProps,
+        inquiry: selectedInquiry,
+        inquiryId: selectedInquiry?.id,
       }
 
     case 'statistics':
       return {
-	...baseProps,
-	inquiries: data,
-	groupId: props.group?.id,
+        ...baseProps,
+        inquiries: data,
+        groupId: props.group?.id,
       }
 
     case 'activity':
       return {
-	...baseProps,
-	inquiries: data,
-	limit: zone.scope?.pagination?.limit || 20,
+        ...baseProps,
+        inquiries: data,
+        limit: zone.scope?.pagination?.limit || 20,
       }
+
+    case 'hero':
+      return {
+        title:    homeConfig.value.hero.title,
+        subtitle: homeConfig.value.hero.subtitle,
+        actions:  resolveHeroActions(homeConfig.value.hero.actions),
+      }
+
+    case 'search':
+      return {}
+
+    case 'news':
+      return { items: [] }
+
+    case 'services':
+      return { services: resolveServices(homeConfig.value.services) }
+
+    case 'events':
+      return { events: [] }
+
+    case 'explore':
+      return { inquiries: props.inquiries || [] }
+
+    case 'promo':
+      return {}
 
     default:
       return {
-	...baseProps,
-	data: data,
-	content: content,
-	group: props.group,
+        ...baseProps,
+        data,
+        content,
+        group: props.group,
       }
   }
 }
@@ -1104,20 +1292,23 @@ function getZoneOptions(zone: any) {
 
 function getZoneStyle(zone: any) {
   if (!zone) return {}
-
-  const pos = getZoneGridPosition(zone)
   const styles: Record<string, string> = {}
 
-  if (pos) {
-    styles.gridRow = `${pos.row} / span ${pos.rowSpan || 1}`
-    styles.gridColumn = `${pos.column} / span ${pos.columnSpan || 1}`
+  // Only assign grid coordinates when we ARE a grid layout
+  if (layoutConfig.value.type === 'grid') {
+    const pos = getZoneGridPosition(zone)
+    if (pos) {
+      styles.gridRow    = `${pos.row} / span ${pos.rowSpan || 1}`
+      styles.gridColumn = `${pos.column} / span ${pos.columnSpan || 1}`
+    }
   }
 
-  const display = zone.display || {}
-  if (display.width) styles.width = display.width
-  if (display.height) styles.height = display.height
-  if (display.background) styles.background = display.background
-
+  // zone.style (not zone.display)
+  const s = zone.style || {}
+  if (s.width)      styles.width = s.width
+  if (s.height)     styles.height = s.height
+  if (s.background) styles.background = s.background
+  if (s.padding)    styles.padding = s.padding
   return styles
 }
 
@@ -1253,17 +1444,52 @@ function handleOptionClick(option: any, zoneKey: string) {
 // ============================================================
 // LEGACY EVENT HANDLERS
 // ============================================================
-function handleViewInquiry(inquiry: Inquiry) {
-  if (!inquiry) return
-  const zoneKey = findZoneForInquiry(inquiry)
-  handleInquiryClick(inquiry, zoneKey || 'fallback')
+function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
+  const zone = filteredArchitecture.value[zoneKey]
+  if (!zone) return
+  const content = zone.content || 'inquiries'
+
+  switch (content) {
+    case 'inquiry_groups':
+      if (['click','select','view','viewGroup'].includes(eventName)) handleViewGroup(payload)
+      return
+    case 'inquiries':
+    case 'inquiry':
+      if (['click','view','viewInquiry'].includes(eventName)) handleInquiryClick(payload, zoneKey)
+      return
+    case 'options':
+      if (['click','view','viewOption'].includes(eventName)) handleOptionClick(payload, zoneKey)
+      return
+
+    case 'hero':
+      if (eventName === 'action') emit('navigateTo', { type: 'hero-action', key: payload })
+      return
+    case 'search':
+      if (eventName === 'search') emit('navigateTo', { type: 'search', query: payload })
+      return
+    case 'news':
+      if (eventName === 'click')       emit('navigateTo', { type: 'news', item: payload })
+      else if (eventName === 'viewAll') emit('navigateTo', { type: 'news-all' })
+      return
+    case 'services':
+      if (eventName === 'service') emit('navigateTo', { type: 'service', key: payload })
+      else if (eventName === 'all')  emit('navigateTo', { type: 'services-all' })
+      return
+    case 'events':
+      if (eventName === 'click')        emit('navigateTo', { type: 'event', item: payload })
+      else if (eventName === 'viewAll') emit('navigateTo', { type: 'events-all' })
+      return
+    case 'explore':
+      if (eventName === 'category')        emit('navigateTo', { type: 'category', key: payload })
+      else if (eventName === 'create')     emit('createInquiry')
+      else if (eventName === 'viewAll')    emit('navigateTo', { type: 'explore-all' })
+      return
+    case 'promo':
+      if (eventName === 'action') emit('navigateTo', { type: 'promo-action' })
+      return
+  }
 }
 
-function handleViewOption(option: any) {
-  if (!option) return
-  const zoneKey = findZoneForOption(option)
-  handleOptionClick(option, zoneKey || 'fallback')
-}
 
 function findZoneForInquiry(inquiry: Inquiry): string | null {
   for (const [key, zone] of Object.entries(filteredArchitecture.value)) {
@@ -1364,393 +1590,430 @@ watch(
 /* EXPERIENCE RENDERER STYLES                                   */
 /* ============================================================ */
 .experience-renderer {
-	width: 100%;
-	min-height: 400px;
+  width: 100%;
+  min-height: 400px;
 }
 
-  .experience-controls {
-	  display: flex;
-	  justify-content: space-between;
-	  align-items: center;
-	  padding: 12px 0 16px;
-	  border-bottom: 1px solid var(--color-border);
-	  margin-bottom: 20px;
-	  flex-wrap: wrap;
-	  gap: 12px;
+.experience-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 16px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
 
-	  .controls-left {
-		  display: flex;
-		  align-items: center;
-		  gap: 12px;
-	  }
-
-	  .controls-right {
-		  display: flex;
-		  align-items: center;
-		  gap: 8px;
-	  }
+  .controls-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
-  /* ============================================================ */
-  /* LOADING & ERROR STATES                                       */
-  /* ============================================================ */
-  .loading-state {
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
-	  justify-content: center;
-	  padding: 60px;
+  .controls-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
 
-	  .spinner {
-		  width: 40px;
-		  height: 40px;
-		  border: 3px solid var(--color-border);
-		  border-top-color: var(--color-primary-element);
-		  border-radius: 50%;
-		  animation: spin 1s linear infinite;
-	  }
+/* ============================================================ */
+/* LOADING & ERROR STATES                                       */
+/* ============================================================ */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
 
-	  p {
-		  margin-top: 16px;
-		  color: var(--color-text-lighter);
-	  }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary-element);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
   }
 
-  .error-state {
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
-	  justify-content: center;
-	  padding: 60px;
-	  text-align: center;
+  p {
+    margin-top: 16px;
+    color: var(--color-text-lighter);
+  }
+}
 
-	  svg {
-		  color: var(--color-error);
-		  opacity: 0.5;
-		  margin-bottom: 16px;
-	  }
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  text-align: center;
 
-	  h3 {
-		  margin: 0 0 8px 0;
-		  color: var(--color-main-text);
-	  }
-
-	  p {
-		  margin: 0 0 24px 0;
-		  color: var(--color-text-lighter);
-		  max-width: 400px;
-	  }
+  svg {
+    color: var(--color-error);
+    opacity: 0.5;
+    margin-bottom: 16px;
   }
 
-  /* ============================================================ */
-  /* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
-  /* ============================================================ */
+  h3 {
+    margin: 0 0 8px 0;
+    color: var(--color-main-text);
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: var(--color-text-lighter);
+    max-width: 400px;
+  }
+}
+
+/* ============================================================ */
+/* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
+/* ============================================================ */
+.architecture-grid {
+  display: grid;
+  gap: 20px;
+  min-height: 400px;
+  &.architecture-layout-full,
+  &.architecture-layout-flex {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &.architecture-layout-sidebar {
+    display: grid;
+    grid-template-columns: minmax(240px, 300px) 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  &.architecture-layout-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .architecture-zone {
+    background: var(--color-main-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+
+    .zone-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-background-dark);
+      color: var(--color-text-lighter);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      .zone-title {
+        flex: 1;
+      }
+
+      .zone-count {
+        background: var(--color-background-hover);
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+      }
+    }
+
+    .zone-content {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      min-height: 100px;
+    }
+
+    .zone-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px 20px;
+      min-height: 140px;
+      color: var(--color-text-lighter);
+
+      .empty-icon {
+        opacity: 0.25;
+        margin-bottom: 12px;
+      }
+
+      .empty-title {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--color-main-text);
+      }
+
+      .empty-hint {
+        margin: 0;
+        font-size: 13px;
+        color: var(--color-text-lighter);
+        max-width: 260px;
+      }
+    }
+
+    &.is-empty {
+      background: var(--color-background-dark);
+      border-style: dashed;
+    }
+  }
+}
+
+/* ============================================================ */
+/* STANDARD LAYOUT                                              */
+/* ============================================================ */
+.standard-layout {
+  display: flex;
+  gap: 24px;
+
+  &.layout-sidebar {
+    .layout-sidebar {
+      flex: 0 0 280px;
+      max-width: 280px;
+    }
+    .layout-main {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &.layout-split {
+    .layout-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+  }
+
+  .layout-sidebar {
+    position: sticky;
+    top: 0;
+    height: fit-content;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+
+  .layout-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+  }
+}
+
+.layout-header {
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-border);
+
+  .layout-title {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-main-text);
+  }
+
+  .layout-description {
+    margin: 0 0 16px 0;
+    color: var(--color-text-lighter);
+    font-size: 16px;
+  }
+
+  .layout-stats {
+    display: flex;
+    gap: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border-light);
+
+    .stat-item {
+      .stat-value {
+        display: block;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--color-main-text);
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--color-text-lighter);
+      }
+    }
+  }
+}
+
+.layout-content {
+  .inquiries-grid {
+    display: grid;
+    gap: 20px;
+
+    &.display-cards {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    &.display-horizontal {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    &.display-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    &.display-compact {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+  }
+}
+
+.layout-comments,
+.layout-resources {
+  padding-top: 20px;
+  border-top: 2px solid var(--color-border);
+  margin-top: 8px;
+
+  .comments-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-main-text);
+    }
+
+    .comments-count {
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--color-background-dark);
+      padding: 2px 10px;
+      border-radius: 12px;
+      color: var(--color-text-lighter);
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  text-align: center;
+
+  svg {
+    color: var(--color-text-lighter);
+    opacity: 0.3;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: var(--color-main-text);
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: var(--color-text-lighter);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================ */
+/* RESPONSIVE - Adapt grid to available space                   */
+/* ============================================================ */
+@media (max-width: 1400px) {
   .architecture-grid {
-	  display: grid;
-	  gap: 20px;
-	  min-height: 400px;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
 
-	  .architecture-zone {
-		  background: var(--color-main-background);
-		  border: 1px solid var(--color-border);
-		  border-radius: 12px;
-		  overflow: hidden;
-		  display: flex;
-		  flex-direction: column;
-		  min-height: 200px;
-
-		  .zone-header {
-			  display: flex;
-			  align-items: center;
-			  gap: 8px;
-			  padding: 10px 16px;
-			  border-bottom: 1px solid var(--color-border);
-			  background: var(--color-background-dark);
-			  color: var(--color-text-lighter);
-			  font-size: 12px;
-			  font-weight: 600;
-			  text-transform: uppercase;
-			  letter-spacing: 0.5px;
-
-			  .zone-title {
-				  flex: 1;
-			  }
-
-			  .zone-count {
-				  background: var(--color-background-hover);
-				  padding: 1px 8px;
-				  border-radius: 10px;
-				  font-size: 11px;
-			  }
-		  }
-
-		  .zone-content {
-			  flex: 1;
-			  padding: 16px;
-			  overflow-y: auto;
-			  min-height: 100px;
-		  }
-
-		  .zone-empty-state {
-			  display: flex;
-			  flex-direction: column;
-			  align-items: center;
-			  justify-content: center;
-			  text-align: center;
-			  padding: 32px 20px;
-			  min-height: 140px;
-			  color: var(--color-text-lighter);
-
-			  .empty-icon {
-				  opacity: 0.25;
-				  margin-bottom: 12px;
-			  }
-
-			  .empty-title {
-				  margin: 0 0 4px 0;
-				  font-size: 14px;
-				  font-weight: 600;
-				  color: var(--color-main-text);
-			  }
-
-			  .empty-hint {
-				  margin: 0;
-				  font-size: 13px;
-				  color: var(--color-text-lighter);
-				  max-width: 260px;
-			  }
-		  }
-
-		  &.is-empty {
-			  background: var(--color-background-dark);
-			  border-style: dashed;
-		  }
-	  }
+@media (max-width: 1024px) {
+  .architecture-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* ============================================================ */
-  /* STANDARD LAYOUT                                              */
-  /* ============================================================ */
   .standard-layout {
-	  display: flex;
-	  gap: 24px;
+    &.layout-sidebar {
+      flex-direction: column;
 
-	  &.layout-sidebar {
-		  .layout-sidebar {
-			  flex: 0 0 280px;
-			  max-width: 280px;
-		  }
-		  .layout-main {
-			  flex: 1;
-			  min-width: 0;
-		  }
-	  }
+      .layout-sidebar {
+        flex: none;
+        max-width: 100%;
+        width: 100%;
+        position: static;
+        max-height: none;
+        padding-right: 0;
+      }
+    }
 
-	  &.layout-split {
-		  .layout-main {
-			  display: grid;
-			  grid-template-columns: 1fr 1fr;
-			  gap: 24px;
-		  }
-	  }
+    &.layout-split {
+      .layout-main {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
 
-	  .layout-sidebar {
-		  position: sticky;
-		  top: 0;
-		  height: fit-content;
-		  max-height: calc(100vh - 100px);
-		  overflow-y: auto;
-		  padding-right: 8px;
-	  }
+@media (max-width: 1400px) {
+  .architecture-grid.architecture-layout-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
 
-	  .layout-main {
-		  display: flex;
-		  flex-direction: column;
-		  gap: 24px;
-		  min-width: 0;
-	  }
+@media (max-width: 1024px) {
+  .architecture-grid.architecture-layout-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .architecture-grid.architecture-layout-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .architecture-grid {
+    grid-template-columns: 1fr !important;
   }
 
-  .layout-header {
-	  padding-bottom: 16px;
-	  border-bottom: 2px solid var(--color-border);
-
-	  .layout-title {
-		  margin: 0 0 8px 0;
-		  font-size: 28px;
-		  font-weight: 700;
-		  color: var(--color-main-text);
-	  }
-
-	  .layout-description {
-		  margin: 0 0 16px 0;
-		  color: var(--color-text-lighter);
-		  font-size: 16px;
-	  }
-
-	  .layout-stats {
-		  display: flex;
-		  gap: 24px;
-		  padding-top: 12px;
-		  border-top: 1px solid var(--color-border-light);
-
-		  .stat-item {
-			  .stat-value {
-				  display: block;
-				  font-size: 20px;
-				  font-weight: 700;
-				  color: var(--color-main-text);
-			  }
-
-			  .stat-label {
-				  font-size: 12px;
-				  color: var(--color-text-lighter);
-			  }
-		  }
-	  }
+  .layout-content .inquiries-grid {
+    &.display-cards {
+      grid-template-columns: 1fr;
+    }
   }
 
-  .layout-content {
-	  .inquiries-grid {
-		  display: grid;
-		  gap: 20px;
+  .experience-controls {
+    flex-direction: column;
+    align-items: stretch;
 
-		  &.display-cards {
-			  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-		  }
-
-		  &.display-horizontal {
-			  grid-template-columns: 1fr;
-			  gap: 16px;
-		  }
-
-		  &.display-list {
-			  display: flex;
-			  flex-direction: column;
-			  gap: 8px;
-		  }
-
-		  &.display-compact {
-			  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-			  gap: 12px;
-		  }
-	  }
+    .controls-left,
+    .controls-right {
+      justify-content: center;
+    }
   }
-
-  .layout-comments,
-  .layout-resources {
-	  padding-top: 20px;
-	  border-top: 2px solid var(--color-border);
-	  margin-top: 8px;
-
-	  .comments-header {
-		  display: flex;
-		  align-items: center;
-		  gap: 12px;
-		  margin-bottom: 16px;
-
-		  h3 {
-			  margin: 0;
-			  font-size: 18px;
-			  font-weight: 600;
-			  color: var(--color-main-text);
-		  }
-
-		  .comments-count {
-			  font-size: 12px;
-			  font-weight: 600;
-			  background: var(--color-background-dark);
-			  padding: 2px 10px;
-			  border-radius: 12px;
-			  color: var(--color-text-lighter);
-		  }
-	  }
-  }
-
-  .empty-state {
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
-	  justify-content: center;
-	  padding: 60px;
-	  text-align: center;
-
-	  svg {
-		  color: var(--color-text-lighter);
-		  opacity: 0.3;
-		  margin-bottom: 16px;
-	  }
-
-	  h3 {
-		  margin: 0 0 8px 0;
-		  color: var(--color-main-text);
-	  }
-
-	  p {
-		  margin: 0 0 24px 0;
-		  color: var(--color-text-lighter);
-	  }
-  }
-
-  @keyframes spin {
-	  to { transform: rotate(360deg); }
-  }
-
-  /* ============================================================ */
-  /* RESPONSIVE - Adapt grid to available space                   */
-  /* ============================================================ */
-  @media (max-width: 1400px) {
-	  .architecture-grid {
-		  grid-template-columns: repeat(2, 1fr) !important;
-	  }
-  }
-
-  @media (max-width: 1024px) {
-	  .architecture-grid {
-		  grid-template-columns: repeat(2, 1fr) !important;
-	  }
-
-	  .standard-layout {
-		  &.layout-sidebar {
-			  flex-direction: column;
-
-			  .layout-sidebar {
-				  flex: none;
-				  max-width: 100%;
-				  width: 100%;
-				  position: static;
-				  max-height: none;
-				  padding-right: 0;
-			  }
-		  }
-
-		  &.layout-split {
-			  .layout-main {
-				  grid-template-columns: 1fr;
-			  }
-		  }
-	  }
-  }
-
-  @media (max-width: 768px) {
-	  .architecture-grid {
-		  grid-template-columns: 1fr !important;
-	  }
-
-	  .layout-content .inquiries-grid {
-		  &.display-cards {
-			  grid-template-columns: 1fr;
-		  }
-	  }
-
-	  .experience-controls {
-		  flex-direction: column;
-		  align-items: stretch;
-
-		  .controls-left,
-		  .controls-right {
-			  justify-content: center;
-		  }
-	  }
-  }
+}
 </style>

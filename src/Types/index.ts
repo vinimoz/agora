@@ -234,9 +234,61 @@ export type StatusResults =
 
 export type SignalingType = '' | 'empty' | 'error' | 'valid' | 'invalid' | 'success' | 'checking'
 
+
+
 export type UserType =
-  | 'email' | 'external' | 'contact' | 'user' | 'group'
-  | 'admin' | 'public' | 'circle' | 'contactGroup' | ''
+  | 'user'
+  | 'admin'
+  | 'public'
+  | 'external'
+  | 'guest'
+  | 'empty'
+  | 'ghost'
+  | 'cron'
+  | 'contact'
+  | 'contactgroup'
+  | 'circle'
+  | 'group'
+  | 'email'
+
+export interface User {
+  array: 'richArray' | 'simpleArray'
+  id: string
+  userId: string
+  user: string | null
+  displayName: string
+  emailAddress: string
+  type: UserType
+
+  // role flags (only meaningful for richArray)
+  isAdmin: boolean
+  isOfficial: boolean
+  isModerator: boolean
+  isLegislative: boolean
+  isGroupEditor: boolean
+  isGuest: boolean
+  isUnrestrictedOwner: boolean
+
+  // i18n
+  languageCode: string
+  languageCodeIntl: string
+  localeCode: string
+  localeCodeIntl: string
+
+  // Agora/Nexcloud groups (Nextcloud group IDs)
+  groups: string[]
+
+  // ⬇ comes from UserBase::loadAccountData() → IAccountManager → address
+  location: string
+
+  // misc
+  description: string
+  subname: string
+  subtitle: string
+  organisation: string
+  timeZone: string
+  categories: string[]
+}
 
 export type VirtualUserItemType = 'addPublicLink' | 'internalAccess' | 'deleted' | 'anonymous'
 
@@ -265,30 +317,6 @@ export type AppPermissions = {
   unrestrictedOwner: boolean
 }
 
-export interface User {
-  id: string
-  displayName: string
-  emailAddress: string
-  isAdmin: boolean
-  isOfficial: boolean
-  isModerator: boolean
-  isLegislative: boolean
-  isGroupEditor: boolean
-  isNoUser: boolean
-  location: string | null
-  type: UserType
-  subName: string | null
-  subtitle: string | null
-  desc: string | null
-  organisation: string | null
-  languageCode: string
-  languageCodeIntl: string
-  localeCode: string | null
-  localeCodeIntl: string | null
-  timeZone: string | null
-  groups: string[] | null
-  categories: string[] | null
-}
 
 export interface Participant {
   inquiryId: number

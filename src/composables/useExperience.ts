@@ -46,7 +46,26 @@ export interface ExperienceConfig {
 // ============================================================
 
 export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition> = {
-  dashboard: {
+
+home: {
+  key: 'home',
+  label: 'Home',
+  icon: 'Home',
+  description: 'Welcome to your civic space',
+  verb: 'Discover',
+  question: 'What can I do today?',
+  defaultTools: ['search'],
+  defaultDisplay: 'banner',
+  allowedDisplays: ['banner', 'cards', 'list'],
+  allowedTools: ['search', 'filter'],
+  layout: 'grid',
+  showHeader: false,      // hero replaces the header
+  showBreadcrumb: false,
+  showStats: false,
+  supportedGroupTypes: [], // available everywhere
+},  
+	
+dashboard: {
     key: 'dashboard',
     label: 'Dashboard',
     icon: 'Home',

@@ -71,8 +71,11 @@ import FileCheck from '@iconify-icons/mdi/file-check'
 import EyeCheckOutline from '@iconify-icons/mdi/eye-check-outline'
 import FileSearch from '@iconify-icons/mdi/file-search'
 import AlertOctagon from '@iconify-icons/mdi/alert-octagon-outline'
-import ShieldAlert from '@iconify-icons/mdi/shield-alert-outline'
+import ShieldAlertOutline from '@iconify-icons/mdi/shield-alert-outline'
 import ShieldAccount from '@iconify-icons/mdi/shield-account'
+import Storefront from '@iconify-icons/mdi/storefront'
+import Leaf       from '@iconify-icons/mdi/leaf'
+import Compass    from '@iconify-icons/mdi/compass-outline'
 
 
 // Options
@@ -318,6 +321,9 @@ export const makeIconComponent = (icon: Component, color = '#000', size = 24) =>
 })
 
 export const InquiryGeneralIcons: Record<string, Component> = {
+  Storefront: makeIconComponent(Storefront, '#00695C'),
+  Leaf:       makeIconComponent(Leaf,       '#2E7D32'),
+  Compass:    makeIconComponent(Compass,    '#00838F'),
   ViewCarousel: makeIconComponent(ViewCarousel, '#607D8B'),
   ViewVertical: makeIconComponent(ViewGrid, '#1976D2'),
   ViewHorizontal: makeIconComponent(ViewDashboard, '#1976D2'),
