@@ -497,6 +497,7 @@ OC.L10N.register(
     "Expired" : "منتهي",
     "Relevant" : "ذات الصلة",
     "Participated" : "شَارَكَ",
+    "Shared" : "مشاركة",
     "Administration" : "الإدارة",
     "Title must not be empty!" : "يجب ألا يكون العنوان فارغًا!",
     "Option added" : "تمّت إضافة الخيار"

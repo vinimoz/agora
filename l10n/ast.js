@@ -268,6 +268,7 @@ OC.L10N.register(
     "now" : "agora",
     "Owner" : "Propietariu",
     "Expired" : "Caducó",
+    "Shared" : "Compartióse",
     "Administration" : "Alministración",
     "Title must not be empty!" : "¡El títulu nun ha tar baleru!"
 },

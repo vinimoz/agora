@@ -497,6 +497,7 @@ OC.L10N.register(
     "Expired" : "Изтекъл",
     "Relevant" : "Съответно",
     "Participated" : "В които сте участвали",
+    "Shared" : "Споделен",
     "Administration" : "Администрация",
     "Title must not be empty!" : "Заглавието не трябва да е празно."
 },

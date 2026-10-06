@@ -266,6 +266,7 @@
     "now" : "agora",
     "Owner" : "Propietariu",
     "Expired" : "Caducó",
+    "Shared" : "Compartióse",
     "Administration" : "Alministración",
     "Title must not be empty!" : "¡El títulu nun ha tar baleru!"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
