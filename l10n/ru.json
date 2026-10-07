@@ -284,6 +284,7 @@
     "Show details" : "Показать подробности",
     "Up" : "Вверх",
     "Down" : "Вниз",
+    "{n} groups" : "{n} групп",
     "Configure" : "Настроить",
     "Use calendar lookup for conflicting calendar events" : "Просматривать события в календаре",
     "Specify in which period (in hours) before the option existing appointments should be included in the search results." : "Укажите, в какой период (в часах) перед опцией следует включить существующие записи в результаты поиска.",
