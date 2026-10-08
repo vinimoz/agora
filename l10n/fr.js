@@ -1930,6 +1930,7 @@ OC.L10N.register(
     "Quadratic Voting" : "Vote quadratique",
     "Vote with quadratic cost mechanism" : "Vote avec un mécanisme de coût quadratique",
     "Credits per user" : "Crédits par utilisateur",
+    "Normalization" : "Normalisation",
     "Maximum weight" : "Poids maximum",
     "Phased Voting" : "Vote par étapes",
     "Multi-round elimination voting" : "Vote par élimination à plusieurs tours",
