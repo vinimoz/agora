@@ -83,10 +83,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     // ModerationStatus types
     public const MODERATION_STATUS_DRAFT = 'draft';
     public const MODERATION_STATUS_PENDING = 'pending';
-    public const MODERATION_STATUS_PUBLISHED = 'published';
+    public const MODERATION_STATUS_ACCEPTED = 'accepted';
     public const MODERATION_STATUS_REJECTED = 'rejected';
-
-
 
 
     // Show results types
