@@ -13,11 +13,11 @@
 const appName = "agora";
 const appVersion = "1.7.14";
 import { G as defineStore, aa as generateOcsUrl, ab as cancelableClient, d as defineComponent, v as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, F as Fragment, L as renderList, K as normalizeClass, E as createTextVNode, k as createCommentVNode, b as computed, q as onMounted, s as ref, C as NcButton, ac as NcEmptyContent, x as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, D as NcModal, h as resolveDynamicComponent, m as mergeProps, a5 as withDirectives, ad as vShow, a6 as vModelText, H as purify, J as withModifiers, ae as withKeys, af as resolveComponent, n as normalizeStyle, y as normalizeProps, z as guardReactiveProps, A as createApp, B as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Dny_Rgcc.chunk.mjs";
-import { I as InputDiv, d as NcAppSettingsDialog, N as NcSettingsSection } from "./index-DaNfkirh.chunk.mjs";
-import { L as Logger, j as useAppSettingsStore, k as gfmHeadingId, l as k, m as adminJobs, I as InquiryGeneralIcons, s as showError, a as showSuccess, n as InquiryOptionIcons, E as ENGINE_DEFINITIONS, S as StatusIcons } from "./NcDashboardWidget-CvpYMKur-C24h1OdY.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-1vQ7TI_B.chunk.mjs";
+import { I as InputDiv, d as NcAppSettingsDialog, N as NcSettingsSection } from "./index-Bosm4nDV.chunk.mjs";
+import { L as Logger, j as useAppSettingsStore, k as gfmHeadingId, l as k, m as adminJobs, I as InquiryGeneralIcons, s as showError, a as showSuccess, n as InquiryOptionIcons, E as ENGINE_DEFINITIONS, S as StatusIcons } from "./NcDashboardWidget-CvpYMKur-Cy0Dgq70.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-B0K9--P8.chunk.mjs";
 import { _ as _sfc_main$E, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-D_ssz6sB-DxVU5U-6.chunk.mjs";
-import { c as createLucideIcon, N as NcNoteCard, a as NcTextArea, E as EngineSelectorModal, R as RadioGroupDiv, C as CardDiv } from "./markdown-BkidiRRa.chunk.mjs";
+import { c as createLucideIcon, N as NcNoteCard, a as NcTextArea, E as EngineSelectorModal, R as RadioGroupDiv, C as CardDiv } from "./markdown-6isnwjNB.chunk.mjs";
 /**
  * @license lucide-vue-next v0.566.0 - ISC
  *

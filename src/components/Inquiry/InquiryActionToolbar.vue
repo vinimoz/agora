@@ -267,7 +267,7 @@ const handleAllowedTransformation = (transformType: string) => {
         <!-- Right: Access switch and item actions -->
         <div class="right-actions">
             <div class="moderation-controls">
-                <div v-if="inquiryStore.configuration.access === 'private' && inquiryStore.status.moderationStatus === 'draft'" class="access-control">
+                <div v-if="inquiryStore.status.moderationStatus === 'draft'" class="access-control">
                     <label class="control-label">{{ t('agora', 'Submit to moderation') }}</label>
                     <NcCheckboxRadioSwitch
                             v-model="inquiryAccess"

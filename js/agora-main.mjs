@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-C24h1OdY.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Dny_Rgcc.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-CkzQIPHO.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-1ig_zjv0.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-DxVU5U-6.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-Bd3v4N2Q.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-b3bien7h.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-DaNfkirh.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-Cy0Dgq70.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Dny_Rgcc.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-BCoc9NPF.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-BBYzu6K2.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-DxVU5U-6.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-BcZ1l-OK.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-B6BF8mZ9.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-Bosm4nDV.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -1204,331 +1204,161 @@ to {
     gap: 8px;
 }
 }.inquiry-filters[data-v-070225bb] {
-  margin-bottom: 10px;
-  padding: 12px;
-  background-color: var(--color-background-dark);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-}
-.inquiry-filters .filters-header[data-v-070225bb] {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 16px;
   margin-bottom: 16px;
-  /* wrapping keeps the last control reachable on a narrow content area,
-     where nowrap pushed it outside the visible width */
+  padding: 16px;
+  background-color: var(--color-background-dark);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-large, 12px);
+}
+
+/* ---------- Toolbar ---------- */
+.filters-toolbar[data-v-070225bb] {
+  display: flex;
   flex-wrap: wrap;
-  min-width: 0;
+  align-items: center;
+  gap: 12px;
 }
-.inquiry-filters .filters-header .search-box.compact[data-v-070225bb] {
-  position: relative;
-  flex: 0 0 auto;
-  min-width: 250px;
-  max-width: 350px;
+.filters-toolbar .search-wrapper[data-v-070225bb] {
+  flex: 1 1 260px;
+  min-width: 200px;
 }
-.inquiry-filters .filters-header .search-box.compact .search-input[data-v-070225bb] {
+.filters-toolbar .search-wrapper .search-input[data-v-070225bb] {
   width: 100%;
-  padding: 10px 12px 10px 36px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: var(--color-main-background);
-  color: var(--color-main-text);
 }
-.inquiry-filters .filters-header .search-box.compact .search-input[data-v-070225bb]:focus {
-  outline: none;
-  border-color: var(--color-primary-element);
-}
-.inquiry-filters .filters-header .search-box.compact .search-icon[data-v-070225bb] {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-lighter);
-  font-size: 14px;
-}
-.inquiry-filters .filters-header .filters-toggle-btn[data-v-070225bb] {
-  position: relative;
-  padding-right: 30px;
+.filters-toolbar .toolbar-actions[data-v-070225bb] {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  background-color: var(--color-background-darker);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  color: var(--color-text-lighter);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: auto;
-  height: fit-content;
-}
-.inquiry-filters .filters-header .filters-toggle-btn[data-v-070225bb]:hover {
-  background-color: var(--color-background-hover);
-  color: var(--color-main-text);
-}
-.inquiry-filters .filters-header .filters-toggle-btn.active[data-v-070225bb] {
-  background-color: var(--color-primary-element);
-  color: white;
-  border-color: var(--color-primary-element);
-}
-.inquiry-filters .filters-header .filters-toggle-btn .filter-icon[data-v-070225bb] {
-  font-size: 14px;
-}
-.inquiry-filters .filters-header .filters-toggle-btn .filter-count[data-v-070225bb] {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: var(--color-error);
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-}
-.inquiry-filters .filters-header .filters-toggle-btn .toggle-arrow[data-v-070225bb] {
-  margin-left: 4px;
-  font-size: 12px;
-}
-.inquiry-filters .filters-header .main-filters[data-v-070225bb] {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex: 1;
-  justify-content: flex-start;
-  min-width: 0;
-  flex-wrap: wrap;
-}
-.inquiry-filters .filters-header .main-filters .filter-group.compact[data-v-070225bb] {
-  display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 8px;
-  white-space: nowrap;
   flex-shrink: 0;
 }
-.inquiry-filters .filters-header .main-filters .filter-group.compact label[data-v-070225bb] {
+.filters-toggle-btn[data-v-070225bb] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.filters-toggle-btn .toggle-icon[data-v-070225bb] {
+  font-size: 10px;
+  line-height: 1;
+}
+.filters-toggle-btn .filter-count[data-v-070225bb] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 2px;
+  background-color: var(--color-error);
+  color: #fff;
+  border-radius: 9px;
+  font-size: 11px;
   font-weight: 600;
-  font-size: 12px;
-  color: var(--color-text-lighter);
-  margin-bottom: 0;
-  flex-shrink: 0;
+  line-height: 1;
 }
-.inquiry-filters .filters-header .main-filters .filter-group.compact[data-v-070225bb] .nc-select {
-  min-width: 150px;
-  flex-shrink: 0;
+.filters-toggle-btn.active[data-v-070225bb] {
+  background-color: var(--color-primary-element);
+  border-color: var(--color-primary-element);
+  color: var(--color-primary-element-text, #fff);
 }
-.inquiry-filters .filters-header .main-filters .checkbox-group[data-v-070225bb] {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-.inquiry-filters .filters-header .main-filters .checkbox-group[data-v-070225bb] .checkbox-radio-switch {
-  margin: 0;
-}
-.inquiry-filters .filters-header .main-filters .checkbox-group[data-v-070225bb] .checkbox-radio-switch__label {
-  font-size: 12px;
-  white-space: nowrap;
-}
-.inquiry-filters .filters-header .reset-btn.compact[data-v-070225bb] {
-  padding: 10px 14px;
-  background-color: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  color: var(--color-text-lighter);
-  font-size: 13px;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: auto;
-  height: fit-content;
-}
-.inquiry-filters .filters-header .reset-btn.compact[data-v-070225bb]:hover {
-  background-color: var(--color-background-hover);
-  color: var(--color-main-text);
-}
-.inquiry-filters .filters-expanded[data-v-070225bb] {
-  margin-bottom: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-border-light);
-}
-.inquiry-filters .filters-expanded .filters-grid[data-v-070225bb] {
+
+/* ---------- Filter fields ---------- */
+.filters-main[data-v-070225bb],
+.filters-expanded[data-v-070225bb] {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  gap: 12px 16px;
+  align-items: end;
 }
-.inquiry-filters .filters-expanded .filters-grid .filter-group[data-v-070225bb] {
+.filters-main[data-v-070225bb] {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.filters-expanded[data-v-070225bb] {
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.filter-field[data-v-070225bb] {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
-.inquiry-filters .filters-expanded .filters-grid .filter-group label[data-v-070225bb] {
-  font-weight: 600;
+.filter-field .filter-label[data-v-070225bb] {
   font-size: 12px;
+  font-weight: 600;
   color: var(--color-text-lighter);
+  line-height: 1.2;
 }
-.inquiry-filters .filters-expanded .filters-grid .filter-group[data-v-070225bb] .nc-select {
+.filter-field[data-v-070225bb] .select {
   width: 100%;
 }
-.inquiry-filters .active-filters-summary[data-v-070225bb] {
+.filter-field--checkbox[data-v-070225bb] {
+  justify-content: flex-end;
+}
+.filter-field--checkbox[data-v-070225bb] .checkbox-radio-switch {
+  margin: 0;
+}
+.filter-field--checkbox[data-v-070225bb] .checkbox-radio-switch__label {
+  font-size: 13px;
+}
+
+/* ---------- Active filters ---------- */
+.active-filters-summary[data-v-070225bb] {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-border-light);
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
 }
-.inquiry-filters .active-filters-summary .summary-label[data-v-070225bb] {
-  font-weight: 600;
+.active-filters-summary .summary-label[data-v-070225bb] {
   font-size: 12px;
+  font-weight: 600;
   color: var(--color-text-lighter);
 }
-.inquiry-filters .active-filters-summary .filter-tag[data-v-070225bb] {
-  padding: 4px 8px;
+.active-filters-summary .filter-tag[data-v-070225bb] {
+  padding: 3px 10px;
   background-color: var(--color-primary-element);
-  color: white;
+  color: var(--color-primary-element-text, #fff);
   border-radius: 12px;
   font-size: 11px;
   font-weight: 500;
+  line-height: 1.6;
 }
-@media (max-width: 1400px) {
-.inquiry-filters .filters-header[data-v-070225bb] {
-    gap: 12px;
-}
-.inquiry-filters .filters-header .search-box.compact[data-v-070225bb] {
-    min-width: 200px;
-    max-width: 300px;
-}
-.inquiry-filters .filters-header .main-filters[data-v-070225bb] {
-    gap: 12px;
-}
-.inquiry-filters .filters-header .main-filters .filter-group.compact[data-v-070225bb] .nc-select {
-    min-width: 130px;
-}
-}
-@media (max-width: 1200px) {
-.inquiry-filters .filters-header[data-v-070225bb] {
-    gap: 10px;
-}
-.inquiry-filters .filters-header .search-box.compact[data-v-070225bb] {
-    min-width: 180px;
-    max-width: 250px;
-}
-.inquiry-filters .filters-header .main-filters[data-v-070225bb] {
-    gap: 10px;
-}
-.inquiry-filters .filters-header .main-filters .filter-group.compact[data-v-070225bb] .nc-select {
-    min-width: 120px;
-}
-}
-@media (max-width: 1024px) {
-.inquiry-filters .filters-header[data-v-070225bb] {
-    flex-wrap: wrap;
-    gap: 12px;
-}
-.inquiry-filters .filters-header .search-box.compact[data-v-070225bb] {
-    max-width: none;
-    min-width: 200px;
-    order: 1;
-    flex: 1;
-}
-.inquiry-filters .filters-header .filters-toggle-btn[data-v-070225bb] {
-    order: 2;
-    flex-shrink: 0;
-}
-.inquiry-filters .filters-header .main-filters[data-v-070225bb] {
-    order: 3;
-    flex-basis: 100%;
-    margin-top: 12px;
-    justify-content: flex-start;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-.inquiry-filters .filters-header .reset-btn.compact[data-v-070225bb] {
-    order: 4;
-    flex-shrink: 0;
-}
-.inquiry-filters .filters-expanded .filters-grid[data-v-070225bb] {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-}
-}
+
+/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
 .inquiry-filters[data-v-070225bb] {
     padding: 12px;
-}
-.inquiry-filters .filters-header[data-v-070225bb] {
-    gap: 10px;
-}
-.inquiry-filters .filters-header .search-box.compact[data-v-070225bb] {
-    min-width: 150px;
-    flex: 1;
-}
-.inquiry-filters .filters-header .main-filters[data-v-070225bb] {
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.inquiry-filters .filters-header .main-filters .filter-group.compact[data-v-070225bb] {
-    flex: 1;
-    min-width: 140px;
-}
-.inquiry-filters .filters-header .filters-toggle-btn[data-v-070225bb] {
-    font-size: 12px;
-    padding: 8px 12px;
-}
-.inquiry-filters .filters-header .reset-btn.compact[data-v-070225bb] {
-    font-size: 12px;
-    padding: 8px 12px;
-}
-.inquiry-filters .filters-expanded .filters-grid[data-v-070225bb] {
-    grid-template-columns: 1fr;
     gap: 12px;
 }
-.inquiry-filters .active-filters-summary[data-v-070225bb] {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
+.filters-main[data-v-070225bb],
+  .filters-expanded[data-v-070225bb] {
+    grid-template-columns: 1fr;
 }
-.inquiry-filters .active-filters-summary .summary-label[data-v-070225bb] {
-    margin-bottom: 2px;
+.filters-toolbar .search-wrapper[data-v-070225bb] {
+    flex: 1 1 100%;
+    min-width: 0;
+}
+.filters-toolbar .toolbar-actions[data-v-070225bb] {
+    width: 100%;
+    justify-content: flex-end;
 }
 }
 @media (max-width: 480px) {
-.inquiry-filters .filters-header[data-v-070225bb] {
+.filters-toolbar .toolbar-actions[data-v-070225bb] {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
 }
-.inquiry-filters .filters-header .search-box.compact[data-v-070225bb] {
-    max-width: none;
-    order: 1;
-    min-width: auto;
-}
-.inquiry-filters .filters-header .filters-toggle-btn[data-v-070225bb] {
-    order: 2;
+.filters-toolbar .toolbar-actions[data-v-070225bb] .button-vue {
+    width: 100%;
     justify-content: center;
 }
-.inquiry-filters .filters-header .main-filters[data-v-070225bb] {
-    order: 3;
+.active-filters-summary[data-v-070225bb] {
     flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-}
-.inquiry-filters .filters-header .main-filters .filter-group.compact[data-v-070225bb] {
-    min-width: auto;
-    justify-content: space-between;
-}
-.inquiry-filters .filters-header .reset-btn.compact[data-v-070225bb] {
-    order: 4;
-    justify-content: center;
+    align-items: flex-start;
 }
 }
 .inquiry-reel[data-v-79df630c] {
@@ -18277,11 +18107,11 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.14";
 import { an as getCurrentInstance, ai as inject, bj as onUnmounted, bx as onDeactivated, by as onActivated, w as watch, O as unref, bz as shallowReactive, bk as shallowRef, d as defineComponent, ah as reactive, b as computed, a4 as h$2, W as provide, s as ref, am as watchEffect, b4 as nextTick$1, bA as Settings, a as _export_sfc, o as openBlock, c as createElementBlock, t as toDisplayString, K as normalizeClass, bB as getCanonicalLocale, bC as NC_ACTIONS_IS_SEMANTIC_MENU, bD as ActionGlobalMixin, P as NcIconSvgWrapper, af as resolveComponent, j as createBaseVNode, a5 as withDirectives, bE as vModelRadio, i as createVNode, bF as mdiRadioboxMarked, bG as mdiRadioboxBlank, u as useModel, Z as createElementId, Y as useSlots, a1 as logger, q as onMounted, b3 as onBeforeUnmount, r as renderSlot, ax as useCssVars, bH as useIsDarkTheme, bI as mdiCreation, at as createSlots, g as withCtx, E as createTextVNode, f as createBlock, C as NcButton, bv as NcActions, m as mergeProps$1, ae as withKeys, k as createCommentVNode, ad as vShow, y as normalizeProps, z as guardReactiveProps, h as resolveDynamicComponent, bJ as userStatus, N as NcAvatar, n as normalizeStyle, p as mergeModels, v as translate, _ as _export_sfc$1, bu as NcActionButton, F as Fragment$1, bK as storeToRefs, L as renderList, x as NcLoadingIcon, bL as Teleport, J as withModifiers, l as NcPopover, b0 as emit, ac as NcEmptyContent, M as DateTime, bM as translatePlural, bN as TransitionGroup, I as generateUrl, D as NcModal, bO as markRaw, bP as customRef, bQ as global, bR as getAugmentedNamespace, b8 as process$1, bs as commonjsGlobal, bS as Buffer, a8 as getDefaultExportFromCjs, G as defineStore, bT as vModelSelect, a6 as vModelText, bd as getCurrentUser, aM as Transition, H as purify, a0 as useTemplateRef, bt as toRaw, bU as subscribe, bV as unsubscribe, aa as generateOcsUrl, ab as cancelableClient, bW as axios, A as createApp, B as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Dny_Rgcc.chunk.mjs";
-import { c as useSessionStore, L as Logger, d as useInquiriesStore, s as showError, o as lodashExports, p as appSettings, q as useInquiryStore, a as showSuccess, r as canTransfer, t as canDelete, v as canRestore, w as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, x as createInquiryContext, y as useInquiryGroupsStore, z as NavigationIcons, A as translateGrade, B as useSupportsStore, f as useOptionsStore, C as canSupportOption, D as canSupport, F as getAvailableInquiryTypesForCreation, G as getInquiryTypeOptions, H as useInquiryGroupStore, J as getAllowedResponseGroupTypes, K as getAvailableInquiryGroupTypesForCreation, M as getInquiryGroupTypeData, O as accessFamilyMenu, P as getInquiryTypesForFamily, Q as getInquiryItemData, R as Event$1, T as canCreateInquiryGroupInGeneral, U as getInquiryTypesByFamily, S as StatusIcons, V as BadgeIcons, W as canComment, X as sortTitlesMapping, Y as getInquiryGroupTypesByFamily, Z as getInquiryGroupTypesForFamily, _ as canViewToggle, $ as getAvailableResponseTypesWithPermissions, a0 as getAvailableTransformTypesWithPermissions, a1 as validators, a2 as publicInquiry, a3 as inquiries, a4 as aiApi, a5 as useAttachmentsStore, n as InquiryOptionIcons, a6 as getOptionTypeIconComponent, a7 as getOptionTypeLabel, a8 as createOptionContext, a9 as canEditOption, aa as canDeleteOption, ab as getOptionTypeColor, ac as usesTitle, ad as allowsComments, ae as hasSupportFeature, af as getAllowedResponses, ag as useOptionStore, ah as findOptionType, ai as getOptionTypeFields, aj as getOptionTypeDescription, ak as getSupportFeatureLabel, al as createDefault, am as useCommentsStore, an as getAvailableResponseTypes, ao as canCommentOption, ap as getFamilyIconComponent, aq as getFamilyOptionsByTarget, ar as getOptionTypesForFamily, as as getRootOptionTypesForFamily, at as detectPairedOptionTypes, au as getFamilyUIConfig, av as getFamilyFeatures, aw as getFamilyActions, ax as filterOptionsByLayout, ay as isImportedFromView, az as getTimelineStartDate, aA as getTimelineEndDate, u as useSupportEngineStore, E as ENGINE_DEFINITIONS, aB as getFamilyColor, aC as isOptionTypeInFamily, aD as getFamiliesWithOptionTypes, aE as getLayoutForFamily, aF as getOptionsCountByFamily, aG as canEdit, aH as useSharesStore, aI as createInquiryGroupContext, aJ as inquiryLinks, j as useAppSettingsStore, aK as ShareIcons, aL as getEditPermissions, aM as getAvailableFields, aN as getAvailableGroupFields, aO as canUseResource } from "./NcDashboardWidget-CvpYMKur-C24h1OdY.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-CareT87x.chunk.mjs";
-import { u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$2n, c as NcDialog, e as NcAppNavigationItem, f as NcAppNavigationList, g as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, h as NcAppContent, i as NcActionButtonGroup, j as find$1, r as registerCustomProtocol, t as tokenize, k as reset, l as NcDateTimePickerNative, m as NcRichContenteditable, O as Options, C as CheckIcon, b as NcProgressBar, n as NcDateTimePicker, o as NcActionInput, p as NcActionCaption, P as PlusIcon, q as NcAppSidebar, d as NcAppSettingsDialog, s as NcContent } from "./index-DaNfkirh.chunk.mjs";
+import { c as useSessionStore, L as Logger, d as useInquiriesStore, s as showError, o as lodashExports, p as appSettings, q as useInquiryStore, a as showSuccess, r as canTransfer, t as canDelete, v as canRestore, w as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, x as createInquiryContext, y as useInquiryGroupsStore, z as NavigationIcons, A as translateGrade, B as useSupportsStore, f as useOptionsStore, C as canSupportOption, D as canSupport, F as getAvailableInquiryTypesForCreation, G as getInquiryTypeOptions, H as useInquiryGroupStore, J as getAllowedResponseGroupTypes, K as getAvailableInquiryGroupTypesForCreation, M as getInquiryGroupTypeData, O as accessFamilyMenu, P as getInquiryTypesForFamily, Q as getInquiryItemData, R as Event$1, T as canCreateInquiryGroupInGeneral, U as getInquiryTypesByFamily, S as StatusIcons, V as BadgeIcons, W as canComment, X as sortTitlesMapping, Y as getInquiryGroupTypesByFamily, Z as getInquiryGroupTypesForFamily, _ as canViewToggle, $ as getAvailableResponseTypesWithPermissions, a0 as getAvailableTransformTypesWithPermissions, a1 as validators, a2 as publicInquiry, a3 as inquiries, a4 as aiApi, a5 as useAttachmentsStore, n as InquiryOptionIcons, a6 as getOptionTypeIconComponent, a7 as getOptionTypeLabel, a8 as createOptionContext, a9 as canEditOption, aa as canDeleteOption, ab as getOptionTypeColor, ac as usesTitle, ad as allowsComments, ae as hasSupportFeature, af as getAllowedResponses, ag as useOptionStore, ah as findOptionType, ai as getOptionTypeFields, aj as getOptionTypeDescription, ak as getSupportFeatureLabel, al as createDefault, am as useCommentsStore, an as getAvailableResponseTypes, ao as canCommentOption, ap as getFamilyIconComponent, aq as getFamilyOptionsByTarget, ar as getOptionTypesForFamily, as as getRootOptionTypesForFamily, at as detectPairedOptionTypes, au as getFamilyUIConfig, av as getFamilyFeatures, aw as getFamilyActions, ax as filterOptionsByLayout, ay as isImportedFromView, az as getTimelineStartDate, aA as getTimelineEndDate, u as useSupportEngineStore, E as ENGINE_DEFINITIONS, aB as getFamilyColor, aC as isOptionTypeInFamily, aD as getFamiliesWithOptionTypes, aE as getLayoutForFamily, aF as getOptionsCountByFamily, aG as canEdit, aH as useSharesStore, aI as createInquiryGroupContext, aJ as inquiryLinks, j as useAppSettingsStore, aK as ShareIcons, aL as getEditPermissions, aM as getAvailableFields, aN as getAvailableGroupFields, aO as canUseResource } from "./NcDashboardWidget-CvpYMKur-Cy0Dgq70.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-x4dK7z_2.chunk.mjs";
+import { u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$2n, c as NcDialog, e as NcAppNavigationItem, f as NcAppNavigationList, g as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, h as NcAppContent, i as NcActionButtonGroup, j as find$1, r as registerCustomProtocol, t as tokenize, k as reset, l as NcDateTimePickerNative, m as NcRichContenteditable, O as Options, C as CheckIcon, b as NcProgressBar, n as NcDateTimePicker, o as NcActionInput, p as NcActionCaption, P as PlusIcon, q as NcAppSidebar, d as NcAppSettingsDialog, s as NcContent } from "./index-Bosm4nDV.chunk.mjs";
 import { d as _sfc_main$2o, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$2p, e as NcRichText, f as __vitePreload, b as NcInputField } from "./NcRichText-D_ssz6sB-DxVU5U-6.chunk.mjs";
-import { c as createLucideIcon, T as TrendingUp, G as Gauge, S as Star, R as RadioGroupDiv, N as NcNoteCard, b as NcRadioGroup, a as NcTextArea, P as Plus, V as Vote, B as Brain, A as Award, d as CircleCheckBig, H as Heart, e as Scale$1, f as ThumbsUp, g as ChartColumn, U as Users, h as Settings$1, I as Info, M as Minus, E as EngineSelectorModal, C as CardDiv } from "./markdown-BkidiRRa.chunk.mjs";
+import { c as createLucideIcon, T as TrendingUp, G as Gauge, S as Star, R as RadioGroupDiv, N as NcNoteCard, b as NcRadioGroup, a as NcTextArea, P as Plus, V as Vote, B as Brain, A as Award, d as CircleCheckBig, H as Heart, e as Scale$1, f as ThumbsUp, g as ChartColumn, U as Users, h as Settings$1, I as Info, M as Minus, E as EngineSelectorModal, C as CardDiv } from "./markdown-6isnwjNB.chunk.mjs";
 import { A as AgoraAppIcon } from "./agora-icon-BPebac06.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-BE6yD-R0-BzWzqijs.chunk.mjs";
 function getDevtoolsGlobalHook() {
@@ -24076,10 +23906,10 @@ const _hoisted_20$r = { class: "breakdown-stats" };
 const _hoisted_21$p = { class: "count" };
 const _hoisted_22$p = { class: "percentage" };
 const _hoisted_23$p = { class: "breakdown-bar" };
-const _hoisted_24$m = { class: "breakdown-item negative" };
-const _hoisted_25$m = { class: "breakdown-header" };
-const _hoisted_26$m = { class: "breakdown-label" };
-const _hoisted_27$m = { class: "breakdown-stats" };
+const _hoisted_24$n = { class: "breakdown-item negative" };
+const _hoisted_25$n = { class: "breakdown-header" };
+const _hoisted_26$n = { class: "breakdown-label" };
+const _hoisted_27$n = { class: "breakdown-stats" };
 const _hoisted_28$m = { class: "count" };
 const _hoisted_29$m = { class: "percentage" };
 const _hoisted_30$l = { class: "breakdown-bar" };
@@ -24457,21 +24287,21 @@ function _sfc_render$1X(_ctx, _cache, $props, $setup, $data, $options) {
               )
             ])
           ]),
-          createBaseVNode("div", _hoisted_24$m, [
-            createBaseVNode("div", _hoisted_25$m, [
+          createBaseVNode("div", _hoisted_24$n, [
+            createBaseVNode("div", _hoisted_25$n, [
               createVNode($setup["ThumbIcon"], {
                 supported: false,
                 size: $props.iconSize * 0.8
               }, null, 8, ["size"]),
               createBaseVNode(
                 "span",
-                _hoisted_26$m,
+                _hoisted_26$n,
                 toDisplayString($setup.t("agora", "No")),
                 1
                 /* TEXT */
               )
             ]),
-            createBaseVNode("div", _hoisted_27$m, [
+            createBaseVNode("div", _hoisted_27$n, [
               createBaseVNode(
                 "span",
                 _hoisted_28$m,
@@ -27189,13 +27019,13 @@ const _hoisted_20$q = {
 const _hoisted_21$o = ["title"];
 const _hoisted_22$o = { class: "user-info-section" };
 const _hoisted_23$o = { class: "user-avatar" };
-const _hoisted_24$l = {
+const _hoisted_24$m = {
   key: 6,
   class: "chip chip--expire"
 };
-const _hoisted_25$l = { class: "chip-value" };
-const _hoisted_26$l = { class: "actions" };
-const _hoisted_27$l = { class: "grid-card" };
+const _hoisted_25$m = { class: "chip-value" };
+const _hoisted_26$m = { class: "actions" };
+const _hoisted_27$m = { class: "grid-card" };
 const _hoisted_28$l = ["title"];
 const _hoisted_29$l = {
   key: 0,
@@ -27497,21 +27327,21 @@ function _sfc_render$1Q(_ctx, _cache, $props, $setup, $data, $options) {
               ])
             ]),
             createCommentVNode(" Expire chip "),
-            !$setup.hasVotePeriod && $props.inquiry.configuration.expire ? (openBlock(), createElementBlock("div", _hoisted_24$l, [
+            !$setup.hasVotePeriod && $props.inquiry.configuration.expire ? (openBlock(), createElementBlock("div", _hoisted_24$m, [
               (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Expiration), {
                 size: 12,
                 class: "icon"
               })),
               createBaseVNode(
                 "span",
-                _hoisted_25$l,
+                _hoisted_25$m,
                 toDisplayString($setup.timeExpirationRelative),
                 1
                 /* TEXT */
               )
             ])) : createCommentVNode("v-if", true)
           ]),
-          createBaseVNode("div", _hoisted_26$l, [
+          createBaseVNode("div", _hoisted_26$m, [
             renderSlot(_ctx.$slots, "actions", {}, void 0, true)
           ])
         ],
@@ -27522,7 +27352,7 @@ function _sfc_render$1Q(_ctx, _cache, $props, $setup, $data, $options) {
         { key: 1 },
         [
           createCommentVNode(" Grid Mode "),
-          createBaseVNode("div", _hoisted_27$l, [
+          createBaseVNode("div", _hoisted_27$m, [
             createCommentVNode(" Moderation Banner for Grid View "),
             $setup.showModerationBanner ? (openBlock(), createElementBlock("div", {
               key: 0,
@@ -27977,68 +27807,72 @@ const _sfc_main$1P = /* @__PURE__ */ defineComponent({
   }
 });
 const _hoisted_1$1x = { class: "inquiry-filters" };
-const _hoisted_2$1f = { class: "filters-header" };
-const _hoisted_3$1b = { class: "search-box compact" };
-const _hoisted_4$15 = {
+const _hoisted_2$1f = { class: "filters-toolbar" };
+const _hoisted_3$1b = { class: "search-wrapper" };
+const _hoisted_4$15 = { class: "toolbar-actions" };
+const _hoisted_5$N = {
+  class: "toggle-icon",
+  "aria-hidden": "true"
+};
+const _hoisted_6$K = {
   key: 0,
   class: "filter-count"
 };
-const _hoisted_5$N = { class: "toggle-arrow" };
-const _hoisted_6$K = { class: "main-filters" };
-const _hoisted_7$G = {
-  key: 0,
-  class: "filter-group compact"
-};
+const _hoisted_7$G = { class: "filters-main" };
 const _hoisted_8$F = {
-  key: 1,
-  class: "filter-group compact"
+  key: 0,
+  class: "filter-field"
 };
-const _hoisted_9$E = { class: "filter-group compact checkbox-group" };
+const _hoisted_9$E = { class: "filter-label" };
 const _hoisted_10$C = {
+  key: 1,
+  class: "filter-field"
+};
+const _hoisted_11$C = { class: "filter-label" };
+const _hoisted_12$z = { class: "filter-field filter-field--checkbox" };
+const _hoisted_13$x = {
   key: 0,
   class: "filters-expanded"
 };
-const _hoisted_11$C = { class: "filters-grid" };
-const _hoisted_12$z = { class: "filter-group" };
-const _hoisted_13$x = { class: "filter-group" };
-const _hoisted_14$w = { class: "filter-group" };
-const _hoisted_15$w = {
+const _hoisted_14$w = { class: "filter-field" };
+const _hoisted_15$w = { class: "filter-label" };
+const _hoisted_16$u = { class: "filter-field" };
+const _hoisted_17$t = { class: "filter-label" };
+const _hoisted_18$s = { class: "filter-field" };
+const _hoisted_19$q = { class: "filter-label" };
+const _hoisted_20$p = {
   key: 1,
   class: "active-filters-summary"
 };
-const _hoisted_16$u = { class: "summary-label" };
-const _hoisted_17$t = {
+const _hoisted_21$n = { class: "summary-label" };
+const _hoisted_22$n = {
   key: 0,
   class: "filter-tag"
 };
-const _hoisted_18$s = {
+const _hoisted_23$n = {
   key: 1,
   class: "filter-tag"
 };
-const _hoisted_19$q = {
+const _hoisted_24$l = {
   key: 2,
   class: "filter-tag"
 };
-const _hoisted_20$p = {
+const _hoisted_25$l = {
   key: 3,
   class: "filter-tag"
 };
-const _hoisted_21$n = {
+const _hoisted_26$l = {
   key: 4,
   class: "filter-tag"
 };
-const _hoisted_22$n = {
+const _hoisted_27$l = {
   key: 5,
-  class: "filter-tag"
-};
-const _hoisted_23$n = {
-  key: 6,
   class: "filter-tag"
 };
 function _sfc_render$1P(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$1x, [
+    createCommentVNode(" Toolbar: search + filter toggle + clear "),
     createBaseVNode("div", _hoisted_2$1f, [
-      createCommentVNode(" Search box "),
       createBaseVNode("div", _hoisted_3$1b, [
         createVNode($setup["NcTextField"], {
           modelValue: $setup.searchQuery,
@@ -28049,274 +27883,245 @@ function _sfc_render$1P(_ctx, _cache, $props, $setup, $data, $options) {
           "label-visible": false,
           class: "search-input",
           onInput: $setup.applyFilters
-        }, null, 8, ["modelValue", "placeholder", "label"]),
-        _cache[8] || (_cache[8] = createBaseVNode(
-          "span",
-          { class: "search-icon" },
-          "🔍",
-          -1
-          /* CACHED */
-        ))
+        }, null, 8, ["modelValue", "placeholder", "label"])
       ]),
-      createCommentVNode(" Filters toggle button "),
-      createVNode($setup["NcButton"], {
-        class: normalizeClass(["filters-toggle-btn", { active: $setup.isFiltersOpen }]),
-        onClick: _cache[1] || (_cache[1] = ($event) => $setup.isFiltersOpen = !$setup.isFiltersOpen)
-      }, {
-        default: withCtx(() => [
-          _cache[9] || (_cache[9] = createBaseVNode(
-            "span",
-            { class: "filter-icon" },
-            "⚙️",
-            -1
-            /* CACHED */
-          )),
-          createTextVNode(
-            " " + toDisplayString($setup.t("agora", "Filters")) + " ",
-            1
-            /* TEXT */
-          ),
-          $setup.activeFiltersCount > 0 ? (openBlock(), createElementBlock(
-            "span",
-            _hoisted_4$15,
-            toDisplayString($setup.activeFiltersCount),
-            1
-            /* TEXT */
-          )) : createCommentVNode("v-if", true),
-          createBaseVNode(
-            "span",
-            _hoisted_5$N,
-            toDisplayString($setup.isFiltersOpen ? "▲" : "▼"),
-            1
-            /* TEXT */
-          )
-        ]),
-        _: 1
-        /* STABLE */
-      }, 8, ["class"]),
-      createCommentVNode(" Main filters always visible "),
-      createBaseVNode("div", _hoisted_6$K, [
-        createCommentVNode(" Location filter "),
-        $setup.filterOptions.locations.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_7$G, [
-          createBaseVNode(
-            "label",
-            null,
-            toDisplayString($setup.t("agora", "Location")),
-            1
-            /* TEXT */
-          ),
-          createVNode($setup["NcSelect"], {
-            modelValue: $setup.selectedLocation,
-            "onUpdate:modelValue": [
-              _cache[2] || (_cache[2] = ($event) => $setup.selectedLocation = $event),
-              $setup.applyFilters
-            ],
-            options: $setup.filterOptions.locations,
-            clearable: false,
-            multiple: false,
-            "input-label": $setup.t("agora", "Location"),
-            "label-outside": "",
-            "value-prop": "value",
-            "label-prop": "label"
-          }, null, 8, ["modelValue", "options", "input-label"])
-        ])) : createCommentVNode("v-if", true),
-        createCommentVNode(" Category filter "),
-        $setup.filterOptions.categories.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_8$F, [
-          createBaseVNode(
-            "label",
-            null,
-            toDisplayString($setup.t("agora", "Category")),
-            1
-            /* TEXT */
-          ),
-          createVNode($setup["NcSelect"], {
-            modelValue: $setup.selectedCategory,
-            "onUpdate:modelValue": [
-              _cache[3] || (_cache[3] = ($event) => $setup.selectedCategory = $event),
-              $setup.applyFilters
-            ],
-            options: $setup.filterOptions.categories,
-            clearable: false,
-            multiple: false,
-            "input-label": $setup.t("agora", "Category"),
-            "value-prop": "value",
-            "label-prop": "label",
-            "label-outside": ""
-          }, null, 8, ["modelValue", "options", "input-label"])
-        ])) : createCommentVNode("v-if", true),
-        createCommentVNode(" Main inquiries checkbox "),
-        createBaseVNode("div", _hoisted_9$E, [
-          createVNode($setup["NcCheckboxRadioSwitch"], {
-            modelValue: $setup.mainInquiriesOnly,
-            "onUpdate:modelValue": [
-              _cache[4] || (_cache[4] = ($event) => $setup.mainInquiriesOnly = $event),
-              $setup.applyFilters
-            ],
-            type: "checkbox"
-          }, {
-            default: withCtx(() => [
-              createTextVNode(
-                toDisplayString($setup.t("agora", "Main inquiries")),
-                1
-                /* TEXT */
-              )
-            ]),
-            _: 1
-            /* STABLE */
-          }, 8, ["modelValue"])
-        ])
-      ]),
-      createCommentVNode(" Clear all button "),
-      $setup.activeFiltersCount > 0 ? (openBlock(), createBlock($setup["NcButton"], {
-        key: 0,
-        class: "reset-btn compact",
-        onClick: $setup.resetFilters
-      }, {
-        default: withCtx(() => [
-          createTextVNode(
-            toDisplayString($setup.t("agora", "Clear all")),
-            1
-            /* TEXT */
-          )
-        ]),
-        _: 1
-        /* STABLE */
-      })) : createCommentVNode("v-if", true)
+      createBaseVNode("div", _hoisted_4$15, [
+        createVNode($setup["NcButton"], {
+          class: normalizeClass(["filters-toggle-btn", { active: $setup.isFiltersOpen }]),
+          onClick: _cache[1] || (_cache[1] = ($event) => $setup.isFiltersOpen = !$setup.isFiltersOpen)
+        }, {
+          icon: withCtx(() => [
+            createBaseVNode(
+              "span",
+              _hoisted_5$N,
+              toDisplayString($setup.isFiltersOpen ? "▲" : "▼"),
+              1
+              /* TEXT */
+            )
+          ]),
+          default: withCtx(() => [
+            createTextVNode(
+              " " + toDisplayString($setup.t("agora", "Filters")) + " ",
+              1
+              /* TEXT */
+            ),
+            $setup.activeFiltersCount > 0 ? (openBlock(), createElementBlock(
+              "span",
+              _hoisted_6$K,
+              toDisplayString($setup.activeFiltersCount),
+              1
+              /* TEXT */
+            )) : createCommentVNode("v-if", true)
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["class"]),
+        $setup.activeFiltersCount > 0 ? (openBlock(), createBlock($setup["NcButton"], {
+          key: 0,
+          class: "reset-btn",
+          onClick: $setup.resetFilters
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              toDisplayString($setup.t("agora", "Clear all")),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        })) : createCommentVNode("v-if", true)
+      ])
     ]),
-    createCommentVNode(" Expanded filters section "),
-    $setup.isFiltersOpen ? (openBlock(), createElementBlock("div", _hoisted_10$C, [
-      createBaseVNode("div", _hoisted_11$C, [
-        createCommentVNode(" Type filter "),
-        createBaseVNode("div", _hoisted_12$z, [
-          createBaseVNode(
-            "label",
-            null,
-            toDisplayString($setup.t("agora", "Type")),
-            1
-            /* TEXT */
-          ),
-          createVNode($setup["NcSelect"], {
-            modelValue: $setup.selectedType,
-            "onUpdate:modelValue": [
-              _cache[5] || (_cache[5] = ($event) => $setup.selectedType = $event),
-              $setup.applyFilters
-            ],
-            options: $setup.filterOptions.types,
-            clearable: false,
-            multiple: false,
-            "input-label": $setup.t("agora", "Type"),
-            "value-prop": "value",
-            "label-prop": "label",
-            "label-outside": ""
-          }, null, 8, ["modelValue", "options", "input-label"])
-        ]),
-        createCommentVNode(" Comments filter "),
-        createBaseVNode("div", _hoisted_13$x, [
-          createBaseVNode(
-            "label",
-            null,
-            toDisplayString($setup.t("agora", "Comments")),
-            1
-            /* TEXT */
-          ),
-          createVNode($setup["NcSelect"], {
-            modelValue: $setup.hasComments,
-            "onUpdate:modelValue": [
-              _cache[6] || (_cache[6] = ($event) => $setup.hasComments = $event),
-              $setup.applyFilters
-            ],
-            options: $setup.filterOptions.participation,
-            clearable: false,
-            multiple: false,
-            "input-label": $setup.t("agora", "Comments"),
-            "value-prop": "value",
-            "label-prop": "label",
-            "label-outside": ""
-          }, null, 8, ["modelValue", "options", "input-label"])
-        ]),
-        createCommentVNode(" Supports filter "),
-        createBaseVNode("div", _hoisted_14$w, [
-          createBaseVNode(
-            "label",
-            null,
-            toDisplayString($setup.t("agora", "Supports")),
-            1
-            /* TEXT */
-          ),
-          createVNode($setup["NcSelect"], {
-            modelValue: $setup.hasSupports,
-            "onUpdate:modelValue": [
-              _cache[7] || (_cache[7] = ($event) => $setup.hasSupports = $event),
-              $setup.applyFilters
-            ],
-            options: $setup.filterOptions.support,
-            clearable: false,
-            multiple: false,
-            "input-label": $setup.t("agora", "Supports"),
-            "value-prop": "value",
-            "label-prop": "label",
-            "label-outside": ""
-          }, null, 8, ["modelValue", "options", "input-label"])
-        ])
+    createCommentVNode(" Always-visible main filters "),
+    createBaseVNode("div", _hoisted_7$G, [
+      $setup.filterOptions.locations.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_8$F, [
+        createBaseVNode(
+          "label",
+          _hoisted_9$E,
+          toDisplayString($setup.t("agora", "Location")),
+          1
+          /* TEXT */
+        ),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.selectedLocation,
+          "onUpdate:modelValue": [
+            _cache[2] || (_cache[2] = ($event) => $setup.selectedLocation = $event),
+            $setup.applyFilters
+          ],
+          options: $setup.filterOptions.locations,
+          clearable: false,
+          multiple: false,
+          "input-label": $setup.t("agora", "Location"),
+          "label-outside": "",
+          "value-prop": "value",
+          "label-prop": "label"
+        }, null, 8, ["modelValue", "options", "input-label"])
+      ])) : createCommentVNode("v-if", true),
+      $setup.filterOptions.categories.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_10$C, [
+        createBaseVNode(
+          "label",
+          _hoisted_11$C,
+          toDisplayString($setup.t("agora", "Category")),
+          1
+          /* TEXT */
+        ),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.selectedCategory,
+          "onUpdate:modelValue": [
+            _cache[3] || (_cache[3] = ($event) => $setup.selectedCategory = $event),
+            $setup.applyFilters
+          ],
+          options: $setup.filterOptions.categories,
+          clearable: false,
+          multiple: false,
+          "input-label": $setup.t("agora", "Category"),
+          "value-prop": "value",
+          "label-prop": "label",
+          "label-outside": ""
+        }, null, 8, ["modelValue", "options", "input-label"])
+      ])) : createCommentVNode("v-if", true),
+      createBaseVNode("div", _hoisted_12$z, [
+        createVNode($setup["NcCheckboxRadioSwitch"], {
+          modelValue: $setup.mainInquiriesOnly,
+          "onUpdate:modelValue": [
+            _cache[4] || (_cache[4] = ($event) => $setup.mainInquiriesOnly = $event),
+            $setup.applyFilters
+          ],
+          type: "checkbox"
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              toDisplayString($setup.t("agora", "Main inquiries")),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["modelValue"])
+      ])
+    ]),
+    createCommentVNode(" Expanded filters "),
+    $setup.isFiltersOpen ? (openBlock(), createElementBlock("div", _hoisted_13$x, [
+      createBaseVNode("div", _hoisted_14$w, [
+        createBaseVNode(
+          "label",
+          _hoisted_15$w,
+          toDisplayString($setup.t("agora", "Type")),
+          1
+          /* TEXT */
+        ),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.selectedType,
+          "onUpdate:modelValue": [
+            _cache[5] || (_cache[5] = ($event) => $setup.selectedType = $event),
+            $setup.applyFilters
+          ],
+          options: $setup.filterOptions.types,
+          clearable: false,
+          multiple: false,
+          "input-label": $setup.t("agora", "Type"),
+          "value-prop": "value",
+          "label-prop": "label",
+          "label-outside": ""
+        }, null, 8, ["modelValue", "options", "input-label"])
+      ]),
+      createBaseVNode("div", _hoisted_16$u, [
+        createBaseVNode(
+          "label",
+          _hoisted_17$t,
+          toDisplayString($setup.t("agora", "Comments")),
+          1
+          /* TEXT */
+        ),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.hasComments,
+          "onUpdate:modelValue": [
+            _cache[6] || (_cache[6] = ($event) => $setup.hasComments = $event),
+            $setup.applyFilters
+          ],
+          options: $setup.filterOptions.participation,
+          clearable: false,
+          multiple: false,
+          "input-label": $setup.t("agora", "Comments"),
+          "value-prop": "value",
+          "label-prop": "label",
+          "label-outside": ""
+        }, null, 8, ["modelValue", "options", "input-label"])
+      ]),
+      createBaseVNode("div", _hoisted_18$s, [
+        createBaseVNode(
+          "label",
+          _hoisted_19$q,
+          toDisplayString($setup.t("agora", "Supports")),
+          1
+          /* TEXT */
+        ),
+        createVNode($setup["NcSelect"], {
+          modelValue: $setup.hasSupports,
+          "onUpdate:modelValue": [
+            _cache[7] || (_cache[7] = ($event) => $setup.hasSupports = $event),
+            $setup.applyFilters
+          ],
+          options: $setup.filterOptions.support,
+          clearable: false,
+          multiple: false,
+          "input-label": $setup.t("agora", "Supports"),
+          "value-prop": "value",
+          "label-prop": "label",
+          "label-outside": ""
+        }, null, 8, ["modelValue", "options", "input-label"])
       ])
     ])) : createCommentVNode("v-if", true),
     createCommentVNode(" Active filters summary "),
-    $setup.activeFiltersCount > 0 ? (openBlock(), createElementBlock("div", _hoisted_15$w, [
+    $setup.activeFiltersCount > 0 ? (openBlock(), createElementBlock("div", _hoisted_20$p, [
       createBaseVNode(
         "span",
-        _hoisted_16$u,
+        _hoisted_21$n,
         toDisplayString($setup.t("agora", "Active filters")),
         1
         /* TEXT */
       ),
       $setup.getValue($setup.selectedType) !== "all" ? (openBlock(), createElementBlock(
         "span",
-        _hoisted_17$t,
+        _hoisted_22$n,
         toDisplayString($setup.filterOptions.types.find((t2) => t2.value === $setup.getValue($setup.selectedType))?.label),
-        1
-        /* TEXT */
-      )) : createCommentVNode("v-if", true),
-      $setup.getValue($setup.selectedInquiryStatus) !== "all" ? (openBlock(), createElementBlock(
-        "span",
-        _hoisted_18$s,
-        toDisplayString($setup.filterOptions.inquiryStatuses.find((s2) => s2.value === $setup.getValue($setup.selectedInquiryStatus))?.label),
         1
         /* TEXT */
       )) : createCommentVNode("v-if", true),
       $setup.getValue($setup.selectedCategory) !== "all" ? (openBlock(), createElementBlock(
         "span",
-        _hoisted_19$q,
+        _hoisted_23$n,
         toDisplayString($setup.filterOptions.categories.find((c2) => c2.value === $setup.getValue($setup.selectedCategory))?.label),
         1
         /* TEXT */
       )) : createCommentVNode("v-if", true),
       $setup.getValue($setup.selectedLocation) !== "all" ? (openBlock(), createElementBlock(
         "span",
-        _hoisted_20$p,
+        _hoisted_24$l,
         toDisplayString($setup.filterOptions.locations.find((l2) => l2.value === $setup.getValue($setup.selectedLocation))?.label),
         1
         /* TEXT */
       )) : createCommentVNode("v-if", true),
-      createCommentVNode(" Example for Comments "),
       $setup.getValue($setup.hasComments) !== null ? (openBlock(), createElementBlock(
         "span",
-        _hoisted_21$n,
+        _hoisted_25$l,
         toDisplayString($setup.filterOptions.participation.find((p2) => p2.value === $setup.getValue($setup.hasComments))?.label),
         1
         /* TEXT */
       )) : createCommentVNode("v-if", true),
-      createCommentVNode(" Example for Supports "),
       $setup.getValue($setup.hasSupports) !== null ? (openBlock(), createElementBlock(
         "span",
-        _hoisted_22$n,
+        _hoisted_26$l,
         toDisplayString($setup.filterOptions.support.find((s2) => s2.value === $setup.getValue($setup.hasSupports))?.label),
         1
         /* TEXT */
       )) : createCommentVNode("v-if", true),
       $setup.searchQuery ? (openBlock(), createElementBlock(
         "span",
-        _hoisted_23$n,
-        toDisplayString($setup.t("agora", "Search")) + ' "' + toDisplayString($setup.searchQuery) + '" ',
+        _hoisted_27$l,
+        toDisplayString($setup.t("agora", "Search")) + ': "' + toDisplayString($setup.searchQuery) + '" ',
         1
         /* TEXT */
       )) : createCommentVNode("v-if", true)
@@ -30441,7 +30246,7 @@ function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
     createCommentVNode(" Right: Access switch and item actions "),
     createBaseVNode("div", _hoisted_7$D, [
       createBaseVNode("div", _hoisted_8$D, [
-        $props.inquiryStore.configuration.access === "private" && $props.inquiryStore.status.moderationStatus === "draft" ? (openBlock(), createElementBlock("div", _hoisted_9$C, [
+        $props.inquiryStore.status.moderationStatus === "draft" ? (openBlock(), createElementBlock("div", _hoisted_9$C, [
           createBaseVNode(
             "label",
             _hoisted_10$A,
@@ -130906,7 +130711,7 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     }
     async function loadOption() {
       const { useOptionsStore: useOptionsStore2 } = await __vitePreload(async () => {
-        const { useOptionsStore: useOptionsStore3 } = await import("./NcDashboardWidget-CvpYMKur-C24h1OdY.chunk.mjs").then((n2) => n2.aQ);
+        const { useOptionsStore: useOptionsStore3 } = await import("./NcDashboardWidget-CvpYMKur-Cy0Dgq70.chunk.mjs").then((n2) => n2.aQ);
         return { useOptionsStore: useOptionsStore3 };
       }, true ? __vite__mapDeps([0,1]) : void 0, import.meta.url);
       const optionsStore = useOptionsStore2();
@@ -131819,14 +131624,14 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       try {
         let component = null;
         if (familyKey === "vote") {
-          const module = await __vitePreload(() => import("./ActionVote-CkzQIPHO.chunk.mjs"), true ? __vite__mapDeps([2,1,0,3,4]) : void 0, import.meta.url);
+          const module = await __vitePreload(() => import("./ActionVote-BCoc9NPF.chunk.mjs"), true ? __vite__mapDeps([2,1,0,3,4]) : void 0, import.meta.url);
           component = markRaw(module.default || module);
         } else if (familyKey === "structure") {
-          const module = await __vitePreload(() => import("./ActionStructure-Bd3v4N2Q.chunk.mjs"), true ? __vite__mapDeps([5,1,6,0,4,7]) : void 0, import.meta.url);
+          const module = await __vitePreload(() => import("./ActionStructure-BcZ1l-OK.chunk.mjs"), true ? __vite__mapDeps([5,1,6,0,4,7]) : void 0, import.meta.url);
           component = markRaw(module.default || module);
         } else {
           const componentName = `${actionKey.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join("")}Modal`;
-          const module = await __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "./Actions/ActionStructure.vue": () => __vitePreload(() => import("./ActionStructure-Bd3v4N2Q.chunk.mjs"), true ? __vite__mapDeps([5,1,6,0,4,7]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => __vitePreload(() => import("./ActionVote-CkzQIPHO.chunk.mjs"), true ? __vite__mapDeps([2,1,0,3,4]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => __vitePreload(() => import("./ExportResultsModal-1ig_zjv0.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => __vitePreload(() => import("./ImportDocumentModal-b3bien7h.chunk.mjs"), true ? __vite__mapDeps([6,1,0,4,7]) : void 0, import.meta.url) }), `./Actions/${componentName}.vue`, 3);
+          const module = await __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "./Actions/ActionStructure.vue": () => __vitePreload(() => import("./ActionStructure-BcZ1l-OK.chunk.mjs"), true ? __vite__mapDeps([5,1,6,0,4,7]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => __vitePreload(() => import("./ActionVote-BCoc9NPF.chunk.mjs"), true ? __vite__mapDeps([2,1,0,3,4]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => __vitePreload(() => import("./ExportResultsModal-BBYzu6K2.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => __vitePreload(() => import("./ImportDocumentModal-B6BF8mZ9.chunk.mjs"), true ? __vite__mapDeps([6,1,0,4,7]) : void 0, import.meta.url) }), `./Actions/${componentName}.vue`, 3);
           component = markRaw(module.default || module);
         }
         if (component) {

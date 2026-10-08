@@ -327,7 +327,6 @@ group: {
   filterCondition: (inquiry: Inquiry) =>
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
-    inquiry.configuration.access === 'private' && 
     inquiry.status.moderationStatus === 'pending',
 },
 }

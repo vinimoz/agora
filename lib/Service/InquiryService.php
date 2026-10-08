@@ -941,7 +941,7 @@ public function getWithTrending(int $inquiryId): array
 		    break;
 
 	    case 'submit_for_moderate':
-		    $inquiry->setAccess('private');
+		    // $inquiry->setAccess('private');
 		    $inquiry->setInquiryStatus('waiting_approval');
 		    $inquiry->setModerationStatus('pending');
 		    $inquiry->setLastInteraction($timestamp);
@@ -949,7 +949,7 @@ public function getWithTrending(int $inquiryId): array
 		    break;
 
 	    case 'submit_for_accepted':
-		    $inquiry->setAccess('private');
+		  //  $inquiry->setAccess('private');
 		    $inquiry->setModerationStatus('accepted');
 
 		    // Preserve the creator's chosen status when it is still valid for this type
