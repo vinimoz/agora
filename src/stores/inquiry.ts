@@ -596,7 +596,7 @@ export const useInquiryStore = defineStore('inquiry', {
 		},
 
 		write(): void {
-			// const inquiriesStore = useInquiriesStore()
+			 const inquiriesStore = useInquiriesStore()
 
 			const debouncedWrite = this.$debounce(async () => {
 				if (this.title === '') {
@@ -606,6 +606,7 @@ export const useInquiryStore = defineStore('inquiry', {
 
 				try {
 					const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
+					inquiriesStore.addInquiryToStore(response.data.inquiry) 
 					this.$patch(response.data.inquiry)
 					emit(Event.UpdateInquiry, {
 						store: 'inquiry',

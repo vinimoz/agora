@@ -900,7 +900,7 @@ private function castValueByType($value, array $fieldDef)
 		);
 	}
     }
-
+/*
     protected function applyAccessFilter(IQueryBuilder $qb, string $alias = self::TABLE): void
     {
 	    $user = $this->userSession->getCurrentUser();
@@ -975,6 +975,102 @@ private function castValueByType($value, array $fieldDef)
 
 	    $qb->andWhere($qb->expr()->orX(...$or));
     }
+ */
+    protected function applyAccessFilter(IQueryBuilder $qb, string $alias = self::TABLE): void
+{
+    $user = $this->userSession->getCurrentUser();
+
+    if ($user->getIsAdmin()) {
+        return;
+    }
+
+    $currentUserId = $this->userSession->getCurrentUserId();
+    $userGroups    = $user->getGroups();
+
+    $or = [];
+
+    // Public inquiries are only visible to non-owners once the moderation
+    // workflow has accepted them. This mirrors Inquiry::getAllowAccessInquiry()
+    // so that listing and per-entity permission checks agree (fixes 403-on-open).
+    $or[] = $qb->expr()->andX(
+        $qb->expr()->eq(
+            $alias . '.access',
+            $qb->createNamedParameter(Inquiry::ACCESS_OPEN, IQueryBuilder::PARAM_STR)
+        ),
+        $qb->expr()->eq(
+            $alias . '.moderation_status',
+            $qb->createNamedParameter(Inquiry::MODERATION_STATUS_ACCEPTED, IQueryBuilder::PARAM_STR)
+        )
+    );
+
+    // Owner always sees their own inquiries, regardless of moderation status.
+    if ($currentUserId !== null) {
+        $or[] = $qb->expr()->eq(
+            $alias . '.owner',
+            $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+        );
+    }
+
+    $groupScoped = $qb->expr()->andX(
+        $qb->expr()->eq($alias . '.access', $qb->createNamedParameter(Inquiry::ACCESS_GROUP, IQueryBuilder::PARAM_STR)),
+        $qb->expr()->isNotNull($alias . '.owned_group'),
+        $qb->expr()->neq($alias . '.owned_group', $qb->createNamedParameter('', IQueryBuilder::PARAM_STR)),
+    );
+
+    $groupMatch = [];
+    if ($currentUserId !== null) {
+        $groupMatch[] = $qb->expr()->eq(
+            $alias . '.owner',
+            $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+        );
+    }
+    if (!empty($userGroups)) {
+        $groupMatch[] = $qb->expr()->in(
+            $alias . '.owned_group',
+            $qb->createNamedParameter($userGroups, IQueryBuilder::PARAM_STR_ARRAY)
+        );
+    }
+    if (!empty($groupMatch)) {
+        $or[] = $qb->expr()->andX(
+            $groupScoped,
+            $qb->expr()->orX(...$groupMatch),
+            // Same moderation gate for group-scoped inquiries.
+            // Owner is already covered by the dedicated owner clause above.
+            $qb->expr()->eq(
+                $alias . '.moderation_status',
+                $qb->createNamedParameter(Inquiry::MODERATION_STATUS_ACCEPTED, IQueryBuilder::PARAM_STR)
+            )
+        );
+    }
+
+    if ($currentUserId !== null) {
+        $shareExists = sprintf(
+            'EXISTS (SELECT 1 FROM `*PREFIX*%s` s '
+            . 'WHERE s.inquiry_id = %s.id AND s.deleted = 0 '
+            . 'AND s.type IN (%s) '
+            . 'AND (s.user_id = :share_user OR s.user_id IN (:share_groups)))',
+            Share::TABLE,
+            $alias,
+            "'user','admin','group','email','contact','external'"
+        );
+        // Explicit shares are intentional grants and bypass the moderation
+        // gate, so reviewers can be given access to drafts / pending items.
+        $or[] = $qb->createFunction($shareExists);
+        $qb->setParameter('share_user', $currentUserId, IQueryBuilder::PARAM_STR);
+        $qb->setParameter('share_groups', $userGroups ?: [''], IQueryBuilder::PARAM_STR_ARRAY);
+    }
+
+    // Moderators see pending inquiries regardless of scope (workflow need).
+    if ($user->getIsModerator()) {
+        $or[] = $qb->expr()->eq(
+            $alias . '.moderation_status',
+            $qb->createNamedParameter(Inquiry::MODERATION_STATUS_PENDING, IQueryBuilder::PARAM_STR)
+        );
+    }
+
+    $qb->andWhere($qb->expr()->orX(...$or));
+    }
+
 
     protected function joinIsShared(
 	    IQueryBuilder &$qb,
@@ -1130,6 +1226,19 @@ private function castValueByType($value, array $fieldDef)
 			    'COUNT(DISTINCT ' . $joinAlias . '.id) AS count_comments'
 		    )
 	    );
+    }
+
+    public function getAllowComment(string $inquiryType): ?bool
+    {
+	    $type = $this->findByType($inquiryType);
+	    $value = $type->getAllowComment();
+	    return $value === null ? null : (bool) $value;
+    }
+
+    public function getSupportFeature(string $inquiryType): ?string
+    {
+	    $type = $this->findByType($inquiryType);
+	    return $type->getSupportFeature();
     }
 
     protected function joinParticipantsCount(

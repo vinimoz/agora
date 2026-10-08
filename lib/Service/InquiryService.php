@@ -96,8 +96,6 @@ class InquiryService
 	    
              $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
 
-            // No more setting family here - it's already joined in the query!
-	
             return $this->inquiry;
         } catch (DoesNotExistException $e) {
             throw new NotFoundException('Inquiry not found');
@@ -320,6 +318,20 @@ class InquiryService
         }
         $this->inquiry->setExpire($expireTimestamp);
         $this->inquiry->setShowResults(Inquiry::SHOW_RESULTS_ALWAYS);
+
+	try {
+	     
+		$typeAllowComment = $this->inquiryTypeMapper->getAllowComment($dto->type);
+		if ($typeAllowComment !== null) {
+        		$this->inquiry->setAllowComment($typeAllowComment ? 1 : 0);
+		}
+
+        	$typeSupportFeature = $this->inquiryTypeMapper->getSupportFeature($dto->type);
+   	 	if ($typeSupportFeature !== null) {
+        		$this->inquiry->setSupportFeature($typeSupportFeature);
+    		}
+	} catch (DoesNotExistException $e) {
+	}
 
         $this->inquiry = $this->inquiryMapper->insert($this->inquiry);
 
@@ -808,6 +820,8 @@ public function delete(int $inquiryId): Inquiry
         $this->inquiry->setTitle('Clone of ' . $origin->getTitle());
         $this->inquiry->setDeleted(0);
         $this->inquiry->setAccess(Inquiry::ACCESS_PRIVATE);
+	$this->inquiry->setAllowComment($origin->getAllowComment());
+	$this->inquiry->setSupportFeature($origin->getSupportFeature());
 
         if ($inquiryType) {
             $this->inquiry->setType($inquiryType);
@@ -937,16 +951,22 @@ public function getWithTrending(int $inquiryId): array
 	    case 'submit_for_accepted':
 		    $inquiry->setAccess('private');
 		    $inquiry->setModerationStatus('accepted');
-		    //We find the first status available in inquiry type status definition
-		    $firstStatus = null;
+
+		    // Preserve the creator's chosen status when it is still valid for this type
 		    $statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
-		    if (!empty($statuses)) {
-			    usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
-			    $firstStatus = $statuses[0] ?? null;
+		    $validKeys = array_map(fn($s) => $s->getStatusKey(), $statuses);
+		    $currentStatus = $inquiry->getInquiryStatus();
+
+		    if (empty($currentStatus) || !in_array($currentStatus, $validKeys, true)) {
+			    if (!empty($statuses)) {
+				    usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
+				    $firstStatus = $statuses[0] ?? null;
+				    if ($firstStatus) {
+					    $inquiry->setInquiryStatus($firstStatus->getStatusKey());
+				    }
+			    }
 		    }
-		    if ($firstStatus) {
-			    $inquiry->setInquiryStatus($firstStatus->getStatusKey());
-		    }
+
 		    $inquiry->setLastInteraction($timestamp);
 		    $inquiry = $this->inquiryMapper->update($inquiry);
 		    break;

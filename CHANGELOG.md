@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# [1.7.14] - 2026-10-07
+- Bug: Set comment, support feature from template
+- Bug: Status already is remplaced when the inquiry is accepted.
+- Bug: When the user is moderator 
+
 # [1.7.13] - 2026-09-24
 Fix:
 - Bug #66: keep others' votes hidden on engines closed to results
