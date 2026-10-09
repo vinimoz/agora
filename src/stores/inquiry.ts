@@ -49,14 +49,15 @@ export type Meta = {
 }
 
 export type InquiryConfiguration = {
-	access: AccessType
-	autoReminder: boolean
-	expire: number
-	forceConfidentialComments: boolean
-	allowComment: number | null
-	supportFeature: string
-	supportEngine: SupportEngine[]
+  access: AccessType
+  autoReminder: boolean
+  expire: number
+  forceConfidentialComments: boolean
+  allowComment: boolean | number | null
+  supportFeature: string
+  supportEngine: SupportEngine[]
 }
+
 
 // Status matching PHP getStatusArray()
 export type InquiryStatus = {
@@ -545,9 +546,30 @@ export const useInquiryStore = defineStore('inquiry', {
 			}
 		},
 
+		async setInquiryAccess(inqAccess: AccessType): Promise<void> {
+                        try {
+                                await InquiriesAPI.updateInquiryAccess(this.id, inqAccess)
+			        const inquiriesStore = useInquiriesStore()
+				inquiriesStore.updateInquiryAccess(this.id,inqAccess)
+                        } catch (error) {
+                                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                                        return
+                                }
+                                Logger.error('Error setting inquiry access:', {
+                                        error,
+                                        inqAccess,
+                                        state: this.$state,
+                                })
+                                throw error
+                        }
+                },
+
+
 		async setInquiryStatus(status: InquiryWorkflowStatus): Promise<void> {
 			try {
 				await InquiriesAPI.updateInquiryStatus(this.id, status)
+			        const inquiriesStore = useInquiriesStore()
+				inquiriesStore.updateInquiryStatus(this.id, status)
 
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -566,6 +588,8 @@ export const useInquiryStore = defineStore('inquiry', {
 			try {
 				await InquiriesAPI.updateModerationStatus(this.id, status)
 				this.status.moderationStatus = status
+			        const inquiriesStore = useInquiriesStore()
+				inquiriesStore.updateInquiryModerationStatus(this.id, status)
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
 					return

@@ -383,6 +383,18 @@ class InquiryController extends BaseController
         }
     }
 
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/updateaccess/{inquiryId}/{access}')]
+    public function updateAccess(int $inquiryId, string $access): JSONResponse
+    {
+
+        return $this->response(
+            fn () => [
+                'inquiry' => $this->inquiryService->setInquiryAccess($inquiryId, $access),
+            ]
+        );
+    }
+
 
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquiry/updateconfig/{inquiryId}')]

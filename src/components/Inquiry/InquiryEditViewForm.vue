@@ -462,7 +462,7 @@ const selectedAccess = computed({
   set: (newValue) => {
     if (!newValue || newValue.id === inquiryStore.configuration.access) return
     inquiryStore.configuration.access = newValue.id as typeof inquiryStore.configuration.access
-    inquiryStore.write()
+    inquiryStore.setInquiryAccess(inquiryStore.id , inquiryStore.configuration.access )
     showSuccess(t('agora', 'Access level updated'))
   },
 })
@@ -472,7 +472,6 @@ const currentAccessLabel = computed(() => {
   const opt = accessOptions.value.find((o) => o.id === inquiryStore.configuration.access)
   return opt?.label ?? inquiryStore.configuration.access
 })
-
 // ============================================================
 // EXPIRATION DATE EDITING (uses NcDateTimePicker)
 // ============================================================
@@ -764,13 +763,13 @@ const expirationDate = computed({
                     </div>
 
                     <!-- Row 3 (Access) -->
-                    <div if="inquiryStore.configuration.access === 'open' || inquiryStore.configuration.access === 'private'" class="metadata-item">
+                    <div v-if="inquiryStore.status.moderationStatus === 'accepted' " class="metadata-item">
                         <div class="metadata-icon">
                             <component :is="InquiryGeneralIcons.Lock" :size="18" />
                         </div>
                         <div class="metadata-content">
                             <span class="metadata-label">{{ t('agora', 'Access') }}</span>
-                            <template v-if="canEditInquiry">
+                            <template v-if="canEditInquiry && (inquiryStore.configuration.access === 'open' || inquiryStore.configuration.access === 'private')">
                                 <div class="select-container">
                                     <NcSelect
                                             v-model="selectedAccess"

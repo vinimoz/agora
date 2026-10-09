@@ -66,10 +66,8 @@ export interface InquiryGroupRights {
  */
 export enum AccessLevel {
   Private = 'private',
-  Moderate = 'moderate',
   Open = 'open',
   Group = 'groups',
-  Invitation = 'invitation',
 }
 
 /**
@@ -85,7 +83,11 @@ export enum InquiryFamily {
 
 export interface InquiryStoreLike {
   owner: { id: string }
-  configuration: { access: AccessLevel | string }
+  configuration: {
+    access: AccessLevel | string
+    supportFeature?: string
+    allowComment?: boolean | number | null
+  }
   status: {
     isLocked: boolean
     isExpired: boolean
@@ -95,15 +97,22 @@ export interface InquiryStoreLike {
     inquiryStatus?: string
   }
   inquiryGroups: InquiryGroup[]
+  ownedGroup?: string
+  currentUserStatus?: {
+    isLocked?: boolean
+    isShared?: boolean
+  }
   type: string
   family: InquiryFamily
 }
 
 export interface OptionStoreLike {
   owner: { id: string }
-  type: string // option_type
+  type: string
   isDeleted?: boolean
   isArchived?: boolean
+  supportFeature?: string
+  allowComment?: boolean | number | null
 }
 
 export interface InquiryGroupStoreLike {
@@ -206,7 +215,8 @@ export interface PermissionContext {
   moderationStatus?: string
   supportFeature?: string  
   allowComment?: boolean  
-  
+  isShared?: boolean  
+
   // Group-specific properties
   isGroupMember?: boolean
   isGroupModerator?: boolean
@@ -271,37 +281,42 @@ export function canInquiryTypePerformAction(
 }
 
 
-export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: unknown): PermissionContext {
-    if (!inquiry || !inquiry.owner || !inquiry.configuration || !inquiry.status) {
+export function createInquiryContext(
+  inquiry: InquiryStoreLike,
+  appSettings: unknown,
+): PermissionContext {
+  if (!inquiry || !inquiry.owner || !inquiry.configuration || !inquiry.status) {
     console.warn('createInquiryContext called with invalid inquiry:', inquiry)
     return null
   }
+
   const isFinalStatus = isInquiryFinalStatus(inquiry, appSettings)
-  
-  const supportFeature = inquiry.configuration.supportFeature
-  const allowComment = inquiry.configuration.allowComment
- 
-  // const currentUserStatus = inquiry.currentUserStatus || {}
+
+  const access = inquiry.configuration.access as AccessLevel
+  const ownedGroup = inquiry.ownedGroup
+  const isShared = inquiry.currentUserStatus?.isShared ?? false
+  const isLocked = inquiry.currentUserStatus?.isLocked ?? false
 
   return {
     userType: getCurrentUserType(),
     contentType: ContentType.Inquiry,
     isOwner: isContentOwner(inquiry.owner.id),
-    isPublic: inquiry.configuration.access === 'invitation',
-    isLocked: inquiry.currentUserStatus.isLocked || false,
+    isPublic: access === AccessLevel.Open,
+    isShared,
+    isLocked,
     isExpired: inquiry.status.isExpired || false,
     isDeleted: inquiry.status.deletionDate > 0,
     isArchived: inquiry.status.isArchived || false,
-    hasGroupRestrictions: inquiry.inquiryGroups.length > 0,
+    hasGroupRestrictions: access === AccessLevel.Group && !!ownedGroup,
     userGroups: getCurrentUserGroups(),
-    allowedGroups: inquiry.inquiryGroups,
+    allowedGroups: ownedGroup ? [ownedGroup] : [],
     inquiryType: inquiry.type,
     inquiryFamily: inquiry.family,
-    accessLevel: inquiry.configuration.access as AccessLevel,
+    accessLevel: access,
     isFinalStatus,
     moderationStatus: inquiry.status.moderationStatus,
-    supportFeature,
-    allowComment,
+    supportFeature: inquiry.configuration.supportFeature,
+    allowComment: inquiry.configuration.allowComment,
   }
 }
 
@@ -461,46 +476,30 @@ function getTypeConfigPermissions(context: PermissionContext): {
   
   return { canSupport: false, canComment: false }
 }
-
 export function canSupport(context: PermissionContext): boolean {
   const appSettings = useSessionStore().appSettings
 
-    // Content blocked check
-    if (isContentBlocked(context)) {
-        return false
-    }
+  if (isContentBlocked(context)) return false
+  if (context.contentType === ContentType.Inquiry && isAccessRestrictedForSupports(context)) {
+    return false
+  }
 
-    // Access restriction check (only for inquiries)
-    if (context.contentType === ContentType.Inquiry && isAccessRestrictedForSupports(context)) {
-        return false
-    }
+  // Explicit supportFeature on the inquiry only *disables* via 'none'
+  if (context.supportFeature && context.supportFeature !== '') {
+    if (context.supportFeature === 'none') return false
+  } else {
+    const typePerms = getDisplayPermissions(context)
+    if (!typePerms.canSupport) return false
+  }
 
+  if (!hasGroupAccess(context)) return false
 
-    if (context.supportFeature && context.supportFeature!=='') {
-        return context.supportFeature !=='none'
-    }
-
-
-    const typePerms = getDisplayPermissions(context) 
-      if (!typePerms.canSupport) {
-        return false
-    }
-
-
-      // Group access check
-    if (!hasGroupAccess(context)) {
-        return false
-    }
-
-
-    // Guest user check
-    if (context.userType === UserType.Guest) {
-        return context.isPublic && appSettings.allowGuestSupport
-    }
-
-    return true
-
+  if (context.userType === UserType.Guest) {
+    return context.isPublic && appSettings.allowGuestSupport
+  }
+  return true
 }
+
 
 export function canComment(context: PermissionContext): boolean {
     const appSettings = useAppSettingsStore()
@@ -515,9 +514,9 @@ export function canComment(context: PermissionContext): boolean {
         return false
     }
 
-    if (context.allowComment) {
-        return context.allowComment
-    }
+if (context.allowComment !== undefined && context.allowComment !== null) {
+    return Boolean(context.allowComment)
+}
 
     const typePerms = getDisplayPermissions(context) // Utilise getDisplayPermissions
     if (!typePerms.canComment) {
@@ -538,69 +537,47 @@ export function canComment(context: PermissionContext): boolean {
 }
 
 function hasGroupAccess(context: PermissionContext): boolean {
-    // Check if user is admin - they have access to everything
-    if (context.userType === UserType.Admin) {
-        return true;
+  if (context.userType === UserType.Admin) return true
+
+  // Users the inquiry was explicitly shared with always have access.
+  // They can view/support/comment/vote, but not edit (edit paths don't
+  // route through hasGroupAccess and require isOwner / elevated rights).
+  if (context.isShared) return true
+
+  // Inquiry-group specific logic (unchanged)
+  if (context.contentType === ContentType.InquiryGroup && context.ownedGroup) {
+    const sessionStore = useSessionStore()
+    const currentUser = sessionStore.currentUser
+    if (!currentUser) return false
+
+    const groups = currentUser.groups
+    if (Array.isArray(groups) && groups.includes(context.ownedGroup)) return true
+    if (currentUser.isGroupEditor) return true
+    return false
+  }
+
+  if (context.hasGroupRestrictions) {
+    const sessionStore = useSessionStore()
+    const currentUser = sessionStore.currentUser
+    if (!currentUser) return false
+
+    if (context.userType === UserType.Moderator) return true
+
+    const userGroups = currentUser.groups
+    if (
+      Array.isArray(userGroups) &&
+      Array.isArray(context.allowedGroups) &&
+      userGroups.some((group) => context.allowedGroups.includes(group))
+    ) {
+      return true
     }
 
-    // For inquiry groups, check if user belongs to ownedGroup or is group editor
-    if (context.contentType === ContentType.InquiryGroup && context.ownedGroup) {
-        const sessionStore = useSessionStore();
-        const currentUser = sessionStore.currentUser;
+    if (currentUser.isGroupEditor) return true
+    return false
+  }
 
-        if (!currentUser) {
-            return false;
-        }
-
-        // Check if user belongs to the owned group
-        const groups = currentUser.groups;
-        
-        // Check if groups is an array and includes the owned group
-        if (Array.isArray(groups) && groups.includes(context.ownedGroup)) {
-            return true;
-        }
-
-        // Check if user is a group editor
-        if (currentUser.isGroupEditor) {
-            return true;
-        }
-
-        return false;
-    }
-
-    // For other content types with group restrictions
-    if (context.hasGroupRestrictions) {
-        const sessionStore = useSessionStore();
-        const currentUser = sessionStore.currentUser;
-
-        if (!currentUser) {
-            return false;
-        }
-
-        // Check if user is moderator
-        if (context.userType === UserType.Moderator) {
-            return true;
-        }
-
-        // Check if user's groups intersect with allowed groups
-        const userGroups = currentUser.groups;
-        if (Array.isArray(userGroups) && 
-            Array.isArray(context.allowedGroups) &&
-            userGroups.some(group => context.allowedGroups.includes(group))) {
-            return true;
-        }
-
-        // Check if user is group editor
-        if (currentUser.isGroupEditor) {
-            return true;
-        }
-
-        return false;
-    }
-
-    // If no group restrictions, return true (or false based on your logic)
-    // You might want to add a default return value here
-    return false;
+  // No group restriction -> not "blocked by groups"
+  return true
 }
 
 function isContentBlocked(context: PermissionContext): boolean {
@@ -608,71 +585,60 @@ function isContentBlocked(context: PermissionContext): boolean {
 }
 
 function isAccessRestrictedForComments(context: PermissionContext): boolean {
-    if (context.isFinalStatus) {
-        return true
-    }
+  if (context.isFinalStatus) return true
+  if (context.moderationStatus && context.moderationStatus !== 'accepted') return true
 
-    if (context.moderationStatus && context.moderationStatus !== 'accepted') {
-        return true
-    }
+  if (context.isOwner) return false
+  if (context.isShared) return false
+  if (context.userType === UserType.Admin || context.userType === UserType.Moderator) return false
 
-    switch (context.accessLevel) {
-        case AccessLevel.Private:
-            return true
-   case AccessLevel.Group:
-            return !hasGroupAccess(context)
-
-        case AccessLevel.Moderate:
-            return context.userType !== UserType.Moderator && context.userType !== UserType.Admin
-        case AccessLevel.Open:
-            default:
-            return false
-    }
+  switch (context.accessLevel) {
+    case AccessLevel.Private:
+      return true
+    case AccessLevel.Group:
+      return !hasGroupAccess(context)
+    case AccessLevel.Open:
+    default:
+      return false
+  }
 }
 
 function isAccessRestrictedForSupports(context: PermissionContext): boolean {
-    if (context.isFinalStatus) {
-        return true
-    }
+  if (context.isFinalStatus) return true
+  if (context.moderationStatus && context.moderationStatus !== 'accepted') return true
 
-    // Check if moderation status is accepted
-    if (context.moderationStatus && context.moderationStatus !== 'accepted') {
-        return true
-    }
+  if (context.isOwner) return false
+  if (context.isShared) return false
+  if (context.userType === UserType.Admin || context.userType === UserType.Moderator) return false
 
-    switch (context.accessLevel) {
-        case AccessLevel.Private:
-            case AccessLevel.Moderate:
-            return true
-	        case AccessLevel.Group:
-            // group members can support; outsiders can't
-            return !hasGroupAccess(context)
-
-        case AccessLevel.Open:
-            default:
-            return false
-    }
+  switch (context.accessLevel) {
+    case AccessLevel.Private:
+      return true
+    case AccessLevel.Group:
+      return !hasGroupAccess(context)
+    case AccessLevel.Open:
+    default:
+      return false
+  }
 }
 
 function isAccessRestrictedForSharing(context: PermissionContext): boolean {
-    if (context.isFinalStatus) {
-        return true
-    }
+  if (context.isFinalStatus) return true
 
-    switch (context.accessLevel) {
-        case AccessLevel.Private:
-            case AccessLevel.Moderate:
-            return true
-		   case AccessLevel.Group:
-            // group members can support; outsiders can't
-            return !hasGroupAccess(context)
+  if (context.isOwner) return false
+  if (context.userType === UserType.Admin || context.userType === UserType.Moderator) return false
 
-        case AccessLevel.Open:
-            default:
-            return false
-
-    }
+  switch (context.accessLevel) {
+    case AccessLevel.Private:
+      return true
+    case AccessLevel.Group:
+      return !hasGroupAccess(context)
+    case AccessLevel.Open:
+    default:
+      return false
+  }
 }
+
 
 /**
  * Check if user can edit result based on moderation status
@@ -929,10 +895,6 @@ export function canArchive(context: PermissionContext): boolean {
                 return true
             }
 
-	    // Check moderation status restrictions
-           if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
-   	         return true
-         	}
 
             // Group editors can archive
             const sessionStore = useSessionStore()
@@ -948,6 +910,10 @@ export function canArchive(context: PermissionContext): boolean {
             return false
     }
 
+	    // Check moderation status restrictions
+           if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
+   	         return true
+         	}
     // Original logic for other content types
     if (context.isArchived || context.isDeleted) return false
 
@@ -1080,41 +1046,42 @@ export function canEdit(context: PermissionContext): boolean {
  * @param context
  */
 export function canShare(context: PermissionContext): boolean {
-    const sessionStore = useSessionStore()
+  const sessionStore = useSessionStore()
 
-    if (context.isArchived || context.isDeleted) {
-        return false
-    }
+  if (context.isArchived || context.isDeleted) return false
+  if (isAccessRestrictedForSharing(context)) return false
 
-    if (isAccessRestrictedForSharing(context)) {
-        return false
-    }
-   
-    if (context.accessLevel === AccessLevel.Open &&
-        context.userType !== UserType.Moderator &&
-        context.userType !== UserType.Admin &&
-        !context.isOwner) {
-            return false;
-        }
-
-    if (sessionStore.appPermissions.allAccess) {
-        return true
-    }
-
-    if (context.userType === UserType.Guest) {
-        return false
-    }
-
-    if (context.userType === UserType.Admin || context.userType === UserType.Moderator) {
-        return true
-    }
-
-    if (context.userType === UserType.Official) {
-        return context.isOwner
-    }
-
+  // A shared-only user must not re-share
+  if (context.isShared && !context.isOwner &&
+      context.userType !== UserType.Admin &&
+      context.userType !== UserType.Moderator) {
     return false
+  }
+
+  if (context.accessLevel !== AccessLevel.Open &&
+      context.userType !== UserType.Moderator &&
+      context.userType !== UserType.Admin &&
+      !context.isOwner) {
+    return false
+  }
+
+  if (sessionStore.appPermissions.allAccess) return true
+  if (context.userType === UserType.Guest) return false
+  if (context.userType === UserType.Admin || context.userType === UserType.Moderator) return true
+  if (context.userType === UserType.Official) return context.isOwner
+
+  return false
 }
+
+function isSharedOnly(context: PermissionContext): boolean {
+  return (
+    !!context.isShared &&
+    !context.isOwner &&
+    context.userType !== UserType.Admin &&
+    context.userType !== UserType.Moderator
+  )
+}
+
 
 /**
  * @param context
@@ -1124,7 +1091,6 @@ export function canUseResource(context: PermissionContext): boolean {
     if (context.isArchived || context.isDeleted || context.isLocked) {
         return false
     }
-
     // Check moderation status restrictions
     if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
         return false
@@ -1136,6 +1102,9 @@ export function canUseResource(context: PermissionContext): boolean {
             return false
         }
     }
+    
+    if (isSharedOnly(context)) return true
+     
 
     if (!hasGroupAccess(context)) {
         return false
@@ -1629,6 +1598,7 @@ export function canEditOption(context: PermissionContext): boolean {
     if (context.userType === UserType.Admin || context.isOwner) {
         return true
     }
+
 
     return false
 }

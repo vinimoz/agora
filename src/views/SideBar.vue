@@ -18,7 +18,7 @@ import { InquiryGeneralIcons } from '../utils/icons.ts'
 import {
   canComment,
   canUseResource,
-  canShare,
+  // canShare,
   canEdit,
   createInquiryContext,
 } from '../utils/permissions.ts'

@@ -540,6 +540,17 @@ protected function joinFamily(
         $qb->executeStatement();
     }
 
+     public function setInquiryAccess(int $inquiryId, string $access): void
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->update($this->getTableName())
+           ->set('access', $qb->createNamedParameter($access))
+           ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+        $qb->executeStatement();
+    }
+
+
+
     public function setModerationStatus(int $inquiryId, string $mstatus): void
     {
         $qb = $this->db->getQueryBuilder();

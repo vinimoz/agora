@@ -90,7 +90,7 @@ const inquiries = {
     })
   },
 
-  updateAccess(
+  updateInquiryAccess(
     inquiryId: number,
     inquiryAccess: string
   ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
@@ -98,7 +98,7 @@ const inquiries = {
       method: 'PUT',
       url: `inquiry/updateaccess/${inquiryId}/${inquiryAccess}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateAccess.name].handleRequestCancellation()
+        cancelTokenHandlerObject[this.updateInquiryAccess.name].handleRequestCancellation()
           .token,
     })
   },

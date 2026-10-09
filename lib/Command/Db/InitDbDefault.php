@@ -232,10 +232,10 @@ class InitDbDefault extends Command
 				'implementation_tracking',
 			],
 			'actions' => [
-				['key' => 'generate_legal_document', 'label' => 'Generate Legal Document', 'icon' => 'Gavel'],
-				['key' => 'export_decision', 'label' => 'Export Decision', 'icon' => 'FileExport'],
-				['key' => 'notify_stakeholders', 'label' => 'Notify Stakeholders', 'icon' => 'Bell'],
-				['key' => 'track_implementation', 'label' => 'Track Implementation', 'icon' => 'ProgressCheck'],
+				['key' => 'generate_legal_document', 'label' => 'Generate legal document', 'icon' => 'Gavel'],
+				['key' => 'export_decision', 'label' => 'Export decision', 'icon' => 'FileExport'],
+				['key' => 'notify_stakeholders', 'label' => 'Notify stakeholders', 'icon' => 'Bell'],
+				['key' => 'track_implementation', 'label' => 'Track implementation', 'icon' => 'ProgressCheck'],
 			],
 			'sort_order' => 4,
 			'created' => '',
@@ -1130,7 +1130,7 @@ class InitDbDefault extends Command
 			'support_feature' => 'binary',
 			'statuses' => [
 				'proposed:Proposed',
-				'under_review:Under Review',
+				'under_review:Under review',
 				'accepted:Accepted',
 				'rejected:Rejected',
 				'implemented:Implemented',
@@ -3154,54 +3154,54 @@ class InitDbDefault extends Command
 		// DELIBERATIVE FAMILY
 		// ----------------------
 		'proposal' => [
-			['status_key' => 'under_process',      'label' => 'Under Process',      'description' => 'The proposal is being reviewed.',              'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-			['status_key' => 'need_revised',       'label' => 'Need Revised',       'description' => 'The proposal requires changes.',               'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_process',      'label' => 'Under process',      'description' => 'The proposal is being reviewed.',              'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'need_revised',       'label' => 'Need revised',       'description' => 'The proposal requires changes.',               'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'rejected',           'label' => 'Rejected',           'description' => 'The proposal was not accepted.',               'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 3],
-			['status_key' => 'collecting_support', 'label' => 'Collecting Support', 'description' => 'The proposal is open for support.',             'is_final' => false, 'icon' => 'Offer',       'sort_order' => 4],
-			['status_key' => 'quorum_reached',     'label' => 'Quorum Reached',     'description' => 'The proposal reached required support.',       'is_final' => true,  'icon' => 'Check',       'sort_order' => 5],
+			['status_key' => 'collecting_support', 'label' => 'Collecting support', 'description' => 'The proposal is open for support.',             'is_final' => false, 'icon' => 'Offer',       'sort_order' => 4],
+			['status_key' => 'quorum_reached',     'label' => 'Quorum reached',     'description' => 'The proposal reached required support.',       'is_final' => true,  'icon' => 'Check',       'sort_order' => 5],
 		],
 		'petition' => [
-			['status_key' => 'under_process',      'label' => 'Under Process',      'description' => 'The petition is under review.',                'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-			['status_key' => 'need_revised',       'label' => 'Need Revised',       'description' => 'The petition needs improvements.',             'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_process',      'label' => 'Under process',      'description' => 'The petition is under review.',                'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'need_revised',       'label' => 'Need revised',       'description' => 'The petition needs improvements.',             'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'rejected',           'label' => 'Rejected',           'description' => 'The petition was not accepted.',               'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 3],
-			['status_key' => 'collecting_support', 'label' => 'Collecting Support', 'description' => 'The petition is open for signatures.',          'is_final' => false, 'icon' => 'Offer',       'sort_order' => 4],
-			['status_key' => 'quorum_reached',     'label' => 'Quorum Reached',     'description' => 'The petition reached the required signatures.', 'is_final' => true,  'icon' => 'Check',       'sort_order' => 5],
+			['status_key' => 'collecting_support', 'label' => 'Collecting support', 'description' => 'The petition is open for signatures.',          'is_final' => false, 'icon' => 'Offer',       'sort_order' => 4],
+			['status_key' => 'quorum_reached',     'label' => 'Quorum reached',     'description' => 'The petition reached the required signatures.', 'is_final' => true,  'icon' => 'Check',       'sort_order' => 5],
 		],
 		'initiative' => [
-			['status_key' => 'under_process',      'label' => 'Under Process',      'description' => 'The initiative is being reviewed.',            'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-			['status_key' => 'collecting_support', 'label' => 'Collecting Support', 'description' => 'The initiative is open for support.',           'is_final' => false, 'icon' => 'Offer',       'sort_order' => 2],
-			['status_key' => 'quorum_reached',     'label' => 'Quorum Reached',     'description' => 'The initiative reached required support.',      'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
+			['status_key' => 'under_process',      'label' => 'Under process',      'description' => 'The initiative is being reviewed.',            'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'collecting_support', 'label' => 'Collecting support', 'description' => 'The initiative is open for support.',           'is_final' => false, 'icon' => 'Offer',       'sort_order' => 2],
+			['status_key' => 'quorum_reached',     'label' => 'Quorum reached',     'description' => 'The initiative reached required support.',      'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
 			['status_key' => 'rejected',           'label' => 'Rejected',           'description' => 'The initiative was not accepted.',              'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 4],
 		],
 		'debate' => [
-			['status_key' => 'under_process',    'label' => 'Under Process',    'description' => 'The debate is being prepared.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_process',    'label' => 'Under process',    'description' => 'The debate is being prepared.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'discussion_open',  'label' => 'Discussion Open',  'description' => 'The debate is open for contributions.',          'is_final' => false, 'icon' => 'ForumOutline', 'sort_order' => 2],
 			['status_key' => 'concluded',        'label' => 'Concluded',        'description' => 'The debate has ended with conclusions.',         'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
 			['status_key' => 'rejected',         'label' => 'Rejected',         'description' => 'The debate was cancelled.',                      'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 4],
 		],
 		'deliberation' => [
-			['status_key' => 'under_process',    'label' => 'Under Process',    'description' => 'The deliberation is being prepared.',            'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_process',    'label' => 'Under process',    'description' => 'The deliberation is being prepared.',            'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'in_session',       'label' => 'In Session',       'description' => 'The deliberation is currently ongoing.',          'is_final' => false, 'icon' => 'ForumOutline', 'sort_order' => 2],
 			['status_key' => 'concluded',        'label' => 'Concluded',        'description' => 'The deliberation ended with conclusions.',        'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
 		],
 		'vision' => [
 			['status_key' => 'draft',            'label' => 'Draft',            'description' => 'The vision document is being drafted.',          'is_final' => false, 'icon' => 'FileOutline',  'sort_order' => 1],
-			['status_key' => 'under_review',     'label' => 'Under Review',     'description' => 'The vision is being discussed.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_review',     'label' => 'Under review',     'description' => 'The vision is being discussed.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'validated',        'label' => 'Validated',        'description' => 'The vision has been validated.',                 'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
 			['status_key' => 'archived',         'label' => 'Archived',         'description' => 'The vision has been archived.',                  'is_final' => true,  'icon' => 'Archive',     'sort_order' => 4],
 		],
 		'objection' => [
-			['status_key' => 'under_process',    'label' => 'Under Process',    'description' => 'The objection is being reviewed.',               'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_process',    'label' => 'Under process',    'description' => 'The objection is being reviewed.',               'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'resolved',         'label' => 'Resolved',         'description' => 'The objection was resolved.',                    'is_final' => true,  'icon' => 'Check',       'sort_order' => 2],
 			['status_key' => 'dismissed',        'label' => 'Dismissed',        'description' => 'The objection was dismissed.',                   'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 3],
 		],
 		'suggestion' => [
-			['status_key' => 'under_process',    'label' => 'Under Process',    'description' => 'The suggestion is under review.',                'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_process',    'label' => 'Under process',    'description' => 'The suggestion is under review.',                'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'integrated',       'label' => 'Integrated',       'description' => 'The suggestion has been integrated.',             'is_final' => true,  'icon' => 'Check',       'sort_order' => 2],
 			['status_key' => 'discarded',        'label' => 'Discarded',        'description' => 'The suggestion was not accepted.',                'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 3],
 		],
 		'project' => [
-			['status_key' => 'under_process',      'label' => 'Under Process',      'description' => 'The project is being prepared.',              'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_process',      'label' => 'Under process',      'description' => 'The project is being prepared.',              'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'feasibility_review', 'label' => 'Feasibility Review', 'description' => 'The project is being checked for feasibility.','is_final' => false, 'icon' => 'EyeOutline',   'sort_order' => 2],
 			['status_key' => 'funded',             'label' => 'Funded',             'description' => 'The project has received funding.',            'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
 			['status_key' => 'not_funded',         'label' => 'Not Funded',         'description' => 'The project will not be financed.',            'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 4],
@@ -3229,13 +3229,13 @@ class InitDbDefault extends Command
 		// ----------------------
 		'law_proposal' => [
 			['status_key' => 'draft',            'label' => 'Draft',            'description' => 'The law proposal is being drafted.',              'is_final' => false, 'icon' => 'FileOutline',  'sort_order' => 1],
-			['status_key' => 'under_review',     'label' => 'Under Review',     'description' => 'The law proposal is under discussion.',           'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_review',     'label' => 'Under review',     'description' => 'The law proposal is under discussion.',           'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'accepted',         'label' => 'Accepted',         'description' => 'The law proposal was accepted.',                  'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
 			['status_key' => 'rejected',         'label' => 'Rejected',         'description' => 'The law proposal was rejected.',                  'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 4],
 		],
 		'amendment' => [
 			['status_key' => 'draft',            'label' => 'Draft',            'description' => 'The amendment is being drafted.',                 'is_final' => false, 'icon' => 'FileOutline',  'sort_order' => 1],
-			['status_key' => 'under_review',     'label' => 'Under Review',     'description' => 'The amendment is under review.',                  'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_review',     'label' => 'Under review',     'description' => 'The amendment is under review.',                  'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'accepted',         'label' => 'Accepted',         'description' => 'The amendment was accepted.',                     'is_final' => true,  'icon' => 'Check',       'sort_order' => 3],
 			['status_key' => 'rejected',         'label' => 'Rejected',         'description' => 'The amendment was rejected.',                     'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 4],
 		],
@@ -3249,7 +3249,7 @@ class InitDbDefault extends Command
 			['status_key' => 'closed',           'label' => 'Closed',           'description' => 'The policy consultation is closed.',              'is_final' => true,  'icon' => 'Check',       'sort_order' => 2],
 		],
 		'response' => [
-			['status_key' => 'under_review',     'label' => 'Under Review',     'description' => 'The response is being reviewed.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_review',     'label' => 'Under review',     'description' => 'The response is being reviewed.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'accepted',         'label' => 'Accepted',         'description' => 'The response was accepted.',                      'is_final' => true,  'icon' => 'Check',       'sort_order' => 2],
 			['status_key' => 'rejected',         'label' => 'Rejected',         'description' => 'The response was rejected.',                      'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 3],
 		],
@@ -3258,7 +3258,7 @@ class InitDbDefault extends Command
 		// ADMINISTRATIVE FAMILY
 		// ----------------------
 		'admin_request' => [
-			['status_key' => 'under_process',    'label' => 'Under Process',    'description' => 'The request is being processed.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_process',    'label' => 'Under process',    'description' => 'The request is being processed.',                 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'resolved',         'label' => 'Resolved',         'description' => 'The request was resolved.',                       'is_final' => true,  'icon' => 'Check',       'sort_order' => 2],
 			['status_key' => 'unresolved',       'label' => 'Unresolved',       'description' => 'The request could not be resolved.',              'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 3],
 		],
@@ -3273,7 +3273,7 @@ class InitDbDefault extends Command
 		// SERVICE FAMILY
 		// ----------------------
 		'service_request' => [
-			['status_key' => 'under_process',    'label' => 'Under Process',    'description' => 'The service request is being processed.',         'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_process',    'label' => 'Under process',    'description' => 'The service request is being processed.',         'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'resolved',         'label' => 'Resolved',         'description' => 'The service request was resolved.',               'is_final' => true,  'icon' => 'Check',       'sort_order' => 2],
 			['status_key' => 'unresolved',       'label' => 'Unresolved',       'description' => 'The service request could not be resolved.',      'is_final' => true,  'icon' => 'Cancel',      'sort_order' => 3],
 		],
@@ -3282,7 +3282,7 @@ class InitDbDefault extends Command
 		// OFFICIAL FAMILY
 		// ----------------------
 		'official_response' => [
-			['status_key' => 'under_review',     'label' => 'Under Review',     'description' => 'The official response is under review.',          'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_review',     'label' => 'Under review',     'description' => 'The official response is under review.',          'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
 			['status_key' => 'published',        'label' => 'Published',        'description' => 'The official response was published.',            'is_final' => true,  'icon' => 'Check',       'sort_order' => 2],
 		],
 		'official_document' => [
@@ -3299,7 +3299,7 @@ class InitDbDefault extends Command
 		],
 		'municipal_report' => [
 			['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The report is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
-			['status_key' => 'review', 'label' => 'Under Review', 'description' => 'The report is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'review', 'label' => 'Under review', 'description' => 'The report is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'published', 'label' => 'Published', 'description' => 'The report has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
 		],
 		'information_request' => [
@@ -3310,7 +3310,7 @@ class InitDbDefault extends Command
 		],
 		'permit_request' => [
 			['status_key' => 'submitted', 'label' => 'Submitted', 'description' => 'The request has been submitted.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The request is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_review', 'label' => 'Under review', 'description' => 'The request is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'approved', 'label' => 'Approved', 'description' => 'The permit has been approved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
 			['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The permit request was rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
 		],
@@ -3333,7 +3333,7 @@ class InitDbDefault extends Command
 		],
 		'recall_initiative' => [
 			['status_key' => 'collecting_signatures', 'label' => 'Collecting Signatures', 'description' => 'Collecting signatures for recall.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The recall is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_review', 'label' => 'Under review', 'description' => 'The recall is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'qualified', 'label' => 'Qualified for Ballot', 'description' => 'The recall qualifies for ballot.', 'is_final' => false, 'icon' => 'Check', 'sort_order' => 3],
 			['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The recall initiative was rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
 			['status_key' => 'successful', 'label' => 'Successful', 'description' => 'The recall was successful.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 5],
@@ -3341,12 +3341,12 @@ class InitDbDefault extends Command
 		],
 		'public_spending_review' => [
 			['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The review is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
-			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The review is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_review', 'label' => 'Under review', 'description' => 'The review is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'published', 'label' => 'Published', 'description' => 'The review has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
 		],
 		'contract_review' => [
 			['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The review is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
-			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The contract is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'under_review', 'label' => 'Under review', 'description' => 'The contract is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
 			['status_key' => 'approved', 'label' => 'Approved', 'description' => 'The contract has been approved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
 			['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The contract has been rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
 		],
