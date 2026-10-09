@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 - Bug: Set comment, support feature from template
 - Bug: Status already is remplaced when the inquiry is accepted.
 - Bug: When the user is moderator 
+- Bug: Fix the rights about share when access = groups
 
 # [1.7.13] - 2026-09-24
 Fix:
