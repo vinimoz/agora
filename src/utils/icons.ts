@@ -76,10 +76,14 @@ import ShieldAccount from '@iconify-icons/mdi/shield-account'
 import Storefront from '@iconify-icons/mdi/storefront'
 import Leaf       from '@iconify-icons/mdi/leaf'
 import Compass    from '@iconify-icons/mdi/compass-outline'
+import Apps             from '@iconify-icons/mdi/apps'
+import Folder           from '@iconify-icons/mdi/folder'
+import DotsHorizontal   from '@iconify-icons/mdi/dots-horizontal'
+import MapMarker        from '@iconify-icons/mdi/map-marker'
+import WeatherSunny     from '@iconify-icons/mdi/weather-sunny'
+import Compare          from '@iconify-icons/mdi/compare'
+import Book             from '@iconify-icons/mdi/book'
 
-
-// Options
-// import LanguageMarkdown from '@iconify-icons/mdi/language-markdown'  // For 'Markdown' ✓
 import Printer from '@iconify-icons/mdi/printer'  // For 'Printer' ✓
 import FileCompare from '@iconify-icons/mdi/file-compare'  // For 'Diff' ✓
 import FileExport from '@iconify-icons/mdi/file-export'  // For 'FileExport' ✓
@@ -359,6 +363,14 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Users: makeIconComponent(AccountGroup, '#2196F3'),
   HomeGroup: makeIconComponent(HomeGroup, '#795548'),
   BookOpen: makeIconComponent(BookOpen, '#3949AB'),
+  Apps:            makeIconComponent(Apps,           '#1976D2'),
+  Folder:          makeIconComponent(Folder,         '#546E7A'),
+  DotsHorizontal:  makeIconComponent(DotsHorizontal, '#757575'),
+  MapMarker:       makeIconComponent(MapMarker,      '#D32F2F'),
+  WeatherSunny:    makeIconComponent(WeatherSunny,   '#FFB300'),
+  Compare:         makeIconComponent(Compare,        '#00ACC1'),
+  Book:            makeIconComponent(Book,           '#3949AB'),
+  SwapHorizontal:  makeIconComponent(SwapHorizontal, '#00BCD4'),
   MessageSquare: makeIconComponent(ChatOutline, '#1565C0'),
   UsersCog: makeIconComponent(UsersCog, '#607D8B'),
   CommentProcessing: makeIconComponent(CommentProcessing, '#FF5722'),

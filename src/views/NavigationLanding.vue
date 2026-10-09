@@ -1,3 +1,7 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -9,126 +13,170 @@ import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCap
 
 import islandIllustration from '../assets/img/island-illustration.png'
 import { AgoraAppIcon } from '../components/AppIcons'
-import { InquiryGeneralIcons } from '../utils/icons'
+import { InquiryGeneralIcons, NavigationIcons } from '../utils/icons'
+import { HOME_DEFAULTS } from '../composables/homeDefaults'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups'
+import { useInquiriesStore } from '../stores/inquiries'
 import { useSessionStore } from '../stores/session'
 import type { InquiryGroup } from '../stores/inquiryGroups.types'
 
 const route = useRoute()
 const router = useRouter()
 const groupsStore = useInquiryGroupsStore()
+const inquiriesStore = useInquiriesStore()
 const sessionStore = useSessionStore()
 
 /* ------------------------------------------------------------------ */
-/*  ICON RESOLVER — never return undefined                             */
+/* BRANDING — driven by homeDefaults.hero                             */
 /* ------------------------------------------------------------------ */
-const FALLBACK_ICON = InquiryGeneralIcons.FolderMultiple
+const cityName = computed(() => HOME_DEFAULTS.hero?.cityName || 'Agora')
+const tagline = computed(() => HOME_DEFAULTS.hero?.tagline || '')
 
-function pickIcon(...names: string[]): any {
-  for (const name of names) {
-    const icon = (InquiryGeneralIcons as Record<string, any>)[name]
-    if (icon) return icon
-  }
-  return FALLBACK_ICON
+/* ------------------------------------------------------------------ */
+/* PRIMARY NAV                                                        */
+/* ------------------------------------------------------------------ */
+interface NavChild {
+  key: string
+  label: string
+  to: { name: string; params?: Record<string, any>; query?: Record<string, any> }
 }
 
-/* ------------------------------------------------------------------ */
-/*  PRIMARY NAV                                                        */
-/* ------------------------------------------------------------------ */
 interface NavItem {
   key: string
   label: string
   icon: any
-  to: { name: string; query?: Record<string, string> }
-  children?: { key: string; label: string }[]
+  to: { name: string; params?: Record<string, any>; query?: Record<string, any> }
+  children?: NavChild[]
 }
 
 const primaryNav: NavItem[] = [
   {
     key: 'landing',
     label: t('agora', 'Home'),
-    icon: pickIcon('Home'),
+    icon: InquiryGeneralIcons.Home,
     to: { name: 'home' },
-  },
-  {
-    key: 'news',
-    label: t('agora', 'News'),
-    icon: pickIcon('Megaphone', 'Flash'),
-    to: { name: 'home', query: { section: 'news' } },
   },
   {
     key: 'participate',
     label: t('agora', 'Participate'),
-    icon: pickIcon('MessageSquare', 'Comment'),
-    to: { name: 'list', query: { experience: 'social' } },
+    icon: InquiryGeneralIcons.MessageSquare,
+    to: { name: 'explore', params: { type: 'relevant' } },
     children: [
-      { key: 'debates',       label: t('agora', 'Debates') },
-      { key: 'consultations', label: t('agora', 'Consultations') },
-      { key: 'petitions',     label: t('agora', 'Petitions') },
+      {
+        key: 'for_you',
+        label: t('agora', 'For you'),
+        to: { name: 'explore', params: { type: 'relevant' }, query: { filter: 'for_you' } },
+      },
+      {
+        key: 'my_participations',
+        label: t('agora', 'My participations'),
+        to: { name: 'list', params: { type: 'participated' } },
+      },
+      {
+        key: 'my_spaces',
+        label: t('agora', 'My spaces'),
+        to: { name: 'explore-spaces' },
+      },
     ],
   },
   {
-    key: 'marketplace',
-    label: t('agora', 'Marketplace'),
-    // Storefront isn't in InquiryGeneralIcons → Compass → Apps fallback
-    icon: pickIcon('Storefront', 'Compass', 'Apps'),
-    to: { name: 'list', query: { experience: 'marketplace' } },
+    key: 'explore',
+    label: t('agora', 'Explore'),
+    icon: InquiryGeneralIcons.Compass,
+    to: { name: 'menu' },
+    children: [], // filled dynamically below from inquiryFamilyTab
   },
   {
-    key: 'trade',
-    label: t('agora', 'Trade'),
-    // SwapHorizontal isn't in InquiryGeneralIcons → Compare → Compass fallback
-    icon: pickIcon('SwapHorizontal', 'Compare', 'Compass'),
-    to: { name: 'list', query: { experience: 'marketplace', kind: 'trade' } },
-  },
-  {
-    key: 'social',
-    label: t('agora', 'Social'),
-    icon: pickIcon('Users'),
-    to: { name: 'list', query: { experience: 'social' } },
-  },
-  {
-    key: 'wiki',
-    label: t('agora', 'Wiki'),
-    icon: pickIcon('Book', 'Document'),
-    to: { name: 'list', query: { experience: 'wiki' } },
+    key: 'news',
+    label: t('agora', 'News'),
+    icon: InquiryGeneralIcons.Megaphone,
+    to: { name: 'explore', params: { type: 'relevant' }, query: { family: 'collective', display: 'feed' } },
   },
   {
     key: 'services',
     label: t('agora', 'Services'),
-    icon: pickIcon('Apps', 'Lightbulb'),
-    to: { name: 'home', query: { section: 'services' } },
-    children: [
-      { key: 'request', label: t('agora', 'Service requests') },
-      { key: 'report',  label: t('agora', 'Reports') },
-      { key: 'booking', label: t('agora', 'Bookings') },
-    ],
+    icon: InquiryGeneralIcons.Apps,
+    to: { name: 'menu', params: { family: 'service' } },
   },
   {
     key: 'agenda',
     label: t('agora', 'Agenda'),
-    icon: pickIcon('Calendar'),
-    to: { name: 'home', query: { section: 'events' } },
+    icon: InquiryGeneralIcons.Calendar,
+    to: { name: 'explore', params: { type: 'relevant' }, query: { display: 'timeline' } },
   },
   {
     key: 'archives',
     label: t('agora', 'Archives'),
-    // Archive isn't in InquiryGeneralIcons → FolderMultiple fallback
-    icon: pickIcon('Archive', 'FolderMultiple'),
-    to: { name: 'list', query: { experience: 'classic', filter: 'archived' } },
+    icon: InquiryGeneralIcons.Archive,
+    to: { name: 'group-archived' },
   },
 ]
 
 /* ------------------------------------------------------------------ */
-/*  MY SPACES                                                          */
+/* MY ACTIVITY — personal views of inquiries.                         */
+/* These routes target /list/:type (admin sidebar). Clicking them     */
+/* swaps the left navigation from NavigationLanding to Navigation.    */
 /* ------------------------------------------------------------------ */
+const myActivityNav = [
+  {
+    key: 'my',
+    label: t('agora', 'My inquiries'),
+    icon: NavigationIcons.MyInquiries,
+    to: { name: 'list', params: { type: 'my' } },
+  },
+  {
+    key: 'shared',
+    label: t('agora', 'Shared with me'),
+    icon: NavigationIcons.Share,
+    to: { name: 'list', params: { type: 'shared' } },
+  },
+  {
+    key: 'participated',
+    label: t('agora', 'My participations'),
+    icon: NavigationIcons.Participated,
+    to: { name: 'list', params: { type: 'participated' } },
+  },
+  {
+    key: 'group',
+    label: t('agora', 'My groups'),
+    icon: NavigationIcons.Group,
+    to: { name: 'list', params: { type: 'group' } },
+  },
+  {
+    key: 'private',
+    label: t('agora', 'Private'),
+    icon: NavigationIcons.Private,
+    to: { name: 'list', params: { type: 'private' } },
+  },
+  {
+    key: 'archived',
+    label: t('agora', 'Archived'),
+    icon: NavigationIcons.Archive,
+    to: { name: 'list', params: { type: 'archived' } },
+  },
+]
 
-/** true if the id is empty in any of the shapes your store uses */
+/* ------------------------------------------------------------------ */
+/* EXPLORE — dynamic families from appSettings.inquiryFamilyTab       */
+/* ------------------------------------------------------------------ */
+const explorerFamilies = computed(() => {
+  const tab = sessionStore.appSettings?.inquiryFamilyTab || []
+  return tab
+    .filter((f: any) => f.is_root !== false)
+    .map((f: any) => ({
+      key: f.family_type || f.type,
+      label: f.label || f.family_type,
+      icon: InquiryGeneralIcons[f.icon] || InquiryGeneralIcons.FolderMultiple,
+    }))
+})
+
+/* ------------------------------------------------------------------ */
+/* MY SPACES — InquiryGroups the user belongs to                      */
+/* ------------------------------------------------------------------ */
 function isEmptyParentId(id: unknown): boolean {
   return id === null || id === undefined || id === 0 || id === '0'
 }
 
-/** normalise `session.currentUser.groups` (array | Record | undefined) */
 function getUserGroupIds(): string[] {
   const g: unknown = sessionStore.currentUser?.groups
   if (!g) return []
@@ -138,16 +186,12 @@ function getUserGroupIds(): string[] {
 }
 
 function belongsToSpace(group: InquiryGroup, uid: string): boolean {
-  // Owner → always
   if (group.owner?.id === uid) return true
-
-  // Admin → sees everything (matches sidebar behaviour elsewhere)
   if (sessionStore.currentUser?.isAdmin) return true
 
   const cfg = group.configuration
   if (!cfg) return false
 
-  // Public / shared with everyone
   if (cfg.visibility === 'everyone') return true
 
   const userGroups = getUserGroupIds()
@@ -174,45 +218,54 @@ function belongsToSpace(group: InquiryGroup, uid: string): boolean {
 const mySpaces = computed<InquiryGroup[]>(() => {
   const uid = sessionStore.currentUser?.id
   if (!uid) return []
-
   return groupsStore.inquiryGroupsSorted
-    .filter((g) => isEmptyParentId(g.parentId))   // ← root groups only
+    .filter((g) => isEmptyParentId(g.parentId))
     .filter((g) => belongsToSpace(g, uid))
     .slice(0, 6)
 })
 
 /* ------------------------------------------------------------------ */
-/*  ACTIVE STATE                                                       */
+/* ACTIVE STATE                                                       */
 /* ------------------------------------------------------------------ */
-const currentExperience = computed<string>(
-  () => (route.query.experience as string) || 'home',
-)
-
 function isActive(item: NavItem): boolean {
   if (item.key === 'landing') {
-    return (
-      route.name === 'home' &&
-      !route.query.experience &&
-      !route.query.section
-    )
+    return route.name === 'home'
   }
-  if (route.query.experience === item.key) return true
-  // News / Services / Agenda live on /home with a `section` query
-  if (item.key === 'news'     && route.query.section === 'news')     return true
-  if (item.key === 'services' && route.query.section === 'services') return true
-  if (item.key === 'agenda'   && route.query.section === 'events')   return true
+  if (item.key === 'news' && route.query.family === 'collective' && route.query.display === 'feed') return true
+  if (item.key === 'services' && route.name === 'menu' && route.params.family === 'service') return true
+  if (item.key === 'agenda' && route.query.display === 'timeline') return true
+  if (item.key === 'archives' && route.name === 'group-archived') return true
+  if (item.key === 'explore' && route.name === 'menu' && route.params.family === undefined) return true
+  if (route.query.family === item.key) return true
   return false
 }
 
 /* ------------------------------------------------------------------ */
-/*  NAVIGATION HELPERS                                                 */
+/* NAVIGATION HELPERS                                                 */
 /* ------------------------------------------------------------------ */
 function goTo(item: NavItem) {
   router.push(item.to)
 }
 
-function goToGroup(groupId: number) {
-  router.push({ name: 'group', params: { id: groupId } })
+function goToChild(child: NavChild) {
+  router.push(child.to)
+}
+
+function goToFamily(key: string) {
+  inquiriesStore.setFamilyType(key)
+  router.push({
+    name: 'list',
+    params: { type: 'relevant' },
+    query: { family: key, viewMode: 'view' },
+  })
+}
+
+function goToGroup(group: InquiryGroup) {
+  if (group.slug) {
+    router.push({ name: 'group-list', params: { slug: group.slug } })
+  } else if (group.id) {
+    router.push({ name: 'group', params: { id: String(group.id) } })
+  }
 }
 
 function goToMenu() {
@@ -221,17 +274,17 @@ function goToMenu() {
 
 function getGroupIcon(type: string) {
   const map: Record<string, any> = {
-    commune:      pickIcon('Home'),
-    environment:  pickIcon('Leaf', 'Compass'),
-    neighborhood: pickIcon('MapMarker'),
-    association:  pickIcon('Users'),
-    council:      pickIcon('Gavel', 'Scale'),
+    commune: InquiryGeneralIcons.Home,
+    environment: InquiryGeneralIcons.Leaf,
+    neighborhood: InquiryGeneralIcons.MapMarker,
+    association: InquiryGeneralIcons.Users,
+    council: InquiryGeneralIcons.Gavel,
   }
-  return map[type] || FALLBACK_ICON
+  return map[type] || InquiryGeneralIcons.FolderMultiple
 }
 
 /* ------------------------------------------------------------------ */
-/*  LOAD SPACES ON MOUNT (idempotent — HomeView also does it)          */
+/* LIFECYCLE                                                          */
 /* ------------------------------------------------------------------ */
 onMounted(() => {
   if (typeof groupsStore.fetchAllGroups === 'function') {
@@ -250,42 +303,57 @@ onMounted(() => {
         </div>
         <div class="nav-brand__text">
           <div class="nav-brand__name">Agora</div>
-          <div class="nav-brand__sub">Moorea-Maiao</div>
+          <div class="nav-brand__sub">{{ cityName }}</div>
         </div>
       </div>
 
-      <!-- Primary navigation -->
+      <!-- PRIMARY NAVIGATION -->
       <NcAppNavigationList>
         <NcAppNavigationItem
           v-for="item in primaryNav"
           :key="item.key"
           :name="item.label"
           :class="{ 'is-active': isActive(item) }"
-          :allow-collapse="!!item.children"
+          :allow-collapse="item.key === 'participate' || item.key === 'explore'"
           @click="goTo(item)"
         >
           <template #icon>
             <component :is="item.icon" />
           </template>
 
-          <template v-if="item.children" #actions>
-            <span class="chevron">›</span>
-          </template>
-
-          <NcAppNavigationList v-if="item.children" class="nav-children">
+          <!-- Participate sub-items -->
+          <NcAppNavigationList v-if="item.key === 'participate' && item.children" class="nav-children">
             <NcAppNavigationItem
               v-for="child in item.children"
               :key="child.key"
               :name="child.label"
-              @click="router.push({ ...item.to, query: { ...item.to.query, filter: child.key } })"
+              @click="goToChild(child)"
+            />
+          </NcAppNavigationList>
+
+          <!-- Explore sub-items — generated from inquiryFamilyTab -->
+          <NcAppNavigationList v-if="item.key === 'explore'" class="nav-children">
+            <NcAppNavigationItem
+              v-for="family in explorerFamilies"
+              :key="family.key"
+              :name="family.label"
+              @click="goToFamily(family.key)"
+            >
+              <template #icon>
+                <component :is="family.icon" />
+              </template>
+            </NcAppNavigationItem>
+            <NcAppNavigationItem
+              v-if="explorerFamilies.length === 0"
+              :name="t('agora', 'No families configured')"
+              :disabled="true"
+              class="nav-hint"
             />
           </NcAppNavigationList>
         </NcAppNavigationItem>
       </NcAppNavigationList>
 
-      <!-- ------------------------------------------------------------ -->
-      <!-- My spaces — always visible, with a link to the legacy menu    -->
-      <!-- ------------------------------------------------------------ -->
+      <!-- MY SPACES -->
       <NcAppNavigationCaption :name="t('agora', 'My spaces')" />
 
       <NcAppNavigationList>
@@ -293,7 +361,7 @@ onMounted(() => {
           v-for="group in mySpaces"
           :key="group.id"
           :name="group.title"
-          @click="goToGroup(group.id)"
+          @click="goToGroup(group)"
         >
           <template #icon>
             <component :is="getGroupIcon(group.type)" />
@@ -307,7 +375,6 @@ onMounted(() => {
           class="nav-hint"
         />
 
-        <!-- Link back to the legacy /menu browser -->
         <NcAppNavigationItem
           :name="t('agora', 'All spaces')"
           @click="goToMenu"
@@ -317,19 +384,33 @@ onMounted(() => {
           </template>
         </NcAppNavigationItem>
       </NcAppNavigationList>
+
+      <!-- MY ACTIVITY — personal shortcuts (swaps to admin sidebar) -->
+      <NcAppNavigationCaption :name="t('agora', 'My activity')" />
+
+      <NcAppNavigationList>
+        <NcAppNavigationItem
+          v-for="item in myActivityNav"
+          :key="item.key"
+          :name="item.label"
+          :to="item.to"
+        >
+          <template #icon>
+            <component :is="item.icon" />
+          </template>
+        </NcAppNavigationItem>
+      </NcAppNavigationList>
     </template>
 
-    <!-- Footer illustration -->
+    <!-- Footer -->
     <template #footer>
       <div class="nav-footer">
         <img
           :src="islandIllustration"
-          alt="Island illustration"
+          alt=""
           class="nav-footer__illustration"
         />
-        <p class="nav-footer__tagline">
-          {{ t('agora', 'Together, let’s build tomorrow') }}
-        </p>
+        <p v-if="tagline" class="nav-footer__tagline">{{ tagline }}</p>
       </div>
     </template>
   </NcAppNavigation>
@@ -374,12 +455,6 @@ onMounted(() => {
 .nav-children {
   margin-left: 12px;
   border-left: 1px solid var(--color-border);
-}
-
-.chevron {
-  color: var(--color-text-lighter);
-  font-size: 18px;
-  padding-right: 8px;
 }
 
 .nav-hint {

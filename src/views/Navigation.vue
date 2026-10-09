@@ -251,7 +251,7 @@ const handleHomeNavigation = () => {
         <NcAppNavigationItem
           :name="t('agora', 'Home')"
           :to="{
-            name: 'menu',
+            name: '/',
           }"
           :exact="true"
           class="navigation-item"

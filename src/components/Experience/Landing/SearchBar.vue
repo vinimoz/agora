@@ -32,9 +32,11 @@ function submit() {
   background: var(--color-main-background);
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  padding: 10px 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s ease;
+  padding: 8px 18px;          // was 10px 20px
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);   // was 0 2px 8px
+  max-width: 720px;           // keeps it from stretching absurdly wide
+  margin: 0 auto;             // centers it inside the full-width zone
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 
   &:focus-within {
     box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.15);

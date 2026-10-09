@@ -2,11 +2,10 @@
   SPDX-FileCopyrightText: 2026 Nextcloud contributors
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
 <template>
-  <div class="inquiry-timeline">
-    <!-- Timeline Header -->
-    <div class="timeline-header">
+  <div class="inquiry-timeline" :class="{ 'is-compact': compact }">
+        <!-- Timeline Header (hidden in compact mode) -->
+    <div v-if="!hideControls" class="timeline-header">
       <div class="header-left">
         <component :is="Icons.Clock" :size="24" class="timeline-icon" />
         <h2>{{ t('agora', 'Timeline') }}</h2>
@@ -27,8 +26,8 @@
       </div>
     </div>
 
-    <!-- Timeline Filters -->
-    <div class="timeline-filters">
+        <!-- Timeline Filters (hidden in compact mode) -->
+    <div v-if="!hideControls" class="timeline-filters">
       <div class="filter-group">
         <button
           v-for="filter in filters"
@@ -57,7 +56,7 @@
     <div class="timeline-container">
       <!-- Mode A: Inquiries Timeline -->
       <template v-if="timelineMode === 'inquiries'">
-        <div v-if="filteredInquiries.length === 0" class="empty-state">
+		        <div v-if="visibleInquiries.length === 0" class="empty-state">
           <component :is="Icons.Clock" :size="48" class="empty-icon" />
           <h3>{{ t('agora', 'No inquiries on timeline') }}</h3>
           <p>{{ t('agora', 'There are no inquiries matching your filters') }}</p>
@@ -177,13 +176,19 @@
           <h3>{{ t('agora', 'No historical events') }}</h3>
           <p>{{ t('agora', 'Historical events will appear here as they occur') }}</p>
         </div>
+	      <!-- Compact mode footer -->
+      <div v-if="compact && hasMore" class="timeline-view-all">
+        <button type="button" @click="emit('viewAll')">
+          {{ t('agora', 'View all') }} →
+        </button>
+      </div>
       </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 import TimelineItem from './TimelineItem.vue'
@@ -194,36 +199,54 @@ interface Props {
   groupId?: number
   selectedInquiryId?: number
   processPhases?: Array<{ key: string; label: string; description?: string }>
+
+  /**
+   * Compact mode: hides the header and filters, caps the list to `limit`,
+   * and surfaces a "View all" link when there is more to show.
+   * Used when the timeline is embedded inside a Home zone.
+   */
+  compact?: boolean
+  /** Hide the header + filter strip regardless of compact. */
+  hideControls?: boolean
+  /** Max number of items to display. 0 = no limit. */
+  limit?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  processPhases: () => []
+  processPhases: () => [],
+  compact: false,
+  hideControls: false,
+  limit: 0,
 })
 
 const emit = defineEmits<{
   click: [inquiry: Inquiry]
+  viewAll: []
 }>()
 
-// Timeline modes with French labels
+// ---------------------------------------------------------------------------
+// Timeline modes
+// ---------------------------------------------------------------------------
+
 const timelineModes = [
   {
     key: 'inquiries',
     label: t('agora', 'Inquiries'),
     icon: Icons.ViewList,
-    description: t('agora', 'View all inquiries over time')
+    description: t('agora', 'View all inquiries over time'),
   },
   {
     key: 'process',
     label: t('agora', 'Process'),
     icon: Icons.GitBranch,
-    description: t('agora', 'View the process steps of a selected inquiry')
+    description: t('agora', 'View the process steps of a selected inquiry'),
   },
   {
     key: 'historical',
     label: t('agora', 'History'),
     icon: Icons.History,
-    description: t('agora', 'View historical events and milestones')
-  }
+    description: t('agora', 'View historical events and milestones'),
+  },
 ]
 
 const timelineMode = ref<'inquiries' | 'process' | 'historical'>('inquiries')
@@ -240,11 +263,23 @@ const filters = [
   { key: 'pending', label: t('agora', 'Pending'), icon: Icons.Clock },
 ]
 
-const selectedInquiry = computed(() =>
-  props.inquiries.find(i => i.id === props.selectedInquiryId)
+// In compact mode we always render the inquiries timeline.
+watch(
+  () => props.compact,
+  (isCompact) => {
+    if (isCompact) timelineMode.value = 'inquiries'
+  },
+  { immediate: true },
 )
 
-// Filtered inquiries for Mode A
+const selectedInquiry = computed(() =>
+  props.inquiries.find(i => i.id === props.selectedInquiryId),
+)
+
+// ---------------------------------------------------------------------------
+// Filtered + visible lists
+// ---------------------------------------------------------------------------
+
 const filteredInquiries = computed(() => {
   let items = [...props.inquiries]
 
@@ -262,32 +297,49 @@ const filteredInquiries = computed(() => {
   return items.sort((a, b) => (b.status?.created || 0) - (a.status?.created || 0))
 })
 
+/**
+ * Visible slice of the filtered list. When `limit > 0` (compact mode),
+ * the timeline only shows the first N items and exposes a "View all" link.
+ */
+const visibleInquiries = computed(() => {
+  if (props.limit > 0) {
+    return filteredInquiries.value.slice(0, props.limit)
+  }
+  return filteredInquiries.value
+})
+
+const hasMore = computed(
+  () => props.limit > 0 && filteredInquiries.value.length > props.limit,
+)
+
 const groupedInquiries = computed(() => {
   const groups: Record<string, Inquiry[]> = {}
 
-  filteredInquiries.value.forEach(inquiry => {
+  visibleInquiries.value.forEach(inquiry => {
     const date = inquiry.status?.created
     if (!date) return
 
     const dateObj = new Date(date * 1000)
     const key = dateObj.toISOString().split('T')[0]
 
-    if (!groups[key]) {
-      groups[key] = []
-    }
+    if (!groups[key]) groups[key] = []
     groups[key].push(inquiry)
   })
 
   return groups
 })
 
-// Process steps for Mode B
+// ---------------------------------------------------------------------------
+// Process steps (Mode B)
+// ---------------------------------------------------------------------------
+
 const processSteps = computed(() => {
   if (!selectedInquiry.value) return []
 
-  // If we have process phases from props, use them
   if (props.processPhases.length > 0) {
-    const currentPhase = selectedInquiry.value.miscFields?.processPhase || props.processPhases[0]?.key
+    const currentPhase =
+      (selectedInquiry.value.miscFields?.processPhase as string | undefined) ||
+      props.processPhases[0]?.key
     const phaseIndex = props.processPhases.findIndex(p => p.key === currentPhase)
 
     return props.processPhases.map((phase, index) => ({
@@ -296,11 +348,10 @@ const processSteps = computed(() => {
       description: phase.description,
       completed: index < phaseIndex,
       active: index === phaseIndex,
-      date: selectedInquiry.value.miscFields?.processHistory?.[phase.key] || null
+      date: (selectedInquiry.value.miscFields?.processHistory as any)?.[phase.key] || null,
     }))
   }
 
-  // Fallback: use status transitions
   const statuses = ['draft', 'waiting_approval', 'active', 'closed']
   const currentStatus = selectedInquiry.value.status?.inquiryStatus || 'draft'
   const statusIndex = statuses.indexOf(currentStatus)
@@ -310,16 +361,18 @@ const processSteps = computed(() => {
     label: t('agora', status.charAt(0).toUpperCase() + status.slice(1)),
     completed: index < statusIndex,
     active: index === statusIndex,
-    date: selectedInquiry.value.status?.created
+    date: selectedInquiry.value.status?.created,
   }))
 })
 
-// Historical events for Mode C
+// ---------------------------------------------------------------------------
+// Historical events (Mode C)
+// ---------------------------------------------------------------------------
+
 const historicalEvents = computed(() => {
   const events: any[] = []
 
   props.inquiries.forEach(inquiry => {
-    // Creation event
     if (inquiry.status?.created) {
       events.push({
         id: `created-${inquiry.id}`,
@@ -328,16 +381,15 @@ const historicalEvents = computed(() => {
         type: 'creation',
         title: t('agora', 'Created "{title}"', { title: inquiry.title }),
         description: t('agora', 'Inquiry was created'),
-        inquiry
+        inquiry,
       })
     }
 
-    // Status change events
     if (inquiry.status?.inquiryStatus) {
       const statusMap: Record<string, { icon: any; type: string; label: string }> = {
-        'active': { icon: Icons.CheckCircle, type: 'active', label: t('agora', 'Activated') },
-        'closed': { icon: Icons.Close, type: 'closed', label: t('agora', 'Closed') },
-        'waiting_approval': { icon: Icons.Clock, type: 'pending', label: t('agora', 'Submitted for approval') }
+        active: { icon: Icons.CheckCircle, type: 'active', label: t('agora', 'Activated') },
+        closed: { icon: Icons.Close, type: 'closed', label: t('agora', 'Closed') },
+        waiting_approval: { icon: Icons.Clock, type: 'pending', label: t('agora', 'Submitted for approval') },
       }
 
       const statusInfo = statusMap[inquiry.status.inquiryStatus]
@@ -348,12 +400,11 @@ const historicalEvents = computed(() => {
           icon: statusInfo.icon,
           type: statusInfo.type,
           title: `${statusInfo.label}: "${inquiry.title}"`,
-          inquiry
+          inquiry,
         })
       }
     }
 
-    // Expiry events
     if (inquiry.configuration?.expire) {
       events.push({
         id: `expiry-${inquiry.id}`,
@@ -362,13 +413,17 @@ const historicalEvents = computed(() => {
         type: 'expiry',
         title: t('agora', 'Expiry of "{title}"', { title: inquiry.title }),
         description: t('agora', 'This inquiry will expire'),
-        inquiry
+        inquiry,
       })
     }
   })
 
   return events.sort((a, b) => a.date - b.date)
 })
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function getProcessStatusClass(inquiry: Inquiry): string {
   const status = inquiry.status?.inquiryStatus || 'draft'
@@ -378,11 +433,11 @@ function getProcessStatusClass(inquiry: Inquiry): string {
 function getProcessStatusText(inquiry: Inquiry): string {
   const status = inquiry.status?.inquiryStatus || 'draft'
   const map: Record<string, string> = {
-    'active': t('agora', 'In Progress'),
-    'closed': t('agora', 'Completed'),
-    'draft': t('agora', 'Draft'),
-    'waiting_approval': t('agora', 'Pending Approval'),
-    'rejected': t('agora', 'Rejected')
+    active: t('agora', 'In Progress'),
+    closed: t('agora', 'Completed'),
+    draft: t('agora', 'Draft'),
+    waiting_approval: t('agora', 'Pending Approval'),
+    rejected: t('agora', 'Rejected'),
   }
   return map[status] || status
 }
@@ -393,17 +448,14 @@ function formatGroupDate(dateKey: string): string {
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
 
-  if (date.toDateString() === today.toDateString()) {
-    return t('agora', 'Today')
-  }
-  if (date.toDateString() === yesterday.toDateString()) {
-    return t('agora', 'Yesterday')
-  }
+  if (date.toDateString() === today.toDateString()) return t('agora', 'Today')
+  if (date.toDateString() === yesterday.toDateString()) return t('agora', 'Yesterday')
+
   return date.toLocaleDateString('default', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 
@@ -414,18 +466,16 @@ function formatDate(timestamp: number): string {
     month: 'short',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
 }
 
 function formatDateDay(timestamp: number): string {
-  const date = new Date(timestamp * 1000)
-  return date.getDate().toString()
+  return new Date(timestamp * 1000).getDate().toString()
 }
 
 function formatDateMonth(timestamp: number): string {
-  const date = new Date(timestamp * 1000)
-  return date.toLocaleDateString('default', { month: 'short' })
+  return new Date(timestamp * 1000).toLocaleDateString('default', { month: 'short' })
 }
 
 function handleClick(inquiry: Inquiry) {
@@ -960,6 +1010,65 @@ function handleClick(inquiry: Inquiry) {
 
   .process-steps .step .step-content .step-title {
     font-size: 14px;
+  }
+}
+/* ============================================================ */
+/* COMPACT MODE — embedded in a Home zone                       */
+/* ============================================================ */
+.inquiry-timeline.is-compact {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  border-radius: 0;
+
+  .timeline-container {
+    max-height: 260px;
+    padding: 0;
+  }
+
+  .timeline-group .group-header {
+    padding: 6px 0;
+    background: transparent;
+    border-top: none;
+    border-bottom: 1px solid var(--color-border-light);
+
+    .group-date {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-text-lighter);
+    }
+
+    .group-count {
+      display: none;
+    }
+  }
+
+  .timeline-group .group-items {
+    padding: 2px 0;
+  }
+}
+
+.timeline-view-all {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0 0;
+
+  button {
+    background: transparent;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary-element);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: var(--color-background-hover);
+      text-decoration: underline;
+    }
   }
 }
 </style>

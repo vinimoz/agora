@@ -6,28 +6,6 @@
 <template>
   <div class="experience-renderer" :class="`experience-${experience}`">
     <!-- ============================================================ -->
-    <!-- EXPERIENCE CONTROLS                                          -->
-    <!-- ============================================================ -->
-    <div class="experience-controls">
-      <div class="controls-left">
-        <ExperienceSwitcher
-          :current-experience="experience"
-          :available-experiences="availableExperiences"
-          :default-experience="defaultExperience"
-          @change="handleExperienceChange"
-        />
-      </div>
-      <div class="controls-right">
-        <DisplayModeSwitcher
-          v-if="availableDisplays.length > 1 && !displayArchitecture"
-          :current-mode="displayMode"
-          :available-modes="availableDisplays"
-          @change="handleDisplayChange"
-        />
-      </div>
-    </div>
-
-    <!-- ============================================================ -->
     <!-- LOADING STATE                                                -->
     <!-- ============================================================ -->
     <div v-if="isLoading" class="loading-state">
@@ -68,8 +46,8 @@
         :style="getZoneStyle(zone)"
       >
         <!-- Zone header -->
-        <div class="zone-header">
-          <component :is="getContentIcon(zone.content)" :size="16" />
+        <div v-if="showZoneHeader(zone)" class="zone-header">
+          <component :is="getZoneHeaderIcon(zone , String(zoneKey))" :size="16" />
           <span class="zone-title">{{ getZoneLabel(zone , String(zoneKey)) }}</span>
           <span v-if="hasZoneData(zone) && isZoneRenderable(zone)" class="zone-count">
             {{ getZoneCount(zone) }}
@@ -80,18 +58,26 @@
         <div class="zone-content">
           <!-- Render component when data exists AND zone is renderable -->
           <template v-if="hasZoneData(zone) && isZoneRenderable(zone)">
-            <component
+              <component
               :is="getZoneComponent(zone)"
               v-bind="getZoneProps(zone)"
               :columns="getColumns(zone)"
-              @view-inquiry="(inquiry) => handleInquiryClick(inquiry, zoneKey)"
-              @view-option="(option) => handleOptionClick(option, zoneKey)"
-              @view-group="handleViewGroup"
-              @click="(item) => handleInquiryClick(item, zoneKey)"
-              @select="handleViewGroup"
-              @view="(item) => handleInquiryClick(item, zoneKey)"
+              @view-inquiry="(p) => handleZoneEvent('viewInquiry', p, String(zoneKey))"
+              @view-option="(p) => handleZoneEvent('viewOption', p, String(zoneKey))"
+              @view-group="(p) => handleZoneEvent('viewGroup', p, String(zoneKey))"
+              @click="(p) => handleZoneEvent('click', p, String(zoneKey))"
+              @select="(p) => handleZoneEvent('select', p, String(zoneKey))"
+              @view="(p) => handleZoneEvent('view', p, String(zoneKey))"
+              @comments="(p) => handleZoneEvent('comments', p, String(zoneKey))"
+              @action="(p) => handleZoneEvent('action', p, String(zoneKey))"
+              @search="(p) => handleZoneEvent('search', p, String(zoneKey))"
+              @service="(p) => handleZoneEvent('service', p, String(zoneKey))"
+              @all="(p) => handleZoneEvent('all', p, String(zoneKey))"
+              @view-all="(p) => handleZoneEvent('viewAll', p, String(zoneKey))"
+              @category="(p) => handleZoneEvent('category', p, String(zoneKey))"
+              @create="(p) => handleZoneEvent('create', p, String(zoneKey))"
             />
-          </template>
+	  </template>
 
           <!-- Structured empty state -->
           <div v-else class="zone-empty-state">
@@ -234,8 +220,6 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 
 // Experience Components
-import ExperienceSwitcher from './ExperienceSwitcher.vue'
-import DisplayModeSwitcher from './DisplayModeSwitcher.vue'
 import ExperienceSidebar from './ExperienceSidebar.vue'
 
 // ============================================================
@@ -300,10 +284,9 @@ import CurrentMomentWidget from './Landing/CurrentMomentWidget.vue'
 import MySpacesWidget from './Landing/MySpacesWidget.vue'
 import ExploreWidget from './Landing/ExploreWidget.vue'
 import NewsWidget from './Landing/NewsWidget.vue'
-import ServicesWidget from './Landing/ServicesWidget.vue'
 import UpcomingWidget from './Landing/UpcomingWidget.vue'
 import PromoCard from './Landing/PromoCard.vue'
-
+import ServiceFamilyWidget from './Landing/ServiceFamilyWidget.vue'
 
 
 // ============================================================
@@ -333,7 +316,6 @@ const props = defineProps<{
   inquiries?: Inquiry[]
   options?: any[]
   experience?: string
-  displayMode?: string
   displayArchitecture?: Record<string, any> | null
   layoutConfig?: { type: string; columns?: number; rows?: number; responsive?: boolean }
   uiConfig?: InquiryGroupUIConfig | null
@@ -347,8 +329,6 @@ const props = defineProps<{
   tools?: string[]
   selectedInquiry?: Inquiry | null
   selectedGroup?: InquiryGroup | null
-  availableExperiences?: ExperienceKey[]
-  defaultExperience?: ExperienceKey
 }>()
 
 // ============================================================
@@ -366,8 +346,6 @@ const emit = defineEmits<{
   retry: []
   createInquiry: []
   sidebarNavigate: [target: string]
-  experienceChange: [experience: ExperienceKey]
-  displayChange: [mode: DisplayMode]
   openPanel: [payload: { inquiry: Inquiry; zone: string; target: string }]
   navigateTo: [target: any]
 }>()
@@ -412,26 +390,6 @@ const gridStyle = computed(() => {
     gridTemplateRows: `repeat(${rows}, auto)`,
     gap: '20px',
   }
-})
-
-// ============================================================
-// COMPUTED - Available Experiences
-// ============================================================
-const availableExperiences = computed(() => {
-  if (props.availableExperiences) {
-    return props.availableExperiences
-  }
-  return Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
-})
-
-const defaultExperience = computed(() => props.defaultExperience || 'dashboard')
-
-// ============================================================
-// COMPUTED - Display Mode
-// ============================================================
-const displayModeClass = computed(() => {
-  const mode = props.displayMode || 'cards'
-  return `display-${mode}`
 })
 
 // ============================================================
@@ -537,6 +495,16 @@ const heroStats = computed(() => {
   return { shared, participated, owned, groupInquiries }
 })
 
+function resolveHeroImage(src: string | number | undefined | null): string {
+  if (!src) return ''
+  const s = String(src)
+  if (/^https?:\/\//i.test(s) || s.startsWith('/')) return s
+  if (/^\d+$/.test(s)) {
+    return `${window.location.origin}/index.php/core/preview?fileId=${s}&x=1920&y=1080&a=1`
+  }
+  return s
+}
+
 function resolveIcon(icon: any): any {
   if (!icon || typeof icon !== 'string') return icon
   return (Icons as any)[icon] || Icons.CheckCircle
@@ -544,9 +512,6 @@ function resolveIcon(icon: any): any {
 
 function resolveHeroActions(actions: any[]) {
   return (actions || []).map(a => ({ ...a, icon: resolveIcon(a.icon) }))
-}
-function resolveServices(services: any[]) {
-  return (services || []).map(s => ({ ...s, icon: resolveIcon(s.icon) }))
 }
 
 function getNestedValue(obj: any, path: string): any {
@@ -824,16 +789,46 @@ function getZoneLabel(zone: any, zoneKey?: string): string {
  */
 function getContentIcon(content: string) {
   const map: Record<string, any> = {
+    // core data zones
     inquiry_groups: Icons.FolderMultiple,
-    inquiries: Icons.ClipboardList,
-    inquiry: Icons.ClipboardList,
-    options: Icons.Lightbulb,
-    resources: Icons.Document,
-    comments: Icons.Comment,
-    statistics: Icons.BarChart,
-    activity: Icons.Activity,
+    inquiries:      Icons.ClipboardList,
+    inquiry:        Icons.ClipboardList,
+    options:        Icons.Lightbulb,
+    resources:      Icons.Document,
+    comments:       Icons.Comment,
+    messages:       Icons.Comment,
+    statistics:     Icons.BarChart,
+    activity:       Icons.Activity,
+
+    // landing zones
+    search:   Icons.Magnify,
+    hero:     Icons.Home,
+    news:     Icons.Megaphone,
+    services: Icons.Apps,
+    events:   Icons.Calendar,
+    explore:  Icons.Compass,
+    promo:    Icons.Lightbulb,
   }
-  return map[content] || Icons.FolderMultiple
+  return map[content] || Icons.DotsHorizontal
+}
+
+/**
+ * Better icon for a zone header: prefer the section key (which is what
+ * homeDefaults sections actually mean) over the generic content type.
+ */
+function getZoneHeaderIcon(zone: any, zoneKey: string) {
+  const bySection: Record<string, any> = {
+    search:  Icons.Magnify,
+    hero:    Icons.Home,
+    news:    Icons.Megaphone,
+    current: Icons.Flash,
+    spaces:  Icons.Users,
+    services:Icons.Apps,
+    explore: Icons.Compass,
+    agenda:  Icons.Calendar,
+    promo:   Icons.Lightbulb,
+  }
+  return bySection[zoneKey] || getContentIcon(zone?.content || 'inquiries')
 }
 
 /**
@@ -945,7 +940,7 @@ function getZoneComponent(zone: any) {
   	hero:     { banner: WelcomeHero },
   	search:   { search_bar: SearchBar },
   	news:     { news_list: NewsWidget, list: NewsWidget },
-  	services: { quick_actions: ServicesWidget, list: ServicesWidget },
+	  	services: { quick_actions: ServiceFamilyWidget, list: ServiceFamilyWidget },
   	events:   { calendar: UpcomingWidget, list: UpcomingWidget },
   	explore:  { category_grid: ExploreWidget },
   	promo:    { promo_card: PromoCard },
@@ -1188,6 +1183,10 @@ function getZoneProps(zone: any) {
         selectedInquiry,
         inquiry: inquiriesData.length === 1 ? inquiriesData[0] : null,
         initialInquiry: inquiriesData[0] ?? null,
+        // Timeline / compact-display hints — ignored by other consumers
+        compact: displayOptions.compact || false,
+        hideControls: displayOptions.hideControls || false,
+        limit: displayOptions.limit || 0,
       }
     }
 
@@ -1221,12 +1220,25 @@ function getZoneProps(zone: any) {
         limit: zone.scope?.pagination?.limit || 20,
       }
 
-    case 'hero':
-      return {
-        title:    homeConfig.value.hero.title,
-        subtitle: homeConfig.value.hero.subtitle,
-        actions:  resolveHeroActions(homeConfig.value.hero.actions),
-      }
+	case 'hero':
+  return {
+    title:         homeConfig.value.hero?.title,
+    subtitle:      homeConfig.value.hero?.subtitle,
+    tagline:       homeConfig.value.hero?.tagline,
+    cityName:      homeConfig.value.hero?.cityName,
+    backgroundUrl: resolveHeroImage(homeConfig.value.hero?.backgroundUrl),
+    weather:       homeConfig.value.hero?.showWeather ? homeConfig.value.hero?.weather : null,
+    actions:       resolveHeroActions(homeConfig.value.hero?.actions || []),
+    stats:         heroStats.value,
+  }
+
+case 'promo':
+  return {
+    title:    homeConfig.value.promo?.title    ?? t('agora', "Together, let's build tomorrow"),
+    text:     homeConfig.value.promo?.text     ?? t('agora', 'Participate in the life of your community!'),
+    cta:      homeConfig.value.promo?.cta      ?? t('agora', 'Discover'),
+    imageUrl: resolveHeroImage(homeConfig.value.promo?.imageUrl),
+  }
 
     case 'search':
       return {}
@@ -1234,8 +1246,16 @@ function getZoneProps(zone: any) {
     case 'news':
       return { items: [] }
 
-    case 'services':
-      return { services: resolveServices(homeConfig.value.services) }
+         case 'services': {
+      const opts = displayOptions as Record<string, unknown>
+      return {
+        family: (opts.family as string) || 'service',
+        limit: (opts.limit as number) || 4,
+        title: opts.title as string | undefined,
+        subtitle: opts.subtitle as string | undefined,
+        ctaLabel: opts.ctaLabel as string | undefined,
+      }
+    }
 
     case 'events':
       return { events: [] }
@@ -1243,15 +1263,12 @@ function getZoneProps(zone: any) {
     case 'explore':
       return { inquiries: props.inquiries || [] }
 
-    case 'promo':
-      return {}
-
     default:
       return {
-        ...baseProps,
-        data,
-        content,
-        group: props.group,
+	...baseProps,
+	data,
+	content,
+	group: props.group,
       }
   }
 }
@@ -1263,6 +1280,17 @@ function getZoneCount(zone: any): number | null {
   if (!zone) return null
   const data = getZoneData(zone)
   return data.length
+}
+
+function showZoneHeader(zone: any): boolean {
+  if (!zone) return false
+  const explicit = zone.display?.options?.showHeader
+  if (explicit === false) return false
+  if (explicit === true)  return true
+
+  if (['search', 'explore','news','services','hero', 'promo'].includes(zone.content)) return false
+
+  return true
 }
 
 function getZoneOptions(zone: any) {
@@ -1447,45 +1475,85 @@ function handleOptionClick(option: any, zoneKey: string) {
 function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
   const zone = filteredArchitecture.value[zoneKey]
   if (!zone) return
+
   const content = zone.content || 'inquiries'
+  const interaction = zone.interaction || {}
+  const directOpen = interaction.action === 'open'
+  const directNavigate = interaction.action === 'navigate'
 
   switch (content) {
-    case 'inquiry_groups':
-      if (['click','select','view','viewGroup'].includes(eventName)) handleViewGroup(payload)
+    // ---- Inquiry groups ----
+    case 'inquiry_groups': {
+      if (['click', 'select', 'view', 'viewGroup'].includes(eventName)) {
+        if (directNavigate && zoneKey === 'my_spaces') {
+          emit('navigateTo', { type: 'group', group: payload })
+        } else {
+          handleViewGroup(payload)
+        }
+      } else if (eventName === 'viewAll') {
+        emit('navigateTo', { type: 'groups-all', zone: zoneKey })
+      }
       return
-    case 'inquiries':
-    case 'inquiry':
-      if (['click','view','viewInquiry'].includes(eventName)) handleInquiryClick(payload, zoneKey)
-      return
-    case 'options':
-      if (['click','view','viewOption'].includes(eventName)) handleOptionClick(payload, zoneKey)
-      return
+    }
 
+    // ---- Inquiries ----
+    case 'inquiries':
+    case 'inquiry': {
+      if (['click', 'view', 'viewInquiry'].includes(eventName)) {
+        if (directOpen) {
+          emit('navigateTo', { type: 'inquiry', inquiry: payload })
+        } else {
+          handleInquiryClick(payload, zoneKey)
+        }
+      } else if (eventName === 'viewAll') {
+        emit('navigateTo', { type: 'inquiries-all', zone: zoneKey })
+      }
+      return
+    }
+
+    // ---- Options ----
+    case 'options': {
+      if (['click', 'view', 'viewOption'].includes(eventName)) {
+        handleOptionClick(payload, zoneKey)
+      }
+      return
+    }
+
+    // ---- Landing widgets ----
     case 'hero':
       if (eventName === 'action') emit('navigateTo', { type: 'hero-action', key: payload })
       return
+
     case 'search':
       if (eventName === 'search') emit('navigateTo', { type: 'search', query: payload })
       return
+
     case 'news':
-      if (eventName === 'click')       emit('navigateTo', { type: 'news', item: payload })
-      else if (eventName === 'viewAll') emit('navigateTo', { type: 'news-all' })
+      if (eventName === 'click')         emit('navigateTo', { type: 'news', item: payload })
+      else if (eventName === 'viewAll')  emit('navigateTo', { type: 'news-all' })
       return
+
     case 'services':
-      if (eventName === 'service') emit('navigateTo', { type: 'service', key: payload })
-      else if (eventName === 'all')  emit('navigateTo', { type: 'services-all' })
+      if (eventName === 'service')       emit('navigateTo', { type: 'service', key: payload })
+      else if (eventName === 'all')      emit('navigateTo', { type: 'services-all' })
       return
+
     case 'events':
-      if (eventName === 'click')        emit('navigateTo', { type: 'event', item: payload })
-      else if (eventName === 'viewAll') emit('navigateTo', { type: 'events-all' })
+      if (eventName === 'click')         emit('navigateTo', { type: 'event', item: payload })
+      else if (eventName === 'viewAll')  emit('navigateTo', { type: 'events-all' })
       return
+
     case 'explore':
-      if (eventName === 'category')        emit('navigateTo', { type: 'category', key: payload })
-      else if (eventName === 'create')     emit('createInquiry')
-      else if (eventName === 'viewAll')    emit('navigateTo', { type: 'explore-all' })
+      if (eventName === 'category')      emit('navigateTo', { type: 'category', key: payload })
+      else if (eventName === 'create')   emit('navigateTo', { type: 'create' })
+      else if (eventName === 'viewAll')  emit('navigateTo', { type: 'explore-all' })
       return
+
     case 'promo':
-      if (eventName === 'action') emit('navigateTo', { type: 'promo-action' })
+      if (eventName === 'action')        emit('navigateTo', { type: 'promo-action' })
+      return
+
+    default:
       return
   }
 }
@@ -1527,17 +1595,6 @@ function findZoneForGroup(group: InquiryGroup): string | null {
   return null
 }
 
-function handleSidebarNavigate(target: string) {
-  emit('sidebarNavigate', target)
-}
-
-function handleExperienceChange(key: ExperienceKey) {
-  emit('experienceChange', key)
-}
-
-function handleDisplayChange(mode: DisplayMode) {
-  emit('displayChange', mode)
-}
 
 function toggleResources() {
   internalShowResources.value = !internalShowResources.value
@@ -1590,430 +1647,421 @@ watch(
 /* EXPERIENCE RENDERER STYLES                                   */
 /* ============================================================ */
 .experience-renderer {
-  width: 100%;
-  min-height: 400px;
+	width: 100%;
+	min-height: 400px;
 }
 
-.experience-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0 16px;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 12px;
 
-  .controls-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  /* ============================================================ */
+  /* LOADING & ERROR STATES                                       */
+  /* ============================================================ */
+  .loading-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+
+	  .spinner {
+		  width: 40px;
+		  height: 40px;
+		  border: 3px solid var(--color-border);
+		  border-top-color: var(--color-primary-element);
+		  border-radius: 50%;
+		  animation: spin 1s linear infinite;
+	  }
+
+	  p {
+		  margin-top: 16px;
+		  color: var(--color-text-lighter);
+	  }
   }
 
-  .controls-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-}
+  .error-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+	  text-align: center;
 
-/* ============================================================ */
-/* LOADING & ERROR STATES                                       */
-/* ============================================================ */
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
+	  svg {
+		  color: var(--color-error);
+		  opacity: 0.5;
+		  margin-bottom: 16px;
+	  }
 
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--color-border);
-    border-top-color: var(--color-primary-element);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
+	  h3 {
+		  margin: 0 0 8px 0;
+		  color: var(--color-main-text);
+	  }
 
-  p {
-    margin-top: 16px;
-    color: var(--color-text-lighter);
-  }
-}
-
-.error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  text-align: center;
-
-  svg {
-    color: var(--color-error);
-    opacity: 0.5;
-    margin-bottom: 16px;
+	  p {
+		  margin: 0 0 24px 0;
+		  color: var(--color-text-lighter);
+		  max-width: 400px;
+	  }
   }
 
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--color-main-text);
-  }
+  /* ============================================================ */
+  /* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
+  /* ============================================================ */
+  .architecture-grid {
+	  display: grid;
+	  gap: 20px;
+	  min-height: 400px;
+	  &.architecture-layout-full,
+	  &.architecture-layout-flex {
+		  display: flex;
+		  flex-direction: column;
+	  }
 
-  p {
-    margin: 0 0 24px 0;
-    color: var(--color-text-lighter);
-    max-width: 400px;
-  }
-}
+	  &.architecture-layout-sidebar {
+		  display: grid;
+		  grid-template-columns: minmax(240px, 300px) 1fr;
+		  gap: 24px;
+		  align-items: start;
+	  }
 
-/* ============================================================ */
-/* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
-/* ============================================================ */
-.architecture-grid {
-  display: grid;
-  gap: 20px;
-  min-height: 400px;
-  &.architecture-layout-full,
-  &.architecture-layout-flex {
-    display: flex;
-    flex-direction: column;
-  }
+	  &.architecture-layout-split {
+		  display: grid;
+		  grid-template-columns: 1fr 1fr;
+		  gap: 24px;
+	  }
+	  .architecture-zone {
+		  background: var(--color-main-background);
+		  border: 1px solid var(--color-border);
+		  border-radius: 12px;
+		  overflow: hidden;
+		  display: flex;
+		  flex-direction: column;
+		  min-height: 200px;
 
-  &.architecture-layout-sidebar {
-    display: grid;
-    grid-template-columns: minmax(240px, 300px) 1fr;
-    gap: 24px;
-    align-items: start;
-  }
+		  .zone-header {
+			  display: flex;
+			  align-items: center;
+			  gap: 8px;
+			  padding: 10px 16px;
+			  border-bottom: 1px solid var(--color-border);
+			  background: var(--color-background-dark);
+			  color: var(--color-text-lighter);
+			  font-size: 12px;
+			  font-weight: 600;
+			  text-transform: uppercase;
+			  letter-spacing: 0.5px;
 
-  &.architecture-layout-split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-  .architecture-zone {
-    background: var(--color-main-background);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 200px;
+			  .zone-title {
+				  flex: 1;
+			  }
 
-    .zone-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--color-border);
-      background: var(--color-background-dark);
-      color: var(--color-text-lighter);
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+			  .zone-count {
+				  background: var(--color-background-hover);
+				  padding: 1px 8px;
+				  border-radius: 10px;
+				  font-size: 11px;
+			  }
+		  }
 
-      .zone-title {
-        flex: 1;
-      }
+		  .zone-content {
+			  flex: 1;
+			  padding: 16px;
+			  overflow-y: auto;
+			  min-height: 100px;
+		  }
 
-      .zone-count {
-        background: var(--color-background-hover);
-        padding: 1px 8px;
-        border-radius: 10px;
-        font-size: 11px;
-      }
-    }
+		  &.display-search_bar {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
 
     .zone-content {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      min-height: 100px;
-    }
-
-    .zone-empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 32px 20px;
-      min-height: 140px;
-      color: var(--color-text-lighter);
-
-      .empty-icon {
-        opacity: 0.25;
-        margin-bottom: 12px;
-      }
-
-      .empty-title {
-        margin: 0 0 4px 0;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--color-main-text);
-      }
-
-      .empty-hint {
-        margin: 0;
-        font-size: 13px;
-        color: var(--color-text-lighter);
-        max-width: 260px;
-      }
-    }
-
-    &.is-empty {
-      background: var(--color-background-dark);
-      border-style: dashed;
-    }
-  }
-}
-
-/* ============================================================ */
-/* STANDARD LAYOUT                                              */
-/* ============================================================ */
-.standard-layout {
-  display: flex;
-  gap: 24px;
-
-  &.layout-sidebar {
-    .layout-sidebar {
-      flex: 0 0 280px;
-      max-width: 280px;
-    }
-    .layout-main {
-      flex: 1;
-      min-width: 0;
+      padding: 0;
+      overflow: visible;
     }
   }
 
-  &.layout-split {
-    .layout-main {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
+
+		  .zone-empty-state {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  justify-content: center;
+			  text-align: center;
+			  padding: 32px 20px;
+			  min-height: 140px;
+			  color: var(--color-text-lighter);
+
+			  .empty-icon {
+				  opacity: 0.25;
+				  margin-bottom: 12px;
+			  }
+
+			  .empty-title {
+				  margin: 0 0 4px 0;
+				  font-size: 14px;
+				  font-weight: 600;
+				  color: var(--color-main-text);
+			  }
+
+			  .empty-hint {
+				  margin: 0;
+				  font-size: 13px;
+				  color: var(--color-text-lighter);
+				  max-width: 260px;
+			  }
+		  }
+
+		  &.is-empty {
+			  background: var(--color-background-dark);
+			  border-style: dashed;
+		  }
+	  }
   }
 
-  .layout-sidebar {
-    position: sticky;
-    top: 0;
-    height: fit-content;
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-    padding-right: 8px;
-  }
-
-  .layout-main {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    min-width: 0;
-  }
-}
-
-.layout-header {
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--color-border);
-
-  .layout-title {
-    margin: 0 0 8px 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--color-main-text);
-  }
-
-  .layout-description {
-    margin: 0 0 16px 0;
-    color: var(--color-text-lighter);
-    font-size: 16px;
-  }
-
-  .layout-stats {
-    display: flex;
-    gap: 24px;
-    padding-top: 12px;
-    border-top: 1px solid var(--color-border-light);
-
-    .stat-item {
-      .stat-value {
-        display: block;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--color-main-text);
-      }
-
-      .stat-label {
-        font-size: 12px;
-        color: var(--color-text-lighter);
-      }
-    }
-  }
-}
-
-.layout-content {
-  .inquiries-grid {
-    display: grid;
-    gap: 20px;
-
-    &.display-cards {
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    }
-
-    &.display-horizontal {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    &.display-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    &.display-compact {
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 12px;
-    }
-  }
-}
-
-.layout-comments,
-.layout-resources {
-  padding-top: 20px;
-  border-top: 2px solid var(--color-border);
-  margin-top: 8px;
-
-  .comments-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-
-    h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--color-main-text);
-    }
-
-    .comments-count {
-      font-size: 12px;
-      font-weight: 600;
-      background: var(--color-background-dark);
-      padding: 2px 10px;
-      border-radius: 12px;
-      color: var(--color-text-lighter);
-    }
-  }
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  text-align: center;
-
-  svg {
-    color: var(--color-text-lighter);
-    opacity: 0.3;
-    margin-bottom: 16px;
-  }
-
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--color-main-text);
-  }
-
-  p {
-    margin: 0 0 24px 0;
-    color: var(--color-text-lighter);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ============================================================ */
-/* RESPONSIVE - Adapt grid to available space                   */
-/* ============================================================ */
-@media (max-width: 1400px) {
-  .architecture-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-@media (max-width: 1024px) {
-  .architecture-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
+  /* ============================================================ */
+  /* STANDARD LAYOUT                                              */
+  /* ============================================================ */
   .standard-layout {
-    &.layout-sidebar {
-      flex-direction: column;
+	  display: flex;
+	  gap: 24px;
 
-      .layout-sidebar {
-        flex: none;
-        max-width: 100%;
-        width: 100%;
-        position: static;
-        max-height: none;
-        padding-right: 0;
-      }
-    }
+	  &.layout-sidebar {
+		  .layout-sidebar {
+			  flex: 0 0 280px;
+			  max-width: 280px;
+		  }
+		  .layout-main {
+			  flex: 1;
+			  min-width: 0;
+		  }
+	  }
 
-    &.layout-split {
-      .layout-main {
-        grid-template-columns: 1fr;
-      }
-    }
-  }
-}
+	  &.layout-split {
+		  .layout-main {
+			  display: grid;
+			  grid-template-columns: 1fr 1fr;
+			  gap: 24px;
+		  }
+	  }
 
-@media (max-width: 1400px) {
-  .architecture-grid.architecture-layout-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
+	  .layout-sidebar {
+		  position: sticky;
+		  top: 0;
+		  height: fit-content;
+		  max-height: calc(100vh - 100px);
+		  overflow-y: auto;
+		  padding-right: 8px;
+	  }
 
-@media (max-width: 1024px) {
-  .architecture-grid.architecture-layout-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .architecture-grid.architecture-layout-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .architecture-grid {
-    grid-template-columns: 1fr !important;
+	  .layout-main {
+		  display: flex;
+		  flex-direction: column;
+		  gap: 24px;
+		  min-width: 0;
+	  }
   }
 
-  .layout-content .inquiries-grid {
-    &.display-cards {
-      grid-template-columns: 1fr;
-    }
+  .layout-header {
+	  padding-bottom: 16px;
+	  border-bottom: 2px solid var(--color-border);
+
+	  .layout-title {
+		  margin: 0 0 8px 0;
+		  font-size: 28px;
+		  font-weight: 700;
+		  color: var(--color-main-text);
+	  }
+
+	  .layout-description {
+		  margin: 0 0 16px 0;
+		  color: var(--color-text-lighter);
+		  font-size: 16px;
+	  }
+
+	  .layout-stats {
+		  display: flex;
+		  gap: 24px;
+		  padding-top: 12px;
+		  border-top: 1px solid var(--color-border-light);
+
+		  .stat-item {
+			  .stat-value {
+				  display: block;
+				  font-size: 20px;
+				  font-weight: 700;
+				  color: var(--color-main-text);
+			  }
+
+			  .stat-label {
+				  font-size: 12px;
+				  color: var(--color-text-lighter);
+			  }
+		  }
+	  }
   }
 
-  .experience-controls {
-    flex-direction: column;
-    align-items: stretch;
+  .layout-content {
+	  .inquiries-grid {
+		  display: grid;
+		  gap: 20px;
 
-    .controls-left,
-    .controls-right {
-      justify-content: center;
-    }
+		  &.display-cards {
+			  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		  }
+
+		  &.display-horizontal {
+			  grid-template-columns: 1fr;
+			  gap: 16px;
+		  }
+
+		  &.display-list {
+			  display: flex;
+			  flex-direction: column;
+			  gap: 8px;
+		  }
+
+		  &.display-compact {
+			  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+			  gap: 12px;
+		  }
+	  }
   }
-}
+
+  .layout-comments,
+  .layout-resources {
+	  padding-top: 20px;
+	  border-top: 2px solid var(--color-border);
+	  margin-top: 8px;
+
+	  .comments-header {
+		  display: flex;
+		  align-items: center;
+		  gap: 12px;
+		  margin-bottom: 16px;
+
+		  h3 {
+			  margin: 0;
+			  font-size: 18px;
+			  font-weight: 600;
+			  color: var(--color-main-text);
+		  }
+
+		  .comments-count {
+			  font-size: 12px;
+			  font-weight: 600;
+			  background: var(--color-background-dark);
+			  padding: 2px 10px;
+			  border-radius: 12px;
+			  color: var(--color-text-lighter);
+		  }
+	  }
+  }
+
+  .empty-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+	  text-align: center;
+
+	  svg {
+		  color: var(--color-text-lighter);
+		  opacity: 0.3;
+		  margin-bottom: 16px;
+	  }
+
+	  h3 {
+		  margin: 0 0 8px 0;
+		  color: var(--color-main-text);
+	  }
+
+	  p {
+		  margin: 0 0 24px 0;
+		  color: var(--color-text-lighter);
+	  }
+  }
+
+  @keyframes spin {
+	  to {
+		  transform: rotate(360deg);
+	  }
+  }
+
+  /* ============================================================ */
+  /* RESPONSIVE - Adapt grid to available space                   */
+  /* ============================================================ */
+  @media (max-width: 1400px) {
+	  .architecture-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+  }
+
+  @media (max-width: 1024px) {
+	  .architecture-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+
+	  .standard-layout {
+		  &.layout-sidebar {
+			  flex-direction: column;
+
+			  .layout-sidebar {
+				  flex: none;
+				  max-width: 100%;
+				  width: 100%;
+				  position: static;
+				  max-height: none;
+				  padding-right: 0;
+			  }
+		  }
+
+		  &.layout-split {
+			  .layout-main {
+				  grid-template-columns: 1fr;
+			  }
+		  }
+	  }
+  }
+
+  @media (max-width: 1400px) {
+	  .architecture-grid.architecture-layout-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+  }
+
+  @media (max-width: 1024px) {
+	  .architecture-grid.architecture-layout-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+  }
+
+  @media (max-width: 768px) {
+	  .architecture-grid.architecture-layout-grid {
+		  grid-template-columns: 1fr !important;
+	  }
+  }
+
+  @media (max-width: 768px) {
+	  .architecture-grid {
+		  grid-template-columns: 1fr !important;
+	  }
+
+	  .layout-content .inquiries-grid {
+		  &.display-cards {
+			  grid-template-columns: 1fr;
+		  }
+	  }
+
+	  .experience-controls {
+		  flex-direction: column;
+		  align-items: stretch;
+
+		  .controls-left,
+		  .controls-right {
+			  justify-content: center;
+		  }
+	  }
+  }
 </style>

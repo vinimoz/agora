@@ -29,6 +29,16 @@ import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
 import LoadingOverlay from '../components/Base/modules/LoadingOverlay.vue'
 import { InquiryGeneralIcons } from '../utils/icons.ts'
 import InquiryReel from '../components/Inquiry/InquiryReel.vue'
+import LandingBreadcrumb from '../components/Experience/Landing/LandingBreadcrumb.vue'
+import { getInquiryTypeData } from '../helpers/modules/InquiryHelper.ts'
+
+const props = withDefaults(defineProps<{
+  showFilterBar?: boolean | null
+}>(), { showFilterBar: null })
+
+const showFilterBarResolved = computed(() =>
+  props.showFilterBar !== null ? props.showFilterBar : showFilterBar.value,
+)
 
 const inquiriesStore = useInquiriesStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
@@ -36,6 +46,36 @@ const preferencesStore = usePreferencesStore()
 const sessionStore = useSessionStore()
 const route = useRoute()
 const router = useRouter()
+
+// ============================================================
+// LANDING MODE
+// ============================================================
+// /explore/* routes share the same component as /list/* but swap the
+// left sidebar for NavigationLanding. In landing mode we surface a small
+// breadcrumb above the title so the user can always jump back to Home.
+
+const isLandingMode = computed(() => route.meta?.landingMode === true)
+
+const landingLabel = computed(() => {
+  const groupType = route.query.group_type as string | undefined
+  const type = route.params.type as string | undefined
+
+  // Family + group-type entry (e.g. /explore/service?group_type=maintenance_board)
+  if (groupType) {
+    const groupTypes = sessionStore.appSettings?.inquiryGroupTypeTab || []
+    const data = getInquiryTypeData(groupType, groupTypes as any)
+    return data?.label || groupType
+  }
+
+  // Type-driven entry (e.g. /explore/news, /explore/relevant)
+  if (type) {
+    const types = sessionStore.appSettings?.inquiryTypeTab || []
+    const data = getInquiryTypeData(type, types as any)
+    return data?.label || type.charAt(0).toUpperCase() + type.slice(1)
+  }
+
+  return t('agora', 'Explore')
+})
 
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
@@ -55,6 +95,8 @@ const isGridView = computed(() => subMode.value === 'table-view')
 const isListView = computed(() => subMode.value === 'list-view')
 const isReelView = computed(() => subMode.value === 'reel-view')
 
+
+
 // Handle main mode change
 function handleMainModeChange(mode: string) {
   mainMode.value = mode
@@ -68,13 +110,11 @@ function handleMainModeChange(mode: string) {
     })
   } else if (mode === 'group') {
     router.push({
-      name: 'group-list',
+      name: '/',
       params: {
-        slug: '' 
       },
       query: {
         ...route.query,
-        viewMode: 'group',
       }
     })
   } else {
@@ -169,24 +209,80 @@ async function loadMore() {
   }
 }
 
+// ============================================================
+// ROUTE → STORE SYNC
+// ============================================================
+// Landing routes carry their filters in the query string:
+//   ?family=<key>       → scope the list to an inquiry family
+//   ?display=<mode>     → override the default sub-view
+//   ?group_type=<key>   → reserved for the service family widget
+//   ?q=<text>           → reserved for the search bar
+//   ?sort=<field>       → reserved for sort overrides
+// Only 'family' and 'display' are wired for now; the others are captured
+// for the next steps without touching the store.
+
+const APPLICABLE_SUB_MODES: ReadonlyArray<ViewMode> = [
+  'table-view',
+  'list-view',
+  'reel-view',
+]
+
+function applyRouteFilters() {
+  // ---- family ----
+  const family = route.query.family as string | undefined
+  if (family) {
+    inquiriesStore.setFamilyType(family)
+  } else if (isLandingMode.value) {
+    // In landing mode without an explicit family, start from a clean slate
+    // so the user is not carrying a previous admin filter into the landing.
+    inquiriesStore.setFamilyType('')
+  }
+
+  // ---- display ----
+  const display = route.query.display as ViewMode | undefined
+  if (display && APPLICABLE_SUB_MODES.includes(display)) {
+    subMode.value = display
+  }
+
+  // ---- reserved params (parsed but not yet acted upon) ----
+  // route.query.q          → will feed the search bar
+  // route.query.sort       → will override inquiriesStore sorting
+  // route.query.group_type → will filter the list to a specific group type
+}
+
+// ============================================================
+// LIFECYCLE
+// ============================================================
 onMounted(() => {
   inquiriesStore.load(false)
-  // Initialize modes from route query
+
+  // Initialize main mode from the route
   if (route.query.viewMode === 'create') {
-    mainMode.value = 'create' 
-  } else if (route.query.viewMode === 'group') { 
+    mainMode.value = 'create'
+  } else if (route.query.viewMode === 'group') {
     mainMode.value = 'group'
   } else {
     mainMode.value = 'view'
   }
 
-  // Initialize subMode from app settings
+  // Initialize subMode from the user preference, then let the route override it
   if (preferencesStore.user?.defaultViewInquiry) {
     subMode.value = preferencesStore.user.defaultViewInquiry
   } else {
     subMode.value = 'table-view'
   }
+
+  applyRouteFilters()
 })
+
+// Re-apply whenever the query string changes (breadcrumb clicks, back/forward,
+// landing widget navigations, etc.)
+watch(
+  () => route.fullPath,
+  () => {
+    applyRouteFilters()
+  },
+)
 
 watch(subMode, (newMode) => {
   if (newMode === 'reel-view' && inquiriesStore.chunkedList.length === 0) {
@@ -198,9 +294,10 @@ watch(subMode, (newMode) => {
 
 <template>
     <NcAppContent class="inquiry-list">
-    <HeaderBar>
+			    <HeaderBar>
     <template #title>
-        {{ title }}
+        <LandingBreadcrumb v-if="isLandingMode" :label="landingLabel" />
+        <span v-else>{{ title }}</span>
     </template>
     {{ description }}
 
@@ -350,7 +447,10 @@ watch(subMode, (newMode) => {
     </template>
     </HeaderBar>
 
-    <InquiryFilter :family-type="selectedFamily" />
+    <InquiryFilter
+  	v-if="showFilterBar"
+  	:family-type="selectedFamily"
+	/>
 
     <div class="area__main">
         <!-- Reel View -->

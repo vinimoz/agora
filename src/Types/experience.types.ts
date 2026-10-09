@@ -262,6 +262,7 @@ export interface DisplayZone {
       showExpiry?: boolean
       showType?: boolean
       showStatus?: boolean
+      showHeader?: boolean
       showSupport?: boolean
       showParticipants?: boolean
       horizontal?: boolean

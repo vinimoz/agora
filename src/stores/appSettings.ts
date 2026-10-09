@@ -34,15 +34,23 @@ export interface HeroActionConfig {
 export interface HomeConfig {
   sections: string[]
   hero: {
+    cityName?: string
+    tagline?: string
     title?: string
     subtitle?: string
-    actions: HeroActionConfig[]
+    backgroundUrl?: string     
+    showWeather?: boolean
+    weather?: { temp: number; location: string }
+    actions: Array<{ key: string; label: string; icon: string; color: string; hint: string }>
+  }
+  promo?: {                     
+    title?: string
+    text?: string
+    cta?: string
+    imageUrl?: string
   }
   services: Array<{ key: string; label: string; icon: string }>
-  relevance: {
-    tiers: Array<{ key: string; label: string }>
-    weights: Record<string, number>
-  }
+  relevance: { tiers: any[]; weights: Record<string, number> }
 }
 
 export interface NavigationConfig {

@@ -25,6 +25,7 @@ import Group from './views/InquiryGroup.vue'
 
 import HomeView from './views/HomeView.vue'
 import NavigationLanding from './views/NavigationLanding.vue'
+import InquiryGroupListView from './views/InquiryGroupListView.vue'
 
 import SideBar from './views/SideBar.vue'
 import SideBarInquiryGroup from './views/SideBarInquiryGroup.vue'
@@ -34,11 +35,11 @@ import { useSessionStore } from './stores/session.ts'
 
 async function validateToken(to: RouteLocationNormalized, from: RouteLocationNormalized) {
   const sessionStore = useSessionStore()
-  
+
   if (to.name === from.name && sessionStore.isLoaded) {
     return true
   }
-  
+
   try {
     await sessionStore.loadShare()
 
@@ -89,8 +90,8 @@ async function validateToken(to: RouteLocationNormalized, from: RouteLocationNor
   }
 
   // finally load the inquiry
-   const inquiryStore = useInquiryStore()
-   inquiryStore.load()
+  const inquiryStore = useInquiryStore()
+  inquiryStore.load()
 }
 
 const routes: RouteRecordRaw[] = [
@@ -101,9 +102,9 @@ const routes: RouteRecordRaw[] = [
       default: GroupList,
       navigation: NavigationGroup,
     },
-      props: {
-        default: true,
-        navigation: false,  
+    props: {
+      default: true,
+      navigation: false,
     },
     meta: {
       listPage: true,
@@ -111,15 +112,41 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
-  name: 'home',
-  path: '/',
-  components: {
-    default: HomeView,
-    navigation: NavigationLanding,
+    name: 'home',
+    path: '/',
+    components: {
+      default: HomeView,
+      navigation: NavigationLanding,
+    },
+    props: { default: false, navigation: false },
+    meta: { listPage: true },
   },
-  props: { default: false, navigation: false },
-  meta: { listPage: true },
-},
+  {
+    name: 'explore-spaces',
+    path: '/explore/spaces',
+    components: {
+      default: InquiryGroupListView,
+      navigation: NavigationLanding,
+    },
+    meta: {
+      listPage: true,
+      landingMode: true,
+    },
+  },
+
+  {
+    name: 'explore',
+    path: '/explore/:type?',
+    components: {
+      default: List,
+      navigation: NavigationLanding,
+    },
+    props: true,
+    meta: {
+      listPage: true,
+      landingMode: true,
+    },
+  },
 
   {
     name: 'list',
@@ -142,160 +169,156 @@ const routes: RouteRecordRaw[] = [
     },
     props: true,
     meta: {
-	    listPage: true,
-        noReload: true,
+      listPage: true,
+      noReload: true,
     },
   },
-   {
+
+  {
     name: 'group-list',
     path: '/groups/:slug?',
     components: {
-      default: Group,  
+      default: Group,
       navigation: NavigationGroup,
     },
-     props: {
-       default: true,
-       navigation: false,
+    props: {
+      default: true,
+      navigation: false,
     },
     meta: {
       groupPage: true,
     },
   },
   {
-	  name: 'notfound',
-	  path: '/not-found',
-	  components: {
-		  default: NotFound,
-		  navigation: Navigation,
-	  },
-	  meta: {
-		  errorPage: true,
-	  },
-  },
-  {
-	  name: 'forbidden',
-	  path: '/forbidden',
-	  components: {
-		  default: Forbidden,
-		  navigation: Navigation,
-	  },
-	  meta: {
-		  errorPage: true,
-	  },
-  },
-  {
-	  name: 'group',
-	  path: '/group/:id',
-	  components: {
-		  default: GroupView,
-		  navigation: NavigationGroup,
-		  sidebar: SideBarInquiryGroup,
-	  },
-      props: {
-        default: true,
-        navigation: false,  
+    name: 'notfound',
+    path: '/not-found',
+    components: {
+      default: NotFound,
+      navigation: Navigation,
     },
-	  meta: {
-		  groupPage: true,
-		  listPage: true,
-	  },
+    meta: {
+      errorPage: true,
+    },
   },
   {
-      name: 'page',
-      path: '/page/inquiry/:id',
-      components: {
-          default: InquiryView,
-          navigation: Navigation,
-          sidebar: SideBar,
-      },
-      props: true,
-      meta: {
-          inquiryPage: true,
-      },
+    name: 'forbidden',
+    path: '/forbidden',
+    components: {
+      default: Forbidden,
+      navigation: Navigation,
+    },
+    meta: {
+      errorPage: true,
+    },
   },
   {
-	  name: 'inquiry',
-	  path: '/inquiry/:id',
-	  components: {
-		  default: InquiryView,
-		  navigation: Navigation,
-		  sidebar: SideBar,
-	  },
-	  props: true,
-	  meta: {
-		  inquiryPage: true,
-	  },
+    name: 'group',
+    path: '/group/:id',
+    components: {
+      default: GroupView,
+      navigation: NavigationGroup,
+      sidebar: SideBarInquiryGroup,
+    },
+    props: {
+      default: true,
+      navigation: false,
+    },
+    meta: {
+      groupPage: true,
+      listPage: true,
+    },
   },
   {
-	  name: 'publicInquiry',
-	  path: '/s/:token',
-	  components: {
-		  default: InquiryView,
-		  sidebar: SideBar,
-	  },
-	  beforeEnter: (to, from) => validateToken(to, from),
-		  props: true,
-	  meta: {
-		  publicPage: true,
-		  inquiryPage: true,
-	  },
+    name: 'page',
+    path: '/page/inquiry/:id',
+    components: {
+      default: InquiryView,
+      navigation: Navigation,
+      sidebar: SideBar,
+    },
+    props: true,
+    meta: {
+      inquiryPage: true,
+    },
   },
   {
-	  path: '/:pathMatch(.*)*',
-	  redirect: {
-		  name: 'notfound',
-	  },
+    name: 'inquiry',
+    path: '/inquiry/:id',
+    components: {
+      default: InquiryView,
+      navigation: Navigation,
+      sidebar: SideBar,
+    },
+    props: true,
+    meta: {
+      inquiryPage: true,
+    },
+  },
+  {
+    name: 'publicInquiry',
+    path: '/s/:token',
+    components: {
+      default: InquiryView,
+      sidebar: SideBar,
+    },
+    beforeEnter: (to, from) => validateToken(to, from),
+    props: true,
+    meta: {
+      publicPage: true,
+      inquiryPage: true,
+    },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: {
+      name: 'notfound',
+    },
   },
 ]
 const router = createRouter({
-    history: createWebHistory(`${generateUrl('/apps/agora')  }/`),
-	routes,
-	linkActiveClass: 'active',
+  history: createWebHistory(`${generateUrl('/apps/agora')}/`),
+  routes,
+  linkActiveClass: 'active',
 })
 
 router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-	const sessionStore = useSessionStore()
-	let forceReload = false
+  const sessionStore = useSessionStore()
+  let forceReload = false
 
+  // if the previous and the requested routes have the same name and
+  // the watcher is active, we can do a cheap loading
+  const cheapLoading =
+    to.name === from.name &&
+    sessionStore.watcher.mode !== 'noInquirying' &&
+    sessionStore.watcher.status !== 'stopped'
 
+  if (to.name === 'login') {
+    forceReload = true
+  }
 
+  // first load app context -> session and preferences
+  try {
+    await loadContext(to, cheapLoading, forceReload)
+  } catch (error) {
+    Logger.error('Could not load context', { error })
 
-	// if the previous and the requested routes have the same name and
-	// the watcher is active, we can do a cheap loading
-	const cheapLoading =
-		to.name === from.name &&
-		sessionStore.watcher.mode !== 'noInquirying' &&
-		sessionStore.watcher.status !== 'stopped'
-
-	if (to.name === 'login') {
-		forceReload = true
-	}
-     
-    // first load app context -> session and preferences
-    try {
-        await loadContext(to, cheapLoading, forceReload)
-
-    } catch (error) {
-        Logger.error('Could not load context', { error })
-        
-        if (to.name === 'inquiry') {
-            Logger.warn('Allowing navigation to inquiry despite context error')
-            return true
-        }
-        
-
-        if (!sessionStore.userStatus.isLoggedin) {
-            // if the user is not logged in, redirect to the login page
-            window.location.replace(generateUrl('login'))
-            return false
-        }
-
-        // if context can't be loaded, redirect to not found page
-        return {
-            name: 'notfound',
-        }
+    if (to.name === 'inquiry') {
+      Logger.warn('Allowing navigation to inquiry despite context error')
+      return true
     }
-    return true
+
+    if (!sessionStore.userStatus.isLoggedin) {
+      // if the user is not logged in, redirect to the login page
+      window.location.replace(generateUrl('login'))
+      return false
+    }
+
+    // if context can't be loaded, redirect to not found page
+    return {
+      name: 'notfound',
+    }
+  }
+  return true
 })
 
 export { router }

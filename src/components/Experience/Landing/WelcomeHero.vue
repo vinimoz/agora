@@ -1,9 +1,12 @@
 <template>
   <div class="welcome-hero" :style="heroStyle">
     <div class="hero-content">
+      <span v-if="cityName" class="hero-city">{{ cityName }}</span>
       <h1 class="hero-title">{{ title }}</h1>
       <p class="hero-subtitle">{{ subtitle }}</p>
-	<div v-if="stats" class="hero-stats">
+      <p v-if="tagline" class="hero-tagline">{{ tagline }}</p>
+
+<div v-if="stats" class="hero-stats">
   <div class="stat">
     <span class="stat-value">{{ stats.shared }}</span>
     <span class="stat-label">{{ t('agora', 'Shared with you') }}</span>
@@ -21,6 +24,7 @@
     <span class="stat-label">{{ t('agora', 'In your spaces') }}</span>
   </div>
 </div>
+
       <div class="hero-actions">
         <button
           v-for="action in actions"
@@ -40,7 +44,6 @@
       </div>
     </div>
 
-    <!-- Weather widget top-right -->
     <div v-if="weather" class="hero-weather">
       <component :is="Icons.WeatherSunny" :size="22" />
       <span class="temp">{{ weather.temp }}°C</span>
@@ -54,57 +57,57 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
 
-interface HeroAction {
-  key: string
-  label: string
-  hint: string
-  icon: any
-  color: string
-}
-
-interface HeroStats {
-  shared: number
-  participated: number
-  owned: number
-  groupInquiries: number
-}
-
 const props = defineProps<{
   title?: string
   subtitle?: string
+  tagline?: string                
+  cityName?: string            
   backgroundUrl?: string
-  actions?: HeroAction[]
-  weather?: { temp: number; location: string }
-  stats?: HeroStats
+  actions?: any[]
+  weather?: { temp: number; location: string } | null
+  stats?: { shared: number; participated: number; owned: number; groupInquiries: number }
 }>()
-
 
 const emit = defineEmits<{ action: [key: string] }>()
 
 const title = computed(() => props.title || t('agora', 'Welcome to Agora'))
 const subtitle = computed(
-  () =>
-    props.subtitle ||
+  () => props.subtitle ||
     t('agora', 'Your civic space for a more direct and participatory democracy'),
 )
 
-const actions = computed<HeroAction[]>(
-  () =>
-    props.actions || [
-      { key: 'participate', label: t('agora', 'Participate'), hint: t('agora', 'Give your opinion'), icon: Icons.CheckCircle, color: '#16a34a' },
-      { key: 'decide',      label: t('agora', 'Decide'),      hint: t('agora', 'Vote and deliberate'), icon: Icons.Scale,        color: '#7c3aed' },
-      { key: 'propose',     label: t('agora', 'Propose'),     hint: t('agora', 'Share your ideas'),   icon: Icons.Lightbulb,    color: '#f59e0b' },
-      { key: 'debate',      label: t('agora', 'Debate'),      hint: t('agora', 'Exchange with others'), icon: Icons.MessageSquare, color: '#0ea5e9' },
-    ],
-)
+/**
+ * Resolve a hero background image:
+ *  - Absolute URL or path starting with `/` → used as-is
+ *  - Numeric fileId → Nextcloud preview endpoint
+ */
+function resolveHeroImage(src?: string): string {
+  if (!src) return ''
+  const s = String(src)
+  if (/^https?:\/\//i.test(s) || s.startsWith('/')) return s
+  if (/^\d+$/.test(s)) {
+    return `${window.location.origin}/index.php/core/preview?fileId=${s}&x=1920&y=1080&a=1`
+  }
+  return s
+}
 
-const heroStyle = computed(() => ({
-  backgroundImage: props.backgroundUrl
-    ? `linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.55)), url(${props.backgroundUrl})`
-    : 'linear-gradient(135deg, #0891b2, #0e7490)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-}))
+const heroStyle = computed(() => {
+  const url = resolveHeroImage(props.backgroundUrl)
+  return {
+    backgroundImage: url
+      ? `linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.55)), url(${url})`
+      : 'linear-gradient(135deg, #0891b2, #0e7490)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  }
+})
+
+const actions = computed(() => props.actions || [
+  { key: 'participate', label: t('agora','Participate'), hint: t('agora','Give your opinion'), icon: Icons.CheckCircle,    color: '#16a34a' },
+  { key: 'decide',      label: t('agora','Decide'),      hint: t('agora','Vote and deliberate'), icon: Icons.Scale,        color: '#7c3aed' },
+  { key: 'propose',     label: t('agora','Propose'),     hint: t('agora','Share your ideas'),    icon: Icons.Lightbulb,    color: '#f59e0b' },
+  { key: 'debate',      label: t('agora','Debate'),      hint: t('agora','Exchange with others'), icon: Icons.MessageSquare, color: '#0ea5e9' },
+])
 </script>
 
 <style lang="scss" scoped>
@@ -115,6 +118,26 @@ const heroStyle = computed(() => ({
   color: white;
   overflow: hidden;
   min-height: 240px;
+
+  .hero-city {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.18);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    backdrop-filter: blur(4px);
+  }
+
+  .hero-tagline {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    font-style: italic;
+    opacity: 0.9;
+  }
 
   .hero-content {
     position: relative;

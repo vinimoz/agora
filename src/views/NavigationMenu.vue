@@ -34,6 +34,8 @@ import {
   accessFamilyMenu,
   canCreateInquiryGroupInGeneral,
 } from '../utils/permissions.ts'
+import { useRecentInquiries } from '../composables/useRecentInquiries.ts'
+
 
 const preferencesStore = usePreferencesStore()
 const router = useRouter()
@@ -96,18 +98,7 @@ const expandedFamilies = ref<Set<string>>(new Set())
 const inquiryFamilies = computed((): InquiryFamily[] => sessionStore.appSettings.inquiryFamilyTab || [])
 
 // Computed for recent inquiries
-const sortedInquiries = computed(() => 
-  [...inquiriesStore.inquiries]
-    .filter(inquiry => 
-      !inquiry.status.isArchived && // Exclude archived
-      inquiry.configuration.visibility === 'everyone' || 
-      inquiry.configuration.visibility === 'private' ||
-      inquiry.configuration.visibility === 'private' ||
-      inquiry.permissions.view // User has view permission
-    )
-    .sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction))
-    .slice(0,5)
-)
+const sortedInquiries = useRecentInquiries({ limit: 5 })
 
 const shouldRedirectToGroupView = (familyType: string) => {
   console.log("  FAMILY TYPE ",familyType)

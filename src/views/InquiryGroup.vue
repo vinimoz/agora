@@ -170,41 +170,13 @@
       @mouseleave="hoveredGroupId = null"
     >
                 <div class="vignette-container">
-                  <div class="group-vignette" @click="selectGroup(group)">
-                    <div v-if="group.coverId" class="vignette-cover">
-                      <img :src="getCoverUrl(group.coverId)" :alt="group.title" />
-                      <div class="vignette-cover-overlay"></div>
-                    </div>
-                    <div class="vignette-content">
-                      <div class="vignette-icon">
-                        <component :is="getGroupTypeIconComponent(group.type)" />
-                      </div>
-                      <h4>{{ group.title }}</h4>
-                      <p v-if="group.description" class="vignette-description">
-                        {{ group.description }}
-                      </p>
-                      <div class="vignette-stats">
-                        <div class="stat-item">
-                          <span class="stat-icon">📝</span>
-                          <span class="stat-value">{{ group.inquiryIds?.length || 0 }}</span>
-                        </div>
-                        <div v-if="getGroupChildren(group).length > 0" class="stat-item">
-                          <span class="stat-icon">👥</span>
-                          <span class="stat-value">{{ getGroupChildren(group).length }}</span>
-                        </div>
-                      </div>
-                      <div class="vignette-footer">
-                        <NcButton class="view-group-button" @click.stop="selectGroup(group)">
-                          {{ t('agora', 'View group') }}
-                          <template #icon>
-                            <svg width="16" height="16" viewBox="0 0 24 24">
-                              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-                            </svg>
-                          </template>
-                        </NcButton>
-                      </div>
-                    </div>
-                  </div>
+                  <InquiryGroupVignette
+                    :group="group"
+                    :cover-url="group.coverId ? getCoverUrl(group.coverId) : ''"
+                    :type-icon="getGroupTypeIconComponent(group.type)"
+                    :child-count="getGroupChildren(group).length"
+                    @open="selectGroup(group)"
+                  />
 
                   <!-- Owner menu -->
                   <div
@@ -309,43 +281,15 @@
 
             <div v-if="displayedGroups.length > 0" class="groups-grid">
               <div v-for="group in displayedGroups" :key="group.id" class="group-vignette-wrapper">
-                <div class="vignette-container">
-                  <div class="group-vignette" @click="selectGroup(group)">
-                    <div v-if="group.coverId" class="vignette-cover">
-                      <img :src="getCoverUrl(group.coverId)" :alt="group.title" />
-                      <div class="vignette-cover-overlay"></div>
-                    </div>
-                    <div class="vignette-content">
-                      <div class="vignette-icon">
-                        <component :is="getGroupTypeIconComponent(group.type)" />
-                      </div>
-                      <h4>{{ group.title }}</h4>
-                      <p v-if="group.description" class="vignette-description">
-                        {{ group.description }}
-                      </p>
-                      <div class="vignette-stats">
-                        <div class="stat-item">
-                          <span class="stat-icon">📝</span>
-                          <span class="stat-value">{{ group.inquiryIds?.length || 0 }}</span>
-                        </div>
-                        <div v-if="getGroupChildren(group).length > 0" class="stat-item">
-                          <span class="stat-icon">👥</span>
-                          <span class="stat-value">{{ getGroupChildren(group).length }}</span>
-                        </div>
-                      </div>
-                      <div class="vignette-footer">
-                        <NcButton class="view-group-button" @click.stop="selectGroup(group)">
-                          {{ t('agora', 'View group') }}
-                          <template #icon>
-                            <svg width="16" height="16" viewBox="0 0 24 24">
-                              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-                            </svg>
-                          </template>
-                        </NcButton>
-                      </div>
-                    </div>
-                  </div>
-                  <div
+                                  <div class="vignette-container">
+                  <InquiryGroupVignette
+                    :group="group"
+                    :cover-url="group.coverId ? getCoverUrl(group.coverId) : ''"
+                    :type-icon="getGroupTypeIconComponent(group.type)"
+                    :child-count="getGroupChildren(group).length"
+                    @open="selectGroup(group)"
+                  />
+		   <div
                     v-if="
                       group &&
                       (canUserEditGroup(group) ||
@@ -467,8 +411,9 @@ import { InquiryGeneralIcons } from '../utils/icons.ts'
 import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
 import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
 import type { InquiryGroupType, InquiryGroup } from '../stores/inquiryGroups.types.ts'
-import InquiryGroupViewMain from '../components/InquiryGroup/InquiryGroupViewMain.vue'
 import { createInquiryGroupContext, canArchive, canEdit, canDelete } from '../utils/permissions.ts'
+import InquiryGroupViewMain from '../components/InquiryGroup/InquiryGroupViewMain.vue'
+import InquiryGroupVignette from '../components/InquiryGroup/InquiryGroupVignette.vue'
 
 // ============================================================
 // ============================================================
@@ -1490,137 +1435,6 @@ console.log('displayArchitecture:', displayArchitecture.value)
   }
 }
 
-.group-vignette {
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  min-height: 320px;
-  max-height: 380px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-    border-color: var(--color-primary, #2196f3);
-
-    .vignette-cover img {
-      transform: scale(1.05);
-    }
-  }
-
-  .vignette-cover {
-    height: 120px;
-    overflow: hidden;
-    position: relative;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .vignette-cover-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 50px;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
-    }
-  }
-
-  .vignette-content {
-    padding: 16px 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-    .vignette-icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 18px;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      margin-bottom: 10px;
-    }
-
-    h4 {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-      color: #2c3e50;
-      line-height: 1.3;
-    }
-
-    .vignette-description {
-      color: #7f8c8d;
-      font-size: 13px;
-      line-height: 1.3;
-      margin-bottom: 12px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      flex: 0 0 auto;
-    }
-
-    .vignette-stats {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-
-      .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 13px;
-
-        .stat-icon {
-          opacity: 0.8;
-        }
-
-        .stat-value {
-          font-weight: 600;
-          color: #2c3e50;
-        }
-      }
-    }
-
-    .vignette-footer {
-      margin-top: auto;
-
-      .view-group-button {
-        width: 100%;
-        justify-content: center;
-        background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
-        color: white;
-        border: none;
-        padding: 8px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 12px;
-        transition: all 0.3s ease;
-
-        &:hover {
-          background: linear-gradient(135deg, #764ba2, #667eea);
-          transform: translateY(-1px);
-        }
-      }
-    }
-  }
-}
 
 .owner-menu-under {
   position: absolute;

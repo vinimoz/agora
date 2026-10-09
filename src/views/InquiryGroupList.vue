@@ -23,7 +23,7 @@ import {
     canRestore,
     canDelete,
 } from '../utils/permissions.ts'
-import { InquiryGeneralIcons, NavigationIcons } from '../utils/icons.ts'
+import InquiryGroupVignette from '../components/InquiryGroup/InquiryGroupVignette.vue'
 import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
 import type { InquiryGroup } from '../stores/inquiryGroups.types.ts'
 
@@ -325,40 +325,23 @@ onMounted(async () => {
             @mouseenter="hoveredGroupId = group.id"
             @mouseleave="hoveredGroupId = null"
           >
-            <div class="vignette-container">
-              <div class="group-vignette archived" @click="selectGroup(group)">
-                <div v-if="group.coverId" class="vignette-cover">
-                  <img :src="getCoverUrl(group.coverId)" :alt="group.title" />
-                  <div class="vignette-cover-overlay"></div>
-                  <div class="archived-overlay">
-                    <component :is="NavigationIcons.Archive" />
-                    <span>{{ t('agora', 'Archived') }}</span>
-                  </div>
-                </div>
-                <div class="vignette-content">
-                  <div class="vignette-icon archived">
-                    <component :is="getGroupTypeIconComponent(group.type)" />
-                  </div>
-                  <h4>{{ group.title }}</h4>
-                  <p v-if="group.description" class="vignette-description">
-                    {{ group.description }}
-                  </p>
-                  <div class="vignette-stats">
-                    <div class="stat-item">
-                      <span class="stat-icon">📝</span>
-                      <span class="stat-value">{{ group.inquiryIds?.length || 0 }}</span>
-                    </div>
-                  </div>
-                  <div class="vignette-footer">
+                        <div class="vignette-container">
+                <InquiryGroupVignette
+                  :group="group"
+                  :cover-url="group.coverId ? getCoverUrl(group.coverId) : ''"
+                  :type-icon="getGroupTypeIconComponent(group.type)"
+                  :is-archived="true"
+                  @open="selectGroup(group)"
+                >
+                  <template #footer>
                     <div class="archive-date">
                       <span class="date-label">{{ t('agora', 'Archived on:') }}</span>
                       <span class="date-value">{{ formatDate(group.created) }}</span>
                     </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Owner menu (appears under the vignette on hover) -->
+                  </template>
+                </InquiryGroupVignette>
+
+	  <!-- Owner menu (appears under the vignette on hover) -->
               <div 
                 v-if="(canUserRestoreGroup(group) || canUserDeleteGroup(group)) && hoveredGroupId === group.id" 
                 class="owner-menu-under"
@@ -685,170 +668,6 @@ onMounted(async () => {
     }
 }
 
-.group-vignette {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    min-height: 320px;
-    max-height: 380px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    &.archived {
-        border-left: 4px solid #6c757d;
-        opacity: 0.9;
-
-        &:hover {
-            opacity: 1;
-            border-color: #495057;
-        }
-    }
-
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-
-        .vignette-cover img {
-            transform: scale(1.05);
-        }
-    }
-
-    .vignette-cover {
-        height: 120px;
-        overflow: hidden;
-        position: relative;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-            filter: grayscale(30%);
-        }
-
-        .vignette-cover-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
-        }
-
-        .archived-overlay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(108, 117, 125, 0.9);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-
-            :deep(svg) {
-                width: 12px;
-                height: 12px;
-            }
-        }
-    }
-
-    .vignette-content {
-        padding: 16px 20px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-
-        .vignette-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #6c757d, #495057);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-            margin-bottom: 10px;
-
-            &.archived {
-                background: linear-gradient(135deg, #adb5bd, #6c757d);
-            }
-        }
-
-        h4 {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-            color: #2c3e50;
-            line-height: 1.3;
-        }
-
-        .vignette-description {
-            color: #7f8c8d;
-            font-size: 13px;
-            line-height: 1.3;
-            margin-bottom: 12px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            flex: 0 0 auto;
-        }
-
-        .vignette-stats {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-
-            .stat-item {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                font-size: 13px;
-
-                .stat-icon {
-                    opacity: 0.8;
-                }
-
-                .stat-value {
-                    font-weight: 600;
-                    color: #2c3e50;
-                }
-            }
-        }
-
-        .vignette-footer {
-            margin-top: auto;
-            
-            .archive-date {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-                font-size: 12px;
-                
-                .date-label {
-                    color: #6c757d;
-                    font-weight: 500;
-                }
-                
-                .date-value {
-                    color: #495057;
-                    font-weight: 600;
-                }
-            }
-        }
-    }
-}
 
 /* Owner menu - appears under the vignette */
 .owner-menu-under {
