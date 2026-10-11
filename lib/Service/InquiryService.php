@@ -68,11 +68,8 @@ class InquiryService
     {
         $inquiryList = $this->inquiryMapper->findForMe($this->userSession->getCurrentUserId());
 
-        // No more looping to set family - it's already joined in the query!
-
-        if ($this->userSession->getCurrentUser()->getIsAdmin()) {
-            return $inquiryList;
-        }
+        // Keep the regular list consistent with the detail view for every user,
+        // including administrators. Administrative listings are handled separately.
 
         return array_values(
             array_filter(
