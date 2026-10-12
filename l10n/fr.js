@@ -1414,6 +1414,7 @@ OC.L10N.register(
     "Allow users to support this inquiry type" : "Autoriser les utilisateurs à prendre position sur ce type de consultation",
     "Support mode" : "Mode de prise de position",
     "Change method" : "Changer la méthode",
+    "Choose which voting method users can use to support this inquiry." : "Choisissez laquelle des méthodes de vote les utilisateurs peuvent utiliser pour participer à cette consultation.",
     "Allow users to comment on this inquiry type" : "Autoriser les utilisateurs à commenter ce type de consultation",
     "Allow using resources" : "Autoriser l'utilisation de ressources",
     "Allow users to use resources for this inquiry type" : "Autoriser les utilisateurs à utiliser des ressources sur ce type de consultation",
