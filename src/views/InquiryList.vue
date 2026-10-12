@@ -110,7 +110,7 @@ function handleMainModeChange(mode: string) {
     })
   } else if (mode === 'group') {
     router.push({
-      name: '/',
+      name: 'home',
       params: {
       },
       query: {

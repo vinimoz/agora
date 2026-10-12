@@ -22,7 +22,6 @@ export type { DisplayZone, ExperienceKey, DisplayType, ToolKey }
 
 // ===== SHARED TYPES =====
 export type VisibilityType = 'private' | 'groups' | 'users' | 'everyone'
-export type PublicationStatus = 'draft' | 'pending' | 'published' | 'archived' | 'deleted'
 export type InquiryGroupWorkflowStatus = 'active' | 'completed' | 'suspended' | 'canceled' 
 
 // ============================================================
@@ -90,7 +89,6 @@ export interface InquiryGroupConfiguration {
 // ===== STATUS =====
 export interface InquiryGroupStatus {
   groupStatus: InquiryGroupWorkflowStatus
-  publicationStatus: PublicationStatus
   created: number
   deleted: number
   updated: number
@@ -137,7 +135,6 @@ export interface InquiryGroup {
   owner: User
   type: string
   trendingScore?: number
-  publicationStatus?: PublicationStatus
   configuration: InquiryGroupConfiguration
   status: InquiryGroupStatus
   title: string

@@ -10,8 +10,7 @@ import { getCookieValue, Logger, setCookie } from './helpers/index.ts'
 import { loadContext } from './composables/context.ts'
 import { AxiosError } from 'axios'
 
-import Navigation from './views/Navigation.vue'
-import NavigationMenu from './views/NavigationMenu.vue'
+import NavigationLanding from './views/NavigationLanding.vue'
 import NavigationGroup from './views/NavigationGroup.vue'
 
 import Forbidden from './views/Forbidden.vue'
@@ -20,12 +19,10 @@ import Menu from './views/InquiryMenu.vue'
 import NotFound from './views/NotFound.vue'
 import InquiryView from './views/InquiryView.vue'
 import GroupView from './views/InquiryGroupView.vue'
-import GroupList from './views/InquiryGroupList.vue'
+import GroupArchive from './views/InquiryGroupArchive.vue'
 import Group from './views/InquiryGroup.vue'
 
 import HomeView from './views/HomeView.vue'
-import NavigationLanding from './views/NavigationLanding.vue'
-import InquiryGroupListView from './views/InquiryGroupListView.vue'
 
 import SideBar from './views/SideBar.vue'
 import SideBarInquiryGroup from './views/SideBarInquiryGroup.vue'
@@ -99,7 +96,7 @@ const routes: RouteRecordRaw[] = [
     name: 'group-archived',
     path: '/groups/archived',
     components: {
-      default: GroupList,
+      default: GroupArchive,
       navigation: NavigationGroup,
     },
     props: {
@@ -125,7 +122,7 @@ const routes: RouteRecordRaw[] = [
     name: 'explore-spaces',
     path: '/explore/spaces',
     components: {
-      default: InquiryGroupListView,
+      default: Group,
       navigation: NavigationLanding,
     },
     meta: {
@@ -153,27 +150,13 @@ const routes: RouteRecordRaw[] = [
     path: '/list/:type?',
     components: {
       default: List,
-      navigation: Navigation,
+      navigation: NavigationLanding,
     },
     props: true,
     meta: {
       listPage: true,
     },
   },
-  {
-    name: 'menu',
-    path: '/menu/:family?',
-    components: {
-      default: Menu,
-      navigation: NavigationMenu,
-    },
-    props: true,
-    meta: {
-      listPage: true,
-      noReload: true,
-    },
-  },
-
   {
     name: 'group-list',
     path: '/groups/:slug?',
@@ -194,7 +177,7 @@ const routes: RouteRecordRaw[] = [
     path: '/not-found',
     components: {
       default: NotFound,
-      navigation: Navigation,
+      navigation: NavigationLanding,
     },
     meta: {
       errorPage: true,
@@ -205,7 +188,7 @@ const routes: RouteRecordRaw[] = [
     path: '/forbidden',
     components: {
       default: Forbidden,
-      navigation: Navigation,
+      navigation: NavigationLanding,
     },
     meta: {
       errorPage: true,
@@ -233,7 +216,7 @@ const routes: RouteRecordRaw[] = [
     path: '/page/inquiry/:id',
     components: {
       default: InquiryView,
-      navigation: Navigation,
+      navigation: NavigationLanding,
       sidebar: SideBar,
     },
     props: true,
@@ -246,7 +229,7 @@ const routes: RouteRecordRaw[] = [
     path: '/inquiry/:id',
     components: {
       default: InquiryView,
-      navigation: Navigation,
+      navigation: NavigationLanding,
       sidebar: SideBar,
     },
     props: true,

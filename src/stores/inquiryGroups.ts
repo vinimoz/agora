@@ -361,13 +361,15 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
       updating.value = true
 
       const response = await InquiryGroupsAPI.getAllGroups()
-      const groups = response.data.groups || []
+      const groups = response.data.inquiryGroups || []
 
       const sessionStore = useSessionStore()
       if (sessionStore.appSettings?.inquiryGroupTypeTab?.length > 0) {
         selectedGroupType.value = getDefaultGroupTypeFromFamily()
       }
       const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+
+      console.log(" RESPONSSEEEEEEEEEEEEEEEEEEE", groups)
       inquiryGroups.value = groups.map((group) => ({
         ...group,
         inquiryGroupType: typeTabs.find(

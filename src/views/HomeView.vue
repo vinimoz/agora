@@ -3,7 +3,6 @@
     <ExperienceRenderer
       :experience="experience"
       :inquiries="inquiries"
-      :groups="groups"
       :selected-inquiry="null"
       :selected-group="null"
       @select-inquiry="onSelectInquiry"
@@ -110,7 +109,7 @@ function onNavigate(target: any) {
         query: { family: 'service', group_type: target.key },
       })
     case 'services-all':
-      return router.push({ name: 'menu', params: { family: 'service' } })
+      return router.push({ name: 'group', params: { family: 'service' } })
 
     // ---- Events / agenda ----
     case 'event':
@@ -130,7 +129,7 @@ function onNavigate(target: any) {
         query: { type: target.key },
       })
     case 'explore-all':
-      return router.push({ name: 'menu' })
+      return router.push({ name: 'group' })
     case 'create':
       return handleCreateInquiry()
     case 'promo-action':
@@ -188,6 +187,6 @@ function handleHeroAction(key: string) {
 }
 
 function handleCreateInquiry() {
-  router.push({ name: 'menu', query: { viewMode: 'create' } })
+  router.push({ name: 'group', query: { viewMode: 'create' } })
 }
 </script>

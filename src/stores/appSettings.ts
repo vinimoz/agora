@@ -197,17 +197,14 @@ export const useAppSettingsStore = defineStore('appSettings', {
   }),
 
   getters: {
-	  getFirstStatusKeyByInquiryType(inquiryType: string): string | null {
-		  if (!this.inquiryStatusTab.length) {
-			  console.warn('[SettingsStore] No statuses available')
-			  return null
-		  }
-		  const statuses = this.inquiryStatusTab
-		  .filter(s => s.inquiryType === inquiryType)
-		  .sort((a, b) => (a.order || 0) - (b.order || 0))
-		  return statuses[0]?.statusKey ?? null
-	  },
-
+	getFirstStatusKeyByInquiryType(state) {
+    return (inquiryType: string): string | null => {
+      const statuses = state.inquiryStatusTab
+        .filter((s) => s.inquiryType === inquiryType)
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+      return statuses[0]?.statusKey ?? null
+    }
+  },
 	  getInquiryTypeRights: (state) => (inquiryType: string) => state.inquiryTypeRights[inquiryType],
 
 		  getMainInquiryTypes: (state) => state.inquiryTypeTab,
@@ -222,22 +219,6 @@ export const useAppSettingsStore = defineStore('appSettings', {
   },
 
 	  actions: {
-		  getFirstStatusKeyByInquiryType(inquiryType: string): string | null {
-			  if (!this.inquiryStatusTab.length) {
-				  console.warn('[SettingsStore] No statuses available')
-			  }
-
-			  const statuses = this.inquiryStatusTab.filter((status) => status.inquiryType === inquiryType)
-
-			  if (statuses.length > 0) {
-				  const sortedStatuses = [...statuses].sort((a, b) => a.sort_order - b.sort_order)
-
-				  const firstStatus = sortedStatuses[0]
-				  return firstStatus.statusKey
-			  }
-
-			  return null
-		  },
 
 		  initializeInquiryTypeRights(inquiryType: string) {
 			  if (!this.inquiryTypeRights[inquiryType]) {

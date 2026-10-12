@@ -330,9 +330,8 @@ export const useInquiryStore = defineStore('inquiry', {
         if (action === 'submit_for_accepted') {
           this.status.moderationStatus = 'accepted'
           this.status.publicationStatus = 'published'
-          this.status.inquiryStatus = appSettingsStore.getFirstStatusKeyByInquiryType(
-            this.type
-          ) as InquiryWorkflowStatus
+	  const firstKey = appSettingsStore.getFirstStatusKeyByInquiryType(this.type)
+	  this.status.inquiryStatus = (firstKey ?? 'draft') as InquiryWorkflowStatus
           this.configuration.visibility = 'everyone'
         } else if (action === 'submit_for_rejected') {
           this.status.moderationStatus = 'rejected'

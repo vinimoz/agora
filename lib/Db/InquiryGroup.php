@@ -19,8 +19,8 @@ use OCP\IGroupManager;
  * @psalm-api
  * @method int getId()
  * @method void setId(int $value)
- * @method int getParentId()
- * @method void setParentId(int $value)
+ * @method ?int getParentId()
+ * @method void setParentId(?int $value)
  * @method int getCreated()
  * @method void setCreated(int $value)
  * @method int getDeleted()
@@ -29,8 +29,6 @@ use OCP\IGroupManager;
  * @method void setDescription(?string $value)
  * @method string getGroupStatus()
  * @method void setGroupStatus(string $value)
- * @method string getPublicationStatus()
- * @method void setPublicationStatus(string $value)
  * @method string getType()
  * @method void setType(string $value)
  * @method string getOwner()
@@ -49,16 +47,8 @@ use OCP\IGroupManager;
  * @method void setMetadata(?string $value)
  * @method ?int getCoverId()
  * @method void setCoverId(?int $value)
- * @method bool getProtected()
- * @method void setProtected(bool $value)
- * @method bool getAllowEdit()
- * @method void setAllowEdit(bool $value)
  * @method string getVisibility()
  * @method void setVisibility(string $value)
- * @method array|null getVisibilityGroups()
- * @method void setVisibilityGroups(array|null $value)
- * @method array|null getVisibilityUsers()
- * @method void setVisibilityUsers(array|null $value)
  */
 class InquiryGroup extends EntityWithUser implements JsonSerializable
 {
@@ -66,7 +56,10 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     public const RELATION_TABLE = 'agora_groups_inquiries';
     public const CONCAT_SEPARATOR = ',';
 
-    // Permission constants
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_ARCHIVED = 'archived';
+    public const STATUS_DRAFT = 'draft';
+
     public const PERMISSION_VIEW = 'view';
     public const PERMISSION_EDIT = 'edit';
     public const PERMISSION_DELETE = 'delete';
@@ -76,10 +69,17 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     public const PERMISSION_ARCHIVE = 'archive';
     public const PERMISSION_CLONE = 'clone';
 
+    public const VISIBILITY_INVITATION = 'invitation';
+    public const VISIBILITY_PRIVATE = 'private';
+    public const VISIBILITY_EVERYONE = 'everyone';
+    public const VISIBILITY_GROUPS = 'groups';
+    public const VISIBILITY_USERS = 'users';
+    public const VISIBILITY_PARTICIPANTS = 'participants';
+
     protected UserSession $userSession;
     protected IGroupManager $groupManager;
 
-    // Schema columns
+    // ── Schema columns ────────────────────────────────────────────────
     public $id = null;
     protected ?int $parentId = null;
     protected int $created = 0;
@@ -87,24 +87,25 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     protected string $title = '';
     protected string $owner = '';
     protected string $type = 'default';
-    protected string $visibility = 'private';
-    protected ?array $visibilityGroups = [];
-    protected ?array $visibilityUsers = [];
-    protected string $groupStatus = 'active';
-    protected string $publicationStatus = 'draft';
+    protected string $visibility = self::VISIBILITY_EVERYONE;
+    /** @var string[] */
+    protected array $visibilityGroups = [];
+    /** @var string[] */
+    protected array $visibilityUsers = [];
+    protected string $groupStatus = self::STATUS_ACTIVE;
+    protected ?string $ownedGroup = null;
     protected ?string $description = null;
     protected ?string $titleExt = null;
-    protected ?string $ownedGroup = null;
     protected int $order = 0;
     protected ?int $expire = null;
-    protected ?string $metadata = null;
+    protected ?array $metadata = null;
     protected ?int $coverId = null;
     protected bool $protected = false;
     protected bool $allowEdit = false;
     protected ?string $supportResult = null;
     protected ?string $supportEngine = null;
 
-    // Joined/injected data
+    // ── Joined / injected data ───────────────────────────────────────
     protected ?string $inquiryIds = '';
     protected array $miscFields = [];
     protected array $childs = [];
@@ -121,13 +122,12 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->addType('visibilityGroups', 'json');
         $this->addType('visibilityUsers', 'json');
         $this->addType('groupStatus', 'string');
-        $this->addType('publicationStatus', 'string');
+        $this->addType('ownedGroup', 'string');
         $this->addType('description', 'string');
         $this->addType('titleExt', 'string');
-        $this->addType('ownedGroup', 'string');
         $this->addType('order', 'integer');
         $this->addType('expire', 'integer');
-        $this->addType('metadata', 'string');
+        $this->addType('metadata', 'json');
         $this->addType('coverId', 'integer');
         $this->addType('protected', 'boolean');
         $this->addType('allowEdit', 'boolean');
@@ -141,8 +141,44 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->groupManager = Container::queryClass(IGroupManager::class);
     }
 
-    // ─── Basic getters/setters (additional) ──────────────────────────────
+    // ── Visibility ────────────────────────────────────────────────────
 
+    public function getVisibility(): string
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(string $visibility): void
+    {
+        $allowed = [
+            self::VISIBILITY_INVITATION,
+            self::VISIBILITY_PRIVATE,
+            self::VISIBILITY_EVERYONE,
+            self::VISIBILITY_GROUPS,
+            self::VISIBILITY_USERS,
+            self::VISIBILITY_PARTICIPANTS,
+        ];
+        $this->visibility = in_array($visibility, $allowed, true)
+            ? $visibility
+            : self::VISIBILITY_EVERYONE;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getVisibilityGroups(): array
+    {
+        return $this->visibilityGroups ?? [];
+    }
+
+    public function setVisibilityGroups(?array $visibilityGroups): void
+    {
+        $this->visibilityGroups = $visibilityGroups ?? [];
+    }
+
+    /**
+     * @return string[]
+     */
     public function getVisibilityUsers(): array
     {
         return $this->visibilityUsers ?? [];
@@ -150,9 +186,32 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
 
     public function setVisibilityUsers(?array $visibilityUsers): void
     {
-        $this->visibilityUsers = $visibilityUsers;
+        $this->visibilityUsers = $visibilityUsers ?? [];
     }
 
+    // ── Protected / allowEdit ─────────────────────────────────────────
+
+    public function getProtected(): bool
+    {
+        return $this->protected;
+    }
+
+    public function setProtected(bool $protected): void
+    {
+        $this->protected = $protected;
+    }
+
+    public function getAllowEdit(): bool
+    {
+        return $this->allowEdit;
+    }
+
+    public function setAllowEdit(bool $allow): void
+    {
+        $this->allowEdit = $allow;
+    }
+
+    // ── Support ───────────────────────────────────────────────────────
 
     public function getSupportResult(): ?array
     {
@@ -161,6 +220,11 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         }
         $decoded = json_decode($this->supportResult, true);
         return is_array($decoded) ? $decoded : [];
+    }
+
+    public function setSupportResult(?array $value): void
+    {
+        $this->supportResult = $value === null ? null : json_encode($value);
     }
 
     public function getSupportEngine(): array
@@ -172,7 +236,12 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         return is_array($decoded) ? $decoded : [];
     }
 
-    // ─── Inquiry IDs ──────────────────────────────────────────────────────
+    public function setSupportEngine(?array $value): void
+    {
+        $this->supportEngine = $value === null ? null : json_encode($value);
+    }
+
+    // ── Inquiry IDs ───────────────────────────────────────────────────
 
     /**
      * @return int[]
@@ -187,7 +256,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
 
     public function setInquiryIds(array $inquiryIds): void
     {
-        $this->inquiryIds = implode(self::CONCAT_SEPARATOR, $inquiryIds);
+        $this->inquiryIds = implode(self::CONCAT_SEPARATOR, array_map('intval', $inquiryIds));
     }
 
     public function hasInquiry(int $inquiryId): bool
@@ -195,7 +264,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         return in_array($inquiryId, $this->getInquiryIds(), true);
     }
 
-    // ─── Children ─────────────────────────────────────────────────────────
+    // ── Children ──────────────────────────────────────────────────────
 
     public function getChilds(): array
     {
@@ -207,19 +276,36 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->childs = $childs;
     }
 
-    // ─── Misc fields ──────────────────────────────────────────────────────
+    // ── Misc fields ───────────────────────────────────────────────────
 
     public function getMiscArray(): array
     {
         return $this->miscFields;
     }
 
+    /** Alias of {@see getMiscArray()} for callers that prefer the plural form. */
+    public function getMiscFields(): array
+    {
+        return $this->miscFields;
+    }
+
+    /**
+     * Accepts either:
+     *   - a list of ['key' => ..., 'value' => ...] entries, or
+     *   - a plain key => value map.
+     */
     public function setMiscFields(array $misc): void
     {
-        foreach ($misc as $field) {
-            $key = $field['key'] ?? null;
-            if ($key) {
-                $this->miscFields[$key] = $field['value'] ?? null;
+        foreach ($misc as $key => $value) {
+            if (is_array($value) && isset($value['key'])) {
+                // list-of-definitions format
+                $fieldKey = (string) $value['key'];
+                $this->miscFields[$fieldKey] = $value['value'] ?? null;
+                continue;
+            }
+            // plain key => value map
+            if (is_string($key) || is_int($key)) {
+                $this->miscFields[(string) $key] = $value;
             }
         }
     }
@@ -228,8 +314,8 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     {
         foreach ($fieldsDefinition as $field) {
             $key = $field['key'] ?? null;
-            if ($key) {
-                $this->miscFields[$key] = $field['default'] ?? null;
+            if ($key !== null) {
+                $this->miscFields[(string) $key] = $field['default'] ?? null;
             }
         }
     }
@@ -244,18 +330,18 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->miscFields[$key] = $value;
     }
 
-    // ─── Slug ─────────────────────────────────────────────────────────────
+    // ── Slug ──────────────────────────────────────────────────────────
 
     public function getSlug(): string
     {
         $slug = preg_replace('/[^a-zA-Z0-9\s]/', '', $this->getTitle() ?: 'group');
-        if ($slug === '') {
+        if ($slug === '' || $slug === null) {
             $slug = 'group';
         }
         return strtolower(str_replace(' ', '-', $slug)) . '-' . $this->getId();
     }
 
-    // ─── User role (simplified) ──────────────────────────────────────────
+    // ── Role ──────────────────────────────────────────────────────────
 
     public function getUserRole(): string
     {
@@ -266,68 +352,54 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         if ($this->userSession->isAdmin()) {
             return 'admin';
         }
-        // You can extend with group-based roles if needed
         return 'user';
     }
 
-    // ─── Nested objects for frontend ─────────────────────────────────────
+    // ── Frontend objects ──────────────────────────────────────────────
 
-    /**
-     * Configuration array matching TypeScript InquiryGroupConfiguration
-     */
     public function getConfigurationArray(): array
     {
         return [
             'visibility' => $this->getVisibility(),
-            'visibilityGroups' => $this->getVisibilityGroups() ?? [],
-            'visibilityUsers' => $this->getVisibilityUsers() ?? [],
+            'visibilityGroups' => $this->getVisibilityGroups(),
+            'visibilityUsers' => $this->getVisibilityUsers(),
             'expire' => $this->getExpire(),
             'supportEngine' => $this->getSupportEngine(),
             'description' => $this->getDescription(),
-            'protected' => (bool)$this->getProtected(),
+            'protected' => $this->getProtected(),
             'titleExt' => $this->getTitleExt(),
         ];
     }
 
-    /**
-     * Status array matching TypeScript InquiryGroupStatus
-     */
     public function getStatusArray(): array
     {
         return [
             'groupStatus' => $this->getGroupStatus(),
-            'publicationStatus' => $this->getPublicationStatus(),
             'created' => $this->getCreated(),
             'deleted' => $this->getDeleted(),
             'supportResult' => $this->getSupportResult(),
         ];
     }
 
-    /**
-     * Permissions array matching TypeScript InquiryGroupPermissions
-     */
     public function getPermissionsArray(): array
     {
         $isOwner = $this->getOwner() === $this->userSession->getCurrentUserId();
         $isAdmin = $this->userSession->isAdmin();
         $canEdit = $this->getAllowEdit() || $isOwner || $isAdmin;
-        $isProtected = (bool)$this->getProtected();
+        $isProtected = $this->getProtected();
 
         return [
-            'view' => true,
-            'edit' => $canEdit && !$isProtected,
-            'delete' => ($isOwner || $isAdmin) && !$isProtected,
-            'addInquiries' => $canEdit && !$isProtected,
-            'reorderInquiries' => $canEdit && !$isProtected,
-            'changeOwner' => ($isOwner || $isAdmin) && !$isProtected,
-            'archive' => ($isOwner || $isAdmin) && !$isProtected,
-            'clone' => true,
+            self::PERMISSION_VIEW => true,
+            self::PERMISSION_EDIT => $canEdit && !$isProtected,
+            self::PERMISSION_DELETE => ($isOwner || $isAdmin) && !$isProtected,
+            self::PERMISSION_ADD_INQUIRIES => $canEdit && !$isProtected,
+            self::PERMISSION_REORDER_INQUIRIES => $canEdit && !$isProtected,
+            self::PERMISSION_CHANGE_OWNER => ($isOwner || $isAdmin) && !$isProtected,
+            self::PERMISSION_ARCHIVE => ($isOwner || $isAdmin) && !$isProtected,
+            self::PERMISSION_CLONE => true,
         ];
     }
 
-    /**
-     * Current user status matching TypeScript CurrentUserInquiryGroupStatus
-     */
     public function getCurrentUserStatus(): array
     {
         return [
@@ -336,16 +408,15 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
             'userId' => $this->userSession->getCurrentUserId(),
             'userRole' => $this->getUserRole(),
             'canEdit' => $this->getAllowEdit() || $this->userSession->isAdmin(),
-            'isProtected' => (bool)$this->getProtected(),
+            'isProtected' => $this->getProtected(),
         ];
     }
 
-    // ─── JSON Serialization ──────────────────────────────────────────────
+    // ── JSON ──────────────────────────────────────────────────────────
 
     public function jsonSerialize(): array
     {
         return [
-            // flat fields (backward compatibility)
             'id' => $this->getId(),
             'parentId' => $this->getParentId(),
             'created' => $this->getCreated(),
@@ -354,10 +425,9 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
             'owner' => $this->getOwner(),
             'type' => $this->getType(),
             'groupStatus' => $this->getGroupStatus(),
-            'publicationStatus' => $this->getPublicationStatus(),
+            'ownedGroup' => $this->getOwnedGroup(),
             'title' => $this->getTitle(),
             'titleExt' => $this->getTitleExt(),
-            'ownedGroup' => $this->getOwnedGroup(),
             'order' => $this->getOrder(),
             'expire' => $this->getExpire(),
             'metadata' => $this->getMetadata(),
@@ -369,7 +439,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
             'slug' => $this->getSlug(),
             'miscFields' => $this->getMiscArray(),
 
-            // nested objects (new)
             'configuration' => $this->getConfigurationArray(),
             'status' => $this->getStatusArray(),
             'permissions' => $this->getPermissionsArray(),
@@ -377,7 +446,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         ];
     }
 
-    // ─── Permission helpers (used by Service) ────────────────────────────
+    // ── Permissions ───────────────────────────────────────────────────
 
     public function getIsAllowed(string $permission): bool
     {
@@ -393,15 +462,13 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         return true;
     }
 
-    // ─── Legacy / compatibility ──────────────────────────────────────────
+    // ── Legacy aliases ────────────────────────────────────────────────
 
-    // alias of getOwner()
     public function getUserId(): string
     {
         return $this->getOwner();
     }
 
-    // alias of setOwner($value)
     public function setUserId(string $userId): void
     {
         $this->setOwner($userId);
@@ -415,11 +482,5 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     public function setName(string $name): void
     {
         $this->setTitle($name);
-    }
-
-    // This method is used by the service to set basic permissions
-    public function setAllowEdit(bool $allow): void
-    {
-        $this->allowEdit = $allow;
     }
 }

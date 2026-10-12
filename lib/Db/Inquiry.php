@@ -86,10 +86,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	public const VISIBILITY_USERS = 'users';
 	public const VISIBILITY_PARTICIPANTS = 'participants';
 
-	// Legacy access types (kept for backwards compatibility with main)
-	public const ACCESS_PRIVATE = 'private';
-	public const ACCESS_OPEN = 'open';
-	public const ACCESS_GROUP = 'groups';
 
 	// PublicationStatus types
 	public const PUBLICATION_STATUS_DRAFT = 'draft';

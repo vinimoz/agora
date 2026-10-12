@@ -50,9 +50,10 @@ export const CONTENT_VALUES = [
   'messages',
   'statistics',
   'activity',
-   'hero',      
+  'hero',
+  'group_types',  
   'news',          
-  'services',
+ // 'services',
   'events',   
   'explore',    
   'promo',        
@@ -84,7 +85,7 @@ export const VALID_SOURCES_BY_CONTENT: Record<ContentValue, SourceValue[]> = {
   'activity':       ['group', 'children', 'all'],
   'hero':           ['all'],
   'news':           ['municipal', 'all', 'featured'],
-  'services':       ['all'],
+  'group_types':    ['all', 'featured'],
   'events':         ['all', 'featured'],
   'explore':        ['all'],
   'promo':          ['featured', 'all'],
@@ -104,6 +105,7 @@ export const DISPLAY_TYPE_VALUES = [
   'book',
   'widget',
   'tool',
+  'tiles',
   'banner',        
   'news_list',    
   'quick_actions',    
@@ -130,8 +132,9 @@ export const VALID_DISPLAYS_BY_CONTENT: Record<ContentValue, DisplayType[]> = {
   'statistics':     ['widget', 'list', 'cards'],
   'activity':       ['feed', 'list'],
   'hero':           ['banner'],
+  'group_types':    ['tiles', 'grid', 'list', 'my_spaces'],
   'news':           ['news_list', 'list'],
-  'services':       ['quick_actions', 'list'],
+//  'services':       ['quick_actions', 'list'],
   'events':         ['calendar', 'list'],
   'explore':        ['category_grid'],
   'promo':          ['promo_card'],
@@ -176,7 +179,8 @@ export const VALID_TOOLS_BY_CONTENT: Record<ContentValue, ToolKey[]> = {
   'activity':       [],
   'hero':           [],
   'news':           [],
-  'services':       [],
+  'group_types':    []
+ // 'services':       [],
   'events':         [],
   'explore':        [],
   'promo':          [],
@@ -188,7 +192,7 @@ export const INTERACTION_ACTIONS = [
   'select', 'open', 'navigate', 'vote', 'edit', 'comment', 'support',
 ] as const
 export type InteractionAction = typeof INTERACTION_ACTIONS[number]
-
+//
 export const INTERACTION_TARGETS = [
   'same_view', 'dialog', 'page', 'panel', 'modal',
 ] as const

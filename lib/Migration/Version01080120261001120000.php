@@ -30,7 +30,7 @@ class Version01080120261001120000 extends SimpleMigrationStep
      */
     private const COLUMNS_TO_DROP = [
         'agora_inquiries' => ['access'],
-        'agora_inq_group' => ['access', 'owned_group'],
+        'agora_inq_group' => ['access','publicationStatus'],
         'agora_options'   => ['access', 'owned_group'],
     ];
 

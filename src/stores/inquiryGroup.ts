@@ -19,7 +19,6 @@ import type {
   InquiryGroupType,
   InquiryGroupConfiguration,
   InquiryGroupStatus,
-  PublicationStatus,
   InquiryGroupWorkflowStatus,
   VisibilityType,
   InquiryGroupUIConfig,
@@ -98,7 +97,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
     // Status - matches inquiry.ts pattern
     status: {
       groupStatus: 'draft' as InquiryGroupWorkflowStatus,
-      publicationStatus: 'draft' as PublicationStatus,
       created: 0,
       deleted: 0,
       updated: 0,
@@ -310,14 +308,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
       return this.status.groupStatus === 'closed'
     },
 
-    isPublished(): boolean {
-      return this.status.publicationStatus === 'published'
-    },
-
-    isPending(): boolean {
-      return this.status.publicationStatus === 'pending'
-    },
-
     // ============================================================
     // Current user status (matches inquiry.ts pattern)
     // ============================================================
@@ -391,7 +381,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
         },
         status: {
           groupStatus: this.status.groupStatus,
-          publicationStatus: this.status.publicationStatus,
           created: this.status.created,
           deleted: this.status.deleted,
           updated: this.status.updated || 0,
@@ -596,7 +585,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
       if (data.status) {
         this.status = {
           groupStatus: data.status.groupStatus || this.status.groupStatus || 'draft',
-          publicationStatus: data.status.publicationStatus || this.status.publicationStatus || 'draft',
           created: data.status.created !== undefined ? data.status.created : this.status.created,
           deleted: data.status.deleted !== undefined ? data.status.deleted : this.status.deleted,
           updated: data.status.updated !== undefined ? data.status.updated : this.status.updated,
@@ -645,7 +633,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
       }
       this.status = {
         groupStatus: 'draft',
-        publicationStatus: 'draft',
         created: 0,
         deleted: 0,
         updated: 0,
@@ -789,11 +776,9 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
       ownedGroup?: string
       groupStatus?: InquiryGroupWorkflowStatus
       expire?: number
-      publicationStatus?: PublicationStatus
       configuration?: InquiryGroupConfiguration
     }): Promise<InquiryGroup | void> {
       try {
-	   console.log(" UPDATEING publication", payload.publicationStatus)
         const response = await InquiryGroupsAPI.updateGroup(this.id, {
           title: payload.title,
           titleExt: payload.titleExt,
@@ -804,7 +789,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
           ownedGroup: payload.ownedGroup,
           groupStatus: payload.groupStatus,
           expire: payload.expire,
-          publicationStatus: payload.publicationStatus,
           configuration: payload.configuration,
         })
 
@@ -854,29 +838,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
       }
     },
 
-    /**
-     * Update publication status
-     */
-    async updatePublicationStatus(status: PublicationStatus): Promise<void> {
-      this.status.publicationStatus = status
-
-      const groupStatusMap: Record<PublicationStatus, InquiryGroupWorkflowStatus> = {
-        draft: 'draft',
-        pending: 'pending',
-        published: 'active',
-        archived: 'archived',
-        deleted: 'archived',
-      }
-
-      try {
-        await this.update({
-		publicationStatus: status, groupStatus: groupStatusMap[status],
-	})
-      } catch (error) {
-	      Logger.error('Error updating publication status', { error, status })
-	      throw error
-      }
-    },
 
     /**
      * Update visibility

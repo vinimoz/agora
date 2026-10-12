@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OCA\Agora\Db;
 
 use Exception;
-use OCA\Agora\Helper\SqlHelper;
 use OCA\Agora\UserSession;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -35,77 +34,53 @@ class InquiryGroupMapper extends QBMapper
 	}
 
 	/**
-	 * List all InquiryGroups
-	 *
-	 * @return InquiryGroup[]
-	 */
-	public function list(): array
-	{
-		$qb = $this->buildQuery();
-		$qb->orderBy('title', 'ASC');
-		$inquiryGroups = $this->findEntities($qb);
+ * List all InquiryGroups (no soft-delete filter — use findActive() for that).
+ *
+ * @return InquiryGroup[]
+ */
+public function list(): array
+{
+    $qb = $this->buildQuery();
+    $qb->orderBy('title', 'ASC')
+       ->addOrderBy(self::TABLE . '.id', 'ASC');
 
-		// Load dynamic fields for all inquiry groups in one query
-		$this->loadDynamicFieldsForMultiple($inquiryGroups);
+    $inquiryGroups = $this->findEntities($qb);
 
-		 // Load visibility groups for all inquiry groups in one query
-		$this->loadVisibilityGroupsForMultiple($inquiryGroups);
-		
-		// Load visibility users for all inquiry groups in one query
-    		$this->loadVisibilityUsersForMultiple($inquiryGroups);
-		return $inquiryGroups;
-	}
+    // Batched hydration — one query per relation type, never per row.
+    $this->loadDynamicFieldsForMultiple($inquiryGroups);   
+    $this->loadVisibilityGroupsForMultiple($inquiryGroups); 
+    $this->loadVisibilityUsersForMultiple($inquiryGroups);  
+    $this->loadInquiryIdsForMultiple($inquiryGroups);        
 
+    return $inquiryGroups;
+}
 	/**
-	 * Find a InquiryGroup by its ID
-	 *
-	 * @param  int $id id off inquiry group
-	 * @return InquiryGroup
+	 * Find an InquiryGroup by its ID
 	 */
 	public function find(int $id): InquiryGroup
 	{
 		$qb = $this->buildQuery();
-
-		$qb->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id)));
+		$qb->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		$inquiryGroup = $this->findEntity($qb);
 		$this->loadDynamicFields($inquiryGroup);
-
-		// Load visibility groups
-		$visibilityGroups = $this->getVisibilityGroupsForGroup($id);
-		$inquiryGroup->setVisibilityGroups($visibilityGroups);
-		
-		 // Load visibility users
-	    	$visibilityUsers = $this->getVisibilityUsersForGroup($id);
-   		$inquiryGroup->setVisibilityUsers($visibilityUsers);
+		$inquiryGroup->setVisibilityGroups($this->getVisibilityGroupsForGroup($id));
+		$inquiryGroup->setVisibilityUsers($this->getVisibilityUsersForGroup($id));
 
 		return $inquiryGroup;
 	}
 
-	/**
-	 * Load misc fields for an InquiryGroup (similar to InquiryMapper)
-	 *
-	 * @param InquiryGroup $inquiryGroup
-	 */
 	public function loadFieldsMisc(InquiryGroup $inquiryGroup): void
 	{
 		$this->loadDynamicFields($inquiryGroup);
 	}
 
-	/**
-	 * Get InquiryGroup with misc fields loaded
-	 *
-	 * @param int $id
-	 * @param bool $getDeleted
-	 * @param bool $withMiscFields
-	 * @return InquiryGroup
-	 */
 	public function get(int $id, bool $getDeleted = false, bool $withMiscFields = true): InquiryGroup
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(self::TABLE . '.*')
-     ->from($this->getTableName(), self::TABLE)
-     ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+			->from($this->getTableName(), self::TABLE)
+			->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		if (!$getDeleted) {
 			$qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
@@ -117,59 +92,44 @@ class InquiryGroupMapper extends QBMapper
 			$this->loadDynamicFields($inquiryGroup);
 		}
 
-		// Load visibility groups
-		$visibilityGroups = $this->getVisibilityGroupsForGroup($id);
-		$inquiryGroup->setVisibilityGroups($visibilityGroups);
+		$inquiryGroup->setVisibilityGroups($this->getVisibilityGroupsForGroup($id));
+		$inquiryGroup->setVisibilityUsers($this->getVisibilityUsersForGroup($id));
 
-		// Load visibility users
-    $visibilityUsers = $this->getVisibilityUsersForGroup($id);
-    $inquiryGroup->setVisibilityUsers($visibilityUsers);
-
-		
-	   return $inquiryGroup;
+		return $inquiryGroup;
 	}
 
 	/**
-	 * Find active (non-deleted) InquiryGroups with misc fields
-	 *
 	 * @return InquiryGroup[]
 	 */
 	public function findActive(): array
 	{
 		$qb = $this->buildQuery();
 		$qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0)))
-     ->orderBy('created', 'ASC')
-     ->addOrderBy('title', 'ASC');
+			->orderBy('created', 'ASC')
+			->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
-
-		// Load dynamic fields for all inquiry groups in one query
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
 
 		return $inquiryGroups;
 	}
 
 	/**
-	 * Find expired InquiryGroups with misc fields
-	 *
 	 * @return InquiryGroup[]
 	 */
 	public function findExpired(): array
 	{
 		$qb = $this->buildQuery();
-		$qb->where($qb->expr()->lt(self::TABLE . '.expire', $qb->createNamedParameter(time())))
-     ->andWhere($qb->expr()->isNotNull(self::TABLE . '.expire'))
-     ->orderBy('created', 'ASC')
-     ->addOrderBy('title', 'ASC');
+		$qb->where($qb->expr()->lt(self::TABLE . '.expire', $qb->createNamedParameter(time(), IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->isNotNull(self::TABLE . '.expire'))
+			->orderBy('created', 'ASC')
+			->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
-
-		// Load dynamic fields for all inquiry groups in one query
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
 
 		return $inquiryGroups;
 	}
-
 
 	/**
 	 * Get visibility groups for an inquiry group
@@ -178,10 +138,10 @@ class InquiryGroupMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('group_id')
-     ->from(GroupRelation::TABLE)
-     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-     ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+			->from(GroupRelation::TABLE)
+			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
 
 		$result = $qb->executeQuery();
 		$groupIds = $result->fetchAll(\PDO::FETCH_COLUMN);
@@ -190,13 +150,8 @@ class InquiryGroupMapper extends QBMapper
 		return array_map('strval', $groupIds);
 	}
 
-	/**
-	 * Save visibility groups for an inquiry group
-	 */
 	public function saveVisibilityGroups(InquiryGroup $inquiryGroup): void
 	{
-		// Need to inject GroupRelationMapper or use direct query
-		// Let's use direct queries for simplicity
 		$this->deleteVisibilityGroupsForGroup($inquiryGroup->getId());
 
 		$groupIds = $inquiryGroup->getVisibilityGroups() ?? [];
@@ -212,48 +167,42 @@ class InquiryGroupMapper extends QBMapper
 
 			$qb = $this->db->getQueryBuilder();
 			$qb->insert(GroupRelation::TABLE)
-      ->values([
-	      'target_type' => $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
-	      'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
-	      'relation_type' => $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
-	      'group_id' => $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_STR),
-	      'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
-      ])
-      ->executeStatement();
+				->values([
+					'target_type' => $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
+					'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
+					'relation_type' => $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
+					'group_id' => $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_STR),
+					'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
+				])
+				->executeStatement();
 		}
 	}
 
-	/**
-	 * Delete visibility groups for an inquiry group
-	 */
 	public function deleteVisibilityGroupsForGroup(int $groupId): int
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete(GroupRelation::TABLE)
-     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-     ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
 
 		return $qb->executeStatement();
 	}
 
-	/**
-	 * Load visibility groups for multiple groups
-	 */
 	public function loadVisibilityGroupsForMultiple(array $groups): void
 	{
 		if (empty($groups)) {
 			return;
 		}
 
-		$groupIds = array_map(fn($group) => $group->getId(), $groups);
+		$groupIds = array_map(fn ($group) => $group->getId(), $groups);
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('target_id', 'group_id')
-     ->from(GroupRelation::TABLE)
-     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
-     ->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
+			->from(GroupRelation::TABLE)
+			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$result = $qb->executeQuery();
 		$rows = $result->fetchAll();
@@ -261,150 +210,186 @@ class InquiryGroupMapper extends QBMapper
 
 		$groupsByTarget = [];
 		foreach ($rows as $row) {
-			$targetId = (int)$row['target_id'];
-			if (!isset($groupsByTarget[$targetId])) {
-				$groupsByTarget[$targetId] = [];
-			}
-			$groupsByTarget[$targetId][] = (string)$row['group_id'];
+			$targetId = (int) $row['target_id'];
+			$groupsByTarget[$targetId][] = (string) $row['group_id'];
 		}
 
 		foreach ($groups as $group) {
-			$id = $group->getId();
-			$group->setVisibilityGroups($groupsByTarget[$id] ?? []);
+			$group->setVisibilityGroups($groupsByTarget[$group->getId()] ?? []);
 		}
 	}
 
+	public function getVisibilityUsersForGroup(int $groupId): array
+	{
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('user_id')
+			->from(UserRelation::TABLE)
+			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+
+		$result = $qb->executeQuery();
+		$userIds = $result->fetchAll(\PDO::FETCH_COLUMN);
+		$result->closeCursor();
+
+		return array_map('strval', $userIds);
+	}
+
+	public function saveVisibilityUsers(InquiryGroup $inquiryGroup): void
+	{
+		$this->deleteVisibilityUsersForGroup($inquiryGroup->getId());
+
+		$userIds = $inquiryGroup->getVisibilityUsers() ?? [];
+		if (empty($userIds)) {
+			return;
+		}
+
+		$now = time();
+		foreach ($userIds as $userId) {
+			if (empty($userId)) {
+				continue;
+			}
+
+			$qb = $this->db->getQueryBuilder();
+			$qb->insert(UserRelation::TABLE)
+				->values([
+					'target_type' => $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
+					'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
+					'relation_type' => $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
+					'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
+					'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
+				])
+				->executeStatement();
+		}
+	}
+
+	public function deleteVisibilityUsersForGroup(int $groupId): int
+	{
+		$qb = $this->db->getQueryBuilder();
+		$qb->delete(UserRelation::TABLE)
+			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+
+		return $qb->executeStatement();
+	}
+
+	public function loadVisibilityUsersForMultiple(array $groups): void
+	{
+		if (empty($groups)) {
+			return;
+		}
+
+		$groupIds = array_map(fn ($group) => $group->getId(), $groups);
+
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('target_id', 'user_id')
+			->from(UserRelation::TABLE)
+			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		$result = $qb->executeQuery();
+		$rows = $result->fetchAll();
+		$result->closeCursor();
+
+		$usersByTarget = [];
+		foreach ($rows as $row) {
+			$targetId = (int) $row['target_id'];
+			$usersByTarget[$targetId][] = (string) $row['user_id'];
+		}
+
+		foreach ($groups as $group) {
+			$group->setVisibilityUsers($usersByTarget[$group->getId()] ?? []);
+		}
+	}
+
+	/**
+	 * Add an inquiry to a group
+	 */
 	public function addInquiryToGroup(int $inquiryId, int $groupId): void
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->insert(InquiryGroup::RELATION_TABLE)
-     ->setValue('inquiry_id', $qb->createNamedParameter($inquiryId))
-     ->setValue('group_id', $qb->createNamedParameter($groupId));
-		$qb->executeStatement();
+			->setValue('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
+			->setValue('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT))
+			->executeStatement();
 	}
 
-
-
-/**
- * Get visibility users for an inquiry group
- */
-public function getVisibilityUsersForGroup(int $groupId): array
-{
-    $qb = $this->db->getQueryBuilder();
-    $qb->select('user_id')
-        ->from(UserRelation::TABLE)
-        ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-        ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-        ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
-
-    $result = $qb->executeQuery();
-    $userIds = $result->fetchAll(\PDO::FETCH_COLUMN);
-    $result->closeCursor();
-
-    return array_map('strval', $userIds);
-}
-
-/**
- * Save visibility users for an inquiry group
- */
-public function saveVisibilityUsers(InquiryGroup $inquiryGroup): void
-{
-    $this->deleteVisibilityUsersForGroup($inquiryGroup->getId());
-
-    $userIds = $inquiryGroup->getVisibilityUsers() ?? [];
-    if (empty($userIds)) {
-        return;
-    }
-
-    $now = time();
-    foreach ($userIds as $userId) {
-        if (empty($userId)) {
-            continue;
-        }
-
-        $qb = $this->db->getQueryBuilder();
-        $qb->insert(UserRelation::TABLE)
-            ->values([
-                'target_type' => $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
-                'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
-                'relation_type' => $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
-                'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
-                'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
-            ])
-            ->executeStatement();
-    }
-}
-
-/**
- * Delete visibility users for an inquiry group
- */
-public function deleteVisibilityUsersForGroup(int $groupId): int
-{
-    $qb = $this->db->getQueryBuilder();
-    $qb->delete(UserRelation::TABLE)
-        ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-        ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-        ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
-
-    return $qb->executeStatement();
-}
-
-/**
- * Load visibility users for multiple groups
- */
-public function loadVisibilityUsersForMultiple(array $groups): void
-{
-    if (empty($groups)) {
-        return;
-    }
-
-    $groupIds = array_map(fn($group) => $group->getId(), $groups);
-
-    $qb = $this->db->getQueryBuilder();
-    $qb->select('target_id', 'user_id')
-        ->from(UserRelation::TABLE)
-        ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-        ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
-        ->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
-
-    $result = $qb->executeQuery();
-    $rows = $result->fetchAll();
-    $result->closeCursor();
-
-    $usersByTarget = [];
-    foreach ($rows as $row) {
-        $targetId = (int)$row['target_id'];
-        if (!isset($usersByTarget[$targetId])) {
-            $usersByTarget[$targetId] = [];
-        }
-        $usersByTarget[$targetId][] = (string)$row['user_id'];
-    }
-
-    foreach ($groups as $group) {
-        $id = $group->getId();
-        $group->setVisibilityUsers($usersByTarget[$id] ?? []);
-    }
-}
-
-
 	/**
-	 * Remove a Inquiry from a InquiryGroup
-	 *
-	 * @param  int $inquiryId id of inquiry
-	 * @param  int $groupId   id of group
-	 * @throws Exception
+	 * Remove an inquiry from a group
 	 */
 	public function removeInquiryFromGroup(int $inquiryId, int $groupId): void
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete(InquiryGroup::RELATION_TABLE)
-     ->where(
-	     $qb->expr()->andX(
-		     $qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId)),
-		     $qb->expr()->eq('group_id', $qb->createNamedParameter($groupId))
-	     )
-     );
-		$qb->executeStatement();
+			->where(
+				$qb->expr()->andX(
+					$qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)),
+					$qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT))
+				)
+			)
+			->executeStatement();
+	}
+
+	/**
+	 * Update the ordering of inquiries within a group.
+	 *
+	 * The relation table may or may not have an "order" column. If it does,
+	 * we persist it; otherwise we replace the relations (preserving the
+	 * logical order by re-inserting rows).
+	 *
+	 * @param int[] $inquiryIds ordered list of inquiry IDs
+	 */
+	public function updateInquiryOrder(int $groupId, array $inquiryIds): void
+	{
+		$inquiryIds = array_values(array_map('intval', $inquiryIds));
+
+		// If an "order" column exists on the relation table, update it.
+		if ($this->hasRelationOrderColumn()) {
+			foreach ($inquiryIds as $index => $inquiryId) {
+				$qb = $this->db->getQueryBuilder();
+				$qb->update(InquiryGroup::RELATION_TABLE)
+					->set('order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT))
+					->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+					->andWhere($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+					->executeStatement();
+			}
+			return;
+		}
+
+		// Fallback: rebuild the relations in the requested order.
+		$this->db->beginTransaction();
+		try {
+			$qb = $this->db->getQueryBuilder();
+			$qb->delete(InquiryGroup::RELATION_TABLE)
+				->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+				->executeStatement();
+
+			foreach ($inquiryIds as $inquiryId) {
+				$this->addInquiryToGroup($inquiryId, $groupId);
+			}
+			$this->db->commit();
+		} catch (Exception $e) {
+			$this->db->rollBack();
+			throw $e;
+		}
+	}
+
+	private function hasRelationOrderColumn(): bool
+	{
+		static $hasOrder = null;
+		if ($hasOrder !== null) {
+			return $hasOrder;
+		}
+		try {
+			$schema = $this->db->createSchema();
+			$table = $schema->getTable($this->getTableName());
+			$hasOrder = $table->hasColumn('order');
+		} catch (\Throwable $e) {
+			$hasOrder = false;
+		}
+		return $hasOrder;
 	}
 
 	public function add(InquiryGroup $inquiryGroup): InquiryGroup
@@ -416,31 +401,30 @@ public function loadVisibilityUsersForMultiple(array $groups): void
 
 	public function tidyInquiryGroups(): void
 	{
-		$qb = $this->db->getQueryBuilder();
-
 		$subquery = $this->db->getQueryBuilder();
 		$subquery->selectDistinct('group_id')->from(InquiryGroup::RELATION_TABLE);
 
+		$qb = $this->db->getQueryBuilder();
 		$qb->delete(InquiryGroup::TABLE)
-     ->where(
-	     $qb->expr()->notIn(
-		     'id',
-		     $qb->createFunction($subquery->getSQL()),
-		     IQueryBuilder::PARAM_INT_ARRAY
-	     )
-     );
-		$qb->executeStatement();
+			->where(
+				$qb->expr()->notIn(
+					'id',
+					$qb->createFunction($subquery->getSQL()),
+					IQueryBuilder::PARAM_INT_ARRAY
+				)
+			)
+			->executeStatement();
 	}
 
 	/**
-	 * Get inquiry IDs for a group
+	 * @return int[]
 	 */
 	public function getInquiryIdsForGroup(int $groupId): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('inquiry_id')
-     ->from(InquiryGroup::RELATION_TABLE)
-     ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId)));
+			->from(InquiryGroup::RELATION_TABLE)
+			->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)));
 
 		$result = $qb->executeQuery();
 		$inquiryIds = [];
@@ -452,15 +436,12 @@ public function loadVisibilityUsersForMultiple(array $groups): void
 		return $inquiryIds;
 	}
 
-	/**
-	 * Count inquiries in a group
-	 */
 	public function countInquiriesInGroup(int $groupId): int
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select($qb->func()->count('*', 'count'))
-     ->from(InquiryGroup::RELATION_TABLE)
-     ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId)));
+			->from(InquiryGroup::RELATION_TABLE)
+			->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)));
 
 		$result = $qb->executeQuery();
 		$count = (int) $result->fetchOne();
@@ -470,104 +451,106 @@ public function loadVisibilityUsersForMultiple(array $groups): void
 	}
 
 	/**
-	 * Find InquiryGroups by parent ID
-	 *
-	 * @param  int $parentId
 	 * @return InquiryGroup[]
 	 */
 	public function findByParentId(int $parentId): array
 	{
 		$qb = $this->buildQuery();
-		$qb->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId)))
-     ->orderBy('created', 'ASC')
-     ->addOrderBy('title', 'ASC');
+		$qb->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
+			->orderBy('created', 'ASC')
+			->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
-
-		// Load dynamic fields for all inquiry groups in one query
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
 
 		return $inquiryGroups;
 	}
 
 	/**
-	 * Find InquiryGroups by type
-	 *
-	 * @param  string $type
 	 * @return InquiryGroup[]
 	 */
 	public function findByType(string $type): array
 	{
 		$qb = $this->buildQuery();
-		$qb->where($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type)))
-     ->orderBy('created', 'ASC')
-     ->addOrderBy('title', 'ASC');
+		$qb->where($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type, IQueryBuilder::PARAM_STR)))
+			->orderBy('created', 'ASC')
+			->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
-
-		// Load dynamic fields for all inquiry groups in one query
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
 
 		return $inquiryGroups;
 	}
 
 	/**
-	 * Find InquiryGroups by status
-	 *
-	 * @param  string $status
 	 * @return InquiryGroup[]
 	 */
 	public function findByStatus(string $status): array
 	{
 		$qb = $this->buildQuery();
-		$qb->where($qb->expr()->eq(self::TABLE . '.group_status', $qb->createNamedParameter($status)))
-     ->orderBy('created', 'ASC')
-     ->addOrderBy('title', 'ASC');
+		$qb->where($qb->expr()->eq(self::TABLE . '.group_status', $qb->createNamedParameter($status, IQueryBuilder::PARAM_STR)))
+			->orderBy('created', 'ASC')
+			->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
-
-		// Load dynamic fields for all inquiry groups in one query
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
 
 		return $inquiryGroups;
 	}
 
 	/**
-	 * Save dynamic fields to InquiryGroupMisc and update miscFields in InquiryGroup
+	 * Persist dynamic fields for an inquiry group.
+	 *
+	 * @param array      $fieldsDefinition definitions with 'key', 'type', 'default', ...
+	 * @param array|null $miscValues       optional key => value overrides (used e.g. by clone/saveMiscFields)
 	 */
-	public function saveDynamicFields(InquiryGroup $inquiryGroup, array $fieldsDefinition): void
-	{
+	public function saveDynamicFields(
+		InquiryGroup $inquiryGroup,
+		array $fieldsDefinition,
+		?array $miscValues = null,
+	): void {
 		$inquiryGroupId = $inquiryGroup->getId();
 		if (empty($fieldsDefinition)) {
 			return;
 		}
 
-		$qb = $this->db->getQueryBuilder();
-
-		$qb->delete(InquiryGroupMisc::TABLE)
-     ->where($qb->expr()->eq('inquiry_group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
-     ->executeStatement();
+		$deleteQb = $this->db->getQueryBuilder();
+		$deleteQb->delete(InquiryGroupMisc::TABLE)
+			->where($deleteQb->expr()->eq('inquiry_group_id', $deleteQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
 
 		foreach ($fieldsDefinition as $fieldDef) {
-			$key = $fieldDef['key'];
-			$value = $this->castValueByType($fieldDef['default'] ?? null, $fieldDef);
+			if (!isset($fieldDef['key'])) {
+				continue;
+			}
 
-			$qb->insert(InquiryGroupMisc::TABLE)
-      ->values(
-	      [
-		      'inquiry_group_id' => $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
-		      'key'        => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-		      'value'      => $qb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
-	      ]
-      )
-      ->executeStatement();
+			$key = (string) $fieldDef['key'];
+
+			if (is_array($miscValues) && array_key_exists($key, $miscValues)) {
+				$raw = $miscValues[$key];
+			} elseif (array_key_exists('default', $fieldDef)) {
+				$raw = $fieldDef['default'];
+			} else {
+				$raw = null;
+			}
+
+			$value = $this->castValueByType($raw, $fieldDef);
+
+			$insertQb = $this->db->getQueryBuilder();
+			$insertQb->insert(InquiryGroupMisc::TABLE)
+				->values([
+					'inquiry_group_id' => $insertQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
+					'key' => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+					'value' => $insertQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR),
+				])
+				->executeStatement();
 
 			$inquiryGroup->setMiscField($key, $value);
 		}
 	}
 
 	/**
-	 * Update only specified dynamic fields in InquiryGroupMisc and miscFields
+	 * Update only the specified dynamic fields.
 	 */
 	public function updateDynamicFields(InquiryGroup $inquiryGroup, array $fieldsToUpdate, array $fieldsDefinition): void
 	{
@@ -576,103 +559,100 @@ public function loadVisibilityUsersForMultiple(array $groups): void
 			return;
 		}
 
-		$qb = $this->db->getQueryBuilder();
-
 		foreach ($fieldsToUpdate as $key => $value) {
-			$key = (string)$key;
+			$key = (string) $key;
 
-			$fieldDef = array_filter($fieldsDefinition, fn($f) => $f['key'] === $key);
-			$fieldDef = array_shift($fieldDef) ?: ['type' => 'string', 'default' => null];
+			$fieldDef = array_values(array_filter($fieldsDefinition, fn ($f) => ($f['key'] ?? null) === $key));
+			$fieldDef = $fieldDef[0] ?? ['type' => 'string', 'default' => null];
 
-			$value = $this->castValueByType($value ?? $fieldDef['default'], $fieldDef);
+			$value = $this->castValueByType($value ?? ($fieldDef['default'] ?? null), $fieldDef);
 
-			$existing = $qb->select('id')
-		  ->from(InquiryGroupMisc::TABLE)
-		  ->where($qb->expr()->eq('inquiry_group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
-		  ->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
-		  ->executeQuery()
-		  ->fetchOne();
+			$selectQb = $this->db->getQueryBuilder();
+			$existing = $selectQb->select('id')
+				->from(InquiryGroupMisc::TABLE)
+				->where($selectQb->expr()->eq('inquiry_group_id', $selectQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
+				->andWhere($selectQb->expr()->eq('key', $selectQb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
+				->executeQuery()
+				->fetchOne();
 
-			if ($existing) {
-				$qb->update(InquiryGroupMisc::TABLE)
-       ->set('value', $qb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR))
-       ->where($qb->expr()->eq('id', $qb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
-       ->executeStatement();
+			if ($existing !== false && $existing !== null) {
+				$updateQb = $this->db->getQueryBuilder();
+				$updateQb->update(InquiryGroupMisc::TABLE)
+					->set('value', $updateQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR))
+					->where($updateQb->expr()->eq('id', $updateQb->createNamedParameter((int) $existing, IQueryBuilder::PARAM_INT)))
+					->executeStatement();
 			} else {
-				$qb->insert(InquiryGroupMisc::TABLE)
-       ->values(
-	       [
-		       'inquiry_group_id' => $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
-		       'key'        => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-		       'value'      => $qb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
-	       ]
-       )
-       ->executeStatement();
+				$insertQb = $this->db->getQueryBuilder();
+				$insertQb->insert(InquiryGroupMisc::TABLE)
+					->values([
+						'inquiry_group_id' => $insertQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
+						'key' => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+						'value' => $insertQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR),
+					])
+					->executeStatement();
 			}
 
 			$inquiryGroup->setMiscField($key, $value);
 		}
 	}
 
-	/**
-	 * Convert a value to the type defined in fields (similar to InquiryMapper)
-	 */
-	private function castValueByType($value, array $fieldDef)
+	private function castValueByType(mixed $value, array $fieldDef): mixed
 	{
 		$type = $fieldDef['type'] ?? 'string';
 
-		// If value is null, return null
 		if ($value === null) {
 			return null;
 		}
 
 		switch ($type) {
-		case 'integer':
-		case 'int':
-			return (int)$value;
+			case 'integer':
+			case 'int':
+			case 'number':
+				return (int) $value;
 
-		case 'boolean':
-		case 'bool':
-			return (bool)$value;
+			case 'boolean':
+			case 'bool':
+			case 'checkbox':
+				return (bool) $value;
 
-		case 'float':
-		case 'double':
-			return (float)$value;
+			case 'float':
+			case 'double':
+				return (float) $value;
 
-		case 'datetime':
-			return is_numeric($value) ? (int)$value : $value;
+			case 'datetime':
+				return is_numeric($value) ? (int) $value : $value;
 
-		case 'json':
-			if (is_array($value) || is_object($value)) {
-				return json_encode($value);
-			}
-			// If it's already JSON, keep it as is
-			return $value;
-
-		case 'enum':
-			$allowed = $fieldDef['allowed_values'] ?? [];
-			if (in_array($value, $allowed, true)) {
+			case 'json':
+			case 'array':
+			case 'multiselect':
+			case 'users':
+				if (is_array($value) || is_object($value)) {
+					return json_encode($value);
+				}
 				return $value;
-			}
-			return $fieldDef['default'] ?? null;
 
-		case 'string':
-		default:
-		return (string)$value;
+			case 'enum':
+				$allowed = $fieldDef['allowed_values'] ?? [];
+				if (in_array($value, $allowed, true)) {
+					return $value;
+				}
+				return $fieldDef['default'] ?? null;
+
+			case 'string':
+			case 'text':
+			default:
+				return (string) $value;
 		}
 	}
 
-	/**
-	 * Load dynamic fields for a single inquiry group
-	 */
 	private function loadDynamicFields(InquiryGroup $inquiryGroup): void
 	{
 		$inquiryGroupId = $inquiryGroup->getId();
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-     ->from(InquiryGroupMisc::TABLE)
-     ->where($qb->expr()->eq('inquiry_group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)));
+			->from(InquiryGroupMisc::TABLE)
+			->where($qb->expr()->eq('inquiry_group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)));
 
 		$stmt = $qb->executeQuery();
 		$storedData = $stmt->fetchAll();
@@ -680,46 +660,34 @@ public function loadVisibilityUsersForMultiple(array $groups): void
 
 		foreach ($storedData as $data) {
 			if (is_array($data) && isset($data['key'], $data['value'])) {
-				$key = (string) $data['key'];
-				$value = $data['value'];
-
-				$inquiryGroup->setMiscField($key, $value);
+				$inquiryGroup->setMiscField((string) $data['key'], $data['value']);
 			}
 		}
 	}
 
-	/**
-	 * Load dynamic fields for multiple inquiry groups in one query
-	 * This avoids the N+1 query problem
-	 */
 	public function loadDynamicFieldsForMultiple(array $inquiryGroups): void
 	{
 		if (empty($inquiryGroups)) {
 			return;
 		}
 
-		$ids = array_map(fn($group) => $group->getId(), $inquiryGroups);
+		$ids = array_map(fn ($group) => $group->getId(), $inquiryGroups);
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-     ->from(InquiryGroupMisc::TABLE)
-     ->where($qb->expr()->in('inquiry_group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+			->from(InquiryGroupMisc::TABLE)
+			->where($qb->expr()->in('inquiry_group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$stmt = $qb->executeQuery();
 		$allData = $stmt->fetchAll();
 		$stmt->closeCursor();
 
-		// Organize data by inquiry_group_id
 		$groupedData = [];
 		foreach ($allData as $data) {
 			$groupId = (int) $data['inquiry_group_id'];
-			if (!isset($groupedData[$groupId])) {
-				$groupedData[$groupId] = [];
-			}
 			$groupedData[$groupId][] = $data;
 		}
 
-		// Assign data to each inquiry group
 		foreach ($inquiryGroups as $inquiryGroup) {
 			$groupId = $inquiryGroup->getId();
 			if (isset($groupedData[$groupId])) {
@@ -732,89 +700,46 @@ public function loadVisibilityUsersForMultiple(array $groups): void
 		}
 	}
 
-	/**
-	 * Build a simple query without problematic joins
-	 */
 	protected function buildQuery(): IQueryBuilder
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(self::TABLE . '.*')
-     ->from($this->getTableName(), self::TABLE);
-
-		// Remove problematic joins that cause PostgreSQL GROUP BY issues
-		// $this->joinInquiryIds($qb);
-		// $this->joinMiscs($qb, self::TABLE);
+			->from($this->getTableName(), self::TABLE);
 
 		return $qb;
 	}
 
-	/**
-	 * Load inquiry IDs for an InquiryGroup
-	 */
 	public function loadInquiryIds(InquiryGroup $inquiryGroup): void
 	{
-		$inquiryGroupId = $inquiryGroup->getId();
-
-		$qb = $this->db->getQueryBuilder();
-		$qb->select('inquiry_id')
-     ->from(InquiryGroup::RELATION_TABLE)
-     ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)));
-
-		$result = $qb->executeQuery();
-		$inquiryIds = [];
-		while ($row = $result->fetch()) {
-			$inquiryIds[] = (int) $row['inquiry_id'];
-		}
-		$result->closeCursor();
-
-		// Assuming InquiryGroup has a method to set inquiry IDs
-		if (method_exists($inquiryGroup, 'setInquiryIds')) {
-			$inquiryGroup->setInquiryIds($inquiryIds);
-		}
+		$inquiryGroup->setInquiryIds($this->getInquiryIdsForGroup($inquiryGroup->getId()));
 	}
 
-	/**
-	 * Load inquiry IDs for multiple inquiry groups in one query
-	 */
 	public function loadInquiryIdsForMultiple(array $inquiryGroups): void
 	{
 		if (empty($inquiryGroups)) {
 			return;
 		}
 
-		$ids = array_map(fn($group) => $group->getId(), $inquiryGroups);
+		$ids = array_map(fn ($group) => $group->getId(), $inquiryGroups);
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-     ->from(InquiryGroup::RELATION_TABLE)
-     ->where($qb->expr()->in('group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+			->from(InquiryGroup::RELATION_TABLE)
+			->where($qb->expr()->in('group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$stmt = $qb->executeQuery();
 		$allData = $stmt->fetchAll();
 		$stmt->closeCursor();
 
-		// Organize data by group_id
 		$groupedData = [];
 		foreach ($allData as $data) {
 			$groupId = (int) $data['group_id'];
-			if (!isset($groupedData[$groupId])) {
-				$groupedData[$groupId] = [];
-			}
 			$groupedData[$groupId][] = (int) $data['inquiry_id'];
 		}
 
-		// Assign data to each inquiry group
 		foreach ($inquiryGroups as $inquiryGroup) {
 			$groupId = $inquiryGroup->getId();
-			if (isset($groupedData[$groupId])) {
-				if (method_exists($inquiryGroup, 'setInquiryIds')) {
-					$inquiryGroup->setInquiryIds($groupedData[$groupId]);
-				}
-			} else {
-				if (method_exists($inquiryGroup, 'setInquiryIds')) {
-					$inquiryGroup->setInquiryIds([]);
-				}
-			}
+			$inquiryGroup->setInquiryIds($groupedData[$groupId] ?? []);
 		}
 	}
 }

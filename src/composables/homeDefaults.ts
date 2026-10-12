@@ -5,12 +5,12 @@ export const HOME_DEFAULTS: HomeConfig = {
 
   // ------------------------------------------------------------
   hero: {
-    cityName: 'Moorea-Maiao',                
+    cityName: 'The place you want to be',                
     tagline:  "Together, let's build tomorrow",
     title:    'Welcome to Agora',
     subtitle: 'Your civic space for a more direct and participatory democracy',
 
-    backgroundUrl: '',
+    backgroundUrl: '../assets/img/hero.jpg',
 
     showWeather: false,
     weather: { temp: 27, location: 'Moorea' },
@@ -28,7 +28,7 @@ export const HOME_DEFAULTS: HomeConfig = {
     title:    "Together, let's build tomorrow",
     text:     'Participate in the life of your community!',
     cta:      'Discover',
-    imageUrl: '',                      
+    imageUrl: '../assets/img/promo.jpg',                      
   },
 
   services: [

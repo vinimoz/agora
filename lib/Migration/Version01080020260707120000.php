@@ -18,7 +18,7 @@ declare(strict_types=1);
  *
  * Modifies:
  *   - agora_inquiries:  adds visibility, publication_status; drops access
- *   - agora_inq_group:  adds visibility, publication_status; drops access, owned_group
+ *   - agora_inq_group:  adds visibility,  drops access
  *   - agora_options:    drops access, owned_group
  *   - agora_comments:   adds parent_id
  *   - agora_inq_status: adds family_type
@@ -92,7 +92,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
 
         // --- Modifications (add columns only here) ---
         $this->modifyInquiriesTable();          // + visibility, publication_status
-        $this->modifyInquiryGroupsTable();      // + visibility, publication_status
+        $this->modifyInquiryGroupsTable();      // + visibility,
         // agora_options: NO new columns — spec says drop access + owned_group only
         $this->modifyCommentsTable();           // + parent_id
         $this->modifyInquiryStatusTable();      // + family_type
@@ -185,12 +185,6 @@ class Version01080020260707120000 extends SimpleMigrationStep
                 'notnull' => true, 'default' => 'everyone', 'length' => 50,
             ]);
         }
-        if (!$t->hasColumn('publication_status')) {
-            $t->addColumn('publication_status', Types::STRING, [
-                'notnull' => true, 'default' => 'draft', 'length' => 50,
-            ]);
-        }
-        $this->log('  + groups.visibility, groups.publication_status');
     }
 
     private function modifyCommentsTable(): void
@@ -542,7 +536,6 @@ private function dropColumnIfExists(string $unprefixedTable, string $columnName)
         $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_visibility_idx', ['visibility']);
         $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_pubstatus_idx',  ['publication_status']);
         $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_visibility_idx',   ['visibility']);
-        $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_pubstatus_idx',    ['publication_status']);
 
         $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_idx',     ['parent_id']);
         $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_ts_idx',  ['parent_id', 'timestamp']);

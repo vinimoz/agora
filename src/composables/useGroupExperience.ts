@@ -14,6 +14,8 @@ import type {
   DisplayZone,
 } from '../Types/experience.types'
 import type { InquiryGroup } from '../stores/inquiryGroups.types'
+import { getExperienceArchitecture } from './experienceArchitecture'
+
 
 export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   const route = useRoute()
@@ -95,29 +97,41 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
     () => uiConfig.value?.displayArchitecture ?? null,
   )
 
-  const layoutConfig = computed<{
-    type: LayoutTypeValue
-    columns?: number
-    rows?: number
-    responsive: boolean
-  }>(() => {
-    const ui = uiConfig.value
-    if (ui?.layout) {
-      return {
-        type: (ui.layout.type ?? 'full') as LayoutTypeValue,
-        columns: ui.layout.columns,
-        rows: ui.layout.rows,
-        responsive: ui.layout.responsive !== false,
-      }
+const layoutConfig = computed<{
+  type: LayoutTypeValue
+  columns?: number
+  rows?: number
+  responsive: boolean
+}>(() => {
+  // 1. Group-specific override always wins
+  const ui = uiConfig.value
+  if (ui?.layout) {
+    return {
+      type: (ui.layout.type ?? 'full') as LayoutTypeValue,
+      columns: ui.layout.columns,
+      rows: ui.layout.rows,
+      responsive: ui.layout.responsive !== false,
     }
+  }
 
-    const def = EXPERIENCE_DEFINITIONS[experience.value]
-    const type = (def?.layout ?? 'full') as LayoutTypeValue
-    if (type === 'grid') {
-      return { type, columns: 2, rows: 2, responsive: true }
+  // 2. Otherwise fall back to the experience's declared layout …
+  const def = EXPERIENCE_DEFINITIONS[experience.value]
+  const type = (def?.layout ?? 'full') as LayoutTypeValue
+
+  if (type === 'grid') {
+    // … and take the actual columns/rows from the architecture,
+    // not from EXPERIENCE_DEFINITIONS (which only says "grid").
+    const archLayout = getExperienceArchitecture(experience.value)?.layout
+    return {
+      type,
+      columns: archLayout?.columns ?? 2,
+      rows:    archLayout?.rows    ?? 2,
+      responsive: archLayout?.responsive !== false,
     }
-    return { type, responsive: true }
-  })
+  }
+
+  return { type, responsive: true }
+})
 
   const contextConfig = computed(
     () => uiConfig.value?.context ?? { type: 'group', selection: 'selected' },

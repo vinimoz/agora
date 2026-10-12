@@ -18,6 +18,8 @@ use OCA\Agora\Model\UserBase;
  * @psalm-suppress UnusedProperty
  * @method         int getId()
  * @method         void setId(int $value)
+ * @method         int getParentId()
+ * @method         void setParentId(int $value)
  * @method         int getInquiryId()
  * @method         void setInquiryId(int $value)
  * @method         int getOptionId()
@@ -48,6 +50,7 @@ class Comment extends EntityWithUser implements JsonSerializable
     protected int $inquiryId = 0;
     protected int $optionId = 0;
     protected string $userId = '';
+    protected ?int $parentId = null;
     protected ?string $comment = null;
     protected int $timestamp = 0;
     protected int $deleted = 0;

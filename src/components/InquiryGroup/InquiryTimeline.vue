@@ -1016,13 +1016,13 @@ function handleClick(inquiry: Inquiry) {
 /* COMPACT MODE — embedded in a Home zone                       */
 /* ============================================================ */
 .inquiry-timeline.is-compact {
-  border: none;
-  box-shadow: none;
-  background: transparent;
-  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
   .timeline-container {
-    max-height: 260px;
+    flex: 1;
+    max-height: none;
     padding: 0;
   }
 
