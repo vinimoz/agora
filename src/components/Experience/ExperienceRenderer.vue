@@ -219,6 +219,7 @@ import { computed, ref, watch, watchEffect } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
+import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 
 // Experience Components
 import ExperienceSidebar from './ExperienceSidebar.vue'
@@ -345,7 +346,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   viewInquiry: [inquiry: Inquiry]
   viewOption: [option: any]
-  navigateTo: [target: any]
   viewGroup: [group: InquiryGroup]
   selectInquiry: [inquiry: Inquiry]
   selectGroup: [group: InquiryGroup]
@@ -357,6 +357,8 @@ const emit = defineEmits<{
   openPanel: [payload: { inquiry: Inquiry; zone: string; target: string }]
 }>()
 
+const route = useRoute()
+const router = useRouter()
 // ============================================================
 // STATE - Two-click interaction
 // ============================================================
@@ -1401,6 +1403,22 @@ function getZoneCount(zone: any): number | null {
   return data.length
 }
 
+
+function handleHeroAction(key: string) {
+  switch (key) {
+    case 'participate':
+      return router.push({ name: 'explore', params: { type: 'relevant' }, query: { filter: 'for_you' } })
+    case 'decide':
+      return router.push({ name: 'explore', params: { type: 'relevant' }, query: { filter: 'to_vote' } })
+    case 'debate':
+      return router.push({ name: 'explore', params: { type: 'relevant' }, query: { filter: 'debates' } })
+    case 'propose':
+      return router.push({ name: 'home', params: { type: 'proposal' }, query: { viewMode: 'create' } })
+    default:
+      return router.push({ name: 'explore', params: { type: 'relevant' } })
+  }
+}
+
 // ---------- Vocabulary: TOOL ----------
 function showZoneHeader(zone: any): boolean {
   if (!zone) return false
@@ -1439,6 +1457,114 @@ function getZoneStyle(zone: any) {
   return styles
 }
 
+// ROUTING 
+	function onNavigate(target: any) {
+  if (!target) return
+
+  switch (target.type) {
+
+    case 'group-type':
+      return router.push({
+        name: 'group-list',
+        params: { slug: '' },
+        query: { family: target.family, group_type: target.key, viewMode: 'group' },
+      })
+
+    case 'family':
+      return router.push({
+        name: 'group-list',
+        params: { slug: '' },
+        query: { family: target.family, viewMode: 'group' },
+      })
+
+    case 'group-types-all':
+      return router.push({ name: 'explore-spaces' })
+
+    case 'services-all':
+      return router.push({
+        name: 'group-list',
+        params: { slug: '' },
+        query: { family: 'service', viewMode: 'group' },
+      })
+
+    case 'explore-all':
+      return router.push({ name: 'explore-spaces' })
+
+    case 'create':
+      return router.push({
+        name: 'home',
+        params: { slug: '' },
+        query: { viewMode: 'create' },
+      })
+
+    case 'promo-action':
+	  return router.push({
+  	  name: 'home',
+   	 query: { ...route.query, viewMode: 'create' },
+  	})
+
+    // ── EVERYTHING ELSE STAYS EXACTLY AS YOU WROTE IT ────────
+    case 'inquiry':
+  return router.push({ name: 'inquiry', params: { id: String(target.inquiry?.id) } })
+
+case 'group':
+  return target.group?.slug
+    ? router.push({ name: 'group-list', params: { slug: target.group.slug } })
+    : router.push({ name: 'group', params: { id: String(target.group?.id) } })
+
+    case 'hero-action':
+      return handleHeroAction(target.key)
+    case 'search':
+      return router.push({ name: 'explore', query: { q: target.query } })
+    case 'news':
+      return onViewInquiry(target.item)
+    case 'news-all':
+      return router.push({
+        name: 'explore',
+        params: { type: 'relevant' },
+        query: { family: 'collective', display: 'feed' },
+      })
+    case 'service':
+      return router.push({
+        name: 'explore',
+        params: { type: 'relevant' },
+        query: { family: 'service', group_type: target.key },
+      })
+    case 'event':
+      return onViewInquiry(target.item)
+    case 'events-all':
+      return router.push({
+        name: 'explore',
+        params: { type: 'relevant' },
+        query: { display: 'timeline' },
+      })
+    case 'category':
+      return router.push({
+        name: 'explore',
+        params: { type: 'relevant' },
+        query: { types: target.key },
+      })
+    case 'inquiries-all':
+      if (target.zone === 'agenda') {
+        return router.push({
+          name: 'explore',
+          params: { type: 'relevant' },
+          query: { display: 'timeline' },
+        })
+      }
+      return router.push({
+        name: 'explore',
+        params: { type: 'relevant' },
+        query: { sort: 'lastInteraction' },
+      })
+    case 'groups-all':
+      return router.push({ name: 'explore-spaces' })
+
+    default:
+      return router.push({ name: 'home' })
+  }
+}
+
 // ============================================================
 // TWO-CLICK INTERACTION HANDLERS
 // ============================================================
@@ -1475,16 +1601,14 @@ function executeInquiryAction(
   const target = interaction?.target ?? 'page'
 
   switch (action) {
-    case 'open':
-      if (target === 'same_view') {
-        return
-      }
-      emit('viewInquiry', inquiry)
-      return
+       case 'open':
+  	if (target === 'same_view') return
+  	  emit('viewInquiry', inquiry)                                 
+  	return router.push({ name: 'inquiry', params: { id: String(inquiry.id) } })  
 
-    case 'navigate':
-      emit('navigateTo', inquiry)
-      return
+	case 'navigate':
+	  onNavigate({ type: 'inquiry', inquiry })
+	return
 
     case 'select':
       // Explicit select action - confirm selection, refresh dependents
@@ -1597,23 +1721,23 @@ case 'inquiry_groups': {
     // and pick between single-click nav and two-phase selection.
     handleViewGroup(payload, zoneKey)
   } else if (eventName === 'viewAll') {
-    emit('navigateTo', { type: 'groups-all', zone: zoneKey })
+    onNavigate({ type: 'groups-all', zone: zoneKey })
   }
   return
 }
 
 case 'group_types': {
   if (eventName === 'select') {
-    emit('navigateTo', {
+    onNavigate( {
       type: 'group-type',
       family: (payload as any)?.family ?? zone.scope?.family,
       key:    (payload as any)?.key    ?? payload,
     })
   } else if (eventName === 'selectFamily') {
     // chips variant: payload is the family key string
-    emit('navigateTo', { type: 'family', family: payload })
+    onNavigate( { type: 'family', family: payload })
   } else if (eventName === 'all') {
-    emit('navigateTo', {
+    onNavigate( {
       type: 'group-types-all',
       family: (payload as any)?.family ?? zone.scope?.family,
     })
@@ -1625,13 +1749,13 @@ case 'group_types': {
     case 'inquiries':
     case 'inquiry': {
       if (['click', 'view', 'viewInquiry'].includes(eventName)) {
-        if (directOpen) {
-          emit('navigateTo', { type: 'inquiry', inquiry: payload })
-        } else {
-          handleInquiryClick(payload, zoneKey)
-        }
+	if (directOpen) {
+	  onNavigate( { type: 'inquiry', inquiry: payload })
+	} else {
+	  handleInquiryClick(payload, zoneKey)
+	}
       } else if (eventName === 'viewAll') {
-        emit('navigateTo', { type: 'inquiries-all', zone: zoneKey })
+	onNavigate( { type: 'inquiries-all', zone: zoneKey })
       }
       return
     }
@@ -1639,38 +1763,44 @@ case 'group_types': {
     // ---- Options ----
     case 'options': {
       if (['click', 'view', 'viewOption'].includes(eventName)) {
-        handleOptionClick(payload, zoneKey)
+	handleOptionClick(payload, zoneKey)
       }
       return
     }
 
     // ---- Landing widgets ----
     case 'hero':
-      if (eventName === 'action') emit('navigateTo', { type: 'hero-action', key: payload })
+      if (eventName === 'action') onNavigate( { type: 'hero-action', key: payload })
       return
 
     case 'search':
-      if (eventName === 'search') emit('navigateTo', { type: 'search', query: payload })
+      if (eventName === 'search') onNavigate( { type: 'search', query: payload })
       return
 
     case 'news':
-      if (eventName === 'click') emit('navigateTo', { type: 'news', item: payload })
-      else if (eventName === 'viewAll') emit('navigateTo', { type: 'news-all' })
+      if (eventName === 'click') onNavigate( { type: 'news', item: payload })
+      else if (eventName === 'viewAll') onNavigate( { type: 'news-all' })
       return
 
     case 'events':
-      if (eventName === 'click') emit('navigateTo', { type: 'event', item: payload })
-      else if (eventName === 'viewAll') emit('navigateTo', { type: 'events-all' })
+      if (eventName === 'click') onNavigate( { type: 'event', item: payload })
+      else if (eventName === 'viewAll') onNavigate( { type: 'events-all' })
       return
 
     case 'explore':
-      if (eventName === 'category') emit('navigateTo', { type: 'category', key: payload })
-      else if (eventName === 'create') emit('navigateTo', { type: 'create' })
-      else if (eventName === 'viewAll') emit('navigateTo', { type: 'explore-all' })
+      if (eventName === 'category') onNavigate( { type: 'category', key: payload })
+      else if (eventName === 'create')  { 
+      	    return onNavigate({
+     		 type: 'create',
+     		 inquiryType: zone.scope?.inquiryType,  // whatever your scope carries
+     		 family: zone.scope?.family,
+    		})
+      }
+      else if (eventName === 'viewAll') onNavigate( { type: 'explore-all' })
       return
 
     case 'promo':
-      if (eventName === 'action') emit('navigateTo', { type: 'promo-action' })
+      if (eventName === 'action') onNavigate( { type: 'promo-action' })
       return
 
     default:
@@ -1683,7 +1813,7 @@ function findZoneForInquiry(inquiry: Inquiry): string | null {
     if (zone.content === 'inquiries' || zone.content === 'inquiry') {
       const data = getZoneData(zone)
       if (data.some((item: any) => item.id === inquiry.id)) {
-        return key
+	return key
       }
     }
   }
@@ -1695,7 +1825,7 @@ function findZoneForOption(option: any): string | null {
     if (zone.content === 'options') {
       const data = getZoneData(zone)
       if (data.some((item: any) => item.id === option.id)) {
-        return key
+	return key
       }
     }
   }
@@ -1707,7 +1837,7 @@ function findZoneForGroup(group: InquiryGroup): string | null {
     if (zone.content === 'inquiry_groups') {
       const data = getZoneData(zone)
       if (data.some((item: any) => item.id === group.id)) {
-        return key
+	return key
       }
     }
   }
@@ -1764,27 +1894,6 @@ watch(
   { immediate: true }
 )
 
-// 🔍 temporary probe — remove before commit
-watchEffect(() => {
-  console.group('[ER] zone audit')
-  console.log('experience:', props.experience)
-  console.log('layoutConfig:', layoutConfig.value)
-  console.log('prop inquiries length:', props.inquiries?.length)
-  const arch = filteredArchitecture.value
-  for (const [key, zone] of Object.entries(arch)) {
-    const data = getZoneData(zone)
-    console.log(
-      key.padEnd(16),
-      `content=${zone.content}`,
-      `display=${zone.display?.type}`,
-      `renderable=${isZoneRenderable(zone)}`,
-      `hasData=${hasZoneData(zone)}`,
-      `rows=${data.length}`,
-      'position=', JSON.stringify(zone.position),
-    )
-  }
-  console.groupEnd()
-})
 </script>
 
 <style lang="scss" scoped>
@@ -1792,418 +1901,418 @@ watchEffect(() => {
 /* EXPERIENCE RENDERER STYLES                                   */
 /* ============================================================ */
 .experience-renderer {
-  width: 100%;
-  min-height: 400px;
+	width: 100%;
+	min-height: 400px;
 }
 
-/* ============================================================ */
-/* LOADING & ERROR STATES                                       */
-/* ============================================================ */
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
+  /* ============================================================ */
+  /* LOADING & ERROR STATES                                       */
+  /* ============================================================ */
+  .loading-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
 
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--color-border);
-    border-top-color: var(--color-primary-element);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+	  .spinner {
+		  width: 40px;
+		  height: 40px;
+		  border: 3px solid var(--color-border);
+		  border-top-color: var(--color-primary-element);
+		  border-radius: 50%;
+		  animation: spin 1s linear infinite;
+	  }
+
+	  p {
+		  margin-top: 16px;
+		  color: var(--color-text-lighter);
+	  }
   }
 
-  p {
-    margin-top: 16px;
-    color: var(--color-text-lighter);
-  }
-}
+  .error-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+	  text-align: center;
 
-.error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  text-align: center;
+	  svg {
+		  color: var(--color-error);
+		  opacity: 0.5;
+		  margin-bottom: 16px;
+	  }
 
-  svg {
-    color: var(--color-error);
-    opacity: 0.5;
-    margin-bottom: 16px;
-  }
+	  h3 {
+		  margin: 0 0 8px 0;
+		  color: var(--color-main-text);
+	  }
 
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--color-main-text);
-  }
-
-  p {
-    margin: 0 0 24px 0;
-    color: var(--color-text-lighter);
-    max-width: 400px;
-  }
-}
-
-/* ============================================================ */
-/* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
-/* ============================================================ */
-.architecture-grid {
-  display: grid;
-  gap: 20px;
-  min-height: 400px;
-  &.architecture-layout-full,
-  &.architecture-layout-flex {
-    display: flex;
-    flex-direction: column;
+	  p {
+		  margin: 0 0 24px 0;
+		  color: var(--color-text-lighter);
+		  max-width: 400px;
+	  }
   }
 
-  &.architecture-layout-sidebar {
-    display: grid;
-    grid-template-columns: minmax(240px, 300px) 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  &.architecture-layout-split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-  .architecture-zone {
-    background: var(--color-main-background);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 200px;
-
-    .zone-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--color-border);
-      background: var(--color-background-dark);
-      color: var(--color-text-lighter);
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-
-      .zone-title {
-        flex: 1;
-      }
-
-      .zone-count {
-        background: var(--color-background-hover);
-        padding: 1px 8px;
-        border-radius: 10px;
-        font-size: 11px;
-      }
-    }
-
-    .zone-content {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      min-height: 100px;
-    }
-
-    &.display-search_bar {
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      min-height: 0;
-
-      .zone-content {
-        padding: 0;
-        overflow: visible;
-      }
-    }
-
-    .zone-empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 32px 20px;
-      min-height: 140px;
-      color: var(--color-text-lighter);
-
-      .empty-icon {
-        opacity: 0.25;
-        margin-bottom: 12px;
-      }
-
-      .empty-title {
-        margin: 0 0 4px 0;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--color-main-text);
-      }
-
-      .empty-hint {
-        margin: 0;
-        font-size: 13px;
-        color: var(--color-text-lighter);
-        max-width: 260px;
-      }
-    }
-
-    &.is-empty {
-      background: var(--color-background-dark);
-      border-style: dashed;
-    }
-  }
-}
-
-/* ============================================================ */
-/* STANDARD LAYOUT                                              */
-/* ============================================================ */
-.standard-layout {
-  display: flex;
-  gap: 24px;
-
-  &.layout-sidebar {
-    .layout-sidebar {
-      flex: 0 0 280px;
-      max-width: 280px;
-    }
-    .layout-main {
-      flex: 1;
-      min-width: 0;
-    }
-  }
-
-  &.layout-split {
-    .layout-main {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-  }
-
-  .layout-sidebar {
-    position: sticky;
-    top: 0;
-    height: fit-content;
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-    padding-right: 8px;
-  }
-
-  .layout-main {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    min-width: 0;
-  }
-}
-
-.layout-header {
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--color-border);
-
-  .layout-title {
-    margin: 0 0 8px 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--color-main-text);
-  }
-
-  .layout-description {
-    margin: 0 0 16px 0;
-    color: var(--color-text-lighter);
-    font-size: 16px;
-  }
-
-  .layout-stats {
-    display: flex;
-    gap: 24px;
-    padding-top: 12px;
-    border-top: 1px solid var(--color-border-light);
-
-    .stat-item {
-      .stat-value {
-        display: block;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--color-main-text);
-      }
-
-      .stat-label {
-        font-size: 12px;
-        color: var(--color-text-lighter);
-      }
-    }
-  }
-}
-
-.layout-content {
-  .inquiries-grid {
-    display: grid;
-    gap: 20px;
-
-    &.display-cards {
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    }
-
-    &.display-horizontal {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    &.display-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    &.display-compact {
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 12px;
-    }
-  }
-}
-
-.layout-comments,
-.layout-resources {
-  padding-top: 20px;
-  border-top: 2px solid var(--color-border);
-  margin-top: 8px;
-
-  .comments-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-
-    h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--color-main-text);
-    }
-
-    .comments-count {
-      font-size: 12px;
-      font-weight: 600;
-      background: var(--color-background-dark);
-      padding: 2px 10px;
-      border-radius: 12px;
-      color: var(--color-text-lighter);
-    }
-  }
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  text-align: center;
-
-  svg {
-    color: var(--color-text-lighter);
-    opacity: 0.3;
-    margin-bottom: 16px;
-  }
-
-  h3 {
-    margin: 0 0 8px 0;
-    color: var(--color-main-text);
-  }
-
-  p {
-    margin: 0 0 24px 0;
-    color: var(--color-text-lighter);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ============================================================ */
-/* RESPONSIVE - Adapt grid to available space                   */
-/* ============================================================ */
-@media (max-width: 1400px) {
+  /* ============================================================ */
+  /* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
+  /* ============================================================ */
   .architecture-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: none;            /* let the rows auto-flow */
+	  display: grid;
+	  gap: 20px;
+	  min-height: 400px;
+	  &.architecture-layout-full,
+	  &.architecture-layout-flex {
+		  display: flex;
+		  flex-direction: column;
+	  }
+
+	  &.architecture-layout-sidebar {
+		  display: grid;
+		  grid-template-columns: minmax(240px, 300px) 1fr;
+		  gap: 24px;
+		  align-items: start;
+	  }
+
+	  &.architecture-layout-split {
+		  display: grid;
+		  grid-template-columns: 1fr 1fr;
+		  gap: 24px;
+	  }
+	  .architecture-zone {
+		  background: var(--color-main-background);
+		  border: 1px solid var(--color-border);
+		  border-radius: 12px;
+		  overflow: hidden;
+		  display: flex;
+		  flex-direction: column;
+		  min-height: 200px;
+
+		  .zone-header {
+			  display: flex;
+			  align-items: center;
+			  gap: 8px;
+			  padding: 10px 16px;
+			  border-bottom: 1px solid var(--color-border);
+			  background: var(--color-background-dark);
+			  color: var(--color-text-lighter);
+			  font-size: 12px;
+			  font-weight: 600;
+			  text-transform: uppercase;
+			  letter-spacing: 0.5px;
+
+			  .zone-title {
+				  flex: 1;
+			  }
+
+			  .zone-count {
+				  background: var(--color-background-hover);
+				  padding: 1px 8px;
+				  border-radius: 10px;
+				  font-size: 11px;
+			  }
+		  }
+
+		  .zone-content {
+			  flex: 1;
+			  padding: 16px;
+			  overflow-y: auto;
+			  min-height: 100px;
+		  }
+
+		  &.display-search_bar {
+			  background: transparent;
+			  border: none;
+			  border-radius: 0;
+			  min-height: 0;
+
+			  .zone-content {
+				  padding: 0;
+				  overflow: visible;
+			  }
+		  }
+
+		  .zone-empty-state {
+			  display: flex;
+			  flex-direction: column;
+			  align-items: center;
+			  justify-content: center;
+			  text-align: center;
+			  padding: 32px 20px;
+			  min-height: 140px;
+			  color: var(--color-text-lighter);
+
+			  .empty-icon {
+				  opacity: 0.25;
+				  margin-bottom: 12px;
+			  }
+
+			  .empty-title {
+				  margin: 0 0 4px 0;
+				  font-size: 14px;
+				  font-weight: 600;
+				  color: var(--color-main-text);
+			  }
+
+			  .empty-hint {
+				  margin: 0;
+				  font-size: 13px;
+				  color: var(--color-text-lighter);
+				  max-width: 260px;
+			  }
+		  }
+
+		  &.is-empty {
+			  background: var(--color-background-dark);
+			  border-style: dashed;
+		  }
+	  }
   }
-}
 
-@media (max-width: 768px) {
-  .architecture-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: none;
-  }
-}
-
-
-@media (max-width: 1024px) {
-  .architecture-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
+  /* ============================================================ */
+  /* STANDARD LAYOUT                                              */
+  /* ============================================================ */
   .standard-layout {
-    &.layout-sidebar {
-      flex-direction: column;
+	  display: flex;
+	  gap: 24px;
 
-      .layout-sidebar {
-        flex: none;
-        max-width: 100%;
-        width: 100%;
-        position: static;
-        max-height: none;
-        padding-right: 0;
-      }
-    }
+	  &.layout-sidebar {
+		  .layout-sidebar {
+			  flex: 0 0 280px;
+			  max-width: 280px;
+		  }
+		  .layout-main {
+			  flex: 1;
+			  min-width: 0;
+		  }
+	  }
 
-    &.layout-split {
-      .layout-main {
-        grid-template-columns: 1fr;
-      }
-    }
+	  &.layout-split {
+		  .layout-main {
+			  display: grid;
+			  grid-template-columns: 1fr 1fr;
+			  gap: 24px;
+		  }
+	  }
+
+	  .layout-sidebar {
+		  position: sticky;
+		  top: 0;
+		  height: fit-content;
+		  max-height: calc(100vh - 100px);
+		  overflow-y: auto;
+		  padding-right: 8px;
+	  }
+
+	  .layout-main {
+		  display: flex;
+		  flex-direction: column;
+		  gap: 24px;
+		  min-width: 0;
+	  }
   }
-}
 
+  .layout-header {
+	  padding-bottom: 16px;
+	  border-bottom: 2px solid var(--color-border);
 
-@media (max-width: 1024px) {
-  .architecture-grid.architecture-layout-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+	  .layout-title {
+		  margin: 0 0 8px 0;
+		  font-size: 28px;
+		  font-weight: 700;
+		  color: var(--color-main-text);
+	  }
+
+	  .layout-description {
+		  margin: 0 0 16px 0;
+		  color: var(--color-text-lighter);
+		  font-size: 16px;
+	  }
+
+	  .layout-stats {
+		  display: flex;
+		  gap: 24px;
+		  padding-top: 12px;
+		  border-top: 1px solid var(--color-border-light);
+
+		  .stat-item {
+			  .stat-value {
+				  display: block;
+				  font-size: 20px;
+				  font-weight: 700;
+				  color: var(--color-main-text);
+			  }
+
+			  .stat-label {
+				  font-size: 12px;
+				  color: var(--color-text-lighter);
+			  }
+		  }
+	  }
   }
-}
 
+  .layout-content {
+	  .inquiries-grid {
+		  display: grid;
+		  gap: 20px;
 
-@media (max-width: 768px) {
-  .architecture-grid {
-    grid-template-columns: 1fr !important;
+		  &.display-cards {
+			  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		  }
+
+		  &.display-horizontal {
+			  grid-template-columns: 1fr;
+			  gap: 16px;
+		  }
+
+		  &.display-list {
+			  display: flex;
+			  flex-direction: column;
+			  gap: 8px;
+		  }
+
+		  &.display-compact {
+			  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+			  gap: 12px;
+		  }
+	  }
   }
 
-  .layout-content .inquiries-grid {
-    &.display-cards {
-      grid-template-columns: 1fr;
-    }
+  .layout-comments,
+  .layout-resources {
+	  padding-top: 20px;
+	  border-top: 2px solid var(--color-border);
+	  margin-top: 8px;
+
+	  .comments-header {
+		  display: flex;
+		  align-items: center;
+		  gap: 12px;
+		  margin-bottom: 16px;
+
+		  h3 {
+			  margin: 0;
+			  font-size: 18px;
+			  font-weight: 600;
+			  color: var(--color-main-text);
+		  }
+
+		  .comments-count {
+			  font-size: 12px;
+			  font-weight: 600;
+			  background: var(--color-background-dark);
+			  padding: 2px 10px;
+			  border-radius: 12px;
+			  color: var(--color-text-lighter);
+		  }
+	  }
   }
 
-  .experience-controls {
-    flex-direction: column;
-    align-items: stretch;
+  .empty-state {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  padding: 60px;
+	  text-align: center;
 
-    .controls-left,
-    .controls-right {
-      justify-content: center;
-    }
+	  svg {
+		  color: var(--color-text-lighter);
+		  opacity: 0.3;
+		  margin-bottom: 16px;
+	  }
+
+	  h3 {
+		  margin: 0 0 8px 0;
+		  color: var(--color-main-text);
+	  }
+
+	  p {
+		  margin: 0 0 24px 0;
+		  color: var(--color-text-lighter);
+	  }
   }
-}
+
+  @keyframes spin {
+	  to {
+		  transform: rotate(360deg);
+	  }
+  }
+
+  /* ============================================================ */
+  /* RESPONSIVE - Adapt grid to available space                   */
+  /* ============================================================ */
+  @media (max-width: 1400px) {
+	  .architecture-grid {
+		  grid-template-columns: repeat(2, minmax(0, 1fr));
+		  grid-template-rows: none;            /* let the rows auto-flow */
+	  }
+  }
+
+  @media (max-width: 768px) {
+	  .architecture-grid {
+		  grid-template-columns: 1fr;
+		  grid-template-rows: none;
+	  }
+  }
+
+
+  @media (max-width: 1024px) {
+	  .architecture-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+
+	  .standard-layout {
+		  &.layout-sidebar {
+			  flex-direction: column;
+
+			  .layout-sidebar {
+				  flex: none;
+				  max-width: 100%;
+				  width: 100%;
+				  position: static;
+				  max-height: none;
+				  padding-right: 0;
+			  }
+		  }
+
+		  &.layout-split {
+			  .layout-main {
+				  grid-template-columns: 1fr;
+			  }
+		  }
+	  }
+  }
+
+
+  @media (max-width: 1024px) {
+	  .architecture-grid.architecture-layout-grid {
+		  grid-template-columns: repeat(2, 1fr) !important;
+	  }
+  }
+
+
+  @media (max-width: 768px) {
+	  .architecture-grid {
+		  grid-template-columns: 1fr !important;
+	  }
+
+	  .layout-content .inquiries-grid {
+		  &.display-cards {
+			  grid-template-columns: 1fr;
+		  }
+	  }
+
+	  .experience-controls {
+		  flex-direction: column;
+		  align-items: stretch;
+
+		  .controls-left,
+		  .controls-right {
+			  justify-content: center;
+		  }
+	  }
+  }
 </style>

@@ -1,4 +1,6 @@
 import type { HomeConfig } from '../stores/appSettings'
+import heroImg from '../assets/img/hero.jpg'
+import promoImg from '../assets/img/promo.jpg'
 
 export const HOME_DEFAULTS: HomeConfig = {
   sections: ['hero', 'news', 'current', 'spaces', 'services', 'explore', 'agenda', 'promo'],
@@ -10,7 +12,7 @@ export const HOME_DEFAULTS: HomeConfig = {
     title:    'Welcome to Agora',
     subtitle: 'Your civic space for a more direct and participatory democracy',
 
-    backgroundUrl: '../assets/img/hero.jpg',
+    backgroundUrl: heroImg,
 
     showWeather: false,
     weather: { temp: 27, location: 'Moorea' },
@@ -28,7 +30,7 @@ export const HOME_DEFAULTS: HomeConfig = {
     title:    "Together, let's build tomorrow",
     text:     'Participate in the life of your community!',
     cta:      'Discover',
-    imageUrl: '../assets/img/promo.jpg',                      
+    imageUrl: promoImg,                      
   },
 
   services: [

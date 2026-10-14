@@ -9,6 +9,7 @@ import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 
+import { useRoute } from 'vue-router'
 import { Logger } from '../helpers/index.ts'
 import { InquiriesAPI } from '../Api/index.ts'
 
@@ -48,6 +49,9 @@ export type FilterType =
   | 'archived'
   | 'admin'
   | 'moderate'
+  | 'for_you'
+  | 'to_vote'
+  | 'debates'
 
 export type AdvancedFilters = {
   type?: FilterType
@@ -58,6 +62,7 @@ export type AdvancedFilters = {
   parentId?: number
   search?: string
   familyType?: string
+  types?: string[]
 }
 
 export type FilterState = {
@@ -122,23 +127,61 @@ export const sortTitlesMapping: { [key in SortType]: string } = {
   countSupports: t('agora', 'Supports count'),
 }
 
+/**
+ * Shared predicate for "relevant to me" — used by the `relevant` category
+ * and its `for_you` / `to_vote` / `debates` derivatives.
+ */
+const isRelevant = (inquiry: Inquiry): boolean =>   {
+    const threshold = inquiry.status.relevantThreshold
+  return (  !inquiry.status.isArchived &&
+	   DateTime.fromSeconds(threshold).diffNow('days').days > -30 &&
+  inquiry.permissions.view &&
+  (inquiry.configuration.visibility === 'everyone' ||
+   inquiry.configuration.visibility === 'groups' ||
+   inquiry.configuration.visibility === 'private')
+)}
+
 const inquiryCategories: InquiryCategoryList = {
-  relevant: {
-    id: 'relevant',
-    title: t('agora', 'Relevant'),
-    titleExt: t('agora', 'Relevant inquiries'),
-    description: t('agora', 'All inquiries who are relevant for you, not older than 30 days.'),
-    pinned: false,
-    showInNavigation: () => true,
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -30 &&
-      inquiry.permissions.view &&
-      (inquiry.configuration.visibility === 'everyone' ||
-     inquiry.configuration.visibility === 'groups' ||
-     inquiry.configuration.visibility === 'private'),
-  },
-  reject: {
+  for_you: {
+  id: 'for_you',
+  title: t('agora', 'For you'),
+  titleExt: t('agora', 'For you'),
+  description: t('agora', 'Inquiries relevant for you.'),
+  pinned: false,
+  showInNavigation: () => true,
+  filterCondition: (i) => isRelevant(i),
+},
+to_vote: {
+  id: 'to_vote',
+  title: t('agora', 'To vote'),
+  titleExt: t('agora', 'To vote'),
+  description: t('agora', 'Votable inquiries relevant for you.'),
+  pinned: false,
+  showInNavigation: () => true,
+  filterCondition: (i) => isRelevant(i) && ['vote', 'poll'].includes(i.type),
+},
+debates: {
+  id: 'debates',
+  title: t('agora', 'Debates'),
+  titleExt: t('agora', 'Debates'),
+  description: t('agora', 'Debates and discussions relevant for you.'),
+  pinned: false,
+  showInNavigation: () => true,
+  filterCondition: (i) =>
+    isRelevant(i) && ['debate', 'discussion', 'question'].includes(i.type),
+},
+
+relevant: {
+  id: 'relevant',
+  title: t('agora', 'Relevant'),
+  titleExt: t('agora', 'Relevant inquiries'),
+  description: t('agora', 'All inquiries who are relevant for you, not older than 30 days.'),
+  pinned: false,
+  showInNavigation: () => true,
+  filterCondition: (inquiry: Inquiry) => isRelevant(inquiry),
+},
+
+reject: {
     id: 'reject',
     title: t('agora', 'Rejected inquiries'),
     titleExt: t('agora', 'Rejected inquiries'),
@@ -429,15 +472,10 @@ export const useInquiriesStore = defineStore('inquiries', {
         return result
       },
 
-    currentCategory(state: InquiryList): InquiryCategory {
-      const sessionStore = useSessionStore()
-      if (sessionStore.route.name === 'list' && sessionStore.route.params.type) {
-        return state.categories[sessionStore.route.params.type as FilterType]
-      }
-      return state.categories.relevant
-    },
-
-    /*
+currentCategory(state: InquiryList): InquiryCategory {
+  return state.categories[state.currentFilter] ?? state.categories.relevant
+},
+      /*
      * inquiries list, filtered by current category, advanced filters and sorted
      */
     /*
@@ -471,6 +509,12 @@ export const useInquiriesStore = defineStore('inquiries', {
         filteredInquiries = filteredInquiries.filter(
           (inquiry) => inquiry.type === state.advancedFilters.type
         )
+      }
+
+      if (state.advancedFilters.types?.length) {
+  	filteredInquiries = filteredInquiries.filter((inquiry) =>
+   	 state.advancedFilters.types!.includes(inquiry.type)
+  	)
       }
 
       // Filter by categoryId
@@ -748,12 +792,13 @@ export const useInquiriesStore = defineStore('inquiries', {
      * Reset filter
      */
     resetFilters(): void {
-	    this.advancedFilters = {
-		    parentId: null,
-		    familyType: this.advancedFilters.familyType,
-	    }
-	    this.resetChunks()
-    },
+  this.advancedFilters = {
+    parentId: null,
+    familyType: this.advancedFilters.familyType,
+    types: undefined,                
+  }
+  this.resetChunks()
+},
 
     /**
      * Change filter

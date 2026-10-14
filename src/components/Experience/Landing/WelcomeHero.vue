@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
 
 const props = defineProps<{
@@ -82,23 +83,25 @@ const subtitle = computed(
  *  - Numeric fileId → Nextcloud preview endpoint
  */
 function resolveHeroImage(src?: string): string {
-  if (!src) return ''
-  const s = String(src)
-  if (/^https?:\/\//i.test(s) || s.startsWith('/')) return s
+  const s = String(src ?? '').trim()
+  if (!s) return ''
+  if (/^(https?:)?\/\//i.test(s) || /^(data|blob):/i.test(s)) return s
   if (/^\d+$/.test(s)) {
-    return `${window.location.origin}/index.php/core/preview?fileId=${s}&x=1920&y=1080&a=1`
+    // generateUrl respects sub-folder installs (/nextcloud/…)
+    return generateUrl(`/core/preview?fileId=${s}&x=1920&y=1080&a=1`)
   }
-  return s
+  return s.startsWith('/') ? s : generateUrl(`/${s}`)
 }
 
 const heroStyle = computed(() => {
   const url = resolveHeroImage(props.backgroundUrl)
   return {
     backgroundImage: url
-      ? `linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.55)), url(${url})`
+      ? `linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55)), url('${url}')`
       : 'linear-gradient(135deg, #0891b2, #0e7490)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
   }
 })
 

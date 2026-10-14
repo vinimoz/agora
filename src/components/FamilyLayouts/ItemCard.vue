@@ -93,7 +93,7 @@
     <!-- Support and Comments in single line (normal mode) -->
     <div v-if="!inline && (hasSupportFeature || allowComment) && !progressBar" class="card-features">
       <!-- Support feature -->
-      <div v-if="hasSupportFeature" class="feature-item support-feature">
+      <div v-if="hasSupportFeature && itemContext" class="feature-item support-feature">
         <SupportFeature
           :item="supportItem"
           :item-type="targetType"
@@ -430,8 +430,12 @@ const allowComment = computed(() =>
 )
 
 const hasSupportFeature = computed(() =>
-  props.targetType === 'inquiry' ? false : hasSupportFeatureHelper(itemType.value, allItemTypes.value)
+  props.targetType === 'inquiry'
+    ? false
+    : itemContext.value !== null
+      && hasSupportFeatureHelper(itemType.value, allItemTypes.value)
 )
+
 
 const allowedChildTypes = computed(() =>
   props.targetType === 'inquiry' ? [] : getAllowedResponses(itemType.value, allItemTypes.value)

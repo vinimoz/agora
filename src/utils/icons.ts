@@ -560,8 +560,9 @@ export const OptionIcons: Record<string, Component> = {
 
 export const NavigationIcons: Record<string, Component> = {
   Share: makeIconComponent(ShareIcon, '#03A9F4'),
+  Apps:            makeIconComponent(Apps,           '#1976D2'),
   ShieldAlert: makeIconComponent(ShieldAlert, '#D32F2F'),
-ShieldRemove: makeIconComponent(ShieldRemove, '#D32F2F'),
+  ShieldRemove: makeIconComponent(ShieldRemove, '#D32F2F'),
   Administration: makeIconComponent(ShieldCrown, '#FF8F00'),
   Settings: makeIconComponent(Cog, '#455A64'),
   Relevant: makeIconComponent(Star, '#FFA000'),

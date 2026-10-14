@@ -27,7 +27,7 @@ const inquiriesStore = useInquiriesStore()
 const sessionStore = useSessionStore()
 
 /* ------------------------------------------------------------------ */
-/* BRANDING — driven by homeDefaults.hero                             */
+/* BRANDING — driven by homeDefaults.hero                              */
 /* ------------------------------------------------------------------ */
 const cityName = computed(() => HOME_DEFAULTS.hero?.cityName || 'Agora')
 const tagline = computed(() => HOME_DEFAULTS.hero?.tagline || '')
@@ -63,7 +63,24 @@ interface NavItem {
 }
 
 /* ------------------------------------------------------------------ */
-/* PRIMARY NAV                                                        */
+/* MY ACTIVITY — personal shortcuts                                    */
+/* ------------------------------------------------------------------ */
+const myActivityNav: NavChild[] = [
+  {
+    key: 'participated',
+    label: t('agora', 'My participations'),
+    icon: NavigationIcons.Participated,
+    to: { name: 'list', params: { type: 'participated' } },
+  },
+  {
+    key: 'shared_activity',
+    label: t('agora', 'Shared with me'),
+    icon: NavigationIcons.Share,
+    to: { name: 'list', params: { type: 'shared' } },
+  },
+]
+/* ------------------------------------------------------------------ */
+/* PRIMARY NAVIGATION                                                  */
 /* ------------------------------------------------------------------ */
 const primaryNav = computed<NavItem[]>(() => [
   {
@@ -73,8 +90,7 @@ const primaryNav = computed<NavItem[]>(() => [
     to: { name: 'home' },
   },
 
-  /* Participate — discovery of inquiries to contribute to. Stays in the
-     landing experience so the user keeps the discovery sidebar. */
+  /* Participate — discovery of inquiries to contribute to. */
   {
     key: 'participate',
     label: t('agora', 'Participate'),
@@ -118,8 +134,7 @@ const primaryNav = computed<NavItem[]>(() => [
     ],
   },
 
-  /* Personal — ownership-oriented views. Routes to /list/:type so the
-     left sidebar swaps to NavigationMenu (classic admin nav). */
+  /* Personal — ownership-oriented views. */
   {
     key: 'personal',
     label: t('agora', 'Personal'),
@@ -150,14 +165,21 @@ const primaryNav = computed<NavItem[]>(() => [
         icon: NavigationIcons.Group,
         to: { name: 'list', params: { type: 'group' } },
       },
+{
+  key: 'rejected',
+  label: t('agora', 'Rejected'),
+  icon: NavigationIcons.ShieldAlert,
+  to: { name: 'list', params: { type: 'reject' } },
+  visible: () => sessionStore.appPermissions.inquiryCreation,
+},
     ],
   },
 
-  /* Management — moderator / admin views. Only rendered for elevated roles. */
+  /* Management — moderator / admin views. */
   {
     key: 'management',
     label: t('agora', 'Management'),
-    icon: NavigationIcons.Moderate,
+    icon: NavigationIcons.Administration,
     to: { name: 'list', params: { type: 'moderate' } },
     visible: () => isManager.value,
     children: [
@@ -192,17 +214,10 @@ const primaryNav = computed<NavItem[]>(() => [
         icon: NavigationIcons.Closed,
         to: { name: 'list', params: { type: 'closed' } },
       },
-      {
-        key: 'rejected',
-        label: t('agora', 'Rejected'),
-        icon: NavigationIcons.ShieldAlert,
-        to: { name: 'list', params: { type: 'reject' } },
-      },
     ],
   },
 
-  /* Explore — dynamic families from inquiryFamilyTab (children rendered
-     separately because they come from app settings). */
+  /* Explore — dynamic families from inquiryFamilyTab. */
   {
     key: 'explore',
     label: t('agora', 'Explore'),
@@ -211,7 +226,26 @@ const primaryNav = computed<NavItem[]>(() => [
     children: [],
   },
 
-  /* News — cross-cutting feed of all published, accessible inquiries. */
+  /* My spaces — dynamic families that own at least one root group type.
+     Rendered like Explore: click expands children inline. */
+  {
+    key: 'my_spaces',
+    label: t('agora', 'My spaces'),
+    icon: InquiryGeneralIcons.FolderMultiple,
+    to: { name: 'explore-spaces' },
+    children: [],
+  },
+
+  /* My activity — personal shortcuts, rendered inline like Explore. */
+  {
+    key: 'my_activity',
+    label: t('agora', 'My activity'),
+    icon: NavigationIcons.Participated,
+    to: { name: 'list', params: { type: 'participated' } },
+    children: myActivityNav,
+  },
+
+  /* News — cross-cutting feed of published, accessible inquiries. */
   {
     key: 'news',
     label: t('agora', 'News'),
@@ -228,11 +262,7 @@ const primaryNav = computed<NavItem[]>(() => [
     key: 'services',
     label: t('agora', 'Services'),
     icon: InquiryGeneralIcons.Apps,
-    to: {
-      name: 'explore',
-      params: { type: 'relevant' },
-      query: { family: 'service' },
-    },
+    to: { name: 'group-list', params: { slug: '' }, query: { family: 'service', viewMode: 'group' } },
   },
 
   /* Agenda — dated consultations and deadlines. */
@@ -262,30 +292,13 @@ const visiblePrimaryNav = computed(() =>
 
 function hasChildren(item: NavItem): boolean {
   if (item.key === 'explore') return true
+  if (item.key === 'my_spaces') return true
   return Array.isArray(item.children) && item.children.length > 0
 }
 
 function visibleChildren(item: NavItem): NavChild[] {
   return (item.children || []).filter((c) => !c.visible || c.visible())
 }
-
-/* ------------------------------------------------------------------ */
-/* MY ACTIVITY — personal shortcuts, always available                  */
-/* ------------------------------------------------------------------ */
-const myActivityNav: NavChild[] = [
-  {
-    key: 'participated',
-    label: t('agora', 'My participations'),
-    icon: NavigationIcons.Participated,
-    to: { name: 'list', params: { type: 'participated' } },
-  },
-  {
-    key: 'shared_activity',
-    label: t('agora', 'Shared with me'),
-    icon: NavigationIcons.Share,
-    to: { name: 'list', params: { type: 'shared' } },
-  },
-]
 
 /* ------------------------------------------------------------------ */
 /* EXPLORE — dynamic families from appSettings.inquiryFamilyTab        */
@@ -310,15 +323,8 @@ const explorerFamilies = computed<FamilyEntry[]>(() => {
 })
 
 /* ------------------------------------------------------------------ */
-/* MY SPACES                                                          */
+/* MY SPACES — families owning at least one root group type            */
 /* ------------------------------------------------------------------ */
-/*
- * Same convention as NavigationMenu.vue: a family is a "space" when it
- * owns at least one root group type (inquiryGroupTypeTab entry with
- * is_root === true and a matching family / family_type key).
- * Clicking a space leads to the family's group view (NavigationGroup).
- */
-
 interface SpaceFamily extends FamilyEntry {
   rootTypes: Array<{ group_type?: string; type?: string }>
 }
@@ -382,21 +388,30 @@ function isChildActive(child: NavChild): boolean {
   return true
 }
 
+function isSpaceFamilyActive(key: string): boolean {
+  return route.name === 'group-list' && route.query.family === key
+}
+
 function isActive(item: NavItem): boolean {
   if (item.key === 'landing') {
     return route.name === 'home'
+  }
+
+  if (item.key === 'my_spaces') {
+    if (route.name === 'explore-spaces') return true
+    return mySpaceFamilies.value.some((f) => isSpaceFamilyActive(f.key))
   }
 
   if (item.children?.some((child) => isChildActive(child))) {
     return true
   }
 
-  // Family-driven active state (Explore / News / Services)
   if (route.query.family === item.key) return true
   if (
     item.key === 'news' &&
     route.query.family === 'collective' &&
     route.query.display === 'feed'
+
   ) {
     return true
   }
@@ -413,7 +428,8 @@ function isActive(item: NavItem): boolean {
     item.key === 'explore' &&
     route.name === 'explore' &&
     !route.query.family &&
-    !route.query.display
+    !route.query.display &&
+    !route.query.filter
   ) {
     return true
   }
@@ -445,16 +461,15 @@ function goToFamily(key: string) {
 }
 
 /**
- * My spaces → family. The family has root group types, so we hand over
- * to the group view where NavigationGroup takes over the sidebar.
- * Mirrors NavigationMenu.navigateToFamilyInquiries.
+ * My spaces → family. Hands over to the group view where NavigationGroup
+ * takes over the sidebar. Mirrors NavigationMenu.navigateToFamilyInquiries.
  */
 function goToFamilySpaces(key: string) {
-  inquiriesStore.setFamilyType(key)          
+  inquiriesStore.setFamilyType(key)
   router.push({
     name: 'group-list',
-    params: { slug: '' },                   
-    query: { family: key, viewMode: 'group' }
+    params: { slug: '' },
+    query: { family: key, viewMode: 'group' },
   })
 }
 
@@ -491,7 +506,7 @@ onMounted(() => {
       </div>
 
       <!-- ============================================================ -->
-      <!-- PRIMARY NAVIGATION                                            -->
+      <!-- PRIMARY NAVIGATION — all expandable items live here          -->
       <!-- ============================================================ -->
       <NcAppNavigationList>
         <NcAppNavigationItem
@@ -527,12 +542,44 @@ onMounted(() => {
               />
             </template>
 
-            <!-- All other expandable items — static children -->
+            <!-- My spaces — dynamic space families + All spaces -->
+            <template v-else-if="item.key === 'my_spaces'">
+              <NcAppNavigationItem
+                v-for="family in mySpaceFamilies"
+                :key="family.key"
+                :name="family.label"
+                :class="{ 'is-active': isSpaceFamilyActive(family.key) }"
+                @click="goToFamilySpaces(family.key)"
+              >
+                <template #icon>
+                  <component :is="family.icon" />
+                </template>
+              </NcAppNavigationItem>
+
+              <NcAppNavigationItem
+                v-if="mySpaceFamilies.length === 0"
+                :name="t('agora', 'No spaces yet')"
+                :disabled="true"
+                class="nav-hint"
+              />
+
+              <NcAppNavigationItem
+                :name="t('agora', 'All spaces')"
+                @click="goToAllSpaces"
+              >
+                <template #icon>
+                  <component :is="InquiryGeneralIcons.FolderMultiple" />
+                </template>
+              </NcAppNavigationItem>
+            </template>
+
+            <!-- Static children (Participate, Personal, Management, My activity) -->
             <template v-else>
               <NcAppNavigationItem
                 v-for="child in visibleChildren(item)"
                 :key="child.key"
                 :name="child.label"
+                :class="{ 'is-active': isChildActive(child) }"
                 @click="goToChild(child)"
               >
                 <template v-if="child.icon" #icon>
@@ -545,71 +592,27 @@ onMounted(() => {
       </NcAppNavigationList>
 
       <!-- ============================================================ -->
-      <!-- MY SPACES — families owning at least one root group type      -->
+      <!-- SETTINGS                                                      -->
       <!-- ============================================================ -->
-      <NcAppNavigationCaption :name="t('agora', 'My spaces')" />
+      <NcAppNavigationCaption
+        :name="t('agora', 'Settings')"
+        class="nav-section-caption"
+      />
 
-      <NcAppNavigationList>
-        <NcAppNavigationItem
-          v-for="family in mySpaceFamilies"
-          :key="family.key"
-          :name="family.label"
-          @click="goToFamilySpaces(family.key)"
-        >
-          <template #icon>
-            <component :is="family.icon" />
-          </template>
-        </NcAppNavigationItem>
-
-        <NcAppNavigationItem
-          v-if="mySpaceFamilies.length === 0"
-          :name="t('agora', 'No spaces yet')"
-          :disabled="true"
-          class="nav-hint"
-        />
-
-        <NcAppNavigationItem
-          :name="t('agora', 'All spaces')"
-          @click="goToAllSpaces"
-        >
-          <template #icon>
-            <component :is="InquiryGeneralIcons.FolderMultiple" />
-          </template>
-        </NcAppNavigationItem>
-      </NcAppNavigationList>
-
-      <!-- ============================================================ -->
-      <!-- MY ACTIVITY                                                   -->
-      <!-- ============================================================ -->
-      <NcAppNavigationCaption :name="t('agora', 'My activity')" />
-
-      <NcAppNavigationList>
-        <NcAppNavigationItem
-          v-for="item in myActivityNav"
-          :key="item.key"
-          :name="item.label"
-          @click="goToChild(item)"
-        >
-          <template #icon>
-            <component :is="item.icon" />
-          </template>
-        </NcAppNavigationItem>
-      </NcAppNavigationList>
-
-      <!-- ============================================================ -->
-      <!-- PREFERENCES                                                   -->
-      <!-- ============================================================ -->
       <NcAppNavigationList>
         <NcAppNavigationItem
           :name="t('agora', 'Preferences')"
           :href="preferencesUrl"
-          class="nav-preferences"
         >
           <template #icon>
             <component :is="NavigationIcons.Settings" />
           </template>
         </NcAppNavigationItem>
       </NcAppNavigationList>
+
+      <!-- Single trailing spacer so the footer illustration never covers
+           the last item. Replaces the old blanket padding on every list. -->
+      <div class="nav-end-spacer" aria-hidden="true" />
     </template>
 
     <!-- Footer -->
@@ -662,6 +665,20 @@ onMounted(() => {
   font-weight: 600;
 }
 
+/* Section caption — only used for Settings now, but styled so it reads
+   as a proper anchor for the block beneath it. */
+:deep(.nav-section-caption) {
+  margin-top: 14px;
+  padding-top: 10px;
+  padding-inline: 16px;
+  border-top: 1px solid var(--color-border);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+  color: var(--color-text-maxcontrast);
+}
+
 .nav-children {
   margin-left: 12px;
   border-left: 1px solid var(--color-border);
@@ -672,14 +689,11 @@ onMounted(() => {
   font-style: italic;
 }
 
-.nav-preferences {
-  margin-top: 12px;
-  border-top: 1px solid var(--color-border);
-  padding-top: 8px;
-}
-
-:deep(.app-navigation__list) {
-  padding-bottom: 180px;
+/* A single spacer at the very end replaces the old blanket
+   padding-bottom: 180px that was pushing the last sections behind
+   the footer. */
+.nav-end-spacer {
+  height: 170px;
 }
 
 .nav-footer {
@@ -692,7 +706,7 @@ onMounted(() => {
 
   &__illustration {
     width: 100%;
-    max-width: 180px;
+    max-width: 160px;
     display: block;
     margin: 0 auto 8px;
     opacity: 0.9;

@@ -11,6 +11,15 @@
       @view-group="onViewGroup"
       @navigate-to="onNavigate"
     />
+    <InquiryCreateDlg
+      v-if="showCreateDialog"
+      :inquiry-type="createDialogType"
+      :response-type="createDialogResponseType"
+      :family="createDialogFamily"
+      :available-groups="availableGroups"
+      @close="closeCreateDialog"
+      @added="onInquiryAdded"
+    />
   </NcAppContent>
 </template>
 
@@ -19,9 +28,11 @@ import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import ExperienceRenderer from '../components/Experience/ExperienceRenderer.vue'
+import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
 
 import { useInquiriesStore } from '../stores/inquiries'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups'
+import { useSessionStore } from '../stores/session'
 import type { Inquiry, InquiryGroup } from '../Types'
 import type { ExperienceKey } from '../Types/experience.types'
 import { useViewableInquiries } from '../composables/useViewableInquiries.ts'
@@ -31,6 +42,7 @@ const route = useRoute()
 
 const inquiriesStore = useInquiriesStore()
 const groupsStore = useInquiryGroupsStore()
+const sessionStore = useSessionStore()
 
 // The landing is always rendered with the `home` experience. The route can
 // still override it via `?experience=` for debugging or future variants, but
@@ -42,6 +54,64 @@ const experience = computed<ExperienceKey>(() => {
   }
   return 'home' as ExperienceKey
 })
+
+const showCreateDialog = computed(() => route.query.viewMode === 'create')
+
+const createDialogType = computed(() => {
+  const key =
+    (route.query.inquiryType as string | undefined) ??
+    (route.query.type as string | undefined)
+  if (!key) return null
+  const types = sessionStore.appSettings.inquiryTypeTab || []
+  return types.find((t) => t.inquiry_type === key) ?? null
+})
+
+const createDialogResponseType = computed<string | null>(() => {
+  const raw = route.query.responseType
+  return typeof raw === 'string' && raw.length > 0 ? raw : null
+})
+
+const createDialogFamily = computed<string | null>(() => {
+  const raw = route.query.family
+  return typeof raw === 'string' && raw.length > 0 ? raw : null
+})
+
+const availableGroups = computed<string[]>(() => {
+  const groups = sessionStore.currentUser.groups || {}
+  return typeof groups === 'object' && !Array.isArray(groups)
+    ? Object.keys(groups)
+    : (groups as string[])
+})
+
+function closeCreateDialog() {
+  const q = { ...route.query }
+  delete q.viewMode
+  delete q.inquiryType
+  delete q.type
+  delete q.responseType
+  router.replace({ query: q })
+}
+
+function onInquiryAdded(inquiry: { id: number; title: string }) {
+  closeCreateDialog()
+  if (inquiry?.id) {
+    router.push({ name: 'inquiry', params: { id: inquiry.id } })
+  }
+}
+
+// ── The one entry-point every caller should use ─────────────────────
+function handleCreateInquiry(options: { type?: string; family?: string } = {}) {
+  const query: Record<string, string> = {
+    ...route.query,
+    viewMode: 'create',
+  }
+  if (options.type) query.inquiryType = options.type
+  if (options.family) query.family = options.family
+
+  // Stay on Home. Don't push to the non-existent `group` route.
+  router.push({ name: 'home', query })
+}
+
 
 // The landing only ever wants the viewable, non-archived set. Per-zone
 // filtering / sorting / pagination is applied downstream by
@@ -100,6 +170,16 @@ function onNavigate(target: any) {
         params: { type: 'relevant' },
         query: { family: 'collective', display: 'feed' },
       })
+     case 'create':
+      return handleCreateInquiry({
+        type: target.inquiryType,
+        family: target.family,
+      })
+    case 'promo-action':
+      return handleCreateInquiry({
+        type: target.inquiryType,
+        family: target.family,
+      })
 
     // ---- Services ----
     case 'service':
@@ -130,10 +210,6 @@ function onNavigate(target: any) {
       })
     case 'explore-all':
       return router.push({ name: 'group' })
-    case 'create':
-      return handleCreateInquiry()
-    case 'promo-action':
-      return handleCreateInquiry()
 
     // ---- Zone-level "view all" ----
     case 'inquiries-all':
@@ -174,7 +250,7 @@ function handleHeroAction(key: string) {
         query: { filter: 'to_vote' },
       })
     case 'propose':
-      return handleCreateInquiry()
+      return handleCreateInquiry({type: 'proposal'})
     case 'debate':
       return router.push({
         name: 'explore',
@@ -186,7 +262,4 @@ function handleHeroAction(key: string) {
   }
 }
 
-function handleCreateInquiry() {
-  router.push({ name: 'group', query: { viewMode: 'create' } })
-}
 </script>

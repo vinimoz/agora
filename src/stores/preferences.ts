@@ -8,7 +8,12 @@ import { UserSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 
-export type ViewMode = 'table-view' | 'list-view' | 'reel-view'
+export type ViewMode =
+  | 'table-view'
+  | 'list-view'
+  | 'reel-view'
+  | 'feed'
+  | 'timeline'
 
 export type UserPreferences = {
   defaultViewInquiry: ViewMode

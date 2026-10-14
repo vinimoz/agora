@@ -464,13 +464,17 @@ const availableResponseTypes = computed(() =>
 
 // Create context once as computed
 const optionContext = computed(() => {
-    if (!optionStore) return null
-    return createOptionContext(optionStore)
+  // nothing loaded yet → no context, permissions default to false
+  if (!optionStore?.id) return null
+  return createOptionContext(optionStore)
 })
 
-// Permission checks as computed properties
-const canEdit = computed(() => canEditOption(optionContext.value))
-const canDelete = computed(() => canDeleteOption(optionContext.value))
+const canEdit = computed(() =>
+  optionContext.value ? canEditOption(optionContext.value) : false
+)
+const canDelete = computed(() =>
+  optionContext.value ? canDeleteOption(optionContext.value) : false
+)
 
 // Computed properties
 const modalTitle = computed(() => optionStore.title || t('agora', 'Option details'))

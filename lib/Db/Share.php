@@ -43,6 +43,8 @@ use OCP\IURLGenerator;
  * @method         ?int getAnonymizedSupports()
  * @method         int getDeleted()
  * @method         void setDeleted(int $value)
+ * @method         int getAllowParticipation()
+ * @method         void setAllowParticipation(int $value)
  * @method         ?string getLabel()
  * @method         void setLabel(?string $value)
  */
@@ -134,6 +136,7 @@ class Share extends EntityWithUser implements JsonSerializable
     protected int $locked = 0;
     protected ?string $miscSettings = null;
     protected int $deleted = 0;
+    protected ?int $allowParticipation = 0;
 
     // joined columns
     protected int $supported = 0;
@@ -144,6 +147,7 @@ class Share extends EntityWithUser implements JsonSerializable
         $this->addType('inquiryId', 'integer');
         $this->addType('invitationSent', 'integer');
         $this->addType('locked', 'integer');
+        $this->addType('allowParticipation', 'integer');
         $this->addType('reminderSent', 'integer');
         $this->addType('deleted', 'integer');
         $this->urlGenerator = Container::queryClass(IURLGenerator::class);

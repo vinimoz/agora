@@ -11,10 +11,12 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { useSharesStore } from '../../stores/shares.ts'
 import { useInquiryGroupStore } from '../../stores/inquiryGroup.ts'
-import ShareList from '../Shares/SharesList.vue'
 import UserSearch from '../User/UserSearch.vue'
 import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from '../../Types/index.ts'
 import type { VisibilityType, PublicationStatus } from '../../stores/inquiryGroup.ts'
+import ShareList from '../Shares/SharesList.vue'
+import SharesListUnsent from '../Shares/SharesListUnsent.vue'
+import SharesListLocked from '../Shares/SharesListLocked.vue'
 
 // ============================================================
 // STORE SETUP
@@ -46,21 +48,31 @@ const visibilityOptionLabels: Record<string, string> = {
 }
 
 // Publication status options - String array for simple values
-const publicationStatusOptions = [
+const groupStatusOptions = [
     'draft',
-    'pending',
-    'published',
+    'active',
     'archived',
-    'deleted',
+    'closed',
 ]
 
-const publicationStatusLabels: Record<PublicationStatus, string> = {
+const groupStatusLabels: Record<string, string> = {
     draft: t('agora', 'Draft'),
-    pending: t('agora', 'Pending Approval'),
-    published: t('agora', 'Published'),
+    active: t('agora', 'Active'),
     archived: t('agora', 'Archived'),
-    deleted: t('agora', 'Deleted'),
+    closed: t('agora', 'Closed'),
 }
+
+const selectedGroupStatus = computed({
+    get: () => inquiryGroupStore.status.groupStatus || 'draft',
+    set: async (val: string) => {
+        try {
+            await inquiryGroupStore.update({ groupStatus: val as any })
+            showSuccess(t('agora', 'Group status updated'))
+        } catch (error) {
+            showError(t('agora', 'Failed to update status'))
+        }
+    },
+})
 
 // ============================================================
 // COMPUTED - Direct store access with reactive updates
@@ -156,16 +168,14 @@ async function saveVisibilityGroups(groups: Array<{ id: string; displayName: str
 // ============================================================
 const infoText = computed((): string => {
     const visibility = inquiryGroupStore.configuration.visibility
-    const pubStatus = inquiryGroupStore.status.publicationStatus
+    const groupStatus = inquiryGroupStore.status.groupStatus
 
     const parts: string[] = []
 
-    // Status
     parts.push(t('agora', 'Status: {status}', {
-        status: publicationStatusLabels[pubStatus] || pubStatus,
+        status: groupStatusLabels[groupStatus] || groupStatus,
     }))
 
-    // Visibility info
     switch (visibility) {
         case 'everyone':
             parts.push(t('agora', 'Open to everyone'))
@@ -192,7 +202,7 @@ const infoText = computed((): string => {
             parts.push(t('agora', 'Private (owner only)'))
             break
     }
- return parts.join(' • ')
+    return parts.join(' • ')
 })
 
 // ============================================================
@@ -252,42 +262,42 @@ onMounted(async () => {
         </div>
 
         <!-- ============================================================
-            PUBLICATION STATUS
+            GROUP STATUS
             ============================================================ -->
         <div class="access-section">
             <div class="section-header">
-                <h3>{{ t('agora', 'Publication Status') }}</h3>
+                <h3>{{ t('agora', 'Group Status') }}</h3>
                 <div class="section-badge">
-                    <span class="badge" :class="inquiryGroupStore.status.publicationStatus">
-                        {{ publicationStatusLabels[inquiryGroupStore.status?.publicationStatus] }}
+                    <span class="badge" :class="inquiryGroupStore.status.groupStatus">
+                        {{ groupStatusLabels[inquiryGroupStore.status?.groupStatus] }}
                     </span>
                 </div>
             </div>
-            <p class="section-desc">{{ t('agora', 'Control the publication state of this group') }}</p>
+            <p class="section-desc">{{ t('agora', 'Control the workflow status of this group') }}</p>
 
             <NcSelect
-                :model-value="selectedPublicationStatus"
-                :options="publicationStatusOptions"
+                :model-value="selectedGroupStatus"
+                :options="groupStatusOptions"
                 :label-outside="true"
-                :option-label="(opt: string) => publicationStatusLabels[opt as PublicationStatus] || opt"
+                :option-label="(opt: string) => groupStatusLabels[opt] || opt"
                 :label="t('agora', 'Status')"
                 :disabled="!canEdit || isSaving"
-		input-label="Select publication status"
-                @update:model-value="selectedPublicationStatus = $event"
+                input-label="Select group status"
+                @update:model-value="selectedGroupStatus = $event"
             />
 
             <!-- Quick actions -->
             <div class="status-actions">
                 <NcButton
-                    v-if="inquiryGroupStore.isDraft || inquiryGroupStore.isPending"
+                    v-if="inquiryGroupStore.isDraft"
                     type="primary"
                     :disabled="!canEdit || isSaving"
                     @click="publishGroup"
                 >
-                    {{ t('agora', 'Publish') }}
+                    {{ t('agora', 'Activate') }}
                 </NcButton>
                 <NcButton
-                    v-if="inquiryGroupStore.isPublished"
+                    v-if="inquiryGroupStore.isActive"
                     type="warning"
                     :disabled="!canEdit || isSaving"
                     @click="archiveGroup"
@@ -365,18 +375,21 @@ onMounted(async () => {
     </div>
 </div>
 
-        <!-- ============================================================
-            PUBLIC ACCESS - Using ShareList like SideBarTabAccess.vue
+ 	<!-- ============================================================
+            ACCESS - 
             ============================================================ -->
         <div class="access-section shares-section">
             <div class="section-header">
-                <h3>{{ t('agora', 'Public Access') }}</h3>
+                <h3>{{ t('agora', 'Access') }}</h3>
                 <div class="section-badge">
-                    <span class="badge">{{ sharesStore.public.length }} {{ t('agora', 'public links') }}</span>
+                    <span class="badge">{{ sharesStore.active.length }} {{ t('agora', 'shares') }}</span>
                 </div>
             </div>
-            <p class="section-desc">{{ t('agora', 'Create public links for external participation') }}</p>
-            <ShareList />
+            <p class="section-desc">{{ t('agora', 'Manage individual and public shares for this group') }}</p>
+
+            <SharesListUnsent class="shares unsent" />
+            <ShareList class="shares effective" />
+            <SharesListLocked class="shares" />
         </div>
 
         <!-- Info text -->

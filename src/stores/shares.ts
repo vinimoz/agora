@@ -43,6 +43,7 @@ export type Share = {
   user: User
   reminderSent: boolean
   label: string
+  allowParticipation: boolean
   URL: string
   supported: boolean
   deleted: boolean

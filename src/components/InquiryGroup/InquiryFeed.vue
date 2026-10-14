@@ -6,7 +6,7 @@
 <template>
   <div class="inquiry-feed">
     <!-- Feed Header -->
-    <div class="feed-header">
+    <div v-if="!hideHeader" class="feed-header">
       <div class="feed-header-left">
         <component :is="Icons.Activity" :size="24" class="feed-icon" />
         <h2>{{ t('agora', 'Activity Feed') }}</h2>
@@ -136,10 +136,12 @@ import type { Inquiry } from '../../Types'
 import { useSessionStore } from '../../stores/session.ts'
 
 
-const props = defineProps<{
+interface Props {
   inquiries: Inquiry[]
   groupId?: number
-}>()
+    hideHeader?: boolean
+}
+const props = withDefaults(defineProps<Props>(), { hideHeader: false })
 
 const emit = defineEmits<{
   click: [inquiry: Inquiry]

@@ -64,7 +64,10 @@ const allInquiryGroupTypes = computed((): InquiryGroupType[] => {
 })
 
 // Find the InquiryGroupType object by group_type string
-const findInquiryGroupTypeByType = (typeString: string): InquiryGroupType | null => allInquiryGroupTypes.value.find(type => type.group_type === typeString) || null
+const findInquiryGroupTypeByType = (typeString: string): InquiryGroupType | null =>
+  allInquiryGroupTypes.value.find(
+    (type) => (type.type || type.group_type) === typeString,
+  ) ?? null
 
 // Get the initial inquiry group type object
 const initialInquiryGroupType = computed(() => {
@@ -110,10 +113,11 @@ const availableInquiryGroupTypes = computed(() => {
 
 const selectedInquiryGroupType = ref<string>('')
 
-const actualSelectedType = computed(() => 
+const actualSelectedType = computed<string>(() =>
   localInquiryGroupType.value
-  || props.inquiryGroupType  
+  || (typeof props.inquiryGroupType === 'string' ? props.inquiryGroupType : '')
   || availableInquiryGroupTypes.value[0]?.group_type
+  || '',
 )
 
 watch(

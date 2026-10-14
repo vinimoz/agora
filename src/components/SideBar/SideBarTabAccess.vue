@@ -20,6 +20,8 @@ import UserSearch from '../User/UserSearch.vue'
 import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from '../../Types/index.ts'
 
 import ShareList from '../Shares/SharesList.vue'
+import SharesListUnsent from '../Shares/SharesListUnsent.vue'
+import SharesListLocked from '../Shares/SharesListLocked.vue'
 
 // ============================================================
 // TYPES
@@ -564,7 +566,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 						:options="visibilityOptions"
 						:label-outside="true"
 						:option-label="(opt: string) => visibilityOptionLabels[opt] || opt"
-						:label="t('agora', 'Visibility')"
+						 :input-label="t('agora', 'Visibility')"
 						@update:model-value="(val: string) => visibilityType = val"
 						/>
 
@@ -606,7 +608,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 							:options="participationOptions"
 							:label-outside="true"
 							:option-label="(opt: string) => participationOptionLabels[opt] || opt"
-							:label="t('agora', 'Participation Policy')"
+							:input-label="t('agora', 'Participation Policy')"
 							:loading="loading.participation"
 							:disabled="isLotteryLocked"
 							@update:model-value="(val) => participationType = val"
@@ -701,6 +703,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 											:model-value="participationConfig.method || 'random'"
 											:options="['random', 'weighted', 'stratified']"
 											:label-outside="true"
+											:input-label="t('agora', 'Selection Method')"
 											:disabled="isLotteryLocked"
 											:option-label="(opt: string) => t('agora', opt.charAt(0).toUpperCase() + opt.slice(1))"
 											:placeholder="t('agora', 'Select selection method')"
@@ -890,17 +893,20 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 	</div>
 
 	<!-- ============================================================
-		PUBLIC ACCESS SECTION
+		ACCESS SECTION 
 		============================================================ -->
 		<div class="participation-section shares-section">
 			<div class="section-header">
-				<h3>{{ t('agora', 'Public Access') }}</h3>
+				<h3>{{ t('agora', 'Access') }}</h3>
 				<div class="section-badge">
-					<span class="badge">{{ sharesStore.public.length }} {{ t('agora', 'public links') }}</span>
+					<span class="badge">{{ sharesStore.active.length }} {{ t('agora', 'shares') }}</span>
 				</div>
 			</div>
-			<p class="section-desc">{{ t('agora', 'Create public links for external participation') }}</p>
-			<ShareList />
+			<p class="section-desc">{{ t('agora', 'Manage individual and public shares for this inquiry') }}</p>
+
+			<ShareList class="shares effective" />
+			<SharesListUnsent class="shares unsent" />
+			<SharesListLocked class="shares" />
 		</div>
 
 		<!-- ============================================================

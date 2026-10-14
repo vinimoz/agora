@@ -7,117 +7,99 @@
 import { ref } from 'vue'
 import { debounce } from 'lodash'
 import { t } from '@nextcloud/l10n'
+import { AxiosError } from '@nextcloud/axios'
 
 import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
 
 import { AppSettingsAPI } from '../../Api/index.ts'
 import { Logger } from '../../helpers/index.ts'
 import { ISearchType, User, SEARCH_TYPE_ALL } from '../../Types/index.ts'
-import { AxiosError } from '@nextcloud/axios'
 
 interface Props {
   placeholder?: string
   ariaLabel?: string
   searchTypes?: ISearchType[]
   closeOnSelect?: boolean
+  inputLabel?: string
   multiple?: boolean
+  disabled?: boolean          // ← ADDED
 }
 
-const emit = defineEmits(['userSelected', 'update:modelValue'])
+const emit = defineEmits<{
+  (e: 'userSelected', user: User): void
+}>()
 
 const model = defineModel<User | User[] | string | string[] | undefined>()
 
-const {
-  placeholder = t('agora', 'Type to start searching'),
-  ariaLabel = t('agora', 'Select users'),
-  searchTypes = [SEARCH_TYPE_ALL],
-  closeOnSelect = false,
-  multiple = false,
-} = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: t('agora', 'Type to start searching'),
+  ariaLabel: t('agora', 'Select users'),
+  searchTypes: () => [SEARCH_TYPE_ALL],
+  closeOnSelect: false,
+  multiple: false,
+  disabled: false,            // ← ADDED (prevents undefined in template)
+})
 
 const users = ref<User[]>([])
 const isLoading = ref(false)
 const userSelect = ref()
-
-const debouncedUpdateModel = debounce((value: User | User[]) => {
-  emit('update:modelValue', value)
-}, 150)
-
 
 const loadUsersAsync = debounce(async function (query: string) {
   if (!query) {
     users.value = []
     return
   }
-
   isLoading.value = true
-
   try {
-    const response = await AppSettingsAPI.getUsers(query, searchTypes)
+    const response = await AppSettingsAPI.getUsers(query, props.searchTypes)
     users.value = response.data.siteusers.map(u => ({
-    ...u,
-    user: u.displayName,
-}))
-
-//    users.value = response.data.siteusers
-    isLoading.value = false
+      ...u,
+      user: u.displayName,
+    }))
   } catch (error) {
-    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-      return
-    }
+    if ((error as AxiosError)?.code === 'ERR_CANCELED') return
     Logger.error('Error loading users', { error })
+  } finally {
     isLoading.value = false
   }
 }, 250)
 
-async function optionSelected(user: User | User[]) {
-
-   users.value = []
-
-    if (userSelect.value?.search !== undefined) {
-        userSelect.value.search = ''
-    }
-
-  if (multiple) {
-    // For multiple selection, emit the array of users
-//    emit('update:modelValue', user as User[])
-    debouncedUpdateModel(user as User[])
-  } else {
-    // For single selection, emit just the user
-    emit('userSelected', user as User)
-        debouncedUpdateModel(user as User)
-    // emit('update:modelValue', user as User)
+function optionSelected(user: User | User[]) {
+  users.value = []
+  if (userSelect.value?.search !== undefined) {
+    userSelect.value.search = ''
   }
-}
-
-const selectProps = {
-  ariaLabelCombobox: ariaLabel,
-  multiple,
-  userSelect: true,
-  tagWidth: 80,
-  loading: isLoading.value,
-  filterable: false,
-  searchable: true,
-  placeholder,
-  closeOnSelect,
-  dropdownShouldOpen: () => users.value.length > 0,
-  label: 'displayName',
+  if (props.multiple) {
+    model.value = user as User[]
+  } else {
+    emit('userSelected', user as User)
+    model.value = user as User
+  }
 }
 </script>
 
 <template>
   <NcSelectUsers
-    id="ajax"
     ref="userSelect"
+    v-bind="$attrs"
     v-model="model"
-    v-bind="selectProps"
-    :options="users"
+    :placeholder="placeholder"
+    :input-label="inputLabel || ariaLabel || placeholder"
+    :label-outside="true"
+    :disabled="disabled"
+    :multiple="multiple"
+    :close-on-select="closeOnSelect"
     :loading="isLoading"
-    @option:selected="optionSelected"
+    :options="users"
+    :filterable="false"
+    :searchable="true"
+    label="displayName"
+    :aria-label-combobox="ariaLabel"
     @search="loadUsersAsync"
+    @option:selected="optionSelected"
   >
     <template #selection="{ values, isOpen }">
-      <span v-if="values.length &amp;&amp; !isOpen" class="multiselect__single">
+      <span v-if="values.length && !isOpen" class="multiselect__single">
         {{ values.length }} {{ multiple ? 'items selected' : 'item selected' }}
       </span>
     </template>

@@ -173,6 +173,7 @@ function isContentOwner(contentOwnerId: string): boolean {
 }
 
 export function createInquiryContext(inquiry: Inquiry): PermissionContext | null {
+	if (!inquiry) return null
 	if (!inquiry?.owner || !inquiry.configuration || !inquiry.status) {
 		console.warn('createInquiryContext: invalid inquiry', inquiry)
 		return null
@@ -397,7 +398,6 @@ export function canComment(ctx: PermissionContext): boolean {
 
 export function canEdit(ctx: PermissionContext): boolean {
 	if (!ctx) return false
-
 	if (ctx.contentType === ContentType.InquiryGroup) {
 		if (ctx.isArchived || ctx.isDeleted) return false
 		if (ctx.isOwner || ctx.userType === UserType.Admin) return true

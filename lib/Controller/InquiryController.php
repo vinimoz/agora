@@ -13,6 +13,7 @@ use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Dto\InquiryDto;
 use OCA\Agora\Exceptions\Exception;
 use OCA\Agora\Model\Settings\AppSettings;
+use OCA\Agora\Service\AIService;                 
 use OCA\Agora\Service\CommentService;
 use OCA\Agora\Service\MailService;
 use OCA\Agora\Service\OptionService;
@@ -58,22 +59,12 @@ class InquiryController extends BaseController
         private SupportResultService $supportResultService,
         private SupportService $supportService,
         private ParticipationService $participationService,
+        private AIService $aiService,            
         private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
     }
 
-    /**
-     * Get list of inquiries
-     * psalm-return JSONResponse<array{
-     *     inquiries: array<int, Inquiry>,
-     *         permissions: array{
-     *             inquiryCreationAllowed: bool,
-     *             comboAllowed: bool
-     *         },
-     *     inquiryGroups: array<int, InquiryGroup>
-     * }>
-     */
     /**
      * Get list of inquiries
      */
@@ -94,14 +85,10 @@ class InquiryController extends BaseController
         );
     }
 
-
-
     /**
      * get childs from an inquiry
      *
      * @param int $inquiryId Inquiry id
-     *
-     *                       psalm-return JSONResponse<array{inquiry: Inquiry}>
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}/childs')]
@@ -114,14 +101,10 @@ class InquiryController extends BaseController
         );
     }
 
-
-
     /**
      * get inquiry
      *
      * @param int $inquiryId Inquiry id
-     *
-     *                       psalm-return JSONResponse<array{inquiry: Inquiry}>
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}/inquiry')]
@@ -134,21 +117,11 @@ class InquiryController extends BaseController
         );
     }
 
-
     /**
      * get complete inquiry
      *
      * @param int $inquiryId Inquiry id
-     *
-     *                       psalm-return JSONResponse<array{
-     *                       inquiry: Inquiry,
-     *                       options: array<int, Option>,
-     *                       comments: array<int, Comment>,
-     *                       shares: array<int, Share>,
-     *                       subscribed: Subscription|null
-     *                       }>
      */
-
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
     public function getFull(int $inquiryId): JSONResponse
@@ -183,18 +156,17 @@ class InquiryController extends BaseController
 
         $inquiryLink = $this->inquiryLinkService->findByInquiryId($inquiryId);
         $timerMicro['inquiryLink'] = microtime(true);
-        
+
         $supportEngine = $this->supportEngineService->getEnginesByInquiry($inquiryId);
         $timerMicro['supportEngine'] = microtime(true);
 
         $supportResult = $this->supportResultService->getResultsByInquiry($inquiryId);
         $timerMicro['supportResult'] = microtime(true);
-        
+
         $supports = $this->supportService->getSupportsByInquiry($inquiryId);
         $timerMicro['supports'] = microtime(true);
 
-	$participation = $this->participationService->getPolicyWithRelations('inquiry', $inquiryId);
-
+        $participation = $this->participationService->getPolicyWithRelations('inquiry', $inquiryId);
         $timerMicro['participation'] = microtime(true);
 
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];
@@ -225,6 +197,7 @@ class InquiryController extends BaseController
                 'diffMicro' => $diffMicro,
             ];
         }
+
         return [
             'inquiry' => $inquiry,
             'options' => $options,
@@ -237,7 +210,6 @@ class InquiryController extends BaseController
             'supportResult' => $supportResult,
             'supports' => $supports,
             'participation' => $participation,
-
         ];
     }
 
@@ -254,20 +226,20 @@ class InquiryController extends BaseController
             }
 
             /*if (empty($data['type']) || !in_array($data['type'], Inquiry::INQ_VALID_TYPE::true)) {
-            throw new \InvalidArgumentException('Invalid inquiry type');
+                throw new \InvalidArgumentException('Invalid inquiry type');
             }*/
 
             $dto = new InquiryDto(
                 (string) $data['title'],
                 (string) $data['type'],
-                (string) $data['family'],
-                isset($data['visibility']) ? (string) $data['visibility'] : '',
-                isset($data['ownedGroup']) ? (string) $data['ownedGroup'] : '',
+                isset($data['family'])      ? (string) $data['family']      : '',
+                isset($data['visibility'])  ? (string) $data['visibility']  : '',
+                isset($data['ownedGroup'])  ? (string) $data['ownedGroup']  : '',
                 isset($data['description']) ? (string) $data['description'] : '',
-                isset($data['parentId']) ? (int) $data['parentId'] : null,
-                isset($data['locationId']) ? (int) $data['locationId'] : 0,
-                isset($data['categoryId']) ? (int) $data['categoryId'] : 0,
-                [],
+                isset($data['parentId'])    ? (int) $data['parentId']       : null,
+                isset($data['locationId'])  ? (int) $data['locationId']     : 0,
+                isset($data['categoryId'])  ? (int) $data['categoryId']     : 0,
+                isset($data['miscFields']) && is_array($data['miscFields']) ? $data['miscFields'] : [],
             );
 
             $inquiry = $this->inquiryService->createFromDto($dto);
@@ -286,14 +258,15 @@ class InquiryController extends BaseController
                 'Server error',
                 [
                     'exception' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
                 ]
             );
+
+            return new JSONResponse(
+                ['error' => 'SERVER_ERROR', 'message' => 'An unexpected error occurred'],
+                Http::STATUS_INTERNAL_SERVER_ERROR
+            );
         }
-        return new JSONResponse(
-            ['error' => 'SERVER_ERROR', 'message' => 'An unexpected error occurred'],
-            Http::STATUS_INTERNAL_SERVER_ERROR
-        );
     }
 
     #[NoAdminRequired]
@@ -302,10 +275,10 @@ class InquiryController extends BaseController
     {
         $data = $this->request->getParams();
 
-        if (!isset($data['key']) || empty(trim($data['key']))) {
+        if (!isset($data['key']) || empty(trim((string) $data['key']))) {
             $this->logger->error('Missing or empty key in misc field update', ['data' => $data]);
             return new JSONResponse([
-                'error' => 'Key cannot be null or empty for misc field update'
+                'error' => 'Key cannot be null or empty for misc field update',
             ], Http::STATUS_BAD_REQUEST);
         }
 
@@ -314,17 +287,17 @@ class InquiryController extends BaseController
 
             return new JSONResponse([
                 'success' => true,
-                'misc' => $result
+                'misc' => $result,
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Error updating misc field: ' . $e->getMessage(), [
                 'inquiryId' => $inquiryId,
                 'key' => $data['key'],
-                'value' => $data['value'] ?? null
+                'value' => $data['value'] ?? null,
             ]);
 
             return new JSONResponse([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], Http::STATUS_BAD_REQUEST);
         }
     }
@@ -332,8 +305,7 @@ class InquiryController extends BaseController
     /**
      * Update inquiry with all possible fields
      *
-     * @param  int $id Inquiry ID to update
-     * @return JSONResponse<array{inquiry: Inquiry}>
+     * @param  int $inquiryId Inquiry ID to update
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquiry/{inquiryId}')]
@@ -347,21 +319,21 @@ class InquiryController extends BaseController
                 throw new \InvalidArgumentException('Title is required');
             }
 
-        /*if (empty($data['type']) || !in_array($data['type'], Inquiry::INQ_VALID_TYPE::true)) {
-        throw new \InvalidArgumentException('Invalid inquiry type');
-        }*/
+            /*if (empty($data['type']) || !in_array($data['type'], Inquiry::INQ_VALID_TYPE::true)) {
+                throw new \InvalidArgumentException('Invalid inquiry type');
+            }*/
 
             $dto = new InquiryDto(
                 (string) $data['title'],
                 (string) $data['type'],
-                isset($data['family']) ? (string) $data['family'] : '',
-                isset($data['visibility']) ? (string) $data['visibility'] : '',
-                isset($data['ownedGroup']) ? (string) $data['ownedGroup'] : '',
+                isset($data['family'])      ? (string) $data['family']      : '',
+                isset($data['visibility'])  ? (string) $data['visibility']  : '',
+                isset($data['ownedGroup'])  ? (string) $data['ownedGroup']  : '',
                 isset($data['description']) ? (string) $data['description'] : '',
-                isset($data['parentId']) ? (int) $data['parentId'] : 0,
-                isset($data['locationId']) ? (int) $data['locationId'] : 0,
-                isset($data['categoryId']) ? (int) $data['categoryId'] : 0,
-                isset($data['miscFields']) && is_array($data['miscFields']) ? $data['miscFields'] : null,
+                isset($data['parentId'])    ? (int) $data['parentId']       : 0,
+                isset($data['locationId'])  ? (int) $data['locationId']     : 0,
+                isset($data['categoryId'])  ? (int) $data['categoryId']     : 0,
+                isset($data['miscFields']) && is_array($data['miscFields']) ? $data['miscFields'] : [],
             );
 
             // Partial update - only changed fields
@@ -388,13 +360,11 @@ class InquiryController extends BaseController
         }
     }
 
-
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquiry/updateconfig/{inquiryId}')]
     public function updateConfiguration(int $inquiryId): JSONResponse
     {
         $rawData = $this->request->getParams('data');
-
 
         return $this->response(
             fn () => [
@@ -403,14 +373,12 @@ class InquiryController extends BaseController
         );
     }
 
-    /*
+    /**
      * Update inquiry status
      *
-     * @param int $inquiryId Inquiry id
-     * @param status $inquirg
-     *
-     * psalm-return JSONResponse<boolean>
-     * */
+     * @param int    $inquiryId Inquiry id
+     * @param string $status
+     */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquiry/updatestatus/{inquiryId}/{status}')]
     public function updateInquiryStatus(int $inquiryId, string $status): JSONResponse
@@ -422,14 +390,11 @@ class InquiryController extends BaseController
         );
     }
 
-    /*
+    /**
      * Submit Inquiry for workflow moderation
      *
      * @param int $inquiryId Inquiry id
-     * @param status $action
-     *
-     * psalm-return JSONResponse<boolean>
-     * */
+     */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquiry/submitinquiry/{inquiryId}')]
     public function submitInquiry(int $inquiryId): JSONResponse
@@ -449,7 +414,6 @@ class InquiryController extends BaseController
             );
         }
     }
-
 
     /**
      * Lock Anonymous
@@ -494,7 +458,7 @@ class InquiryController extends BaseController
     {
         return $this->response(
             fn () => [
-                'inquiry' => $this->inquiryService->toggleArchiveRecursive($inquiryId)
+                'inquiry' => $this->inquiryService->toggleArchiveRecursive($inquiryId),
             ]
         );
     }
@@ -510,7 +474,7 @@ class InquiryController extends BaseController
     {
         return $this->response(
             fn () => [
-                'inquiry' => $this->inquiryService->delete($inquiryId)
+                'inquiry' => $this->inquiryService->delete($inquiryId),
             ]
         );
     }
@@ -557,18 +521,22 @@ class InquiryController extends BaseController
     public function clone(int $inquiryId): JSONResponse
     {
         $rawData = $this->request->getParams('data');
+
         return $this->response(
             fn () => [
-                'inquiry' => $this->cloneInquiry($inquiryId, $rawData['type'])
+                'inquiry' => $this->cloneInquiry($inquiryId, $rawData['type'] ?? null),
             ]
         );
     }
 
-    private function cloneInquiry(int $inquiryId): Inquiry
+    //      *clone* (not the original) and pass source id → target id in
+    //      the correct order for optionService->clone().
+    private function cloneInquiry(int $inquiryId, ?string $type = null): Inquiry
     {
-        $inquiry = $this->inquiryService->clone($inquiryId);
-        $this->optionService->clone($inquiryId, $inquiry->getId());
-        return $this->inquiryService->get($inquiryId);
+        $clone = $this->inquiryService->clone($inquiryId, $type);
+        $this->optionService->clone($inquiryId, $clone->getId());
+
+        return $clone;
     }
 
     /**
@@ -597,7 +565,7 @@ class InquiryController extends BaseController
     }
 
     /**
-     * Collect email addresses from particitipants
+     * Collect email addresses from participants
      *
      * @param int $inquiryId Inquiry id
      */
@@ -608,15 +576,15 @@ class InquiryController extends BaseController
         return $this->response(fn () => $this->inquiryService->getParticipantsEmailAddresses($inquiryId));
     }
 
-
     /**
-     * Get echance Text for inquiry
+     * Get enhanced text for inquiry
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/inquiry/get-text-ai')]
-    public function getTextAi(string $text): JSONResponse
+    public function getTextAi(): JSONResponse
     {
         $rawData = $this->request->getParams('data');
+
         return $this->response(fn () => $this->aiService->echanceText($rawData));
     }
 }
