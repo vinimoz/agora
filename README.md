@@ -157,12 +157,12 @@ occ app:enable agora
 
 | Document | Description | Link |
 | :-: | :-: | :-: |
-| **👤 User Guide** | Complete user manual with step-by-step instructions | [📖 USER\_GUIDE.md](file:///home/vini/Bureau/PERSO/Nextcloud/agora/docs/USER_GUIDE.md) |
-| **👤 Admin Guide** | Admin manual with step-by-step instructions for template and customization | [📖 ADMIN\_GUIDE.md](file:///home/vini/Bureau/PERSO/Nextcloud/agora/docs/ADMIN_GUIDE.md) |
-| **🔧 Template Guide** | Template configuration for administrators | [📘 template\_guide.md](file:///home/vini/Bureau/PERSO/Nextcloud/agora/docs/template_guide.md) |
-| **🔌 API Guide** | REST API documentation for developers | [🔌 API\_v1.0.md](file:///home/vini/Bureau/PERSO/Nextcloud/agora/docs/API_v1.0.md) |
-| **📋 Template Schema** | JSON schema for template validation | [📋 Agora-template-schema.json](file:///home/vini/Bureau/PERSO/Nextcloud/agora/docs/Agora-template-schema.json) |
-| **🏛  Democratic Guide** | Democratic voting guide | 🏛 [ Democratic\_vote](file:///home/vini/Bureau/PERSO/Nextcloud/agora/docs/Democratic_vote.md) |
+| **👤 User Guide** | Complete user manual with step-by-step instructions | [📖 USER\_GUIDE.md](docs/USER_GUIDE.md) |
+| **👤 Admin Guide** | Admin manual with step-by-step instructions for template and customization | [📖 ADMIN\_GUIDE.md](docs/ADMIN_GUIDE.md) |
+| **🔧 Template Guide** | Template configuration for administrators | [📘 template\_guide.md](docs/template_guide.md) |
+| **🔌 API Guide** | REST API documentation for developers | [🔌 API\_v1.0.md](docs/API_v1.0.md) |
+| **📋 Template Schema** | JSON schema for template validation | [📋 Agora-template-schema.json](docs/Agora-template-schema.json) |
+| **🏛  Democratic Guide** | Democratic voting guide | 🏛 [ Democratic\_vote](docs/Democratic_vote.md) |
 
 
 ## 🗺️ Roadmap
@@ -173,7 +173,7 @@ occ app:enable agora
 
 ## 📄 License
 
-This project is licensed under the GNU Affero General Public License v3.0 — see the [COPYING](file:///home/vini/Bureau/PERSO/Nextcloud/agora/COPYING) file for details.
+This project is licensed under the GNU Affero General Public License v3.0 — see the [COPYING](COPYING) file for details.
 
 ## 🙏 Credits
 
