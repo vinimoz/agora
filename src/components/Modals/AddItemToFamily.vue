@@ -153,6 +153,7 @@ const inquiryGroupsStore = useInquiryGroupsStore()
 // ---------------------------------------------------------------------------
 // Which items may be selected?
 // ---------------------------------------------------------------------------
+
 /**
  * Options: every option of the current inquiry, minus already-linked ones.
  * Inquiries: **only** the ones in the current inquiry group.
@@ -160,15 +161,22 @@ const inquiryGroupsStore = useInquiryGroupsStore()
  * The "only group" rule is a hard product constraint: votes for inquiries are
  * scoped to a group. See `getEnginesByTarget` in supportEngine.ts.
  */
+
 const availableItemIds = computed<number[]>(() => {
   const linked = new Set(props.alreadyLinkedItemIds ?? [])
 
   if (props.targetType === 'inquiry') {
-    // Priority 1: resolved current group
-    const currentGroup = inquiryGroupsStore.currentInquiryGroup
-    const groupIds = currentGroup?.inquiryIds ?? []
+    // Priority 1: the group id we were handed by the layout
+    const groupId = props.inquiryId
+    const idsFromGroup = groupId
+      ? inquiryGroupsStore.byId[groupId]?.inquiryIds ?? []
+      : []
 
-    // Priority 2: any group the current inquiry belongs to
+    // Priority 2: whatever group the store currently considers "current"
+    const currentGroup = inquiryGroupsStore.currentInquiryGroup
+    const groupIds = idsFromGroup.length ? idsFromGroup : currentGroup?.inquiryIds ?? []
+
+    // Priority 3: groups the currently-loaded inquiry belongs to
     let fallbackIds: number[] = []
     if (!groupIds.length) {
       const currentInquiryGroups =
@@ -183,6 +191,7 @@ const availableItemIds = computed<number[]>(() => {
   }
 
   return (optionsStore.options ?? [])
+    .filter((o) => !props.inquiryId || o.targetId === props.inquiryId)
     .map((o) => o.id)
     .filter((id) => !linked.has(id))
 })
@@ -294,9 +303,20 @@ async function patchOption(item: Option, patch: MiscUpdateMap, status?: string):
  * Persist a miscFields patch on an Inquiry.
  * `inquiriesStore` has no action for this — call the API and refresh the list.
  */
-async function patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
-  await inquiriesStore.updateInquiryMiscFields(item.id, patch)
-}
+ async function patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
+  const response = await InquiriesAPI.updateInquiry(item.id, {
+    miscFields: { ...(item.miscFields ?? {}), ...patch } as any,
+  })
+  const updated = response.data?.inquiry
+  if (updated) {
+    const idx = inquiriesStore.inquiries.findIndex(i => i.id === updated.id)
+    if (idx !== -1) {
+      inquiriesStore.inquiries[idx] = updated
+      inquiriesStore.inquiries = [...inquiriesStore.inquiries]
+    }
+  }
+ }
+
 
 async function patchItem(item: VotableItem, patch: MiscUpdateMap, status?: string): Promise<void> {
   if (props.targetType === 'inquiry') {

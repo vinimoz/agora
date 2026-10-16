@@ -27,7 +27,7 @@
             </div>
 
             <!-- Content -->
-            <div v-else-if="optionStore.id !== 0" class="modal-content">
+	    <div v-else-if="optionStore.id > 0" class="modal-content">
                 <!-- Header with option type and actions -->
                 <div class="modal-header">
                     <div class="header-left">
@@ -186,7 +186,7 @@
                                 <!-- Left side: Support and comment features -->
                                 <div class="features-left">
                                     <!-- Support feature -->
-                                    <div v-if="hasSupportFeature" class="feature-group">
+                                    <div v-if="hasSupportFeature && optionContext" class="feature-group">
                                         <SupportFeature
                                             :item="optionStore"
                                             item-type="option"
@@ -320,7 +320,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted, toRaw } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -464,10 +464,10 @@ const availableResponseTypes = computed(() =>
 
 // Create context once as computed
 const optionContext = computed(() => {
-  // nothing loaded yet → no context, permissions default to false
   if (!optionStore?.id) return null
-  return createOptionContext(optionStore)
+  return createOptionContext(toRaw(optionStore))
 })
+
 
 const canEdit = computed(() =>
   optionContext.value ? canEditOption(optionContext.value) : false

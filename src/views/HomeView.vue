@@ -105,9 +105,11 @@ function handleCreateInquiry(options: { type?: string; family?: string } = {}) {
     ...route.query,
     viewMode: 'create',
   }
+  console.log(" INQUIRY TYPE ", options.type )
+  console.log(" INQUIRY FAMILY TYPE ", options.family )
   if (options.type) query.inquiryType = options.type
   if (options.family) query.family = options.family
-
+  
   // Stay on Home. Don't push to the non-existent `group` route.
   router.push({ name: 'home', query })
 }

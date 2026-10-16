@@ -23,28 +23,9 @@ import type {
   VisibilityType,
   InquiryGroupUIConfig,
   DisplayZone,
-} from './inquiryGroups.types.ts'
-
-// ===== TYPES =====
-export type InquiryGroupPermissions = {
-  view: boolean
-  edit: boolean
-  delete: boolean
-  addInquiries: boolean
-  reorderInquiries: boolean
-  changeOwner: boolean
-  archive: boolean
-  clone: boolean
-}
-
-export type CurrentUserInquiryGroupStatus = {
-  isOwner: boolean
-  isLoggedIn: boolean
-  userId: string
-  userRole: UserType
-  canEdit: boolean
-  isProtected: boolean
-}
+  InquiryGroupPermissions,
+  CurrentUserInquiryGroupStatus,
+} from '@/Types'
 
 // ===== STORE =====
 export const useInquiryGroupStore = defineStore('inquiryGroup', {

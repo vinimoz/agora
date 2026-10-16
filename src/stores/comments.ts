@@ -13,7 +13,7 @@ import { useOptionStore } from './option'
 import { useSessionStore } from './session'
 
 import type { AxiosError } from '@nextcloud/axios'
-import type { Comment, CommentsStore } from './comments.types'
+import type { Comment, CommentsStore } from '@Types'
 
 export const useCommentsStore = defineStore('comments', {
 	state: (): CommentsStore => ({

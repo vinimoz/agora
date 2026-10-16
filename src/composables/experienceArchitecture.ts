@@ -109,7 +109,7 @@ home: {
 	    },
 	    position: { row: 3, column: 3, rowSpan: 3 },
 
-	    interaction: { action: 'open', target: 'page' },
+	    interaction: { action: 'open', target: 'dialog' },
     },
 
     // ---- Promo card (main column, bottom) ----
@@ -122,352 +122,469 @@ home: {
   },
 },
 
+
 // ============================================================
-// DASHBOARD – 2×2 grid
+// DASHBOARD — Monitoring view. Numbers → flow → items.
+// 3 cols × 2 rows
+// ┌────────┬────────┬────────┐
+// │  stats │ activity (2r)   │ recent │
+// ├────────┤        ├────────┤
+// │ trending│       │ featured│
+// └────────┴────────┴────────┘
 // ============================================================
 dashboard: {
-	experience: 'dashboard',
-	layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
-	context: { type: 'group', selection: 'current' },
-	features: ['statistics', 'activity', 'navigation'],
-	displayArchitecture: {
-		stats: {
-			content: 'statistics',
-			scope: { source: 'group' },
-			filter: { status: ['active', 'published'] },
-			display: { type: 'widget' },
-			position: { row: 1, column: 1 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-		activity: {
-			content: 'activity',
-			scope: { source: 'children' },
-			filter: { type: ['news', 'announcement'] },
-			display: { type: 'feed' },
-			position: { row: 1, column: 2 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-		groups: {
-			content: 'inquiry_groups',
-			scope: { source: 'children' },
-			filter: { status: 'active' },
-			display: { type: 'cards' },
-			position: { row: 2, column: 1 },
-			interaction: { action: 'navigate', target: 'page' },
-		},
-		inquiries: {
-			content: 'inquiries',
-			scope: {
-				source: 'children',
-				sort: { field: 'created', direction: 'desc' },
-				pagination: { limit: 10, offset: 0 },
-			},
-			filter: { status: ['published', 'active'] },
-			display: { type: 'cards' },
-			position: { row: 2, column: 2 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-	},
+  experience: 'dashboard',
+  defaultDisplay: 'widget',
+  layout: { type: 'grid', columns: 3, rows: 2, responsive: true },
+  context: { type: 'group', selection: 'current' },
+  features: ['statistics', 'activity', 'trending', 'featured'],
+  sections: [
+    { key: 'stats',    label: 'Statistics',        order: 1, zones: ['statistics'] },
+    { key: 'activity', label: 'Recent activity',   order: 2, zones: ['activity'] },
+    { key: 'recent',   label: 'Recent inquiries',  order: 3, zones: ['recent_inquiries'] },
+    { key: 'trending', label: 'Trending',          order: 4, zones: ['trending_inquiries'] },
+    { key: 'featured', label: 'Featured',          order: 5, zones: ['featured_inquiries'] },
+  ],
+  displayArchitecture: {
+    statistics: {
+      content: 'statistics',
+      scope: { source: 'group' },
+      filter: { status: ['active', 'published'] },
+      display: { type: 'widget', options: { showStats: true, compact: true } },
+      position: { row: 1, column: 1 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    activity: {
+      content: 'activity',
+      scope: { source: 'children' },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'feed', options: { compact: true } },
+      position: { row: 1, column: 2, rowSpan: 2 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    recent_inquiries: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.created', direction: 'desc' },
+        pagination: { limit: 5, offset: 0 },
+      },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'list', options: { dense: true, showMeta: true } },
+      position: { row: 1, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    trending_inquiries: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.countSupports', direction: 'desc' },
+        pagination: { limit: 5, offset: 0 },
+      },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'list', options: { dense: true, showSupport: true } },
+      position: { row: 2, column: 1 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    featured_inquiries: {
+      content: 'inquiries',
+      scope: {
+        source: 'featured',
+        pagination: { limit: 4, offset: 0 },
+      },
+      display: { type: 'cards', options: { compact: true, showSupport: true } },
+      position: { row: 2, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+  },
 },
 
 // ============================================================
-// SOCIAL – single full-width feed
+// SOCIAL — Conversation stream + context rail.
+// 3 cols × 3 rows
+// ┌─────────────┬─────────────┬──────────┐
+// │              │             │ trending │
+// │   feed       │             ├──────────┤
+// │  (col-span 2,│             │ featured │
+// │   row-span 3)│             ├──────────┤
+// │              │             │ activity │
+// └─────────────┴─────────────┴──────────┘
 // ============================================================
 social: {
-	experience: 'social',
-	layout: { type: 'full', responsive: true },
-	context: { type: 'group', selection: 'current' },
-	features: ['feed', 'activity', 'comments', 'support'],
-	displayArchitecture: {
-		main: {
-			content: 'inquiries',
-			scope: {
-				source: 'children',
-				sort: { field: 'status.lastInteraction', direction: 'desc' },
-				pagination: { limit: 20, offset: 0 },
-			},
-			filter: {
-				status: ['published', 'active'],
-				inquiry_type: ['discussion', 'poll', 'question'],
-			},
-			display: { type: 'feed', pagination: 'infinite' },
-			position: { row: 1, column: 1 },
-		},
-	},
+  experience: 'social',
+  defaultDisplay: 'feed',
+  layout: { type: 'grid', columns: 3, rows: 3, responsive: true },
+  context: { type: 'group', selection: 'current' },
+  features: ['feed', 'trending', 'featured', 'activity'],
+  sections: [
+    { key: 'feed',     label: 'Feed',     order: 1, zones: ['feed'] },
+    { key: 'trending', label: 'Trending', order: 2, zones: ['trending'] },
+    { key: 'featured', label: 'Featured', order: 3, zones: ['featured'] },
+    { key: 'activity', label: 'Activity', order: 4, zones: ['activity'] },
+  ],
+  displayArchitecture: {
+    feed: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.lastInteraction', direction: 'desc' },
+        pagination: { limit: 20, offset: 0 },
+      },
+      filter: {
+        status: ['published', 'active'],
+      //  inquiry_type: ['discussion', 'poll', 'question', 'debate'],
+      },
+      display: { type: 'feed', pagination: 'infinite', options: { interactive: true } },
+      position: { row: 1, column: 1, columnSpan: 2, rowSpan: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    trending: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.countSupports', direction: 'desc' },
+        pagination: { limit: 6, offset: 0 },
+      },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'list', options: { compact: true, dense: true, showSupport: true } },
+      position: { row: 1, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    featured: {
+      content: 'inquiries',
+      scope: {
+        source: 'featured',
+        pagination: { limit: 4, offset: 0 },
+      },
+      display: { type: 'cards', options: { compact: true, cardsPerRow: 1 } },
+      position: { row: 2, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    activity: {
+      content: 'activity',
+      scope: { source: 'children' },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'feed', options: { compact: true } },
+      position: { row: 3, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+  },
 },
 
 // ============================================================
-// MARKETPLACE – 3×3 grid with search, cards, filters, map
+// MARKETPLACE — Search → filter → browse → feature.
+// 3 cols × 3 rows
+// ┌───────────────────────────────────────┐
+// │            search_bar (span 3)        │
+// ├──────────┬────────────────────────────┤
+// │          │     results_grid (span 2)  │
+// │  filters ├────────────────────────────┤
+// │ (2 rows) │     featured (span 2)      │
+// └──────────┴────────────────────────────┘
 // ============================================================
 marketplace: {
-	experience: 'marketplace',
-	layout: { type: 'grid', columns: 3, rows: 3, responsive: true },
-	context: { type: 'group', selection: 'all' },
-	features: ['search', 'filter', 'compare', 'cards'],
-	displayArchitecture: {
-		search_bar: {
-			content: 'inquiries',
-			scope: { source: 'children', sort: { field: 'promoted', direction: 'desc' } },
-			filter: {
-				status: ['published', 'active'],
-				inquiry_type: ['proposal', 'offer', 'service', 'project'],
-			},
-			display: { type: 'tool', tool: 'search' },
-			position: { row: 1, column: 1, columnSpan: 3 },
-		},
-		main_grid: {
-			content: 'inquiries',
-			scope: {
-				source: 'children',
-				sort: { field: 'rating', direction: 'desc' },
-				pagination: { limit: 20, offset: 0 },
-			},
-			filter: {
-				status: ['published', 'featured'],
-				inquiry_type: ['proposal', 'offer', 'service'],
-			},
-			display: { type: 'cards', options: { cardsPerRow: 2 } },
-			position: { row: 2, column: 1, columnSpan: 2 },
-			interaction: { action: 'open', target: 'modal' },
-		},
-		filters: {
-			content: 'statistics',
-			scope: { source: 'group' },
-			filter: { status: ['published', 'active'] },
-			display: { type: 'widget' },
-			position: { row: 2, column: 3 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-		map_view: {
-			content: 'inquiries',
-			scope: { source: 'children' },
-			filter: {
-				status: ['published', 'active'],
-				inquiry_type: ['proposal', 'offer', 'service'],
-			},
-			display: { type: 'list' },
-			position: { row: 3, column: 1, columnSpan: 3 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-	},
+  experience: 'marketplace',
+  defaultDisplay: 'cards',
+  layout: { type: 'grid', columns: 3, rows: 3, responsive: true },
+  context: { type: 'group', selection: 'all' },
+  features: ['search', 'filter', 'compare', 'featured'],
+  sections: [
+    { key: 'search',   label: '',            order: 1, zones: ['search_bar'] },
+    { key: 'filters',  label: 'Refine',      order: 2, zones: ['filters'] },
+    { key: 'results',  label: 'Results',     order: 3, zones: ['results_grid'] },
+    { key: 'featured', label: 'Featured',    order: 4, zones: ['featured'] },
+  ],
+  displayArchitecture: {
+    search_bar: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.lastInteraction', direction: 'desc' },
+      },
+      filter: {
+        status: ['published', 'active'],
+      //  inquiry_type: ['proposal', 'offer', 'service', 'project', 'classified_ad', 'job_offer'],
+      },
+      display: { type: 'tool', tool: 'search' },
+      position: { row: 1, column: 1, columnSpan: 3 },
+    },
+    filters: {
+      content: 'statistics',
+      scope: { source: 'group' },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'widget', options: { compact: true, showStats: true } },
+      position: { row: 2, column: 1, rowSpan: 2 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    results_grid: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.countSupports', direction: 'desc' },
+        pagination: { limit: 12, offset: 0 },
+      },
+      filter: {
+        status: ['published', 'featured'],
+      //  inquiry_type: ['proposal', 'offer', 'service', 'project'],
+      },
+      display: { type: 'cards', options: { cardsPerRow: 3, showStats: true, showSupport: true } },
+      position: { row: 2, column: 2, columnSpan: 2 },
+      interaction: { action: 'open', target: 'page' },
+    },
+    featured: {
+      content: 'inquiries',
+      scope: {
+        source: 'featured',
+        pagination: { limit: 4, offset: 0 },
+      },
+      display: { type: 'cards', options: { horizontal: true, cardsPerRow: 2, compact: true } },
+      position: { row: 3, column: 2, columnSpan: 2 },
+      interaction: { action: 'open', target: 'page' },
+    },
+  },
 },
 
 // ============================================================
-// KANBAN – Board view for inquiries
+// KANBAN — Wide board + status rail.
+// 3 cols × 2 rows
+// ┌───────────────────┬────────┐
+// │                   │  stats │
+// │   board (span 2,  ├────────┤
+// │   span 2 rows)    │activity│
+// └───────────────────┴────────┘
 // ============================================================
 kanban: {
-	experience: 'kanban',
-	layout: { type: 'full', responsive: true },
-	context: { type: 'group', selection: 'current' },
-	features: ['drag-drop', 'status-tracking', 'progress'],
-	displayArchitecture: {
-		board: {
-			content: 'inquiries',
-			scope: {
-				source: 'children',
-				sort: { field: 'priority', direction: 'desc' },
-			},
-			filter: {
-				status: ['active', 'in_progress', 'review'],
-				selection: { category: 'board' },
-			},
-			display: { type: 'kanban' },   // fixed: was 'kaban'
-			position: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
-			interaction: { action: 'select', target: 'same_view' },
-		},
-	},
+  experience: 'kanban',
+  defaultDisplay: 'tool',
+  defaultTool: 'kanban',
+  layout: { type: 'grid', columns: 3, rows: 2, responsive: true },
+  context: { type: 'group', selection: 'current' },
+  features: ['drag-drop', 'status-tracking', 'progress'],
+  sections: [
+    { key: 'board',    label: 'Board',           order: 1, zones: ['board'] },
+    { key: 'stats',    label: 'Progress',        order: 2, zones: ['statistics'] },
+    { key: 'activity', label: 'Recent activity', order: 3, zones: ['activity'] },
+  ],
+  displayArchitecture: {
+    board: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.lastInteraction', direction: 'desc' },
+      },
+      filter: { status: ['active', 'in_progress', 'review'] },
+      display: { type: 'tool', tool: 'kanban', options: { interactive: true } },
+      position: { row: 1, column: 1, columnSpan: 2, rowSpan: 2 },
+      interaction: { action: 'select', target: 'same_view' },
+    },
+    statistics: {
+      content: 'statistics',
+      scope: { source: 'group' },
+      filter: { status: ['active', 'in_progress', 'review'] },
+      display: { type: 'widget', options: { compact: true } },
+      position: { row: 1, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    activity: {
+      content: 'activity',
+      scope: { source: 'children' },
+      // filter: { type: ['status_change', 'milestone', 'workflow_transition'] },
+      display: { type: 'feed', options: { compact: true, dense: true } },
+      position: { row: 2, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+  },
 },
 
 // ============================================================
-// TIMELINE – Chronological history
+// TIMELINE — Chronological spine + stats & activity rail.
+// 3 cols × 2 rows
+// ┌───────────────────┬────────┐
+// │   timeline_view   │  stats │
+// │   (span 2,        ├────────┤
+// │   span 2 rows)    │activity│
+// └───────────────────┴────────┘
 // ============================================================
 timeline: {
-	experience: 'timeline',
-	layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
-	context: { type: 'group', selection: 'current' },
-	features: ['chronological', 'events', 'milestones'],
-	displayArchitecture: {
-		timeline_view: {
-			content: 'inquiries',
-			scope: {
-				source: 'children',
-				sort: { field: 'created', direction: 'asc' },
-			},
-			filter: {
-				status: ['published', 'completed', 'archived'],
-				// Relative offset in ms – consumer resolves to absolute time.
-				// Avoids module-load-time freeze via Date.now().
-				date: { from: -365 * 24 * 60 * 60 * 1000 },
-				selection: { category: 'history' },
-			},
-			display: { type: 'timeline' },
-			position: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-		stats: {
-			content: 'statistics',
-			scope: { source: 'group' },
-			filter: {
-				status: ['published', 'completed'],
-				selection: { category: 'timeline_stats' },
-			},
-			display: { type: 'widget' },
-			position: { row: 2, column: 1 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-		activity_summary: {
-			content: 'activity',
-			scope: { source: 'children' },
-			filter: {
-				type: ['milestone', 'event'],
-				selection: { category: 'timeline' },
-			},
-			display: { type: 'list' },
-			position: { row: 2, column: 2 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-	},
+  experience: 'timeline',
+  defaultDisplay: 'timeline',
+  layout: { type: 'grid', columns: 3, rows: 2, responsive: true },
+  context: { type: 'group', selection: 'current' },
+  features: ['chronological', 'events', 'milestones'],
+  sections: [
+    { key: 'timeline', label: 'History',         order: 1, zones: ['timeline_view'] },
+    { key: 'stats',    label: 'At a glance',     order: 2, zones: ['statistics'] },
+    { key: 'activity', label: 'Milestones',      order: 3, zones: ['activity'] },
+  ],
+  displayArchitecture: {
+    timeline_view: {
+      content: 'inquiries',
+      scope: {
+        source: 'children',
+        sort: { field: 'status.created', direction: 'asc' },
+      },
+      filter: { status: ['published', 'active', 'completed', 'archived'] },
+      display: { type: 'timeline', options: { interactive: true } },
+      position: { row: 1, column: 1, columnSpan: 2, rowSpan: 2 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    statistics: {
+      content: 'statistics',
+      scope: { source: 'group' },
+      filter: { status: ['published', 'completed', 'active'] },
+      display: { type: 'widget', options: { compact: true } },
+      position: { row: 1, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    activity: {
+      content: 'activity',
+      scope: { source: 'children' },
+      // filter: { type: ['milestone', 'event', 'status_change'] },
+      display: { type: 'feed', options: { compact: true, dense: true } },
+      position: { row: 2, column: 3 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+  },
 },
 
 // ============================================================
-// WIKI – Document-style reading with structure
+// WIKI — Tree sidebar + book + structure tool.
+// 3 cols × 2 rows
+// ┌──────────┬────────────────────────────┐
+// │          │         content (span 2)   │
+// │   tree   ├────────────────────────────┤
+// │ (2 rows) │         structure (span 2) │
+// └──────────┴────────────────────────────┘
 // ============================================================
 wiki: {
-	experience: 'wiki',
-	layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
-	context: { type: 'group', selection: 'selected' },
-	features: ['tree-navigation', 'structure', 'book-reading'],
-	displayArchitecture: {
-		navigation: {
-			content: 'inquiry_groups',
-			scope: {
-				source: 'children',
-				sort: { field: 'order', direction: 'asc' },
-			},
-			filter: {
-				status: ['published', 'active'],
-				selection: { category: 'navigation' },
-			},
-			display: { type: 'tree' },
-			position: { row: 1, column: 1, rowSpan: 2, columnSpan: 2 },
-			interaction: { action: 'navigate', target: 'same_view' },
-		},
-		content: {
-			content: 'inquiries',
-			scope: { source: 'selected_inquiry' },
-			filter: {
-				status: ['published', 'active'],
-				selection: { category: 'content' },
-			},
-			display: { type: 'book', options: { showMeta: true } },
-			position: { row: 1, column: 2 },
-			interaction: { action: 'open', target: 'page' },
-		},
-		structure: {
-			content: 'options',
-			scope: { source: 'selected_inquiry' },
-			filter: {
-				family: 'structure',
-				status: ['published', 'active'],
-				selection: { category: 'structure' },
-			},
-			display: { type: 'tool', tool: 'structure' },
-			position: { row: 2, column: 2 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-	},
+  experience: 'wiki',
+  defaultDisplay: 'book',
+  layout: { type: 'grid', columns: 3, rows: 2, responsive: true },
+  context: { type: 'group', selection: 'selected' },
+  features: ['tree-navigation', 'structure', 'book-reading'],
+  sections: [
+    { key: 'nav',       label: 'Contents',  order: 1, zones: ['navigation'] },
+    { key: 'content',   label: 'Document',  order: 2, zones: ['content'] },
+    { key: 'structure', label: 'Structure', order: 3, zones: ['structure'] },
+  ],
+  displayArchitecture: {
+    navigation: {
+      content: 'inquiry_groups',
+      scope: {
+        source: 'children',
+        sort: { field: 'order', direction: 'asc' },
+      },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'tree', options: { dense: true } },
+      position: { row: 1, column: 1, rowSpan: 2 },
+      interaction: { action: 'navigate', target: 'same_view' },
+    },
+    content: {
+      content: 'inquiries',
+      scope: { source: 'selected_group' },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'book', options: { showMeta: true } },
+      position: { row: 1, column: 2, columnSpan: 2 },
+      interaction: { action: 'open', target: 'page' },
+    },
+    structure: {
+      content: 'options',
+      scope: { source: 'selected_inquiry' },
+      filter: { family: 'structure', status: ['published', 'active'] },
+      display: { type: 'tool', tool: 'structure' },
+      position: { row: 2, column: 2, columnSpan: 2 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+  },
 },
 
 // ============================================================
-// DECISION_ROOM – Full decision-making interface
+// DECISION_ROOM — Reading → debate + evidence → discussion.
+// 2 cols × 3 rows
+// ┌───────────────────────────────────────┐
+// │       inquiry_detail (span 2)         │
+// ├───────────────────┬───────────────────┤
+// │      debate       │     resources     │
+// ├───────────────────┴───────────────────┤
+// │       discussion (span 2)             │
+// └───────────────────────────────────────┘
 // ============================================================
 decision_room: {
-	experience: 'decision_room',
-	layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
-	context: { type: 'group', selection: 'selected' },
-	features: ['debate', 'resources', 'comments', 'decision-making'],
-	displayArchitecture: {
-		inquiry_detail: {
-			content: 'inquiries',
-			scope: { source: 'selected_inquiry' },
-			filter: {
-				status: ['active', 'debate', 'voting'],
-				selection: { category: 'decision' },
-			},
-			display: {
-				type: 'book',
-				options: { showMeta: true, showStats: true },
-			},
-			position: { row: 1, column: 1 },
-			interaction: { action: 'open', target: 'page' },
-		},
-		resources: {
-			content: 'resources',
-			scope: { source: 'selected_inquiry' },
-			filter: {
-				type: ['document', 'link', 'reference'],
-				selection: { category: 'resources' },
-			},
-			display: { type: 'list', options: { showMeta: true } },
-			position: { row: 1, column: 2 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-		debate: {
-			content: 'options',
-			scope: {
-				source: 'selected_inquiry',
-				sort: { field: 'supportCount', direction: 'desc' },
-			},
-			filter: {
-				family: 'debate',
-				status: ['active', 'proposed', 'under_discussion'],
-				selection: { category: 'debate' },
-			},
-			display: { type: 'tool', tool: 'debate' },
-			position: { row: 2, column: 1 },
-			interaction: { action: 'open', target: 'panel' },
-		},
-		discussion: {
-			content: 'messages',   // 'comments' is not in ContentValue; use 'messages'
-			scope: {
-				source: 'selected_inquiry',
-				sort: { field: 'created', direction: 'desc' },
-				pagination: { limit: 50, offset: 0 },
-			},
-			filter: {
-				type: ['comment', 'argument', 'objection'],
-				status: 'published',
-				selection: { category: 'discussion' },
-			},
-			display: { type: 'feed', options: { showMeta: true } },
-			position: { row: 2, column: 2 },
-			interaction: { action: 'comment', target: 'panel' },
-		},
-	},
+  experience: 'decision_room',
+  defaultDisplay: 'book',
+  layout: { type: 'grid', columns: 2, rows: 3, responsive: true },
+  context: { type: 'group', selection: 'selected' },
+  features: ['debate', 'resources', 'comments', 'decision-making'],
+  sections: [
+    { key: 'detail',     label: '',             order: 1, zones: ['inquiry_detail'] },
+    { key: 'debate',     label: 'Debate',       order: 2, zones: ['debate'] },
+    { key: 'resources',  label: 'Resources',    order: 3, zones: ['resources'] },
+    { key: 'discussion', label: 'Discussion',   order: 4, zones: ['discussion'] },
+  ],
+  displayArchitecture: {
+    inquiry_detail: {
+      content: 'inquiries',
+      scope: { source: 'selected_inquiry' },
+      filter: { status: ['active', 'debate', 'voting'] },
+      display: { type: 'book', options: { showMeta: true, showStats: true } },
+      position: { row: 1, column: 1, columnSpan: 2 },
+      interaction: { action: 'open', target: 'page' },
+    },
+    debate: {
+      content: 'options',
+      scope: {
+        source: 'selected_inquiry',
+        sort: { field: 'supportCount', direction: 'desc' },
+      },
+      filter: { family: 'debate', status: ['active', 'proposed', 'under_discussion'] },
+      display: { type: 'tool', tool: 'debate' },
+      position: { row: 2, column: 1 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    resources: {
+      content: 'resources',
+      scope: { source: 'selected_inquiry' },
+      filter: { status: ['published', 'active'] },
+      display: { type: 'list', options: { showMeta: true } },
+      position: { row: 2, column: 2 },
+      interaction: { action: 'open', target: 'panel' },
+    },
+    discussion: {
+      content: 'messages',
+      scope: {
+        source: 'selected_inquiry',
+        sort: { field: 'created', direction: 'desc' },
+        pagination: { limit: 50, offset: 0 },
+      },
+      filter: { status: 'published' },
+      display: { type: 'feed', options: { showMeta: true } },
+      position: { row: 3, column: 1, columnSpan: 2 },
+      interaction: { action: 'comment', target: 'panel' },
+    },
+  },
 },
 
 // ============================================================
-// NAVIGATION – Simple navigation
+// NAVIGATION — Simple navigation. Groups ARE the point.
 // ============================================================
 navigation: {
-	experience: 'navigation',
-	layout: { type: 'full', responsive: true },
-	context: { type: 'group', selection: 'current' },
-	features: ['navigation'],
-	displayArchitecture: {
-		groups: {
-			content: 'inquiry_groups',
-			scope: {
-				source: 'children',
-				sort: { field: 'order', direction: 'asc' },
-			},
-			filter: { status: ['active', 'published'] },
-			display: { type: 'navigation' },
-			position: { row: 1, column: 1 },
-			interaction: { action: 'navigate', target: 'page' },
-		},
-	},
+  experience: 'navigation',
+  defaultDisplay: 'navigation',
+  layout: { type: 'full', responsive: true },
+  context: { type: 'group', selection: 'current' },
+  features: ['navigation'],
+  displayArchitecture: {
+    groups: {
+      content: 'inquiry_groups',
+      scope: { source: 'children', sort: { field: 'order', direction: 'asc' } },
+      filter: { status: ['active', 'published'] },
+      display: { type: 'navigation' },
+      position: { row: 1, column: 1 },
+      interaction: { action: 'navigate', target: 'page' },
+    },
+  },
 },
+
 
 // ============================================================
 // CLASSIC – Plain list view (required by ExperienceKey)

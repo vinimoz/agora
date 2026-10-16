@@ -250,9 +250,9 @@ import InquiryGroupNavigation from '../InquiryGroup/InquiryGroupNavigation.vue'
 // OPTION TOOL COMPONENTS
 // ============================================================
 import OptionToolDisplay from '../Options/OptionToolDisplay.vue'
-import FamilyLayoutPaired from '../Options/FamilyLayouts/FamilyLayoutPaired.vue'
-import FamilyLayoutTree from '../Options/FamilyLayouts/FamilyLayoutTree.vue'
-import FamilyLayoutConsensusFlow from '../Options/FamilyLayouts/FamilyLayoutConsensusFlow.vue'
+import FamilyLayoutPaired from '../FamilyLayouts/FamilyLayoutPaired.vue'
+import FamilyLayoutTree from '../FamilyLayouts/FamilyLayoutTree.vue'
+import FamilyLayoutConsensusFlow from '../FamilyLayouts/FamilyLayoutConsensusFlow.vue'
 import FamilyLayoutKanban from '../FamilyLayouts/FamilyLayoutKanban.vue'
 import FamilyLayoutTimeline from '../FamilyLayouts/FamilyLayoutTimeline.vue'
 import FamilyLayoutVote from '../FamilyLayouts/FamilyLayoutVote.vue'
@@ -312,6 +312,7 @@ import {
 
 import { useHomeConfig } from '../../composables/useHomeConfig'
 import { useRelevance } from '../../composables/useRelevance'
+import { getOptionTypesForFamily, getLayoutForFamily, getForceLayouts } from '../../helpers/modules/InquiryOptionHelper'
 
 import type { Inquiry, Option, Item } from '../../Types/index.ts'
 import { toItems } from '../../helpers/modules/itemHelpers'
@@ -438,6 +439,16 @@ const canCreateInquiry = computed(
   () => sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor
 )
 
+const isReadonly = computed(() => route.name === 'publicInquiry')
+
+// Same source of truth OptionEditView uses today (it hardcodes `true`;
+// this is the closest real equivalent available in this component).
+const canManageVote = computed(
+  () =>
+    !isReadonly.value &&
+    (sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor),
+)
+
 // ============================================================
 // Filter out null/undefined inquiries
 // ============================================================
@@ -506,20 +517,29 @@ const heroStats = computed(() => {
   if (!uid) {
     return { shared: 0, participated: 0, owned: 0, groupInquiries: 0 }
   }
-  const spaceIds = new Set(context.value.spaces.map((s) => s.id))
 
-  const owned = list.filter((i) => i.owner?.id === uid).length
-  const participated = list.filter(
-    (i) => (i as any).currentUserStatus?.isInvolved || (i as any).currentUserStatus?.hasSupported
+  // Only count inquiries the user can actually see and that aren't archived
+  const visible = list.filter(
+    (i) => !i.status?.isArchived && i.permissions?.view
+  )
+
+  const owned = visible.filter(
+    (i) => i.currentUserStatus?.isOwner
   ).length
-  const groupInquiries = list.filter((i) =>
-    i.inquiryGroups?.some((gid) => spaceIds.has(gid))
+
+  const participated = visible.filter(
+    (i) => (i.status?.countParticipants ?? 0) > 0
   ).length
-  const shared = list.filter(
+
+  const groupInquiries = visible.filter(
     (i) =>
-      (i.configuration as any)?.visibility === 'private' &&
-      i.owner?.id !== uid &&
-      ((i as any).sharedWith?.includes(uid) || false)
+      i.configuration?.visibility === 'groups' &&
+      i.ownedGroup &&
+      (sessionStore.currentUser?.groups ?? []).includes(i.ownedGroup)
+  ).length
+
+  const shared = visible.filter(
+    (i) => i.currentUserStatus?.isShared
   ).length
 
   return { shared, participated, owned, groupInquiries }
@@ -542,56 +562,6 @@ function resolveIcon(icon: any): any {
 
 function resolveHeroActions(actions: any[]) {
   return (actions || []).map((a) => ({ ...a, icon: resolveIcon(a.icon) }))
-}
-
-function getNestedValue(obj: any, path: string): any {
-  if (!obj) return undefined
-  return path.split('.').reduce((a, k) => (a == null ? undefined : a[k]), obj)
-}
-
-function matchesFilter(item: any, filter: any): boolean {
-  if (!filter || typeof filter !== 'object') return true
-  for (const [key, value] of Object.entries(filter)) {
-    if (key === 'selection') continue
-    if (key === 'date') {
-      const t = getNestedValue(item, 'created') ?? getNestedValue(item, 'status.created')
-      const from = (value as any)?.from
-      if (typeof from === 'number' && typeof t === 'number') {
-        const absFrom = from < 0 ? Date.now() + from : from
-        if (t * 1000 < absFrom) return false
-      }
-      continue
-    }
-    const itemValue = getNestedValue(item, key)
-    if (Array.isArray(value)) {
-      if (!value.includes(itemValue)) return false
-    } else if (value && typeof value === 'object') continue
-    else if (itemValue !== value) return false
-  }
-  return true
-}
-
-function applyScope(data: any[], scope: any): any[] {
-  if (!scope || !Array.isArray(data)) return data
-  let r = [...data]
-  if (scope.filter) r = r.filter((i) => matchesFilter(i, scope.filter))
-  if (scope.sort?.field) {
-    const { field, direction } = scope.sort
-    const dir = direction === 'desc' ? -1 : 1
-    r.sort((a, b) => {
-      const av = getNestedValue(a, field),
-        bv = getNestedValue(b, field)
-      if (av == null && bv == null) return 0
-      if (av == null) return 1
-      if (bv == null) return -1
-      return av < bv ? -1 * dir : av > bv ? 1 * dir : 0
-    })
-  }
-  if (scope.pagination) {
-    const { limit = r.length, offset = 0 } = scope.pagination
-    r = r.slice(offset, offset + limit)
-  }
-  return r
 }
 
 // ============================================================
@@ -631,7 +601,49 @@ function getZoneData(zone: any): any[] {
     const offset = scope.pagination?.offset ?? 0
     return ranked.slice(offset, offset + limit)
   }
-  return applyScope(raw, scope)
+
+  // Options have an extra union rule the generic pipeline can't express.
+  if (content === 'options') return processOptionZoneData(raw, zone)
+
+  // Everything else: shared filter / sort / pagination.
+  // zone.filter + zone.scope.sort + zone.scope.pagination.
+  return processZoneData(raw, zone)
+}
+
+/**
+ * Options zone resolver.
+ *
+ * An option belongs to the zone if EITHER:
+ *   1. its own `family` matches `zone.filter.family`, OR
+ *   2. its `miscFields.force_layouts` contains the layout the current tool
+ *      renders with (debate → 'paired', structure → 'tree',
+ *      workflow → 'kanban', process → 'timeline', …).
+ *
+ * Remaining `zone.filter` keys (status, …) are handed to the shared
+ * filter engine, and sort/pagination come from `zone.scope` as usual.
+ */
+function processOptionZoneData(options: Option[], zone: any): Option[] {
+  const filterIn = { ...(zone.filter ?? {}) }
+  const family   = filterIn.family as string | undefined
+  const tool     = zone?.display?.tool as string | undefined
+  const layout   = tool ? getLayoutForFamily(family ?? '') : null
+
+  const kept = options.filter((opt) => {
+    const familyMatch      = !family || opt.family === family
+    const forcedIntoLayout = !!layout && getForceLayouts(opt).includes(layout)
+    return familyMatch || forcedIntoLayout
+  })
+
+  // `family` is already applied above; strip it so the shared engine
+  // doesn't try to re-apply it (it would, since applyFilters knows it).
+  delete filterIn.family
+
+  const restZone = {
+    scope:  zone.scope ?? {},
+    filter: Object.keys(filterIn).length ? filterIn : undefined,
+  }
+
+  return processZoneData(kept, restZone)
 }
 
 //// FETCH RAW DATA
@@ -684,9 +696,7 @@ function fetchRawData(content: string, source: string, scope: any = {}) {
     case 'options': {
       const s = getSelectedInquiry()
       if (!s) return []
-      let opts = (props.options || []).filter((o) => o.inquiryId === s.id)
-      if (scope.family) opts = opts.filter((o) => o.family === scope.family)
-      return opts
+      return (props.options || []).filter((o) => o.inquiryId === s.id)
     }
     case 'resources':
       return getResourcesForInquiry(getSelectedInquiry())
@@ -1244,23 +1254,37 @@ case 'inquiry_groups': {
       }
     }
 
-    case 'options': {
-      const optionsData = Array.isArray(data) ? (data as Option[]) : []
-      return {
-        ...baseProps,
-        items: toItems(optionsData),
-        parentId: selectedInquiry?.id ?? 0,
-        targetType: 'option' as const,
-        optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
-        family: zone.scope?.family ?? null,
-        familyKey: zone.scope?.family ?? null,
-        tool,
-        families: zone.scope?.families ?? [],
-        inquiry: selectedInquiry,
-        inquiryId: selectedInquiry?.id,
-        options: optionsData,
-      }
-    }
+case 'options': {
+  const optionsData = Array.isArray(data) ? (data as Option[]) : []
+  const inquiry = selectedInquiry
+  const familyKey = zone.scope?.family ?? null
+  const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+
+  return {
+    ...baseProps,
+    items: toItems(optionsData),
+    parentId: inquiry?.id ?? 0,
+    targetType: 'option' as const,
+    optionTypes: allOptionTypes,
+    family: familyKey,
+    familyKey,
+    tool,
+    families: zone.scope?.families ?? [],
+    inquiry,
+    inquiryId: inquiry?.id,
+    options: optionsData,
+
+    // required by FamilyLayoutVote
+    canManageVote: canManageVote.value,
+    isReadonly: isReadonly.value,
+
+    // consumed by FamilyLayoutKanban / FamilyLayoutTimeline
+    appSettings: sessionStore.appSettings,
+    familyOptionTypes: familyKey
+      ? getOptionTypesForFamily(familyKey, allOptionTypes)
+      : [],
+  }
+}
 
 case 'group_types': {
   const opts = displayOptions as Record<string, unknown>
@@ -1490,18 +1514,27 @@ function getZoneStyle(zone: any) {
     case 'explore-all':
       return router.push({ name: 'explore-spaces' })
 
-    case 'create':
-      return router.push({
-        name: 'home',
-        params: { slug: '' },
-        query: { viewMode: 'create' },
-      })
+case 'create':
+  return router.push({
+    name: 'home',
+    params: { slug: '' },
+    query: {
+      viewMode: 'create',
+      ...(target.inquiryType ? { inquiryType: target.inquiryType } : {}),
+      ...(target.family ? { family: target.family } : {}),
+    },
+  })
 
-    case 'promo-action':
-	  return router.push({
-  	  name: 'home',
-   	 query: { ...route.query, viewMode: 'create' },
-  	})
+case 'promo-action':
+  return router.push({
+    name: 'home',
+    query: {
+      ...route.query,
+      viewMode: 'create',
+      ...(target.inquiryType ? { inquiryType: target.inquiryType } : {}),
+      ...(target.family ? { family: target.family } : {}),
+    },
+  })
 
     // ── EVERYTHING ELSE STAYS EXACTLY AS YOU WROTE IT ────────
     case 'inquiry':
@@ -1788,16 +1821,19 @@ case 'group_types': {
       return
 
     case 'explore':
-      if (eventName === 'category') onNavigate( { type: 'category', key: payload })
-      else if (eventName === 'create')  { 
-      	    return onNavigate({
-     		 type: 'create',
-     		 inquiryType: zone.scope?.inquiryType,  // whatever your scope carries
-     		 family: zone.scope?.family,
-    		})
-      }
-      else if (eventName === 'viewAll') onNavigate( { type: 'explore-all' })
-      return
+  if (eventName === 'category') {
+    onNavigate({ type: 'category', key: payload })
+  } else if (eventName === 'create') {
+    return onNavigate({
+      type: 'create',
+      inquiryType: payload?.inquiryType ?? zone.scope?.inquiryType,
+      family: payload?.family ?? zone.scope?.family,
+    })
+  } else if (eventName === 'viewAll') {
+    onNavigate({ type: 'explore-all' })
+  }
+  return
+
 
     case 'promo':
       if (eventName === 'action') onNavigate( { type: 'promo-action' })

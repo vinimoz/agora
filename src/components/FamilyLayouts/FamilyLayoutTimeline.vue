@@ -167,7 +167,7 @@
     <AddItemToFamily
       v-if="showAddModal"
       family-type="timeline"
-      :parent-id="parentId"
+      :inquiry-id="parentId"
       :target-type="targetType"
       @close="showAddModal = false"
       @success="handleAddSuccess"
@@ -198,7 +198,7 @@ import {
   getTimelineEndDate,
   getItemTypeIconComponent
 } from '../../helpers/modules/InquiryOptionHelper'
-import type { Option, Inquiry, InquiryOptionType, OptionFamily } from '../../../Types/index.ts'
+import type { Option, Inquiry, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
 import AddItemToFamily from '../Modals/AddItemToFamily.vue'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -239,7 +239,6 @@ const props = defineProps<{
 }>()
 
 const getItemTitle = (item: Item | null) => item?.title ?? ''
-const getItemStatus = (item: Item) => item.statusKey
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
@@ -252,7 +251,8 @@ const getStatusColor = (status: string) => {
 // ---- timelineItems: no store reads, just props ----
 const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
 const timelineItems = computed(() => {
-	return  getItemsForFamily(props.items, familyKey.value)
+  const key = familyKey.value
+  return key ? getItemsForFamily(props.items, key) : props.items
 })
 
 

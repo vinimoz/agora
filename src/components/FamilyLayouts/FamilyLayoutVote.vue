@@ -361,6 +361,8 @@ import AddItemToFamily from '../Modals/AddItemToFamily.vue'
 import SupportsDetailModal from '../Modals/SupportsDetailModal.vue'
 import { ENGINE_DEFINITIONS } from '../../Types/votingType'
 import { showSuccess } from '@nextcloud/dialogs'
+import { getItemsForFamily } from '../../helpers/modules/itemHelpers'
+
 
 const props = defineProps<{
     items: Item[]
@@ -368,6 +370,8 @@ const props = defineProps<{
     targetType: TargetType
     canManageVote: boolean
     isReadonly: boolean
+    family?: OptionFamily | null
+    familyKey?: string
 }>()
 
 const emit = defineEmits<{
@@ -388,6 +392,10 @@ const engineStore = useSupportEngineStore()
 const supportsStore = useSupportsStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
 
+
+const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+const voteItems = computed(() => getItemsForFamily(props.items, familyKey.value))
+
 const targetEngineId = ref<number | null>(null)
 
 const onAddToVote = (engine: SupportEngine) => {
@@ -395,6 +403,8 @@ const onAddToVote = (engine: SupportEngine) => {
   targetEngineId.value = engine.id          
   showAddToVoteModal.value = true
 }
+
+
 
 // ---------------------------------------------------------------
 // Effective parent id
@@ -427,13 +437,19 @@ const effectiveParentId = computed<number | null>(() => {
 // All items
 // ---------------------------------------------------------------
 const allItems = computed<(Option | Inquiry)[]>(() => {
-    if (props.items?.length) {
-        return props.items.map((i) => i.raw as Option | Inquiry)
+    if (voteItems.value.length) {
+        return voteItems.value.map((i) => i.raw as Option | Inquiry)
     }
     return props.targetType === 'option'
         ? optionsStore.options || []
         : inquiriesStore.inquiries || []
 })
+
+const votableFullItems = computed<Item[]>(() => {
+    const ids = new Set(votableItems.value.map((v) => v.id))
+    return voteItems.value.filter((it) => ids.has(it.id))
+})
+
 
 // ---------------------------------------------------------------
 // Vote context
@@ -614,7 +630,7 @@ const availableEnginesSelector = computed(() => {
             recommendedViews: engine.recommendedViews,
         }))
 
-    const count = props.items.length
+    const count = voteItems.value.length
     if (!count) return engines
 
     return engines.filter((engine) => {
@@ -629,16 +645,6 @@ const winner = computed(() => getWinner(votableItems.value))
 const winnerPercentage = computed(() => getWinnerPercentage(votableItems.value))
 const rankedItems = computed(() => getRankedItems(votableItems.value))
 const votableItemIds = computed(() => votableItems.value.map((item) => item.id))
-
-/**
- * `VoteCardsLayout` expects an `Item[]` (the wrapper type), not the trimmed
- * `{ id, title }` shape that `votableItems` exposes. Re-project onto the
- * original `props.items` and keep only the ones the engine targets.
- */
-const votableFullItems = computed<Item[]>(() => {
-    const ids = new Set(votableItems.value.map((v) => v.id))
-    return (props.items ?? []).filter((it) => ids.has(it.id))
-})
 
 // ---------------------------------------------------------------
 // Supports modal

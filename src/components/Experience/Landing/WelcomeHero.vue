@@ -21,7 +21,7 @@
   </div>
   <div class="stat">
     <span class="stat-value">{{ stats.groupInquiries }}</span>
-    <span class="stat-label">{{ t('agora', 'In your spaces') }}</span>
+    <span class="stat-label">{{ t('agora', 'In your groups') }}</span>
   </div>
 </div>
 

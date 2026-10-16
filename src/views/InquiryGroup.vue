@@ -413,6 +413,7 @@
 			:inquiry-group-type="selectedInquiryGroupTypeForCreation"
 			:parent-group-id="selectedParentId"
 			:available-groups="availableGroups"
+			:family="createDialogFamily"
 			@added="inquiryGroupAdded"
 			@close="handleCloseGroupDialog"
 			/>
@@ -479,7 +480,6 @@ const selectedInquiryGroupTypeForCreation = ref<InquiryGroupType | null>(null)
 const groupNotFound = ref(false)
 
 const showCreateDialog = computed(() => route.query.viewMode === 'create')
-console.log(" SHOW CRAE DLG ",showCreateDialog.value )
 
 const showDeleteDialog = ref(false)
 const deleteDialogGroup = ref<InquiryGroup | null>(null)
@@ -505,8 +505,12 @@ const currentInquiryGroup = computed<InquiryGroup | null>(() => {
   const slug = route.params.slug as string
   const group = inquiryGroupsStore.bySlug(slug)
   if (!group || !group.owner) return null
+console.log(" ACTIVE FAMILY ",activeFamily.value)
+console.log(" IS FAMILY BROS ",isFamilyBrowserMode.value)
+console.log(" CURRENT INQUIRY GROUP ", currentInquiryGroup.value)
   return group
 })
+
 
 // ============================================================
 // Experience
@@ -871,18 +875,17 @@ function modifyGroup(group: InquiryGroup) {
   router.push({ name: 'group', params: { id: String(group.id) } })
 }
 
-function createInquiryGroup(inquiryGroupType: string | InquiryGroupType) {
+const createDialogFamily = ref<string | null>(null)
+
+function createInquiryGroup(inquiryGroupType: InquiryGroupType | string) {
   if (hasSlug.value) {
-    selectedParentId.value = currentInquiryGroup.value?.id ?? null
-  }
-  if (typeof inquiryGroupType === 'string') {
-    selectedInquiryGroupTypeForCreation.value =
-      sessionStore.appSettings.inquiryGroupTypeTab?.find(
-	(tt) => (tt.type || tt.group_type) === inquiryGroupType,
-      ) ?? null
+    selectedParentId.value = currentInquiryGroup?.value.id ?? null
+    createDialogFamily.value = null // parent type drives filtering
   } else {
-    selectedInquiryGroupTypeForCreation.value = inquiryGroupType
+    selectedParentId.value = null
+    createDialogFamily.value = activeFamily.value
   }
+  selectedInquiryGroupTypeForCreation.value = inquiryGroupType
   createGroupDlgToggle.value = true
 }
 

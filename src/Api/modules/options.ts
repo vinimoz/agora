@@ -5,9 +5,8 @@
 import { Option, OptionConfiguration } from '../../stores/options.ts'
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { Support } from '../../stores/supports.ts'
 import { Share } from '../../stores/shares.ts'
-import { ApiEmailAdressList, Comment } from '../../Types/index.ts'
+import { ApiEmailAdressList, Comment, Support } from '@/Types'
 
 
 export type OptionAction = 'save_draft' | 'submit' | 'archive' | 'restore'

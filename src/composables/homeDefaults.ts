@@ -7,7 +7,7 @@ export const HOME_DEFAULTS: HomeConfig = {
 
   // ------------------------------------------------------------
   hero: {
-    cityName: 'The place you want to be',                
+    cityName: 'Take back your authority',                
     tagline:  "Together, let's build tomorrow",
     title:    'Welcome to Agora',
     subtitle: 'Your civic space for a more direct and participatory democracy',

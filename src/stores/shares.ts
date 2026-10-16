@@ -70,7 +70,7 @@ export const useSharesStore = defineStore('shares', {
           !share.locked &&
           (directShareTypes.includes(share.type) ||
             (invitationTypes.includes(share.type) &&
-              (share.type === 'external' || share.invitationSent || share.supportedd)))
+              (share.type === 'external' || share.invitationSent || share.supported)))
       )
     },
 

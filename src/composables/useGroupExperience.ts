@@ -16,6 +16,10 @@ import type {
 import type { InquiryGroup } from '../stores/inquiryGroups.types'
 import { getExperienceArchitecture } from './experienceArchitecture'
 
+const NON_GROUP_EXPERIENCES: ExperienceKey[] = ['home']
+// Experiences that should always be reachable, regardless of group type
+const ALWAYS_AVAILABLE: ExperienceKey[] = ['classic', 'navigation','kanban','timeline']
+
 
 export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   const route = useRoute()
@@ -158,167 +162,178 @@ const layoutConfig = computed<{
   // ----------------------------------------------------------
   // EXPERIENCE AVAILABILITY
   // ----------------------------------------------------------
-  const availableExperiences = computed<ExperienceKey[]>(() => {
-    const groupType = group.value?.type
-    const allKeys = Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
 
-    if (!groupType) return allKeys
 
-    return allKeys.filter((key) => {
-      const def = EXPERIENCE_DEFINITIONS[key]
-      if (!def.supportedGroupTypes || def.supportedGroupTypes.length === 0) {
-        return true
-      }
-      return def.supportedGroupTypes.some(
-        (supportedType) =>
-          supportedType.toLowerCase() === groupType.toLowerCase(),
-      )
-    })
+const availableExperiences = computed<ExperienceKey[]>(() => {
+  const groupType = group.value?.type
+  const allKeys = (Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[])
+    .filter((key) => !NON_GROUP_EXPERIENCES.includes(key))
+
+  // No group context yet → show everything (except home)
+  if (!groupType) return allKeys
+
+  const matched = allKeys.filter((key) => {
+    const def = EXPERIENCE_DEFINITIONS[key]
+    if (!def.supportedGroupTypes?.length) return false
+    return def.supportedGroupTypes.some(
+      (t) => t.toLowerCase() === groupType.toLowerCase(),
+    )
   })
 
-  const defaultExperience = computed<ExperienceKey>(() => {
-    const candidate =
-      (uiConfig.value?.defaultExperience as ExperienceKey | undefined) ??
-      (uiConfig.value?.experience as ExperienceKey | undefined)
+  // Always keep the escape hatches
+  for (const key of ALWAYS_AVAILABLE) {
+    if (!matched.includes(key)) matched.push(key)
+  }
 
-    if (candidate && EXPERIENCE_DEFINITIONS[candidate]) return candidate
-    return 'dashboard'
+  // If the group type matched nothing meaningful (only escape hatches),
+  // fall back to showing every experience. Better a superset than a dead end.
+  const meaningful = matched.filter((k) => !ALWAYS_AVAILABLE.includes(k))
+  return meaningful.length > 0 ? matched : allKeys
+})
+
+  const defaultExperience = computed<ExperienceKey>(() => {
+	  const candidate =
+		  (uiConfig.value?.defaultExperience as ExperienceKey | undefined) ??
+		  (uiConfig.value?.experience as ExperienceKey | undefined)
+
+	  if (candidate && EXPERIENCE_DEFINITIONS[candidate]) return candidate
+		  return 'dashboard'
   })
 
   const defaultDisplay = computed<DisplayType>(() => {
-    const def = EXPERIENCE_DEFINITIONS[experience.value]
-    return def?.defaultDisplay ?? 'cards'
+	  const def = EXPERIENCE_DEFINITIONS[experience.value]
+	  return def?.defaultDisplay ?? 'cards'
   })
 
   // ----------------------------------------------------------
   // ZONE HELPERS
   // ----------------------------------------------------------
   function getZonesByContent(
-    contentType: string,
+	  contentType: string,
   ): Array<{ key: string; zone: DisplayZone }> {
-    const architecture = displayArchitecture.value
-    if (!architecture) return []
+	  const architecture = displayArchitecture.value
+	  if (!architecture) return []
 
-    return Object.entries(architecture)
-      .filter(([, zone]) => zone.content === contentType)
-      .map(([key, zone]) => ({ key, zone }))
+		  return Object.entries(architecture)
+		  .filter(([, zone]) => zone.content === contentType)
+		  .map(([key, zone]) => ({ key, zone }))
   }
 
   function getZone(zoneKey: string): DisplayZone | null {
-    return displayArchitecture.value?.[zoneKey] ?? null
+	  return displayArchitecture.value?.[zoneKey] ?? null
   }
 
   function hasFeature(featureName: string): boolean {
-    return features.value.includes(featureName)
+	  return features.value.includes(featureName)
   }
 
   const definition = computed(
-    () =>
-      EXPERIENCE_DEFINITIONS[experience.value] ||
-      EXPERIENCE_DEFINITIONS.dashboard,
+	  () =>
+	  EXPERIENCE_DEFINITIONS[experience.value] ||
+		  EXPERIENCE_DEFINITIONS.dashboard,
   )
 
   // ----------------------------------------------------------
   // ACTIONS
   // ----------------------------------------------------------
   function buildQuery(extra: Record<string, string>): Record<string, string> {
-    return {
-      ...Object.fromEntries(
-        Object.entries(route.query).filter(
-          ([, v]) => typeof v === 'string',
-        ) as [string, string][],
-      ),
-      ...extra,
-    }
+	  return {
+		  ...Object.fromEntries(
+			  Object.entries(route.query).filter(
+				  ([, v]) => typeof v === 'string',
+			  ) as [string, string][],
+		  ),
+		  ...extra,
+	  }
   }
 
   function switchExperience(key: ExperienceKey) {
-    experience.value = key
-    const def = EXPERIENCE_DEFINITIONS[key]
-    const extra: Record<string, string> = { experience: key }
-    if (def) extra.display = def.defaultDisplay
-    router.push({ query: buildQuery(extra) })
+	  experience.value = key
+	  const def = EXPERIENCE_DEFINITIONS[key]
+	  const extra: Record<string, string> = { experience: key }
+	  if (def) extra.display = def.defaultDisplay
+		  router.push({ query: buildQuery(extra) })
   }
 
   function switchDisplay(mode: DisplayType) {
-    displayMode.value = mode
-    router.push({ query: buildQuery({ display: mode }) })
+	  displayMode.value = mode
+	  router.push({ query: buildQuery({ display: mode }) })
   }
 
   // ----------------------------------------------------------
   // COMPUTED COLLECTIONS
   // ----------------------------------------------------------
   const allZones = computed(() => {
-    const architecture = displayArchitecture.value
-    if (!architecture) return []
-    return Object.entries(architecture).map(([key, zone]) => ({
-      key,
-      ...zone,
-    }))
+	  const architecture = displayArchitecture.value
+	  if (!architecture) return []
+		  return Object.entries(architecture).map(([key, zone]) => ({
+			  key,
+			  ...zone,
+		  }))
   })
 
   function getZonesByPosition(
-    row: number,
-    column: number,
+	  row: number,
+	  column: number,
   ): Array<{ key: string; zone: DisplayZone }> {
-    const architecture = displayArchitecture.value
-    if (!architecture) return []
+	  const architecture = displayArchitecture.value
+	  if (!architecture) return []
 
-    return Object.entries(architecture)
-      .filter(
-        ([, zone]) =>
-          zone.position?.row === row && zone.position?.column === column,
-      )
-      .map(([key, zone]) => ({ key, zone }))
+		  return Object.entries(architecture)
+		  .filter(
+			  ([, zone]) =>
+			  zone.position?.row === row && zone.position?.column === column,
+		  )
+		  .map(([key, zone]) => ({ key, zone }))
   }
 
   // ----------------------------------------------------------
   // WATCHERS
   // ----------------------------------------------------------
   watch(
-    () => group.value?.type,
-    (newType) => {
-      if (!newType) return
+	  () => group.value?.type,
+		  (newType) => {
+		  if (!newType) return
 
-      const available = availableExperiences.value
-      if (available.includes(experience.value)) return
+			  const available = availableExperiences.value
+			  if (available.includes(experience.value)) return
 
-      const fallback = defaultExperience.value
-      const next =
-        fallback && available.includes(fallback) ? fallback : available[0]
+				  const fallback = defaultExperience.value
+				  const next =
+					  fallback && available.includes(fallback) ? fallback : available[0]
 
-      if (next && next !== experience.value) switchExperience(next)
-    },
-    { immediate: true },
+				  if (next && next !== experience.value) switchExperience(next)
+	  },
+  { immediate: true },
   )
 
   return {
-    // State
-    experience,
-    displayMode,
-    uiConfig,
-    displayArchitecture,
-    layoutConfig,
-    contextConfig,
-    features,
-    definition,
-    allowedTools,
-    defaultExperience,
-    defaultDisplay,
+	  // State
+	  experience,
+	  displayMode,
+	  uiConfig,
+	  displayArchitecture,
+	  layoutConfig,
+	  contextConfig,
+	  features,
+	  definition,
+	  allowedTools,
+	  defaultExperience,
+	  defaultDisplay,
 
-    // Computed
-    hasCustomArchitecture,
-    availableExperiences,
-    allZones,
+	  // Computed
+	  hasCustomArchitecture,
+	  availableExperiences,
+	  allZones,
 
-    // Actions
-    switchExperience,
-    switchDisplay,
+	  // Actions
+	  switchExperience,
+	  switchDisplay,
 
-    // Helpers
-    getZonesByContent,
-    getZone,
-    getZonesByPosition,
-    hasFeature,
+	  // Helpers
+	  getZonesByContent,
+	  getZone,
+	  getZonesByPosition,
+	  hasFeature,
   }
 }

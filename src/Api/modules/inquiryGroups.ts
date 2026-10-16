@@ -4,8 +4,7 @@
  */
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { Inquiry } from '../../stores/inquiry.ts'
-import { InquiryGroup } from '../../stores/inquiryGroups.types.ts'
+import { Inquiry, InquiryGroup } from '@/Types'
 
 const inquiryGroups = {
 

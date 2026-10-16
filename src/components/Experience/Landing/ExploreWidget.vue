@@ -58,8 +58,30 @@ import { getInquiryTypeData } from '../../../helpers/modules/InquiryHelper.ts'
 import { useSessionStore } from '../../../stores/session.ts'
 import type { Inquiry } from '../../../Types'
 
-const props = defineProps<{ inquiries?: Inquiry[] }>()
-const emit = defineEmits<{ category: [key: string]; create: []; viewAll: [] }>()
+const props = defineProps<{
+  inquiries?: Inquiry[]
+  // optional: which inquiry type the "Create a proposal" CTA should preselect
+  createType?: string
+}>()
+
+const emit = defineEmits<{
+  category: [key: string]
+  create: [payload?: { inquiryType?: string }]
+  viewAll: []
+}>()
+
+// Pick the type to preselect: explicit prop → top category → first root type
+const defaultCreateType = computed(() => {
+  if (props.createType) return props.createType
+  if (categories.value.length > 0) return categories.value[0].key
+  const types = sessionStore.appSettings?.inquiryTypeTab || []
+  return types.find((t) => t.is_root)?.inquiry_type
+})
+
+function onCreate() {
+  emit('create', { inquiryType: defaultCreateType.value })
+}
+
 
 const sessionStore = useSessionStore()
 

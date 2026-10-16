@@ -5,11 +5,9 @@
 import { Inquiry, InquiryConfiguration, InquiryType } from '../../stores/inquiry.ts'
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { Option } from '../../stores/options.ts'
-import { Support } from '../../stores/supports.ts'
 import { Share } from '../../stores/shares.ts'
 import { ApiEmailAdressList, Comment, User } from '../../Types/index.ts'
-import { InquiryGroup } from '../../stores/inquiryGroups.types.ts'
+import { InquiryGroup, Option, Support } from '@/Types'
 
 export type Confirmations = {
   sentMails: { emailAddress: string; displayName: string }[]

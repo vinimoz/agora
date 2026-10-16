@@ -26,10 +26,11 @@ import {
 
 // Define props
 interface Props {
-  inquiryGroupType?: string | null
+  inquiryGroupType?: InquiryGroupType | null
   parentGroupId?: string | number | null
   availableGroups?: string[]
   defaultTitle?: string | null
+  family?: string  | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -63,62 +64,75 @@ const allInquiryGroupTypes = computed((): InquiryGroupType[] => {
   return types
 })
 
+// Normalize a type key
+const typeKey = (t: InquiryGroupType): string => t.type || t.group_type || ''
+
+// Find the InquiryGroupType object by type string OR by object identity
+const findInquiryGroupType = (
+  input: InquiryGroupType | string | null,
+): InquiryGroupType | null => {
+  if (!input) return null
+  if (typeof input === 'object') return input
+  return allInquiryGroupTypes.value.find((t) => typeKey(t) === input) ?? null
+}
+
+const initialInquiryGroupType = computed(() =>
+  findInquiryGroupType(props.inquiryGroupType),
+)
+
+const availableInquiryGroupTypes = computed<InquiryGroupType[]>(() => {
+  const all = allInquiryGroupTypes.value
+
+  // CASE 1 & 2: no parent → root types only, filtered by family if provided
+  if (!props.parentGroupId) {
+    const roots = all.filter((t) => t.is_root === true)
+    if (!props.family) return roots
+    return roots.filter((t) => t.family === props.family)
+  }
+
+  // CASE 3: parent exists → parent type + allowed responses
+  const parentType = initialInquiryGroupType.value
+  if (!parentType) return []
+
+  const parentKey = typeKey(parentType)
+  const allowed = getAllowedResponseGroupTypes(all, parentKey)
+
+  // De-duplicate, keeping parent first
+  const seen = new Set<string>([parentKey])
+  const result: InquiryGroupType[] = [parentType]
+  for (const t of allowed) {
+    const k = typeKey(t)
+    if (!seen.has(k)) {
+      seen.add(k)
+      result.push(t)
+    }
+  }
+  return result
+})
+
+const showGroupTypeSelector = computed(
+  () => availableInquiryGroupTypes.value.length > 1,
+)
+
+const actualSelectedType = computed<string>(() => {
+  return (
+    localInquiryGroupType.value ||
+    (initialInquiryGroupType.value ? typeKey(initialInquiryGroupType.value) : '') ||
+    (availableInquiryGroupTypes.value[0] ? typeKey(availableInquiryGroupTypes.value[0]) : '')
+  )
+})
+
+
+
 // Find the InquiryGroupType object by group_type string
 const findInquiryGroupTypeByType = (typeString: string): InquiryGroupType | null =>
   allInquiryGroupTypes.value.find(
     (type) => (type.type || type.group_type) === typeString,
   ) ?? null
 
-// Get the initial inquiry group type object
-const initialInquiryGroupType = computed(() => {
-  if (props.inquiryGroupType) {
-    return findInquiryGroupTypeByType(props.inquiryGroupType)
-  }
-  return null
-})
-
-const availableInquiryGroupTypes = computed(() => {
- 
- console.log(" PARENT GROUP ID",props.parentGroupId)
- console.log(" PARENT GROUP ID INITIAL ", initialInquiryGroupType.value)
-  // CASE 1: No parent ID, use the provided type
-  if (!props.parentGroupId && initialInquiryGroupType.value) {
-    return [initialInquiryGroupType.value]
-  }
-  
-  // CASE 2: Has parent ID, we need to find parent group type
-  if (props.parentGroupId && initialInquiryGroupType.value) {
-    
-    console.log(" LOIT OF  ", allInquiryGroupTypes.value)
-    // Get allowed response types for the parent group type
-    const allowedResponses = getAllowedResponseGroupTypes(allInquiryGroupTypes.value, initialInquiryGroupType.value.group_type)
-    
-    console.log(" ALLOWED RESPONSE LOIT OF  ", allowedResponses)
-    
-    if (allowedResponses && allowedResponses.length > 0) {
-      // Return parent type + allowed responses
-      const result = [initialInquiryGroupType.value, ...allowedResponses]
-      return result
-    }
-    
-    // Fallback: if no allowed responses, just return parent type
-    return [initialInquiryGroupType.value]
-  }
-  
-  // Default: return all root types
-  const rootTypes = allInquiryGroupTypes.value.filter(type => type.is_root === true)
-  const result = getAvailableInquiryGroupTypesForCreation(rootTypes)
-  return result
-})
 
 const selectedInquiryGroupType = ref<string>('')
 
-const actualSelectedType = computed<string>(() =>
-  localInquiryGroupType.value
-  || (typeof props.inquiryGroupType === 'string' ? props.inquiryGroupType : '')
-  || availableInquiryGroupTypes.value[0]?.group_type
-  || '',
-)
 
 watch(
   [
@@ -138,10 +152,6 @@ const currentInquiryGroupTypeData = computed(() => {
   return data
 })
 
-const showGroupTypeSelector = computed(() => {
-  const shouldShow = props.parentGroupId && availableInquiryGroupTypes.value.length > 1
-  return shouldShow
-})
 
 const dialogTitle = computed(() => {
   if (!props.parentGroupId) {

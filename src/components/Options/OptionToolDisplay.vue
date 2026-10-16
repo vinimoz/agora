@@ -130,9 +130,9 @@ import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 
 // Import ONLY Option-family tool components
 // These tools are exclusive to Options (family debate, consensus, structure)
-import FamilyLayoutConsensusFlow from './FamilyLayouts/FamilyLayoutConsensusFlow.vue'
-import FamilyLayoutPaired from './FamilyLayouts/FamilyLayoutPaired.vue'
-import FamilyLayoutTree from './FamilyLayouts/FamilyLayoutTree.vue'
+import FamilyLayoutConsensusFlow from '../FamilyLayouts/FamilyLayoutConsensusFlow.vue'
+import FamilyLayoutPaired from '../FamilyLayouts/FamilyLayoutPaired.vue'
+import FamilyLayoutTree from '../FamilyLayouts/FamilyLayoutTree.vue'
 
 // NOTE: FamilyLayoutKanban, FamilyLayoutTimeline, FamilyLayoutVote are NOT imported here
 // because they can be used for both Options AND Inquiries.

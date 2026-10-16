@@ -9,7 +9,7 @@ import { gfmHeadingId } from 'marked-gfm-heading-id'
 import { t } from '@nextcloud/l10n'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-
+import { useOptionsStore } from './options.ts'
 import { Logger } from '../helpers/index.ts'
 import { OptionsAPI } from '../Api/index.ts'
 import {
@@ -28,98 +28,14 @@ import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
 import { AxiosError } from '@nextcloud/axios'
 
-export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'
-
-export type OptionConfiguration = {
-	visibility: 'private' | 'everyone' | 'groups' | 'participants' | 'invitation'
-	showResults: string
-	allowComment: number
-	supportFeature: string
-	family: string
-}
-
-export type OptionCurrentStatus = {
-	created: number
-	updated: number
-	isArchived: boolean
-	isDeleted: boolean
-	countParticipants: number
-	countComments: number
-	countSupports: number
-	trendingScore: number
-	optionStatus: string
-	supportResult: SupportResult | null
-	publicationStatus: 'draft' | 'pending' | 'published' | 'archived' | 'deleted'
-}
-
-export type CurrentUserOptionStatus = {
-	isInvolved: boolean
-	hasSupported: boolean
-	supportValue: string | null
-	supportResult: SupportResult | null
-	isLoggedIn: boolean
-	isOwner: boolean
-	shareToken: string
-	userId: string
-	userRole: UserType
-}
-
-export type OptionPermissions = {
-	view: boolean
-	edit: boolean
-	delete: boolean
-	archive: boolean
-	support: boolean
-	comment: boolean
-	addShares: boolean
-	addSharesExternal: boolean
-	changeForeignSupports: boolean
-	changeOwner: boolean
-	reorderOptions: boolean
-	seeResults: boolean
-	seeUsernames: boolean
-	subscribe: boolean
-	takeOver: boolean
-	addOption: boolean
-	confirmOption: boolean
-}
-
-export type Option = {
-	id: number
-	targetId: number
-	parentId: number
-	type: string
-	family: string
-	title: string
-	text: string
-	textSafe: string
-	sortOrder: number
-	configuration: OptionConfiguration
-	miscFields: array
-	ownedGroup: string
-	owner: User
-	currentUserStatus: CurrentUserOptionStatus
-	permissions: OptionPermissions
-	status: OptionCurrentStatus
-	childs: Option[]
-	meta: {
-		chunking: Chunking
-		status: StatusResults
-	}
-	inquiryInfo: {
-		targetId: number
-		inquiryTitle: string
-		inquiryType: string
-		inquiryAccess: string
-	}
-	_typeInfo?: InquiryOptionType
-	_familyInfo?: {
-		name: string
-		color: string
-		icon: string
-		description: string
-	}
-}
+import type {
+	Option,
+	OptionConfiguration,
+	OptionCurrentStatus,
+	CurrentUserOptionStatus,
+	OptionPermissions,
+	OptionStatus,
+} from '@/Types'
 
 const markedPrefix = {
 	prefix: 'opt-',
@@ -207,6 +123,33 @@ export const useOptionStore = defineStore('option', {
 	}),
 
 	getters: {
+		optionData(): Option {
+			return {
+				id: this.id,
+				targetId: this.targetId,
+				parentId: this.parentId,
+				type: this.type,
+				family: this.family,
+				title: this.title,
+				text: this.text,
+				textSafe: this.textSafe,
+				sortOrder: this.sortOrder,
+				configuration: this.configuration,
+				miscFields: this.miscFields,
+				ownedGroup: this.ownedGroup,
+				owner: this.owner,
+				currentUserStatus: this.currentUserStatus,
+				permissions: this.permissions,
+				status: this.status,
+				childs: this.childs,
+				meta: this.meta,
+				inquiryInfo: this.inquiryInfo,
+				_typeInfo: this._typeInfo,
+				_familyInfo: this._familyInfo,
+			}
+		},
+
+
 		formattedExpireDate(): string {
 			if (this.configuration.expire > 0) {
 				const date = new Date(this.configuration.expire * 1000)
@@ -258,17 +201,17 @@ export const useOptionStore = defineStore('option', {
 		familyInfo(): { name: string; color: string; icon: string; description: string } | undefined {
 			if (!this.typeInfo?.family) return undefined
 
-			const sessionStore = useSessionStore()
-			const family = sessionStore.appSettings?.optionFamilyTab?.find(
-				(f) => f.family_type === this.typeInfo!.family
-			)
+				const sessionStore = useSessionStore()
+				const family = sessionStore.appSettings?.optionFamilyTab?.find(
+					(f) => f.family_type === this.typeInfo!.family
+				)
 
-			return {
-				name: family?.label || this.typeInfo.family,
-				color: getFamilyColor(this.typeInfo.family),
-				icon: family?.icon || 'File',
-				description: family?.description || this.typeInfo.description || '',
-			}
+				return {
+					name: family?.label || this.typeInfo.family,
+					color: getFamilyColor(this.typeInfo.family),
+					icon: family?.icon || 'File',
+					description: family?.description || this.typeInfo.description || '',
+				}
 		},
 
 		// Check if option has required misc fields
@@ -279,11 +222,11 @@ export const useOptionStore = defineStore('option', {
 		// Check if all required misc fields are filled
 		allRequiredMiscFieldsFilled(): boolean {
 			return this.miscFields
-				.filter((field) => field.required)
-				.every((field) => {
-					const value = this.miscFields[field.key]
-					return value !== undefined && value !== null && value !== ''
-				})
+			.filter((field) => field.required)
+			.every((field) => {
+				const value = this.miscFields[field.key]
+				return value !== undefined && value !== null && value !== ''
+			})
 		},
 
 		// Type-specific checks
@@ -331,8 +274,8 @@ export const useOptionStore = defineStore('option', {
 		// Validation
 		isValid(): boolean {
 			if (this.text.trim() === '') return false
-			if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false
-			return true
+				if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false
+					return true
 		},
 
 		// Get default status from type definition
@@ -354,11 +297,23 @@ export const useOptionStore = defineStore('option', {
 		// Check if status can be changed to target status
 		canChangeStatusTo:
 			(state) =>
-			(targetStatus: string): boolean =>
-				state.availableStatuses.includes(targetStatus),
+		(targetStatus: string): boolean =>
+		state.availableStatuses.includes(targetStatus),
 	},
 
 	actions: {
+syncToCollectionStore(): void {
+  if (this.id === 0) return
+  const optionsStore = useOptionsStore()
+  optionsStore.updateOption({ option: this.optionData })
+},
+
+syncDeletionToCollectionStore(): void {
+  if (this.id === 0) return
+  const optionsStore = useOptionsStore()
+  optionsStore.removeOption(this.id)
+},
+
 		reset(): void {
 			this.$reset()
 		},
@@ -389,7 +344,7 @@ export const useOptionStore = defineStore('option', {
 			this.options.forEach((option) => {
 				const count = comments.filter(
 					(comment) =>
-						comment.inquiryId === inquiryId &&
+					comment.inquiryId === inquiryId &&
 						comment.optionId === option.id &&
 						comment.deleted === 0
 				).length
@@ -427,6 +382,7 @@ export const useOptionStore = defineStore('option', {
 			try {
 				await OptionsAPI.setOptionStatus(this.id, optionStatus)
 				this.status.optionStatus = optionStatus
+				this.syncToCollectionStore()
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
 					return
@@ -445,6 +401,7 @@ export const useOptionStore = defineStore('option', {
 				const response = await OptionsAPI.toggleArchive(payload.optionId)
 				if (this.id === payload.optionId) {
 					this.$patch(response.data.option)
+					this.syncToCollectionStore()
 				}
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -490,6 +447,7 @@ export const useOptionStore = defineStore('option', {
 					this.configuration.access = 'moderate'
 				}
 				const response = await OptionsAPI.submitOption(this.id, action)
+				this.syncToCollectionStore()
 				if (!response || !response.data) {
 					this.$reset()
 					return
@@ -586,11 +544,11 @@ export const useOptionStore = defineStore('option', {
 					sessionStore.currentUser.isOwner = true
 				else sessionStore.currentUser.isOwner = false
 
-				// Initialize type info after loading
-				this.initializeTypeInfo()
+					// Initialize type info after loading
+					this.initializeTypeInfo()
 
-				this.meta.status = 'loaded'
-				return response
+					this.meta.status = 'loaded'
+					return response
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
 					return
@@ -827,6 +785,9 @@ export const useOptionStore = defineStore('option', {
 				const newChild = response.data.option
 				this.childs.push(newChild)
 
+				const optionsStore = useOptionsStore()
+				optionsStore.addOption(newChild)     
+				this.syncToCollectionStore()	
 				return newChild
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -854,9 +815,9 @@ export const useOptionStore = defineStore('option', {
 
 				if (this.hasChildren) {
 					confirmMessage = t('agora',
-						'This option has {count} child options. Deleting this option will also delete all its children permanently.',
-						{ count: this.childs.length }
-					)
+							   'This option has {count} child options. Deleting this option will also delete all its children permanently.',
+					{ count: this.childs.length }
+							  )
 				}
 
 				if (this.isPublished || this.isClosed || this.hasChildren) {
@@ -864,22 +825,22 @@ export const useOptionStore = defineStore('option', {
 					if (!confirmed) return
 				}
 
-				await OptionsAPI.deleteOption(this.id)
+			await OptionsAPI.deleteOption(this.id)
 
-				emit(Event.DeleteOption, {
-					optionId: this.id,
-					message: this.hasChildren
-						? t('agora', 'Option and all children deleted')
-						: t('agora', 'Option deleted'),
-				})
+			emit(Event.DeleteOption, {
+				optionId: this.id,
+				message: this.hasChildren
+					? t('agora', 'Option and all children deleted')
+					: t('agora', 'Option deleted'),
+			})
 
-				if (sessionStore.currentOptionId === this.id) {
-					this.reset()
-				}
+			if (sessionStore.currentOptionId === this.id) {
+				this.reset()
+			}
 
-				if (inquiryStore.id) {
-					await inquiryStore.load()
-				}
+			if (inquiryStore.id) {
+				await inquiryStore.load()
+			}
 
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -966,6 +927,7 @@ export const useOptionStore = defineStore('option', {
 				try {
 					await OptionsAPI.updateOptionMiscField(this.id, { key, value })
 					this.miscFields[key] = value
+					this.syncToCollectionStore()
 				} catch (error) {
 					if ((error as AxiosError)?.code === 'ERR_CANCELED') {
 						return

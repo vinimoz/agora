@@ -352,6 +352,7 @@ const emit = defineEmits<{
   comment: [item: Item]
   viewChildren: [item: Item, childType: string]
   removeFromView: [itemId: number, updatedForceLayouts: string[]]
+  updated: []
 }>()
 
 // ---- Raw object still needed for helpers that predate unification ----
@@ -372,9 +373,9 @@ const itemCreatedAt = computed(() => {
 })
 
 
-const ownerId = computed(() => raw?.value.owner?.id ?? null)
-const ownerName = computed(() => raw?.value.owner?.displayName ?? null)
-const commentCount = computed(() => raw?.value.status?.countComments ?? 0)
+const ownerId      = computed(() => raw.value?.owner?.id ?? null)
+const ownerName    = computed(() => raw.value?.owner?.displayName ?? null)
+const commentCount = computed(() => raw.value?.status?.countComments ?? 0)
 
 const isImportedFromView = computed(() =>
   checkImported(raw.value, props.familyType || '')
@@ -480,6 +481,7 @@ const deleteItem = async () => {
       await inquiriesStore.deleteInquiry(props.item.id)
     }
     emit('delete', props.item.id)
+     emit('updated')
     showSuccess(t('agora', 'Item deleted successfully'))
   } catch (err) {
     console.error(err)

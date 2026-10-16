@@ -179,8 +179,8 @@ export const VALID_TOOLS_BY_CONTENT: Record<ContentValue, ToolKey[]> = {
   'activity':       [],
   'hero':           [],
   'news':           [],
-  'group_types':    []
- // 'services':       [],
+  'group_types':    [],
+  'services':       [],
   'events':         [],
   'explore':        [],
   'promo':          [],

@@ -43,8 +43,8 @@ const showAddModal = ref(false)
 const draggingItemId = ref<number | null>(null)
 
 const statusColumns = computed(() => {
-  const cfg = (props.appSettings as any)?.optionFamilyTab?.[props.family?.key || 'kanban']
-    ?.ui?.kanban_column
+const cfg = (props.appSettings as any)?.optionFamilyTab?.[props.family?.family_type || 'kanban']
+	?.ui?.kanban_column
   if (Array.isArray(cfg) && cfg.length) {
     return cfg.map((c: any) => ({
       value: c.value,
@@ -64,8 +64,10 @@ const columnCount = computed(() => statusColumns.value.length)
 
 /** Filter items for this layout (family + force_layouts) */
 const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+
 const kanbanItems = computed(() => {
-	return  getItemsForFamily(props.items, familyKey.value)
+  const key = familyKey.value
+  return key ? getItemsForFamily(props.items, key) : props.items
 })
 
 const getItemsByStatus = (status: string) =>
@@ -120,7 +122,7 @@ console.log(" ITEMS IN KANBAN  ",props.items)
     <AddItemToFamily
       v-if="showAddModal"
       family-type="kanban"
-      :parent-id="parentId"
+      :inquiry-id="parentId"
       :target-type="targetType"
       @close="showAddModal = false"
       @success="emit('updateItems')"

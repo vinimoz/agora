@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { AxiosResponse } from '@nextcloud/axios'
-import { AppSettings, Group } from '../../stores/appSettings.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { ISearchType, User , Category, Location, InquiryStatus, InquiryFamily, OptionFamily } from '../../Types/index.js'
-import type { InquiryGroupType } from '../stores/inquiryGroups.types.js'
+import { ISearchType, User , Category, Location, InquiryStatus, InquiryFamily, OptionFamily, AppSettings, Group } from '@/Types'
+import type { InquiryGroupType } from '@/Types'
 
 const appSettings = {
 	getAppSettings(): Promise<AxiosResponse<{ appSettings: AppSettings }>> {

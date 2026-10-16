@@ -411,14 +411,20 @@ class InquiryGroupService
 
 			$inquiryGroup = $this->inquiryGroupMapper->insert($inquiryGroup);
 			$this->setBasicPermissions($inquiryGroup);
-		} elseif ($inquiryGroupId !== null) {
-			try {
-				$inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
-			} catch (DoesNotExistException $e) {
-				throw new NotFoundException('Inquiry group not found');
-			}
-			$inquiryGroup->request(InquiryGroup::PERMISSION_EDIT);
-			$this->enrichInquiryGroup($inquiryGroup, false, false);
+			} elseif ($inquiryGroupId !== null) {
+    try {
+        $inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
+    } catch (DoesNotExistException $e) {
+        throw new NotFoundException('Inquiry group not found');
+    }
+
+    // enrich first so allowEdit / permissions are computed from the loaded row
+    $this->enrichInquiryGroup($inquiryGroup, false, false);
+
+    // a user attaching their own inquiry only needs "add inquiries",
+    // not full edit rights over the group
+    $inquiryGroup->request(InquiryGroup::PERMISSION_ADD_INQUIRIES);
+
 		} else {
 			throw new InsufficientAttributesException('An existing inquiry group id must be provided or a new inquiry group name must be given.');
 		}

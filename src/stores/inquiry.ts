@@ -35,123 +35,19 @@ import { useAttachmentsStore } from './attachments.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { useSupportResultStore } from './supportResult.ts'
 
-// Type definitions matching PHP constants
-export type VisibilityType =
-  | 'private'
-  | 'groups'
-  | 'participants'
-  | 'everyone'
-  | 'users'
-
-export type PublicationStatus = 'draft' | 'pending' | 'published' | 'archived' | 'deleted'
-export type ShowResultsType = 'always' | 'closed' | 'never'
-export type ModerationWorkflowStatus = 'draft' | 'pending' | 'accepted' | 'rejected'
-export type InquiryWorkflowStatus = 'draft' | 'waiting_approval' | 'active' | 'closed' | 'rejected'
-export type SortParticipants = 'alphabetical' | 'supportCount' | 'unordered'
-
-// Meta information for loading states
-export type Meta = {
-  chunking: Chunking
-  status: StatusResults
-}
-
-export type InquiryConfiguration = {
-  autoReminder: boolean
-  expire: number
-  forceConfidentialComments: boolean
-  allowComment: number | null
-  supportFeature: string
-  supportEngine: SupportEngine[]
-  visibility: VisibilityType
-  visibilityGroups: string[]
-  visibilityUsers: string[]
-}
-
-// Status matching PHP getStatusArray()
-export type InquiryStatus = {
-  moderationStatus: ModerationWorkflowStatus
-  inquiryStatus: InquiryWorkflowStatus
-  lastInteraction: number
-  created: number
-  isAnonymous: boolean
-  isArchived: boolean
-  isExpired: boolean
-  relevantThreshold: number
-  deletionDate: number
-  archivedDate: number
-  supportResult: SupportResult[] | null
-  countParticipants: number
-  countComments: number
-  countSupports: number
-  trendingScore: number
-  publicationStatus: string
-}
-
-// Permissions matching PHP getPermissionsArray()
-export type InquiryPermissions = {
-  view: boolean
-  edit: boolean
-  delete: boolean
-  archive: boolean
-  support: boolean
-  comment: boolean
-  addShares: boolean
-  addSharesExternal: boolean
-  changeForeignInquiries: boolean
-  changeOwner: boolean
-  reorderOptions: boolean
-  seeResults: boolean
-  seeUsernames: boolean
-  subscribe: boolean
-  takeOver: boolean
-  deanonymize: boolean
-  addOptions: boolean
-  confirmOptions: boolean
-  clone: boolean
-}
-
-// Current user status matching PHP getCurrentUserStatus()
-export type CurrentUserStatus = {
-  groupInvitations: string[]
-  isInvolved: boolean
-  isShared: boolean
-  hasSupported: boolean
-  supportValue: string | null
-  isLocked: boolean
-  isLoggedIn: boolean
-  isOwner: boolean
-  shareToken: string
-  userId: string
-  userRole: UserType
-  countInquiries: number
-  orphanedInquiries: number
-}
-
-// Main Inquiry type matching PHP jsonSerialize()
-export type Inquiry = {
-  id: number
-  type: string
-  family: string
-  coverId: number
-  title: string
-  description: string
-  descriptionSafe: string
-  parentId: number
-  locationId: number
-  categoryId: number
-  owner: User
-  ownedGroup: string
-  inquiryGroups: number[]
-  childs: Inquiry[]
-  miscFields: Record<string, unknown>
-  configuration: InquiryConfiguration
-  status: InquiryStatus
-  currentUserStatus: CurrentUserStatus
-  permissions: InquiryPermissions
-  revealParticipants: boolean
-  sortParticipants: SortParticipants
-  meta: Meta
-}
+import type {
+	Inquiry,
+	InquiryStatus,
+	InquiryConfiguration,
+	InquiryPermissions,
+	CurrentUserStatus,
+	InquiryMeta,
+	VisibilityType,
+	PublicationStatus,
+	ModerationWorkflowStatus,
+	InquiryWorkflowStatus,
+	SortParticipants,
+} from '@/Types'
 
 const markedPrefix = {
   prefix: 'desc-',
@@ -251,6 +147,35 @@ export const useInquiryStore = defineStore('inquiry', {
   }),
 
   getters: {
+
+  /** Full, serializable */
+  inquiryData(): Inquiry {
+    return {
+      id: this.id,
+      type: this.type,
+      family: this.family,
+      coverId: this.coverId,
+      title: this.title,
+      description: this.description,
+      descriptionSafe: this.descriptionSafe,
+      parentId: this.parentId,
+      locationId: this.locationId,
+      categoryId: this.categoryId,
+      owner: this.owner,
+      ownedGroup: this.ownedGroup,
+      inquiryGroups: this.inquiryGroups,
+      childs: this.childs,
+      miscFields: this.miscFields,
+      configuration: this.configuration,
+      status: this.status,
+      currentUserStatus: this.currentUserStatus,
+      permissions: this.permissions,
+      revealParticipants: this.revealParticipants,
+      sortParticipants: this.sortParticipants,
+      meta: this.meta,
+    }
+  },
+
     isConfirmationAllowed(state): boolean {
       return state.permissions.confirmOptions || !this.isClosed
     },
@@ -294,6 +219,19 @@ export const useInquiryStore = defineStore('inquiry', {
   },
 
   actions: {
+
+  syncToCollectionStore(): void {
+    if (this.id === 0) return
+    const inquiriesStore = useInquiriesStore()
+    inquiriesStore.addInquiryToStore(this.inquiryData)
+  },
+
+  syncDeletionToCollectionStore(): void {
+    if (this.id === 0) return
+    const inquiriesStore = useInquiriesStore()
+    inquiriesStore.inquiries = inquiriesStore.inquiries.filter(i => i.id !== this.id)
+  },
+
     reset(): void {
       this.$reset()
     },
@@ -539,6 +477,7 @@ export const useInquiryStore = defineStore('inquiry', {
       try {
         await InquiriesAPI.updateMiscField(this.id, value)
         this.miscFields[key] = value
+	this.syncToCollectionStore()
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
           return
@@ -559,6 +498,7 @@ export const useInquiryStore = defineStore('inquiry', {
         this.status.inquiryStatus = status
         if (response?.data?.inquiry) {
           this.$patch(response.data.inquiry)
+	  this.syncToCollectionStore()
         }
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') return
@@ -575,6 +515,7 @@ export const useInquiryStore = defineStore('inquiry', {
       try {
         await InquiriesAPI.updateModerationStatus(this.id, status)
         this.status.moderationStatus = status
+	this.syncToCollectionStore() 
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
           return
@@ -593,6 +534,7 @@ export const useInquiryStore = defineStore('inquiry', {
         const response = await InquiriesAPI.lockAnonymous(this.id)
         if (response?.data?.inquiry) {
           this.$patch(response.data.inquiry)
+	  this.syncToCollectionStore()
         } else {
           this.status.isAnonymous = true
         }
@@ -616,6 +558,7 @@ export const useInquiryStore = defineStore('inquiry', {
         try {
           const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
           this.$patch(response.data.inquiry)
+	  this.syncToCollectionStore()
           emit(Event.UpdateInquiry, {
             store: 'inquiry',
             message: t('agora', 'Inquiry updated'),
@@ -640,7 +583,6 @@ export const useInquiryStore = defineStore('inquiry', {
         const response = await InquiriesAPI.closeInquiry(this.id)
         const updated = response.data.inquiry
         this.$patch(updated)
-
         const index = inquiriesStore.inquiries.findIndex((i) => i.id === updated.id)
         if (index !== -1) {
           inquiriesStore.inquiries[index] = updated

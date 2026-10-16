@@ -19,89 +19,18 @@ import { Chunking, StatusResults } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
 
-type ViewMode = 'table-view' | 'list-view'
-export type SortType =
-  | 'created'
-  | 'title'
-  | 'visibility'
-  | 'owner'
-  | 'comments'
-  | 'supports'
-  | 'expire'
-  | 'interaction'
-  | 'type'
-  | 'countComments'
-  | 'countSupports'
-
-export type SortDirection = 'asc' | 'desc'
-
-export type FilterType =
-  | 'relevant'
-  | 'my'
-  | 'private'
-  | 'reject'
-  | 'open'
-  | 'participated'
-  | 'shared'
-  | 'group'
-  | 'all'
-  | 'closed'
-  | 'archived'
-  | 'admin'
-  | 'moderate'
-  | 'for_you'
-  | 'to_vote'
-  | 'debates'
-
-export type AdvancedFilters = {
-  type?: FilterType
-  categoryId?: string
-  locationId?: string
-  hasComments?: boolean
-  hasSupports?: boolean
-  parentId?: number
-  search?: string
-  familyType?: string
-  types?: string[]
-}
-
-export type FilterState = {
-  currentFilter: FilterType
-  advancedFilters: AdvancedFilters
-}
-
-export type InquiryCategory = {
-  id: FilterType
-  title: string
-  titleExt: string
-  description: string
-  pinned: boolean
-  showInNavigation(): boolean
-  filterCondition(inquiry: Inquiry): boolean
-}
-
-export type InquiryCategoryList = Record<FilterType, InquiryCategory>
-
-export type Meta = {
-  chunks: Chunking
-  maxInquiriesInNavigation: number
-  status: StatusResults
-}
-
-export type InquiryList = {
-  inquiries: Inquiry[]
-  viewMode: ViewMode
-  // inquiryGroups: InquiryGroup[]
-  meta: Meta
-  sort: {
-    by: SortType
-    reverse: boolean
-  }
-  status: {
-    loadingGroups: boolean
-  }
-  categories: InquiryCategoryList
-}
+import type {
+	Inquiry,
+	InquiryCategory,
+	InquiryCategoryList,
+	InquiryList,
+	InquiryListMeta,
+	ViewMode,
+	SortType,
+	FilterType,
+	AdvancedFilters,
+	FilterState,
+} from '@/Types'
 
 export const sortColumnsMapping: { [key in SortType]: string } = {
   created: 'status.created',

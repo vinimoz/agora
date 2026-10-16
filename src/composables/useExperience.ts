@@ -299,7 +299,7 @@ export function useExperience(initialExperience?: ExperienceKey) {
   function getAvailableExperiences(): ExperienceKey[] {
     const targetGroup = currentGroup.value
     const allKeys = Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
-    if (!targetGroup) return allKeys
+    /*if (!targetGroup) return allKeys
 
     return allKeys.filter((key) => {
       const def = EXPERIENCE_DEFINITIONS[key]
@@ -308,6 +308,8 @@ export function useExperience(initialExperience?: ExperienceKey) {
       }
       return def.supportedGroupTypes.includes(targetGroup.type)
     })
+   */
+  return allKeys
   }
 
   function getAvailableDisplays(): DisplayMode[] {

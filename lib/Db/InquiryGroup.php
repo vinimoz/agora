@@ -385,19 +385,22 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     {
         $isOwner = $this->getOwner() === $this->userSession->getCurrentUserId();
         $isAdmin = $this->userSession->isAdmin();
+        // $isGroupEditor = $this->userSession->isGroupEditor();
         $canEdit = $this->getAllowEdit() || $isOwner || $isAdmin;
         $isProtected = $this->getProtected();
+        $isLoggedIn = $this->userSession->getIsLoggedIn();
 
-        return [
-            self::PERMISSION_VIEW => true,
-            self::PERMISSION_EDIT => $canEdit && !$isProtected,
-            self::PERMISSION_DELETE => ($isOwner || $isAdmin) && !$isProtected,
-            self::PERMISSION_ADD_INQUIRIES => $canEdit && !$isProtected,
-            self::PERMISSION_REORDER_INQUIRIES => $canEdit && !$isProtected,
-            self::PERMISSION_CHANGE_OWNER => ($isOwner || $isAdmin) && !$isProtected,
-            self::PERMISSION_ARCHIVE => ($isOwner || $isAdmin) && !$isProtected,
-            self::PERMISSION_CLONE => true,
-        ];
+
+return [
+    self::PERMISSION_VIEW              => true,
+    self::PERMISSION_EDIT              => $canEdit && !$isProtected,
+    self::PERMISSION_DELETE            => ($isOwner || $isAdmin) && !$isProtected,
+    self::PERMISSION_ADD_INQUIRIES     => $isLoggedIn && !$isProtected,   // ← changed
+    self::PERMISSION_REORDER_INQUIRIES => ($isOwner || $isAdmin) && !$isProtected,
+    self::PERMISSION_CHANGE_OWNER      => ($isOwner || $isAdmin) && !$isProtected,
+    self::PERMISSION_ARCHIVE           => ($isOwner || $isAdmin) && !$isProtected,
+    self::PERMISSION_CLONE             => true,
+];
     }
 
     public function getCurrentUserStatus(): array

@@ -215,13 +215,13 @@ import { useSessionStore } from '../../stores/session'
 import { useSupportEngineStore } from '../../stores/supportEngine'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 
-import type { InquiryType, OptionType, Option, Action, Inquiry } from '../../Types/index.ts'
+import type { Item, InquiryType, OptionType, Option, Action, Inquiry } from '../../Types/index.ts'
 
 // Import layout components
-import FamilyLayoutTree from './FamilyLayouts/FamilyLayoutTree.vue'
-import FamilyLayoutCards from './FamilyLayouts/FamilyLayoutCards.vue'
-import FamilyLayoutPaired from './FamilyLayouts/FamilyLayoutPaired.vue'
-import FamilyLayoutConsensusFlow from './FamilyLayouts/FamilyLayoutConsensusFlow.vue'
+import FamilyLayoutTree from '../FamilyLayouts/FamilyLayoutTree.vue'
+import FamilyLayoutCards from '../FamilyLayouts/FamilyLayoutCards.vue'
+import FamilyLayoutPaired from '../FamilyLayouts/FamilyLayoutPaired.vue'
+import FamilyLayoutConsensusFlow from '../FamilyLayouts/FamilyLayoutConsensusFlow.vue'
 import FamilyLayoutKanban from '../FamilyLayouts/FamilyLayoutKanban.vue'
 import FamilyLayoutTimeline from '../FamilyLayouts/FamilyLayoutTimeline.vue'
 import FamilyLayoutVote from '../FamilyLayouts/FamilyLayoutVote.vue'
@@ -245,7 +245,6 @@ import {
 } from '../../helpers/modules/InquiryOptionHelper'
 
 import { toItems } from '../../helpers/modules/itemHelpers'
-import type { Item } from '../../Types/index.ts'
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -496,7 +495,7 @@ const familyItems = computed(() => {
     if (!activeFamilyData.value) return []
 
     // For option-only layouts (cards, consensus, paired, tree) - use filtered options
-    const optionOnlyFamilies = ['cards', 'consensus_flow:', 'paired', 'tree', 'tree']
+    const optionOnlyFamilies = ['cards', 'consensus_flow:', 'paired', 'tree']
     if (optionOnlyFamilies.includes(activeFamilyData.value.key)) {
 	return getFamilyOptionsByTarget(
 	    optionsStore.options,
@@ -560,8 +559,15 @@ const closeAddOptionModal = () => {
     selectedParentId.value = null
 }
 
-const openOptionDetail = (option: Option) => {
+const openOptionDetail = (option: Item | Option) => {
     if (isReadOnly.value) return
+
+    // Only options open the detail modal here; inquiries have their own flow.
+    const kind = (option as any).kind
+    if (kind && kind !== 'option') {
+        return
+    }
+
     selectedOptionId.value = option.id
     showOptionDetail.value = true
 }

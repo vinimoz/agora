@@ -27,35 +27,10 @@ import type {
   ApprovalResult,
   RankingResult,
   TrendingResult,
+  Support,
+  SupportableItem,
 } from '../Types/index.ts'
 
-export type Support = {
-  id?: number
-  inquiryId: number
-  optionId: number
-  userId: string
-  value: SupportValue
-  weight: number
-  created: number
-  updated?: number
-  supportEngineId?: number
-}
-
-export interface SupportableItem {
-  id: number
-  configuration?: {
-    supportFeature?: SupportFeature
-    grades?: string[]  
-  }
-  currentUserStatus?: {
-    supportValue?: SupportValue
-    hasSupported?: boolean
-  }
-  status?: {
-    countSupports?: number
-    supportResult?: SupportResultData
-  }
-}
 
 export const useSupportsStore = defineStore('supports', () => {
   // State
