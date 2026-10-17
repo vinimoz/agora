@@ -240,6 +240,7 @@ OC.L10N.register(
     "Restore" : "Restablir",
     "Archive" : "Arxiu",
     "Delete Option" : "Eliminar la opció",
+    "Are you sure you want to delete \"{option}\"?" : "Segur que vols eliminar «{option}»?",
     "Delete permanently" : "Suprimir permanentment",
     "OK" : "OK",
     "Vote" : "Votació",

@@ -125,6 +125,7 @@ OC.L10N.register(
     "Recommendations" : "Препораки",
     "Explore" : "Истражувај",
     "Map" : "Мапа",
+    "Normal" : "Нормално",
     "Selected" : "Избрани",
     "Year" : "Година",
     "No content yet" : "Сеуште нема содржина",

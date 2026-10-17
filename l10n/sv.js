@@ -1262,6 +1262,7 @@ OC.L10N.register(
     "Add status" : "Lägg till status",
     "Edit status" : "Redigera status",
     "No type selected" : "Ingen typ har valts",
+    "{n} groups" : "{n} grupper",
     "Configure" : "Konfigurera",
     "Edit inquiry type" : "Redigera enkättyp",
     "Enable unrestricted owners globally" : "Aktivera obegränsade ägare globalt",
