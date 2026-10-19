@@ -66,117 +66,95 @@ class LotteryService
      * Run lottery with full validation
      */
     public function runLottery(Participation $participation, ?string $seed = null): LotteryRun
-    {
-        if ($participation === null) {
-            throw new Exception('Participation policy not found');
+{
+    if ($participation->getPolicyType() !== Participation::POLICY_LOTTERY) {
+        throw new Exception('Participation policy is not a lottery');
+    }
+
+    $participationId = $participation->getId();
+    if ($participationId === null) {
+        throw new Exception('Participation policy must be persisted before running the lottery');
+    }
+
+    // Guard: one active/completed run per participation
+    $latest = $this->lotteryRunMapper->findLatestByParticipationId($participationId);
+    if ($latest !== null && in_array($latest->getStatus(), [
+        LotteryRun::STATUS_PENDING,
+        LotteryRun::STATUS_RUNNING,
+        LotteryRun::STATUS_COMPLETED,
+        LotteryRun::STATUS_VALIDATED,
+    ], true)) {
+        throw new Exception('A lottery run already exists for this participation; reset first');
+    }
+
+    $method = $participation->getLotteryMethod();
+    $count  = $participation->getLotteryCount();
+    $pool   = $this->buildPoolFromPolicy($participation);
+    $seed ??= $this->generateSeed();
+
+    // Create the run row (running)
+    $run = new LotteryRun();
+    $run->setParticipationId($participationId);
+    $run->setSeed($seed);
+    $run->setStatus(LotteryRun::STATUS_RUNNING);
+    $run->setPoolSize(count($pool));
+    $run->setSelectionCount(0);
+    $run->setCreatedAt(time());
+    $run->setMetadata([
+        'executed_by' => $this->userSession->getCurrentUserId(),
+        'method'      => $method,
+        'requested'   => $count,
+    ]);
+    $run = $this->lotteryRunMapper->insert($run);
+
+    try {
+        if ($method !== Participation::LOTTERY_METHOD_RANDOM) {
+            throw new Exception("Lottery method '{$method}' is not implemented");
+        }
+        if (count($pool) < $count) {
+            throw new Exception(sprintf(
+                'Not enough eligible participants: pool=%d, requested=%d',
+                count($pool),
+                $count
+            ));
         }
 
-        if ($participation->getPolicyType() !== Participation::POLICY_LOTTERY) {
-            throw new Exception('Participation policy is not a lottery');
+        $selected = $this->selectRandom($pool, $count, $seed);
+
+        $rank = 1;
+        foreach ($selected as $userId) {
+            $sel = new LotterySelection();
+            $sel->setParticipationId($participationId);
+            $sel->setRunId($run->getId());
+            $sel->setSelectedUserId($userId);
+            $sel->setRank($rank++);
+            $sel->setStatus(LotterySelection::STATUS_PENDING);
+            $sel->setSelectedAt(time());
+            $sel->setExpiresAt(time() + 7 * 86400);
+            $this->lotterySelectionMapper->insert($sel);
         }
 
-        $participationId = $participation->getId();
-
-        // Check if there's already a running or completed run
-        $existingRun = $this->lotteryRunMapper->findLatestByParticipationId($participationId);
-        if ($existingRun !== null) {
-            if ($existingRun->isRunning()) {
-                throw new Exception('A lottery is already running');
-            }
-            if ($existingRun->isCompleted() && !$existingRun->isValidated()) {
-                throw new Exception('A completed but unvalidated lottery exists. Please validate or create a new run.');
-            }
-        }
-
-        // Build pool from policy configuration
-        $pool = $this->buildPoolFromPolicy($participation);
-        if (empty($pool)) {
-            throw new Exception('No eligible users found for lottery');
-        }
-
-        $config = $participation->getPolicyConfig();
-        $selectionSize = (int)($config['selection_size'] ?? $config['count'] ?? 1);
-        $maxSelection = min($selectionSize, count($pool));
-
-        if ($maxSelection < $selectionSize) {
-            $this->logger->warning('Lottery requested more users than available', [
-                'requested' => $selectionSize,
-                'available' => count($pool),
-                'participation_id' => $participationId,
-            ]);
-        }
-
-        // Create run
-        $run = new LotteryRun();
-        $run->setParticipationId($participationId);
-        $run->setSeed($seed ?? $this->generateSeed());
-        $run->setStatus(LotteryRun::STATUS_RUNNING);
-        $run->setPoolSize(count($pool));
-        $run->setCreatedAt(time());
-        $run->setMetadata([
-            'executed_by' => $this->userSession->getCurrentUserId(),
-            'executed_at' => time(),
-            'pool_build_info' => $this->getPoolBuildInfo($participation),
-            'requested_count' => $selectionSize,
-            'available_count' => count($pool),
+        $run->setStatus(LotteryRun::STATUS_COMPLETED);
+        $run->setSelectionCount(count($selected));
+        $run->setCompletedAt(time());
+        $run->setResultSummary([
+            'method'         => $method,
+            'requested_size' => $count,
+            'pool_size'      => count($pool),
+            'selected'       => array_values($selected),
+            'seed'           => $seed,
         ]);
-        $this->lotteryRunMapper->insert($run);
+        return $this->lotteryRunMapper->update($run);
 
-        try {
-            // Perform selection
-            $selected = $this->selectRandom($pool, $maxSelection, $run->getSeed());
-
-            // Save selections
-            $rank = 1;
-            foreach ($selected as $userId) {
-                $selection = new LotterySelection();
-                $selection->setParticipationId($participationId);
-                $selection->setRunId($run->getId());
-                $selection->setSelectedUserId($userId);
-                $selection->setRank($rank++);
-                $selection->setStatus(LotterySelection::STATUS_PENDING);
-                $selection->setSelectedAt(time());
-                $selection->setExpiresAt(time() + (7 * 24 * 60 * 60)); // 7 days to respond
-                $this->lotterySelectionMapper->insert($selection);
-            }
-
-            // Mark run as completed
-            $run->setStatus(LotteryRun::STATUS_COMPLETED);
-            $run->setSelectionCount(count($selected));
-            $run->setCompletedAt(time());
-            $run->setResultSummary([
-                'pool_size' => count($pool),
-                'selection_size' => count($selected),
-                'requested_size' => $selectionSize,
-                'seed' => $run->getSeed(),
-                'full_pool' => $pool, // For audit purposes
-                'selected_users' => $selected,
-            ]);
-            $this->lotteryRunMapper->update($run);
-
-            $this->logger->info('Lottery completed successfully', [
-                'participation_id' => $participationId,
-                'run_id' => $run->getId(),
-                'selected_count' => count($selected),
-            ]);
-
-            return $run;
-
-        } catch (\Exception $e) {
-            $run->setStatus(LotteryRun::STATUS_FAILED);
-            $run->setMetadata(array_merge($run->getMetadata() ?? [], [
-                'error' => $e->getMessage(),
-                'failed_at' => time(),
-            ]));
-            $this->lotteryRunMapper->update($run);
-            
-            $this->logger->error('Lottery execution failed', [
-                'participation_id' => $participationId,
-                'error' => $e->getMessage(),
-            ]);
-            
-            throw new Exception('Lottery execution failed: ' . $e->getMessage());
-        }
+    } catch (\Throwable $e) {
+        $run->setStatus(LotteryRun::STATUS_FAILED);
+        $run->setCompletedAt(time());
+        $meta = $run->getMetadata() ?? [];
+        $meta['error'] = $e->getMessage();
+        $run->setMetadata($meta);
+        $this->lotteryRunMapper->update($run);
+        throw $e;
+    }
     }
 
     /**
@@ -184,38 +162,38 @@ class LotteryService
      */
     public function validateLottery(int $runId): LotteryRun
     {
-        $run = $this->lotteryRunMapper->find($runId);
-        if ($run === null) {
-            throw new Exception('Lottery run not found');
-        }
-    $this->logger->warning('validateLottery - find result', [
-        'runId' => $runId,
-        'type' => gettype($run),
-        'is_object' => is_object($run),
-        'class' => is_object($run) ? get_class($run) : 'not_object'
-    ]);
-    
-        if (!$run->isCompleted()) {
-            throw new Exception('Only completed lottery runs can be validated');
-        }
+	    $run = $this->lotteryRunMapper->find($runId);
+	    if ($run === null) {
+		    throw new Exception('Lottery run not found');
+	    }
+	    $this->logger->warning('validateLottery - find result', [
+		    'runId' => $runId,
+		    'type' => gettype($run),
+		    'is_object' => is_object($run),
+		    'class' => is_object($run) ? get_class($run) : 'not_object'
+	    ]);
 
-        if ($run->isValidated()) {
-            throw new Exception('Lottery run is already validated');
-        }
+	    if (!$run->isCompleted()) {
+		    throw new Exception('Only completed lottery runs can be validated');
+	    }
 
-        $run->setStatus(LotteryRun::STATUS_VALIDATED);
-        $metadata = $run->getMetadata() ?? [];
-        $metadata['validated_by'] = $this->userSession->getCurrentUserId();
-        $metadata['validated_at'] = time();
-        $run->setMetadata($metadata);
-        $this->lotteryRunMapper->update($run);
+	    if ($run->isValidated()) {
+		    throw new Exception('Lottery run is already validated');
+	    }
 
-        $this->logger->warning('Lottery validated', [
-            'run_id' => $runId,
-            'validated_by' => $this->userSession->getCurrentUserId(),
-        ]);
+	    $run->setStatus(LotteryRun::STATUS_VALIDATED);
+	    $metadata = $run->getMetadata() ?? [];
+	    $metadata['validated_by'] = $this->userSession->getCurrentUserId();
+	    $metadata['validated_at'] = time();
+	    $run->setMetadata($metadata);
+	    $this->lotteryRunMapper->update($run);
 
-        return $run;
+	    $this->logger->warning('Lottery validated', [
+		    'run_id' => $runId,
+		    'validated_by' => $this->userSession->getCurrentUserId(),
+	    ]);
+
+	    return $run;
     }
 
     /**
@@ -223,34 +201,34 @@ class LotteryService
      */
     public function cancelLottery(int $runId, string $reason): LotteryRun
     {
-        $run = $this->lotteryRunMapper->find($runId);
-        if ($run === null) {
-            throw new Exception('Lottery run not found');
-        }
+	    $run = $this->lotteryRunMapper->find($runId);
+	    if ($run === null) {
+		    throw new Exception('Lottery run not found');
+	    }
 
-        if ($run->isValidated()) {
-            throw new Exception('Cannot cancel a validated lottery run');
-        }
+	    if ($run->isValidated()) {
+		    throw new Exception('Cannot cancel a validated lottery run');
+	    }
 
-        if (!$run->isCompleted() && !$run->isFailed()) {
-            throw new Exception('Only completed or failed runs can be cancelled');
-        }
+	    if (!$run->isCompleted() && !$run->isFailed()) {
+		    throw new Exception('Only completed or failed runs can be cancelled');
+	    }
 
-        $run->setStatus(LotteryRun::STATUS_CANCELLED);
-        $metadata = $run->getMetadata() ?? [];
-        $metadata['cancelled_by'] = $this->userSession->getCurrentUserId();
-        $metadata['cancelled_at'] = time();
-        $metadata['cancel_reason'] = $reason;
-        $run->setMetadata($metadata);
-        $this->lotteryRunMapper->update($run);
+	    $run->setStatus(LotteryRun::STATUS_CANCELLED);
+	    $metadata = $run->getMetadata() ?? [];
+	    $metadata['cancelled_by'] = $this->userSession->getCurrentUserId();
+	    $metadata['cancelled_at'] = time();
+	    $metadata['cancel_reason'] = $reason;
+	    $run->setMetadata($metadata);
+	    $this->lotteryRunMapper->update($run);
 
-        $this->logger->warning('Lottery cancelled', [
-            'run_id' => $runId,
-            'reason' => $reason,
-            'cancelled_by' => $this->userSession->getCurrentUserId(),
-        ]);
+	    $this->logger->warning('Lottery cancelled', [
+		    'run_id' => $runId,
+		    'reason' => $reason,
+		    'cancelled_by' => $this->userSession->getCurrentUserId(),
+	    ]);
 
-        return $run;
+	    return $run;
     }
 
     /**
@@ -258,12 +236,12 @@ class LotteryService
      */
     public function getEligiblePool(string $targetType, int $targetId): array
     {
-        $participation = $this->participationMapper->findByTarget($targetType, $targetId);
-        if ($participation === null || !$participation->isLottery()) {
-            return [];
-        }
+	    $participation = $this->participationMapper->findByTarget($targetType, $targetId);
+	    if ($participation === null || !$participation->isLottery()) {
+		    return [];
+	    }
 
-        return $this->buildPoolFromPolicy($participation);
+	    return $this->buildPoolFromPolicy($participation);
     }
 
     /**
@@ -271,19 +249,19 @@ class LotteryService
      */
     public function getAuditTrail(int $participationId): array
     {
-        $runs = $this->lotteryRunMapper->findByParticipationId($participationId);
-        $audit = [];
+	    $runs = $this->lotteryRunMapper->findByParticipationId($participationId);
+	    $audit = [];
 
-        foreach ($runs as $run) {
-            $selections = $this->lotterySelectionMapper->findByRunId($run->getId());
-            $audit[] = [
-                'run' => $run->jsonSerialize(),
-                'selections' => array_map(fn($s) => $s->jsonSerialize(), $selections),
-                'status_history' => $this->getStatusHistory($run),
-            ];
-        }
+	    foreach ($runs as $run) {
+		    $selections = $this->lotterySelectionMapper->findByRunId($run->getId());
+		    $audit[] = [
+			    'run' => $run->jsonSerialize(),
+			    'selections' => array_map(fn($s) => $s->jsonSerialize(), $selections),
+			    'status_history' => $this->getStatusHistory($run),
+		    ];
+	    }
 
-        return $audit;
+	    return $audit;
     }
 
     // ====================================================================
@@ -292,92 +270,90 @@ class LotteryService
 
     private function buildPoolFromPolicy(Participation $participation): array
     {
-        $config = $participation->getPolicyConfig();
-        $mode = $config['mode'] ?? Participation::LOTTERY_MODE_USERS;
+	    $config = $participation->getPolicyConfig();
+	    $mode = $config['mode'] ?? Participation::LOTTERY_MODE_USERS;
 
-        if ($mode === Participation::LOTTERY_MODE_GROUPS) {
-            $groupIds = $config['source_groups'] ?? [];
-            return $this->getUsersFromGroups($groupIds);
-        }
+	    if ($mode === Participation::LOTTERY_MODE_GROUPS) {
+		    $groupIds = $config['source_groups'] ?? [];
+		    return $this->getUsersFromGroups($groupIds);
+	    }
 
-        // For 'users' mode, get all users (or from a specific list if configured)
-        if ($mode === Participation::LOTTERY_MODE_USERS) {
-            // If specific users are configured, use them
-            if (isset($config['user_ids']) && !empty($config['user_ids'])) {
-                return $config['user_ids'];
-            }
-            // Otherwise, get all active users
-            return array_map(
-                fn($user) => $user->getUID(),
-                $this->userManager->search('')
-            );
-        }
+	    // For 'users' mode, get all users (or from a specific list if configured)
+	    if ($mode === Participation::LOTTERY_MODE_USERS) {
+		    // If specific users are configured, use them
+		    if (isset($config['user_ids']) && !empty($config['user_ids'])) {
+			    return $config['user_ids'];
+		    }
+		    // Otherwise, get all active users
+		    return array_map(
+			    fn($user) => $user->getUID(),
+			    $this->userManager->search('')
+		    );
+	    }
 
-        return [];
+	    return [];
     }
 
     private function getUsersFromGroups(array $groupIds): array
     {
-        $users = [];
-        foreach ($groupIds as $groupId) {
-            $group = $this->groupManager->get($groupId);
-            if ($group !== null) {
-                $groupUsers = $group->getUsers();
-                foreach ($groupUsers as $user) {
-                    $users[] = $user->getUID();
-                }
-            }
-        }
-        return array_values(array_unique($users));
+	    $users = [];
+	    foreach ($groupIds as $groupId) {
+		    $group = $this->groupManager->get($groupId);
+		    if ($group !== null) {
+			    $groupUsers = $group->getUsers();
+			    foreach ($groupUsers as $user) {
+				    $users[] = $user->getUID();
+			    }
+		    }
+	    }
+	    return array_values(array_unique($users));
     }
 
     private function getPoolBuildInfo(Participation $participation): array
     {
-        $config = $participation->getPolicyConfig();
-        $mode = $config['mode'] ?? Participation::LOTTERY_MODE_USERS;
+	    $config = $participation->getPolicyConfig();
+	    $mode = $config['mode'] ?? Participation::LOTTERY_MODE_USERS;
 
-        return [
-            'mode' => $mode,
-            'source_groups' => $config['source_groups'] ?? [],
-            'has_specific_users' => isset($config['user_ids']) && !empty($config['user_ids']),
-        ];
+	    return [
+		    'mode' => $mode,
+		    'source_groups' => $config['source_groups'] ?? [],
+		    'has_specific_users' => isset($config['user_ids']) && !empty($config['user_ids']),
+	    ];
     }
 
     private function selectRandom(array $pool, int $count, string $seed): array
     {
-        // Use seed for reproducibility
-        mt_srand(crc32($seed));
-        
-        // Shuffle using the seeded random
-        $keys = array_keys($pool);
-        shuffle($keys);
-        
-        // Reset seed
-        mt_srand();
-        
-        // Return selected items
-        $selected = [];
-        foreach (array_slice($keys, 0, $count) as $key) {
-            $selected[] = $pool[$key];
-        }
-        
-        return $selected;
+	    $pool = array_values($pool);       // ensure list
+	    $n = count($pool);
+	    $keys = range(0, $n - 1);
+
+	    // Deterministic Fisher-Yates using an explicit hash-based RNG
+	    $hash = hash('sha256', $seed, true);
+	    $state = unpack('N', substr($hash, 0, 4))[1];
+
+	    for ($i = $n - 1; $i > 0; $i--) {
+		    $state = ($state * 1103515245 + 12345) & 0x7FFFFFFF;
+		    $j = $state % ($i + 1);
+		    [$keys[$i], $keys[$j]] = [$keys[$j], $keys[$i]];
+	    }
+
+	    return array_map(fn($i) => $pool[$i], array_slice($keys, 0, $count));
     }
 
     private function generateSeed(): string
     {
-        return bin2hex(random_bytes(16)) . '_' . time();
+	    return bin2hex(random_bytes(16)) . '_' . time();
     }
 
     private function getStatusHistory(LotteryRun $run): array
     {
-        // Would need to track status changes in a separate table or parse metadata
-        // For now, return basic info
-        return [
-            'created_at' => $run->getCreatedAt(),
-            'completed_at' => $run->getCompletedAt(),
-            'status' => $run->getStatus(),
-            'metadata' => $run->getMetadata(),
-        ];
+	    // Would need to track status changes in a separate table or parse metadata
+	    // For now, return basic info
+	    return [
+		    'created_at' => $run->getCreatedAt(),
+		    'completed_at' => $run->getCompletedAt(),
+		    'status' => $run->getStatus(),
+		    'metadata' => $run->getMetadata(),
+	    ];
     }
 }

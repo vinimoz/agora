@@ -132,7 +132,6 @@ const emit = defineEmits<{
   removeMyVote: []
   openSupportsModal: [itemId: number]
   submitMultiVote: []
-  selectItem: [item: Item]
 }>()
 
 void emit

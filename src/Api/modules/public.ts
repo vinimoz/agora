@@ -3,15 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { AxiosResponse } from '@nextcloud/axios'
-import { Option, Sequence } from '../../stores/options.js'
 import { Session } from '../../stores/session.js'
-import { Inquiry } from '../../stores/inquiries.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { Comment } from '../../stores/comments.js'
-import { Supports } from '../../stores/supports.js'
-import { Inquiry } from '../../stores/inquiry.js'
-import { Share } from '../../stores/shares.js'
 import { SentResults } from './shares.js'
+import type {
+	Option,
+	Inquiry,
+	Comment,
+	Support,        
+	Share,
+	Sequence,
+} from '../../Types/index.js'
+
 
 const publicInquiry = {
   getInquiry(shareToken: string): Promise<
@@ -20,7 +23,7 @@ const publicInquiry = {
       options: Option[]
       inquiries: Inquiry[]
       comments: Comment[]
-      supports: Supports[]
+      supports: Support[]
       shares: Share[]
       subscribed: boolean
     }>
@@ -63,7 +66,7 @@ const publicInquiry = {
     return httpInstance.request({
       method: 'POST',
       url: `/s/${shareToken}/option`,
-      data: { option, sequence, inquiryYes },
+      data: { option, sequence, inquiry },
       cancelToken: cancelTokenHandlerObject[this.addOption.name].handleRequestCancellation().token,
     })
   },
@@ -103,7 +106,7 @@ const publicInquiry = {
     shareToken: string,
     inquiryId: number,
     optionId: number,
-    value: int,
+    value: number,
   ): Promise<
     AxiosResponse<{
       inquiry: Inquiry
@@ -119,7 +122,7 @@ const publicInquiry = {
         inquiryId,
         value,
       },
-      cancelToken: cancelTokenHandlerObject[this.setInquiry.name].handleRequestCancellation().token,
+      cancelToken: cancelTokenHandlerObject[this.supportInquiry.name].handleRequestCancellation().token,
     })
   },
 

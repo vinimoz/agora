@@ -58,8 +58,9 @@ export const useOptionStore = defineStore('option', {
 			allowComment: null,
 			supportFeature: 'none',
 			family: 'debate',
+			expire: 0,
 		},
-		miscFields: [],
+		miscFields: {},
 		ownedGroup: '',
 		owner: createDefault<User>(),
 		currentUserStatus: {
@@ -70,10 +71,11 @@ export const useOptionStore = defineStore('option', {
 			isOwner: false,
 			shareToken: '',
 			userId: '',
-			userRole: '',
+			userRole: 'user' as UserType,
 		},
 		status: {
 			created: 0,
+			updated: 0,
 			isArchived: false,
 			isExpired: false,
 			isDeleted: false,
@@ -438,13 +440,10 @@ syncDeletionToCollectionStore(): void {
 			try {
 				if (action === 'submit_for_accepted') {
 					this.status.optionStatus = 'published'
-					this.configuration.access = 'open'
 				} else if (action === 'submit_for_rejected') {
 					this.status.optionStatus = 'rejected'
-					this.configuration.access = 'private'
 				} else if (action === 'submit_for_moderate') {
 					this.status.optionStatus = 'pending'
-					this.configuration.access = 'moderate'
 				}
 				const response = await OptionsAPI.submitOption(this.id, action)
 				this.syncToCollectionStore()

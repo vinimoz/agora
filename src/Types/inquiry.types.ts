@@ -33,6 +33,7 @@ export interface BaseEntry {
 	id: number
 	name: string
 	parentId?: number
+	children?: BaseEntry[]
 }
 
 // ============================================================================
@@ -281,6 +282,9 @@ export type InquiryList = {
 		loadingGroups: boolean
 	}
 	categories: InquiryCategoryList
+
+	currentFilter: FilterType
+	advancedFilters: AdvancedFilters
 }
 
 // ============================================================================

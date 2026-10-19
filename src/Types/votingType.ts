@@ -137,7 +137,7 @@ export type OptionType =
   | 'color'
   | 'image'
 
-export type VoteScope = 'per_option' | 'cross_option' | 'flex'
+export type VoteScope = 'per_option' | 'cross_option' | 'flex' | 'none'
 
 export type InputModel =
   | 'scalar' // single value per option (yes/no, star, score, grade)

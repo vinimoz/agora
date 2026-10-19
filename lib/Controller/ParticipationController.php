@@ -127,72 +127,71 @@ class ParticipationController extends BaseController
         }
     }
 
+
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/participation/{targetType}/{targetId}/lottery/reset')]
     public function resetLottery(string $targetType, int $targetId): DataResponse
     {
-        try {
-
-
-            $run = $this->participationService->resetLottery($targetType,$targetId);
-            return new DataResponse($run->jsonSerialize());
-        } catch (\Exception $e) {
-            return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
-        }
+	    try {
+		    $result = $this->participationService->resetLottery($targetType, $targetId);
+		    return new DataResponse($result);
+	    } catch (\Exception $e) {
+		    return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+	    }
     }
 
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/participation/{targetType}/{targetId}/lottery/cancel')]
     public function cancelLottery(string $targetType, int $targetId, string $reason): DataResponse
     {
-        try {
-            $participation = $this->participationMapper->findByTarget($targetType, $targetId);
-            if ($participation === null) {
-                throw new Exception('Participation policy not found');
-            }
+	    try {
+		    $participation = $this->participationMapper->findByTarget($targetType, $targetId);
+		    if ($participation === null) {
+			    throw new Exception('Participation policy not found');
+		    }
 
-            $latestRun = $this->lotteryRunMapper->findLatestByParticipationId($participation->getId());
-            if ($latestRun === null) {
-                throw new Exception('No lottery run found to cancel');
-            }
+		    $latestRun = $this->lotteryRunMapper->findLatestByParticipationId($participation->getId());
+		    if ($latestRun === null) {
+			    throw new Exception('No lottery run found to cancel');
+		    }
 
-            $run = $this->lotteryService->cancelLottery($latestRun->getId(), $reason);
-            return new DataResponse($run->jsonSerialize());
-        } catch (\Exception $e) {
-            return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
-        }
+		    $run = $this->lotteryService->cancelLottery($latestRun->getId(), $reason);
+		    return new DataResponse($run->jsonSerialize());
+	    } catch (\Exception $e) {
+		    return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+	    }
     }
 
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/participation/{targetType}/{targetId}/lottery/results')]
     public function getLotteryResults(string $targetType, int $targetId): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'results' => $this->participationService->getLotteryResults($targetType, $targetId)
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'results' => $this->participationService->getLotteryResults($targetType, $targetId)
+		    ]
+	    );
     }
 
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/lottery/selection/{selectionId}/accept')]
     public function acceptSelection(int $selectionId): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'selection' => $this->participationService->acceptSelection($selectionId)
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'selection' => $this->participationService->acceptSelection($selectionId)
+		    ]
+	    );
     }
 
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/lottery/selection/{selectionId}/decline')]
     public function declineSelection(int $selectionId): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'selection' => $this->participationService->declineSelection($selectionId)
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'selection' => $this->participationService->declineSelection($selectionId)
+		    ]
+	    );
     }
 }

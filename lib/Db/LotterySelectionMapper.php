@@ -94,6 +94,21 @@ class LotterySelectionMapper extends QBMapper
     }
 
     /**
+ * Delete all selections for a given participation.
+ */
+public function deleteByParticipationId(int $participationId): int
+{
+    $qb = $this->db->getQueryBuilder();
+    $qb->delete($this->getTableName())
+        ->where($qb->expr()->eq(
+            'participation_id',
+            $qb->createNamedParameter($participationId, IQueryBuilder::PARAM_INT)
+        ));
+
+    return $qb->executeStatement();
+}
+
+    /**
      * Find pending selections that are about to expire
      * 
      * @return LotterySelection[]

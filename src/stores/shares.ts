@@ -12,46 +12,15 @@ import { AxiosError } from '@nextcloud/axios'
 import { SentResults } from '../Api/modules/shares.ts'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
 import { useInquiryGroupStore } from './inquiryGroup.ts'
+import type {
+	Share,
+	Shares,
+	ShareType,
+	SharePurpose,
+	PublicInquiryEmailConditions,
+} from '../Types/index.ts'
 
-export type ShareType =
-  | 'email'
-  | 'external'
-  | 'contact'
-  | 'user'
-  | 'group'
-  | 'admin'
-  | 'public'
-  | 'circle'
-  | 'contactGroup'
-
-export type PublicInquiryEmailConditions = 'mandatory' | 'optional' | 'disabled'
-
-export type SharePurpose = 'inquiry' | 'inquiryGroup'
-
-export type Share = {
-  displayName: string
-  id: string
-  invitationSent: boolean
-  locked: boolean
-  inquiryId: number | null
-  groupId: number | null
-  token: string
-  type: ShareType
-  emailAddress: string
-  userId: string
-  publicInquiryEmail: PublicInquiryEmailConditions
-  user: User
-  reminderSent: boolean
-  label: string
-  allowParticipation: boolean
-  URL: string
-  supported: boolean
-  deleted: boolean
-}
-
-export type Shares = {
-  shares: Share[]
-}
+export type { Share, Shares, ShareType, SharePurpose, PublicInquiryEmailConditions }
 
 export const useSharesStore = defineStore('shares', {
   state: (): Shares => ({

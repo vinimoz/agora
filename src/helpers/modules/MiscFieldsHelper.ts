@@ -359,11 +359,11 @@ export function useMiscFields(
         if (!field) return []
 
         if (field.type === 'location' && options?.locationItems?.value) {
-            return getHierarchicalOptions(options.locationItems.value, t('Select location'))
+            return getHierarchicalOptions(options.locationItems.value, t('agora','Select location'))
         }
 
         if (field.type === 'category' && options?.categoryItems?.value) {
-            return getHierarchicalOptions(options.categoryItems.value, t('Select category'))
+            return getHierarchicalOptions(options.categoryItems.value, t('agora','Select category'))
         }
 
         return []
@@ -468,7 +468,7 @@ export function useMiscFields(
         if (!field) return ''
 
         const value = getValue(fieldKey)
-        if (!value) return t('Not set')
+        if (!value) return t('agora','Not set')
 
         if (field.type === 'location' && options?.locationItems?.value) {
             const path = getHierarchyPath(options.locationItems.value, value as string | number)
@@ -527,7 +527,7 @@ export const formatMiscValueForDisplay = (
     }
 ): string => {
     if (value === null || value === undefined || value === '') {
-        return t('Not set')
+        return t('agora','Not set')
     }
 
     try {
@@ -552,7 +552,7 @@ export const formatMiscValueForDisplay = (
 
         switch (field.type) {
             case 'boolean':
-                return parsed ? t('Yes') : t('No')
+                return parsed ? t('agora','Yes') : t('agora','No')
             case 'datetime':
                 if (parsed instanceof Date) {
                     return parsed.toLocaleString()
@@ -728,21 +728,21 @@ export const validateField = (field: MiscField, value: unknown): string | null =
     if (!field.rules) return null
 
     if (field.required && (value === null || value === undefined || value === '')) {
-        return t('This field is required')
+        return t('agora','This field is required')
     }
 
     if (field.rules.maxLength && typeof value === 'string' && value.length > field.rules.maxLength) {
-        return t('Maximum length is {max} characters', { max: field.rules.maxLength })
+        return t('agora','Maximum length is {max} characters', { max: field.rules.maxLength })
     }
 
     if (field.rules.minLength && typeof value === 'string' && value.length < field.rules.minLength) {
-        return t('Minimum length is {min} characters', { min: field.rules.minLength })
+        return t('agora','Minimum length is {min} characters', { min: field.rules.minLength })
     }
 
     if (field.rules.pattern && typeof value === 'string') {
         const regex = new RegExp(field.rules.pattern)
         if (!regex.test(value)) {
-            return field.rules.message || t('Invalid format')
+            return field.rules.message || t('agora','Invalid format')
         }
     }
 

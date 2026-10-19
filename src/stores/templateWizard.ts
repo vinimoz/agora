@@ -61,11 +61,7 @@ export type WizardStep =
 	| 'importing'
 	| 'results'
 
-export type UseCase =
-	| 'citizen_participation'
-	| 'enterprise'
-	| 'education'
-	| 'custom'
+export type UseCase = 'citizen_participation' | 'enterprise' | 'education' | 'custom'
 
 export interface ImportResult {
 	success: string[]
@@ -74,60 +70,55 @@ export interface ImportResult {
 }
 
 export interface WizardState {
-	// Wizard flow
 	isOpen: boolean
 	currentStep: WizardStep
 	steps: WizardStep[]
-
-	// Template catalog
 	templates: Template[]
 	loadingTemplates: boolean
-
-	// User selections
 	selectedUseCase: UseCase | null
 	selectedTemplate: Template | null
 	selectedLanguage: string | null
 	customTemplate: TemplateContent | null
-
-	// Editable template data (Step 4 customization)
 	editableData: TemplateContent | null
-
-	// Import process
 	importing: boolean
 	importResult: ImportResult | null
 	importError: string | null
-
-	// Database state
 	isDatabaseEmpty: boolean | null
 }
+
+type EditableSection =
+	| 'inquiry_families'
+	| 'inquiry_types'
+	| 'inquiry_statuses'
+	| 'option_types'
+	| 'inquiry_group_types'
+	| 'categories'
+	| 'locations'
 
 export const useTemplateWizardStore = defineStore('templateWizard', {
 	state: (): WizardState => ({
 		isOpen: false,
 		currentStep: 'use-case',
 		steps: ['use-case', 'template-selection', 'language', 'preview', 'summary', 'importing', 'results'],
-
 		templates: [],
 		loadingTemplates: false,
-
 		selectedUseCase: null,
 		selectedTemplate: null,
 		selectedLanguage: null,
 		customTemplate: null,
-
 		editableData: null,
-
 		importing: false,
 		importResult: null,
 		importError: null,
-
 		isDatabaseEmpty: null,
 	}),
 
 	getters: {
-		currentStepIndex: (state): number => state.steps.indexOf(state.currentStep),
+		currentStepIndex(state): number {
+			return state.steps.indexOf(state.currentStep)
+		},
 
-		canGoNext: (state): boolean => {
+		canGoNext(state): boolean {
 			switch (state.currentStep) {
 				case 'use-case':
 					return state.selectedUseCase !== null
@@ -144,52 +135,45 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			}
 		},
 
-		canGoPrevious: (state): boolean => state.currentStepIndex > 0 && !state.importing,
+		canGoPrevious(state): boolean {
+			return state.steps.indexOf(state.currentStep) > 0 && !state.importing
+		},
 
-		availableTemplates: (state): Template[] => {
-			if (!state.selectedUseCase) {
-				return state.templates
-			}
-
-			// Custom shows templates that don't match other use cases
+		availableTemplates(state): Template[] {
+			if (!state.selectedUseCase) return state.templates
 			if (state.selectedUseCase === 'custom') {
-				return state.templates.filter(t => {
+				return state.templates.filter((t) => {
 					const useCase = t.use_case || ''
-					return !useCase.startsWith('citizen_') &&
-						   !useCase.startsWith('default_') &&
-						   !useCase.startsWith('enterprise_') &&
-						   !useCase.startsWith('business_') &&
-						   !useCase.startsWith('education_') &&
-						   !useCase.startsWith('research_')
+					return !useCase.startsWith('citizen_')
+						&& !useCase.startsWith('default_')
+						&& !useCase.startsWith('enterprise_')
+						&& !useCase.startsWith('business_')
+						&& !useCase.startsWith('education_')
+						&& !useCase.startsWith('research_')
 				})
 			}
-
-			// Prefix-based matching for main use cases
 			if (state.selectedUseCase === 'citizen_participation') {
-				return state.templates.filter(t => {
+				return state.templates.filter((t) => {
 					const useCase = t.use_case || ''
 					return useCase.startsWith('citizen_') || useCase.startsWith('default_')
 				})
 			}
-
 			if (state.selectedUseCase === 'enterprise') {
-				return state.templates.filter(t => {
+				return state.templates.filter((t) => {
 					const useCase = t.use_case || ''
 					return useCase.startsWith('enterprise_') || useCase.startsWith('business_')
 				})
 			}
-
 			if (state.selectedUseCase === 'education') {
-				return state.templates.filter(t => {
+				return state.templates.filter((t) => {
 					const useCase = t.use_case || ''
 					return useCase.startsWith('education_') || useCase.startsWith('research_')
 				})
 			}
-
 			return state.templates
 		},
 
-		availableLanguages: (state): string[] => {
+		availableLanguages(state): string[] {
 			if (state.selectedTemplate?.content) {
 				return state.selectedTemplate.content.template_info.available_languages || []
 			}
@@ -206,10 +190,17 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			try {
 				const url = generateOcsUrl('/apps/agora/api/v1.0/templates')
 				const response = await axios.get(url)
-				this.templates = response.data.ocs.data
-				Logger.info('Loaded templates:', this.templates)
+				const raw = (response.data as { ocs?: { data?: unknown } })?.ocs?.data
+				this.templates = Array.isArray(raw)
+					? raw.filter((item): item is Template => {
+							return typeof item === 'object'
+								&& item !== null
+								&& typeof (item as { name?: unknown }).name === 'string'
+					  })
+					: []
+				Logger.info('Loaded templates', { count: this.templates.length })
 			} catch (error) {
-				Logger.error('Failed to load templates:', error)
+				Logger.error('Failed to load templates', { error: String(error) })
 				throw error
 			} finally {
 				this.loadingTemplates = false
@@ -220,10 +211,13 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			try {
 				const url = generateOcsUrl(`/apps/agora/api/v1.0/templates/${identifier}`)
 				const response = await axios.get(url)
-				this.selectedTemplate = response.data.ocs.data
-				Logger.info('Loaded template details:', this.selectedTemplate)
+				const raw = (response.data as { ocs?: { data?: unknown } })?.ocs?.data
+				this.selectedTemplate =
+					typeof raw === 'object' && raw !== null && typeof (raw as { name?: unknown }).name === 'string'
+						? (raw as Template)
+						: null
 			} catch (error) {
-				Logger.error('Failed to load template details:', error)
+				Logger.error('Failed to load template details', { error: String(error) })
 				throw error
 			}
 		},
@@ -232,21 +226,17 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			try {
 				const url = generateOcsUrl('/apps/agora/api/v1.0/templates/check-empty')
 				const response = await axios.get(url)
-				this.isDatabaseEmpty = response.data.ocs.data.empty
-				Logger.info('Database empty check:', this.isDatabaseEmpty)
+				const raw = (response.data as { ocs?: { data?: { empty?: unknown } } })?.ocs?.data
+				this.isDatabaseEmpty = raw?.empty === true
 			} catch (error) {
-				Logger.error('Failed to check database:', error)
+				Logger.error('Failed to check database', { error: String(error) })
 				throw error
 			}
 		},
 
 		async importTemplate() {
-			if (!this.editableData) {
-				throw new Error('No editable data available')
-			}
-			if (!this.selectedLanguage) {
-				throw new Error('No language selected')
-			}
+			if (!this.editableData) throw new Error('No editable data available')
+			if (!this.selectedLanguage) throw new Error('No language selected')
 
 			this.importing = true
 			this.importError = null
@@ -254,18 +244,20 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 
 			try {
 				const url = generateOcsUrl('/apps/agora/api/v1.0/templates/import-data')
-
 				const response = await axios.post(url, {
 					templateData: this.editableData,
 					language: this.selectedLanguage,
 				})
-
-				this.importResult = response.data.ocs.data.results
+				const raw = (response.data as { ocs?: { data?: { results?: unknown } } })?.ocs?.data
+				const results = raw?.results
+				this.importResult =
+					typeof results === 'object' && results !== null
+						? (results as ImportResult)
+						: { success: [], skipped: [], failed: [] }
 				this.currentStep = 'results'
-				Logger.info('Import completed:', this.importResult)
 			} catch (error) {
 				this.importError = error instanceof Error ? error.message : 'Unknown error'
-				Logger.error('Import failed:', error)
+				Logger.error('Import failed', { error: String(error) })
 				throw error
 			} finally {
 				this.importing = false
@@ -276,9 +268,9 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			try {
 				const url = generateOcsUrl('/apps/agora/api/v1.0/templates/validate')
 				const response = await axios.post(url, { template })
-				return response.data.ocs.data
+				return (response.data as { ocs?: { data?: unknown } })?.ocs?.data
 			} catch (error) {
-				Logger.error('Template validation failed:', error)
+				Logger.error('Template validation failed', { error: String(error) })
 				throw error
 			}
 		},
@@ -299,12 +291,9 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			const currentIndex = this.currentStepIndex
 			if (currentIndex < this.steps.length - 1) {
 				const nextStep = this.steps[currentIndex + 1]
-
-				// Prepare editable data when entering preview step
 				if (nextStep === 'preview' && this.selectedLanguage) {
 					this.prepareEditableData()
 				}
-
 				this.currentStep = nextStep
 			}
 		},
@@ -327,8 +316,6 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 		async selectTemplate(template: Template) {
 			this.selectedTemplate = template
 			this.customTemplate = null
-
-			// Load full template details if not already loaded
 			if (!template.content) {
 				await this.loadTemplateDetails(template.name)
 			}
@@ -349,136 +336,89 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 				Logger.error('Cannot prepare editable data: missing template or language')
 				return
 			}
-
-			// Deep clone the template to avoid modifying the original
-			const clonedTemplate = JSON.parse(JSON.stringify(template))
-
-			// Extract text for selected language
-			this.editableData = this.extractLanguageText(clonedTemplate, this.selectedLanguage)
-			Logger.info('Prepared editable data:', this.editableData)
+			const cloned = JSON.parse(JSON.stringify(template)) as TemplateContent
+			this.editableData = this.extractLanguageText(cloned, this.selectedLanguage)
 		},
 
 		extractLanguageText(template: TemplateContent, language: string): TemplateContent {
-			const extracted = { ...template }
-
-			Logger.info('[extractLanguageText] Starting extraction with language:', language)
-
-			const sections = [
-				'inquiry_families',
-				'inquiry_types',
-				'inquiry_statuses',
-				'option_types',
-				'inquiry_group_types',
-				'categories',
-				'locations',
-			]
-
-			// Helper function to check if object is a multi-language object
-			const isMultiLangObject = (obj: unknown): boolean => {
-				if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
-					return false
-				}
-				const keys = Object.keys(obj)
-				// Must have at least one known language key and all values should be strings or undefined
-				const langKeys = ['en', 'fr', 'de', 'gsw', 'it', 'es', 'pt', 'nl', 'ru', 'zh', 'ja', 'ko']
-				const hasLangKey = keys.some(k => langKeys.includes(k))
-				const allStringsOrEmpty = keys.every(k =>
-					obj[k] === undefined || obj[k] === null || typeof obj[k] === 'string'
-				)
-				return hasLangKey && allStringsOrEmpty
+			return {
+				template_info: template.template_info,
+				inquiry_families: this.extractSection(template.inquiry_families, language),
+				inquiry_types: this.extractSection(template.inquiry_types, language),
+				inquiry_statuses: this.extractSection(template.inquiry_statuses, language),
+				option_types: this.extractSection(template.option_types, language),
+				inquiry_group_types: this.extractSection(template.inquiry_group_types, language),
+				categories: this.extractSection(template.categories, language),
+				locations: this.extractSection(template.locations, language),
 			}
-
-			// Helper function to extract language string from multi-language object
-			const extractLangString = (obj: unknown): string => {
-				// Try selected language first (non-empty)
-				if (obj[language] !== undefined && obj[language] !== '') {
-					return obj[language]
-				}
-				// Fallback to English
-				if (obj.en !== undefined && obj.en !== '') {
-					return obj.en
-				}
-				// Use first available non-empty translation
-				const keys = Object.keys(obj)
-				const firstKey = keys.find(k => obj[k] !== undefined && obj[k] !== '')
-				if (firstKey) {
-					return obj[firstKey]
-				}
-				Logger.warn('[extractLangString] No valid translation found in object:', obj)
-				return ''
-			}
-
-			// Recursive function to process unknown value
-			const processValue = (value: unknown, path: string = ''): unknown => {
-				if (value === null || value === undefined) {
-					return value
-				}
-
-				// Check if this is a multi-language object
-				if (isMultiLangObject(value)) {
-					const extracted = extractLangString(value)
-					Logger.debug(`[processValue] Extracted "${extracted}" from multi-lang at ${path}`)
-					return extracted
-				}
-
-				// Process arrays recursively
-				if (Array.isArray(value)) {
-					return value.map((item, idx) => processValue(item, `${path}[${idx}]`))
-				}
-
-				// Process objects recursively
-				if (typeof value === 'object') {
-					const processedObj: unknown = {}
-					Object.keys(value).forEach(key => {
-						processedObj[key] = processValue(value[key], `${path}.${key}`)
-					})
-					return processedObj
-				}
-
-				// Return primitives as-is
-				return value
-			}
-
-			sections.forEach(section => {
-				if (extracted[section] && Array.isArray(extracted[section])) {
-					Logger.info(`[extractLanguageText] Processing section: ${section} (${extracted[section].length} items)`)
-					extracted[section] = extracted[section].map((item: unknown, idx: number) => {
-						const processed = processValue(item, `${section}[${idx}]`)
-						// Log first item's label for debugging
-						if (idx === 0 && processed.label !== undefined) {
-							Logger.info(`[extractLanguageText] First ${section} item label:`, processed.label)
-						}
-						return processed
-					})
-				}
-			})
-
-			Logger.info('[extractLanguageText] Extraction complete')
-			return extracted
 		},
 
-		updateEditableItem(section: string, index: number, updatedItem: unknown) {
-			if (!this.editableData || !this.editableData[section]) {
-				return
-			}
-			this.editableData[section][index] = updatedItem
+		extractSection(section: unknown, language: string): unknown[] {
+			if (!Array.isArray(section)) return []
+			return section.map((item) => this.extractLanguageValue(item, language))
 		},
 
-		removeEditableItem(section: string, index: number) {
-			if (!this.editableData || !this.editableData[section]) {
-				return
+		extractLanguageValue(value: unknown, language: string): unknown {
+			if (value === null || value === undefined) return value
+			if (typeof value === 'string') return value
+			if (typeof value === 'number' || typeof value === 'boolean') return value
+
+			if (Array.isArray(value)) {
+				return value.map((entry) => this.extractLanguageValue(entry, language))
 			}
-			this.editableData[section].splice(index, 1)
+
+			if (typeof value === 'object') {
+				const obj = value as Record<string, unknown>
+				if (this.isMultiLangObject(obj)) {
+					return this.pickLanguage(obj, language)
+				}
+				const out: Record<string, unknown> = {}
+				for (const [key, sub] of Object.entries(obj)) {
+					out[key] = this.extractLanguageValue(sub, language)
+				}
+				return out
+			}
+
+			return value
 		},
 
-		addEditableItem(section: string, item: unknown) {
-			if (!this.editableData) {
-				return
+		isMultiLangObject(obj: Record<string, unknown>): boolean {
+			const keys = Object.keys(obj)
+			if (keys.length === 0) return false
+			const langKeys = ['en', 'fr', 'de', 'gsw', 'it', 'es', 'pt', 'nl', 'ru', 'zh', 'ja', 'ko']
+			if (!keys.some((k) => langKeys.includes(k))) return false
+			return keys.every((k) => langKeys.includes(k) && typeof obj[k] === 'string')
+		},
+
+		pickLanguage(obj: Record<string, unknown>, language: string): string {
+			const direct = obj[language]
+			if (typeof direct === 'string' && direct !== '') return direct
+			const en = obj.en
+			if (typeof en === 'string' && en !== '') return en
+			for (const value of Object.values(obj)) {
+				if (typeof value === 'string' && value !== '') return value
 			}
-			if (!this.editableData[section]) {
-				this.editableData[section] = []
+			return ''
+		},
+
+		updateEditableItem(section: EditableSection, index: number, updatedItem: unknown) {
+			const arr = this.editableData?.[section]
+			if (Array.isArray(arr)) arr[index] = updatedItem
+		},
+
+		removeEditableItem(section: EditableSection, index: number) {
+			const arr = this.editableData?.[section]
+			if (Array.isArray(arr)) arr.splice(index, 1)
+		},
+
+		addEditableItem(section: EditableSection, item: unknown) {
+			if (!this.editableData) return
+			const arr = this.editableData[section]
+			if (!Array.isArray(arr)) {
+				this.editableData[section] = [item]
+			} else {
+				arr.push(item)
 			}
-			this.editableData[section].push(item)
 		},
 
 		reset() {

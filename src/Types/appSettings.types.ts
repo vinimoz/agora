@@ -6,9 +6,7 @@
 import type { User } from './user.types'
 import type { InquiryType, InquiryFamily } from './inquiry.types'
 import type { InquiryOptionType, OptionFamily } from './option.types'
-// TODO: once inquiry group types are moved to Types/inquiryGroup.types.ts,
-// switch this import to `from './inquiryGroup.types'`
-import type { InquiryGroupType } from '../stores/inquiryGroups.types'
+import type { InquiryGroupType } from './inquiryGroups.types'
 
 import type { InquiryTypeRights, ModeratorRights, OfficialRights } from '../utils/permissions'
 
@@ -63,7 +61,10 @@ export interface HomeConfig {
 		imageUrl?: string
 	}
 	services: Array<{ key: string; label: string; icon: string }>
-	relevance: { tiers: unknown[]; weights: Record<string, number> }
+	relevance: {
+		tiers: Record<string, unknown>[]
+		weights: Record<string, number>
+	}
 }
 
 export interface NavigationConfig {

@@ -16,9 +16,10 @@ export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'
 export type OptionConfiguration = {
 	visibility: 'private' | 'everyone' | 'groups' | 'participants' | 'invitation'
 	showResults: string
-	allowComment: number
+	allowComment: number | null
 	supportFeature: string
 	family: string
+	expire?: number
 }
 
 export type OptionCurrentStatus = {
@@ -26,6 +27,7 @@ export type OptionCurrentStatus = {
 	updated: number
 	isArchived: boolean
 	isDeleted: boolean
+	isExpired: boolean
 	countParticipants: number
 	countComments: number
 	countSupports: number
@@ -140,7 +142,9 @@ export type OptionsState = {
 // OPTION TYPE / FAMILY
 // ============================================================================
 
+// Types/option.types.ts — replace InquiryOptionType
 export interface InquiryOptionType {
+	// Backend fields
 	id: number
 	option_type: string
 	family: string
@@ -153,6 +157,16 @@ export interface InquiryOptionType {
 	support_feature: string
 	statuses: string[]
 	use_title: boolean
+	defaultStatus?: string 
+	features?: string[]
+
+	// Client-side aliases written by stores & helpers
+	key?: string
+	name?: string
+	color?: string
+	sortOrder?: number
+	text?: string
+	optionType?: string
 }
 
 export interface FamilyFeatures {
@@ -164,18 +178,29 @@ export interface FamilyFeatures {
 	[key: string]: unknown
 }
 
+// Types/option.types.ts — replace the whole OptionFamily interface
 export interface OptionFamily {
-	id: number
-	family_type: string
+	// Backend-only fields (present on server objects, absent on client-built ones)
+	id?: number
+	family_type?: string
+	sort_order?: number
+	created?: number
+
+	// Present on both
 	label: string
 	description?: string
-	icon: string
-	ui: string[]
-	features: FamilyFeatures
-	rules: string[]
-	actions: string[]
-	sort_order: number
-	created: number
+	icon?: string
+	ui?: string[] | Record<string, unknown>
+	features?: FamilyFeatures | string[]
+	rules?: string[]
+	actions?: string[] | Array<{ key: string; label: string; icon?: string }>
+
+	// Client-side aliases (already there)
+	key?: string
+	name?: string
+	color?: string
+	sortOrder?: number
+	types?: InquiryOptionType[]
 }
 
 export interface OptionFamilyEvent {

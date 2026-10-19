@@ -64,6 +64,17 @@ export enum ContentType {
 /* ============================================================
  * RIGHTS ()
  * ============================================================ */
+export interface InquiryTypeRights {
+	canEdit: boolean
+	canDelete: boolean
+	canCreate: boolean
+
+	supportInquiry?: boolean
+	supportFeature?: string | null
+	commentInquiry?: boolean | null
+
+	[key: string]: unknown
+}
 
 export interface ModeratorRights {
 	changeInquiryStatus?: boolean

@@ -115,7 +115,6 @@ import MonitorOff from '@iconify-icons/mdi/monitor-off'
 
 
 // For 'ViewKanban' - use one of these alternatives:
-import ViewDashboard from '@iconify-icons/mdi/view-dashboard'  // Alternative for Kanban ✓
 
 import Reply from '@iconify-icons/mdi/reply'          
 // import Grid from '@iconify-icons/mdi/grid'               
@@ -136,7 +135,6 @@ import ArrowDown from '@iconify-icons/mdi/arrow-down'
 // import GraphOutline from '@iconify-icons/mdi/graph-outline'
 
 // Consensus actions
-import ClipboardText from '@iconify-icons/mdi/clipboard-text-outline' // Minutes
 import MapOutline from '@iconify-icons/mdi/map-outline'
 
 // import Circle from '@iconify-icons/mdi/circle'    
@@ -279,7 +277,6 @@ import CalendarPlusOutline from '@iconify-icons/mdi/calendar-plus-outline'
 
 import ViewCarousel from '@iconify-icons/mdi/view-carousel'
 import ArrowLeftRight from '@iconify-icons/mdi/arrow-left-right'
-import Play from '@iconify-icons/mdi/play'
 import ViewGrid from '@iconify-icons/mdi/view-grid'
 import ViewDashboard from '@iconify-icons/mdi/view-dashboard'
 

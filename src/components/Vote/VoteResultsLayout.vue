@@ -10,7 +10,7 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ totalVotes }}</div>
-                    <div class="summary-label">{{ t('agora', 'Total Votes') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Total votes') }}</div>
                 </div>
             </div>
             <div class="summary-card">
@@ -19,7 +19,7 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ winner?.title || '-' }}</div>
-                    <div class="summary-label">{{ t('agora', 'Current Leader') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Current leader') }}</div>
                 </div>
             </div>
             <div class="summary-card">
@@ -28,7 +28,7 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ winnerPercentage }}%</div>
-                    <div class="summary-label">{{ t('agora', 'Leading Percentage') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Leading percentage') }}</div>
                 </div>
             </div>
             <div class="summary-card">
@@ -37,29 +37,29 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ timeRemaining }}</div>
-                    <div class="summary-label">{{ t('agora', 'Time Remaining') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Time remaining') }}</div>
                 </div>
             </div>
         </div>
 
         <div class="charts-section">
             <div class="chart-container">
-                <h4>{{ t('agora', 'Vote Distribution') }}</h4>
+                <h4>{{ t('agora', 'Vote distribution') }}</h4>
                 <canvas ref="pieChartCanvas"></canvas>
             </div>
             <div class="chart-container">
-                <h4>{{ t('agora', 'Vote Ranking') }}</h4>
+                <h4>{{ t('agora', 'Vote ranking') }}</h4>
                 <canvas ref="barChartCanvas"></canvas>
             </div>
         </div>
 
         <div class="ranking-table">
-            <h4>{{ t('agora', 'Detailed Ranking') }}</h4>
+            <h4>{{ t('agora', 'Detailed ranking') }}</h4>
             <table>
                 <thead>
                     <tr>
                         <th>{{ t('agora', 'Rank') }}</th>
-                        <th>{{ t('agora', 'Item') }}</th>
+                        <th>{{ t('agora', 'Option') }}</th>
                         <th>{{ t('agora', 'Votes') }}</th>
                         <th>{{ t('agora', 'Percentage') }}</th>
                         <th>{{ t('agora', 'Status') }}</th>
@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onUnmounted } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import Chart from 'chart.js/auto'
 import { Users, Trophy, TrendingUp, Clock } from 'lucide-vue-next'
@@ -139,6 +139,15 @@ const pieChartCanvas = ref<HTMLCanvasElement | null>(null)
 const barChartCanvas = ref<HTMLCanvasElement | null>(null)
 let pieChart: Chart | null = null
 let barChart: Chart | null = null
+
+/*
+const getRankClass = (index: number): string => {
+    if (index === 0) return 'gold'
+    if (index === 1) return 'silver'
+    if (index === 2) return 'bronze'
+    return ''
+}
+*/
 
 const createCharts = (): void => {
     if (!pieChartCanvas.value || !barChartCanvas.value) return
@@ -235,6 +244,11 @@ const createCharts = (): void => {
 watch([() => props.rankedItems], () => {
     nextTick(() => createCharts())
 }, { deep: true })
+
+onMounted(() => {
+    nextTick(() => createCharts())
+})
+
 
 onUnmounted(() => {
     if (pieChart) pieChart.destroy()

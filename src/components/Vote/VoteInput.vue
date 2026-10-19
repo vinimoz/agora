@@ -186,21 +186,16 @@ const props = defineProps<{
   currentReaction?: string[] | null
   currentQuadraticVotes?: number | null
   currentTokenWeight?: number | null
-  /**
-   * Renamed from `canResetVote` — matches the prop name used by VoteCard.vue.
-   */
   canRemoveVote?: boolean
   totalItems?: number
 }>()
+
 
 const emit = defineEmits<{
   vote: [value: SupportValue]
   approvalToggle: [itemId: number]
   changeRank: [rank: number | null]
   changeGrade: [grade: string | null]
-  /**
-   * Renamed from `resetVote` — matches the listener used by VoteCard.vue.
-   */
   removeVote: []
   'update:score': [itemId: number, score: number | null]
   'update:star': [itemId: number, star: number | null]
@@ -208,6 +203,9 @@ const emit = defineEmits<{
   'update:quadratic': [itemId: number, votes: number | null]
   'update:token_weight': [itemId: number, weight: number | null]
 }>()
+
+console.log(" PROPS ITEM ",props.item)
+console.log(" USER VOTEEEEEEEEEEEEEEE ",props.userVote)
 
 function handleVote(value: SupportValue) {
   emit('vote', value)

@@ -4,8 +4,20 @@
  */
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { ISearchType, User , Category, Location, InquiryStatus, InquiryFamily, OptionFamily, AppSettings, Group } from '@/Types'
-import type { InquiryGroupType } from '@/Types'
+import type {
+	AppSettings,
+	Group,
+	ISearchType,
+	User,
+	Category,
+	Location,
+	InquiryStatusDefinition,  
+	InquiryFamily,
+	OptionFamily,
+	InquiryType,
+	InquiryOptionType,
+} from '../../Types/index.js'
+import type { InquiryGroupType } from '../../Types/inquiryGroups.types.js'
 
 const appSettings = {
 	getAppSettings(): Promise<AxiosResponse<{ appSettings: AppSettings }>> {
@@ -82,14 +94,13 @@ const appSettings = {
 		})
 	},
 
-	// Location functions
-	addLocation(location: Location): Promise<AxiosResponse<{ location: Location }>> {
-		return httpInstance.request({
-			method: 'POST',
-			url: 'settings/locations',
-			data: { location },
-			cancelToken:
-				cancelTokenHandlerObject[this.addLocation.name].handleRequestCancellation().token,
+	// Location function
+	addLocation(location: Omit<Location, 'id'>): Promise<AxiosResponse<{ location: Location }>> {
+	return httpInstance.request({
+		method: 'POST',
+		url: 'settings/locations',
+		data: { location },
+		cancelToken: cancelTokenHandlerObject[this.addLocation.name].handleRequestCancellation().token,
 		})
 	},
 
@@ -118,8 +129,8 @@ const appSettings = {
 
 	// InquiryStatus functions
 	addInquiryStatus(
-		inquiryStatus: InquiryStatus
-	): Promise<AxiosResponse<{ inquiryStatus: InquiryStatus }>> {
+		inquiryStatus: InquiryStatusDefinition
+	): Promise<AxiosResponse<{ inquiryStatus: InquiryStatusDefinition }>> {
 		return httpInstance.request({
 			method: 'POST',
 			url: 'settings/inquiry-statuses',
@@ -141,8 +152,8 @@ const appSettings = {
 
 	updateInquiryStatus(
 		inquiryStatusId: string,
-		inquiryStatus: InquiryStatus
-	): Promise<AxiosResponse<{ inquiryStatus: InquiryStatus }>> {
+		inquiryStatus: InquiryStatusDefinition
+	): Promise<AxiosResponse<{ inquiryStatus: InquiryStatusDefinition }>> {
 		return httpInstance.request({
 			method: 'PUT',
 			url: `settings/inquiry-statuses/${inquiryStatusId}`,

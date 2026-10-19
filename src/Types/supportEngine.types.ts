@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { Phase } from './votingType'
+import type { SupportEngine } from './support.types'
+
 export interface CreateEngineRequest {
   engine: string  
   purpose: string       

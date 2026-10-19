@@ -2,11 +2,9 @@
  * SPDX-FileCopyrightText: 2025 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { User } from '../Types/index.ts'
-import {
-  SupportResult,
-  SupportEngine,
-} from '../Types/index.ts'
+import type { User, UserType } from './user.types'
+import type { SupportResult, SupportEngine } from './support.types'
+
 
 // Import unified types from experience.types.ts
 import type {
@@ -21,9 +19,28 @@ import type {
 export type { DisplayZone, ExperienceKey, DisplayType, ToolKey }
 
 // ===== SHARED TYPES =====
-export type VisibilityType = 'private' | 'groups' | 'users' | 'everyone'
-export type InquiryGroupWorkflowStatus = 'active' | 'completed' | 'suspended' | 'canceled' 
+export type VisibilityInquiryGroupType =
+	| 'private'
+	| 'groups'
+	| 'users'
+	| 'everyone'
 
+export type InquiryGroupWorkflowStatus =
+	| 'draft'
+	| 'active'
+	| 'archived'
+	| 'closed'
+	| 'completed'
+	| 'suspended'
+	| 'canceled'
+
+export interface InquiryGroupStatus {
+	groupStatus: InquiryGroupWorkflowStatus
+	created: number
+	deleted: number
+	updated: number
+	supportResult: SupportResult[]
+}
 // ============================================================
 // INQUIRY GROUP UI CONFIGURATION
 // ============================================================
@@ -75,7 +92,7 @@ export type InquiryGroupPermissions = {
 
 // ===== CONFIGURATION =====
 export interface InquiryGroupConfiguration {
-  visibility: VisibilityType
+  visibility: VisibilityInquiryGroupType
   visibilityGroups: string[]
   visibilityUsers: string[]
   expire: number | null
@@ -153,4 +170,14 @@ export interface InquiryGroup {
   inquiryGroupType?: InquiryGroupType
   permissions?: InquiryGroupPermissions
 }
-export type { InquiryGroupPermissions }
+
+
+export type CurrentUserInquiryGroupStatus = {
+  isOwner: boolean
+  isLoggedIn: boolean
+  userId: string
+  userRole: UserType
+  canEdit: boolean
+  isProtected: boolean
+}
+

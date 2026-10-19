@@ -6,7 +6,7 @@ import { defineStore } from 'pinia'
 import { t } from '@nextcloud/l10n'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import { Component } from '@nextcloud/vue'
+import { Component } from 'vue'
 import { useOptionStore, Option } from './option'
 
 import { Logger } from '../helpers/index.ts'
@@ -76,12 +76,13 @@ export const useOptionsStore = defineStore('options', {
 
       // Add families from settings
       familiesFromSettings.forEach((family: OptionFamily) => {
-        familiesMap[family.family_type] = {
+	const familyKey = family.family_type || 'default'
+        familiesMap[familyKey] = {
           key: family.family_type,
           name: family.label || family.family_type,
           label: family.label,
           description: family.description || '',
-          color: getFamilyColor(family.family_type),
+	color: getFamilyColor(family.family_type || 'default'),
           icon: family.icon || 'File',
           sortOrder: family.sort_order || 999,
           types: [],

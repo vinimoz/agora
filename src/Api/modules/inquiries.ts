@@ -2,12 +2,28 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { Inquiry, InquiryConfiguration, InquiryType } from '../../stores/inquiry.ts'
+
+import type {
+	Inquiry,
+	InquiryConfiguration,
+	InquiryType,
+	VisibilityType,
+	Category,
+} from '../../Types/index.js'
+
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { Share } from '../../stores/shares.ts'
+import { Share } from '../../Types/share.types.ts'
 import { ApiEmailAdressList, Comment, User } from '../../Types/index.ts'
 import { InquiryGroup, Option, Support } from '@/Types'
+import type { ModerationWorkflowStatus } from '../../Types/index.ts'
+
+
+export type ApiEmailAdressList = {
+	displayName: string
+	emailAddress: string
+	combined: string
+}
 
 export type Confirmations = {
   sentMails: { emailAddress: string; displayName: string }[]
@@ -147,6 +163,13 @@ const inquiries = {
     cancelToken:
       cancelTokenHandlerObject[this.updateInquiryConfig.name].handleRequestCancellation().token,
   })
+},
+
+updateModerationStatus(
+	inquiryId: number,
+	moderationStatus: ModerationWorkflowStatus
+): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+	return Promise.reject(new Error('InquiriesAPI.updateModerationStatus not implemented'))
 },
 
 addInquiry(dataInquiry: {

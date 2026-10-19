@@ -56,6 +56,7 @@
 					:placeholder="t('agora', 'Select voting method')"
 					:clearable="false"
 					label="title"
+					:aria-label-combobox="t('agora', 'Voting method')"
 					:reduce="(engine) => engine"
 					class="engine-select"
 					:label-outside="true"

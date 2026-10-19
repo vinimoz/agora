@@ -3,37 +3,63 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// ---------------------------------------------------------------------------
-// Domain types
-// ---------------------------------------------------------------------------
+// ─── Domain types ────────────────────────────────────────────
 export * from './user.types'
 export * from './inquiry.types'
 export * from './option.types'
 export * from './support.types'
 export * from './appSettings.types'
+export * from './comments.types'
+export * from './activity.types'
+export * from './share.types'
 
-// ---------------------------------------------------------------------------
-// Voting / engine types
-// ---------------------------------------------------------------------------
+// ─── Group types ─────────────────────────────────────────────
 export type {
+	InquiryGroup,
+	InquiryGroupType,
+	InquiryGroupConfiguration,
+	InquiryGroupStatus,
+	InquiryGroupWorkflowStatus,
+	InquiryGroupUIConfig,
+	InquiryGroupPermissions,
+	CurrentUserInquiryGroupStatus,
+	VisibilityInquiryGroupType,
+} from './inquiryGroups.types'
+
+// ─── Voting / engine types ───────────────────────────────────
+export type {
+	// Result shapes
 	BinaryResult,
 	TernaryResult,
 	ScoreResult,
+	StarResult,
 	RankingResult,
 	CondorcetResult,
 	MajorityJudgmentResult,
 	ReactionResult,
 	ApprovalResult,
+	ApprovalDelibResult,
 	TrendingResult,
+	BordaResult,
+	QuadraticResult,
+	TokenWeightedResult,
+	PhasedVotingResult,
 	SupportResultData,
+
+	// Support primitives
 	SupportFeature,
+	SupportValue,
+	SupportData,
+	SupportTemplate,
 	VotingEngine,
-	Phase,
 	VotingConfiguration,
 	VotingOptions,
-	SupportData,
-	SupportValue,
-	SupportTemplate,
+	Phase,
+
+	// Engine metadata
+	EngineDefinition,
+	EngineInfo,
+	ConfigSchemaField,
 } from './votingType'
 
 export {
@@ -44,15 +70,10 @@ export {
 	isValidPhase,
 } from './votingType'
 
-// ---------------------------------------------------------------------------
-// Experience types
-// ---------------------------------------------------------------------------
+// ─── Experience types ────────────────────────────────────────
 export * from './experience.types'
 
-// ---------------------------------------------------------------------------
-// Utilities
-// ---------------------------------------------------------------------------
-
+// ─── Utilities ───────────────────────────────────────────────
 export function createDefault<T>(): T {
 	return {} as T
 }

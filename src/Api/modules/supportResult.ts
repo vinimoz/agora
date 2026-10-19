@@ -5,7 +5,7 @@
 
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import type { SupportResult } from '../Types/index.ts'
+import type { SupportResult } from '../../Types/index.ts'
 
 export const supportResultApi = {
     // Get results for a specific engine

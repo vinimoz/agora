@@ -35,10 +35,9 @@
                 @update:reactions="updateReactions"
                 @update:quadratic-votes="updateQuadraticVotes"
                 @update:token-weights="updateTokenWeights"
-                @vote="(item, value) => submitSingleVote(inquiryId,item, value)"
+                @vote="(item, value) => submitSingleVote(props.parentId,item, value)"
                 @submit-multi-vote="onSubmitMultiVote"
                 @remove-my-vote="onRemoveMyVote"
-                @select-item="$emit('selectItem', $event)"
                 @open-supports-modal="!hideResults && $emit('openSupportsModal', $event)"
                 />
     </div>
@@ -47,7 +46,6 @@
         <VoteResultsLayout
                 :total-votes="totalVotes"
                 :ranked-items="rankedItems"
-                :current-engine="currentEngine"
                 :effective-engine-id="effectiveEngineId"
                 :active-engine="currentEngine"
                 :can-vote="canVote"
@@ -64,21 +62,17 @@
                 :get-item-rank="getItemRank"
                 :get-item-vote-count="getItemVoteCount"
                 :get-percentage="(item) => getPercentage(item)"
-                :has-user-voted-for="hasUserVotedFor"
                 :is-selected-for-vote="isSelectedForVote"
                 :winner="winner"
                 :winner-percentage="winnerPercentage"
                 :time-remaining="timeRemaining"
-                @toggle-selection="toggleSelection"
                 @update:rankings="rankings = $event"
                 @update:scores="scores = $event"
                 @update:grades="grades = $event"
                 @update:reactions="reactions = $event"
                 @update:quadratic-votes="quadraticVotes = $event"
                 @update:token-weights="tokenWeights = $event"
-                @vote="(item, value) => submitSingleVote(inquiryId,item, value)"
-                @submit-multi-vote="submitMultiVote"
-                @select-item="$emit('selectItem', $event)"
+                @vote="(item, value) => submitSingleVote(props.parentId,item, value)"
                 />
     </div>
 </template>
@@ -94,9 +88,9 @@ import VoteCardsLayout from './VoteCardsLayout.vue'
 import VoteResultsLayout from './VoteResultsLayout.vue'
 
 const props = defineProps<{
-  inquiryId: number
+  parentId: number
+  targetType: 'option' | 'inquiry'
   engineId: number
-  targetType: 'option' | 'inquiry'  
   layout: 'cards' | 'results'
   timeRemaining: string
   enqueueSave?: (engineId: number, task: () => Promise<boolean>) => Promise<boolean>
@@ -140,7 +134,7 @@ const {
   reactions,
   quadraticVotes,
   tokenWeights,
-  } = useVoteContext(props.inquiryId, props.targetType, props.engineId)
+  } = useVoteContext(props.parentId, props.targetType, props.engineId)
 
 const winner = computed(() => getWinner(votableItems.value))
 const winnerPercentage = computed(() => getWinnerPercentage(votableItems.value))
@@ -161,7 +155,7 @@ const hasLocalAnswers = () => answered.value > 0
 // A save sends the whole ballot: never autosave before the stored answers are loaded.
 const hydrated = ref(false)
 watch(
-  [() => supportsStore.getSupportsByInquiryId(props.inquiryId), () => supportsStore.loading],
+  [() => supportsStore.getSupportsByInquiryId(props.parentId), () => supportsStore.loading],
   () => {
     if (hydrated.value || supportsStore.loading) return
     if (hasUserVoted.value && !hasLocalAnswers()) loadUserVotesForEngine(props.engineId)

@@ -15,7 +15,7 @@ import {
   OptionFamily,
 } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
-import type { InquiryGroupType } from './inquiryGroups.types'
+import type { InquiryGroupType } from '../Types/inquiryGroups.types'
 
 import type { InquiryTypeRights, ModeratorRights, OfficialRights } from '../utils/permissions.ts'
 import { DefaultModeratorRights, DefaultOfficialRights } from '../utils/permissions.ts'
@@ -123,8 +123,10 @@ export const useAppSettingsStore = defineStore('appSettings', {
 				  const response = await AppSettingsAPI.getAppSettings()
 				  // Initialize inquiryStatusTab with defaults if empty
 				  const settings = response.data.appSettings
+				  this.$patch((state) => {
+					Object.assign(state, settings)
+				  })
 
-				  this.$patch(settings)
 				  return settings
 			  } catch (error) {
 				  Logger.error('Error getting appSettings', { error })
@@ -134,7 +136,11 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		  async write(): Promise<void> {
 			  try {
 				  const response = await AppSettingsAPI.writeAppSettings(this.$state)
-				  this.$patch(response.data.appSettings)
+				  const settings = response.data.appSettings
+				  this.$patch((state) => {
+					Object.assign(state, settings)
+				  })
+
 			  } catch (error) {
 				  if ((error as AxiosError)?.code === 'ERR_CANCELED') {
 					  return
@@ -169,14 +175,14 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		  // STORE FOR MODERATION STATUS
 
 		  // Get statuses for a specific inquiry type
-		  getStatusesForInquiryType(inquiryType: string): InquiryStatus[] {
+		  getStatusesForInquiryType(inquiryType: string): InquiryStatusDefinition[] {
 			  return this.inquiryStatusTab
 			  .filter((status) => status.inquiryType === inquiryType)
 			  .sort((a, b) => (a.order || 0) - (b.order || 0))
 		  },
 
 		  // Get specific status details by key
-		  getStatusByKey(inquiryType: string, statusKey: string): InquiryStatus | undefined {
+		  getStatusByKey(inquiryType: string, statusKey: string): InquiryStatusDefinition | undefined {
 			  return this.inquiryStatusTab.find(
 				  (status) => status.inquiryType === inquiryType && status.statusKey === statusKey
 			  )
@@ -185,7 +191,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		  // Add a new status for an inquiry type
 		  async addStatusForInquiryType(
 			  inquiryType: string,
-			  status: Omit<InquiryStatus, 'inquiryType' | 'order'>
+			  status: Omit<InquiryStatusDefinition, 'inquiryType' | 'order'>
 		  ): Promise<void> {
 			  const existingStatuses = this.getStatusesForInquiryType(inquiryType)
 			  const newOrder = existingStatuses.length
@@ -212,7 +218,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		  async updateStatusForInquiryType(
 			  inquiryType: string,
 			  statusId: string,
-			  updates: Partial<InquiryStatus>
+			  updates: Partial<InquiryStatusDefinition>
 		  ): Promise<void> {
 			  const index = this.inquiryStatusTab.findIndex(
 				  (s) => s.inquiryType === inquiryType && s.id === statusId
@@ -425,12 +431,20 @@ export const useAppSettingsStore = defineStore('appSettings', {
 					  ...familyData,
 					  created: Date.now(),
 				  })
-
 				  this.inquiryFamilyTab.push({
 					  id: newId,
-					  ...familyData,
+					  family_type: familyData.family_type,
+					  label: familyData.label,
+					  description: familyData.description,
+					  icon: familyData.icon ?? 'File',
+					  sort_order: familyData.sort_order ?? 999,
+					  ui: [],
+					  features: [],
+					  rules: [],
+					  actions: [],
 					  created: Date.now(),
 				  })
+
 			  } catch (error) {
 				  Logger.error('Error adding inquiry family', { error })
 			  }

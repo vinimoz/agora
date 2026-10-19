@@ -58,7 +58,7 @@
       v-if="canVote"
       :engine-id="effectiveEngineId"
       :engine-config="engineConfig"
-      :item="item"
+      :item="raw"
       :disabled="!canVote"
       :is-selected="isSelected"
       :current-rank="currentRank"
@@ -171,6 +171,8 @@ const props = defineProps<{
   hideResults?: boolean
 }>()
 
+console.log(" PRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ITEM ", props.item)
+
 const raw = computed(() => (props.item as any).raw ?? props.item)
 
 const emit = defineEmits<{
@@ -188,7 +190,13 @@ const emit = defineEmits<{
 
 const sessionStore = useSessionStore()
 const inquiryStore = useInquiryStore()
-const allItemTypes = computed(() => sessionStore.appSettings?.inquiryItemTypeTab || [])
+
+const allItemTypes = computed(() => {
+  if (props.item.kind === 'option') {
+    return sessionStore.appSettings?.inquiryOptionTypeTab || []
+  }
+  return sessionStore.appSettings?.inquiryItemTypeTab || []
+})
 
 const itemTypeLabel = computed(() => {
   if (!props.item?.type || !allItemTypes.value) {
@@ -271,15 +279,14 @@ const canComment = computed(() => !!raw.permissions?.comment
   && sessionStore.route.name !== 'publicInquiry')
 const showComment = ref(false)
 const commentMounted = ref(false)
-const openedByGrade = ref(false)
 const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null)
 const commentZoneId = computed(() => `item-comment-${props.item.id}`)
 const commentGrades = computed(() => (props.engineConfig.comment_grades as string[] | undefined) ?? [])
+const openedByGrade = computed(() => !!props.currentGrade && commentGrades.value.includes(props.currentGrade))
 
 async function toggleComment() {
   showComment.value = !showComment.value
   if (showComment.value) {
-    openedByGrade.value = false
     commentMounted.value = true
     await nextTick()
     commentAdd.value?.focus()
@@ -307,6 +314,8 @@ const userVoteForItem = computed(() => {
   return { value, itemId: props.item.id } as SupportData
 })
 
+console.log(" IUSE VOTER VALUE FOR TIEM", userVoteForItem.value)
+
 function openSupportsModal() {
   emit('openSupportsModal', props.item.id)
 }
@@ -318,7 +327,6 @@ function handleRankChange(rank: number | null) { emit('changeRank', props.item.i
 function handleGradeChange(grade: string | null) {
   emit('changeGrade', props.item.id, grade)
   if (grade && canComment.value && commentGrades.value.includes(grade)) {
-    if (!showComment.value) openedByGrade.value = true
     commentMounted.value = true
     showComment.value = true
   }

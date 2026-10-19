@@ -94,7 +94,6 @@ const options = {
         })
     },
 
-    // Create a new option
 // Create a new option
 createOption(
     data: {
@@ -374,7 +373,34 @@ createOption(
             url: `option/${optionId}${subscription ? '/subscribe' : '/unsubscribe'}`,
             cancelToken: cancelTokenHandlerObject[this.setOptionSubscription.name].handleRequestCancellation().token,
         })
-    }
+    },
+
+toggleArchive(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+	return Promise.reject(new Error('OptionsAPI.toggleArchive not implemented'))
+},
+
+getEnhancedText(text: string): Promise<AxiosResponse<{ enhancedText: string }>> {
+	return Promise.reject(new Error('OptionsAPI.getEnhancedText not implemented'))
+},
+
+submitOption(optionId: number, action: string): Promise<AxiosResponse<{ option: Option }>> {
+	return Promise.reject(new Error('OptionsAPI.submitOption not implemented'))
+},
+
+closeOption(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+	return Promise.reject(new Error('OptionsAPI.closeOption not implemented'))
+},
+
+reopenOption(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+	return Promise.reject(new Error('OptionsAPI.reopenOption not implemented'))
+},
+
+addChildOption(
+	parentId: number,
+	data: { text: string; type: string; ownedGroup: string; access: string; status: string; miscFields: Record<string, { key: string; value: string }> }
+): Promise<AxiosResponse<{ option: Option }>> {
+	return Promise.reject(new Error('OptionsAPI.addChildOption not implemented'))
+},
 }
 
 const cancelTokenHandlerObject = createCancelTokenHandler(options)

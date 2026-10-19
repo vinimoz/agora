@@ -72,11 +72,13 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
  */
 const getEnginesByTarget = computed(
   () => (targetType: 'inquiry' | 'option', parentId: number) => {
+    if (!engines.value || !Array.isArray(engines.value)) return []
     if (targetType === 'option') {
       return engines.value.filter((engine) => engine.inquiry_id === parentId)
     }
     return engines.value.filter((engine) => engine.inquiry_group_id === parentId)
-  })
+  }
+)
 
 const getEnginesByGroup = computed(() => (groupId: number) => {
   if (!engines.value || !Array.isArray(engines.value)) return []
@@ -167,106 +169,152 @@ const getEnginesByGroup = computed(() => (groupId: number) => {
     }
   }
 
-  async function loadEnginesByInquiryGroup(inquiryGroupId: number): Promise<void> {
-    if (isLoadingEngines.value) return
+async function loadEnginesByInquiryGroup(inquiryGroupId: number): Promise<void> {
+  if (isLoadingEngines.value) return
+  isLoadingEngines.value = true
+  loading.value = true
+  error.value = null
+  try {
+    const response = await SupportEngineAPI.getEnginesByInquiryGroup(inquiryGroupId)
+    engines.value = response.data?.engines || []
+    initialized.value = true
 
-    isLoadingEngines.value = true
-    loading.value = true
-    error.value = null
-    try {
-      const response = await SupportEngineAPI.getEnginesByInquiryGroup(inquiryGroupId)
-      engines.value = response.data?.engines || []
-      initialized.value = true
-      await loadActiveEngineResults()
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to load engines'
-      Logger.error('Error loading support engines for group:', { error: err, inquiryGroupId })
-      engines.value = []
-      throw err
-    } finally {
-      loading.value = false
-      isLoadingEngines.value = false
+    // ⚡ mirror loadEnginesByInquiry — THIS WAS MISSING
+    if (engines.value.length > 0) {
+      const active = engines.value.find((e) => e.status === 'active')
+      currentEngine.value = active ?? engines.value[0]
+    } else {
+      currentEngine.value = null
     }
+
+    await loadActiveEngineResults()
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load engines'
+    Logger.error('Error loading support engines for group:', { error: err, inquiryGroupId })
+    engines.value = []
+    currentEngine.value = null
+    throw err
+  } finally {
+    loading.value = false
+    isLoadingEngines.value = false
   }
-
-  async function createEngine(
-    engine: Omit<SupportEngine, 'id' | 'created'>
-  ): Promise<SupportEngine | null> {
-    loading.value = true
-    error.value = null
-    try {
-	    const response = await SupportEngineAPI.createEngine(engine)
-	    // API wraps the payload as `{ engine: SupportEngine }` (see supportEngine.types.ts)
-	    const newEngine =
-		    (response.data as { engine?: SupportEngine }).engine ?? (response.data as SupportEngine)
-	    if (!newEngine) {
-		    Logger.error('createEngine: response contained no engine', { response })
-		    return null
-	    }
-	    if (!engines.value) engines.value = []
-		    engines.value.push(newEngine)
-	    emit(Event.UpdateSupports, { action: 'engine-created', engine: newEngine })
-	    return newEngine
-    } catch (err) {
-	    error.value = err instanceof Error ? err.message : 'Failed to create engine'
-	    Logger.error('Error creating support engine:', { error: err, engine })
-	    return null
-    } finally {
-	    loading.value = false
-    }
-  }
-
-  async function updateEngine(
-	  id: number,
-	  data: Partial<SupportEngine>
-  ): Promise<SupportEngine | null> {
-	  if (!engines.value || !Array.isArray(engines.value)) return null
-
-		  const engine = engines.value.find((e) => e.id === id)
-		  if (!engine) return null
-
-			  const hasExistingSupports = await hasSupports(id)
-			  const allowedUpdatesForActive = ['status']
-			  const requestedKeys = Object.keys(data)
-
-			  if (hasExistingSupports && !requestedKeys.every((k) => allowedUpdatesForActive.includes(k))) {
-				  error.value =
-					  'Cannot modify engine configuration after votes have been cast. Only status changes are allowed.'
-				  return null
-			  }
-			  loading.value = true
-			  error.value = null
-			  try {
-				  const response = await SupportEngineAPI.updateEngine(id, data)
-const updatedEngine =
-  (response.data as { engine?: SupportEngine }).engine ?? (response.data as SupportEngine)
-
-if (!updatedEngine) {
-  Logger.error('updateEngine: response contained no engine', { response })
-  return null
 }
 
-const index = engines.value.findIndex((e) => e.id === id)
-				  if (index !== -1) {
-					  engines.value[index] = updatedEngine
-				  }
+async function createEngine(
+	engine: Omit<SupportEngine, 'id' | 'created'>
+): Promise<SupportEngine | null> {
+	loading.value = true
+	error.value = null
+	try {
+		const response = await SupportEngineAPI.createEngine(engine)
+		const payload = response?.data as
+			| { engine?: SupportEngine }
+			| SupportEngine
+			| null
+			| undefined
 
-				  if (currentEngine.value?.id === id) {
-					  currentEngine.value = updatedEngine
-				  }
+		let newEngine: SupportEngine | null = null
+		if (payload && typeof payload === 'object') {
+			if ('engine' in payload && payload.engine && typeof payload.engine === 'object') {
+				newEngine = payload.engine as SupportEngine
+			} else if ('id' in payload && typeof (payload as SupportEngine).id === 'number') {
+				newEngine = payload as SupportEngine
+			}
+		}
 
-				  emit(Event.UpdateSupports, { action: 'engine-updated', engine: updatedEngine })
-				  return updatedEngine
-			  } catch (err) {
-				  error.value = err instanceof Error ? err.message : 'Failed to update engine'
-				  Logger.error('Error updating support engine:', { error: err, id, data })
-				  return null
-			  } finally {
-				  loading.value = false
-			  }
-  }
+		if (!newEngine) {
+			Logger.error('createEngine: response contained no engine', { response })
+			return null
+		}
 
-  async function hasSupports(engineId: number): Promise<boolean> {
+		if (!engines.value) engines.value = []
+		engines.value.push(newEngine)
+		emit(Event.UpdateSupports, { action: 'engine-created', engine: newEngine })
+		return newEngine
+	} catch (err) {
+		error.value = err instanceof Error ? err.message : 'Failed to create engine'
+		Logger.error('Error creating support engine:', { error: err, engine })
+		return null
+	} finally {
+		loading.value = false
+	}
+}
+
+async function updateEngine(
+	id: number,
+	data: Partial<SupportEngine>
+): Promise<SupportEngine | null> {
+	if (!engines.value || !Array.isArray(engines.value)) return null
+	const engine = engines.value.find((e) => e.id === id)
+	if (!engine) return null
+
+	// Fields that are safe to change once votes exist.
+	const allowedUpdatesWithVotes = ['status', 'target_ids']
+
+	// Only consider keys whose value is actually being changed.
+	const requestedKeys = Object.keys(data).filter((k) => {
+		const currentVal = (engine as Record<string, unknown>)[k]
+		const newVal = (data as Record<string, unknown>)[k]
+		return JSON.stringify(currentVal) !== JSON.stringify(newVal)
+	})
+
+	const hasExistingSupports = await hasSupports(id)
+	if (
+		hasExistingSupports &&
+		!requestedKeys.every((k) => allowedUpdatesWithVotes.includes(k))
+	) {
+		error.value =
+			`Cannot modify engine configuration after votes have been cast. ` +
+			`Only ${allowedUpdatesWithVotes.join(', ')} can change.`
+		return null
+	}
+
+	loading.value = true
+	error.value = null
+	try {
+		const response = await SupportEngineAPI.updateEngine(id, data)
+
+		// Robust response parsing
+		const payload = response?.data as
+			| { engine?: SupportEngine }
+			| SupportEngine
+			| null
+			| undefined
+
+		let updatedEngine: SupportEngine | null = null
+		if (payload && typeof payload === 'object') {
+			if ('engine' in payload && payload.engine && typeof payload.engine === 'object') {
+				updatedEngine = payload.engine as SupportEngine
+			} else if ('id' in payload && typeof (payload as SupportEngine).id === 'number') {
+				updatedEngine = payload as SupportEngine
+			}
+		}
+
+		if (!updatedEngine) {
+			Logger.warn('updateEngine: API returned no engine payload, merging locally', {
+				response,
+			})
+			// Server accepted the call — keep local state in sync by merging.
+			updatedEngine = { ...engine, ...data } as SupportEngine
+		}
+
+		const index = engines.value.findIndex((e) => e.id === id)
+		if (index !== -1) engines.value[index] = updatedEngine
+		if (currentEngine.value?.id === id) currentEngine.value = updatedEngine
+
+		emit(Event.UpdateSupports, { action: 'engine-updated', engine: updatedEngine })
+		return updatedEngine
+	} catch (err) {
+		error.value = err instanceof Error ? err.message : 'Failed to update engine'
+		Logger.error('Error updating support engine:', { error: err, id, data })
+		return null
+	} finally {
+		loading.value = false
+	}
+}
+
+
+async function hasSupports(engineId: number): Promise<boolean> {
 	  const { supports } = useSupportsStore()
 	  if (!supports.value) return false
 		  return supports.value.some((s) => s.supportEngineId === engineId)

@@ -20,9 +20,10 @@ import type {
   InquiryGroupConfiguration,
   InquiryGroupStatus,
   InquiryGroupWorkflowStatus,
-  VisibilityType,
+  VisibilityInquiryGroupType,
   InquiryGroupUIConfig,
   DisplayZone,
+  SupportEngine,
   InquiryGroupPermissions,
   CurrentUserInquiryGroupStatus,
 } from '@/Types'
@@ -59,11 +60,11 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
 
     // Configuration
     configuration: {
-      visibility: 'private' as VisibilityType,
+      visibility: 'private' as VisibilityInquiryGroupType,
       visibilityGroups: [] as string[],
       visibilityUsers: [] as string[],
       expire: null as number | null,
-      supportEngine: [],
+      supportEngine: [] as SupportEngine[],
       description: '',
       protected: false,
       titleExt: null as string | null,
@@ -110,6 +111,15 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
   // ============================================================
   // ============================================================
   getters: {
+	visibility(state): VisibilityInquiryGroupType {
+  return state.configuration.visibility || 'private'
+},
+visibilityGroups(state): string[] {
+  return state.configuration.visibilityGroups || []
+},
+visibilityUsers(state): string[] {
+  return state.configuration.visibilityUsers || []
+},
     /**
      * Get the type template from session store
      */
@@ -290,7 +300,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
     },
 
     // ============================================================
-    // Current user status (matches inquiry.ts pattern)
     // ============================================================
     currentUserStatus(): CurrentUserInquiryGroupStatus {
       const sessionStore = useSessionStore()
@@ -304,41 +313,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
       }
     },
 
-    // ============================================================
-    // Visibility shortcuts (matches inquiry.ts pattern)
-    // ============================================================
-    visibility: {
-      get(): VisibilityType {
-        return this.configuration.visibility || 'private'
-      },
-      set(value: VisibilityType) {
-        this.configuration.visibility = value
-        void this.updateConfiguration({ visibility: value })
-      },
-    },
-
-    visibilityGroups: {
-      get(): string[] {
-        return this.configuration.visibilityGroups || []
-      },
-      set(groups: string[]) {
-        this.configuration.visibilityGroups = groups
-        void this.updateConfiguration({ visibilityGroups: groups })
-      },
-    },
-
-    visibilityUsers: {
-      get(): string[] {
-        return this.configuration.visibilityUsers || []
-      },
-      set(users: string[]) {
-        this.configuration.visibilityUsers = users
-        void this.updateConfiguration({ visibilityUsers: users })
-      },
-    },
 
     // ============================================================
-    // Full inquiry group object (matches inquiry.ts pattern)
     // ============================================================
     inquiryGroup(): InquiryGroup {
       return {
@@ -449,6 +425,19 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
         inquiryGroup: this.inquiryGroup,
       })
     },
+
+    setVisibility(value: VisibilityInquiryGroupType) {
+  this.configuration.visibility = value
+  void this.updateConfiguration({ visibility: value })
+},
+setVisibilityGroups(groups: string[]) {
+  this.configuration.visibilityGroups = groups
+  void this.updateConfiguration({ visibilityGroups: groups })
+},
+setVisibilityUsers(users: string[]) {
+  this.configuration.visibilityUsers = users
+  void this.updateConfiguration({ visibilityUsers: users })
+},
 
     /**
      * Sync UI configuration from template to configuration.ui
@@ -601,7 +590,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
         visibilityGroups: [],
         visibilityUsers: [],
         expire: null,
-        supportEngine: [],
+        supportEngine: [] as SupportEngine[],
         description: '',
         protected: false,
         titleExt: null,
@@ -824,7 +813,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
      * Update visibility
      */
     async updateVisibility(params: {
-	    visibility: VisibilityType
+	    visibility: VisibilityInquiryGroupType
 	    visibilityGroups?: string[]
 	    visibilityUsers?: string[]
     }): Promise<void> {

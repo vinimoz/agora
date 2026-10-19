@@ -45,6 +45,11 @@ class Participation extends EntityWithUser implements JsonSerializable
     public const TARGET_INQUIRY_GROUP = 'inquiry_group';
     public const TARGET_ENGINE = 'engine';
 
+    public const LOTTERY_METHOD_RANDOM     = 'random';
+    public const LOTTERY_METHOD_WEIGHTED   = 'weighted';
+    public const LOTTERY_METHOD_STRATIFIED = 'stratified';
+
+
     // Lottery modes
     public const LOTTERY_MODE_USERS = 'users';
     public const LOTTERY_MODE_GROUPS = 'groups';
@@ -73,20 +78,19 @@ class Participation extends EntityWithUser implements JsonSerializable
     /**
      * Set policy config from array, JSON string, or null
      */
-    public function setPolicyConfig(array|string|null $config): void
-    {
-        if ($config === null) {
-            $this->policyConfig = [];
-            return;
-        }
-
-        if (is_string($config)) {
-            $decoded = json_decode($config, true);
-            $this->policyConfig = is_array($decoded) ? $decoded : [];
-        } else {
-            $this->policyConfig = $config;
-        }
+public function setPolicyConfig(array|string|null $config): void
+{
+    if ($config === null) {
+        $this->policyConfig = [];
+    } elseif (is_string($config)) {
+        $decoded = json_decode($config, true);
+        $this->policyConfig = is_array($decoded) ? $decoded : [];
+    } else {
+        $this->policyConfig = $config;
     }
+
+    $this->markFieldUpdated('policyConfig');
+}
 
     /**
      * Check if the policy allows everyone
@@ -148,6 +152,18 @@ class Participation extends EntityWithUser implements JsonSerializable
         $config = $this->getLotteryConfig();
         return $config['seed'] ?? null;
     }
+
+public function getLotteryMethod(): string
+{
+    $config = $this->getLotteryConfig();
+    $method = $config['method'] ?? self::LOTTERY_METHOD_RANDOM;
+
+    return in_array($method, [
+        self::LOTTERY_METHOD_RANDOM,
+        self::LOTTERY_METHOD_WEIGHTED,
+        self::LOTTERY_METHOD_STRATIFIED,
+    ], true) ? $method : self::LOTTERY_METHOD_RANDOM;
+}
 
     /**
      * Check if the policy uses user-based selection
