@@ -111,7 +111,7 @@ class InquiryMapper extends QBMapper
 			$this->joinSupportEngine($qb, self::TABLE);
 
 			// From main — share/visibility filters
-			$this->applyVisibilityFilter($qb, self::TABLE);
+			$this->applyVisibilityFilter($qb, $currentUserId);
 			$this->joinIsShared($qb, self::TABLE, $currentUserId, $userGroups);
 
 			$qb->groupBy(self::TABLE . '.id');
@@ -601,7 +601,7 @@ class InquiryMapper extends QBMapper
 		}
 
 		// From main — row-level visibility
-		$this->applyVisibilityFilter($qb, self::TABLE);
+		$this->applyVisibilityFilter($qb, $currentUserId);
 
 		$stmt = $qb->executeQuery();
 		$rows = $stmt->fetchAll();

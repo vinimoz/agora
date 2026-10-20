@@ -273,7 +273,6 @@ const handleGroupUpdate = (groups) => {
 
     <InquiryHeaderButtons /> 
     
-    <!-- Action toolbar component - caché en mode public -->
     <InquiryActionToolbar
       v-if="editMode && !isPublicRoute"
       :inquiry-store="inquiryStore"
@@ -302,9 +301,9 @@ const handleGroupUpdate = (groups) => {
       <InquiryInfoCards class="sticky-left" /> 
     </div>
 
-    <!-- Modal de création - caché en mode public -->
     <InquiryCreateDlg
       v-if="createDlgToggle && !isPublicRoute"
+      :family= "inquiryStore.family"
       :response-type="selectedInquiryTypeForCreation"
       :selected-groups="selectedGroups"
       :selected-mode="selectedMode"

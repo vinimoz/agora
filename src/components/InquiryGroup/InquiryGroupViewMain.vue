@@ -201,7 +201,7 @@ import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 
 import type { Inquiry } from '../../Types/index.ts'
-import type { InquiryGroup } from '../../stores/inquiryGroups.types.ts'
+import type { InquiryGroup } from '../../Types/inquiryGroups.types.ts'
 
 // Import stores
 import { useInquiriesStore } from '../../stores/inquiries.ts'

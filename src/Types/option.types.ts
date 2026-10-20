@@ -14,7 +14,7 @@ import type { Chunking, StatusResults } from './inquiry.types'
 export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'
 
 export type OptionConfiguration = {
-	visibility: 'private' | 'everyone' | 'groups' | 'participants' | 'invitation'
+	visibility: 'private' | 'everyone' | 'groups' | 'participants' 
 	showResults: string
 	allowComment: number | null
 	supportFeature: string

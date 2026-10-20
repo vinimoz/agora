@@ -5,7 +5,7 @@
 import { AxiosResponse } from '@nextcloud/axios'
 import { Share, ShareType, User } from '../../Types/index.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { PublicInquiryEmailConditions, SharePurpose } from '../../stores/shares.js'
+import { PublicInquiryEmailConditions, SharePurpose } from '../../Types/share.types.js'
 
 export type SentResults = {
   sentMails: { emailAddress: string; displayName: string }[]

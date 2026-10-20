@@ -108,7 +108,7 @@ import { DateTime } from 'luxon'
 import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts'
-import type { InquiryGroup } from '../../stores/inquiryGroups.types.ts'
+import type { InquiryGroup } from '../../Types/inquiryGroups.types.ts'
 
 const props = defineProps<{
   groups: InquiryGroup[]

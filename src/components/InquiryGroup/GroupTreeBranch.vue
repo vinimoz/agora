@@ -83,7 +83,7 @@ import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
 import { useSessionStore } from '../../stores/session'
-import type { InquiryGroup } from '../../stores/inquiryGroups.types'
+import type { InquiryGroup } from '../../Types/inquiryGroups.types'
 
 interface TreeNode extends InquiryGroup {
   children: TreeNode[]

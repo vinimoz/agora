@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { useSessionStore } from '../stores/session'
 import { HOME_DEFAULTS } from './homeDefaults'
-import type { HomeConfig } from '../stores/appSettings'
+import type { HomeConfig } from '../Types/appSettings.types.ts'
 
 export function useHomeConfig() {
   const session = useSessionStore()

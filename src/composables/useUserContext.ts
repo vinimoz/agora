@@ -4,7 +4,7 @@ import { useSessionStore } from '../stores/session'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups'
 import { useInquiriesStore } from '../stores/inquiries'
 import { usePreferencesStore } from '../stores/preferences'
-import type { InquiryGroup } from '../stores/inquiryGroups.types'
+import type { InquiryGroup } from '../Types/inquiryGroups.types'
 
 export interface AgoraLocation {
   /** Raw string from NC profile — hint only */

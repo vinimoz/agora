@@ -2,14 +2,15 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { Option, OptionConfiguration } from '../../stores/options.ts'
+import { Option, OptionConfiguration } from '../../Types/option.types.ts'
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { Share } from '../../stores/shares.ts'
-import { ApiEmailAdressList, Comment, Support } from '@/Types'
-
+import { Share } from '../../Types/share.types.ts'
+import { Comment, Support, OptionGroup } from '@/Types'
+import type { ApiEmailAdressList } from './inquiries.js'
 
 export type OptionAction = 'save_draft' | 'submit' | 'archive' | 'restore'
+
 
 const options = {
     // List all options (for current user)

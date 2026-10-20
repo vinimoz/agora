@@ -10,7 +10,7 @@ import { ActivityAPI } from '../Api'
 import { useSessionStore } from './session'
 
 import type { AxiosError } from '@nextcloud/axios'
-import type { Activity, ActivityStore } from './activity.types'
+import type { Activity, ActivityStore } from '../Types/activity.types.ts'
 
 export const useActivityStore = defineStore('activity', {
 	state: (): ActivityStore => ({

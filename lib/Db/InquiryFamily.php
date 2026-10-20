@@ -36,6 +36,8 @@ use OCP\AppFramework\Db\Entity;
  * @method         void setFeatures(?array $value)
  * @method         ?array getActions()
  * @method         void setActions(?array $value)
+ * @method         ?array getStatuses()
+ * @method         void setStatuses(?array $value)
  */
 class InquiryFamily extends Entity implements JsonSerializable
 {
@@ -53,6 +55,7 @@ class InquiryFamily extends Entity implements JsonSerializable
     protected ?array $rules = null;
     protected ?array $features = null;
     protected ?array $actions = null;
+    protected $statuses; 
 
     public function __construct()
     {
@@ -66,8 +69,10 @@ class InquiryFamily extends Entity implements JsonSerializable
         $this->addType('ui', 'json');
         $this->addType('rules', 'json');
         $this->addType('features', 'json');
-        $this->addType('actions', 'json');
+	$this->addType('actions', 'json');
+	  $this->addType('statuses', 'json');
     }
+
 
     /**
      * @return array
@@ -88,6 +93,7 @@ class InquiryFamily extends Entity implements JsonSerializable
             'rules' => $this->getRules() ?? [],
             'features' => $this->getFeatures() ?? [],
             'actions' => $this->getActions() ?? [],
+            'statuses' => $this->getStatuses() ?? [],
         ];
     }
 

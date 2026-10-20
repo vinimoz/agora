@@ -15,7 +15,7 @@ import { BaseEntry, Event } from '../../Types/index.ts'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
 import { useRoute, useRouter } from 'vue-router'
-
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import {
   getInquiryTypeData,
 } from '../../helpers/modules/InquiryHelper.ts'
@@ -93,7 +93,33 @@ const inquiryTypeData = computed(() => {
   return data
 })
 
+const moderationNotice = computed<{
+  type: 'info' | 'warning' | 'error'
+  title: string
+  text: string
+} | null>(() => {
+  const modStatus    = inquiryStore.status.moderationStatus
+  const pubStatus    = inquiryStore.status.publicationStatus
+  const inquiryStatus = inquiryStore.status.inquiryStatus
 
+  if (modStatus === 'pending' || inquiryStatus === 'waiting_approval' || pubStatus === 'pending') {
+    return {
+      type: 'info',
+      title: t('agora', 'Inquiry under moderation'),
+      text: t('agora', 'This inquiry is waiting for a moderator to review it. It cannot be modified until the review is complete.'),
+    }
+  }
+
+  if (modStatus === 'rejected') {
+    return {
+      type: 'error',
+      title: t('agora', 'Inquiry rejected'),
+      text: t('agora', 'A moderator rejected this inquiry. It cannot be modified. Contact a moderator if you think this is a mistake.'),
+    }
+  }
+
+  return null
+})
 
 // Computed for families and options
 const allInquiryTypes = computed<InquiryType[]>(() =>
@@ -331,7 +357,7 @@ watch(
 
 // Event subscriptions
 onMounted(async () => {
-  if (!canView) { 
+  if (!canView(context.value)) { 
         hasAccess.value = false
   	showError("Error you cannot view this inquiry !")
 	router.push({ name: 'list', params: { type: 'relevant' } })
@@ -437,7 +463,6 @@ const canEditInquiry = computed(() =>
    context.value ? canEdit(context.value) : false
 )
 
-
 // Format date
 const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDateString()
 
@@ -497,6 +522,14 @@ const expirationDate = computed({
 	<div v-if="isLoaded && hasAccess" class="inquiry-edit-view">
 		<!-- Cover Image Section -->
 
+		<NcNoteCard
+  v-if="moderationNotice"
+  :type="moderationNotice.type"
+  class="moderation-notice"
+>
+  <p class="moderation-notice__title"><strong>{{ moderationNotice.title }}</strong></p>
+  <p class="moderation-notice__text">{{ moderationNotice.text }}</p>
+</NcNoteCard>
 		<div v-if="inquiryStore.currentUserStatus?.isOwner" class="cover-image-section">
 			<input
 				id="cover-upload-input"
@@ -868,6 +901,13 @@ const expirationDate = computed({
     box-shadow: var(--squareux-card-shadow);
     backdrop-filter: blur(4px);
     background-color: rgba(var(--color-background-darker-rgb), 0.9);
+}
+
+.moderation-notice {
+  margin-bottom: 24px;
+
+  &__title { margin: 0 0 4px; }
+  &__text  { margin: 0; }
 }
 
 /* ============================================================

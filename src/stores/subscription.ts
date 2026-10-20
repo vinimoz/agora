@@ -54,36 +54,34 @@ export const useSubscriptionStore = defineStore('subscription', () => {
   /**
    *
    */
-  async function write() {
-    const sessionStore = useSessionStore()
+async function write() {
+  const sessionStore = useSessionStore()
 
-    let inquiryId = sessionStore.currentInquiryId
-    try {
-      const response = await (() => {
-        if (sessionStore.route.name === 'publicInquiry') {
-          return PublicAPI.setSubscription(sessionStore.route.params.token, !subscribed.value)
-        }
-        if (sessionStore.route.name === 'inquiry') {
-		console.log(" WE TAKE ROUTE SET SUB ", sessionStore.currentInquiryId)
-          return InquiriesAPI.setSubscription(sessionStore.currentInquiryId, !subscribed.value)
-        }
-
-        return null
-      })()
-
-      if (response) {
-        subscribed.value = response.data.subscribed
-        return
+  try {
+    const response = await (() => {
+      if (sessionStore.route.name === 'publicInquiry') {
+        return PublicAPI.setSubscription(sessionStore.route.params.token, !subscribed.value)
       }
-      subscribed.value = false
-    } catch (error: unknown) {
-      if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-        return
+      if (sessionStore.route.name === 'inquiry') {
+        return InquiriesAPI.setSubscription(sessionStore.currentInquiryId, !subscribed.value)
       }
-      Logger.error('Error on changing subscription', { error })
-      throw error
+      return null
+    })()
+
+    if (response) {
+      subscribed.value = response.data.subscribed
+      return
     }
+    subscribed.value = false
+  } catch (error: unknown) {
+    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+      return
+    }
+    Logger.error('Error on changing subscription', { error })
+    throw error
   }
+}
+
   return {
     subscribed,
     load,

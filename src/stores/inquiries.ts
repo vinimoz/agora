@@ -13,7 +13,6 @@ import { useRoute } from 'vue-router'
 import { Logger } from '../helpers/index.ts'
 import { InquiriesAPI } from '../Api/index.ts'
 
-import { Inquiry } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
 import { Chunking, StatusResults } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'

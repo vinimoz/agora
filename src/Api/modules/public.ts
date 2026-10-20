@@ -12,7 +12,6 @@ import type {
 	Comment,
 	Support,        
 	Share,
-	Sequence,
 } from '../../Types/index.js'
 
 
@@ -57,7 +56,8 @@ const publicInquiry = {
   addOption(
     shareToken: string,
     option: Option,
-    sequence: Sequence | null,
+    sequence: unknown | null,
+    inquiry?: Inquiry,
   ): Promise<
     AxiosResponse<{
       option: Option

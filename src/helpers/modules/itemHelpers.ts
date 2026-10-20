@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import type { Item } from '../../Types/index.ts'
-import type { Option } from '../../stores/option.ts'
-import type { Inquiry } from '../../stores/inquiry.ts'
+import type { Option } from '../../Types/option.types.ts'
+import type { Inquiry } from '../../Types/inquiry.types.ts'
 import { useAppSettingsStore } from '../../stores/appSettings.ts'
 import { getFamilyUIConfig, getLayoutForFamily } from './InquiryOptionHelper'
 

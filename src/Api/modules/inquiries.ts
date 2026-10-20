@@ -14,7 +14,7 @@ import type {
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { Share } from '../../Types/share.types.ts'
-import { ApiEmailAdressList, Comment, User } from '../../Types/index.ts'
+import { Comment, User } from '../../Types/index.ts'
 import { InquiryGroup, Option, Support } from '@/Types'
 import type { ModerationWorkflowStatus } from '../../Types/index.ts'
 

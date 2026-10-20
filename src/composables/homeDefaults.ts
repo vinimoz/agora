@@ -1,4 +1,4 @@
-import type { HomeConfig } from '../stores/appSettings'
+import type { HomeConfig } from '../Types/appSettings.types.ts'
 import heroImg from '../assets/img/hero.jpg'
 import promoImg from '../assets/img/promo.jpg'
 

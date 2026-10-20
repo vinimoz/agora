@@ -191,6 +191,7 @@ export interface InquiryFamily {
 	features: string[]
 	rules: string[]
 	actions: string[]
+	statuses: string[]
 	created: number
 }
 

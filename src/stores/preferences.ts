@@ -17,6 +17,7 @@ export type ViewMode =
 
 export type UserPreferences = {
   defaultViewInquiry: ViewMode
+  defaultDisplayMode?: string   // ← added
   inquiryCombo: number[]
   relevantOffset: number
   useNewInquiryDialogInNavigation: boolean

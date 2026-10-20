@@ -13,7 +13,7 @@ import type {
   LayoutTypeValue,
   DisplayZone,
 } from '../Types/experience.types'
-import type { InquiryGroup } from '../stores/inquiryGroups.types'
+import type { InquiryGroup } from '../Types/inquiryGroups.types'
 import { getExperienceArchitecture } from './experienceArchitecture'
 
 const NON_GROUP_EXPERIENCES: ExperienceKey[] = ['home']

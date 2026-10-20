@@ -21,6 +21,8 @@ import {
 	UserType,
 	InquiryOptionType,
 	SupportResult,
+	Comment,          // ← added: needed by updateAllCommentCounts
+	Inquiry,          // ← added: needed by parentInquiry return type
 } from '../Types/index.ts'
 import { getFamilyColor } from '../helpers/modules/InquiryOptionHelper.ts'
 
@@ -151,7 +153,6 @@ export const useOptionStore = defineStore('option', {
 			}
 		},
 
-
 		formattedExpireDate(): string {
 			if (this.configuration.expire > 0) {
 				const date = new Date(this.configuration.expire * 1000)
@@ -203,32 +204,37 @@ export const useOptionStore = defineStore('option', {
 		familyInfo(): { name: string; color: string; icon: string; description: string } | undefined {
 			if (!this.typeInfo?.family) return undefined
 
-				const sessionStore = useSessionStore()
-				const family = sessionStore.appSettings?.optionFamilyTab?.find(
-					(f) => f.family_type === this.typeInfo!.family
-				)
+			const sessionStore = useSessionStore()
+			const family = sessionStore.appSettings?.optionFamilyTab?.find(
+				(f) => f.family_type === this.typeInfo!.family
+			)
 
-				return {
-					name: family?.label || this.typeInfo.family,
-					color: getFamilyColor(this.typeInfo.family),
-					icon: family?.icon || 'File',
-					description: family?.description || this.typeInfo.description || '',
-				}
+			return {
+				name: family?.label || this.typeInfo.family,
+				color: getFamilyColor(this.typeInfo.family),
+				icon: family?.icon || 'File',
+				description: family?.description || this.typeInfo.description || '',
+			}
 		},
 
-		// Check if option has required misc fields
+		// Fixed: miscFields holds *values* (Record<string, …>), so the
+		// field *configs* must come from `this.typeInfo.fields`.
 		hasRequiredMiscFields(): boolean {
-			return this.miscFields.some((field) => field.required)
+			const fields = this.typeInfo?.fields
+			if (!Array.isArray(fields)) return false
+			return fields.some((field) => field.required === true)
 		},
 
-		// Check if all required misc fields are filled
+		// Fixed: iterate required field configs, read each value from miscFields.
 		allRequiredMiscFieldsFilled(): boolean {
-			return this.miscFields
-			.filter((field) => field.required)
-			.every((field) => {
-				const value = this.miscFields[field.key]
-				return value !== undefined && value !== null && value !== ''
-			})
+			const fields = this.typeInfo?.fields
+			if (!Array.isArray(fields)) return true
+			return fields
+				.filter((field) => field.required === true)
+				.every((field) => {
+					const value = this.miscFields[field.key]
+					return value !== undefined && value !== null && value !== ''
+				})
 		},
 
 		// Type-specific checks
@@ -263,7 +269,8 @@ export const useOptionStore = defineStore('option', {
 		},
 
 		// Parent inquiry information
-		parentInquiry(): int {
+		// Fixed: `int` is not a TS type → `Inquiry | null`
+		parentInquiry(): Inquiry | null {
 			const inquiryStore = useInquiryStore()
 			return inquiryStore.id === this.targetId ? inquiryStore : null
 		},
@@ -276,8 +283,8 @@ export const useOptionStore = defineStore('option', {
 		// Validation
 		isValid(): boolean {
 			if (this.text.trim() === '') return false
-				if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false
-					return true
+			if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false
+			return true
 		},
 
 		// Get default status from type definition
@@ -296,57 +303,64 @@ export const useOptionStore = defineStore('option', {
 			return baseStatuses
 		},
 
-		// Check if status can be changed to target status
-		canChangeStatusTo:
-			(state) =>
-		(targetStatus: string): boolean =>
-		state.availableStatuses.includes(targetStatus),
+		// Fixed: was `state.availableStatuses` — that's a *getter*, not state.
+		// Converted to a method so `this.availableStatuses` resolves correctly.
+		canChangeStatusTo(): (targetStatus: string) => boolean {
+			return (targetStatus: string) => this.availableStatuses.includes(targetStatus)
+		},
 	},
 
 	actions: {
-syncToCollectionStore(): void {
-  if (this.id === 0) return
-  const optionsStore = useOptionsStore()
-  optionsStore.updateOption({ option: this.optionData })
-},
+		syncToCollectionStore(): void {
+			if (this.id === 0) return
+			const optionsStore = useOptionsStore()
+			optionsStore.updateOption({ option: this.optionData })
+		},
 
-syncDeletionToCollectionStore(): void {
-  if (this.id === 0) return
-  const optionsStore = useOptionsStore()
-  optionsStore.removeOption(this.id)
-},
+		syncDeletionToCollectionStore(): void {
+			if (this.id === 0) return
+			const optionsStore = useOptionsStore()
+			optionsStore.removeOption(this.id)
+		},
 
 		reset(): void {
 			this.$reset()
 		},
 
+		// Fixed: singular store has no `options` array — delegate to plural store.
 		setOptions(options: Option[]) {
-			this.options = options.map((option) => ({
+			const optionsStore = useOptionsStore()
+			optionsStore.options = options.map((option) => ({
 				...option,
 				status: option.status || { countComments: 0 },
 			}))
 		},
 
+		// Fixed: same as above.
 		addOption(option: Option) {
-			this.options.push({
+			const optionsStore = useOptionsStore()
+			optionsStore.options.push({
 				...option,
 				status: option.status || { countComments: 0 },
 			})
 		},
 
+		// Fixed: same as above.
 		updateOptionCommentCount(optionId: number, count: number) {
-			const option = this.options.find((opt) => opt.id === optionId)
+			const optionsStore = useOptionsStore()
+			const option = optionsStore.options.find((opt) => opt.id === optionId)
 			if (option && option.status) {
 				option.status.countComments = count
 			}
 		},
 
-		// Bulk update all option comment counts
+		// Fixed: same as above.
 		updateAllCommentCounts(inquiryId: number, comments: Comment[]) {
-			this.options.forEach((option) => {
+			const optionsStore = useOptionsStore()
+			optionsStore.options.forEach((option) => {
 				const count = comments.filter(
 					(comment) =>
-					comment.inquiryId === inquiryId &&
+						comment.inquiryId === inquiryId &&
 						comment.optionId === option.id &&
 						comment.deleted === 0
 				).length
@@ -357,13 +371,13 @@ syncDeletionToCollectionStore(): void {
 			})
 		},
 
-		// Helper method to get option by ID
+		// Fixed: returns `.option` (was returning the wrapper object).
 		async getOptionById(optionId: number): Promise<Option | undefined> {
 			try {
 				if (optionId) {
 					const response = await OptionsAPI.getFullOption(optionId)
 					if (response) {
-						return response.data
+						return response.data?.option
 					}
 				}
 			} catch (error) {
@@ -526,7 +540,7 @@ syncDeletionToCollectionStore(): void {
 			}
 		},
 
-		async load(optionId: number | null = null): Promise<void> {
+		async load(optionId: number | null = null): Promise<unknown> {
 			const sessionStore = useSessionStore()
 
 			this.meta.status = 'loading'
@@ -543,11 +557,11 @@ syncDeletionToCollectionStore(): void {
 					sessionStore.currentUser.isOwner = true
 				else sessionStore.currentUser.isOwner = false
 
-					// Initialize type info after loading
-					this.initializeTypeInfo()
+				// Initialize type info after loading
+				this.initializeTypeInfo()
 
-					this.meta.status = 'loaded'
-					return response
+				this.meta.status = 'loaded'
+				return response
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
 					return
@@ -571,16 +585,24 @@ syncDeletionToCollectionStore(): void {
 			family: string
 			status?: string
 			miscFields?: Record<string, { key: string; value: string }>
+			owner?: string        // ← added: used at bottom of the method
 		}): Promise<Option | void> {
 			const inquiryStore = useInquiryStore()
 
-			// Validate parent if provided
+			// Validate parent if provided.
+			// Fixed: `parentOption.typeInfo` is not a runtime property — `typeInfo`
+			// is a getter on the *store*, not on plain `Option` data. Look it up
+			// from the session's option-type tab instead.
 			if (payload.parentId) {
 				const parentOption = await this.getOptionById(payload.parentId)
-				if (parentOption && parentOption.typeInfo) {
+				if (parentOption) {
+					const sessionStore = useSessionStore()
+					const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.find(
+						(opt: InquiryOptionType) => opt.option_type === parentOption.type
+					)
 					if (
-						parentOption.typeInfo.allowed_response &&
-						!parentOption.typeInfo.allowed_response.includes(payload.type)
+						parentTypeInfo?.allowed_response &&
+						!parentTypeInfo.allowed_response.includes(payload.type)
 					) {
 						showError(
 							t('agora', 'This option type cannot be added as a child to the selected parent')
@@ -593,16 +615,17 @@ syncDeletionToCollectionStore(): void {
 			try {
 				// Set defaults from type definition
 				const sessionStore = useSessionStore()
+				// Fixed: `OptionType` → `InquiryOptionType` (the correct imported type)
 				const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.find(
-					(opt: OptionType) => opt.option_type === payload.type
+					(opt: InquiryOptionType) => opt.option_type === payload.type
 				)
 
 				const defaultMiscFields: Record<string, { key: string; value: string }> = {}
 				if (typeInfo?.fields) {
 					const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : []
-					fields.forEach((field: { key: string; value: string }) => {
+					fields.forEach((field: { key: string; value: string; default?: unknown }) => {
 						if (field.default !== undefined) {
-							defaultMiscFields[field.key] = field.default
+							defaultMiscFields[field.key] = field.default as { key: string; value: string }
 						}
 					})
 				}
@@ -640,7 +663,8 @@ syncDeletionToCollectionStore(): void {
 			}
 		},
 
-		// Validate misc fields against type configuration
+		// Fixed: `miscFields` is a Record — iterate field *configs* from
+		// `typeInfo.fields` and read values from `this.miscFields`.
 		validateMiscFields(): { valid: boolean; errors: string[] } {
 			const errors: string[] = []
 
@@ -648,7 +672,12 @@ syncDeletionToCollectionStore(): void {
 				return { valid: true, errors }
 			}
 
-			this.miscFields.forEach((field) => {
+			const fields = this.typeInfo.fields
+			if (!Array.isArray(fields)) {
+				return { valid: true, errors }
+			}
+
+			fields.forEach((field) => {
 				if (field.required) {
 					const value = this.miscFields[field.key]
 					if (value === undefined || value === null || value === '') {
@@ -785,8 +814,8 @@ syncDeletionToCollectionStore(): void {
 				this.childs.push(newChild)
 
 				const optionsStore = useOptionsStore()
-				optionsStore.addOption(newChild)     
-				this.syncToCollectionStore()	
+				optionsStore.addOption(newChild)
+				this.syncToCollectionStore()
 				return newChild
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -813,10 +842,11 @@ syncDeletionToCollectionStore(): void {
 				let confirmMessage = t('agora', 'Are you sure you want to delete this option?')
 
 				if (this.hasChildren) {
-					confirmMessage = t('agora',
-							   'This option has {count} child options. Deleting this option will also delete all its children permanently.',
-					{ count: this.childs.length }
-							  )
+					confirmMessage = t(
+						'agora',
+						'This option has {count} child options. Deleting this option will also delete all its children permanently.',
+						{ count: this.childs.length }
+					)
 				}
 
 				if (this.isPublished || this.isClosed || this.hasChildren) {
@@ -824,23 +854,22 @@ syncDeletionToCollectionStore(): void {
 					if (!confirmed) return
 				}
 
-			await OptionsAPI.deleteOption(this.id)
+				await OptionsAPI.deleteOption(this.id)
 
-			emit(Event.DeleteOption, {
-				optionId: this.id,
-				message: this.hasChildren
-					? t('agora', 'Option and all children deleted')
-					: t('agora', 'Option deleted'),
-			})
+				emit(Event.DeleteOption, {
+					optionId: this.id,
+					message: this.hasChildren
+						? t('agora', 'Option and all children deleted')
+						: t('agora', 'Option deleted'),
+				})
 
-			if (sessionStore.currentOptionId === this.id) {
-				this.reset()
-			}
+				if (sessionStore.currentOptionId === this.id) {
+					this.reset()
+				}
 
-			if (inquiryStore.id) {
-				await inquiryStore.load()
-			}
-
+				if (inquiryStore.id) {
+					await inquiryStore.load()
+				}
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
 					return
@@ -850,7 +879,9 @@ syncDeletionToCollectionStore(): void {
 					optionId: this.id,
 				})
 
-				if (error.response?.status === 403) {
+				// Fixed: cast unknown → AxiosError before accessing `.response`
+				const axiosError = error as AxiosError
+				if (axiosError.response?.status === 403) {
 					showError(t('agora', 'You do not have permission to delete this option'))
 				} else {
 					showError(t('agora', 'Error deleting option'))
@@ -907,36 +938,39 @@ syncDeletionToCollectionStore(): void {
 			debouncedLoad()
 		},
 
-		// Enhanced updateMiscField with type validation
+		// Fixed: `Array.isArray(this.miscFields)` is always false (miscFields is
+		// a Record) → this action was a silent no-op. Field config now comes
+		// from `typeInfo.fields`, and number validation checks `value.value`.
 		async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {
-			if (this.miscFields && Array.isArray(this.miscFields)) {
-				const fieldConfig = this.miscFields.find((f) => f.key === key)
-				if (fieldConfig) {
-					if (fieldConfig.type === 'number' && value && isNaN(Number(value))) {
-						showError(t('agora', '{field} must be a number', { field: fieldConfig.label }))
-						return
-					}
-
-					if (fieldConfig.options && !fieldConfig.options.some((opt) => opt.value === value)) {
-						showError(t('agora', 'Invalid value for {field}', { field: fieldConfig.label }))
-						return
-					}
+			const fieldConfig = this.typeInfo?.fields?.find((f) => f.key === key)
+			if (fieldConfig) {
+				if (fieldConfig.type === 'number' && value?.value && isNaN(Number(value.value))) {
+					showError(t('agora', '{field} must be a number', { field: fieldConfig.label }))
+					return
 				}
 
-				try {
-					await OptionsAPI.updateOptionMiscField(this.id, { key, value })
-					this.miscFields[key] = value
-					this.syncToCollectionStore()
-				} catch (error) {
-					if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-						return
-					}
-					Logger.error('Error updating option misc field:', {
-						error,
-						state: this.$state,
-					})
-					throw error
+				if (
+					fieldConfig.options &&
+					!fieldConfig.options.some((opt) => opt.value === value.value)
+				) {
+					showError(t('agora', 'Invalid value for {field}', { field: fieldConfig.label }))
+					return
 				}
+			}
+
+			try {
+				await OptionsAPI.updateOptionMiscField(this.id, { key, value })
+				this.miscFields[key] = value
+				this.syncToCollectionStore()
+			} catch (error) {
+				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+					return
+				}
+				Logger.error('Error updating option misc field:', {
+					error,
+					state: this.$state,
+				})
+				throw error
 			}
 		},
 	},

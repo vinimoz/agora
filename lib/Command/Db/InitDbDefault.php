@@ -37,6 +37,15 @@ class InitDbDefault extends Command
 			'description' => 'Citizen-driven processes such as debates, proposals, petitions, projects, and deliberations.',
 			'icon' => 'AccountGroup',
 			'sort_order' => 1,
+			   'statuses' => [
+            ['value' => 'draft',              'label' => 'Draft',              'color' => '#949494'],
+            ['value' => 'under_process',      'label' => 'Under Process',      'color' => '#f39c12'],
+            ['value' => 'discussion_open',    'label' => 'Discussion',         'color' => '#3498db'],
+            ['value' => 'collecting_support', 'label' => 'Collecting Support', 'color' => '#9b59b6'],
+            ['value' => 'concluded',          'label' => 'Concluded',          'color' => '#27ae60'],
+            ['value' => 'rejected',           'label' => 'Rejected',           'color' => '#e74c3c'],
+            ['value' => 'archived',           'label' => 'Archived',           'color' => '#7f8c8d'],
+        ],
 			'created' => '',
 		],
 		[
@@ -45,6 +54,12 @@ class InitDbDefault extends Command
 			'description' => 'Law proposals, amendments, constitutional workshops, and official legislative responses.',
 			'icon' => 'Gavel',
 			'sort_order' => 2,
+			'statuses' => [
+            ['value' => 'draft',        'label' => 'Draft',        'color' => '#949494'],
+            ['value' => 'under_review', 'label' => 'Under Review', 'color' => '#f39c12'],
+            ['value' => 'accepted',     'label' => 'Accepted',     'color' => '#27ae60'],
+            ['value' => 'rejected',     'label' => 'Rejected',     'color' => '#e74c3c'],
+        ],
 			'created' => '',
 		],
 		[
@@ -53,6 +68,12 @@ class InitDbDefault extends Command
 			'description' => 'Administrative requests and grievances addressed to institutions.',
 			'icon' => 'OfficeBuilding',
 			'sort_order' => 3,
+			'statuses' => [
+            ['value' => 'submitted',     'label' => 'Submitted',     'color' => '#3498db'],
+            ['value' => 'under_process', 'label' => 'Under Process', 'color' => '#f39c12'],
+            ['value' => 'resolved',      'label' => 'Resolved',      'color' => '#27ae60'],
+            ['value' => 'unresolved',    'label' => 'Unresolved',    'color' => '#e74c3c'],
+        ],
 			'created' => '',
 		],
 		[
@@ -61,6 +82,14 @@ class InitDbDefault extends Command
 			'description' => 'Social and citizen service requests such as housing, childcare, or scholarships.',
 			'icon' => 'Offer',
 			'sort_order' => 4,
+			 'statuses' => [
+            ['value' => 'submitted',     'label' => 'Submitted',     'color' => '#3498db'],
+            ['value' => 'under_process', 'label' => 'Under Process', 'color' => '#f39c12'],
+            ['value' => 'resolved',      'label' => 'Resolved',      'color' => '#27ae60'],
+            ['value' => 'unresolved',    'label' => 'Unresolved',    'color' => '#e74c3c'],
+            ['value' => 'expired',       'label' => 'Expired',       'color' => '#95a5a6'],
+        ],
+
 			'created' => '',
 		],
 		[
@@ -69,6 +98,14 @@ class InitDbDefault extends Command
 			'description' => 'Assemblies and grouped consultations on themes or topics, could be used for submit it to polls',
 			'icon' => 'AccountMultiple',
 			'sort_order' => 5,
+			'statuses' => [
+            ['value' => 'planned',    'label' => 'Planned',    'color' => '#949494'],
+            ['value' => 'open',       'label' => 'Open',       'color' => '#3498db'],
+            ['value' => 'in_session', 'label' => 'In Session', 'color' => '#f39c12'],
+            ['value' => 'concluded',  'label' => 'Concluded',  'color' => '#27ae60'],
+            ['value' => 'closed',     'label' => 'Closed',     'color' => '#7f8c8d'],
+            ['value' => 'archived',   'label' => 'Archived',   'color' => '#95a5a6'],
+        ],
 			'created' => '',
 		],
 		[
@@ -77,6 +114,13 @@ class InitDbDefault extends Command
 			'description' => 'Citizen oversight, transparency mechanisms and investigation processes to prevent corruption and ensure accountability.',
 			'icon' => 'EyeCheck',
 			'sort_order' => 6,
+			'statuses' => [
+            ['value' => 'reported',            'label' => 'Reported',       'color' => '#3498db'],
+            ['value' => 'under_investigation', 'label' => 'Investigating',  'color' => '#f39c12'],
+            ['value' => 'resolved',            'label' => 'Resolved',       'color' => '#27ae60'],
+            ['value' => 'dismissed',           'label' => 'Dismissed',      'color' => '#95a5a6'],
+            ['value' => 'unresolved',          'label' => 'Unresolved',     'color' => '#e74c3c'],
+        ],
 			'created' => '',
 		],
 		[
@@ -85,6 +129,12 @@ class InitDbDefault extends Command
 			'description' => 'Citizen oversight, accountability, audits and performance evaluation of public entities.',
 			'icon' => 'ShieldAccount',
 			'sort_order' => 8,
+			 'statuses' => [
+            ['value' => 'submitted',     'label' => 'Submitted',     'color' => '#3498db'],
+            ['value' => 'under_review',  'label' => 'Under Review',  'color' => '#f39c12'],
+            ['value' => 'resolved',      'label' => 'Resolved',      'color' => '#27ae60'],
+            ['value' => 'unresolved',    'label' => 'Unresolved',    'color' => '#e74c3c'],
+        ],
 			'created' => '',
 		],
 		[
@@ -93,6 +143,12 @@ class InitDbDefault extends Command
 			'description' => 'Responses and contributions from official entities such as city hall, experts, or commissions.',
 			'icon' => 'Seal',
 			'sort_order' => 7,
+			 'statuses' => [
+            ['value' => 'draft',     'label' => 'Draft',        'color' => '#949494'],
+            ['value' => 'review',    'label' => 'Under Review', 'color' => '#f39c12'],
+            ['value' => 'published', 'label' => 'Published',    'color' => '#27ae60'],
+            ['value' => 'archived',  'label' => 'Archived',     'color' => '#7f8c8d'],
+        ],
 			'created' => '',
 		],
 	];
@@ -5257,8 +5313,8 @@ class InitDbDefault extends Command
 
 	    $insert = $this->connection->prepare(
 		'INSERT INTO `*PREFIX*' . InquiryFamily::TABLE . '`
-	    (`family_type`, `label`, `description`, `icon`, `ui`, `rules`, `features`, `actions`, `sort_order`, `created`)
-	    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+	    (`family_type`, `label`, `description`, `icon`, `ui`, `rules`, `features`, `actions`, `sort_order`, `statuses`, `created`)
+	    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 	    );
 
 	    try {
@@ -5269,6 +5325,7 @@ class InitDbDefault extends Command
 		$rules = !empty($family['rules']) ? json_encode($family['rules']) : '{}';
 		$features = !empty($family['features']) ? json_encode($family['features']) : '[]';
 		$actions = !empty($family['actions']) ? json_encode($family['actions']) : '[]';
+		$statuses = !empty($family['statuses']) ? json_encode($family['statuses']) : '[]';
 
 		$insert->execute(
 		    [
@@ -5281,6 +5338,7 @@ class InitDbDefault extends Command
 			$features,
 			$actions,
 			$family['sort_order'] ?? 0,
+			$statuses,
 			$created,
 		    ]
 		);

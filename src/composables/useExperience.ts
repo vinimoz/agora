@@ -6,7 +6,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups'
-import type { InquiryGroup } from '../stores/inquiryGroups.types'
+import type { InquiryGroup } from '../Types/inquiryGroups.types'
 
 import {
   type DisplayType,

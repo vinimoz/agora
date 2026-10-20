@@ -60,7 +60,7 @@ import { computed, type Component } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { NavigationIcons } from '../../utils/icons'
-import type { InquiryGroup } from '../../stores/inquiryGroups.types'
+import type { InquiryGroup } from '../../Types/inquiryGroups.types'
 
 /**
  * InquiryGroupVignette

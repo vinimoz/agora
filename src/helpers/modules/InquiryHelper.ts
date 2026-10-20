@@ -8,7 +8,7 @@ import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 import type { useInquiryStore } from '../../stores/inquiry.ts'
 import type { useAppSettingsStore } from '../../stores/appSettings.ts'
 import type { InquiryStatus, InquiryType } from '../../Types/index.ts'
-import type { InquiryGroupType } from '../stores/inquiryGroups.types.ts'
+import type { InquiryGroupType } from '../../Types/inquiryGroups.types.ts'
 
 export interface InquiryFamily {
   id: number | string

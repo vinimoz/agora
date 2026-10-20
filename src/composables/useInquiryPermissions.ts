@@ -4,7 +4,7 @@
  */
 
 import { computed, Ref } from 'vue'
-import { Inquiry } from '../stores/inquiry.ts'
+import { Inquiry } from '../Types/inquiry.ts'
 import {
   createPermissionContextForContent,
   ContentType,

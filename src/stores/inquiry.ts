@@ -344,6 +344,7 @@ export const useInquiryStore = defineStore('inquiry', {
             return PublicAPI.getInquiry(sessionStore.route.params.token)
           }
           if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'page') {
+            console.log(" TOOOOOOOO LATE ",inquiryId)
             return InquiriesAPI.getFullInquiry(inquiryId ?? sessionStore.currentInquiryId)
           }
           return Promise.resolve(null)
@@ -365,7 +366,7 @@ export const useInquiryStore = defineStore('inquiry', {
         supportResultStore.setResults(response.data.supportResult || [])
         await supportEngineStore.initializeFromInquiry(this.id, response.data.supportEngine)
         this.configuration.supportEngine = response.data.supportEngine
-        this.status.supportResult = response.data.supportResult
+       // this.status.supportResult = response.data.supportResult
         inquiriesStore.setFamilyType(this.family)
 
         if (sessionStore.currentUser?.id && inquiry.owner?.id === sessionStore.currentUser.id) {

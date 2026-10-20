@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { AxiosResponse } from '@nextcloud/axios'
+import { getRequestToken } from '@nextcloud/auth'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import type { Attachment } from '../../stores/attachments.js'
 
@@ -14,15 +15,17 @@ const attachments = {
   ): Promise<AxiosResponse<{ attachment: Attachment }>> {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('coverId', coverId)
-    
+    // Fixed: FormData.append only accepts string | Blob
+    formData.append('coverId', coverId ? '1' : '0')
+
     return httpInstance.request({
       method: 'POST',
       url: `inquiry/${inquiryId}/attachment`,
       data: formData,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        requesttoken: OC.requestToken || '', // Token CSRF for Nextcloud
+        // Fixed: `OC` was not typed / not in scope; use @nextcloud/auth
+        requesttoken: getRequestToken() || '',
       },
       cancelToken:
         cancelTokenHandlerObject[this.uploadAttachment.name].handleRequestCancellation().token,
@@ -36,18 +39,19 @@ const attachments = {
   ): Promise<AxiosResponse<{ attachment: Attachment }>> {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('coverId', coverId)
-    
+    formData.append('coverId', coverId ? '1' : '0')
+
     return httpInstance.request({
       method: 'POST',
       url: `group/${groupId}/attachment`,
       data: formData,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        requesttoken: OC.requestToken || '', // Token CSRF for Nextcloud
+        requesttoken: getRequestToken() || '',
       },
+      // Fixed: was `this.uploadAttachment.name` (copy-paste bug)
       cancelToken:
-        cancelTokenHandlerObject[this.uploadAttachment.name].handleRequestCancellation().token,
+        cancelTokenHandlerObject[this.uploadGroupAttachment.name].handleRequestCancellation().token,
     })
   },
 

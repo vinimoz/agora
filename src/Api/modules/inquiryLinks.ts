@@ -4,14 +4,27 @@
  */
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import type { InquiryLink, CreateLinkData, UpdateLinkData, CreateAppResourceData } from '../stores/inquiryLink.ts'
+// Fixed: wrong path (`../stores/inquiryLink.ts` → `../../stores/inquiryLinks.ts`)
+import type {
+  InquiryLink,
+  CreateLinkData as StoreCreateLinkData,
+  UpdateLinkData as StoreUpdateLinkData,
+  CreateAppResourceData,
+} from '../../stores/inquiryLinks.ts'
 
+// The store's CreateLinkData / UpdateLinkData do not declare `metadata`,
+// but this API sends it as part of the request body. Extend locally so
+// the API compiles without requiring a simultaneous store edit.
+// The store's type definitions should be updated to include
+// `metadata?: string` as a follow-up.
+interface CreateLinkData extends StoreCreateLinkData {
+  metadata?: string
+}
+interface UpdateLinkData extends StoreUpdateLinkData {
+  metadata?: string
+}
 
 const inquiryLinks = {
-  /**
-   * Get all links for an inquiry
-   * @param inquiryId
-   */
   getLinksByInquiry(inquiryId: number): Promise<AxiosResponse<{ links: InquiryLink[] }>> {
     return httpInstance.request({
       method: 'GET',
@@ -21,15 +34,9 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Get links by target
-   * @param targetApp
-   * @param targetType
-   * @param targetId
-   */
   getLinksByTarget(
-    targetApp: string, 
-    targetType: string, 
+    targetApp: string,
+    targetType: string,
     targetId: string
   ): Promise<AxiosResponse<{ links: InquiryLink[] }>> {
     return httpInstance.request({
@@ -40,10 +47,6 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Get links by target application
-   * @param targetApp
-   */
   getLinksByTargetApp(targetApp: string): Promise<AxiosResponse<{ links: InquiryLink[] }>> {
     return httpInstance.request({
       method: 'GET',
@@ -53,10 +56,6 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Get a specific link
-   * @param id
-   */
   getLink(id: number): Promise<AxiosResponse<{ link: InquiryLink }>> {
     return httpInstance.request({
       method: 'GET',
@@ -66,10 +65,6 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Create a new link
-   * @param data
-   */
   createLink(data: CreateLinkData): Promise<AxiosResponse<{ link: InquiryLink }>> {
     return httpInstance.request({
       method: 'POST',
@@ -87,13 +82,8 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Create multiple links for an inquiry
-   * @param inquiryId
-   * @param links
-   */
   createMultipleLinks(
-    inquiryId: number, 
+    inquiryId: number,
     links: Omit<CreateLinkData, 'inquiryId'>[]
   ): Promise<AxiosResponse<{ links: InquiryLink[] }>> {
     return httpInstance.request({
@@ -104,11 +94,6 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Update a link
-   * @param id
-   * @param data
-   */
   updateLink(id: number, data: UpdateLinkData): Promise<AxiosResponse<{ link: InquiryLink }>> {
     return httpInstance.request({
       method: 'PUT',
@@ -124,10 +109,6 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Delete a link
-   * @param id
-   */
   deleteLink(id: number): Promise<AxiosResponse<{ link: InquiryLink }>> {
     return httpInstance.request({
       method: 'DELETE',
@@ -136,10 +117,6 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Delete all links for an inquiry
-   * @param inquiryId
-   */
   deleteLinksByInquiry(inquiryId: number): Promise<AxiosResponse<{ deleted: boolean }>> {
     return httpInstance.request({
       method: 'DELETE',
@@ -148,67 +125,38 @@ const inquiryLinks = {
     })
   },
 
-  /**
-   * Create a Poll resource
-   * @param data
-   */
   createPoll(data: CreateAppResourceData): Promise<AxiosResponse<{ app: string; id: number }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'link/poll',
-      data: {
-        title: data.title,
-        description: data.description || '',
-      },
+      data: { title: data.title, description: data.description || '' },
       cancelToken: cancelTokenHandlerObject[this.createPoll.name].handleRequestCancellation().token,
     })
   },
 
-  /**
-   * Create a Form resource
-   * @param data
-   */
   createForm(data: CreateAppResourceData): Promise<AxiosResponse<{ app: string; id: number }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'link/form',
-      data: {
-        title: data.title,
-        description: data.description || '',
-      },
+      data: { title: data.title, description: data.description || '' },
       cancelToken: cancelTokenHandlerObject[this.createForm.name].handleRequestCancellation().token,
     })
   },
 
-  /**
-   * Create a Deck card resource
-   * @param data
-   */
   createDeckCard(data: CreateAppResourceData): Promise<AxiosResponse<{ app: string; id: number }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'link/deck-card',
-      data: {
-        title: data.title,
-        description: data.description || '',
-        stackId: data.stackId || 1,
-      },
+      data: { title: data.title, description: data.description || '', stackId: data.stackId || 1 },
       cancelToken: cancelTokenHandlerObject[this.createDeckCard.name].handleRequestCancellation().token,
     })
   },
 
-  /**
-   * Create a Cospend expense resource
-   * @param data
-   */
   createCospendExpense(data: CreateAppResourceData): Promise<AxiosResponse<{ app: string; id: number }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'link/cospend-expense',
-      data: {
-        amount: data.amount || 0,
-        description: data.description || '',
-      },
+      data: { amount: data.amount || 0, description: data.description || '' },
       cancelToken: cancelTokenHandlerObject[this.createCospendExpense.name].handleRequestCancellation().token,
     })
   },

@@ -6,7 +6,7 @@
 // @see Complete Vocabulary Definition - Single Source of Truth
 // ============================================================
 
-import type { ScopeFilter } from '../Types/experience.types'
+import type { ScopeFilter } from '../../Types/experience.types'
 
 /**
  * Apply filters to a data array
