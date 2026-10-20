@@ -64,7 +64,7 @@ OC.L10N.register(
     "{actor} has changed an option" : "{actor} が選択肢を変更しました",
     "You have confirmed option {optionTitle}" : "あなたは選択肢 {optionTitle} を確認しました",
     "{actor} has confirmed option {optionTitle}" : "{actor}  が選択肢 {optionTitle} を確認しました",
-    "You have unconfirmed option {optionTitle}" : "あなたは投票 {optionTitle} の選択肢 {optionTitle} が未確認です",
+    "You have unconfirmed option {optionTitle}" : "あなたは投票 {optionTitle} の選択肢",
     "{actor} has unconfirmed option {optionTitle}" : "{actor} には未確認の選択肢 {optionTitle} があります",
     "You have deleted option {optionTitle}" : "あなたは選択肢 {optionTitle}を削除しました",
     "{actor} has deleted option {optionTitle}" : "{actor} は選択肢 {optionTitle} を削除しました",

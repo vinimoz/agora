@@ -522,7 +522,7 @@ OC.L10N.register(
     "Failed to upload {file}" : "{file} yüklenemedi",
     "never" : "asla",
     "Open" : "Aç",
-    "Private" : "Kişisel",
+    "Private" : "Özel",
     "Access level updated" : "Erişim düzeyi güncellendi",
     "Select cover image" : "Kapak görselini seçin",
     "Inquiry cover image" : "Araştırma kapak görseli",
