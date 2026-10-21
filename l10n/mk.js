@@ -158,6 +158,7 @@ OC.L10N.register(
     "Label" : "Ознака",
     "Required" : "Задолжително",
     "Actions" : "Акции",
+    "Family" : "Фамилија",
     "Privacy policy link" : "Политика за приватност",
     "Show details" : "Прикажи детали",
     "{n} groups" : "{n} групи",

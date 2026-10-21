@@ -1646,7 +1646,7 @@ OC.L10N.register(
     "Email address deleted" : "E-posta adresi silindi",
     "Error deleting email address {emailAddress}" : "{emailAddress} e-posta adresi silinirken sorun çıktı",
     "Invitation resent to {emailAddress}" : "Davet {emailAddress} adresine yeniden gönderildi",
-    "Mail could not be resent to {emailAddress}" : "Çağrı {emailAddress} adresine yeniden gönderilemedi",
+    "Mail could not be resent to {emailAddress}" : "E-posta {emailAddress} adresine yeniden gönderilemedi",
     "Your inquiries are reset" : "Araştırmalarınız sıfırlandı",
     "Error while resetting inquiries" : "Araştırmalarınız sıfırlanırken sorun çıktı",
     "View mode" : "Görünüm kipi",
