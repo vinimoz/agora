@@ -15,6 +15,12 @@ import type { Option, SupportEngine, SupportValue } from '../Types/index'
 // import { useTrending } from './useTrending'
 import { ENGINE_DEFINITIONS } from '../Types/votingType'
 
+export interface MajorityJudgmentSummary {
+  median: string
+  total: number
+  distribution: [string, number][]
+}
+
 export interface VoteContext {
   loadingEngines: Ref<boolean>
   availableEngines: ComputedRef<SupportEngine[]>
@@ -39,6 +45,7 @@ export interface VoteContext {
 
   totalVotes: ComputedRef<number>
   getOptionVoteCount: (optionId: number) => number
+  getOptionMajorityJudgment: (optionId: number) => MajorityJudgmentSummary | null
   getPercentage: (option: Option, total?: number) => number
   getRankedOptions: (options: Option[]) => Option[]
   getOptionRank: (optionId: number) => number | null
@@ -168,7 +175,7 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
 
   const canVote = computed(() => {
       const engine = currentEngine.value
-      if (!engine || engine.status !== 'active') return false
+      if (!engine || engine.status !== 'active' || inquiryStore.isClosed) return false
           if (!isEngineMulti.value && hasUserVoted.value) return false
               return true
   })
@@ -676,6 +683,20 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
   const resultsMap = ref<Map<number, unknown>>(new Map())
   const engineResult = ref<SupportResultData>(null) // store the inquiry-level result for complex engines
 
+  // Median and count per grade of an option, in the order of the configured grades
+  const getOptionMajorityJudgment = (optionId: number): MajorityJudgmentSummary | null => {
+      const res = [resultsMap.value.get(optionId), engineResult.value]
+          .find((r) => r?.type === 'majority_judgment' && r.options?.[optionId])
+      if (!res) return null
+      const opt = res.options[optionId]
+      const grades: string[] = res.grades ?? Object.keys(opt.grade_distribution ?? {})
+      return {
+          median: opt.median_grade ?? '',
+          total: opt.total_votes ?? 0,
+          distribution: grades.map((g) => [g, opt.grade_distribution?.[g] ?? 0]),
+      }
+  }
+
   const getOptionVoteCount = (optionId: number): number => {
       if (effectiveEngineId.value === 'trending') {
           return getTrendingScore(optionId)
@@ -1100,6 +1121,7 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
 
       totalVotes,
       getOptionVoteCount,
+      getOptionMajorityJudgment,
       getOptionRank,
       getPercentage,
       getRankedOptions,

@@ -17,6 +17,8 @@ build_source_dir=$(build_dir)/source
 appstore_build_dir=$(build_dir)/artifacts
 appstore_package_name=$(appstore_build_dir)/$(app_name)
 nc_cert_dir=$(HOME)/.nextcloud/certificates
+# occ of a Nextcloud server, to sign the code: make appstore occ=/path/to/server/occ
+occ=
 composer=$(shell which composer 2> /dev/null || echo $(build_tools_dir)/composer.phar)
 version=$(shell node -p -e "require('./package.json').version")
 
@@ -87,11 +89,17 @@ ifeq (,$(wildcard $(composer)))
 endif
 
 # Builds the source package for the appstore
-# signs, if certificate is present
+# signs the code and the package, if occ and the certificate are present
 package: clean
 	mkdir -p $(build_source_dir)
 	mkdir -p $(appstore_build_dir)
-	rsync -zarh $(project_dir)/ --files-from="$(project_dir)/sync_list.txt" --exclude="vendor/bin" $(build_source_dir)/$(app_name)
+	rsync -zarh $(project_dir)/ --files-from="$(project_dir)/sync_list.txt" --exclude="vendor/bin" --exclude="appinfo/signature.json" $(build_source_dir)/$(app_name)
+	@if [ -n "$(occ)" ] && [ -f $(nc_cert_dir)/$(app_name).key ] && [ -f $(nc_cert_dir)/$(app_name).crt ]; then \
+		echo "Signing code..."; \
+		php $(occ) integrity:sign-app --privateKey=$(nc_cert_dir)/$(app_name).key --certificate=$(nc_cert_dir)/$(app_name).crt --path=$(abspath $(build_source_dir)/$(app_name)); \
+	else \
+		echo "Code not signed: set occ= and put $(app_name).key and $(app_name).crt in $(nc_cert_dir)"; \
+	fi
 	tar -czf $(appstore_package_name).tar.gz --directory="$(build_source_dir)" $(app_name)
 	@if [ -f $(nc_cert_dir)/$(app_name).key ]; then \
 		echo "Signing package..."; \

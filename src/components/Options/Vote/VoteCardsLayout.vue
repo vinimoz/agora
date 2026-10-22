@@ -14,6 +14,7 @@
         :has-user-voted-for="hasUserVotedFor"
         :vote-count="getOptionVoteCount(option.id)"
         :percentage="getPercentage(option)"
+        :majority-judgment="getOptionMajorityJudgment?.(option.id)"
         :is-selected="isSelectedForVote(option.id)"
         :current-rank="rankings[option.id]"
         :current-grade="grades[option.id]"
@@ -89,6 +90,7 @@ import VoteCard from './VoteCard.vue'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import type { Option, SupportEngine } from '../../../Types/index'
 import type { SupportValue } from '../../../Types/votingType'
+import type { MajorityJudgmentSummary } from '../../../composables/useVoteContext'
 
 const props = defineProps<{
   options: Option[]
@@ -107,6 +109,7 @@ const props = defineProps<{
   voteSelectionInfo: string | null
   getOptionVoteCount: (optionId: number) => number
   getPercentage: (option: Option) => number
+  getOptionMajorityJudgment?: (optionId: number) => MajorityJudgmentSummary | null
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
   getUserVoteValueForOption: (optionId: number) => SupportValue | null

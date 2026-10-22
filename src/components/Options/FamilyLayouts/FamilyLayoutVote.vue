@@ -271,9 +271,9 @@ const {
     selectEngine,
 } = useVoteContext(props.inquiryId)
 
-// One block per active engine, only when each option belongs to exactly one of them.
+// One block per active or closed engine, only when each option belongs to exactly one of them.
 const stackedEngines = computed<SupportEngine[]>(() => {
-    const active = availableEngines.value.filter((e) => e.status === 'active')
+    const active = availableEngines.value.filter((e) => e.status !== 'draft')
     if (
         active.length < 2 ||
         active.some((e) => e.engine === 'phased_voting' || !e.target_ids?.length)
@@ -349,9 +349,9 @@ onBeforeRouteLeave(async () => {
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
 const hidesResults = (engine?: SupportEngine | null) =>
-    engine?.config?.results_visibility === 'closed' &&
-    engine?.status !== 'closed' &&
-    !inquiryStore.permissions.edit
+    !inquiryStore.permissions.edit &&
+    (!inquiryStore.permissions.seeResults ||
+        (engine?.config?.results_visibility === 'closed' && engine?.status !== 'closed'))
 const resultsHidden = computed(() => hidesResults(currentEngine.value))
 // Stacked mode keeps the Results tab while one block still shows its results.
 const allowedLayouts = computed(() => {

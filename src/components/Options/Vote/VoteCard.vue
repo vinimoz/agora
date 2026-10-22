@@ -33,7 +33,12 @@
       
       <!-- Support and comments stats (when not voting mode) -->
       <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div v-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
+        <div v-if="!hideResults && majorityJudgment" class="support-stats" @click.stop="openSupportsModal">
+          <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
+          <span class="vote-count">{{ translateGrade(majorityJudgment.median) }}</span>
+          <span class="percentage">{{ n('agora', '%n voter', '%n voters', majorityJudgment.total) }}</span>
+        </div>
+        <div v-else-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
           <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
@@ -45,8 +50,27 @@
         </div>
       </div>
 
+      <!-- Majority judgment: one segment per grade, in the configured order -->
+      <div v-if="(!canVote || hasUserVoted) && !hideResults && majorityJudgment?.total" class="grade-distribution">
+        <div class="grade-bar">
+          <div
+            v-for="([grade, count], index) in majorityJudgment.distribution"
+            :key="grade"
+            class="grade-segment"
+            :style="{ width: (count / majorityJudgment.total) * 100 + '%', opacity: 1 - index / majorityJudgment.distribution.length }"
+            :title="`${translateGrade(grade)} : ${count}`"
+          />
+        </div>
+        <ul class="grade-legend">
+          <li v-for="([grade, count], index) in majorityJudgment.distribution" :key="grade">
+            <span class="grade-dot" :style="{ opacity: 1 - index / majorityJudgment.distribution.length }" />
+            {{ translateGrade(grade) }} {{ count }}
+          </li>
+        </ul>
+      </div>
+
       <!-- Progress bar for voting mode -->
-      <div v-if="(!canVote || hasUserVoted) && !hideResults" class="progress-bar-container">
+      <div v-else-if="(!canVote || hasUserVoted) && !hideResults && !majorityJudgment" class="progress-bar-container">
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: percentage + '%' }" />
         </div>
@@ -102,6 +126,21 @@
           :placeholder="openedByGrade ? t('agora', 'Under which conditions? Why?') : undefined"
         />
       </div>
+      <ul v-if="ownComments.length" class="own-comments">
+        <li v-for="comment in ownComments" :key="comment.id">
+          <span>{{ comment.comment }}</span>
+          <NcButton
+            variant="tertiary"
+            :aria-label="t('agora', 'Delete comment')"
+            :title="t('agora', 'Delete comment')"
+            @click="deleteComment(comment)"
+          >
+            <template #icon>
+              <DeleteIcon :size="16" />
+            </template>
+          </NcButton>
+        </li>
+      </ul>
     </div>
 
     <!-- Footer with owner info -->
@@ -127,7 +166,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -135,6 +174,10 @@ import VoteInput from './VoteInput.vue'
 import CommentAdd from '../../Comments/CommentAdd.vue'
 import { useSessionStore } from '../../../stores/session'
 import { useInquiryStore } from '../../../stores/inquiry'
+import { useCommentsStore } from '../../../stores/comments'
+import { showError } from '@nextcloud/dialogs'
+import DeleteIcon from 'vue-material-design-icons/Delete.vue'
+import type { Comment } from '../../../stores/comments.types'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import {
   getOptionTypeLabel,
@@ -144,6 +187,8 @@ import {
   allowsComments
 } from '../../../helpers/modules/InquiryOptionHelper'
 
+import { translateGrade } from '../../../Types/votingType'
+import type { MajorityJudgmentSummary } from '../../../composables/useVoteContext'
 import type { Option, SupportValue } from '../../../Types/index'
 
 const props = defineProps<{
@@ -167,6 +212,7 @@ const props = defineProps<{
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
   totalOptions?: number
   hideResults?: boolean
+  majorityJudgment?: MajorityJudgmentSummary | null
 }>()
 
 const emit = defineEmits<{
@@ -184,6 +230,22 @@ const emit = defineEmits<{
 
 const sessionStore = useSessionStore()
 const inquiryStore = useInquiryStore()
+const commentsStore = useCommentsStore()
+
+// The user's own comments on this option; others' stay out of the ballot
+const ownComments = computed(() =>
+  commentsStore.getOptionComments(inquiryStore.id, props.option.id)
+    .filter((comment) => comment.user?.id === sessionStore.currentUser.id && !comment.deleted),
+)
+
+async function deleteComment(comment: Comment) {
+  try {
+    await commentsStore.delete({ comment })
+  } catch {
+    showError(t('agora', 'Error while deleting the comment'))
+  }
+}
+
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 const optionTypeLabel = computed(() => {
@@ -467,6 +529,42 @@ function handleCardClick(event: MouseEvent) {
       }
     }
 
+    .grade-distribution {
+      .grade-bar {
+        display: flex;
+        height: 6px;
+        background: var(--color-background-dark);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .grade-segment,
+      .grade-dot {
+        background: var(--color-primary-element);
+      }
+
+      .grade-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--color-text-light);
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+      }
+
+      .grade-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+    }
+
     .progress-bar-container {
       .progress-bar {
         height: 6px;
@@ -520,6 +618,15 @@ function handleCardClick(event: MouseEvent) {
 
   .option-comment {
     margin-top: 8px;
+
+    .own-comments li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--color-text-light);
+    }
   }
 
   // Voted Badge
