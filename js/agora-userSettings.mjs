@@ -1,10 +1,10 @@
 const A = "agora", k = "1.7.14";
 import { d as c, q as a, s as m, o as l, b as g, e as t, g as s, v as e, x as r, y as n, z as f, A as _ } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-PC04lt40.chunk.mjs";
-import { N as i } from "./index-DUz0R92N.chunk.mjs";
-import "./NcDashboardWidget-CvpYMKur-nbMvY5qN.chunk.mjs";
-import { F as u } from "./FlexSettings-CBV_mGbi.chunk.mjs";
+import { N as i } from "./index-CCFeqmYI.chunk.mjs";
+import "./NcDashboardWidget-CvpYMKur-CL0RCMIc.chunk.mjs";
+import { F as u } from "./FlexSettings-DOb3Zp7l.chunk.mjs";
 import "./NcRichText-D_ssz6sB-JwEspN5z.chunk.mjs";
-import { u as S, _ as d, a as y } from "./StyleSettings-Bj_prJqH.chunk.mjs";
+import { u as S, _ as d, a as y } from "./StyleSettings-DczIRPWw.chunk.mjs";
 const x = c({ __name: "UserSettingsPage", setup(N) {
   const p = S(), o = { personalSettings: { name: a("agora", "Personal preferences"), description: a("agora", "Set your personal preferences for the agora app") }, styleSettings: { name: a("agora", "Experimental styles"), description: a("agora", "Some visual styling options") } };
   return m(() => {
