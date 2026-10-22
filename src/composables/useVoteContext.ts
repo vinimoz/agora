@@ -168,7 +168,7 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
 
   const canVote = computed(() => {
       const engine = currentEngine.value
-      if (!engine || engine.status !== 'active') return false
+      if (!engine || engine.status !== 'active' || inquiryStore.isClosed) return false
           if (!isEngineMulti.value && hasUserVoted.value) return false
               return true
   })
