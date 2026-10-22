@@ -102,6 +102,21 @@
           :placeholder="openedByGrade ? t('agora', 'Under which conditions? Why?') : undefined"
         />
       </div>
+      <ul v-if="ownComments.length" class="own-comments">
+        <li v-for="comment in ownComments" :key="comment.id">
+          <span>{{ comment.comment }}</span>
+          <NcButton
+            variant="tertiary"
+            :aria-label="t('agora', 'Delete comment')"
+            :title="t('agora', 'Delete comment')"
+            @click="deleteComment(comment)"
+          >
+            <template #icon>
+              <DeleteIcon :size="16" />
+            </template>
+          </NcButton>
+        </li>
+      </ul>
     </div>
 
     <!-- Footer with owner info -->
@@ -135,6 +150,10 @@ import VoteInput from './VoteInput.vue'
 import CommentAdd from '../../Comments/CommentAdd.vue'
 import { useSessionStore } from '../../../stores/session'
 import { useInquiryStore } from '../../../stores/inquiry'
+import { useCommentsStore } from '../../../stores/comments'
+import { showError } from '@nextcloud/dialogs'
+import DeleteIcon from 'vue-material-design-icons/Delete.vue'
+import type { Comment } from '../../../stores/comments.types'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import {
   getOptionTypeLabel,
@@ -184,6 +203,22 @@ const emit = defineEmits<{
 
 const sessionStore = useSessionStore()
 const inquiryStore = useInquiryStore()
+const commentsStore = useCommentsStore()
+
+// The user's own comments on this option; others' stay out of the ballot
+const ownComments = computed(() =>
+  commentsStore.getOptionComments(inquiryStore.id, props.option.id)
+    .filter((comment) => comment.user?.id === sessionStore.currentUser.id && !comment.deleted),
+)
+
+async function deleteComment(comment: Comment) {
+  try {
+    await commentsStore.delete({ comment })
+  } catch {
+    showError(t('agora', 'Error while deleting the comment'))
+  }
+}
+
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 const optionTypeLabel = computed(() => {
@@ -520,6 +555,15 @@ function handleCardClick(event: MouseEvent) {
 
   .option-comment {
     margin-top: 8px;
+
+    .own-comments li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--color-text-light);
+    }
   }
 
   // Voted Badge
