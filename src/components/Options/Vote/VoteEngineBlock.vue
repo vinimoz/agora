@@ -21,6 +21,7 @@
                 :can-submit-multi-vote="canSubmitMultiVote"
                 :vote-selection-info="voteSelectionInfo"
                 :get-option-vote-count="getOptionVoteCount"
+                :get-option-majority-judgment="getOptionMajorityJudgment"
                 :get-percentage="(option) => getPercentage(option)"
                 :has-user-voted-for="hasUserVotedFor"
                 :is-selected-for-vote="isSelectedForVote"
@@ -127,6 +128,7 @@ const {
   submitMultiVote,
   totalVotes,
   getOptionVoteCount,
+  getOptionMajorityJudgment,
   getOptionRank,
   getPercentage,
   getRankedOptions,
