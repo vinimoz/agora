@@ -349,9 +349,9 @@ onBeforeRouteLeave(async () => {
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
 const hidesResults = (engine?: SupportEngine | null) =>
-    engine?.config?.results_visibility === 'closed' &&
-    engine?.status !== 'closed' &&
-    !inquiryStore.permissions.edit
+    !inquiryStore.permissions.edit &&
+    (!inquiryStore.permissions.seeResults ||
+        (engine?.config?.results_visibility === 'closed' && engine?.status !== 'closed'))
 const resultsHidden = computed(() => hidesResults(currentEngine.value))
 // Stacked mode keeps the Results tab while one block still shows its results.
 const allowedLayouts = computed(() => {

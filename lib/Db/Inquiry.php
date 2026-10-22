@@ -368,13 +368,16 @@ public function setIsShared(bool $value): void
 
 
     /**
-     * Support results without those of engines hidden until close
+     * Support results the current user may see
      */
     private function getVisibleSupportResult(): ?array
     {
 	    $results = $this->getSupportResult();
 	    if (!$results || $this->getIsAllowed(self::PERMISSION_INQUIRY_EDIT)) {
 		    return $results;
+	    }
+	    if (!$this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW)) {
+		    return [];
 	    }
 	    $hidden = [];
 	    foreach ($this->getSupportEngine() as $engine) {
