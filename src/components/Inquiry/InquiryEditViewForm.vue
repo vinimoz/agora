@@ -663,7 +663,11 @@ const expirationDate = computed({
                                         class="metadata-select"
                                         :label-outside="true"
                                         required
-                                        />
+                                        >
+                                    <template #option="{ label }">
+                                        <span class="metadata-option">{{ label }}</span>
+                                    </template>
+                                </NcSelect>
                             </div>
                             <span v-else class="metadata-value">
                                 {{ getHierarchyPath(sessionStore.appSettings.locationTab, inquiryStore.locationId) || t('agora', 'Inherited from parent') }}
@@ -685,7 +689,11 @@ const expirationDate = computed({
                                         class="metadata-select"
                                         :label-outside="true"
                                         required
-                                        />
+                                        >
+                                    <template #option="{ label }">
+                                        <span class="metadata-option">{{ label }}</span>
+                                    </template>
+                                </NcSelect>
                             </div>
                             <span v-else class="metadata-value">
                                 {{ getHierarchyPath(sessionStore.appSettings.categoryTab, inquiryStore.categoryId) || t('agora', 'Inherited from parent') }}
@@ -2094,5 +2102,11 @@ const expirationDate = computed({
             }
         }
     }
+}
+
+// Location and category labels wrap instead of being cut in the middle
+.metadata-option {
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 </style>
