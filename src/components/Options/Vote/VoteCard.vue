@@ -33,7 +33,12 @@
       
       <!-- Support and comments stats (when not voting mode) -->
       <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div v-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
+        <div v-if="!hideResults && majorityJudgment" class="support-stats" @click.stop="openSupportsModal">
+          <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
+          <span class="vote-count">{{ translateGrade(majorityJudgment.median) }}</span>
+          <span class="percentage">{{ n('agora', '%n voter', '%n voters', majorityJudgment.total) }}</span>
+        </div>
+        <div v-else-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
           <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
@@ -45,8 +50,27 @@
         </div>
       </div>
 
+      <!-- Majority judgment: one segment per grade, in the configured order -->
+      <div v-if="(!canVote || hasUserVoted) && !hideResults && majorityJudgment?.total" class="grade-distribution">
+        <div class="grade-bar">
+          <div
+            v-for="([grade, count], index) in majorityJudgment.distribution"
+            :key="grade"
+            class="grade-segment"
+            :style="{ width: (count / majorityJudgment.total) * 100 + '%', opacity: 1 - index / majorityJudgment.distribution.length }"
+            :title="`${translateGrade(grade)} : ${count}`"
+          />
+        </div>
+        <ul class="grade-legend">
+          <li v-for="([grade, count], index) in majorityJudgment.distribution" :key="grade">
+            <span class="grade-dot" :style="{ opacity: 1 - index / majorityJudgment.distribution.length }" />
+            {{ translateGrade(grade) }} {{ count }}
+          </li>
+        </ul>
+      </div>
+
       <!-- Progress bar for voting mode -->
-      <div v-if="(!canVote || hasUserVoted) && !hideResults" class="progress-bar-container">
+      <div v-else-if="(!canVote || hasUserVoted) && !hideResults && !majorityJudgment" class="progress-bar-container">
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: percentage + '%' }" />
         </div>
@@ -142,7 +166,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -163,6 +187,8 @@ import {
   allowsComments
 } from '../../../helpers/modules/InquiryOptionHelper'
 
+import { translateGrade } from '../../../Types/votingType'
+import type { MajorityJudgmentSummary } from '../../../composables/useVoteContext'
 import type { Option, SupportValue } from '../../../Types/index'
 
 const props = defineProps<{
@@ -186,6 +212,7 @@ const props = defineProps<{
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
   totalOptions?: number
   hideResults?: boolean
+  majorityJudgment?: MajorityJudgmentSummary | null
 }>()
 
 const emit = defineEmits<{
@@ -499,6 +526,42 @@ function handleCardClick(event: MouseEvent) {
         .stat-icon {
           color: var(--color-text-lighter);
         }
+      }
+    }
+
+    .grade-distribution {
+      .grade-bar {
+        display: flex;
+        height: 6px;
+        background: var(--color-background-dark);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .grade-segment,
+      .grade-dot {
+        background: var(--color-primary-element);
+      }
+
+      .grade-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--color-text-light);
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+      }
+
+      .grade-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
       }
     }
 
