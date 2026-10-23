@@ -17,6 +17,7 @@ use OCA\Agora\Model\Settings\AppSettings;
 use OCA\Agora\Model\Settings\SystemSettings;
 use OCA\Agora\UserSession;
 use OCP\IURLGenerator;
+use OCA\Agora\Db\Inquiry;
 
 /**
  * @psalm-api
@@ -42,14 +43,10 @@ use OCP\IURLGenerator;
  * @method    void setCreated(int $value)
  * @method    int getUpdated()
  * @method    void setUpdated(int $value)
- * @method    string getShowResults()
- * @method    void setShowResults(string $value)
  * @method    int getDeleted()
  * @method    void setDeleted(int $value)
  * @method    int getArchived()
  * @method    void setArchived(int $value)
- * @method    string getStatus()
- * @method    void setStatus(string $value)
  * @method    string getOptionStatus()
  * @method    void setOptionStatus(string $value)
  * @method    int getAllowComment()
@@ -125,8 +122,8 @@ class Option extends EntityWithUser implements JsonSerializable
 
     // schema columns
     public $id = null;
-    protected int $targetId = 0;  // Reference to parent inquiry
-    protected int $parentId = 0;  // For hierarchical options
+    protected int $targetId = 0;
+    protected int $parentId = 0;
     protected string $type = '';
     protected string $access = 'private';
     protected string $text = '';
@@ -160,13 +157,19 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $inquiryType = '';
     protected string $inquiryAccess = '';
     protected ?string $miscSettingsConcat = '';
-    
+
     // Dynamic fields for option types
     protected ?string $supportResult = null;
     protected array $miscFields = [];
     private array $optionTypeConfig = [];
     protected ?float $trendingScore = null;
     private array $childs = [];
+
+    /**
+     * The parent Inquiry. When set, all access / edit / config decisions
+     * are delegated to it (see getAllow* and getAllowComment et al.).
+     */
+    protected ?Inquiry $inquiry = null;
 
     public function __construct()
     {
@@ -195,10 +198,65 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->userSession = Container::queryClass(UserSession::class);
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Inquiry attachment                                                 */
+    /* ------------------------------------------------------------------ */
+
+    public function setInquiry(?Inquiry $inquiry): void
+    {
+        $this->inquiry = $inquiry;
+    }
+
+    public function getInquiry(): ?Inquiry
+    {
+        return $this->inquiry;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Config inheritance from parent Inquiry                             */
+    /* ------------------------------------------------------------------ */
+
     /**
-     * Always mark text as updated, so that an empty text is stored as is
-     * instead of falling back to the column default on insert.
+     * Inherit commenting flag from the parent inquiry. Falls back to the
+     * option's local value when no inquiry is attached (e.g. mid-creation,
+     * before hydration — see OptionService::create()).
      */
+    public function getAllowComment(): ?int
+    {
+        $inquiry = $this->getInquiry();
+        if ($inquiry !== null) {
+            return $inquiry->getAllowComment();
+        }
+        return $this->allowComment;
+    }
+
+    public function getSupportFeature(): string
+    {
+        $inquiry = $this->getInquiry();
+        if ($inquiry !== null) {
+            return $inquiry->getSupportFeature();
+        }
+        return $this->supportFeature;
+    }
+
+    public function getShowResults(): string
+    {
+        $inquiry = $this->getInquiry();
+        if ($inquiry !== null) {
+            return $inquiry->getShowResults();
+        }
+        return $this->showResults;
+    }
+
+    public function getExpired(): bool
+    {
+        return $this->getInquiry()?->getExpired() ?? false;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Existing behaviour                                                 */
+    /* ------------------------------------------------------------------ */
+
     public function setText(string $text): void
     {
         $this->text = $text;
@@ -207,7 +265,7 @@ class Option extends EntityWithUser implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        $baseData = [
+        return [
             'id' => $this->getId(),
             'targetId' => $this->getTargetId(),
             'parentId' => $this->getParentId(),
@@ -227,16 +285,11 @@ class Option extends EntityWithUser implements JsonSerializable
             'inquiryInfo' => $this->getInquiryInfoArray(),
             'miscFields' => $this->getMiscArray(),
             'childs' => $this->getChildren(),
-            'supportResult' => $this->getSupportResult(), 
+            'supportResult' => $this->getSupportResult(),
             'trendingScore' => $this->getTrendingScore(),
         ];
-
-        return $baseData;
     }
 
-        /**
-     * Get option status array - matching TypeScript InquiryStatus interface
-     */
     public function getStatusArray(): array
     {
         return [
@@ -247,11 +300,11 @@ class Option extends EntityWithUser implements JsonSerializable
             'supportResult' => $this->getSupportResult(),
             'countSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountSupports() : 0,
             'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW)
-            ? $this->getCountParticipants()
-            : 0,
+                ? $this->getCountParticipants()
+                : 0,
             'countComments' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW)
-            ? $this->getCountComments()
-            : 0,
+                ? $this->getCountComments()
+                : 0,
         ];
     }
 
@@ -260,26 +313,19 @@ class Option extends EntityWithUser implements JsonSerializable
         return $this->countSupports;
     }
 
-    
     public function getConfigurationArray(): array
     {
         return [
             'access' => $this->getAccess(),
-            'allowComment' => boolval($this->getAllowComment()),
+            'allowComment' => (bool)$this->getAllowComment(),
             'supportFeature' => $this->getSupportFeature(),
         ];
     }
 
-
     public function getMiscArray(): array
     {
-        $prefixedMiscFields = [];
-        foreach ($this->miscFields as $key => $value) {
-            $prefixedMiscFields["$key"] = $value;
-        }
-        return $prefixedMiscFields;
+        return $this->miscFields;
     }
-
 
     public function getTrendingScore(): ?float
     {
@@ -291,52 +337,44 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->trendingScore = $score;
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Permission entry point                                             */
+    /* ------------------------------------------------------------------ */
+
     public function getIsAllowed(string $permission): bool
     {
         return match ($permission) {
-            // View permission - all logged-in users
             self::PERMISSION_OPTION_VIEW => $this->getAllowAccessOption(),
-
-            // Results view - all logged-in users
             self::PERMISSION_OPTION_RESULTS_VIEW => $this->getAllowShowResults(),
 
-            // Edit-related permissions - only owner and admin
             self::PERMISSION_OPTION_EDIT => $this->getAllowEditOption(),
-            self::PERMISSION_OPTION_DELETE => $this->getAllowEditOption(),
+            self::PERMISSION_OPTION_DELETE => $this->getAllowDeleteOption(),
             self::PERMISSION_OPTION_ARCHIVE => $this->getAllowEditOption(),
-            self::PERMISSION_OPTION_CHANGE_OWNER => $this->getAllowEditOption(),
-            self::PERMISSION_OPTIONS_REORDER => $this->getAllowEditOption(),
-            self::PERMISSION_OPTION_CONFIRM => $this->getAllowEditOption() && $this->getExpired(),
+            self::PERMISSION_OPTION_CHANGE_OWNER => $this->getAllowChangeOwner(),
+            self::PERMISSION_OPTIONS_REORDER => $this->getAllowReorderOptions(),
+            self::PERMISSION_OPTION_CONFIRM => $this->getAllowConfirmOption(),
 
-            // Comment and support - all logged-in users
-            self::PERMISSION_COMMENT_ADD => $this->getAllowAccessOption() && $this->getAllowComment(),
-            self::PERMISSION_SUPPORT_ADD => $this->getAllowAccessOption() && $this->getSupportFeature() !== 'none',
+            self::PERMISSION_COMMENT_ADD => $this->getAllowCommenting(),
+            self::PERMISSION_SUPPORT_ADD => $this->getSupportFeaturing(),
 
-            // Delete comments/supports - only owner and admin
-            self::PERMISSION_COMMENT_DELETE => $this->getAllowEditOption(),
-            self::PERMISSION_SUPPORT_DELETE => $this->getAllowEditOption(),
-            self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowEditOption(),
+            self::PERMISSION_COMMENT_DELETE => $this->getAllowDeleteComment(),
+            self::PERMISSION_SUPPORT_DELETE => $this->getAllowDeleteSupport(),
+            self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowChangeForeignSupports(),
+            self::PERMISSION_DEANONYMIZE => $this->getAllowDeanonymize(),
 
-            // Deanonymize - only owner and admin
-            self::PERMISSION_DEANONYMIZE => $this->getAllowEditOption(),
+            self::PERMISSION_OPTION_TAKEOVER => $this->getAllowTakeOver(),
+            self::PERMISSION_OPTION_ADD => $this->getAllowAddOption(),
+            self::PERMISSION_OPTION_SUBSCRIBE => $this->getAllowSubscribeToOption(),
 
-            // Takeover - only admin
-            self::PERMISSION_OPTION_TAKEOVER => $this->userSession->getCurrentUser()->getIsAdmin(),
-
-            // Share permissions - based on system settings
             self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
             self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
 
-            // Override - always true
             self::PERMISSION_OVERRIDE => true,
 
             default => false,
         };
     }
 
-    /**
-     * Get support result as array (decoded from JSON string)
-     */
     public function getSupportResult(): ?array
     {
         if ($this->supportResult === null || $this->supportResult === '') {
@@ -346,79 +384,151 @@ class Option extends EntityWithUser implements JsonSerializable
         return is_array($decoded) ? $decoded : [];
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Access / edit permission implementations                           */
+    /* ------------------------------------------------------------------ */
 
     /**
-     * Check if user can view the option
-     * All logged-in Nextcloud users can view by default
+     * Visibility is fully delegated to the parent Inquiry. If the inquiry
+     * is inaccessible (draft, rejected, restricted group, deleted, archived,
+     * missing share, …) the option is inaccessible too. This closes the
+     * 1.7.14 information-disclosure bug at the model layer.
      */
     private function getAllowAccessOption(): bool
     {
-        // If user is logged in to Nextcloud, they can view
-        if ($this->userSession->getIsLoggedIn()) {
-            return true;
+        $inquiry = $this->getInquiry();
+        if ($inquiry === null) {
+            // targetId=0 never occurs per design; fail-closed.
+            return false;
         }
-
-        // Check for public share access
-        $share = $this->userSession->getShare();
-        if ($share->getId()) {
-            return true;
-        }
-
-        return false;
+        return $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW);
     }
 
     /**
-     * Check if user can see results (counts)
-     * All logged-in Nextcloud users can see results by default
+     * See-results follows the inquiry's PERMISSION_INQUIRY_RESULTS_VIEW,
+     * which already honours showResults=closed + expiry + never.
      */
     private function getAllowShowResults(): bool
     {
-        // Logged-in Nextcloud users can always see results
-        if ($this->userSession->getIsLoggedIn()) {
-            return true;
-        }
-
-        // Check for public share access
-        $share = $this->userSession->getShare();
-        if ($share->getId()) {
-            // For public shares, respect the showResults setting
-            if ($this->getShowResults() === self::SHOW_RESULTS_ALWAYS) {
-                return true;
-            }
-
-            if ($this->getShowResults() === self::SHOW_RESULTS_CLOSED && $this->getExpired()) {
-                return true;
-            }
-        }
-
-        return false;
+        $inquiry = $this->getInquiry();
+        return $inquiry !== null
+            && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_RESULTS_VIEW);
     }
 
     /**
-     * Check if user can edit the option
-     * Only owner and admins can edit
+     * Edit is granted to:
+     *  - anyone with edit rights on the inquiry (owner / delegated admin), OR
+     *  - the option's own owner, provided they can at least view the inquiry.
+     *
+     * System admins who are not inquiry owners are deliberately excluded
+     * (fixes the 1.7.14 privileged-bypass; see user requirement #2).
      */
     private function getAllowEditOption(): bool
     {
-        // Console access (CLI) always allowed
         if (defined('OC_CONSOLE')) {
             return true;
         }
-
-        // Check if user is the owner
-        if ($this->getIsOptionOwner()) {
+        $inquiry = $this->getInquiry();
+        if ($inquiry === null) {
+            return false;
+        }
+        if ($inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)) {
             return true;
         }
-
-        // Check if user is a Nextcloud admin
-        if ($this->userSession->getCurrentUser()->getIsAdmin()) {
-            return true;
-        }
-
-        return false;
+        return $this->getIsOptionOwner()
+            && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW);
     }
 
+    private function getAllowDeleteOption(): bool
+    {
+        return $this->getAllowEditOption();
+    }
 
+    private function getAllowDeleteSupport(): bool
+    {
+        return $this->getAllowEditOption();
+    }
+
+    private function getAllowDeleteComment(): bool
+    {
+        return $this->getAllowEditOption();
+    }
+
+    private function getAllowChangeForeignSupports(): bool
+    {
+        return $this->getAllowEditOption()
+            && $this->userSession->getCurrentUser()->getIsUnrestrictedInquiryOwner();
+    }
+
+    private function getAllowDeanonymize(): bool
+    {
+        return $this->getAllowEditOption()
+            && $this->userSession->getCurrentUser()->getIsUnrestrictedInquiryOwner();
+    }
+
+    private function getAllowTakeOver(): bool
+    {
+        if (!$this->userSession->getCurrentUser()->getIsAdmin()) {
+            return false;
+        }
+        $inquiry = $this->getInquiry();
+        return $inquiry !== null
+            && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT);
+    }
+
+    private function getAllowChangeOwner(): bool
+    {
+        return $this->getAllowEditOption();
+    }
+
+    private function getAllowAddOption(): bool
+    {
+        $inquiry = $this->getInquiry();
+        if ($inquiry === null) {
+            return false;
+        }
+        if ($inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)) {
+            return true;
+        }
+        if (!$inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW)) {
+            return false;
+        }
+        // Debate inquiries accept argument/proposal options from any viewer.
+        if ($inquiry->getType() === Inquiry::TYPE_DEBATE) {
+            return $this->userSession->getIsLoggedIn();
+        }
+        return true;
+    }
+
+    private function getAllowCommenting(): bool
+    {
+        return $this->getAllowAccessOption() && (bool)$this->getAllowComment();
+    }
+
+    private function getSupportFeaturing(): bool
+    {
+        return $this->getAllowAccessOption() && $this->getSupportFeature() !== 'none';
+    }
+
+    private function getAllowConfirmOption(): bool
+    {
+        return $this->getAllowEditOption() && $this->getExpired();
+    }
+
+    private function getAllowReorderOptions(): bool
+    {
+        return $this->getAllowEditOption();
+    }
+
+    private function getAllowSubscribeToOption(): bool
+    {
+        return $this->getAllowAccessOption()
+            && $this->userSession->getCurrentUser()->getHasEmail();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Current user & permissions arrays                                  */
+    /* ------------------------------------------------------------------ */
 
     public function getCurrentUserStatus(): array
     {
@@ -467,13 +577,6 @@ class Option extends EntityWithUser implements JsonSerializable
         ];
     }
 
-    public function getExpired(): bool
-    {
-        // Options inherit expiry from parent inquiry
-        // We would need to join with inquiry table or have a separate query
-        return false;
-    }
-
     public function getUserRole(): string
     {
         if ($this->getCurrentUserIsEntityUser()) {
@@ -519,12 +622,6 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         return $this->childs;
     }
-/*
-    public function getOptionId(): int
-    {
-        return $this->getId();
-    }
- */
 
     public function getUserId(): string
     {
@@ -535,6 +632,10 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         $this->setOwner($userId);
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Group shares / hierarchy                                           */
+    /* ------------------------------------------------------------------ */
 
     private function getGroupShares(): array
     {
@@ -559,6 +660,10 @@ class Option extends EntityWithUser implements JsonSerializable
         }
         return explode(OptionGroup::CONCAT_SEPARATOR, $this->optionGroupUserShares);
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Misc field management                                              */
+    /* ------------------------------------------------------------------ */
 
     public function setMiscFields(array $misc): void
     {
@@ -596,7 +701,6 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->setSupportFeature($optionConfiguration['supportFeature'] ?? $this->getSupportFeature());
         $this->setShowResults($optionConfiguration['showResults'] ?? $this->getShowResults());
 
-        // Set misc fields from configuration
         if (isset($optionConfiguration['miscFields']) && is_array($optionConfiguration['miscFields'])) {
             foreach ($optionConfiguration['miscFields'] as $key => $value) {
                 $this->setMiscField($key, $value);
@@ -613,6 +717,10 @@ class Option extends EntityWithUser implements JsonSerializable
         }
         return true;
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Involvement helpers                                                */
+    /* ------------------------------------------------------------------ */
 
     private function getIsInvolved(): bool
     {
@@ -634,18 +742,14 @@ class Option extends EntityWithUser implements JsonSerializable
         return $this->hasSupported;
     }
 
-    // Current (fine but different from Inquiry)
-
     private function supportValue(): mixed
     {
         if ($this->supportValue === null) {
             return null;
         }
-
         if (is_int($this->supportValue)) {
             return $this->supportValue;
         }
-
         if (is_string($this->supportValue)) {
             $decoded = json_decode($this->supportValue, true);
             if (json_last_error() === JSON_ERROR_NONE) {
@@ -661,7 +765,6 @@ class Option extends EntityWithUser implements JsonSerializable
                 return (int)$this->supportValue;
             }
         }
-
         if (is_array($this->supportValue)) {
             if (isset($this->supportValue['value'])) {
                 return $this->supportValue['value'];
@@ -671,7 +774,6 @@ class Option extends EntityWithUser implements JsonSerializable
             }
             return $this->supportValue;
         }
-
         return $this->supportValue;
     }
 
@@ -692,9 +794,7 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         return array_filter(
             $this->getGroupShares(),
-            function ($groupName) {
-                return $this->userSession->getCurrentUser()->getIsInGroup($groupName);
-            }
+            fn ($groupName) => $this->userSession->getCurrentUser()->getIsInGroup($groupName)
         );
     }
 
@@ -708,67 +808,14 @@ class Option extends EntityWithUser implements JsonSerializable
                 self::ROLE_EXTERNAL,
                 self::ROLE_EMAIL,
                 self::ROLE_CONTACT,
-            ]
+            ],
+            true
         );
     }
 
     private function getIsDelegatedAdmin(): bool
     {
         return $this->getUserRole() === self::ROLE_ADMIN;
-    }
-
-
-    private function getAllowTakeOver(): bool
-    {
-        return $this->userSession->getCurrentUser()->getIsAdmin();
-    }
-
-    private function getAllowChangeOwner(): bool
-    {
-        return $this->getAllowEditOption()
-            || $this->userSession->getCurrentUser()->getIsAdmin();
-    }
-
-
-    private function getAllowDeleteOption(): bool
-    {
-        if ($this->getAllowEditOption()) {
-            return true;
-        }
-
-        return $this->userSession->getCurrentUser()->getIsAdmin();
-    }
-
-    private function getAllowAddOption(): bool
-    {
-        if ($this->getAllowEditOption()) {
-            return true;
-        }
-
-        if (!$this->getAllowAccessOption()) {
-            return false;
-        }
-
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
-        }
-
-        // For debate inquiries, check if we can add arguments/proposals
-        if ($this->getTargetId() > 0 && $this->inquiryType === Inquiry::TYPE_DEBATE) {
-            return $this->userSession->getIsLoggedIn();
-        }
-
-        return true;
-    }
-
-    private function getAllowConfirmOption(): bool
-    {
-        return $this->getAllowEditOption() && $this->getExpired();
-    }
-
-    private function getAllowReorderOptions(): bool
-    {
-        return $this->getAllowEditOption() && !$this->getExpired();
     }
 
     public function matchUser(string $userId): bool
@@ -778,7 +825,7 @@ class Option extends EntityWithUser implements JsonSerializable
 
     public function getIsOptionOwner(): bool
     {
-        return ($this->getUserRole() === self::ROLE_OWNER);
+        return $this->getUserRole() === self::ROLE_OWNER;
     }
 
     public function getIsHaveParticipated(): bool
@@ -795,61 +842,9 @@ class Option extends EntityWithUser implements JsonSerializable
         return false;
     }
 
-    private function getAllowCommenting(): bool
-    {
-        if (!$this->getAllowAccessOption()) {
-            return false;
-        }
-
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
-        }
-
-        return (bool)$this->getAllowComment();
-    }
-
-    private function getSupportFeaturing(): bool
-    {
-        if (!$this->getAllowAccessOption()) {
-            return false;
-        }
-
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
-        }
-
-        return $this->getSupportFeature() !== 'none';
-    }
-
-    private function getAllowDeleteSupport(): bool
-    {
-        return $this->getAllowEditOption();
-    }
-
-    private function getAllowDeleteComment(): bool
-    {
-        return $this->getAllowEditOption();
-    }
-
-    private function getAllowChangeForeignSupports(): bool
-    {
-        return $this->getAllowEditOption();
-    }
-
-    private function getAllowDeanonymize(): bool
-    {
-        return $this->getAllowEditOption();
-    }
-
-    private function getAllowSubscribeToOption(): bool
-    {
-        if (!$this->getAllowAccessOption()) {
-            return false;
-        }
-
-        return $this->userSession->getCurrentUser()->getHasEmail();
-    }
-
+    /* ------------------------------------------------------------------ */
+    /* Setters used by the service layer                                  */
+    /* ------------------------------------------------------------------ */
 
     public function setInquiryInfo(string $title, string $type, string $access): void
     {
@@ -864,14 +859,13 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->supportValue = $supportValue;
     }
 
-    // Load misc fields from concatenated string (used when loading from database)
     public function loadMiscFromConcat(): void
     {
         if ($this->miscSettingsConcat) {
             $pairs = explode(OptionMisc::CONCAT_SEPARATOR, $this->miscSettingsConcat);
             foreach ($pairs as $pair) {
                 if (strpos($pair, '=') !== false) {
-                    list($key, $value) = explode('=', $pair, 2);
+                    [$key, $value] = explode('=', $pair, 2);
                     $this->miscFields[$key] = $value;
                 }
             }

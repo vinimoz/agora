@@ -256,6 +256,87 @@ class InquiryMapper extends QBMapper
 }
 
 /**
+ * Batch version of get() used to hydrate options without N+1.
+ * Does NOT apply the access filter (matches get()), so callers may
+ * rely on Inquiry::getIsAllowed() for the final decision.
+ *
+ * @return array<int, Inquiry> keyed by inquiry id
+ */
+public function findByIds(array $ids, bool $getDeleted = false, bool $withRoles = true): array
+{
+    if (empty($ids)) {
+        return [];
+    }
+    $ids = array_values(array_unique(array_map('intval', $ids)));
+
+    $qb = $this->db->getQueryBuilder();
+    $qb->select([
+        self::TABLE . '.id', self::TABLE . '.cover_id', self::TABLE . '.type',
+        self::TABLE . '.title', self::TABLE . '.description',
+        self::TABLE . '.location_id', self::TABLE . '.category_id',
+        self::TABLE . '.owner', self::TABLE . '.created', self::TABLE . '.archived',
+        self::TABLE . '.expire', self::TABLE . '.deleted', self::TABLE . '.owned_group',
+        self::TABLE . '.access', self::TABLE . '.show_results',
+        self::TABLE . '.last_interaction', self::TABLE . '.parent_id',
+        self::TABLE . '.moderation_status', self::TABLE . '.inquiry_status',
+        self::TABLE . '.allow_comment', self::TABLE . '.support_feature',
+        self::TABLE . '.family',
+    ])
+    ->from($this->getTableName(), self::TABLE)
+    ->where($qb->expr()->in(
+        self::TABLE . '.id',
+        $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)
+    ));
+
+    if (!$getDeleted) {
+        $qb->andWhere($qb->expr()->eq(
+            self::TABLE . '.deleted',
+            $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)
+        ));
+    }
+
+    if ($withRoles) {
+        $currentUserId = $this->userSession->getCurrentUserId();
+        $userGroups    = $this->userSession->getCurrentUser()->getGroups();
+        $inquiryGroupsAlias = 'inquiry_groups';
+
+        $this->joinFamily($qb, self::TABLE);
+        $this->joinUserRole($qb, self::TABLE, $currentUserId);
+        $this->joinGroupShares($qb, self::TABLE);
+        $this->joinHasSupported($qb, self::TABLE, $currentUserId);
+        $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
+        $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
+        $this->joinSupportValue($qb, self::TABLE, $currentUserId);
+        $this->joinParticipantsCount($qb, self::TABLE);
+        $this->joinCommentsCount($qb, self::TABLE);
+        $this->joinSupportsCount($qb, self::TABLE);
+        $this->joinMiscs($qb, self::TABLE);
+        $this->joinSupportResult($qb, self::TABLE);
+        $this->joinSupportEngine($qb, self::TABLE);
+        $this->joinIsShared($qb, self::TABLE, $currentUserId, $userGroups);
+
+        $qb->groupBy([
+            self::TABLE . '.id', self::TABLE . '.cover_id', self::TABLE . '.type',
+            self::TABLE . '.title', self::TABLE . '.description',
+            self::TABLE . '.location_id', self::TABLE . '.category_id',
+            self::TABLE . '.owner', self::TABLE . '.created', self::TABLE . '.archived',
+            self::TABLE . '.expire', self::TABLE . '.deleted', self::TABLE . '.owned_group',
+            self::TABLE . '.access', self::TABLE . '.show_results',
+            self::TABLE . '.last_interaction', self::TABLE . '.parent_id',
+            self::TABLE . '.moderation_status', self::TABLE . '.inquiry_status',
+            self::TABLE . '.allow_comment', self::TABLE . '.support_feature',
+            self::TABLE . '.family',
+        ]);
+    }
+
+    $result = [];
+    foreach ($this->findEntities($qb) as $entity) {
+        $result[$entity->getId()] = $entity;
+    }
+    return $result;
+}
+
+/**
  * Join support engines for inquiry
  * Table: oc_agora_support_engines
  * Columns: id, title, description, engine, type, inquiry_id, inquiry_group_id, 

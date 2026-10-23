@@ -26,18 +26,91 @@ class OptionMapper extends QBMapper
     public const CONCAT_SEPARATOR = ',';
     public const SUPPORT_RESULT_TABLE = SupportResult::TABLE;
 
+    /**
+     * Per-request cache of parent inquiries, populated by hydrateInquiries().
+     *
+     * @var array<int, Inquiry>
+     */
+    private array $inquiryCache = [];
+
     public function __construct(
         IDBConnection $db,
         private UserSession $userSession,
         protected LoggerInterface $logger,
+        private InquiryMapper $inquiryMapper,
     ) {
         $this->logger = $logger;
         parent::__construct($db, Option::TABLE, Option::class);
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Inquiry hydration                                                  */
+    /* ------------------------------------------------------------------ */
+
     /**
-     * Add correlated subquery for supports count
+     * Attach the parent Inquiry to each Option. All permission methods on
+     * Option delegate to the inquiry, so this call must precede any access
+     * decision. Uses InquiryMapper::findByIds() (single query) when
+     * available, with per-ID get() as a defensive fallback.
+     *
+     * @param Option[] $options
      */
+    private function hydrateInquiries(array $options): void
+    {
+        if (empty($options)) {
+            return;
+        }
+
+        $missing = [];
+        foreach ($options as $option) {
+            $tid = (int)$option->getTargetId();
+            if ($tid > 0 && !isset($this->inquiryCache[$tid])) {
+                $missing[$tid] = true;
+            }
+        }
+
+        if (!empty($missing)) {
+            $ids = array_keys($missing);
+
+            if (method_exists($this->inquiryMapper, 'findByIds')) {
+                try {
+                    $loaded = $this->inquiryMapper->findByIds($ids, withRoles: true);
+                    foreach ($loaded as $id => $inquiry) {
+                        $this->inquiryCache[(int)$id] = $inquiry;
+                    }
+                } catch (\Throwable $e) {
+                    $this->logger->warning('OptionMapper::hydrateInquiries failed', [
+                        'ids' => $ids,
+                        'exception' => $e->getMessage(),
+                    ]);
+                }
+            } else {
+                // Defensive fallback: InquiryMapper::findByIds() not deployed.
+                foreach ($ids as $id) {
+                    try {
+                        $this->inquiryCache[$id] = $this->inquiryMapper->get($id, false, true);
+                    } catch (\Throwable $e) {
+                        $this->logger->warning('OptionMapper: inquiry get failed', [
+                            'id' => $id,
+                            'exception' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
+        }
+
+        foreach ($options as $option) {
+            $tid = (int)$option->getTargetId();
+            if ($tid > 0 && isset($this->inquiryCache[$tid])) {
+                $option->setInquiry($this->inquiryCache[$tid]);
+            }
+        }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Read helpers                                                       */
+    /* ------------------------------------------------------------------ */
+
     protected function addSupportsCountSubquery(
         IQueryBuilder &$qb,
         string $tableAlias,
@@ -65,17 +138,18 @@ class OptionMapper extends QBMapper
 
         if ($withRoles) {
             $currentUserId = $this->userSession->getCurrentUserId();
-
             $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
             $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
             $this->addParticipantsCountSubquery($qb, self::TABLE);
             $this->addSupportsCountSubquery($qb, self::TABLE);
             $this->addCommentsCountSubquery($qb, self::TABLE);
             $this->addMiscsSubquery($qb, self::TABLE);
-            $this->addSupportResultSubquery($qb, self::TABLE);  
+            $this->addSupportResultSubquery($qb, self::TABLE);
         }
 
-        return $this->findEntity($qb);
+        $option = $this->findEntity($qb);
+        $this->hydrateInquiries([$option]);
+        return $option;
     }
 
     public function find(int $id): Option
@@ -83,33 +157,27 @@ class OptionMapper extends QBMapper
         $qb = $this->buildQuery();
         $qb->andWhere($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
-        return $this->findEntity($qb);
+        $option = $this->findEntity($qb);
+        $this->hydrateInquiries([$option]);
+        return $option;
     }
 
-    /**
-     * FIXED: Use andWhere() instead of where() since buildQuery() already has a WHERE clause
-     */
     public function findByTargetId(int $targetId): array
     {
         $qb = $this->buildQuery();
-
-        // Use andWhere() instead of where() to add to existing conditions
         $qb->andWhere($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
            ->addOrderBy(self::TABLE . '.created', 'ASC');
 
         $options = $this->findEntities($qb);
-        // Load dynamic fields for all options
+        $this->hydrateInquiries($options);
+
         foreach ($options as $option) {
             $this->loadDynamicFields($option);
         }
-
         return $options;
     }
 
-    /**
-     * FIXED: Use andWhere() instead of where() since buildQuery() already has a WHERE clause
-     */
     public function findByParentId(int $parentId): array
     {
         $qb = $this->buildQuery();
@@ -118,23 +186,17 @@ class OptionMapper extends QBMapper
            ->addOrderBy(self::TABLE . '.created', 'ASC');
 
         $options = $this->findEntities($qb);
+        $this->hydrateInquiries($options);
 
-        // Load dynamic fields for all options
         foreach ($options as $option) {
             $this->loadDynamicFields($option);
         }
-
         return $options;
     }
 
-    /**
-     * FIXED: Create fresh query builder instead of using buildQuery() since we have custom WHERE logic
-     */
     public function findByType(string $type, int $targetId = 0): array
     {
-        // Start with fresh query builder to avoid WHERE clause conflicts
         $qb = $this->db->getQueryBuilder();
-        
         $qb->select(self::TABLE . '.*')
            ->from($this->getTableName(), self::TABLE)
            ->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
@@ -147,7 +209,6 @@ class OptionMapper extends QBMapper
         $qb->orderBy(self::TABLE . '.sort_order', 'ASC')
            ->addOrderBy(self::TABLE . '.created', 'ASC');
 
-        // Add the dynamic subqueries
         $currentUserId = $this->userSession->getCurrentUserId();
         $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
         $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
@@ -158,18 +219,14 @@ class OptionMapper extends QBMapper
         $this->addSupportsCountSubquery($qb, self::TABLE);
 
         $options = $this->findEntities($qb);
+        $this->hydrateInquiries($options);
 
-        // Load dynamic fields for all options
         foreach ($options as $option) {
             $this->loadDynamicFields($option);
         }
-
         return $options;
     }
 
-    /**
-     * Add correlated subquery for support value - can be NULL
-     */
     protected function addSupportValueSubquery(
         IQueryBuilder &$qb,
         string $tableAlias,
@@ -196,19 +253,18 @@ class OptionMapper extends QBMapper
     {
         $qb = $this->buildQuery();
         $qb->andWhere(
-               $qb->expr()->orX(
-                   $qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)),
-                   $qb->expr()->eq(self::TABLE . '.access', $qb->createNamedParameter(Option::ACCESS_OPEN, IQueryBuilder::PARAM_STR))
-               )
-           );
+            $qb->expr()->orX(
+                $qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)),
+                $qb->expr()->eq(self::TABLE . '.access', $qb->createNamedParameter(Option::ACCESS_OPEN, IQueryBuilder::PARAM_STR))
+            )
+        );
 
         $options = $this->findEntities($qb);
+        $this->hydrateInquiries($options);
 
-        // Load dynamic fields for all options
         foreach ($options as $option) {
             $this->loadDynamicFields($option);
         }
-
         return $options;
     }
 
@@ -218,12 +274,11 @@ class OptionMapper extends QBMapper
         $qb->andWhere($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
         $options = $this->findEntities($qb);
+        $this->hydrateInquiries($options);
 
-        // Load dynamic fields for all options
         foreach ($options as $option) {
             $this->loadDynamicFields($option);
         }
-
         return $options;
     }
 
@@ -231,26 +286,25 @@ class OptionMapper extends QBMapper
     {
         $qb = $this->buildQuery();
         $qb->andWhere(
-               $qb->expr()->orX(
-                   ...array_map(
-                       function (string $token) use ($qb) {
-                           return $qb->expr()->iLike(
-                               self::TABLE . '.text',
-                               $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR)
-                           );
-                       },
-                       explode(' ', $query->getTerm())
-                   )
-               )
-           );
+            $qb->expr()->orX(
+                ...array_map(
+                    function (string $token) use ($qb) {
+                        return $qb->expr()->iLike(
+                            self::TABLE . '.text',
+                            $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR)
+                        );
+                    },
+                    explode(' ', $query->getTerm())
+                )
+            )
+        );
 
         $options = $this->findEntities($qb);
+        $this->hydrateInquiries($options);
 
-        // Load dynamic fields for all options
         foreach ($options as $option) {
             $this->loadDynamicFields($option);
         }
-
         return $options;
     }
 
@@ -260,14 +314,17 @@ class OptionMapper extends QBMapper
         $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
         $options = $this->findEntities($qb);
+        $this->hydrateInquiries($options);
 
-        // Load dynamic fields for all options
         foreach ($options as $option) {
             $this->loadDynamicFields($option);
         }
-
         return $options;
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Lifecycle maintenance                                              */
+    /* ------------------------------------------------------------------ */
 
     public function archiveExpiredOptions(int $offset): int
     {
@@ -344,6 +401,10 @@ class OptionMapper extends QBMapper
         $qb->executeStatement();
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Query building                                                     */
+    /* ------------------------------------------------------------------ */
+
     protected function buildQuery(): IQueryBuilder
     {
         $qb = $this->db->getQueryBuilder();
@@ -365,17 +426,11 @@ class OptionMapper extends QBMapper
         return $qb;
     }
 
-    /**
-     * Get the full table name with prefix
-     */
     private function getFullTableName(string $tableName): string
     {
         return $this->db->getQueryBuilder()->getTableName($tableName);
     }
 
-    /**
-     * Add correlated subquery for has_supported flag - always returns 0 or 1, never NULL
-     */
     protected function addHasSupportedSubquery(
         IQueryBuilder &$qb,
         string $tableAlias,
@@ -399,9 +454,6 @@ class OptionMapper extends QBMapper
         );
     }
 
-    /**
-     * Add correlated subquery for support value - can be NULL
-     */
     protected function addSupportResultSubquery(
         IQueryBuilder &$qb,
         string $tableAlias
@@ -426,7 +478,6 @@ class OptionMapper extends QBMapper
                 )::text AS support_result"
             ));
         } else {
-            // MySQL version
             $qb->addSelect($qb->createFunction(
                 "COALESCE(
                     (SELECT CONCAT('[', GROUP_CONCAT(
@@ -447,9 +498,6 @@ class OptionMapper extends QBMapper
         }
     }
 
-    /**
-     * Add correlated subquery for comments count - always returns 0 or positive integer
-     */
     protected function addCommentsCountSubquery(
         IQueryBuilder &$qb,
         string $tableAlias,
@@ -465,9 +513,6 @@ class OptionMapper extends QBMapper
         );
     }
 
-    /**
-     * Add correlated subquery for participants count - always returns 0 or positive integer
-     */
     protected function addParticipantsCountSubquery(
         IQueryBuilder &$qb,
         string $tableAlias,
@@ -483,35 +528,23 @@ class OptionMapper extends QBMapper
         );
     }
 
-     public function getChildOptionIds(int $parentId): array
-    {       
-        $currentUserId = $this->userSession->getCurrentUserId();
+    public function getChildOptionIds(int $parentId): array
+    {
         $qb = $this->db->getQueryBuilder();
         $qb->select(self::TABLE . '.id')
            ->from($this->getTableName(), self::TABLE)
            ->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
-	/*
-        $qb->andWhere($qb->expr()->neq(self::TABLE . '.access', $qb->createNamedParameter('private')));
-            
-        if ($currentUserId !== null) {
-            $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId)));
-	} */  
-                
+
         $stmt = $qb->executeQuery();
         $rows = $stmt->fetchAll();
         $stmt->closeCursor();
 
         if (empty($rows)) {
-            return []; 
+            return [];
         }
-
         return array_map(static fn(array $row): int => (int)$row['id'], $rows);
     }
 
-
-    /**
-     * Add subquery for misc settings using platform-specific concatenation
-     */
     protected function addMiscsSubquery(
         IQueryBuilder &$qb,
         string $tableAlias,
@@ -540,6 +573,10 @@ class OptionMapper extends QBMapper
         }
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Dynamic fields                                                     */
+    /* ------------------------------------------------------------------ */
+
     private function loadDynamicFields(Option $option): void
     {
         $optionId = $option->getId();
@@ -558,9 +595,6 @@ class OptionMapper extends QBMapper
         $result->closeCursor();
     }
 
-    /**
-     * Convert a value to the type defined in fields
-     */
     private function castValueByType($value, array $fieldDef)
     {
         $type = $fieldDef['type'] ?? 'string';
@@ -582,170 +616,151 @@ class OptionMapper extends QBMapper
             case 'datetime':
                 return is_numeric($value) ? (int)$value : $value;
             case 'json':
-	    case 'object':
-	    case 'array':
-		    if (is_string($value)) {
-			    return $value;
-		    }
-		    if (is_array($value) || is_object($value)) {
-			    return json_encode($value, JSON_UNESCAPED_UNICODE);
-		    }
-		    return (string)$value;
-	    case 'enum':
-		    $allowed = $fieldDef['allowed_values'] ?? [];
-		    if (in_array($value, $allowed, true)) {
-			    return $value;
-		    }
-		    return $fieldDef['default'] ?? null;
-	    case 'string':
-	    default:
-	    return (string)$value;
-	}
+            case 'object':
+            case 'array':
+                if (is_string($value)) {
+                    return $value;
+                }
+                if (is_array($value) || is_object($value)) {
+                    return json_encode($value, JSON_UNESCAPED_UNICODE);
+                }
+                return (string)$value;
+            case 'enum':
+                $allowed = $fieldDef['allowed_values'] ?? [];
+                if (in_array($value, $allowed, true)) {
+                    return $value;
+                }
+                return $fieldDef['default'] ?? null;
+            case 'string':
+            default:
+                return (string)$value;
+        }
     }
 
-    /**
-     * Save dynamic fields to OptionMisc and update miscFields in Option
-     */
     public function saveDynamicFields(Option $option, array $fieldsDefinition): void
     {
-	    $optionId = $option->getId();
-	    if (empty($fieldsDefinition)) {
-		    return;
-	    }
+        $optionId = $option->getId();
+        if (empty($fieldsDefinition)) {
+            return;
+        }
 
-	    // Delete existing misc fields
-	    $deleteQb = $this->db->getQueryBuilder();
-	    $deleteQb->delete(OptionMisc::TABLE)
-	      ->where($deleteQb->expr()->eq('option_id', $deleteQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
-	      ->executeStatement();
+        $deleteQb = $this->db->getQueryBuilder();
+        $deleteQb->delete(OptionMisc::TABLE)
+          ->where($deleteQb->expr()->eq('option_id', $deleteQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
+          ->executeStatement();
 
-	    // Insert new misc fields
-	    foreach ($fieldsDefinition as $fieldDef) {
-		    $key = $fieldDef['key'];
-		    $value = $this->castValueByType($fieldDef['default'] ?? null, $fieldDef);
+        foreach ($fieldsDefinition as $fieldDef) {
+            $key = $fieldDef['key'];
+            $value = $this->castValueByType($fieldDef['default'] ?? null, $fieldDef);
 
-		    $insertQb = $this->db->getQueryBuilder();
-		    $insertQb->insert(OptionMisc::TABLE)
-	       ->values(
-		       [
-			       'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
-			       'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-			       'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
-		       ]
-	       )
-	       ->executeStatement();
+            $insertQb = $this->db->getQueryBuilder();
+            $insertQb->insert(OptionMisc::TABLE)
+               ->values([
+                   'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
+                   'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+                   'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
+               ])
+               ->executeStatement();
 
-		    $option->setMiscField($key, $value);
-	    }
+            $option->setMiscField($key, $value);
+        }
     }
 
-    /**
-     * Update only specified dynamic fields in OptionMisc and miscFields
-     */
     public function updateDynamicFields(Option $option, array $fieldsToUpdate, array $fieldsDefinition): void
     {
-	    $optionId = $option->getId();
-	    if (empty($fieldsToUpdate)) {
-		    return;
-	    }
+        $optionId = $option->getId();
+        if (empty($fieldsToUpdate)) {
+            return;
+        }
 
-	    foreach ($fieldsToUpdate as $key => $value) {
-		    $key = (string)$key;
+        foreach ($fieldsToUpdate as $key => $value) {
+            $key = (string)$key;
 
-		    $fieldDef = array_filter($fieldsDefinition, fn($f) => $f['key'] === $key);
-		    $fieldDef = array_shift($fieldDef) ?: ['type' => 'string', 'default' => null];
+            $fieldDef = array_filter($fieldsDefinition, fn($f) => $f['key'] === $key);
+            $fieldDef = array_shift($fieldDef) ?: ['type' => 'string', 'default' => null];
 
-		    $value = $this->castValueByType($value ?? $fieldDef['default'], $fieldDef);
+            $value = $this->castValueByType($value ?? $fieldDef['default'], $fieldDef);
 
-		    // Check if field exists
-		    $checkQb = $this->db->getQueryBuilder();
-		    $existing = $checkQb->select('id')
-			  ->from(OptionMisc::TABLE)
-			  ->where($checkQb->expr()->eq('option_id', $checkQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
-			  ->andWhere($checkQb->expr()->eq('key', $checkQb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
-			  ->executeQuery()
-			  ->fetchOne();
+            $checkQb = $this->db->getQueryBuilder();
+            $existing = $checkQb->select('id')
+                  ->from(OptionMisc::TABLE)
+                  ->where($checkQb->expr()->eq('option_id', $checkQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
+                  ->andWhere($checkQb->expr()->eq('key', $checkQb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
+                  ->executeQuery()
+                  ->fetchOne();
 
-		    if ($existing) {
-			    $updateQb = $this->db->getQueryBuilder();
-			    $updateQb->update(OptionMisc::TABLE)
-		->set('value', $updateQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR))
-		->where($updateQb->expr()->eq('id', $updateQb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
-		->executeStatement();
-		    } else {
-			    $insertQb = $this->db->getQueryBuilder();
-			    $insertQb->insert(OptionMisc::TABLE)
-		->values(
-			[
-				'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
-				'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-				'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
-			]
-		)
-		->executeStatement();
-		    }
+            if ($existing) {
+                $updateQb = $this->db->getQueryBuilder();
+                $updateQb->update(OptionMisc::TABLE)
+                    ->set('value', $updateQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR))
+                    ->where($updateQb->expr()->eq('id', $updateQb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
+                    ->executeStatement();
+            } else {
+                $insertQb = $this->db->getQueryBuilder();
+                $insertQb->insert(OptionMisc::TABLE)
+                    ->values([
+                        'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
+                        'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+                        'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
+                    ])
+                    ->executeStatement();
+            }
 
-		    $option->setMiscField($key, $value);
-	    }
+            $option->setMiscField($key, $value);
+        }
     }
 
-    /**
-     * Join inquiry information for the option
-     */
+    /* ------------------------------------------------------------------ */
+    /* Joins / aggregates                                                 */
+    /* ------------------------------------------------------------------ */
+
     protected function joinInquiryInfo(
-	    IQueryBuilder &$qb,
-	    string $fromAlias,
-	    string $joinAlias = 'inquiry_info'
+        IQueryBuilder &$qb,
+        string $fromAlias,
+        string $joinAlias = 'inquiry_info'
     ): void {
-	    $qb->addSelect($joinAlias . '.title AS inquiry_title')
-	->addSelect($joinAlias . '.type AS inquiry_type')
-	->addSelect($joinAlias . '.access AS inquiry_access')
-	->leftJoin(
-		$fromAlias,
-		Inquiry::TABLE,
-		$joinAlias,
-		$qb->expr()->andX(
-			$qb->expr()->eq($joinAlias . '.id', $fromAlias . '.target_id'),
-			$qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
-		)
-	);
+        $qb->addSelect($joinAlias . '.title AS inquiry_title')
+           ->addSelect($joinAlias . '.type AS inquiry_type')
+           ->addSelect($joinAlias . '.access AS inquiry_access')
+           ->leftJoin(
+               $fromAlias,
+               Inquiry::TABLE,
+               $joinAlias,
+               $qb->expr()->andX(
+                   $qb->expr()->eq($joinAlias . '.id', $fromAlias . '.target_id'),
+                   $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
+               )
+           );
     }
 
-    /**
-     * Get the maximum sort order for options in a specific target (inquiry)
-     */
     public function getMaxSortOrder(int $targetId): int
     {
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->select($qb->func()->max('sort_order', 'max_sort'))
-	->from($this->getTableName())
-	->where($qb->expr()->eq('target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
-	->andWhere($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+        $qb = $this->db->getQueryBuilder();
+        $qb->select($qb->func()->max('sort_order', 'max_sort'))
+           ->from($this->getTableName())
+           ->where($qb->expr()->eq('target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
+           ->andWhere($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
-	    $result = $qb->executeQuery()->fetch();
-	    return (int)($result['max_sort'] ?? 0);
+        $result = $qb->executeQuery()->fetch();
+        return (int)($result['max_sort'] ?? 0);
     }
 
-    /**
-     * Get options with their child options for hierarchical display
-     */
     public function findWithChildren(int $targetId): array
     {
-	    // First get all parent options
-	    $qb = $this->buildQuery();
-	    $qb->andWhere($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
-	->andWhere($qb->expr()->eq(self::TABLE . '.parent_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-	->orderBy(self::TABLE . '.sort_order', 'ASC')
-	->addOrderBy(self::TABLE . '.created', 'ASC');
+        $qb = $this->buildQuery();
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
+           ->andWhere($qb->expr()->eq(self::TABLE . '.parent_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+           ->orderBy(self::TABLE . '.sort_order', 'ASC')
+           ->addOrderBy(self::TABLE . '.created', 'ASC');
 
-	    $parentOptions = $this->findEntities($qb);
+        $parentOptions = $this->findEntities($qb);
+        $this->hydrateInquiries($parentOptions);
 
-	    // For each parent option, get its children
-	    foreach ($parentOptions as $parentOption) {
-		    $childOptions = $this->findByParentId($parentOption->getId());
-		    $parentOption->setChildren($childOptions);
-	    }
+        foreach ($parentOptions as $parentOption) {
+            $childOptions = $this->findByParentId($parentOption->getId());
+            $parentOption->setChildren($childOptions);
+        }
 
-	    return $parentOptions;
+        return $parentOptions;
     }
 }

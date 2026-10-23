@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# [1.7.15] - 2026-10-22
+- Bug #80: list the user's own comments under a vote card
+- Bug #79: sign the code of the appstore package
+- Bug #78: show full location and category names in their menus
+- Bug #77: show the median and grade split on majority judgment cards
+- Bug #76: keep one block per engine once the engines are closed
+- Bug #75: show the not found page instead of the error trace
+- Bug #74: refuse votes once the inquiry has expired
+- Bug #73: store the editor type of an inquiry type as a string
+- Bug #72: apply showResults to aggregated results
+- Bug #71: fix links to documentation pages
+- Bug #70: filter regular inquiry lists for administrators
+- Bug #68: answer 404 or 403 instead of 500
+- Bug #67: drop others' votes instead of blanking them
+- Bug: Fix access to options take same rights as inquiry parent
+
 # [1.7.14] - 2026-10-07
 - Bug: Set comment, support feature from template
 - Bug: Status already is remplaced when the inquiry is accepted.

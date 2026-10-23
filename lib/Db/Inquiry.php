@@ -938,9 +938,9 @@ public function setIsShared(bool $value): void
 		    return false;
 	    }
 
-	    if ($this->userSession->getShare()->getType() === 'public') {
+	    /*if ($this->userSession->getShare()->getType() === 'public') {
 		    return false;
-	    }
+	    }*/
 
 	    return (bool)$this->getAllowComment();
     }
