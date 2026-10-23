@@ -84,8 +84,8 @@ class InquiryMapper extends QBMapper
 			self::TABLE . '.family',
 			self::TABLE . '.visibility',
 		])
-			->from($this->getTableName(), self::TABLE)
-			->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+     ->from($this->getTableName(), self::TABLE)
+     ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		if (!$getDeleted) {
 			$qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
@@ -180,7 +180,7 @@ class InquiryMapper extends QBMapper
 			self::TABLE . '.family',
 			self::TABLE . '.visibility',
 		])
-			->from($this->getTableName(), self::TABLE);
+     ->from($this->getTableName(), self::TABLE);
 
 		$currentUserId = $this->userSession->getCurrentUserId();
 		$this->applyVisibilityFilter($qb, $currentUserId);
@@ -242,10 +242,10 @@ class InquiryMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from($this->getTableName())
-			->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('support_feature', $qb->createNamedParameter('trending')));
+     ->from($this->getTableName())
+     ->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->eq('support_feature', $qb->createNamedParameter('trending')));
 
 		return $this->findEntities($qb);
 	}
@@ -287,7 +287,7 @@ class InquiryMapper extends QBMapper
 			if ($policy !== null) {
 				$this->logger->info(
 					'Derived Participation for inquiry ' . $inquiry->getId()
-						. ' from relations (no participation row present)',
+					. ' from relations (no participation row present)',
 					['app' => 'agora']
 				);
 			}
@@ -408,7 +408,7 @@ class InquiryMapper extends QBMapper
 
 		$userGroupIds = $this->getUserGroupIds($currentUserId);
 
-				$this->logger->info('agora visibility filter', [
+		$this->logger->info('agora visibility filter', [
 			'app' => 'agora',
 			'userId' => $currentUserId,
 			'userGroupIds' => $userGroupIds,
@@ -422,7 +422,7 @@ class InquiryMapper extends QBMapper
 				GroupRelation::RELATION_PARTICIPATION,
 				$userGroupIds ?: ['']
 			),
-				]);
+		]);
 
 		$orConditions = [];
 
@@ -535,15 +535,15 @@ class InquiryMapper extends QBMapper
 		// 1. All inquiries with visibility=participants (non-deleted)
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(self::TABLE . '.id')
-			->from($this->getTableName(), self::TABLE)
-			->where($qb->expr()->eq(
-				self::TABLE . '.visibility',
-				$qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)
-			))
-			->andWhere($qb->expr()->eq(
-				self::TABLE . '.deleted',
-				$qb->expr()->literal(0, IQueryBuilder::PARAM_INT)
-			));
+     ->from($this->getTableName(), self::TABLE)
+     ->where($qb->expr()->eq(
+	     self::TABLE . '.visibility',
+	     $qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)
+     ))
+     ->andWhere($qb->expr()->eq(
+	     self::TABLE . '.deleted',
+	     $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)
+     ));
 
 		$stmt = $qb->executeQuery();
 		$allIds = array_map(static fn(array $row): int => (int)$row['id'], $stmt->fetchAll());
@@ -556,15 +556,15 @@ class InquiryMapper extends QBMapper
 		// 2. Bulk-fetch policies (may be empty — DO NOT early-return)
 		$policyQb = $this->db->getQueryBuilder();
 		$policyQb->select('*')
-			->from(Participation::TABLE)
-			->where($policyQb->expr()->eq(
-				'target_type',
-				$policyQb->createNamedParameter(Participation::TARGET_INQUIRY, IQueryBuilder::PARAM_STR)
-			))
-			->andWhere($policyQb->expr()->in(
-				'target_id',
-				$policyQb->createNamedParameter($allIds, IQueryBuilder::PARAM_INT_ARRAY)
-			));
+	   ->from(Participation::TABLE)
+	   ->where($policyQb->expr()->eq(
+		   'target_type',
+		   $policyQb->createNamedParameter(Participation::TARGET_INQUIRY, IQueryBuilder::PARAM_STR)
+	   ))
+	   ->andWhere($policyQb->expr()->in(
+		   'target_id',
+		   $policyQb->createNamedParameter($allIds, IQueryBuilder::PARAM_INT_ARRAY)
+	   ));
 
 		$pStmt = $policyQb->executeQuery();
 		$policies = [];
@@ -594,32 +594,32 @@ class InquiryMapper extends QBMapper
 		try {
 			$lotteryQb = $this->db->getQueryBuilder();
 			$lotteryQb->selectDistinct('p.target_id')
-				->from(LotterySelection::TABLE, 'ls')
-				->innerJoin(
-					'ls',
-					Participation::TABLE,
-					'p',
-					$lotteryQb->expr()->eq('p.id', 'ls.participation_id')
-				)
-				->where($lotteryQb->expr()->eq(
-					'p.target_type',
-					$lotteryQb->createNamedParameter(Participation::TARGET_INQUIRY, IQueryBuilder::PARAM_STR)
-				))
-				->andWhere($lotteryQb->expr()->in(
-					'p.target_id',
-					$lotteryQb->createNamedParameter($allIds, IQueryBuilder::PARAM_INT_ARRAY)
-				))
-				->andWhere($lotteryQb->expr()->eq(
-					'ls.selected_user_id',
-					$lotteryQb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
-				))
-				->andWhere($lotteryQb->expr()->in(
-					'ls.status',
-					$lotteryQb->createNamedParameter(
-						[LotterySelection::STATUS_PENDING, LotterySelection::STATUS_ACCEPTED],
-						IQueryBuilder::PARAM_STR_ARRAY
-					)
-				));
+	     ->from(LotterySelection::TABLE, 'ls')
+	     ->innerJoin(
+		     'ls',
+		     Participation::TABLE,
+		     'p',
+		     $lotteryQb->expr()->eq('p.id', 'ls.participation_id')
+	     )
+	     ->where($lotteryQb->expr()->eq(
+		     'p.target_type',
+		     $lotteryQb->createNamedParameter(Participation::TARGET_INQUIRY, IQueryBuilder::PARAM_STR)
+	     ))
+	     ->andWhere($lotteryQb->expr()->in(
+		     'p.target_id',
+		     $lotteryQb->createNamedParameter($allIds, IQueryBuilder::PARAM_INT_ARRAY)
+	     ))
+	     ->andWhere($lotteryQb->expr()->eq(
+		     'ls.selected_user_id',
+		     $lotteryQb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+	     ))
+	     ->andWhere($lotteryQb->expr()->in(
+		     'ls.status',
+		     $lotteryQb->createNamedParameter(
+			     [LotterySelection::STATUS_PENDING, LotterySelection::STATUS_ACCEPTED],
+			     IQueryBuilder::PARAM_STR_ARRAY
+		     )
+	     ));
 
 			$lStmt = $lotteryQb->executeQuery();
 			$userLotteryIds = array_map(
@@ -653,38 +653,38 @@ class InquiryMapper extends QBMapper
 
 			// ── Normal path: explicit Participation row ──
 			switch ($policy['policy_type'] ?? null) {
-				case Participation::POLICY_EVERYONE:
+			case Participation::POLICY_EVERYONE:
+				$allowed[] = $inquiryId;
+				break;
+
+			case Participation::POLICY_USERS:
+				if (in_array($inquiryId, $userParticipationIds, false)) {
 					$allowed[] = $inquiryId;
-					break;
+				}
+				break;
 
-				case Participation::POLICY_USERS:
-					if (in_array($inquiryId, $userParticipationIds, false)) {
-						$allowed[] = $inquiryId;
-					}
-					break;
+			case Participation::POLICY_GROUPS:
+				if (in_array($inquiryId, $groupParticipationIds, false)) {
+					$allowed[] = $inquiryId;
+				}
+				break;
 
-				case Participation::POLICY_GROUPS:
-					if (in_array($inquiryId, $groupParticipationIds, false)) {
-						$allowed[] = $inquiryId;
-					}
-					break;
+			case Participation::POLICY_LOTTERY:
+				if (in_array($inquiryId, $userLotteryIds, false)) {
+					$allowed[] = $inquiryId;
+				}
+				break;
 
-				case Participation::POLICY_LOTTERY:
-					if (in_array($inquiryId, $userLotteryIds, false)) {
-						$allowed[] = $inquiryId;
-					}
-					break;
-
-				default:
-					// Unknown or legacy → not visible
-					break;
+			default:
+				// Unknown or legacy → not visible
+				break;
 			}
 		}
 
 		return $allowed;
 	}
 
-		/**
+	/**
 	 * Resolve the current user's group IDs.
 	 *
 	 * OCA\Agora\UserSession::getCurrentUser() returns the app's User wrapper,
@@ -768,8 +768,8 @@ class InquiryMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-			->from($this->getTableName())
-			->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+     ->from($this->getTableName())
+     ->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
 		$inquiries = $this->findEntities($qb);
 		$this->hydrateInquiries($inquiries);
@@ -841,9 +841,9 @@ class InquiryMapper extends QBMapper
 		$currentUserId = $this->userSession->getCurrentUserId();
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(self::TABLE . '.id')
-			->from($this->getTableName(), self::TABLE)
-			->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->neq(self::TABLE . '.visibility', $qb->createNamedParameter('private')));
+     ->from($this->getTableName(), self::TABLE)
+     ->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->neq(self::TABLE . '.visibility', $qb->createNamedParameter('private')));
 
 		if ($currentUserId !== null) {
 			$qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId)));
@@ -983,11 +983,11 @@ class InquiryMapper extends QBMapper
 						'target_id', sr.target_id,
 						'result', sr.result,
 						'updated', sr.updated
-					))
-					FROM $table sr
-					WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
-					'[]'::json
-				)::text AS support_result"
+			))
+			FROM $table sr
+			WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
+			'[]'::json
+			)::text AS support_result"
 			));
 		} else {
 			$qb->addSelect($qb->createFunction(
@@ -1387,13 +1387,13 @@ class InquiryMapper extends QBMapper
 				AND s.type IN ('user','admin','group','email','contact','external')
 				AND (s.user_id = :is_shared_user OR s.user_id IN (:is_shared_groups))
 			) THEN 1 ELSE 0 END AS is_shared",
-			Share::TABLE,
-			$fromAlias
+				Share::TABLE,
+				$fromAlias
 		);
 
-		$qb->addSelect($qb->createFunction($sql));
-		$qb->setParameter('is_shared_user', $currentUserId, IQueryBuilder::PARAM_STR);
-		$qb->setParameter('is_shared_groups', $userGroups ?: [''], IQueryBuilder::PARAM_STR_ARRAY);
+			$qb->addSelect($qb->createFunction($sql));
+			$qb->setParameter('is_shared_user', $currentUserId, IQueryBuilder::PARAM_STR);
+			$qb->setParameter('is_shared_groups', $userGroups ?: [''], IQueryBuilder::PARAM_STR_ARRAY);
 	}
 
 	// ── Dynamic fields ──
@@ -1404,8 +1404,8 @@ class InquiryMapper extends QBMapper
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-			->from(InquiryMisc::TABLE)
-			->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+     ->from(InquiryMisc::TABLE)
+     ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
 
 		$stmt = $qb->executeQuery();
 		$storedData = $stmt->fetchAll();
@@ -1427,36 +1427,36 @@ class InquiryMapper extends QBMapper
 		}
 
 		switch ($type) {
-			case 'integer':
-			case 'int':
-				return (int)$value;
-			case 'boolean':
-			case 'bool':
-				return (bool)$value;
-			case 'float':
-			case 'double':
-				return (float)$value;
-			case 'datetime':
-				return is_numeric($value) ? (int)$value : $value;
-			case 'json':
-			case 'object':
-			case 'array':
-				if (is_string($value)) {
-					return $value;
-				}
-				if (is_array($value) || is_object($value)) {
-					return json_encode($value, JSON_UNESCAPED_UNICODE);
-				}
-				return (string)$value;
-			case 'enum':
-				$allowed = $fieldDef['allowed_values'] ?? [];
-				if (in_array($value, $allowed, true)) {
-					return $value;
-				}
-				return $fieldDef['default'] ?? null;
-			case 'string':
-			default:
-				return (string)$value;
+		case 'integer':
+		case 'int':
+			return (int)$value;
+		case 'boolean':
+		case 'bool':
+			return (bool)$value;
+		case 'float':
+		case 'double':
+			return (float)$value;
+		case 'datetime':
+			return is_numeric($value) ? (int)$value : $value;
+		case 'json':
+		case 'object':
+		case 'array':
+			if (is_string($value)) {
+				return $value;
+			}
+			if (is_array($value) || is_object($value)) {
+				return json_encode($value, JSON_UNESCAPED_UNICODE);
+			}
+			return (string)$value;
+		case 'enum':
+			$allowed = $fieldDef['allowed_values'] ?? [];
+			if (in_array($value, $allowed, true)) {
+				return $value;
+			}
+			return $fieldDef['default'] ?? null;
+		case 'string':
+		default:
+		return (string)$value;
 		}
 	}
 
@@ -1470,8 +1470,8 @@ class InquiryMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete(InquiryMisc::TABLE)
-			->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-			->executeStatement();
+     ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+     ->executeStatement();
 
 		foreach ($fieldsDefinition as $fieldDef) {
 			$key = $fieldDef['key'];
@@ -1479,15 +1479,101 @@ class InquiryMapper extends QBMapper
 			$stringValue = is_array($value) ? json_encode($value) : (string)$value;
 
 			$qb->insert(InquiryMisc::TABLE)
-				->values([
-					'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
-					'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-					'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
-				])
-				->executeStatement();
+      ->values([
+	      'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
+	      'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+	      'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
+      ])
+      ->executeStatement();
 
 			$inquiry->setMiscField($key, $value);
 		}
+	}
+
+	/**
+	 * Batch version of get() used to hydrate options without N+1.
+	 * Applies the same joins as buildQuery() but does NOT apply the
+	 * visibility filter — callers must call Inquiry::getIsAllowed()
+	 * for the final decision (matches HEAD's semantics).
+	 *
+	 * @return array<int, Inquiry> keyed by inquiry id
+	 */
+	public function findByIds(array $ids, bool $getDeleted = false, bool $withRoles = true): array
+	{
+		if (empty($ids)) {
+			return [];
+		}
+		$ids = array_values(array_unique(array_map('intval', $ids)));
+
+		$qb = $this->db->getQueryBuilder();
+		$qb->select([
+			self::TABLE . '.id', self::TABLE . '.cover_id', self::TABLE . '.type',
+			self::TABLE . '.title', self::TABLE . '.description',
+			self::TABLE . '.location_id', self::TABLE . '.category_id',
+			self::TABLE . '.owner', self::TABLE . '.created', self::TABLE . '.archived',
+			self::TABLE . '.expire', self::TABLE . '.deleted', self::TABLE . '.owned_group',
+			self::TABLE . '.publication_status', self::TABLE . '.show_results',
+			self::TABLE . '.last_interaction', self::TABLE . '.parent_id',
+			self::TABLE . '.moderation_status', self::TABLE . '.inquiry_status',
+			self::TABLE . '.allow_comment', self::TABLE . '.support_feature',
+			self::TABLE . '.family', self::TABLE . '.visibility',
+		])
+     ->from($this->getTableName(), self::TABLE)
+     ->where($qb->expr()->in(
+	     self::TABLE . '.id',
+	     $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)
+     ));
+
+		if (!$getDeleted) {
+			$qb->andWhere($qb->expr()->eq(
+				self::TABLE . '.deleted',
+				$qb->expr()->literal(0, IQueryBuilder::PARAM_INT)
+			));
+		}
+
+		if ($withRoles) {
+			$currentUserId      = $this->userSession->getCurrentUserId();
+			$userGroups         = $this->userSession->getCurrentUser()?->getGroups() ?? [];
+			$inquiryGroupsAlias = 'inquiry_groups';
+
+			$this->joinFamily($qb, self::TABLE);
+			$this->joinUserRole($qb, self::TABLE, $currentUserId);
+			$this->joinGroupShares($qb, self::TABLE);
+			$this->joinHasSupported($qb, self::TABLE, $currentUserId);
+			$this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
+			$this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
+			$this->joinSupportValue($qb, self::TABLE, $currentUserId);
+			$this->joinParticipantsCount($qb, self::TABLE);
+			$this->joinCommentsCount($qb, self::TABLE);
+			$this->joinSupportsCount($qb, self::TABLE);
+			$this->joinMiscs($qb, self::TABLE);
+			$this->joinSupportResult($qb, self::TABLE);
+			$this->joinSupportEngine($qb, self::TABLE);
+			$this->joinIsShared($qb, self::TABLE, $currentUserId, $userGroups);
+
+			$qb->groupBy([
+				self::TABLE . '.id', self::TABLE . '.cover_id', self::TABLE . '.type',
+				self::TABLE . '.title', self::TABLE . '.description',
+				self::TABLE . '.location_id', self::TABLE . '.category_id',
+				self::TABLE . '.owner', self::TABLE . '.created', self::TABLE . '.archived',
+				self::TABLE . '.expire', self::TABLE . '.deleted', self::TABLE . '.owned_group',
+				self::TABLE . '.publication_status', self::TABLE . '.show_results',
+				self::TABLE . '.last_interaction', self::TABLE . '.parent_id',
+				self::TABLE . '.moderation_status', self::TABLE . '.inquiry_status',
+				self::TABLE . '.allow_comment', self::TABLE . '.support_feature',
+				self::TABLE . '.family', self::TABLE . '.visibility',
+			]);
+		}
+
+		$result = [];
+		foreach ($this->findEntities($qb) as $entity) {
+			$this->loadDynamicFields($entity);
+			$this->loadParticipation($entity);
+			$entity->setVisibilityGroups($this->getVisibilityGroupsForInquiry($entity->getId()));
+			$entity->setVisibilityUsers($this->getUserIdsForVisibility($entity->getId()));
+			$result[$entity->getId()] = $entity;
+		}
+		return $result;
 	}
 
 	public function updateDynamicFields(Inquiry $inquiry, array $fieldsToUpdate, array $fieldsDefinition): void
@@ -1509,25 +1595,25 @@ class InquiryMapper extends QBMapper
 			$stringValue = is_array($value) ? json_encode($value) : (string)$value;
 
 			$existing = $qb->select('id')
-				->from(InquiryMisc::TABLE)
-				->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-				->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
-				->executeQuery()
-				->fetchOne();
+		  ->from(InquiryMisc::TABLE)
+		  ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+		  ->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
+		  ->executeQuery()
+		  ->fetchOne();
 
 			if ($existing) {
 				$qb->update(InquiryMisc::TABLE)
-					->set('value', $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR))
-					->where($qb->expr()->eq('id', $qb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
-					->executeStatement();
+       ->set('value', $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR))
+       ->where($qb->expr()->eq('id', $qb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
+       ->executeStatement();
 			} else {
 				$qb->insert(InquiryMisc::TABLE)
-					->values([
-						'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
-						'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-						'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
-					])
-					->executeStatement();
+       ->values([
+	       'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
+	       'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+	       'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
+       ])
+       ->executeStatement();
 			}
 
 			$inquiry->setMiscField($key, $value);
@@ -1566,9 +1652,9 @@ class InquiryMapper extends QBMapper
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-			->from(TrendingScore::TABLE)
-			->where($qb->expr()->in('inquiry_id', $qb->createNamedParameter($inquiryIds, IQueryBuilder::PARAM_INT_ARRAY)))
-			->orderBy('updated_at', 'DESC');
+     ->from(TrendingScore::TABLE)
+     ->where($qb->expr()->in('inquiry_id', $qb->createNamedParameter($inquiryIds, IQueryBuilder::PARAM_INT_ARRAY)))
+     ->orderBy('updated_at', 'DESC');
 
 		$stmt = $qb->executeQuery();
 		$scores = [];
@@ -1599,17 +1685,16 @@ class InquiryMapper extends QBMapper
 		return $inquiries;
 	}
 
-	// ── CRUD ──
 
 	public function archiveExpiredInquiries(int $offset): int
 	{
 		$archiveDate = time();
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
-			->set('archived', $qb->createNamedParameter($archiveDate))
-			->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
-			->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+     ->set('archived', $qb->createNamedParameter($archiveDate))
+     ->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
+     ->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 		return $qb->executeStatement();
 	}
 
@@ -1617,8 +1702,18 @@ class InquiryMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
-			->set('inquiry_status', $qb->createNamedParameter($mstatus))
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+     ->set('inquiry_status', $qb->createNamedParameter($mstatus))
+     ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+		$qb->executeStatement();
+
+	}
+
+	public function setInquiryVisibility(int $inquiryId, string $visibility): void
+	{
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+     ->set('visibility', $qb->createNamedParameter($visibility))
+     ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
 		$qb->executeStatement();
 	}
 
@@ -1626,8 +1721,8 @@ class InquiryMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
-			->set('moderation_status', $qb->createNamedParameter($mstatus))
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+     ->set('moderation_status', $qb->createNamedParameter($mstatus))
+     ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
 		$qb->executeStatement();
 	}
 
@@ -1635,8 +1730,8 @@ class InquiryMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->lt('archived', $qb->createNamedParameter($offset)))
-			->andWhere($qb->expr()->gt('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+     ->where($qb->expr()->lt('archived', $qb->createNamedParameter($offset)))
+     ->andWhere($qb->expr()->gt('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 		return $qb->executeStatement();
 	}
 
@@ -1645,8 +1740,8 @@ class InquiryMapper extends QBMapper
 		$timestamp = time();
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
-			->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+     ->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
+     ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
 		$qb->executeStatement();
 	}
 
@@ -1654,8 +1749,8 @@ class InquiryMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete($this->getTableName())
-			->where('owner = :userId')
-			->setParameter('userId', $userId);
+     ->where('owner = :userId')
+     ->setParameter('userId', $userId);
 		$qb->executeStatement();
 	}
 
@@ -1664,11 +1759,11 @@ class InquiryMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->selectDistinct([self::TABLE . '.owner', self::TABLE . '.id'])
-			->from($this->getTableName(), self::TABLE)
-			->groupBy(self::TABLE . '.owner', self::TABLE . '.id')
-			->where(
-				$qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
-			);
+     ->from($this->getTableName(), self::TABLE)
+     ->groupBy(self::TABLE . '.owner', self::TABLE . '.id')
+     ->where(
+	     $qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
+     );
 
 		return $this->findEntities($qb);
 	}

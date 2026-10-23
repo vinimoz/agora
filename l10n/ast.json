@@ -83,7 +83,6 @@
     "never" : "enxamás",
     "Open" : "Abrir",
     "Private" : "Priváu",
-    "Invitation" : "Invitación",
     "Comments" : "Comentarios",
     "Location" : "Llocalización",
     "Category" : "Categoría",
@@ -267,6 +266,7 @@
     "now" : "agora",
     "Owner" : "Propietariu",
     "Expired" : "Caducó",
+    "Shared" : "Compartióse",
     "Administration" : "Alministración",
     "Title must not be empty!" : "¡El títulu nun ha tar baleru!"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

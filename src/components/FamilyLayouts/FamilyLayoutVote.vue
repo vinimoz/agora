@@ -24,6 +24,61 @@
       @add-item="$emit('addItem')"
     />
 
+    <!-- Stacked mode: N disjoint active engines, one shared ballot strip -->
+<div v-if="isStacked" class="vote-interface stacked">
+  <!-- Optional: engine strip header for the whole page -->
+  <div class="stacked-header">
+    <h2>{{ t('agora', 'Vote on all methods') }}</h2>
+    <span class="stacked-count">
+      {{ n('agora', '{count} method', '{count} methods', stackedEngines.length, { count: stackedEngines.length }) }}
+    </span>
+  </div>
+
+  <section
+    v-for="engine in stackedEngines"
+    :key="engine.id"
+    class="vote-engine-section"
+  >
+    <div class="engine-strip">
+      <h3>{{ engine.title || t('agora', 'Untitled engine') }}</h3>
+      <span class="engine-badge engine-badge--type">
+        {{ ENGINE_DEFINITIONS[engine.engine]?.label ?? engine.engine }}
+      </span>
+    </div>
+
+    <VoteEngineBlock
+      ref="blocks"
+      :parent-id="effectiveParentId ?? 0"
+      :target-type="props.targetType"
+      :engine-id="engine.id"
+      layout="cards"
+      :time-remaining="timeRemaining"
+      :enqueue-save="enqueueSave"
+      :hide-results="hidesResults(engine)"
+      @open-supports-modal="openSupportsModal"
+      @select-item="$emit('selectItem', $event)"
+      @progress="onProgress"
+    />
+  </section>
+
+  <!-- Shared progress + submit bar -->
+  <div class="vote-progress-bar">
+    <span>
+      {{
+        n('agora', '{answered} answer out of {total}', '{answered} answers out of {total}',
+          progressTotals[1], { answered: progressTotals[0], total: progressTotals[1] })
+      }}
+    </span>
+    <progress :value="progressTotals[0]" :max="progressTotals[1] || 1" />
+    <span v-if="savesRunning">{{ t('agora', 'Saving …') }}</span>
+    <span v-else-if="failedSaves.size">
+      {{ t('agora', 'Not saved') }}
+      <NcButton variant="tertiary" @click="retrySaves">{{ t('agora', 'Retry') }}</NcButton>
+    </span>
+    <span v-else-if="allSaved">{{ t('agora', 'All your answers are saved') }}</span>
+  </div>
+</div>
+
     <!-- Main interface -->
     <template v-else>
       <!-- Tab bar + primary action -->
@@ -261,6 +316,7 @@
               :vote-selection-info="voteSelectionInfo"
               :get-item-vote-count="getItemVoteCount"
               :get-percentage="(item) => getPercentage(item)"
+	      :get-item-majority-judgment="getMajorityJudgment"
               :has-user-voted-for="hasUserVotedFor"
               :is-selected-for-vote="isSelectedForVote"
               :get-user-vote-value-for-item="getUserVoteValueForItem"
@@ -408,7 +464,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, useTemplateRef } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { n, t } from '@nextcloud/l10n'
 import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -532,6 +589,7 @@ const {
   getPercentage,
   getRankedItems,
   getWinner,
+  getMajorityJudgment,
   getWinnerPercentage,
   getUserVoteValueForItem,
   refreshEngines,
@@ -555,6 +613,89 @@ console.log('🔍 FLV-INIT', {
 const draftEngines = computed(() => availableEngines.value.filter((e) => e.status === 'draft'))
 const activeEngines = computed(() => availableEngines.value.filter((e) => e.status === 'active'))
 const closedEngines = computed(() => availableEngines.value.filter((e) => e.status === 'closed'))
+
+// Stacked mode: two or more engines whose target_ids are disjoint.
+// Guard: phased_voting is excluded (its phases interact), and every item
+// shown by any engine must be covered by exactly one engine.
+const stackedEngines = computed<SupportEngine[]>(() => {
+  const active = availableEngines.value.filter((e) => e.status !== 'draft')
+  if (
+    active.length < 2 ||
+    active.some((e) => e.engine === 'phased_voting' || !e.target_ids?.length)
+  ) {
+    return []
+  }
+  const covered = new Set<number>()
+  for (const e of active) {
+    for (const id of e.target_ids) {
+      if (covered.has(id)) return []   // overlap → not stackable
+      covered.add(id)
+    }
+  }
+  const shown = availableEngines.value.flatMap((e) => e.target_ids ?? [])
+  if (shown.some((id) => !covered.has(id))) return []  // not all items covered
+  return [...active].sort((a, b) => a.id - b.id)
+})
+
+const isStacked = computed(() => stackedEngines.value.length > 0)
+
+// ── Per-engine progress ─────────────────────────────────────────
+const progress = ref<Record<number, [number, number]>>({})
+const onProgress = (engineId: number, count: number, total: number) => {
+  progress.value[engineId] = [count, total]
+}
+const progressTotals = computed<[number, number]>(() =>
+  stackedEngines.value.reduce(
+    ([count, total], e) => [
+      count + (progress.value[e.id]?.[0] ?? 0),
+      total + (progress.value[e.id]?.[1] ?? 0),
+    ],
+    [0, 0] as [number, number],
+  ),
+)
+
+// ── Serialised save queue ───────────────────────────────────────
+// Supports API cancels previous in-flight calls of the same name, so writes
+// must run one at a time. failedSaves keeps the pending task so Retry
+// re-enqueues it without re-firing user input.
+let queue: Promise<unknown> = Promise.resolve()
+const savesRunning = ref(0)
+const failedSaves = ref(new Map<number, () => Promise<boolean>>())
+
+const enqueueSave = (engineId: number, task: () => Promise<boolean>): Promise<boolean> => {
+  savesRunning.value += 1
+  const run = queue
+    .then(task)
+    .catch(() => false)
+    .then((ok) => {
+      savesRunning.value -= 1
+      if (ok) failedSaves.value.delete(engineId)
+      else failedSaves.value.set(engineId, task)
+      return ok
+    })
+  queue = run
+  return run
+}
+const retrySaves = () => {
+  for (const [engineId, task] of failedSaves.value) enqueueSave(engineId, task)
+}
+
+// ── Flush on leave ──────────────────────────────────────────────
+const blocks = useTemplateRef<Array<{ flush: () => Promise<boolean>; settled: boolean }>>('blocks')
+
+const allSaved = computed(
+  () =>
+    progressTotals.value[1] > 0 &&
+    progressTotals.value[0] === progressTotals.value[1] &&
+    !savesRunning.value &&
+    !failedSaves.value.size &&
+    (blocks.value ?? []).every((b) => b.settled),
+)
+
+onBeforeRouteLeave(async () => {
+  if (!isStacked.value) return
+  await Promise.all((blocks.value ?? []).map((b) => b.flush()))
+})
 
 const votableFullItems = computed<Item[]>(() => {
   const ids = new Set(votableItems.value.map((v) => v.id))

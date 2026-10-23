@@ -156,7 +156,8 @@ occ app:enable agora
 | **🔧 Template Guide** | Template configuration for administrators | [📘 template\_guide.md](docs/template_guide.md) |
 | **🔌 API Guide** | REST API documentation for developers | [🔌 API\_v1.0.md](docs/API_v1.0.md) |
 | **📋 Template Schema** | JSON schema for template validation | [📋 Agora-template-schema.json](docs/Agora-template-schema.json) |
-| **🏛  Democratic Guide** | Democratic voting guide |🏛 [ Democratic_vote](docs/Democratic_vote.md) |
+| **🏛  Democratic Guide** | Democratic voting guide | 🏛 [ Democratic\_vote](docs/Democratic_vote.md) |
+
 
 ## 🗺️ Roadmap
 ### 1.9 — Process & Workflow 🔄
@@ -164,7 +165,6 @@ occ app:enable agora
 
 ## 📄 License
 This project is licensed under the GNU Affero General Public License v3.0 — see the [COPYING](COPYING) file for details.
-
 
 ## 🙏 Credits
 Developed by ViniMoz

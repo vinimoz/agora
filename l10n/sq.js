@@ -124,6 +124,7 @@ OC.L10N.register(
     "_%n day ago_::_%n days ago_" : ["%n ditë më parë","%n ditë më parë"],
     "_%n month ago_::_%n months ago_" : ["%n muaj më parë","%n muaj më parë"],
     "_%n year ago_::_%n years ago_" : ["%n vit më parë","%n vjet më parë"],
-    "now" : "tani"
+    "now" : "tani",
+    "Shared" : "Ndarë"
 },
 "nplurals=2; plural=(n != 1);");

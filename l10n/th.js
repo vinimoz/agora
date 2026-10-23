@@ -124,6 +124,7 @@ OC.L10N.register(
     "_%n month ago_::_%n months ago_" : ["%n เดือนที่ผ่านมา"],
     "_%n year ago_::_%n years ago_" : ["%n ปีที่ผ่านมา"],
     "now" : "ตอนนี้",
-    "Owner" : "เจ้าของ"
+    "Owner" : "เจ้าของ",
+    "Shared" : "ถูกแชร์"
 },
 "nplurals=1; plural=0;");

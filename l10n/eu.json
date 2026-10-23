@@ -134,7 +134,6 @@
     "never" : "inoiz ez",
     "Open" : "Ireki",
     "Private" : "Pribatua",
-    "Invitation" : "Gonbidapena",
     "Comments" : "Iruzkinak",
     "Location" : "Kokapena",
     "Category" : "Kategoria",
@@ -416,6 +415,7 @@
     "Expired" : "Iraungita",
     "Relevant" : "Beharrezkoa",
     "Participated" : "Parte hartu da",
+    "Shared" : "Partekatuta",
     "Administration" : "Administrazioa",
     "Title must not be empty!" : "Izenburua ezin da hutsik egon!"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

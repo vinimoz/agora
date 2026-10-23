@@ -327,6 +327,7 @@ class Application extends App implements IBootstrap
                     $c->get(GroupRelationMapper::class),
                     $c->get(UserRelationMapper::class),
                     $c->get(LoggerInterface::class),
+                    $c->get(InquiryMapper::class),
                 );
             }
         );

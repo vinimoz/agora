@@ -228,7 +228,7 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
             id="editor-type-select"
             v-model="typeRights.editorType"
             :options="editorOptions"
-            option-value="value"
+            :reduce="(option: { value: string }) => option.value"
             option-label="label"
             class="editor-select"
             @update:model-value="updateRights"

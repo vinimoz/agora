@@ -149,6 +149,7 @@ OC.L10N.register(
     "Sharing" : "Ulashish",
     "Not found" : "Topilmadi",
     "Export as PDF" : "PDF sifatida eksport qilish",
-    "Owner" : "Egalik"
+    "Owner" : "Egalik",
+    "Shared" : "Ulashilgan"
 },
 "nplurals=1; plural=0;");

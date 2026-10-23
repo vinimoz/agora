@@ -21,6 +21,7 @@
       :reactions="reactions"
       :quadratic-votes="quadraticVotes"
       :token-weights="tokenWeights"
+      :get-item-majority-judgment="getMajorityJudgment"
       :can-submit-multi-vote="canSubmitMultiVote"
       :vote-selection-info="voteSelectionInfo"
       :get-item-vote-count="getItemVoteCount"
@@ -133,6 +134,7 @@ const {
   getWinner,
   getWinnerPercentage,
   getUserVoteValueForItem,
+  getMajorityJudgment,
   effectiveEngineId,
   removeMyVote,
   loadUserVotesForEngine,

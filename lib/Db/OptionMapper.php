@@ -16,6 +16,7 @@ use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\Search\ISearchQuery;
 use Psr\Log\LoggerInterface;
+use OCA\Agora\Db\InquiryMapper;
 
 /**
  * @template-extends QBMapper<Option>
@@ -42,6 +43,61 @@ class OptionMapper extends QBMapper
     // ====================================================================
     // MAIN QUERY METHODS
     // ====================================================================
+	protected function hydrateOptions(array $options): void
+{
+    if (empty($options)) {
+        return;
+    }
+
+    foreach ($options as $option) {
+        $this->loadDynamicFields($option);
+    }
+
+    // Batch-load parent inquiries (avoids N+1 — main-only improvement)
+    $missing = [];
+    foreach ($options as $option) {
+        $tid = (int)$option->getTargetId();
+        if ($tid > 0 && !isset($this->inquiryCache[$tid])) {
+            $missing[$tid] = true;
+        }
+    }
+
+    if (!empty($missing)) {
+        $ids = array_keys($missing);
+        try {
+            if (method_exists($this->inquiryMapper, 'findByIds')) {
+                $loaded = $this->inquiryMapper->findByIds($ids, withRoles: true);
+                foreach ($loaded as $id => $inquiry) {
+                    $this->inquiryCache[(int)$id] = $inquiry;
+                }
+            } else {
+                foreach ($ids as $id) {
+                    try {
+                        $this->inquiryCache[$id] = $this->inquiryMapper->get($id, false, true);
+                    } catch (\Throwable $e) {
+                        $this->logger->warning('OptionMapper: inquiry get failed', [
+                            'id' => $id,
+                            'exception' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->logger->warning('OptionMapper::hydrateOptions failed', [
+                'ids' => $ids,
+                'exception' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    foreach ($options as $option) {
+        $tid = (int)$option->getTargetId();
+        if ($tid > 0 && isset($this->inquiryCache[$tid])) {
+            $option->setParentInquiry($this->inquiryCache[$tid]);
+        }
+    }
+	}
+
 
     public function get(int $id, bool $getDeleted = false, bool $withRoles = false): Option
     {
@@ -259,21 +315,28 @@ class OptionMapper extends QBMapper
         $qb->andWhere($qb->expr()->orX(...$orConditions));
     }
 
-    private function getUserGroupIds(string $userId): array
-    {
-        try {
-            $user = $this->userSession->getUser();
-            if ($user !== null && $user instanceof \OCP\IUser) {
-                return $this->groupManager->getUserGroupIds($user);
-            }
-        } catch (\Exception $e) {
-            $this->logger->error('Could not get user groups: ' . $e->getMessage(), [
-                'app' => 'agora',
-                'userId' => $userId
-            ]);
+private function getUserGroupIds(string $userId): array
+{
+    try {
+        $user = $this->userSession->getCurrentUser();
+        if ($user === null) {
+            return [];
         }
-        return [];
+        if (method_exists($user, 'getGroups')) {
+            $groups = $user->getGroups();
+            return is_array($groups) ? array_values($groups) : [];
+        }
+        if ($user instanceof \OCP\IUser) {
+            return $this->groupManager->getUserGroupIds($user);
+        }
+    } catch (\Throwable $e) {
+        $this->logger->error('Could not get user groups: ' . $e->getMessage(), [
+            'app' => 'agora',
+            'userId' => $userId,
+        ]);
     }
+    return [];
+}
 
     // ====================================================================
     // INQUIRY CONTEXT JOIN

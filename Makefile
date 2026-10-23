@@ -17,6 +17,9 @@ build_source_dir=$(build_dir)/source
 appstore_build_dir=$(build_dir)/artifacts
 appstore_package_name=$(appstore_build_dir)/$(app_name)
 nc_cert_dir=$(HOME)/.nextcloud/certificates
+#nc_cert_dir=/etc/nextcloud/signing
+# occ of a Nextcloud server, to sign the code: make appstore occ=/path/to/server/occ
+occ=/var/www/nextcloud/occ
 composer=$(shell which composer 2> /dev/null || echo $(build_tools_dir)/composer.phar)
 version=$(shell node -p -e "require('./package.json').version")
 
@@ -86,18 +89,23 @@ ifeq (,$(wildcard $(composer)))
 	chmod +x $(build_tools_dir)/composer.phar
 endif
 
-# Builds the source package for the appstore
-# signs, if certificate is present
+
+# Builds and signs the source package for the App Store
+# signs the code and the package, if occ and the certificate are present
 package: clean
+	@test -n "$(occ)" || (echo "ERROR: specify occ=/path/to/nextcloud/occ" >&2; exit 1)
+	@test -r "$(nc_cert_dir)/$(app_name).key" || (echo "ERROR: private key missing or unreadable: $(nc_cert_dir)/$(app_name).key" >&2; exit 1)
+	@test -r "$(nc_cert_dir)/$(app_name).crt" || (echo "ERROR: certificate missing or unreadable: $(nc_cert_dir)/$(app_name).crt" >&2; exit 1)
+	@test -f "$(occ)" || (echo "ERROR: occ not found: $(occ)" >&2; exit 1)
 	mkdir -p $(build_source_dir)
 	mkdir -p $(appstore_build_dir)
-	rsync -zarh $(project_dir)/ --files-from="$(project_dir)/sync_list.txt" --exclude="vendor/bin" $(build_source_dir)/$(app_name)
+	rsync -zarh $(project_dir)/ --files-from="$(project_dir)/sync_list.txt" --exclude="vendor/bin" --exclude="appinfo/signature.json" $(build_source_dir)/$(app_name)
+	@echo "Signing application code as $(USER)..."
+	php "$(occ)" integrity:sign-app --privateKey="$(nc_cert_dir)/$(app_name).key" --certificate="$(nc_cert_dir)/$(app_name).crt" --path="$(abspath $(build_source_dir)/$(app_name))" || exit 1
+	@test -s "$(build_source_dir)/$(app_name)/appinfo/signature.json" || (echo "ERROR: signature.json was not generated" >&2; exit 1)
 	tar -czf $(appstore_package_name).tar.gz --directory="$(build_source_dir)" $(app_name)
-	@if [ -f $(nc_cert_dir)/$(app_name).key ]; then \
-		echo "Signing package..."; \
-		openssl dgst -sha512 -sign $(nc_cert_dir)/$(app_name).key $(appstore_build_dir)/$(app_name).tar.gz | openssl base64; \
-	fi
-
+	@echo "Package created: $(appstore_package_name).tar.gz"
+	@if tar -tzf "$(appstore_package_name).tar.gz" | grep -Eq '(^|/)(private\.key|agora\.key)$$'; then echo "ERROR: private key found in package" >&2; exit 1; fi
 
 .PHONY: test
 test: composer setup-dev-composer

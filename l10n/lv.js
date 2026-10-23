@@ -181,6 +181,7 @@ OC.L10N.register(
     "_%n year ago_::_%n years ago_" : ["pirms %n gadiem","pirms %n gada","pirms %n gadiem"],
     "now" : "šobrīd",
     "Owner" : "Īpašnieks",
+    "Shared" : "Koplietots",
     "Administration" : "Pārvaldīšana"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

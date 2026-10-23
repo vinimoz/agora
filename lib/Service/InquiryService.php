@@ -69,23 +69,22 @@ class InquiryService
 	/**
 	 * Get list of inquiries
 	 */
-	public function listInquiries(): array
-	{
-		$inquiryList = $this->inquiryMapper->findForMe($this->userSession->getCurrentUserId());
 
-		if ($this->userSession->getCurrentUser()->getIsAdmin()) {
-			return $inquiryList;
-		}
+public function listInquiries(): array
+{
+    $inquiryList = $this->inquiryMapper->findForMe($this->userSession->getCurrentUserId());
 
-		return array_values(
-			array_filter(
-				$inquiryList,
-				function (Inquiry $inquiry): bool {
-					return $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW);
-				}
-			)
-		);
-	}
+    // Keep the regular list consistent with the detail view for every user,
+    // including administrators. Administrative listings are handled separately.
+    return array_values(
+        array_filter(
+            $inquiryList,
+            function (Inquiry $inquiry): bool {
+                return $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW);
+            }
+        )
+    );
+}
 
 	public function get(int $inquiryId, $lightweight = false)
 	{
@@ -695,7 +694,7 @@ class InquiryService
 	/**
 	 * Get inquiry with trending scores included
 	 */
-		/**
+	/**
 	 * Get inquiry with trending scores included
 	 */
 	public function getWithTrending(int $inquiryId): array
@@ -905,6 +904,8 @@ class InquiryService
 		$this->inquiry->setTitle('Clone of ' . $origin->getTitle());
 		$this->inquiry->setDeleted(0);
 		$this->inquiry->setVisibility(Inquiry::VISIBILITY_PRIVATE);
+		$this->inquiry->setAllowComment($origin->getAllowComment());
+		$this->inquiry->setSupportFeature($origin->getSupportFeature());
 
 		if ($inquiryType) {
 			$this->inquiry->setType($inquiryType);
@@ -960,100 +961,86 @@ class InquiryService
 	 * Run a moderation/status action on an inquiry.
 	 */
 	public function applyAction(int $inquiryId, string $action): Inquiry
-	{
-		$inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+{
+    $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+    if (!$inquiry) {
+        throw new \Exception('Inquiry not found');
+    }
 
-		if (!$inquiry) {
-			throw new \Exception('Inquiry not found');
-		}
+    $inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);   // ← ADD (main)
 
-		$user = $this->userSession->getCurrentUser();
-		$selfAccept = !$this->appSettings->getUseModeration()
-			|| ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
+    $user = $this->userSession->getCurrentUser();
+    $selfAccept = !$this->appSettings->getUseModeration()
+        || ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
 
-		$allowed = match ($action) {
-			'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
-			'submit_for_accepted' => $user->getIsModerator()
-				|| ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
-			'submit_for_rejected' => $user->getIsModerator(),
-			default => true,
-		};
+    $allowed = match ($action) {
+        'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
+        'submit_for_accepted' => $user->getIsModerator()
+            || ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
+        'submit_for_rejected' => $user->getIsModerator(),
+        default => true,
+    };
+    if (!$allowed) {
+        throw new ForbiddenException('denied action ' . $action);
+    }
 
-		if (!$allowed) {
-			throw new ForbiddenException('denied action ' . $action);
-		}
+    $timestamp = time();
 
-		$timestamp = time();
+    switch ($action) {
+        case 'save_draft':
+            $inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PENDING);
+            $inquiry->setInquiryStatus('waiting_approval');
+            $inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PENDING);
+            $inquiry->setLastInteraction($timestamp);
+            $inquiry = $this->inquiryMapper->update($inquiry);
+            break;
 
-		switch ($action) {
-			case 'save_draft':
-				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PENDING);
-				$inquiry->setInquiryStatus('waiting_approval');
-				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PENDING);
-				$inquiry->setLastInteraction($timestamp);
-				$inquiry = $this->inquiryMapper->update($inquiry);
-				break;
+        case 'submit_for_moderate':
+            $inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PENDING);
+            $inquiry->setInquiryStatus('waiting_approval');
+            $inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PENDING);
+            $inquiry->setLastInteraction($timestamp);
+            $inquiry = $this->inquiryMapper->update($inquiry);
+            break;
 
-			case 'submit_for_moderate':
-				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PENDING);
-				$inquiry->setInquiryStatus('waiting_approval');
-				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PENDING);
-				$inquiry->setLastInteraction($timestamp);
-				$inquiry = $this->inquiryMapper->update($inquiry);
-				break;
+        case 'submit_for_accepted':
+            $inquiry->setVisibility(Inquiry::VISIBILITY_EVERYONE);
+            $inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PUBLISHED);
+            $inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PUBLISHED);
+            $inquiry->setLastInteraction($timestamp);
 
-			case 'submit_for_accepted':
-				$inquiry->setVisibility(Inquiry::VISIBILITY_EVERYONE);
-				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_PUBLISHED);
-				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_PUBLISHED);
-				$inquiry->setLastInteraction($timestamp);
-				// Find the first status available in inquiry type status definition
-				$statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
-				if (!empty($statuses)) {
-					usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
-					$firstStatus = $statuses[0] ?? null;
-				}
-				if (!empty($firstStatus)) {
-					$inquiry->setInquiryStatus($firstStatus->getStatusKey());
-				}
-				$inquiry = $this->inquiryMapper->update($inquiry);
-				break;
+            // ← Preserve the creator's chosen status if it is still valid
+            //   for this inquiry type (fix from main).
+            $statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
+            $validKeys = array_map(fn ($s) => $s->getStatusKey(), $statuses);
+            $currentStatus = $inquiry->getInquiryStatus();
 
-			case 'submit_for_rejected':
-				$inquiry->setVisibility(Inquiry::VISIBILITY_PRIVATE);
-				$inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_DRAFT);
-				$inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_REJECTED);
-				$inquiry->setInquiryStatus('rejected');
-				$inquiry->setLastInteraction($timestamp);
-				$inquiry = $this->inquiryMapper->update($inquiry);
-				break;
+            if (empty($currentStatus) || !in_array($currentStatus, $validKeys, true)) {
+                if (!empty($statuses)) {
+                    usort($statuses, fn ($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
+                    $firstStatus = $statuses[0] ?? null;
+                    if ($firstStatus !== null) {
+                        $inquiry->setInquiryStatus($firstStatus->getStatusKey());
+                    }
+                }
+            }
+            $inquiry = $this->inquiryMapper->update($inquiry);
+            break;
 
-			default:
-				throw new \InvalidArgumentException("Unknown action '$action'");
-		}
+        case 'submit_for_rejected':
+            $inquiry->setVisibility(Inquiry::VISIBILITY_PRIVATE);
+            $inquiry->setPublicationStatus(Inquiry::PUBLICATION_STATUS_DRAFT);
+            $inquiry->setModerationStatus(Inquiry::MODERATION_STATUS_REJECTED);
+            $inquiry->setInquiryStatus('rejected');
+            $inquiry->setLastInteraction($timestamp);
+            $inquiry = $this->inquiryMapper->update($inquiry);
+            break;
 
-		return $inquiry;
-	}
+        default:
+            throw new \InvalidArgumentException("Unknown action '$action'");
+    }
 
-	// ─────────────────────────────────────────────────────────────
-	// Legacy access helpers (kept for backward compatibility with
-	// any callers still using the access API). Prefer visibility.
-	// ─────────────────────────────────────────────────────────────
+    return $inquiry;
+}
 
-	/**
-	 * @deprecated use getValidVisibility()
-	 */
-	private function getValidAccess(): array
-	{
-		return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN, Inquiry::ACCESS_GROUP];
-	}
-
-	/**
-	 * @deprecated use updateVisibility()
-	 */
-	public function setInquiryAccess(int $inquiryId, $access): string
-	{
-		$this->inquiryMapper->setInquiryAccess($inquiryId, $access);
-		return $access;
-	}
 }

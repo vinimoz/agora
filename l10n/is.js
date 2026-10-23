@@ -131,7 +131,7 @@ OC.L10N.register(
     "Enabled" : "Virkt",
     "Disabled" : "Óvirkt",
     "Close" : "Loka",
-    "Add {type}" : "Bæta við {0:s}",
+    "Add {type}" : "Bæta við {type}",
     "Option" : "Valkostur",
     "Preview" : "Forskoðun",
     "Create" : "Búa til",
@@ -265,6 +265,7 @@ OC.L10N.register(
     "Owner" : "Eigandi",
     "Expired" : "Útrunnið",
     "Relevant" : "Tengt",
+    "Shared" : "Sameiginlegt",
     "Administration" : "Stjórnun",
     "Title must not be empty!" : "Titill getur ekki verið auður!"
 },

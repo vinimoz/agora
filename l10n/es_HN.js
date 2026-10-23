@@ -121,6 +121,7 @@ OC.L10N.register(
     "_%n year ago_::_%n years ago_" : ["hace %n año","hace %n años","hace %n años"],
     "now" : "ahora",
     "Owner" : "Dueño",
+    "Shared" : "Compartido",
     "Administration" : "Administración"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

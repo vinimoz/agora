@@ -198,7 +198,6 @@ OC.L10N.register(
     "never" : "geen",
     "Open" : "Openen",
     "Private" : "Privé",
-    "Invitation" : "Uitnodiging",
     "Comments" : "Reacties",
     "Location" : "Locatie",
     "Category" : "Categorie",
@@ -467,6 +466,7 @@ OC.L10N.register(
     "Expired" : "Vervallen",
     "Relevant" : "Relevant",
     "Participated" : "Heeft deelgenomen",
+    "Shared" : "Gedeeld",
     "Administration" : "Beheer",
     "Title must not be empty!" : "Titel mag niet leeg zijn!",
     "Invalid Group ID" : "Ongeldig Group ID"

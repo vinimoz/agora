@@ -77,7 +77,6 @@ OC.L10N.register(
     "never" : "nikad",
     "Open" : "Otvori",
     "Private" : "Privatna",
-    "Invitation" : "Pozivnica",
     "Comments" : "Komentari",
     "Category" : "Kategorija",
     "Created" : "Stvoreno",
@@ -313,6 +312,7 @@ OC.L10N.register(
     "Expired" : "Istekao",
     "Relevant" : "Važno",
     "Participated" : "Sudjelovao",
+    "Shared" : "Dijeljeno",
     "Administration" : "Administracija",
     "Title must not be empty!" : "Naslov ne smije biti prazan!"
 },

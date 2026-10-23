@@ -60,7 +60,6 @@ OC.L10N.register(
     "never" : "מעולם לא",
     "Open" : "פתוח",
     "Private" : "פרטי",
-    "Invitation" : "הזמנה",
     "Comments" : "תגובות",
     "Location" : "מיקום",
     "Category" : "קטגוריה",
@@ -227,6 +226,7 @@ OC.L10N.register(
     "now" : "עכשיו",
     "Owner" : "בעלות",
     "Expired" : "פג",
+    "Shared" : "משותף",
     "Administration" : "ניהול",
     "Title must not be empty!" : "הכותרת לא יכולה להישאר ריקה!"
 },

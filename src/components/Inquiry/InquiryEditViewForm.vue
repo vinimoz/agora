@@ -492,7 +492,7 @@ const selectedAccess = computed({
   set: (newValue) => {
     if (!newValue || newValue.id === inquiryStore.configuration.access) return
     inquiryStore.configuration.access = newValue.id as typeof inquiryStore.configuration.access
-    inquiryStore.write()
+    inquiryStore.setInquiryAccess(inquiryStore.id , inquiryStore.configuration.access )
     showSuccess(t('agora', 'Access level updated'))
   },
 })
@@ -501,7 +501,6 @@ const currentAccessLabel = computed(() => {
   const opt = accessOptions.value.find((o) => o.id === inquiryStore.configuration.access)
   return opt?.label ?? inquiryStore.configuration.access
 })
-
 // ============================================================
 // EXPIRATION DATE EDITING (uses NcDateTimePicker)
 // ============================================================
@@ -698,6 +697,230 @@ const expirationDate = computed({
                   />
                 </template>
               </NcTextField>
+
+                <!-- Counters section - ensure it's always displayed -->
+                <div class="counters-section">
+                    <div v-if="canCommentOnInquiry" class="counter-item">
+                        <div class="counter-icon">
+                            <component :is="InquiryGeneralIcons.Comment" :size="20" />
+                        </div>
+                        <div class="counter-content">
+                            <NcCounterBubble :count="inquiryStore.status.countComments || 0" :raw="true" />
+                            <span class="counter-label">{{ t('agora', 'Comments') }}</span>
+                        </div>
+                    </div>
+
+                    <div v-if="canSupportInquiry" class="counter-item supports">
+                        <SupportFeature
+                                :item="inquiryStore"
+                                item-type="inquiry"
+                                :context="context"
+                                :view-only="viewOnlySupportInquiry"
+                                :show-quorum="true"
+                                :show-details-on-hover="true"
+                                :icon-size="20"
+                                />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metadata section -->
+            <div class="metadata-section">
+                <h3 class="section-subtitle">{{ t('agora', 'INQUIRY DETAILS') }}</h3>
+                <div class="metadata-grid">
+                    <!-- Row 1 -->
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Location" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Location') }}</span>
+                            <div v-if="!showLocationAsLabel" class="select-container">
+                                <NcSelect
+                                        v-model="selectedLocation"
+                                        :options="hierarchicalLocation"
+                                        :clearable="false"
+                                        class="metadata-select"
+                                        :label-outside="true"
+                                        required
+                                        >
+                                    <template #option="{ label }">
+                                        <span class="metadata-option">{{ label }}</span>
+                                    </template>
+                                </NcSelect>
+                            </div>
+                            <span v-else class="metadata-value">
+                                {{ getHierarchyPath(sessionStore.appSettings.locationTab, inquiryStore.locationId) || t('agora', 'Inherited from parent') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Category" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Category') }}</span>
+                            <div v-if="!showCategoryAsLabel" class="select-container">
+                                <NcSelect
+                                        v-model="selectedCategory"
+                                        :options="hierarchicalCategory"
+                                        :clearable="false"
+                                        class="metadata-select"
+                                        :label-outside="true"
+                                        required
+                                        >
+                                    <template #option="{ label }">
+                                        <span class="metadata-option">{{ label }}</span>
+                                    </template>
+                                </NcSelect>
+                            </div>
+                            <span v-else class="metadata-value">
+                                {{ getHierarchyPath(sessionStore.appSettings.categoryTab, inquiryStore.categoryId) || t('agora', 'Inherited from parent') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="StatusIcons.Calendar" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Created') }}</span>
+                            <span class="metadata-value">{{ formatDate(inquiryStore.status.created) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="StatusIcons.Updated" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Last interaction') }}</span>
+                            <span class="metadata-value">{{ formatDate(inquiryStore.status.lastInteraction) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="metadata-item highlight">
+                        <div class="metadata-icon">
+                            <component :is="currentInquiryStatusIcon" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Status') }}</span>
+                            <template v-if="canEditInquiry">
+                                <div class="select-container">
+                                    <NcSelect
+                                            v-model="selectedInquiryStatus"
+                                            :options="statusInquiryOptions"
+                                            :clearable="false"
+                                            class="status-select"
+                                            :label-outside="true"
+                                            @update:model-value="onStatusChange"
+                                            />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <span class="metadata-value">{{ t('agora', currentInquiryStatusLabel) }}</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div v-if="canEditInquiry || inquiryStore.configuration.expire" class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Expiration" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Expires') }}</span>
+                            <template v-if="canEditInquiry">
+                                <div class="select-container">
+                                    <NcDateTimePicker
+                                            v-model="expirationDate"
+                                            type="datetime"
+                                            :clearable="true"
+                                            :placeholder="t('agora', 'Never')"
+                                            :aria-label="t('agora', 'Expiration date')"
+                                            class="expiration-picker"
+                                            />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <span class="metadata-value">{{ timeExpirationRelative }}</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 (Access) -->
+                    <div v-if="inquiryStore.status.moderationStatus === 'accepted' " class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Lock" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Access') }}</span>
+                            <template v-if="canEditInquiry && (inquiryStore.configuration.access === 'open' || inquiryStore.configuration.access === 'private')">
+                                <div class="select-container">
+                                    <NcSelect
+                                            v-model="selectedAccess"
+                                            :options="accessOptions"
+                                            :clearable="false"
+                                            class="access-select"
+                                            :label-outside="true"
+                                            />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <span class="metadata-value">{{ t('agora', currentAccessLabel) }}</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description section -->
+            <div class="description-section">
+                <div class="section-header-with-icon">
+                    <div class="section-icon">
+                        <component :is="InquiryGeneralIcons.Description" :size="24" />
+                    </div>
+                    <div>
+                        <h3 class="section-subtitle">{{ t('agora', 'DESCRIPTION') }}</h3>
+                        <p class="section-description">{{ t('agora', 'Detailed information about this inquiry') }}</p>
+                    </div>
+                </div>
+
+                <div class="description-content">
+                    <div
+                            v-if="sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]?.editorType === 'wysiwyg'"
+                            class="editor-container"
+                            >
+                            <InquiryEditor v-model="inquiryStore.description" :readonly="props.isReadonly" />
+                    </div>
+
+                        <div
+                                v-else-if="sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]?.editorType === 'texteditor'"
+                                class="editor-container"
+                                >
+                                <NcRichContenteditable
+                                        v-model="inquiryStore.description"
+                                        :autolink="true"
+                                        :use-markdown="true"
+                                        :emoji-autocomplete="true"
+                                        :link-autocomplete="true"
+                                        :multiline="true"
+                                        :disabled="props.isReadonly"
+                                        class="rich-text-editor"
+                                        />
+                        </div>
+
+                            <div v-else class="editor-container">
+                                <NcTextArea
+                                        v-model="inquiryStore.description"
+                                        :disabled="props.isReadonly"
+                                        class="text-area-editor"
+                                        :rows="8"
+                                        />
+                            </div>
+                </div>
             </div>
           </template>
         </div>
@@ -2252,5 +2475,11 @@ const expirationDate = computed({
       }
     }
   }
+}
+
+// Location and category labels wrap instead of being cut in the middle
+.metadata-option {
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 </style>

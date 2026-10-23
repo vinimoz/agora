@@ -85,7 +85,6 @@ OC.L10N.register(
     "never" : "enxamás",
     "Open" : "Abrir",
     "Private" : "Priváu",
-    "Invitation" : "Invitación",
     "Comments" : "Comentarios",
     "Location" : "Llocalización",
     "Category" : "Categoría",
@@ -269,6 +268,7 @@ OC.L10N.register(
     "now" : "agora",
     "Owner" : "Propietariu",
     "Expired" : "Caducó",
+    "Shared" : "Compartióse",
     "Administration" : "Alministración",
     "Title must not be empty!" : "¡El títulu nun ha tar baleru!"
 },

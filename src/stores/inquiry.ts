@@ -467,7 +467,6 @@ export const useInquiryStore = defineStore('inquiry', {
           Logger.error('Error updating inquiry', { error, state: this.$state })
           throw error
         }
-      }, 500)
 
       return debouncedUpdate()
     },
@@ -553,7 +552,6 @@ export const useInquiryStore = defineStore('inquiry', {
           showError(t('agora', 'Title must not be empty!'))
           return
         }
-
         try {
           const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
           this.$patch(response.data.inquiry)

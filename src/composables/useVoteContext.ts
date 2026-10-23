@@ -39,6 +39,12 @@ const unwrap = <T>(v: MaybeRefOrGetter<T>): T => {
   return v
 }
 
+export interface MajorityJudgmentSummary {
+  median: string
+  total: number
+  distribution: [string, number][]
+}
+
 export interface VoteContext {
   loadingEngines: Ref<boolean>
   availableEngines: ComputedRef<SupportEngine[]>
@@ -63,6 +69,7 @@ export interface VoteContext {
 
   totalVotes: ComputedRef<number>
   getItemVoteCount: (itemId: number) => number
+  getItemMajorityJudgment: (itemId: number) => MajorityJudgmentSummary | null
   getPercentage: (item: { id: number }, total?: number) => number
   getRankedItems: (items: VotableItem[]) => VotableItem[]
   getWinner: (items: VotableItem[]) => VotableItem | null
@@ -550,8 +557,10 @@ export function useVoteContext(
   const isEngineMulti = computed(() => !SINGLE_VOTE_ENGINES.includes(effectiveEngineId.value))
 
   const canVote = computed(() => {
-    const engine = currentEngine.value
-    return !!engine && engine.status === 'active'
+      const engine = currentEngine.value
+      if (!engine || engine.status !== 'active' || inquiryStore.isClosed) return false
+          if (!isEngineMulti.value && hasUserVoted.value) return false
+              return true
   })
 
   // ---------- Lookups ----------
@@ -1138,6 +1147,19 @@ export function useVoteContext(
   // ---------- Results ----------
   const engineResult = ref<SupportResultData>(null)
 
+  const getItemMajorityJudgment = (itemId: number): MajorityJudgmentSummary | null => {
+      const res = [resultsMap.value.get(itemId), engineResult.value]
+          .find((r) => r?.type === 'majority_judgment' && r.items?.[itemId])
+      if (!res) return null
+      const opt = res.items[itemId]
+      const grades: string[] = res.grades ?? Object.keys(opt.grade_distribution ?? {})
+      return {
+          median: opt.median_grade ?? '',
+          total: opt.total_votes ?? 0,
+          distribution: grades.map((g) => [g, opt.grade_distribution?.[g] ?? 0]),
+      }
+  }
+
   const getItemVoteCount = (itemId: number): number => {
     if (effectiveEngineId.value === 'trending') return getTrendingScore(itemId)
 
@@ -1599,6 +1621,7 @@ export function useVoteContext(
 
     totalVotes,
     getItemVoteCount,
+    getItemMajorityJudgment,
     getItemRank,
     getPercentage,
     getRankedItems,

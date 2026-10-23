@@ -8,6 +8,7 @@ import { emit, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import type { AxiosError } from 'axios'
 
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 
@@ -110,6 +111,11 @@ async function loadInquiry() {
     await nextTick()
     forceRenderKey.value += 1
   } catch (e) {
+    const status = (e as AxiosError).response?.status
+    if (!isPublicRoute.value && (status === 403 || status === 404)) {
+      router.replace({ name: status === 403 ? 'forbidden' : 'notfound' })
+      return
+    }
     console.error('Error in loadInquiry:', e)
     error.value = e as Error
 

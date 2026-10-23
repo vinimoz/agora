@@ -320,7 +320,6 @@ const handleAllowedTransformation = (transformType: string) => {
           </div>
         </div>
       </div>
-
       <!--
             <div v-if="inquiryStore.status.publicationStatus !== 'accepted'" class="status-section">
                 <div class="status-badge" :style="getStatusColor(inquiryStore.status.moderationStatus)">

@@ -214,27 +214,30 @@ class SupportResultService
     }
 
     /**
-     * Engines of an inquiry whose results are hidden from the current user
+     * Engines of an inquiry whose results are hidden from the current user,
+     * or null when all its results are hidden (showResults, or no access)
      *
-     * @return SupportEngine[]
+     * @return SupportEngine[]|null
      */
-    private function getHiddenEngines(int $inquiryId): array
+    private function getHiddenEngines(int $inquiryId): ?array
     {
-        $engines = array_values(array_filter(
-            $this->engineMapper->findByInquiryId($inquiryId),
-            fn (SupportEngine $e) => SupportEngine::hidesResults($e->getConfig(), $e->getStatus()),
-        ));
-        if (!$engines) {
-            return [];
-        }
+        // find() bypasses the access filter, so that getAllowShowResults()
+        // decides, public share tokens included
         try {
-            if ($this->inquiryMapper->get($inquiryId, true, true)->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)) {
-                return [];
-            }
+            $inquiry = $this->inquiryMapper->find($inquiryId);
         } catch (DoesNotExistException $e) {
             return [];
         }
-        return $engines;
+        if ($inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)) {
+            return [];
+        }
+        if (!$inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_RESULTS_VIEW)) {
+            return null;
+        }
+        return array_values(array_filter(
+            $this->engineMapper->findByInquiryId($inquiryId),
+            fn (SupportEngine $e) => SupportEngine::hidesResults($e->getConfig(), $e->getStatus()),
+        ));
     }
 
     /**
@@ -242,7 +245,8 @@ class SupportResultService
      */
     public function getHiddenEngineIds(int $inquiryId): array
     {
-        return array_map(fn (SupportEngine $e) => $e->getId(), $this->getHiddenEngines($inquiryId));
+        $engines = $this->getHiddenEngines($inquiryId) ?? $this->engineMapper->findByInquiryId($inquiryId);
+        return array_map(fn (SupportEngine $e) => $e->getId(), $engines);
     }
 
     public function isEngineHidden(?int $engineId): bool
@@ -260,10 +264,14 @@ class SupportResultService
      */
     private function filterHidden(array $results, int $inquiryId): array
     {
-        $hidden = $this->getHiddenEngineIds($inquiryId);
-        if (!$hidden) {
+        $engines = $this->getHiddenEngines($inquiryId);
+        if ($engines === null) {
+            return [];
+        }
+        if (!$engines) {
             return $results;
         }
+        $hidden = array_map(fn (SupportEngine $e) => $e->getId(), $engines);
         return array_values(array_filter(
             $results,
             fn ($r) => !in_array($r->getSupportEngineId(), $hidden, true),
@@ -271,7 +279,7 @@ class SupportResultService
     }
 
     /**
-     * Strip counts and results of hidden engines from options of one inquiry
+     * Strip hidden counts and results from options of one inquiry
      *
      * @param Option[] $options
      * @return Option[]
@@ -279,21 +287,22 @@ class SupportResultService
     public function redactOptions(array $options, int $inquiryId): array
     {
         $engines = $this->getHiddenEngines($inquiryId);
-        if (!$engines) {
+        if ($engines === []) {
             return $options;
         }
+        $all = $engines === null;
         $hidden = [];
         $targets = [];
-        foreach ($engines as $engine) {
+        foreach ($engines ?? [] as $engine) {
             $hidden[] = $engine->getId();
             foreach ($engine->getTargetIds() as $targetId) {
                 $targets[(int)$targetId] = true;
             }
         }
-        $walk = function (array $options) use (&$walk, $targets, $hidden): void {
+        $walk = function (array $options) use (&$walk, $all, $targets, $hidden): void {
             foreach ($options as $option) {
-                if (isset($targets[$option->getId()])) {
-                    $kept = array_values(array_filter(
+                if ($all || isset($targets[$option->getId()])) {
+                    $kept = $all ? [] : array_values(array_filter(
                         $option->getSupportResult() ?? [],
                         fn ($r) => !in_array((int)($r['support_engine_id'] ?? 0), $hidden, true),
                     ));

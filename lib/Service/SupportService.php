@@ -43,7 +43,8 @@ class SupportService
     /**
      * Allow a vote, its change or its removal only for the current user,
      * on an option of the inquiry and on an active engine of the inquiry,
-     * or with the right to support when no engine is used
+     * or with the right to support when no engine is used, and only
+     * while the inquiry is neither expired nor archived
      *
      * @throws ForbiddenException
      */
@@ -65,9 +66,10 @@ class SupportService
             }
         } else {
             $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
-            if ($inquiry->getExpired() || $inquiry->getArchived() > 0) {
-                throw new ForbiddenException('Inquiry is closed');
-            }
+        }
+
+        if ($inquiry->getExpired() || $inquiry->getArchived() > 0) {
+            throw new ForbiddenException('Inquiry is closed');
         }
 
         if ($optionId > 0) {

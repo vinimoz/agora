@@ -136,7 +136,6 @@ OC.L10N.register(
     "never" : "inoiz ez",
     "Open" : "Ireki",
     "Private" : "Pribatua",
-    "Invitation" : "Gonbidapena",
     "Comments" : "Iruzkinak",
     "Location" : "Kokapena",
     "Category" : "Kategoria",
@@ -418,6 +417,7 @@ OC.L10N.register(
     "Expired" : "Iraungita",
     "Relevant" : "Beharrezkoa",
     "Participated" : "Parte hartu da",
+    "Shared" : "Partekatuta",
     "Administration" : "Administrazioa",
     "Title must not be empty!" : "Izenburua ezin da hutsik egon!"
 },

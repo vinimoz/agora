@@ -108,25 +108,29 @@ class OptionService
     /**
      * Get options by target inquiry ID
      */
+
     public function listByTargetId(int $targetId): array
-    {
-	    try {
-		    $inquiry = $this->inquiryMapper->get($targetId, withRoles: true);
-		    $inquiry->request(\OCA\Agora\Db\Inquiry::PERMISSION_INQUIRY_VIEW);
-	    } catch (DoesNotExistException $e) {
-		    throw new NotFoundException('Target inquiry not found');
-	    }
+{
+    try {
+        $inquiry = $this->inquiryMapper->get($targetId, withRoles: true);
+        $inquiry->request(\OCA\Agora\Db\Inquiry::PERMISSION_INQUIRY_VIEW);
+    } catch (DoesNotExistException $e) {
+        throw new NotFoundException('Target inquiry not found');
+    }
 
-	    $options = $this->optionMapper->findByTargetId($targetId);
+    $options = $this->optionMapper->findByTargetId($targetId);
 
-	    return array_values(
-		    array_filter(
-			    $options, 
-			    function (Option $option): bool {
-				    return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
-			    }
-	    )
-	    );
+    $options = array_values(
+        array_filter(
+            $options,
+            function (Option $option): bool {
+                return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
+            }
+        )
+    );
+
+    // ← ADD: honour showResults / hidden-engine redaction
+    return $this->redactResults($options);
     }
 
     /**
@@ -353,27 +357,25 @@ class OptionService
      * Get options by parent ID
      */
     public function getByParentId(int $parentId): array
-    {
-	    try {
-		    $inquiry = $this->inquiryMapper->get($targetId, withRoles: true);
-		    $inquiry->request(\OCA\Agora\Db\Inquiry::PERMISSION_INQUIRY_VIEW);
-	    } catch (DoesNotExistException $e) {
-		    throw new NotFoundException('Target inquiry not found');
-	    }
-
-	    try {
-		    $options = $this->optionMapper->findByParentId($parentId);
-
-		    foreach ($options as $option) {
-			    $family = $this->optionTypeMapper->getFamilyFromType($option->getType());
-
-		    }
-
-		    return $this->redactResults($options);
-	    } catch (DoesNotExistException $e) {
-		    throw new NotFoundException('Options not found for parent');
-	    }
+{
+    $all = $this->optionMapper->findByParentId($parentId);
+    if (empty($all)) {
+        return [];
     }
+    $targetId = $all[0]->getTargetId();
+
+    try {
+        $inquiry = $this->inquiryMapper->get($targetId, withRoles: true);
+        $inquiry->request(\OCA\Agora\Db\Inquiry::PERMISSION_INQUIRY_VIEW);
+    } catch (DoesNotExistException $e) {
+        throw new NotFoundException('Target inquiry not found');
+    }
+
+    return $this->redactResults(array_values(
+        array_filter($all, fn (Option $o): bool => $o->getIsAllowed(Option::PERMISSION_OPTION_VIEW))
+    ));
+    }
+
 
     /**
      * Get option owner from DB
@@ -598,61 +600,43 @@ class OptionService
      *
      * @return array [option: Option, archivedCount: int]
      */
-    /**
-     * Move to archive or restore with recursive functionality
-     * Uses simple recursion: calls itself on each child
-     *
-     * @return array [option: Option, archivedCount: int]
-     */
-    public function toggleArchiveRecursive(int $optionId, bool $archiveState = null): array
-    {
-	    // Get the option
-	    $this->option = $this->optionMapper->find($optionId);
-	    $this->option->request(Option::PERMISSION_OPTION_DELETE);
+    public function toggleArchiveRecursive(int $optionId, ?bool $archiveState = null): array
+{
+    $option = $this->optionMapper->find($optionId);
+    $option->request(Option::PERMISSION_OPTION_ARCHIVE);
 
-	    // Determine archive state if not provided
-	    if ($archiveState === null) {
-		    $archiveState = !$this->option->getArchived();
-	    }
-
-	    $archivedTime = $archiveState ? time() : 0;
-	    $archivedCount = 1;
-
-	    try {
-		    // Archive/restore this option - ONLY set archived, NOT deleted!
-		    $this->option->setArchived($archivedTime);
-		    $this->option->setUpdated(time());
-		    $this->option = $this->optionMapper->update($this->option);
-
-		    if ($archiveState) {
-			    $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($this->option));
-		    } else {
-			    $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($this->option));
-		    }
-
-		    // RECURSION: Call the same method on each child option
-		    $children = $this->optionMapper->findByParentId($optionId);
-		    foreach ($children as $child) {
-			    try {
-				    $result = $this->toggleArchiveRecursive($child->getId(), $archiveState);
-				    $archivedCount += $result['archivedCount'];
-			    } catch (ForbiddenException $e) {
-				    $this->logger->error("Permission denied for child option {$child->getId()}: " . $e->getMessage());
-				    continue;
-			    } catch (\Exception $e) {
-				    $this->logger->error("Error processing child option {$child->getId()}: " . $e->getMessage());
-				    continue;
-			    }
-		    }
-
-		    return [
-			    'option' => $this->supportResultService->redactOption($this->option),
-			    'archivedCount' => $archivedCount
-		    ];
-	    } catch (\Exception $e) {
-		    throw $e;
-	    }
+    if ($archiveState === null) {
+        $archiveState = !$option->getArchived();
     }
+
+    $archivedTime  = $archiveState ? time() : 0;
+    $archivedCount = 1;
+
+    $option->setArchived($archivedTime);
+    $option->setUpdated(time());
+    $option = $this->optionMapper->update($option);
+
+    $this->eventDispatcher->dispatchTyped(
+        $archiveState ? new OptionArchivedEvent($option) : new OptionRestoredEvent($option)
+    );
+
+    foreach ($this->optionMapper->findByParentId($optionId) as $child) {
+        try {
+            $result = $this->toggleArchiveRecursive($child->getId(), $archiveState);
+            $archivedCount += $result['archivedCount'];
+        } catch (ForbiddenException $e) {
+            $this->logger->error("Permission denied for child option {$child->getId()}");
+        } catch (\Exception $e) {
+            $this->logger->error("Error archiving child {$child->getId()}: {$e->getMessage()}");
+        }
+    }
+
+    return [
+        'option'        => $this->supportResultService->redactOption($option),
+        'archivedCount' => $archivedCount,
+    ];
+    }
+
 
     /**
      * Archive recursively all children
@@ -665,8 +649,6 @@ class OptionService
 	    foreach ($children as $child) {
 		    try {
 			    $child->request(Option::PERMISSION_OPTION_DELETE);
-			    $child->setArchived($archiveState ? time() : 0);
-			    $child->setDeleted($archiveState ? time() : 0);
 			    $child->setUpdated(time());
 			    $this->optionMapper->update($child);
 			    $count++;

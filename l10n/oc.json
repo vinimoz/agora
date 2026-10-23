@@ -160,6 +160,7 @@
     "_%n year ago_::_%n years ago_" : ["fa %n annada","fa %n annadas"],
     "now" : "ara",
     "Expired" : "Expirat",
+    "Shared" : "Partejat",
     "Administration" : "Administracion"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

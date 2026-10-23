@@ -407,9 +407,16 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	private function getVisibleSupportResult(): ?array
 	{
 		$results = $this->getSupportResult();
+
+
 		if (!$results || $this->getIsAllowed(self::PERMISSION_INQUIRY_EDIT)) {
 			return $results;
 		}
+
+		if (!$this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW)) {
+    			return [];
+		}
+
 		$hidden = [];
 		foreach ($this->getSupportEngine() as $engine) {
 			$config = is_string($engine['config'] ?? null) ? json_decode($engine['config'], true) : ($engine['config'] ?? []);

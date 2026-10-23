@@ -58,7 +58,6 @@
     "never" : "מעולם לא",
     "Open" : "פתוח",
     "Private" : "פרטי",
-    "Invitation" : "הזמנה",
     "Comments" : "תגובות",
     "Location" : "מיקום",
     "Category" : "קטגוריה",
@@ -225,6 +224,7 @@
     "now" : "עכשיו",
     "Owner" : "בעלות",
     "Expired" : "פג",
+    "Shared" : "משותף",
     "Administration" : "ניהול",
     "Title must not be empty!" : "הכותרת לא יכולה להישאר ריקה!"
 },"pluralForm" :"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;"

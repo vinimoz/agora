@@ -250,7 +250,6 @@ OC.L10N.register(
     "never" : "从不",
     "Open" : "打开",
     "Private" : "私密",
-    "Invitation" : "邀请",
     "Comments" : "评论",
     "Location" : "地点",
     "Category" : "类别",
@@ -548,6 +547,7 @@ OC.L10N.register(
     "Expired" : "已过期",
     "Relevant" : "相关",
     "Participated" : "已参与",
+    "Shared" : "已共享",
     "Administration" : "管理员",
     "Title must not be empty!" : "标题不能为空！"
 },

@@ -296,6 +296,8 @@ class Option extends EntityWithUser implements JsonSerializable
         ];
     }
 
+
+
     // ====================================================================
     // PERMISSIONS (delegated to parent inquiry)
     // ====================================================================
@@ -414,6 +416,27 @@ class Option extends EntityWithUser implements JsonSerializable
     // ====================================================================
     // HELPERS
     // ====================================================================
+
+public function getAllowComment(): ?int
+{
+    if ($this->allowComment !== null) {
+        return $this->allowComment;
+    }
+    return $this->getParentInquiry()?->getAllowComment();
+}
+
+public function getSupportFeature(): string
+{
+    if ($this->supportFeature !== '' && $this->supportFeature !== 'none') {
+        return $this->supportFeature;
+    }
+    return $this->getParentInquiry()?->getSupportFeature() ?? $this->supportFeature;
+}
+
+public function getShowResults(): string
+{
+    return $this->getParentInquiry()?->getShowResults() ?? $this->showResults;
+}
 
     public function getUserRole(): string
     {

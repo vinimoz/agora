@@ -27,10 +27,13 @@ class User extends UserBase
      * @var string
      */
     public const PRINCIPAL_PREFIX = 'principals/users/';
-    public const GROUP_MODERATOR = 'agora_moderator';
-    public const GROUP_OFFICIAL = 'agora_official';
-    public const GROUP_LEGISLATIVE = 'agora_legislative';
-    public const GROUP_GROUP_EDITOR = 'agora_group_editor';
+
+    public const GROUP_MODERATOR    = 'Agora Moderator';
+    public const GROUP_OFFICIAL     = 'Agora Official';
+    public const GROUP_LEGISLATIVE  = 'Agora Legislative';
+    public const GROUP_GROUP_EDITOR = 'Agora Group Editor';
+
+
 
     private IConfig $config;
     private IUser $user;
@@ -60,57 +63,24 @@ class User extends UserBase
         $this->timeZoneName = $this->config->getUserValue($this->id, 'core', 'timezone');
         $this->groups = [];
     }
+
     /**
      * Return the logical role of the user ('moderator', 'official'), or null
      */
-    public function getRoles(): ?string
+    public function getRoles(): array
     {
-        if ($this->getIsInGroup(self::GROUP_MODERATOR)) {
-            return 'moderator';
-        }
-        if ($this->getIsInGroup(self::GROUP_OFFICIAL)) {
-            return 'official';
-        }
-        if ($this->getIsInGroup(self::GROUP_GROUP_EDITOR)) {
-            return 'groupEditor';
-        }
-        if ($this->getIsInGroup(self::GROUP_LEGISLATIVE)) {
-            return 'legislative';
-        }
-        return null;
+	    $roles = [];
+	    if ($this->getIsInGroup(self::GROUP_MODERATOR))    { $roles[] = 'moderator'; }
+	    if ($this->getIsInGroup(self::GROUP_OFFICIAL))     { $roles[] = 'official'; }
+	    if ($this->getIsInGroup(self::GROUP_GROUP_EDITOR)) { $roles[] = 'groupEditor'; }
+	    if ($this->getIsInGroup(self::GROUP_LEGISLATIVE))  { $roles[] = 'legislative'; }
+	    return $roles;
     }
 
-    /**
-     * Check if user is a moderator
-     */
-    public function isModerator(): bool
-    {
-        return $this->getRoles() === 'moderator';
-    }
-
-    /**
-     * Check if user is an official
-     */
-    public function isOfficial(): bool
-    {
-        return $this->getRoles() === 'official';
-    }
-
-    /**
-     * Check if user is an legislative
-     */
-    public function isLegislative(): bool
-    {
-        return $this->getRoles() === 'legislative';
-    }
-
-    /**
-     * Check if user is an group editor
-     */
-    public function isGroupEditor(): bool
-    {
-        return $this->getRoles() === 'groupEditor';
-    }
+    public function isModerator(): bool   { return in_array('moderator',   $this->getRoles(), true); }
+    public function isOfficial(): bool    { return in_array('official',    $this->getRoles(), true); }
+    public function isLegislative(): bool { return in_array('legislative', $this->getRoles(), true); }
+    public function isGroupEditor(): bool { return in_array('groupEditor', $this->getRoles(), true); }
 
 
     /**

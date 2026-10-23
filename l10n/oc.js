@@ -162,6 +162,7 @@ OC.L10N.register(
     "_%n year ago_::_%n years ago_" : ["fa %n annada","fa %n annadas"],
     "now" : "ara",
     "Expired" : "Expirat",
+    "Shared" : "Partejat",
     "Administration" : "Administracion"
 },
 "nplurals=2; plural=(n > 1);");

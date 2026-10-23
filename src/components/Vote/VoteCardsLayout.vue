@@ -24,6 +24,7 @@
         :current-token-weight="tokenWeights[item.id]"
         :total-items="items.length"
         :hide-results="hideResults"
+	:majority-judgment="getItemMajorityJudgment?.(item.id) ?? null"
         :get-user-vote-value-for-item="getUserVoteValueForItem"
         @vote="(rawItem, value) => $emit('vote', rawItem, value)"
         @approval-toggle="(itemId) => $emit('toggleSelection', itemId)"
@@ -110,6 +111,7 @@ import VoteCard from './VoteCard.vue'
 import { InquiryOptionIcons, InquiryGeneralIcons } from '../../utils/icons.ts'
 import type { Item, SupportEngine } from '../../Types/index'
 import type { SupportValue } from '../../Types/votingType'
+import type { MajorityJudgmentSummary } from '../../../composables/useVoteContext'
 
 const props = defineProps<{
   /**
@@ -131,10 +133,7 @@ const props = defineProps<{
   canSubmitMultiVote: boolean
   voteSelectionInfo: string | null
   getItemVoteCount: (itemId: number) => number
-  /**
-   * Accepts either a full Item or a trimmed VotableItem — `getPercentage`
-   * only needs `id`.
-   */
+  getItemMajorityJudgment?: (itemId: number) => MajorityJudgmentSummary | null
   getPercentage: (item: Item | { id: number }) => number
   hasUserVotedFor: (itemId: number) => boolean
   isSelectedForVote: (itemId: number) => boolean

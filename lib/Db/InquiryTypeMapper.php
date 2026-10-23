@@ -191,4 +191,17 @@ class InquiryTypeMapper extends QBMapper
         $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_transformation'], true) ?? [] : [];
     }
+
+    public function getAllowComment(string $inquiryType): ?bool
+    {
+	    $type = $this->findByType($inquiryType);
+	    $value = $type->getAllowComment();
+	    return $value === null ? null : (bool) $value;
+    }
+
+    public function getSupportFeature(string $inquiryType): ?string
+    {
+	    $type = $this->findByType($inquiryType);
+	    return $type->getSupportFeature();
+    }
 }
