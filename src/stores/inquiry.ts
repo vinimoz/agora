@@ -452,7 +452,6 @@ export const useInquiryStore = defineStore('inquiry', {
             locationId: payload.locationId ?? undefined,
             categoryId: payload.categoryId ?? undefined,
           })
-
           const updatedInquiry = response.data.inquiry
           if (updatedInquiry) {
             const index = inquiriesStore.inquiries.findIndex((inq) => inq.id === updatedInquiry.id)
@@ -462,13 +461,19 @@ export const useInquiryStore = defineStore('inquiry', {
             }
           }
           return updatedInquiry
-        } catch (error) {
-          if ((error as AxiosError)?.code === 'ERR_CANCELED') return
-          Logger.error('Error updating inquiry', { error, state: this.$state })
-          throw error
-        }
-
-      return debouncedUpdate()
+                                      } catch (error) { 
+                                        if ((error as AxiosError)?.code === 'ERR_CANCELED') { 
+                                                return 
+                                        } 
+                                        Logger.error('Error updating inquiry', { 
+                                                error, 
+                                                state: this.$state, 
+                                        }) 
+                                        throw error 
+                                }  
+                        }, 500)
+	  
+	return debouncedUpdate()
     },
 
     async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {

@@ -209,14 +209,14 @@ import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import VoteInput from './VoteInput.vue'
-import CommentAdd from '../../Comments/CommentAdd.vue'
-import { useSessionStore } from '../../../stores/session'
-import { useInquiryStore } from '../../../stores/inquiry'
-import { useCommentsStore } from '../../../stores/comments'
+import CommentAdd from '../Comments/CommentAdd.vue'
+import { useSessionStore } from '../../stores/session'
+import { useInquiryStore } from '../../stores/inquiry'
+import { useCommentsStore } from '../../stores/comments'
 import { showError } from '@nextcloud/dialogs'
 import DeleteIcon from 'vue-material-design-icons/Delete.vue'
-import type { Comment } from '../../../stores/comments.types'
-import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import type { Comment } from '../../Types/comments.types'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 import {
   getItemTypeLabel,
   getItemTypeIconComponent,
@@ -227,10 +227,11 @@ import {
   hasSupportFeature as hasSupportFeatureHelper,
 } from '../../helpers/modules/InquiryOptionHelper'
 
-import { translateGrade } from '../../../Types/votingType'
-import type { MajorityJudgmentSummary } from '../../../composables/useVoteContext'
+import { translateGrade } from '../../Types/votingType'
+import type { MajorityJudgmentSummary } from '../../composables/useVoteContext'
 
 import type { Item, Option, SupportData, SupportValue } from '../../Types/index'
+
 const props = defineProps<{
   item: Item
   compact?: boolean
