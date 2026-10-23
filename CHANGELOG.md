@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Bug #68: answer 404 or 403 instead of 500
 - Bug #67: drop others' votes instead of blanking them
 - Bug: Fix access to options take same rights as inquiry parent
+- Bug: Fix Not delete families who contains types 
 
 # [1.7.14] - 2026-10-07
 - Bug: Set comment, support feature from template
