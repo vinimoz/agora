@@ -78,8 +78,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 {
 	public const TABLE = 'agora_inquiries';
 
-	// Visibility types (1.8 — replaces ACCESS_*)
-	public const VISIBILITY_INVITATION = 'invitation';
 	public const VISIBILITY_PRIVATE = 'private';
 	public const VISIBILITY_EVERYONE = 'everyone';
 	public const VISIBILITY_GROUPS = 'groups';
@@ -151,6 +149,44 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
 	// Default status
 	public const DEFAULT_STATUS_DRAFT = 'draft';
+
+	/**
+	 * Whitelist of participation policies allowed for each visibility.
+	 * Enforced in setParticipationPolicy() so illegal combinations cannot
+	 * be persisted through any code path.
+	 *
+	 *   private      → none
+	 *   groups       → groups           (same group IDs as visibility)
+	 *   users        → users            (same user IDs as visibility)
+	 *   participants → none, everyone, users, groups, lottery
+	 *   everyone     → none, everyone, users, groups, lottery
+	 *   invitation   → none, everyone, users, groups, lottery
+	 */
+	private const ALLOWED_PARTICIPATION_BY_VISIBILITY = [
+		self::VISIBILITY_PRIVATE => [
+			Participation::POLICY_NONE,
+		],
+		self::VISIBILITY_GROUPS => [
+			Participation::POLICY_GROUPS,
+		],
+		self::VISIBILITY_USERS => [
+			Participation::POLICY_USERS,
+		],
+		self::VISIBILITY_PARTICIPANTS => [
+			Participation::POLICY_NONE,
+			Participation::POLICY_EVERYONE,
+			Participation::POLICY_USERS,
+			Participation::POLICY_GROUPS,
+			Participation::POLICY_LOTTERY,
+		],
+		self::VISIBILITY_EVERYONE => [
+			Participation::POLICY_NONE,
+			Participation::POLICY_EVERYONE,
+			Participation::POLICY_USERS,
+			Participation::POLICY_GROUPS,
+			Participation::POLICY_LOTTERY,
+		],
+	];
 
 	private IURLGenerator $urlGenerator;
 	private IGroupManager $groupManager;
@@ -496,56 +532,62 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this->participationPolicy;
 	}
 
+	/**
+	 * Set the participation policy after validating that it is compatible
+	 * with the current visibility. Throws ForbiddenException on illegal
+	 * combinations (e.g. private + everyone, groups + everyone, users + groups).
+	 */
 	public function setParticipationPolicy(?Participation $policy): void
 	{
+		if ($policy !== null) {
+			$allowed = self::ALLOWED_PARTICIPATION_BY_VISIBILITY[$this->getVisibility()] ?? [];
+			if (!in_array($policy->getPolicyType(), $allowed, true)) {
+				throw new ForbiddenException(sprintf(
+					'Participation policy "%s" is not allowed for visibility "%s"',
+					$policy->getPolicyType(),
+					$this->getVisibility()
+				));
+			}
+		}
+
 		$this->participationPolicy = $policy;
 		$this->canParticipate = $this->evaluateCanParticipate();
 	}
 
+	/**
+	 * Public entry point for "can the current user participate?".
+	 * Delegates to evaluateCanParticipate() so the policy + visibility
+	 * intersection logic lives in a single place.
+	 */
 	public function canParticipate(): bool
 	{
-		if ($this->participationPolicy === null) {
-			return true;
-		}
-
-		$userId = $this->userSession->getCurrentUserId();
-		if ($userId === null) {
-			return $this->participationPolicy->getPolicyType() === Participation::POLICY_EVERYONE;
-		}
-
-		$policy = $this->participationPolicy;
-
-		switch ($policy->getPolicyType()) {
-			case Participation::POLICY_EVERYONE:
-				return true;
-
-			case Participation::POLICY_USERS:
-				$config = $policy->getPolicyConfig();
-				$allowedUsers = $config['user_ids'] ?? [];
-				return in_array($userId, $allowedUsers);
-
-			case Participation::POLICY_GROUPS:
-				$config = $policy->getPolicyConfig();
-				$allowedGroups = $config['group_ids'] ?? [];
-				return $this->userIsInGroups($userId, $allowedGroups);
-
-			default:
-				return false;
-		}
+		return $this->evaluateCanParticipate();
 	}
 
 	private function userIsInGroups(string $userId, array $groupIds): bool
 	{
 		try {
 			$user = $this->userSession->getCurrentUser();
-			if ($user === null || !$user instanceof \OCP\IUser) {
+			if ($user === null) {
 				return false;
 			}
-			$userGroups = $this->groupManager->getUserGroupIds($user);
-			return !empty(array_intersect($groupIds, $userGroups));
+
+			// Agora's User wrapper
+			if (method_exists($user, 'getGroups')) {
+				$userGroups = $user->getGroups();
+				return is_array($userGroups)
+					&& !empty(array_intersect($groupIds, $userGroups));
+			}
+
+			// Raw IUser fallback
+			if ($user instanceof \OCP\IUser) {
+				$userGroups = $this->groupManager->getUserGroupIds($user);
+				return !empty(array_intersect($groupIds, $userGroups));
+			}
 		} catch (\Exception $e) {
-			return false;
+			// swallow
 		}
+		return false;
 	}
 
 	public function isViewableByUser(): bool
@@ -553,29 +595,99 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this->getIsAllowed(self::PERMISSION_INQUIRY_VIEW);
 	}
 
+	/**
+	 * Whether the current user matches the visibility audience
+	 * (groups → must be in a visibility group; users → must be listed;
+	 * invitation → must be involved; everyone/participants → no extra filter).
+	 */
+	private function matchesVisibilityAudience(string $userId): bool
+	{
+		return match ($this->getVisibility()) {
+			self::VISIBILITY_PRIVATE => false,
+			self::VISIBILITY_GROUPS => $this->userIsInGroups($userId, $this->getVisibilityGroups()),
+			self::VISIBILITY_USERS => in_array($userId, $this->getVisibilityUsers(), true),
+			default => true,
+		};
+	}
+
+	/**
+	 * Core logic: resolve whether the current user may participate,
+	 * taking both visibility defaults and the configured policy into account.
+	 *
+	 * Rules enforced:
+	 *   private      + none                                            → none (owner excepted)
+	 *   groups       + groups                                          → same group IDs
+	 *   users        + users                                           → same user IDs
+	 *   participants + none | everyone | users | groups | lottery      → audience = policy
+	 *   everyone     + none | everyone | users | groups | lottery      → open view, policy restricts participation
+	 */
 	private function evaluateCanParticipate(): bool
 	{
 		$userId = $this->userSession->getCurrentUserId();
+		$visibility = $this->getVisibility();
+		$policyType = $this->participationPolicy?->getPolicyType();
 
-		if (!$this->participationPolicy) {
+		// The owner is never "external" — always allowed to act on their own inquiry.
+		if ($userId !== null && $this->getIsInquiryOwner()) {
 			return true;
+		}
+
+		// ── No policy configured → derive from visibility ──
+		if ($policyType === null) {
+			if ($userId === null) {
+				// Anonymous can only participate in an "everyone" inquiry
+				return $visibility === self::VISIBILITY_EVERYONE;
+			}
+
+			return match ($visibility) {
+				self::VISIBILITY_PRIVATE => false,
+				self::VISIBILITY_GROUPS => $this->userIsInGroups($userId, $this->getVisibilityGroups()),
+				self::VISIBILITY_USERS => in_array($userId, $this->getVisibilityUsers(), true),
+				// "participants" without a policy has no defined audience
+				self::VISIBILITY_PARTICIPANTS => false,
+				// "everyone" is open by default
+				default => true,
+			};
+		}
+
+		// ── Policy configured ──
+		if ($userId === null) {
+			return $policyType === Participation::POLICY_EVERYONE
+				&& $visibility === self::VISIBILITY_EVERYONE;
 		}
 
 		$policy = $this->participationPolicy;
 
-		switch ($policy->getPolicyType()) {
+		switch ($policyType) {
+			case Participation::POLICY_NONE:
+				return false;
+
 			case Participation::POLICY_EVERYONE:
-				return true;
+				// Even under groups/users visibility, "everyone" still means
+				// "everyone who can already see it" → intersect with audience.
+				return $this->matchesVisibilityAudience($userId);
 
 			case Participation::POLICY_USERS:
+				// Rule: users-visibility ⇒ same user IDs for visibility and participation.
+				if ($visibility === self::VISIBILITY_USERS) {
+					return in_array($userId, $this->getVisibilityUsers(), true);
+				}
 				$config = $policy->getPolicyConfig();
 				$allowedUsers = $config['user_ids'] ?? [];
-				return in_array($userId, $allowedUsers);
+				if (!in_array($userId, $allowedUsers, true)) {
+					return false;
+				}
+				return $this->matchesVisibilityAudience($userId);
 
 			case Participation::POLICY_GROUPS:
+				// Rule: groups-visibility ⇒ same group IDs for visibility and participation.
+				if ($visibility === self::VISIBILITY_GROUPS) {
+					return $this->userIsInGroups($userId, $this->getVisibilityGroups());
+				}
 				$config = $policy->getPolicyConfig();
 				$allowedGroups = $config['group_ids'] ?? [];
-				return $this->userIsInGroups($userId, $allowedGroups);
+				return !empty($allowedGroups)
+					&& $this->userIsInGroups($userId, $allowedGroups);
 
 			case Participation::POLICY_LOTTERY:
 				$config = $policy->getLotteryConfig();
@@ -815,12 +927,13 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		);
 	}
 
+	/**
+	 * Open-inquiry shortcut: only for public (visibility=everyone) inquiries.
+	 * NOTE: this no longer unlocks edit — see getAllowEditInquiry().
+	 */
 	private function getIsOpenInquiry(): bool
 	{
-		$visibility = $this->getVisibility();
-		$publicationStatus = $this->getPublicationStatus();
-		return ($visibility === self::VISIBILITY_EVERYONE
-				|| $publicationStatus === self::PUBLICATION_STATUS_PUBLISHED)
+		return $this->getVisibility() === self::VISIBILITY_EVERYONE
 			&& $this->userSession->getIsLoggedIn();
 	}
 
@@ -872,7 +985,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	}
 
 	/**
-	 * Merged: main added the `getIsOpenInquiry()` short-circuit; keep it.
+	 * Edit permission is strictly: console, owner, or delegated admin.
+	 *
+	 * The previous `getIsOpenInquiry()` short-circuit has been removed:
+	 * it allowed any logged-in user to edit any `everyone`-visible inquiry,
+	 * which is a privilege escalation that bypasses every visibility rule.
 	 */
 	private function getAllowEditInquiry(): bool
 	{
@@ -885,10 +1002,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		}
 
 		if ($this->getIsDelegatedAdmin()) {
-			return true;
-		}
-
-		if ($this->getIsOpenInquiry()) {
 			return true;
 		}
 
@@ -907,8 +1020,13 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	}
 
 	/**
-	 * Merged logic: 1.8 visibility checks + main's OC_CONSOLE,
-	 * moderator-pending, draft/rejected, archived guards.
+	 * Visibility gate — enforces the "who can view" half of the rules:
+	 *   private      → owner/admin only (handled above)
+	 *   groups       → member of a visibility group
+	 *   users        → explicitly listed user
+	 *   participants → derived from the participation policy
+	 *   invitation   → involved user (share / invited)
+	 *   everyone     → any logged-in user
 	 */
 	private function getAllowVisibilityInquiry(): bool
 	{
@@ -925,6 +1043,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		}
 
 		$user = $this->userSession->getCurrentUser();
+		if ($user === null) {
+			// Anonymous: only public (everyone) inquiries are reachable here;
+			// share-token flows are handled by the share/controller layer.
+			return $this->getVisibility() === self::VISIBILITY_EVERYONE;
+		}
 
 		if ($user->getIsModerator()
 			&& $this->getModerationStatus() === self::MODERATION_STATUS_PENDING) {
@@ -938,26 +1061,35 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 			return false;
 		}
 
-		if ($this->getVisibility() === self::VISIBILITY_GROUPS) {
-			$ownedGroup = $this->getOwnedGroup();
+		switch ($this->getVisibility()) {
+			case self::VISIBILITY_PRIVATE:
+				// Owner/admin already returned above → no one else can view.
+				return false;
 
-			if ($ownedGroup !== '' && $ownedGroup !== null) {
-				$isOwner = $this->getOwner() === $user->getId();
-				$isInGroup = in_array($ownedGroup, $user->getGroups(), true);
-				return $user->getIsAdmin() || $isOwner || $isInGroup;
-			}
+			case self::VISIBILITY_GROUPS:
+				return $this->isVisibleToAnyGroup($user->getGroups());
+
+			case self::VISIBILITY_USERS:
+				return in_array($user->getId(), $this->getVisibilityUsers(), true);
+
+			case self::VISIBILITY_PARTICIPANTS:
+				// The audience is derived from the participation policy.
+				return $this->canParticipate();
+
+			case self::VISIBILITY_EVERYONE:
+				return $this->userSession->getIsLoggedIn();
+
+			default:
+				// Legacy fallback for pre-1.8 records
+				if ($this->getIsOpenInquiry()) {
+					return true;
+				}
+				if ($this->getIsPersonallyInvited() || $this->getIsInvitedViaGroupShare()) {
+					return true;
+				}
+				$share = $this->userSession->getShare();
+				return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
 		}
-
-		if ($this->getIsOpenInquiry()) {
-			return true;
-		}
-
-		if ($this->getIsPersonallyInvited() || $this->getIsInvitedViaGroupShare()) {
-			return true;
-		}
-
-		$share = $this->userSession->getShare();
-		return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
 	}
 
 	private function getAllowDeleteInquiry(): bool
@@ -1019,9 +1151,17 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return false;
 	}
 
+	/**
+	 * Comments are participation — the user must be able to see the inquiry
+	 * AND be allowed to participate according to the visibility/policy rules.
+	 */
 	private function getAllowCommenting(): bool
 	{
 		if (!$this->getAllowVisibilityInquiry()) {
+			return false;
+		}
+
+		if (!$this->canParticipate()) {
 			return false;
 		}
 
@@ -1032,9 +1172,16 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return (bool)$this->getAllowComment();
 	}
 
+	/**
+	 * Voting/support is participation — same gate as commenting.
+	 */
 	private function getSupportFeaturing(): bool
 	{
 		if (!$this->getAllowVisibilityInquiry()) {
+			return false;
+		}
+
+		if (!$this->canParticipate()) {
 			return false;
 		}
 
@@ -1090,9 +1237,12 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		return $this->getShowResults() === self::SHOW_RESULTS_ALWAYS;
 	}
 
+	/**
+	 * @return string[]
+	 */
 	public function getVisibilityUsers(): array
 	{
-		return $this->visibilityUsers;
+		return $this->visibilityUsers ?? [];
 	}
 
 	public function setVisibilityUsers(array $visibilityUsers): void
@@ -1128,7 +1278,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
 	public function isVisibleToAnyGroup(array $groupIds): bool
 	{
-		return !empty(array_intersect($groupIds, $this->visibilityGroups));
+		return !empty(array_intersect($groupIds, $this->visibilityGroups ?? []));
 	}
 
 	public function hasGroupRelation(string $groupId, string $relationType = 'visibility'): bool

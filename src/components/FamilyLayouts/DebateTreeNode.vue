@@ -3,23 +3,32 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div class="tree-node" :style="{ paddingLeft: (node.depth * 16 + 4) + 'px' }">
+  <div
+    class="tree-node"
+    :style="{ paddingLeft: node.depth * 16 + 4 + 'px' }"
+  >
     <div
       class="node-content"
-      :class="{ 
+      :class="{
         selected: selectedId === node.id,
-        'has-children': node.children.length > 0
+        'has-children': node.children.length > 0,
       }"
       @click="$emit('select', node)"
     >
-      <component :is="getOptionTypeIconComponent(node.type, optionTypes)" :size="14" />
+      <component
+        :is="getOptionTypeIconComponent(node.type, optionTypes)"
+        :size="14"
+      />
       <span class="node-label">{{ getOptionLabel(node) }}</span>
       <span class="node-type">{{ getOptionTypeLabel(node.type) }}</span>
-      <span v-if="node.children.length > 0" class="node-count">
+      <span
+        v-if="node.children.length > 0"
+        class="node-count"
+      >
         {{ node.children.length }}
       </span>
     </div>
-    
+
     <!-- Recursive children -->
     <template v-if="node.children.length > 0">
       <DebateTreeNode
@@ -35,7 +44,10 @@
 </template>
 
 <script setup lang="ts">
-import { getOptionTypeIconComponent, getOptionTypeLabel } from '../../helpers/modules/InquiryOptionHelper'
+import {
+  getOptionTypeIconComponent,
+  getOptionTypeLabel,
+} from '../../helpers/modules/InquiryOptionHelper'
 import type { InquiryOptionType } from '../../Types/index.ts'
 
 interface OptionNode {
@@ -54,13 +66,12 @@ defineProps<{
   optionTypes: InquiryOptionType[]
 }>()
 
-
 defineEmits<{
   select: [option: OptionNode]
 }>()
 
-
-const getOptionLabel = (option: OptionNode): string => option.title || option.label || getOptionTypeLabel(option.type)
+const getOptionLabel = (option: OptionNode): string =>
+  option.title || option.label || getOptionTypeLabel(option.type)
 </script>
 
 <style scoped lang="scss">

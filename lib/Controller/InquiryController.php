@@ -390,6 +390,23 @@ class InquiryController extends BaseController
         );
     }
 
+     /**
+     * Update Moderation status
+     *
+     * @param int    $inquiryId Inquiry id
+     * @param string $status
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/updatemoderation/{inquiryId}/{status}')]
+    public function updateModerationStatus(int $inquiryId, string $status): JSONResponse
+    {
+        return $this->response(
+            fn () => [
+                'inquiry' => $this->inquiryService->setModerationStatus($inquiryId, $status),
+            ]
+        );
+    }
+
     /**
      * Submit Inquiry for workflow moderation
      *

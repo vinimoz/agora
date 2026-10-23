@@ -6,39 +6,60 @@
   <div class="debate-header">
     <div class="header-top">
       <div class="header-left">
-        <NcButton type="tertiary" size="small" @click="$emit('back')">
+        <NcButton
+          type="tertiary"
+          size="small"
+          @click="$emit('back')"
+        >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Back" :size="16" />
+            <component
+              :is="InquiryGeneralIcons.Back"
+              :size="16"
+            />
           </template>
           {{ t('agora', 'Back to debates') }}
         </NcButton>
       </div>
       <div class="header-right">
-        <span class="status-badge" :class="statusClass">
-          <span class="status-dot"></span>
+        <span
+          class="status-badge"
+          :class="statusClass"
+        >
+          <span class="status-dot" />
           {{ statusLabel }}
         </span>
       </div>
     </div>
 
-    <h1 class="debate-title">{{ question }}</h1>
+    <h1 class="debate-title">
+      {{ question }}
+    </h1>
 
     <div class="header-metrics">
       <div class="metric-group">
         <div class="metric">
-          <component :is="InquiryOptionIcons.Users" :size="16" />
+          <component
+            :is="InquiryOptionIcons.Users"
+            :size="16"
+          />
           <span>{{ metrics.participants || 0 }}</span>
           <span class="metric-label">{{ t('agora', 'participants') }}</span>
         </div>
-        <div class="metric-divider"></div>
+        <div class="metric-divider" />
         <div class="metric">
-          <component :is="InquiryOptionIcons.Comment" :size="16" />
+          <component
+            :is="InquiryOptionIcons.Comment"
+            :size="16"
+          />
           <span>{{ metrics.arguments || 0 }}</span>
           <span class="metric-label">{{ t('agora', 'arguments') }}</span>
         </div>
-        <div class="metric-divider"></div>
+        <div class="metric-divider" />
         <div class="metric">
-          <component :is="InquiryOptionIcons.AlertCircle" :size="16" />
+          <component
+            :is="InquiryOptionIcons.AlertCircle"
+            :size="16"
+          />
           <span>{{ metrics.objections || 0 }}</span>
           <span class="metric-label">{{ t('agora', 'objections') }}</span>
         </div>
@@ -46,8 +67,14 @@
 
       <div class="balance-summary">
         <div class="balance-bar">
-          <div class="for-bar" :style="{ width: `${balance.for || 50}%` }"></div>
-          <div class="against-bar" :style="{ width: `${balance.against || 50}%` }"></div>
+          <div
+            class="for-bar"
+            :style="{ width: `${balance.for || 50}%` }"
+          />
+          <div
+            class="against-bar"
+            :style="{ width: `${balance.against || 50}%` }"
+          />
         </div>
         <div class="balance-labels">
           <span class="for-label">{{ t('agora', 'For') }} {{ balance.for || 50 }}%</span>
@@ -98,20 +125,20 @@ defineEmits<{
 
 const statusClass = computed(() => {
   const statusMap: Record<string, string> = {
-    'open': 'status-open',
-    'closed': 'status-closed',
-    'draft': 'status-draft',
-    'active': 'status-active',
+    open: 'status-open',
+    closed: 'status-closed',
+    draft: 'status-draft',
+    active: 'status-active',
   }
   return statusMap[props.status || ''] || 'status-open'
 })
 
 const statusLabel = computed(() => {
   const labelMap: Record<string, string> = {
-    'open': t('agora', 'Open'),
-    'closed': t('agora', 'Closed'),
-    'draft': t('agora', 'Draft'),
-    'active': t('agora', 'Active'),
+    open: t('agora', 'Open'),
+    closed: t('agora', 'Closed'),
+    draft: t('agora', 'Draft'),
+    active: t('agora', 'Active'),
   }
   return labelMap[props.status || ''] || t('agora', 'Open')
 })

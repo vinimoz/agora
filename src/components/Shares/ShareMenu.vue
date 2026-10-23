@@ -272,8 +272,14 @@ async function submitLabel() {
       @click="switchAdmin.action"
     >
       <template #icon>
-        <component :is="ShareIcons.AdminGrant" v-if="share.type === 'user'" />
-        <component :is="ShareIcons.AdminRevoke" v-else />
+        <component
+          :is="ShareIcons.AdminGrant"
+          v-if="share.type === 'user'"
+        />
+        <component
+          :is="ShareIcons.AdminRevoke"
+          v-else
+        />
       </template>
     </NcActionButton>
 
@@ -359,8 +365,14 @@ async function submitLabel() {
       @click="lockShareButton.action"
     >
       <template #icon>
-        <component :is="ShareIcons.Unlock" v-if="share.locked" />
-        <component :is="ShareIcons.Lock" v-else />
+        <component
+          :is="ShareIcons.Unlock"
+          v-if="share.locked"
+        />
+        <component
+          :is="ShareIcons.Lock"
+          v-else
+        />
       </template>
     </NcActionButton>
 
@@ -372,8 +384,14 @@ async function submitLabel() {
       @click="deleteShareButton.action"
     >
       <template #icon>
-        <component :is="ShareIcons.Restore" v-if="share.deleted" />
-        <component :is="ShareIcons.Delete" v-else />
+        <component
+          :is="ShareIcons.Restore"
+          v-if="share.deleted"
+        />
+        <component
+          :is="ShareIcons.Delete"
+          v-else
+        />
       </template>
     </NcActionButton>
   </NcActions>

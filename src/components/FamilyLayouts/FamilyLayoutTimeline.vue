@@ -13,7 +13,10 @@
             @click="switchView('list')"
           >
             <template #icon>
-              <component :is="InquiryOptionIcons.List" :size="16" />
+              <component
+                :is="InquiryOptionIcons.List"
+                :size="16"
+              />
             </template>
             {{ t('agora', 'List') }}
           </NcButton>
@@ -23,7 +26,10 @@
             @click="switchView('calendar')"
           >
             <template #icon>
-              <component :is="InquiryOptionIcons.Calendar" :size="16" />
+              <component
+                :is="InquiryOptionIcons.Calendar"
+                :size="16"
+              />
             </template>
             {{ t('agora', 'Calendar') }}
           </NcButton>
@@ -33,7 +39,10 @@
             @click="switchView('timeline')"
           >
             <template #icon>
-              <component :is="InquiryOptionIcons.Timeline" :size="16" />
+              <component
+                :is="InquiryOptionIcons.Timeline"
+                :size="16"
+              />
             </template>
             {{ t('agora', 'Timeline') }}
           </NcButton>
@@ -43,35 +52,41 @@
       <!-- Period navigation group -->
       <div class="control-group">
         <div class="period-controls">
-          <NcButton size="small" @click="moveTimeline(-1)">
+          <NcButton
+            size="small"
+            @click="moveTimeline(-1)"
+          >
             <template #icon>
-              <component :is="InquiryOptionIcons.ChevronLeft" :size="16" />
+              <component
+                :is="InquiryOptionIcons.ChevronLeft"
+                :size="16"
+              />
             </template>
           </NcButton>
-          
+
           <div class="period-selector">
-            <NcButton 
+            <NcButton
               size="small"
               :type="scale === 'day' ? 'primary' : 'tertiary'"
               @click="setScale('day')"
             >
               {{ t('agora', 'Day') }}
             </NcButton>
-            <NcButton 
+            <NcButton
               size="small"
               :type="scale === 'week' ? 'primary' : 'tertiary'"
               @click="setScale('week')"
             >
               {{ t('agora', 'Week') }}
             </NcButton>
-            <NcButton 
+            <NcButton
               size="small"
               :type="scale === 'month' ? 'primary' : 'tertiary'"
               @click="setScale('month')"
             >
               {{ t('agora', 'Month') }}
             </NcButton>
-            <NcButton 
+            <NcButton
               size="small"
               :type="scale === 'year' ? 'primary' : 'tertiary'"
               @click="setScale('year')"
@@ -79,16 +94,28 @@
               {{ t('agora', 'Year') }}
             </NcButton>
           </div>
-          
-          <NcButton size="small" @click="moveTimeline(1)">
+
+          <NcButton
+            size="small"
+            @click="moveTimeline(1)"
+          >
             <template #icon>
-              <component :is="InquiryOptionIcons.ChevronRight" :size="16" />
+              <component
+                :is="InquiryOptionIcons.ChevronRight"
+                :size="16"
+              />
             </template>
           </NcButton>
-          
-          <NcButton size="small" @click="centerOnToday">
+
+          <NcButton
+            size="small"
+            @click="centerOnToday"
+          >
             <template #icon>
-              <component :is="InquiryOptionIcons.CalendarToday" :size="16" />
+              <component
+                :is="InquiryOptionIcons.CalendarToday"
+                :size="16"
+              />
             </template>
             {{ t('agora', 'Today') }}
           </NcButton>
@@ -105,14 +132,17 @@
             @update:value="dateFilter = $event"
           />
         </div>
-        
+
         <NcButton
           type="primary"
           class="add-timeline-btn"
           @click="showAddModal = true"
         >
           <template #icon>
-            <component :is="InquiryOptionIcons.Plus" :size="16" />
+            <component
+              :is="InquiryOptionIcons.Plus"
+              :size="16"
+            />
           </template>
           {{ t('agora', 'Add to timeline') }}
         </NcButton>
@@ -120,20 +150,28 @@
     </div>
 
     <!-- Draggable items pool -->
-    <div v-if="showDraggablePool" class="draggable-pool">
+    <div
+      v-if="showDraggablePool"
+      class="draggable-pool"
+    >
       <h4>{{ t('agora', 'Draggable Items') }}</h4>
       <div class="draggable-items">
-        <div 
-          v-for="item in timelineItems" 
+        <div
+          v-for="item in timelineItems"
           :key="item.id"
           class="draggable-item"
-          :data-event="JSON.stringify({
-            title: getItemTitle(item),
-            duration: '02:00',
-            extendedProps: { itemId: item.id, item }
-          })"
+          :data-event="
+            JSON.stringify({
+              title: getItemTitle(item),
+              duration: '02:00',
+              extendedProps: { itemId: item.id, item },
+            })
+          "
         >
-          <component :is="getItemTypeIcon(item.type || 'text')" :size="16" />
+          <component
+            :is="getItemTypeIcon(item.type || 'text')"
+            :size="16"
+          />
           <span>{{ getItemTitle(item) }}</span>
         </div>
       </div>
@@ -158,7 +196,11 @@
     <DeleteConfirmationDialog
       v-model:visible="showDeleteDialog"
       :item-title="getItemTitle(selectedItem)"
-		    :is-imported="selectedItem ? isImportedFromView(selectedItem.raw as any, family?.key || 'timeline') : false"
+      :is-imported="
+        selectedItem
+          ? isImportedFromView(selectedItem.raw as any, family?.key || 'timeline')
+          : false
+      "
       :view-type="'timeline'"
       @confirm="handleConfirmDelete"
       @remove-from-view="handleRemoveFromView"
@@ -192,11 +234,11 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { DateTime } from 'luxon'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { 
+import {
   getTimelineStartDate,
   isImportedFromView,
   getTimelineEndDate,
-  getItemTypeIconComponent
+  getItemTypeIconComponent,
 } from '../../helpers/modules/InquiryOptionHelper'
 import type { Option, Inquiry, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
 import AddItemToFamily from '../Modals/AddItemToFamily.vue'
@@ -242,8 +284,12 @@ const getItemTitle = (item: Item | null) => item?.title ?? ''
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    draft: '#949494', active: '#3498db', completed: '#27ae60',
-    cancelled: '#e74c3c', pending: '#f39c12', approved: '#2ecc71',
+    draft: '#949494',
+    active: '#3498db',
+    completed: '#27ae60',
+    cancelled: '#e74c3c',
+    pending: '#f39c12',
+    approved: '#2ecc71',
   }
   return colors[status] || '#949494'
 }
@@ -255,11 +301,10 @@ const timelineItems = computed(() => {
   return key ? getItemsForFamily(props.items, key) : props.items
 })
 
-
 // ---- events computed — swap `item.raw` handling ----
 const events = computed(() =>
   timelineItems.value
-    .map(item => {
+    .map((item) => {
       const start = getTimelineStartDate(item.raw)
       if (!start) return null
 
@@ -281,13 +326,12 @@ const events = computed(() =>
         allDay: true,
         extendedProps: { item },
         backgroundColor: getStatusColor(item.statusKey),
-        borderColor:     getStatusColor(item.statusKey),
+        borderColor: getStatusColor(item.statusKey),
         textColor: '#ffffff',
       }
     })
     .filter(Boolean)
 )
-
 
 // ---- emit openDetail with Item ----
 const handleEventClick = (info: EventClickArg) => {
@@ -317,9 +361,8 @@ const emit = defineEmits<{
   eventReceive: [eventInfo: unknown]
   deleteItem: [itemId: number]
   removeFromTimeline: [itemId: number, updatedForceLayouts: string[]]
-  itemFamilyChanged: [payload: { itemId: number, familyKey: string, action: string }]
+  itemFamilyChanged: [payload: { itemId: number; familyKey: string; action: string }]
 }>()
-
 
 // State refs
 const calendarRef = ref<unknown>(null)
@@ -334,12 +377,10 @@ const dateFilter = ref('')
 const showDeleteDialog = ref(false)
 const selectedItem = ref<Item | null>(null)
 
-
 let pendingCallbacks: {
   onDelete: () => void
   onRemoveFromView: () => void
 } | null = null
-
 
 const preventGlobalContextMenu = (e: MouseEvent) => {
   const target = e.target as HTMLElement
@@ -353,14 +394,14 @@ const contextMenu = ref({
   visible: false,
   x: 0,
   y: 0,
-  event: null as unknown
+  event: null as unknown,
 })
 
 const popoverStyle = computed(() => ({
   position: 'fixed',
   left: `${contextMenu.value.x}px`,
   top: `${contextMenu.value.y}px`,
-  zIndex: 9999
+  zIndex: 9999,
 }))
 
 const getItemTypeIcon = (type: string) => getItemTypeIconComponent(type, props.optionTypes)
@@ -369,9 +410,11 @@ const updateCurrentPeriodText = () => {
   if (!calendarRef.value) return
   const api = (calendarRef.value as { getApi: () => { getDate: () => Date } }).getApi()
   const currentDate = api.getDate()
-  currentPeriodText.value = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })
+  currentPeriodText.value = currentDate.toLocaleString('default', {
+    month: 'long',
+    year: 'numeric',
+  })
 }
-
 
 const processItems = computed(() =>
   timelineItems.value.filter((item: Item) => getTimelineStartDate(item.raw) !== null)
@@ -384,7 +427,6 @@ const resources = computed(() =>
     eventColor: getStatusColor(item.statusKey),
   }))
 )
-
 
 // Event Handlers
 const handleExternalDrop = async (dropInfo: DropArg) => {
@@ -404,15 +446,17 @@ const handleExternalDrop = async (dropInfo: DropArg) => {
         resourceId: dropInfo.resource?.id,
         extendedProps: {
           ...parsedEvent.extendedProps,
-          created: Date.now()
-        }
+          created: Date.now(),
+        },
       }
 
       emit('eventDrop', newEvent)
       showSuccess(t('agora', 'Event added to timeline'))
 
       if (calendarRef.value) {
-        ;(calendarRef.value as { getApi: () => { refetchEvents: () => void } }).getApi().refetchEvents()
+        (calendarRef.value as { getApi: () => { refetchEvents: () => void } })
+          .getApi()
+          .refetchEvents()
       }
     } catch (e) {
       console.error('Error parsing event data:', e)
@@ -422,7 +466,9 @@ const handleExternalDrop = async (dropInfo: DropArg) => {
 }
 
 const handleEventDrop = async (dropInfo: unknown) => {
-  const event = (dropInfo as { event: { id: string; start: Date; end: Date; resource?: { id: string } } }).event
+  const event = (
+    dropInfo as { event: { id: string; start: Date; end: Date; resource?: { id: string } } }
+  ).event
   const itemId = parseInt(event.id)
   const item = timelineItems.value.find((i: Item) => i.id === itemId)
 
@@ -432,7 +478,7 @@ const handleEventDrop = async (dropInfo: unknown) => {
       newStart: event.start,
       newEnd: event.end,
       newResourceId: event.resource?.id,
-      item
+      item,
     })
     showSuccess(t('agora', 'Event updated'))
   }
@@ -449,7 +495,7 @@ const handleEventResize = async (resizeInfo: unknown) => {
       newStart: event.start,
       newEnd: event.end,
       item,
-      resized: true
+      resized: true,
     })
     showSuccess(t('agora', 'Event duration updated'))
   }
@@ -460,7 +506,7 @@ const handleDateSelect = (selectInfo: unknown) => {
     start: (selectInfo as { start: Date }).start,
     end: (selectInfo as { end: Date }).end,
     allDay: (selectInfo as { allDay: boolean }).allDay,
-    resource: (selectInfo as { resource?: { id: string } }).resource
+    resource: (selectInfo as { resource?: { id: string } }).resource,
   })
 }
 
@@ -468,11 +514,12 @@ const handleDateSelect = (selectInfo: unknown) => {
 const listViewOptions = computed(() => ({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
   headerToolbar: false,
-  initialView: scale.value === 'day' ? 'listDay' : scale.value === 'week' ? 'listWeek' : 'listMonth',
+  initialView:
+    scale.value === 'day' ? 'listDay' : scale.value === 'week' ? 'listWeek' : 'listMonth',
   views: {
     listDay: { type: 'list', duration: { days: 1 } },
     listWeek: { type: 'list', duration: { days: 7 } },
-    listMonth: { type: 'list', duration: { months: 1 } }
+    listMonth: { type: 'list', duration: { months: 1 } },
   },
   events: events.value,
   eventClick: handleEventClick,
@@ -483,17 +530,22 @@ const listViewOptions = computed(() => ({
   drop: handleExternalDrop,
   datesSet: () => {
     updateCurrentPeriodText()
-  }
+  },
 }))
 
 const calendarViewOptions = computed(() => ({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, multiMonthPlugin],
   headerToolbar: false,
-  initialView: scale.value === 'day' ? 'timeGridDay' : scale.value === 'week' ? 'timeGridWeek' : 'dayGridMonth',
+  initialView:
+    scale.value === 'day'
+      ? 'timeGridDay'
+      : scale.value === 'week'
+        ? 'timeGridWeek'
+        : 'dayGridMonth',
   views: {
     timeGridDay: { type: 'timeGrid', duration: { days: 1 } },
     timeGridWeek: { type: 'timeGrid', duration: { days: 7 } },
-    dayGridMonth: { type: 'dayGrid', duration: { months: 1 } }
+    dayGridMonth: { type: 'dayGrid', duration: { months: 1 } },
   },
   events: events.value,
   eventClick: handleEventClick,
@@ -508,7 +560,7 @@ const calendarViewOptions = computed(() => ({
   locale: 'en',
   datesSet: () => {
     updateCurrentPeriodText()
-  }
+  },
 }))
 
 const resourceDayViewOptions = computed(() => ({
@@ -530,12 +582,13 @@ const resourceDayViewOptions = computed(() => ({
   locale: 'en',
   datesSet: () => {
     updateCurrentPeriodText()
-  }
+  },
 }))
 
 const handleContextMenuDelete = () => {
   if (contextMenu.value.event) {
-    const item = (contextMenu.value.event as { extendedProps?: { item?: Item } }).extendedProps?.item
+    const item = (contextMenu.value.event as { extendedProps?: { item?: Item } }).extendedProps
+      ?.item
 
     if (item) {
       selectedItem.value = item
@@ -544,30 +597,35 @@ const handleContextMenuDelete = () => {
           emit('deleteItem', item.id)
           if (calendarRef.value) {
             setTimeout(() => {
-              ;(calendarRef.value as { getApi: () => { refetchEvents: () => void } }).getApi().refetchEvents()
+              (calendarRef.value as { getApi: () => { refetchEvents: () => void } })
+                .getApi()
+                .refetchEvents()
             }, 100)
           }
         },
-	onRemoveFromView: () => {
-  const rawItem = item.raw as any
-  let currentLayouts = rawItem.miscFields?.force_layouts || []
+        onRemoveFromView: () => {
+          const rawItem = item.raw as any
+          let currentLayouts = rawItem.miscFields?.force_layouts || []
 
-  if (typeof currentLayouts === 'string') {
-    try { currentLayouts = JSON.parse(currentLayouts) }
-    catch { currentLayouts = [] }
-  }
+          if (typeof currentLayouts === 'string') {
+            try {
+              currentLayouts = JSON.parse(currentLayouts)
+            } catch {
+              currentLayouts = []
+            }
+          }
 
-  const updatedLayouts = currentLayouts.filter((l: string) => l !== 'timeline')
-  emit('removeFromTimeline', item.id, updatedLayouts)
+          const updatedLayouts = currentLayouts.filter((l: string) => l !== 'timeline')
+          emit('removeFromTimeline', item.id, updatedLayouts)
 
-  if (calendarRef.value) {
-    setTimeout(() => {
-      ;(calendarRef.value as { getApi: () => { refetchEvents: () => void } })
-        .getApi()
-        .refetchEvents()
-    }, 100)
-  }
-}
+          if (calendarRef.value) {
+            setTimeout(() => {
+              (calendarRef.value as { getApi: () => { refetchEvents: () => void } })
+                .getApi()
+                .refetchEvents()
+            }, 100)
+          }
+        },
       }
       showDeleteDialog.value = true
     }
@@ -596,11 +654,16 @@ const handleRemoveFromView = () => {
 const timelineViewOptions = computed(() => {
   const getViewName = () => {
     switch (scale.value) {
-      case 'day': return 'resourceTimelineDay'
-      case 'week': return 'resourceTimelineWeek'
-      case 'month': return 'resourceTimelineMonth'
-      case 'year': return 'resourceTimelineYear'
-      default: return 'resourceTimelineWeek'
+      case 'day':
+        return 'resourceTimelineDay'
+      case 'week':
+        return 'resourceTimelineWeek'
+      case 'month':
+        return 'resourceTimelineMonth'
+      case 'year':
+        return 'resourceTimelineYear'
+      default:
+        return 'resourceTimelineWeek'
     }
   }
 
@@ -613,7 +676,7 @@ const timelineViewOptions = computed(() => {
       resourceTimelineDay: { type: 'resourceTimeline', duration: { days: 1 } },
       resourceTimelineWeek: { type: 'resourceTimeline', duration: { days: 7 } },
       resourceTimelineMonth: { type: 'resourceTimeline', duration: { months: 1 } },
-      resourceTimelineYear: { type: 'resourceTimeline', duration: { years: 1 } }
+      resourceTimelineYear: { type: 'resourceTimeline', duration: { years: 1 } },
     },
     resources: resources.value,
     events: events.value,
@@ -630,7 +693,7 @@ const timelineViewOptions = computed(() => {
     resourceAreaWidth: '200px',
     datesSet: () => {
       updateCurrentPeriodText()
-    }
+    },
   }
 })
 
@@ -653,25 +716,32 @@ const resourceWeekViewOptions = computed(() => ({
   locale: 'en',
   datesSet: () => {
     updateCurrentPeriodText()
-  }
+  },
 }))
 
 const currentCalendarOptions = computed(() => {
   switch (viewMode.value) {
-    case 'list': return listViewOptions.value
-    case 'calendar': return calendarViewOptions.value
-    case 'resourceDay': return resourceDayViewOptions.value
-    case 'resourceWeek': return resourceWeekViewOptions.value
-    default: return timelineViewOptions.value
+    case 'list':
+      return listViewOptions.value
+    case 'calendar':
+      return calendarViewOptions.value
+    case 'resourceDay':
+      return resourceDayViewOptions.value
+    case 'resourceWeek':
+      return resourceWeekViewOptions.value
+    default:
+      return timelineViewOptions.value
   }
 })
 
 // Navigation methods
-const switchView = async (newView: 'list' | 'timeline' | 'calendar' | 'resourceDay' | 'resourceWeek') => {
+const switchView = async (
+  newView: 'list' | 'timeline' | 'calendar' | 'resourceDay' | 'resourceWeek'
+) => {
   if (viewMode.value === newView) return
 
   calendarInitialized.value = false
-  await new Promise(resolve => setTimeout(resolve, 50))
+  await new Promise((resolve) => setTimeout(resolve, 50))
   viewMode.value = newView
   calendarKey.value = calendarKey.value + 1
   calendarInitialized.value = true
@@ -683,7 +753,7 @@ const setScale = async (newScale: 'day' | 'week' | 'month' | 'year') => {
 
   if (viewMode.value !== 'resourceDay' && viewMode.value !== 'resourceWeek') {
     calendarInitialized.value = false
-    await new Promise(resolve => setTimeout(resolve, 50))
+    await new Promise((resolve) => setTimeout(resolve, 50))
     calendarKey.value = calendarKey.value + 1
     calendarInitialized.value = true
   }
@@ -691,7 +761,9 @@ const setScale = async (newScale: 'day' | 'week' | 'month' | 'year') => {
 
 const moveTimeline = (direction: number) => {
   if (!calendarRef.value) return
-  const api = (calendarRef.value as { getApi: () => { prev: () => void; next: () => void } }).getApi()
+  const api = (
+    calendarRef.value as { getApi: () => { prev: () => void; next: () => void } }
+  ).getApi()
   if (direction < 0) {
     api.prev()
   } else {
@@ -711,7 +783,7 @@ const handleAddSuccess = () => {
   emit('update:items')
   calendarInitialized.value = false
   setTimeout(() => {
-    calendarKey.value = calendarKey.value + 1 
+    calendarKey.value = calendarKey.value + 1
     calendarInitialized.value = true
   }, 50)
 }
@@ -731,9 +803,9 @@ const initDraggable = () => {
           }
           return {
             title: eventEl.innerText,
-            duration: '02:00'
+            duration: '02:00',
           }
-        }
+        },
       })
     }
   })
@@ -741,29 +813,38 @@ const initDraggable = () => {
 
 const destroyDraggable = () => {
   if (draggableInstance) {
-    ;(draggableInstance as { destroy: () => void }).destroy()
+    (draggableInstance as { destroy: () => void }).destroy()
     draggableInstance = null
   }
 }
 
 // Watchers
-watch(events, () => {
-  if (calendarRef.value && calendarInitialized.value) {
-    try {
-      ;(calendarRef.value as { getApi: () => { refetchEvents: () => void } }).getApi().refetchEvents()
-    } catch (e) {
-      console.warn('Error refreshing events:', e)
+watch(
+  events,
+  () => {
+    if (calendarRef.value && calendarInitialized.value) {
+      try {
+        (calendarRef.value as { getApi: () => { refetchEvents: () => void } })
+          .getApi()
+          .refetchEvents()
+      } catch (e) {
+        console.warn('Error refreshing events:', e)
+      }
+    }
+  },
+  { deep: true }
+)
+
+watch(
+  () => props.showDraggablePool,
+  (show) => {
+    if (show) {
+      initDraggable()
+    } else {
+      destroyDraggable()
     }
   }
-}, { deep: true })
-
-watch(() => props.showDraggablePool, (show) => {
-  if (show) {
-    initDraggable()
-  } else {
-    destroyDraggable()
-  }
-})
+)
 
 // Lifecycle
 onMounted(() => {
@@ -790,7 +871,7 @@ onBeforeUnmount(() => {
   destroyDraggable()
   document.removeEventListener('contextmenu', preventGlobalContextMenu)
 })
-console.log(" ITEMS IN TIMELINE  ",props.items)
+console.log(' ITEMS IN TIMELINE  ', props.items)
 
 defineExpose({ moveTimeline, centerOnToday, switchView, setScale })
 </script>
@@ -846,7 +927,11 @@ defineExpose({ moveTimeline, centerOnToday, switchView, setScale })
     }
 
     .add-timeline-btn {
-      background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-element-light) 0%,
+        var(--color-primary-element) 100%
+      );
       border: none;
       color: white;
       font-weight: 600;
@@ -932,7 +1017,8 @@ defineExpose({ moveTimeline, centerOnToday, switchView, setScale })
       }
     }
 
-    .view-mode, .period-controls {
+    .view-mode,
+    .period-controls {
       flex-wrap: wrap;
     }
   }
@@ -944,7 +1030,9 @@ defineExpose({ moveTimeline, centerOnToday, switchView, setScale })
       flex-direction: column;
       align-items: stretch;
 
-      .view-mode, .period-controls, .filter-controls {
+      .view-mode,
+      .period-controls,
+      .filter-controls {
         width: 100%;
         justify-content: center;
       }

@@ -38,7 +38,7 @@ export function getItemTitle(item: GenericItem | null | undefined): string {
  */
 export function getItemStatus(item: GenericItem | null | undefined): string {
   if (!item) return 'draft'
-  
+
   if ('status' in item && item.status) {
     if (typeof item.status === 'object' && 'optionStatus' in item.status) {
       return item.status.optionStatus || 'draft'
@@ -90,9 +90,9 @@ export function getItemId(item: GenericItem | null | undefined): number | null {
  */
 export function getForceLayouts(item: GenericItemWithMiscFields | null | undefined): string[] {
   if (!item?.miscFields?.force_layouts) return []
-  
+
   const forceLayouts = item.miscFields.force_layouts
-  
+
   if (typeof forceLayouts === 'string') {
     try {
       const parsed = JSON.parse(forceLayouts)
@@ -103,11 +103,11 @@ export function getForceLayouts(item: GenericItemWithMiscFields | null | undefin
       return [forceLayouts]
     }
   }
-  
+
   if (Array.isArray(forceLayouts)) {
     return forceLayouts
   }
-  
+
   return []
 }
 
@@ -116,21 +116,18 @@ export function getForceLayouts(item: GenericItemWithMiscFields | null | undefin
  * @param item
  * @param layout
  */
-export function addLayoutToItem<T extends GenericItemWithMiscFields>(
-  item: T,
-  layout: string
-): T {
+export function addLayoutToItem<T extends GenericItemWithMiscFields>(item: T, layout: string): T {
   const miscFields = { ...(item.miscFields || {}) }
   const currentLayouts = getForceLayouts(item)
-  
+
   if (!currentLayouts.includes(layout)) {
     currentLayouts.push(layout)
     miscFields.force_layouts = JSON.stringify(currentLayouts)
   }
-  
+
   return {
     ...item,
-    miscFields
+    miscFields,
   }
 }
 
@@ -145,17 +142,17 @@ export function removeLayoutFromItem<T extends GenericItemWithMiscFields>(
 ): T {
   const miscFields = { ...(item.miscFields || {}) }
   const currentLayouts = getForceLayouts(item)
-  const updatedLayouts = currentLayouts.filter(l => l !== layout)
-  
+  const updatedLayouts = currentLayouts.filter((l) => l !== layout)
+
   if (updatedLayouts.length === 0) {
     delete miscFields.force_layouts
   } else {
     miscFields.force_layouts = JSON.stringify(updatedLayouts)
   }
-  
+
   return {
     ...item,
-    miscFields
+    miscFields,
   }
 }
 
@@ -164,7 +161,10 @@ export function removeLayoutFromItem<T extends GenericItemWithMiscFields>(
  * @param item
  * @param layout
  */
-export function hasLayout(item: GenericItemWithMiscFields | null | undefined, layout: string): boolean {
+export function hasLayout(
+  item: GenericItemWithMiscFields | null | undefined,
+  layout: string
+): boolean {
   if (!item) return false
   const layouts = getForceLayouts(item)
   return layouts.includes(layout)
@@ -184,12 +184,12 @@ export function filterItemsByLayout<T extends GenericItemWithMiscFields>(
   layout: string,
   targetFamily?: string
 ): T[] {
-  return items.filter(item => {
+  return items.filter((item) => {
     const forceLayouts = getForceLayouts(item)
     const hasForceLayout = forceLayouts.includes(layout)
 
     // Check if item belongs to target family
-    const isTargetFamily = targetFamily ? (getItemFamily(item) === targetFamily) : false
+    const isTargetFamily = targetFamily ? getItemFamily(item) === targetFamily : false
 
     return isTargetFamily || hasForceLayout
   })
@@ -235,7 +235,7 @@ export function setTimelineDates<T extends GenericItemWithMiscFields>(
   endDate?: Date | string | null
 ): T {
   const miscFields = { ...(item.miscFields || {}) }
-  
+
   // Set start date
   if (startDate) {
     const formattedStart = formatDateToISO(startDate)
@@ -245,7 +245,7 @@ export function setTimelineDates<T extends GenericItemWithMiscFields>(
   } else if (startDate === null) {
     delete miscFields.start_date
   }
-  
+
   // Set end date (if provided)
   if (endDate !== undefined) {
     if (endDate === null) {
@@ -257,10 +257,10 @@ export function setTimelineDates<T extends GenericItemWithMiscFields>(
       }
     }
   }
-  
+
   return {
     ...item,
-    miscFields
+    miscFields,
   }
 }
 
@@ -268,18 +268,18 @@ export function setTimelineDates<T extends GenericItemWithMiscFields>(
  * Get timeline start date from an item
  * @param item
  */
-export function getTimelineStartDate(item: GenericItemWithMiscFields | null | undefined): Date | null {
+export function getTimelineStartDate(
+  item: GenericItemWithMiscFields | null | undefined
+): Date | null {
   if (!item) return null
-  
+
   const miscFields = item.miscFields || {}
-  
+
   // Check multiple possible date fields
-  const dateStr = miscFields.start_date || 
-                  miscFields.voting_start || 
-                  miscFields.support_start
-  
+  const dateStr = miscFields.start_date || miscFields.voting_start || miscFields.support_start
+
   if (!dateStr) return null
-  
+
   try {
     if (typeof dateStr === 'string') {
       const date = new Date(dateStr)
@@ -303,14 +303,16 @@ export function getTimelineStartDate(item: GenericItemWithMiscFields | null | un
  * Get timeline end date from an item
  * @param item
  */
-export function getTimelineEndDate(item: GenericItemWithMiscFields | null | undefined): Date | null {
+export function getTimelineEndDate(
+  item: GenericItemWithMiscFields | null | undefined
+): Date | null {
   if (!item) return null
-  
+
   const miscFields = item.miscFields || {}
   const dateStr = miscFields.end_date
-  
+
   if (!dateStr) return null
-  
+
   try {
     if (typeof dateStr === 'string') {
       const date = new Date(dateStr)
@@ -376,36 +378,36 @@ export function getItemTypeIcon(
   optionTypes: Array<{ option_type: string; icon?: string }>
 ): string {
   if (!type) return 'File'
-  
+
   // Try to find in option types first
-  const found = optionTypes.find(opt => opt.option_type === type)
+  const found = optionTypes.find((opt) => opt.option_type === type)
   if (found?.icon) {
     return found.icon
   }
-  
+
   // Fallback based on type
   const typeIcons: Record<string, string> = {
-    'text': 'FileText',
-    'date': 'Calendar',
-    'location': 'MapPin',
-    'user': 'User',
-    'group': 'AccountGroup',
-    'file': 'File',
-    'link': 'Link',
-    'number': 'Number',
-    'boolean': 'Checkbox',
-    'color': 'Palette',
-    'image': 'Image',
-    'debate': 'Discussion',
-    'structure': 'Settings',
-    'consensus': 'ThumbUp',
-    'decision': 'Checkmark',
-    'proposal': 'Lightbulb',
-    'workflow': 'BarChart2',
-    'process': 'Timeline',
-    'vote': 'Vote'
+    text: 'FileText',
+    date: 'Calendar',
+    location: 'MapPin',
+    user: 'User',
+    group: 'AccountGroup',
+    file: 'File',
+    link: 'Link',
+    number: 'Number',
+    boolean: 'Checkbox',
+    color: 'Palette',
+    image: 'Image',
+    debate: 'Discussion',
+    structure: 'Settings',
+    consensus: 'ThumbUp',
+    decision: 'Checkmark',
+    proposal: 'Lightbulb',
+    workflow: 'BarChart2',
+    process: 'Timeline',
+    vote: 'Vote',
   }
-  
+
   return typeIcons[type] || 'File'
 }
 
@@ -436,10 +438,10 @@ export function getAvailableStatuses(
   optionTypes: Array<{ option_type: string; statuses?: string[] | string }>
 ): string[] {
   if (!itemType) return ['draft', 'active', 'completed', 'cancelled']
-  
-  const found = optionTypes.find(opt => opt.option_type === itemType)
+
+  const found = optionTypes.find((opt) => opt.option_type === itemType)
   if (!found?.statuses) return ['draft', 'active', 'completed', 'cancelled']
-  
+
   if (typeof found.statuses === 'string') {
     try {
       const parsed = JSON.parse(found.statuses)
@@ -448,8 +450,10 @@ export function getAvailableStatuses(
       return ['draft', 'active', 'completed', 'cancelled']
     }
   }
-  
-  return Array.isArray(found.statuses) ? found.statuses : ['draft', 'active', 'completed', 'cancelled']
+
+  return Array.isArray(found.statuses)
+    ? found.statuses
+    : ['draft', 'active', 'completed', 'cancelled']
 }
 
 /**
@@ -465,7 +469,7 @@ export function getStatusColor(status: string): string {
     pending: '#f39c12',
     approved: '#2ecc71',
     rejected: '#e74c3c',
-    archived: '#95a5a6'
+    archived: '#95a5a6',
   }
   return colors[status] || '#949494'
 }
@@ -484,13 +488,13 @@ export function getItemTypeLabel(
 ): string {
   if (!type) return fallback
 
-  const found = optionTypes.find(opt => opt.option_type === type)
+  const found = optionTypes.find((opt) => opt.option_type === type)
   if (found?.label) return found.label
 
   // Format the type key as a readable label
   return type
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
 }
 
@@ -519,10 +523,13 @@ export function getItemStatusLabel(status: string | null | undefined): string {
     implemented: 'Implemented',
   }
 
-  return labels[status] || status
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ')
+  return (
+    labels[status] ||
+    status
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+  )
 }
 
 /**
@@ -534,7 +541,7 @@ export function getItemTypeColor(
 ): string {
   if (!type) return '#949494'
 
-  const found = optionTypes.find(opt => opt.option_type === type)
+  const found = optionTypes.find((opt) => opt.option_type === type)
   if (found?.color) return found.color
 
   return '#949494'
@@ -578,7 +585,6 @@ export function getItemIcon(item: GenericItem | null | undefined): Component {
   return getItemTypeIconComponent(type, [])
 }
 
-
 // ============================================================================
 // GROUPING HELPERS
 // ============================================================================
@@ -589,15 +595,15 @@ export function getItemIcon(item: GenericItem | null | undefined): Component {
  */
 export function groupItemsByFamily<T extends GenericItem>(items: T[]): Record<string, T[]> {
   const grouped: Record<string, T[]> = {}
-  
-  items.forEach(item => {
+
+  items.forEach((item) => {
     const family = getItemFamily(item) || 'default'
     if (!grouped[family]) {
       grouped[family] = []
     }
     grouped[family].push(item)
   })
-  
+
   return grouped
 }
 
@@ -607,15 +613,15 @@ export function groupItemsByFamily<T extends GenericItem>(items: T[]): Record<st
  */
 export function groupItemsByStatus<T extends GenericItem>(items: T[]): Record<string, T[]> {
   const grouped: Record<string, T[]> = {}
-  
-  items.forEach(item => {
+
+  items.forEach((item) => {
     const status = getItemStatus(item)
     if (!grouped[status]) {
       grouped[status] = []
     }
     grouped[status].push(item)
   })
-  
+
   return grouped
 }
 
@@ -625,15 +631,15 @@ export function groupItemsByStatus<T extends GenericItem>(items: T[]): Record<st
  */
 export function groupItemsByType<T extends GenericItem>(items: T[]): Record<string, T[]> {
   const grouped: Record<string, T[]> = {}
-  
-  items.forEach(item => {
+
+  items.forEach((item) => {
     const type = getItemType(item)
     if (!grouped[type]) {
       grouped[type] = []
     }
     grouped[type].push(item)
   })
-  
+
   return grouped
 }
 
@@ -646,14 +652,11 @@ export function groupItemsByType<T extends GenericItem>(items: T[]): Record<stri
  * @param items
  * @param searchTerm
  */
-export function searchItemsByTitle<T extends GenericItem>(
-  items: T[],
-  searchTerm: string
-): T[] {
+export function searchItemsByTitle<T extends GenericItem>(items: T[], searchTerm: string): T[] {
   if (!searchTerm) return items
-  
+
   const term = searchTerm.toLowerCase()
-  return items.filter(item => {
+  return items.filter((item) => {
     const title = getItemTitle(item).toLowerCase()
     return title.includes(term)
   })
@@ -664,13 +667,10 @@ export function searchItemsByTitle<T extends GenericItem>(
  * @param items
  * @param statuses
  */
-export function filterItemsByStatus<T extends GenericItem>(
-  items: T[],
-  statuses: string[]
-): T[] {
+export function filterItemsByStatus<T extends GenericItem>(items: T[], statuses: string[]): T[] {
   if (!statuses || statuses.length === 0) return items
-  
-  return items.filter(item => {
+
+  return items.filter((item) => {
     const status = getItemStatus(item)
     return statuses.includes(status)
   })
@@ -681,13 +681,10 @@ export function filterItemsByStatus<T extends GenericItem>(
  * @param items
  * @param types
  */
-export function filterItemsByType<T extends GenericItem>(
-  items: T[],
-  types: string[]
-): T[] {
+export function filterItemsByType<T extends GenericItem>(items: T[], types: string[]): T[] {
   if (!types || types.length === 0) return items
-  
-  return items.filter(item => {
+
+  return items.filter((item) => {
     const type = getItemType(item)
     return types.includes(type)
   })

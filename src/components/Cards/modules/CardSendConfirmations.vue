@@ -38,7 +38,10 @@ function confirmationSendSuccess() {
   <CardDiv :type="cardType">
     {{ confirmationSendMessage }}
     <template #button>
-      <ActionSendConfirmed @error="confirmationSendError()" @success="confirmationSendSuccess()" />
+      <ActionSendConfirmed
+        @error="confirmationSendError()"
+        @success="confirmationSendSuccess()"
+      />
     </template>
   </CardDiv>
 </template>

@@ -7,13 +7,13 @@ import { Session } from '../../stores/session.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { SentResults } from './shares.js'
 import type {
-	Option,
-	Inquiry,
-	Comment,
-	Support,        
-	Share,
+  Option,
+  Inquiry,
+  Comment,
+  Support,
+  Share,
+  SupportResultData,
 } from '../../Types/index.js'
-
 
 const publicInquiry = {
   getInquiry(shareToken: string): Promise<
@@ -53,11 +53,70 @@ const publicInquiry = {
     })
   },
 
+  addSupport(
+    shareToken: string,
+    inquiryId: number,
+    userId: string,
+    optionId: number,
+    data: { value: unknown; weight?: number; engineId?: number }
+  ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null }>> {
+    return httpInstance.request({
+      method: 'POST',
+      url: `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}`,
+      data,
+      cancelToken: cancelTokenHandlerObject[this.addSupport.name].handleRequestCancellation().token,
+    })
+  },
+
+  updateSupport(
+    shareToken: string,
+    inquiryId: number,
+    userId: string,
+    optionId: number,
+    data: { value: unknown; weight?: number; engineId?: number }
+  ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null }>> {
+    return httpInstance.request({
+      method: 'PUT',
+      url: `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}`,
+      data,
+      cancelToken:
+        cancelTokenHandlerObject[this.updateSupport.name].handleRequestCancellation().token,
+    })
+  },
+
+  removeSupport(
+    shareToken: string,
+    inquiryId: number,
+    userId: string,
+    optionId: number,
+    engineId?: number
+  ): Promise<AxiosResponse<{ success: boolean; result: SupportResultData | null }>> {
+    const url = engineId
+      ? `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}/${engineId}`
+      : `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}`
+    return httpInstance.request({
+      method: 'DELETE',
+      url,
+      cancelToken:
+        cancelTokenHandlerObject[this.removeSupport.name].handleRequestCancellation().token,
+    })
+  },
+
+  getSupports(shareToken: string): Promise<AxiosResponse<{ supports: Support[] }>> {
+    return httpInstance.request({
+      method: 'GET',
+      url: `s/${shareToken}/supports`,
+      params: { time: +new Date() },
+      cancelToken:
+        cancelTokenHandlerObject[this.getSupports.name].handleRequestCancellation().token,
+    })
+  },
+
   addOption(
     shareToken: string,
     option: Option,
     sequence: unknown | null,
-    inquiry?: Inquiry,
+    inquiry?: Inquiry
   ): Promise<
     AxiosResponse<{
       option: Option
@@ -106,7 +165,7 @@ const publicInquiry = {
     shareToken: string,
     inquiryId: number,
     optionId: number,
-    value: number,
+    value: number
   ): Promise<
     AxiosResponse<{
       inquiry: Inquiry
@@ -122,7 +181,8 @@ const publicInquiry = {
         inquiryId,
         value,
       },
-      cancelToken: cancelTokenHandlerObject[this.supportInquiry.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.supportInquiry.name].handleRequestCancellation().token,
     })
   },
 

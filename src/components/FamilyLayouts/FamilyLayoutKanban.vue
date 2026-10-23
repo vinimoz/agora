@@ -43,8 +43,8 @@ const showAddModal = ref(false)
 const draggingItemId = ref<number | null>(null)
 
 const statusColumns = computed(() => {
-const cfg = (props.appSettings as any)?.optionFamilyTab?.[props.family?.family_type || 'kanban']
-	?.ui?.kanban_column
+  const cfg = (props.appSettings as any)?.optionFamilyTab?.[props.family?.family_type || 'kanban']
+    ?.ui?.kanban_column
   if (Array.isArray(cfg) && cfg.length) {
     return cfg.map((c: any) => ({
       value: c.value,
@@ -53,8 +53,8 @@ const cfg = (props.appSettings as any)?.optionFamilyTab?.[props.family?.family_t
     }))
   }
   return [
-    { value: 'draft',     label: t('agora', 'Draft'),     color: '#949494' },
-    { value: 'active',    label: t('agora', 'Active'),    color: '#3498db' },
+    { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
+    { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
     { value: 'completed', label: t('agora', 'Completed'), color: '#27ae60' },
     { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' },
   ]
@@ -70,11 +70,10 @@ const kanbanItems = computed(() => {
   return key ? getItemsForFamily(props.items, key) : props.items
 })
 
-const getItemsByStatus = (status: string) =>
-  kanbanItems.value.filter(i => i.statusKey === status)
+const getItemsByStatus = (status: string) => kanbanItems.value.filter((i) => i.statusKey === status)
 
 const getStatusLabel = (status: string) =>
-  statusColumns.value.find(s => s.value === status)?.label || status
+  statusColumns.value.find((s) => s.value === status)?.label || status
 
 const handleDragStart = (e: DragEvent, item: Item) => {
   draggingItemId.value = item.id
@@ -82,7 +81,9 @@ const handleDragStart = (e: DragEvent, item: Item) => {
   e.dataTransfer!.effectAllowed = 'move'
 }
 
-const handleDragEnd = () => { draggingItemId.value = null }
+const handleDragEnd = () => {
+  draggingItemId.value = null
+}
 
 const handleDrop = async (e: DragEvent, newStatus: string) => {
   e.preventDefault()
@@ -105,15 +106,22 @@ const changeStatus = async (itemId: number, newStatus: string) => {
     showError(t('agora', 'Item status could not be updated'))
   }
 }
-console.log(" ITEMS IN KANBAN  ",props.items)
+console.log(' ITEMS IN KANBAN  ', props.items)
 </script>
 
 <template>
   <div class="kanban-layout">
     <div class="kanban-actions">
-      <NcButton type="primary" class="add-kanban-btn" @click="showAddModal = true">
+      <NcButton
+        type="primary"
+        class="add-kanban-btn"
+        @click="showAddModal = true"
+      >
         <template #icon>
-          <component :is="InquiryOptionIcons.Plus" :size="18" />
+          <component
+            :is="InquiryOptionIcons.Plus"
+            :size="18"
+          />
         </template>
         {{ t('agora', 'Add to board') }}
       </NcButton>
@@ -129,7 +137,10 @@ console.log(" ITEMS IN KANBAN  ",props.items)
     />
 
     <!-- headers -->
-    <div class="kanban-header" :style="{ gridTemplateColumns: `repeat(${columnCount}, 1fr)` }">
+    <div
+      class="kanban-header"
+      :style="{ gridTemplateColumns: `repeat(${columnCount}, 1fr)` }"
+    >
       <div
         v-for="status in statusColumns"
         :key="status.value"
@@ -138,7 +149,10 @@ console.log(" ITEMS IN KANBAN  ",props.items)
         @drop="handleDrop($event, status.value)"
       >
         <div class="header-content">
-          <span class="status-badge" :style="{ backgroundColor: status.color }" />
+          <span
+            class="status-badge"
+            :style="{ backgroundColor: status.color }"
+          />
           <span class="status-label">{{ status.label }}</span>
           <span class="item-count">{{ getItemsByStatus(status.value).length }}</span>
         </div>
@@ -146,7 +160,10 @@ console.log(" ITEMS IN KANBAN  ",props.items)
     </div>
 
     <!-- columns -->
-    <div class="kanban-board" :style="{ gridTemplateColumns: `repeat(${columnCount}, 1fr)` }">
+    <div
+      class="kanban-board"
+      :style="{ gridTemplateColumns: `repeat(${columnCount}, 1fr)` }"
+    >
       <div
         v-for="status in statusColumns"
         :key="status.value"
@@ -179,12 +196,15 @@ console.log(" ITEMS IN KANBAN  ",props.items)
               <div class="item-actions">
                 <NcActions>
                   <NcActionButton
-                    v-for="target in statusColumns.filter(s => s.value !== item.statusKey)"
+                    v-for="target in statusColumns.filter((s) => s.value !== item.statusKey)"
                     :key="target.value"
                     @click="changeStatus(item.id, target.value)"
                   >
                     <template #icon>
-                      <div class="status-dot-small" :style="{ backgroundColor: target.color }" />
+                      <div
+                        class="status-dot-small"
+                        :style="{ backgroundColor: target.color }"
+                      />
                     </template>
                     {{ t('agora', 'Move to {column}', { column: target.label }) }}
                   </NcActionButton>
@@ -200,7 +220,10 @@ console.log(" ITEMS IN KANBAN  ",props.items)
             @drop="handleDrop($event, status.value)"
           >
             <div class="empty-icon">
-              <component :is="InquiryOptionIcons.Board" :size="32" />
+              <component
+                :is="InquiryOptionIcons.Board"
+                :size="32"
+              />
             </div>
             <p>{{ t('agora', 'No items in this column') }}</p>
           </div>
@@ -222,7 +245,11 @@ console.log(" ITEMS IN KANBAN  ",props.items)
     justify-content: flex-end;
 
     .add-kanban-btn {
-      background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-element-light) 0%,
+        var(--color-primary-element) 100%
+      );
       border: none;
       color: white;
       font-weight: 600;
@@ -251,10 +278,18 @@ console.log(" ITEMS IN KANBAN  ",props.items)
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
       border-bottom: 4px solid;
 
-      &.status-draft { border-bottom-color: #949494; }
-      &.status-active { border-bottom-color: #3498db; }
-      &.status-completed { border-bottom-color: #27ae60; }
-      &.status-cancelled { border-bottom-color: #e74c3c; }
+      &.status-draft {
+        border-bottom-color: #949494;
+      }
+      &.status-active {
+        border-bottom-color: #3498db;
+      }
+      &.status-completed {
+        border-bottom-color: #27ae60;
+      }
+      &.status-cancelled {
+        border-bottom-color: #e74c3c;
+      }
 
       .header-content {
         display: flex;

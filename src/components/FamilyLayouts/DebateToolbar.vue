@@ -14,7 +14,10 @@
           :title="view.label"
           @click="updateView(view.key)"
         >
-          <component :is="view.icon" :size="18" />
+          <component
+            :is="view.icon"
+            :size="18"
+          />
           <span class="view-label">{{ view.label }}</span>
         </button>
       </div>
@@ -30,14 +33,27 @@
           :title="mode.label"
           @click="updateDisplayMode(mode.key)"
         >
-          <component :is="mode.icon" :size="16" />
+          <component
+            :is="mode.icon"
+            :size="16"
+          />
         </button>
       </div>
 
-      <div v-if="hasBack" class="toolbar-actions">
-        <NcButton type="tertiary" size="small" @click="$emit('back')">
+      <div
+        v-if="hasBack"
+        class="toolbar-actions"
+      >
+        <NcButton
+          type="tertiary"
+          size="small"
+          @click="$emit('back')"
+        >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Back" :size="16" />
+            <component
+              :is="InquiryGeneralIcons.Back"
+              :size="16"
+            />
           </template>
         </NcButton>
       </div>
@@ -53,7 +69,7 @@ import { InquiryGeneralIcons } from '../../utils/icons.ts'
 // Props
 // ============================================
 
-  // eslint-disable-next-line 
+// eslint-disable-next-line
 const props = defineProps<{
   modelValue: string
   displayMode: string
@@ -69,7 +85,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   'update:displayMode': [value: string]
-  'back': []
+  back: []
 }>()
 
 // ============================================

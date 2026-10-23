@@ -32,7 +32,7 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type { Option, Inquiry, SupportData } from '../../Types/index'
+import type { Option, Inquiry, SupportData } from '../../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
@@ -60,7 +60,7 @@ const currentReactions = computed(() => {
 function toggleReaction(reaction: string) {
   let newReactions: string[]
   if (currentReactions.value.includes(reaction)) {
-    newReactions = currentReactions.value.filter(r => r !== reaction)
+    newReactions = currentReactions.value.filter((r) => r !== reaction)
   } else {
     newReactions = [...currentReactions.value, reaction]
   }

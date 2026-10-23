@@ -12,7 +12,7 @@ const {
   show = false,
   name = t('agora', 'Loading'),
   loadingTexts = '',
-  teleportTo = '',            // no implicit '#content-vue'
+  teleportTo = '', // no implicit '#content-vue'
 } = defineProps<{
   show: boolean
   name: string
@@ -26,9 +26,7 @@ const description = ref(t('agora', 'Please wait'))
 const resolvedTarget = ref<string | HTMLElement | null>(null)
 
 function resolveTarget() {
-  resolvedTarget.value = teleportTo
-    ? document.querySelector(teleportTo)
-    : null
+  resolvedTarget.value = teleportTo ? document.querySelector(teleportTo) : null
 }
 
 const sequentialDescriptionOutput = () => {
@@ -53,7 +51,7 @@ const sequentialDescriptionOutput = () => {
     if (show === false) return
     if (index < loadingTexts.length) {
       description.value = loadingTexts[index]
-      index =  index  + 1 
+      index = index + 1
       const delay = 1500 + Math.floor(Math.random() * 1001) - 500
       setTimeout(showDescription, delay)
     } else {
@@ -81,22 +79,42 @@ onMounted(() => {
 
 <template>
   <!-- Teleport only when a real target is available -->
-  <Teleport v-if="resolvedTarget" :to="resolvedTarget">
-    <div v-show="show" class="loading-overlay">
+  <Teleport
+    v-if="resolvedTarget"
+    :to="resolvedTarget"
+  >
+    <div
+      v-show="show"
+      class="loading-overlay"
+    >
       <div class="loading-overlay__inner">
-        <Spinner class="loading-overlay__spinner" :size="70" />
+        <Spinner
+          class="loading-overlay__spinner"
+          :size="70"
+        />
         <span class="loading-overlay__name">{{ name }}</span>
-        <p class="loading-overlay__description">{{ description }}</p>
+        <p class="loading-overlay__description">
+          {{ description }}
+        </p>
       </div>
     </div>
   </Teleport>
 
   <!-- Fallback: render in place if no valid target -->
-  <div v-else v-show="show" class="loading-overlay">
+  <div
+    v-else
+    v-show="show"
+    class="loading-overlay"
+  >
     <div class="loading-overlay__inner">
-      <Spinner class="loading-overlay__spinner" :size="70" />
+      <Spinner
+        class="loading-overlay__spinner"
+        :size="70"
+      />
       <span class="loading-overlay__name">{{ name }}</span>
-      <p class="loading-overlay__description">{{ description }}</p>
+      <p class="loading-overlay__description">
+        {{ description }}
+      </p>
     </div>
   </div>
 </template>

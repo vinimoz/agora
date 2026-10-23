@@ -4,37 +4,58 @@
 -->
 
 <template>
-  <div ref="gridRef" class="inquiry-grid">
+  <div
+    ref="gridRef"
+    class="inquiry-grid"
+  >
     <div
       v-for="(inquiry, index) in inquiries"
       :key="inquiry.id"
       class="grid-item"
       :class="{
-        'featured': isFeatured(inquiry),
-        'compact': compact,
+        featured: isFeatured(inquiry),
+        compact: compact,
         'size-lg': getSize(inquiry) === 'large',
-        'size-sm': getSize(inquiry) === 'small'
+        'size-sm': getSize(inquiry) === 'small',
       }"
       :style="getItemStyle(index)"
       @click="handleClick(inquiry)"
     >
       <!-- Cover Image -->
-      <div v-if="getCoverUrl(inquiry)" class="item-cover">
-        <img :src="getCoverUrl(inquiry)" :alt="inquiry.title" loading="lazy" />
+      <div
+        v-if="getCoverUrl(inquiry)"
+        class="item-cover"
+      >
+        <img
+          :src="getCoverUrl(inquiry)"
+          :alt="inquiry.title"
+          loading="lazy"
+        >
         <div class="cover-overlay">
-          <span class="type-badge" :class="getTypeClass(inquiry.type)">
+          <span
+            class="type-badge"
+            :class="getTypeClass(inquiry.type)"
+          >
             {{ getTypeLabel(inquiry.type) }}
           </span>
         </div>
       </div>
 
       <!-- Content -->
-      <div class="item-content" :class="{ 'no-cover': !getCoverUrl(inquiry) }">
-        <h4 class="item-title">{{ inquiry.title }}</h4>
-        <p v-if="inquiry.description" class="item-description">
+      <div
+        class="item-content"
+        :class="{ 'no-cover': !getCoverUrl(inquiry) }"
+      >
+        <h4 class="item-title">
+          {{ inquiry.title }}
+        </h4>
+        <p
+          v-if="inquiry.description"
+          class="item-description"
+        >
           {{ truncateText(stripHtml(inquiry.description), 80) }}
         </p>
-        
+
         <div class="item-meta">
           <div class="meta-author">
             <NcAvatar
@@ -54,12 +75,24 @@
             <span class="meta-name">{{ inquiry.ownedGroup || inquiry.owner?.displayName }}</span>
           </div>
           <div class="meta-stats">
-            <span v-if="inquiry.status?.countComments" class="stat">
-              <component :is="Icons.MessageSquare" :size="12" />
+            <span
+              v-if="inquiry.status?.countComments"
+              class="stat"
+            >
+              <component
+                :is="Icons.MessageSquare"
+                :size="12"
+              />
               {{ inquiry.status.countComments }}
             </span>
-            <span v-if="inquiry.status?.countSupports" class="stat">
-              <component :is="Icons.ThumbUp" :size="12" />
+            <span
+              v-if="inquiry.status?.countSupports"
+              class="stat"
+            >
+              <component
+                :is="Icons.ThumbUp"
+                :size="12"
+              />
               {{ inquiry.status.countSupports }}
             </span>
           </div>
@@ -128,7 +161,7 @@ function getItemStyle(index: number): Record<string, string> {
 function truncateText(text: string, max: number): string {
   if (!text) return ''
   if (text.length <= max) return text
-  return `${text.substring(0, max)  }…`
+  return `${text.substring(0, max)}…`
 }
 
 function stripHtml(html: string): string {
@@ -213,8 +246,8 @@ function handleClick(inquiry: Inquiry) {
       left: 0;
       right: 0;
       padding: 12px;
-      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-      
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+
       .type-badge {
         display: inline-block;
         padding: 2px 10px;
@@ -222,13 +255,25 @@ function handleClick(inquiry: Inquiry) {
         font-size: 11px;
         font-weight: 600;
         color: white;
-        
-        &.type-proposal { background: #10b981; }
-        &.type-survey { background: #3b82f6; }
-        &.type-poll { background: #8b5cf6; }
-        &.type-discussion { background: #06b6d4; }
-        &.type-question { background: #f59e0b; }
-        &.type-default { background: #6b7280; }
+
+        &.type-proposal {
+          background: #10b981;
+        }
+        &.type-survey {
+          background: #3b82f6;
+        }
+        &.type-poll {
+          background: #8b5cf6;
+        }
+        &.type-discussion {
+          background: #06b6d4;
+        }
+        &.type-question {
+          background: #f59e0b;
+        }
+        &.type-default {
+          background: #6b7280;
+        }
       }
     }
 

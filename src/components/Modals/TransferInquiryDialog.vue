@@ -104,7 +104,10 @@ const dialogProps = computed(() => ({
 </script>
 
 <template>
-  <NcDialog v-model:open="model" v-bind="dialogProps">
+  <NcDialog
+    v-model:open="model"
+    v-bind="dialogProps"
+  >
     <UserSearch
       v-model="newUser"
       :search-types="[0]"

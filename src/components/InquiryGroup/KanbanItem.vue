@@ -6,10 +6,7 @@
 <template>
   <div
     class="kanban-item"
-    :class="[
-      `status-${inquiry.status?.inquiryStatus || 'draft'}`,
-      { 'is-dragging': isDragging }
-    ]"
+    :class="[`status-${inquiry.status?.inquiryStatus || 'draft'}`, { 'is-dragging': isDragging }]"
     draggable="true"
     @click="handleClick"
     @dragstart="handleDragStart"
@@ -17,31 +14,55 @@
   >
     <div class="item-header">
       <div class="item-type">
-        <component :is="typeIcon" :size="14" />
+        <component
+          :is="typeIcon"
+          :size="14"
+        />
       </div>
       <span class="item-title">{{ inquiry.title }}</span>
     </div>
 
-    <div v-if="shortDescription" class="item-description">
+    <div
+      v-if="shortDescription"
+      class="item-description"
+    >
       {{ shortDescription }}
     </div>
 
     <div class="item-footer">
       <div class="item-meta">
-        <span v-if="inquiry.ownedGroup || inquiry.owner?.displayName" class="meta-author">
+        <span
+          v-if="inquiry.ownedGroup || inquiry.owner?.displayName"
+          class="meta-author"
+        >
           {{ inquiry.ownedGroup || inquiry.owner?.displayName }}
         </span>
-        <span v-if="inquiry.status?.countComments" class="meta-item">
-          <component :is="Icons.Comment" :size="12" />
+        <span
+          v-if="inquiry.status?.countComments"
+          class="meta-item"
+        >
+          <component
+            :is="Icons.Comment"
+            :size="12"
+          />
           {{ inquiry.status.countComments }}
         </span>
-        <span v-if="inquiry.status?.countSupports" class="meta-item">
-          <component :is="Icons.ThumbUp" :size="12" />
+        <span
+          v-if="inquiry.status?.countSupports"
+          class="meta-item"
+        >
+          <component
+            :is="Icons.ThumbUp"
+            :size="12"
+          />
           {{ inquiry.status.countSupports }}
         </span>
       </div>
 
-      <div v-if="inquiry.status?.created" class="item-time">
+      <div
+        v-if="inquiry.status?.created"
+        class="item-time"
+      >
         {{ formatTime(inquiry.status.created) }}
       </div>
     </div>
@@ -62,7 +83,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  draggable: true
+  draggable: true,
 })
 
 const emit = defineEmits<{
@@ -83,16 +104,16 @@ const typeIcon = computed(() => {
     return typeData.value.icon
   }
   const iconMap: Record<string, any> = {
-    'survey': Icons.ClipboardList,
-    'poll': Icons.CheckCircle,
-    'question': Icons.Question,
-    'discussion': Icons.MessageSquare,
-    'news': Icons.Newspaper,
-    'announcement': Icons.Megaphone,
-    'meeting': Icons.Users,
-    'document': Icons.Document,
-    'proposal': Icons.Scale,
-    'general': Icons.FolderMultiple,
+    survey: Icons.ClipboardList,
+    poll: Icons.CheckCircle,
+    question: Icons.Question,
+    discussion: Icons.MessageSquare,
+    news: Icons.Newspaper,
+    announcement: Icons.Megaphone,
+    meeting: Icons.Users,
+    document: Icons.Document,
+    proposal: Icons.Scale,
+    general: Icons.FolderMultiple,
   }
   return iconMap[props.inquiry.type?.toLowerCase()] || Icons.FolderMultiple
 })

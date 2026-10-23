@@ -79,7 +79,10 @@ async function clickAction() {
       size="small"
     >
       <div class="modal-confirmation-result">
-        <div v-if="confirmations?.countSentMails > 0" class="sent-confirmations">
+        <div
+          v-if="confirmations?.countSentMails > 0"
+          class="sent-confirmations"
+        >
           <h2>
             {{
               n(
@@ -91,12 +94,18 @@ async function clickAction() {
             }}
           </h2>
           <ul>
-            <li v-for="item in confirmations.sentMails" :key="item.displayName">
+            <li
+              v-for="item in confirmations.sentMails"
+              :key="item.displayName"
+            >
               {{ item.displayName }} &lt;{{ item.emailAddress }}&gt;
             </li>
           </ul>
         </div>
-        <div v-if="confirmations?.countAbortedMails > 0" class="error-confirmations">
+        <div
+          v-if="confirmations?.countAbortedMails > 0"
+          class="error-confirmations"
+        >
           <h2>
             {{
               n(
@@ -108,7 +117,10 @@ async function clickAction() {
             }}
           </h2>
           <ul>
-            <li v-for="item in confirmations.abortedMails" :key="item.displayName">
+            <li
+              v-for="item in confirmations.abortedMails"
+              :key="item.displayName"
+            >
               {{ item.displayName }} ({{
                 item.reason === 'InvalidMail'
                   ? t('agora', 'No valid email address')

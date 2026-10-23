@@ -6,19 +6,34 @@
 <template>
   <div
     v-if="inquiry"
-    class="inquiry-card" 
-    :class="cardClasses" 
-    @click="handleClick"
+    class="inquiry-card"
+    :class="cardClasses"
     :data-inquiry-id="inquiry.id"
+    @click="handleClick"
   >
     <!-- Cover Image -->
-    <div v-if="showCover && coverUrl" class="card-cover" :class="{ 'horizontal-cover': horizontal }">
-      <img :src="coverUrl" :alt="inquiry.title" class="cover-image" loading="lazy" />
-      <div class="cover-overlay"></div>
-      
+    <div
+      v-if="showCover && coverUrl"
+      class="card-cover"
+      :class="{ 'horizontal-cover': horizontal }"
+    >
+      <img
+        :src="coverUrl"
+        :alt="inquiry.title"
+        class="cover-image"
+        loading="lazy"
+      >
+      <div class="cover-overlay" />
+
       <!-- Cover Actions - Support & Comments on cover for horizontal layout -->
-      <div v-if="horizontal" class="cover-actions">
-        <div v-if="showSupport" class="cover-support">
+      <div
+        v-if="horizontal"
+        class="cover-actions"
+      >
+        <div
+          v-if="showSupport"
+          class="cover-support"
+        >
           <SupportFeature
             :item="inquiry"
             item-type="inquiry"
@@ -29,62 +44,118 @@
             @click.stop
           />
         </div>
-        <div v-if="showComments && inquiry.status?.countComments" class="cover-comments" @click.stop="handleCommentsClick">
-          <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="16" />
+        <div
+          v-if="showComments && inquiry.status?.countComments"
+          class="cover-comments"
+          @click.stop="handleCommentsClick"
+        >
+          <component
+            :is="InquiryGeneralIcons.Comment"
+            class="counter-icon"
+            :size="16"
+          />
           <span class="counter-value">{{ inquiry.status.countComments }}</span>
         </div>
       </div>
     </div>
 
     <!-- Content -->
-    <div 
-      class="card-content" 
-      :class="{ 
+    <div
+      class="card-content"
+      :class="{
         'has-cover': showCover && coverUrl,
         'horizontal-content': horizontal,
-        'no-padding': compact
+        'no-padding': compact,
       }"
     >
       <!-- Header: Type + Status -->
-      <div v-if="showType || showStatus" class="card-header">
-        <div v-if="showType" class="type-badge">
-          <component :is="typeIconComponent" class="type-icon" :size="14" />
+      <div
+        v-if="showType || showStatus"
+        class="card-header"
+      >
+        <div
+          v-if="showType"
+          class="type-badge"
+        >
+          <component
+            :is="typeIconComponent"
+            class="type-icon"
+            :size="14"
+          />
           <span class="type-label">{{ typeLabel }}</span>
         </div>
-        
-        <div v-if="showStatus && currentInquiryStatus" class="status-badge" :class="statusBadgeClass">
-          <component :is="statusIconComponent" class="status-icon" :size="12" />
+
+        <div
+          v-if="showStatus && currentInquiryStatus"
+          class="status-badge"
+          :class="statusBadgeClass"
+        >
+          <component
+            :is="statusIconComponent"
+            class="status-icon"
+            :size="12"
+          />
           {{ statusText }}
         </div>
       </div>
 
       <!-- Title -->
-      <h3 v-if="inquiry.title" class="card-title" :title="inquiry.title">
+      <h3
+        v-if="inquiry.title"
+        class="card-title"
+        :title="inquiry.title"
+      >
         {{ inquiry.title }}
       </h3>
 
       <!-- Description -->
-      <div v-if="showDescription && shortDescription" class="card-description">
+      <div
+        v-if="showDescription && shortDescription"
+        class="card-description"
+      >
         {{ shortDescription }}
       </div>
 
       <!-- Meta: Location & Category -->
-      <div v-if="showMeta" class="card-meta-info">
-        <div v-if="locationPath" class="meta-item location">
-          <component :is="InquiryGeneralIcons.Location" class="meta-icon" :size="12" />
+      <div
+        v-if="showMeta"
+        class="card-meta-info"
+      >
+        <div
+          v-if="locationPath"
+          class="meta-item location"
+        >
+          <component
+            :is="InquiryGeneralIcons.Location"
+            class="meta-icon"
+            :size="12"
+          />
           <span class="meta-text">{{ truncatedLocation }}</span>
         </div>
-        
-        <div v-if="categoryPath" class="meta-item category">
-          <component :is="InquiryGeneralIcons.Category" class="meta-icon" :size="12" />
+
+        <div
+          v-if="categoryPath"
+          class="meta-item category"
+        >
+          <component
+            :is="InquiryGeneralIcons.Category"
+            class="meta-icon"
+            :size="12"
+          />
           <span class="meta-text">{{ truncatedCategory }}</span>
         </div>
       </div>
 
       <!-- Stats: Author + Counters -->
-      <div v-if="showStats || showAuthor" class="card-stats">
+      <div
+        v-if="showStats || showAuthor"
+        class="card-stats"
+      >
         <!-- Author -->
-        <div v-if="showAuthor" class="stat-author">
+        <div
+          v-if="showAuthor"
+          class="stat-author"
+        >
           <NcAvatar
             v-if="inquiry.ownedGroup"
             :display-name="inquiry.ownedGroup"
@@ -100,17 +171,29 @@
             class="author-avatar"
           />
           <div class="author-info">
-            <div class="author-name">{{ truncatedAuthorName }}</div>
+            <div class="author-name">
+              {{ truncatedAuthorName }}
+            </div>
             <div class="post-time">
-              <component :is="InquiryGeneralIcons.Calendar" class="calendar-icon" :size="10" />
+              <component
+                :is="InquiryGeneralIcons.Calendar"
+                class="calendar-icon"
+                :size="10"
+              />
               <span>{{ formattedTime }}</span>
             </div>
           </div>
         </div>
 
         <!-- Counters -->
-        <div v-if="showStats && !horizontal" class="stat-counters">
-          <div v-if="showSupport" class="counter-item supports">
+        <div
+          v-if="showStats && !horizontal"
+          class="stat-counters"
+        >
+          <div
+            v-if="showSupport"
+            class="counter-item supports"
+          >
             <SupportFeature
               :item="inquiry"
               item-type="inquiry"
@@ -121,21 +204,46 @@
               @click.stop
             />
           </div>
-          <div v-if="showComments && inquiry.status?.countComments" class="counter-item comments" @click.stop="handleCommentsClick">
-            <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="14" />
+          <div
+            v-if="showComments && inquiry.status?.countComments"
+            class="counter-item comments"
+            @click.stop="handleCommentsClick"
+          >
+            <component
+              :is="InquiryGeneralIcons.Comment"
+              class="counter-icon"
+              :size="14"
+            />
             <span class="counter-value">{{ inquiry.status.countComments }}</span>
           </div>
-          <div v-if="showParticipants && inquiry.status?.countParticipants" class="counter-item participants">
-            <component :is="InquiryGeneralIcons.Users" class="counter-icon" :size="14" />
+          <div
+            v-if="showParticipants && inquiry.status?.countParticipants"
+            class="counter-item participants"
+          >
+            <component
+              :is="InquiryGeneralIcons.Users"
+              class="counter-icon"
+              :size="14"
+            />
             <span class="counter-value">{{ inquiry.status.countParticipants }}</span>
           </div>
         </div>
       </div>
 
       <!-- Expiry Badge -->
-      <div v-if="showExpiry && showExpiryBadge" class="card-dates">
-        <div class="date-item expiry" :class="expiryBadgeClass">
-          <component :is="InquiryGeneralIcons.ClockOutline" class="date-icon" :size="12" />
+      <div
+        v-if="showExpiry && showExpiryBadge"
+        class="card-dates"
+      >
+        <div
+          class="date-item expiry"
+          :class="expiryBadgeClass"
+        >
+          <component
+            :is="InquiryGeneralIcons.ClockOutline"
+            class="date-icon"
+            :size="12"
+          />
           <span>{{ expiryText }}</span>
         </div>
       </div>
@@ -163,7 +271,7 @@ interface Props {
   compact?: boolean
   interactive?: boolean
   horizontal?: boolean
-  
+
   // Display feature toggles
   showIcon?: boolean
   showCover?: boolean
@@ -177,7 +285,7 @@ interface Props {
   showComments?: boolean
   showSupport?: boolean
   showParticipants?: boolean
-  
+
   // Open behavior
   openMode?: 'page' | 'modal' | 'popup' | 'none'
 }
@@ -200,7 +308,7 @@ const props = withDefaults(defineProps<Props>(), {
   showComments: true,
   showSupport: true,
   showParticipants: true,
-  openMode: 'page'
+  openMode: 'page',
 })
 
 const emit = defineEmits<{
@@ -218,7 +326,7 @@ const cardClasses = computed(() => ({
   'is-compact': props.compact,
   'is-interactive': props.interactive,
   'has-cover': props.showCover && !!coverUrl.value,
-  'is-horizontal': props.horizontal
+  'is-horizontal': props.horizontal,
 }))
 
 // Get inquiry types
@@ -243,21 +351,21 @@ const typeIconComponent = computed(() => {
       return iconName
     }
   }
-  
+
   const iconMap = {
-    'survey': 'ClipboardList',
-    'poll': 'CheckCircle',
-    'question': 'Question',
-    'discussion': 'MessageSquare',
-    'news': 'Newspaper',
-    'announcement': 'Megaphone',
-    'meeting': 'Users',
-    'document': 'Document',
-    'proposal': 'Scale',
-    'general': 'FolderMultiple',
-    'draft': 'Empty',
+    survey: 'ClipboardList',
+    poll: 'CheckCircle',
+    question: 'Question',
+    discussion: 'MessageSquare',
+    news: 'Newspaper',
+    announcement: 'Megaphone',
+    meeting: 'Users',
+    document: 'Document',
+    proposal: 'Scale',
+    general: 'FolderMultiple',
+    draft: 'Empty',
   }
-  
+
   const iconName = iconMap[props.inquiry.type?.toLowerCase()] || 'FolderMultiple'
   return InquiryGeneralIcons[iconName] || InquiryGeneralIcons.FolderMultiple
 })
@@ -265,22 +373,22 @@ const typeIconComponent = computed(() => {
 // Get current status
 const currentInquiryStatus = computed(() => {
   if (!props.inquiry.status?.inquiryStatus) return null
-  
+
   const specialStatuses = {
-    'draft': {
+    draft: {
       statusKey: 'draft',
       label: t('agora', 'Draft'),
       icon: 'draft',
       inquiryType: props.inquiry.type,
       order: 0,
     },
-    'waiting_approval': {
+    waiting_approval: {
       statusKey: 'waiting_approval',
       label: t('agora', 'Pending approval'),
       icon: 'waitingapproval',
       inquiryType: props.inquiry.type,
       order: 1,
-    }
+    },
   }
 
   const currentStatus = props.inquiry.status.inquiryStatus
@@ -288,15 +396,20 @@ const currentInquiryStatus = computed(() => {
     return specialStatuses[currentStatus]
   }
 
-  const statusesFromSettings = sessionStore.appSettings?.inquiryStatusTab
-    ?.filter((status) => status.inquiryType === props.inquiry.type) || []
-    
-  return statusesFromSettings.find(
-    (status) => status.statusKey === currentStatus
-  ) || specialStatuses.draft
+  const statusesFromSettings =
+    sessionStore.appSettings?.inquiryStatusTab?.filter(
+      (status) => status.inquiryType === props.inquiry.type
+    ) || []
+
+  return (
+    statusesFromSettings.find((status) => status.statusKey === currentStatus) ||
+    specialStatuses.draft
+  )
 })
 
-const statusText = computed(() => currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : '')
+const statusText = computed(() =>
+  currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : ''
+)
 
 const statusIconComponent = computed(() => {
   if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
@@ -307,11 +420,11 @@ const statusIconComponent = computed(() => {
 const statusBadgeClass = computed(() => {
   const status = props.inquiry.status?.inquiryStatus
   const map: Record<string, string> = {
-    'active': 'status-open',
-    'open': 'status-open',
-    'closed': 'status-closed',
-    'draft': 'status-draft',
-    'waiting_approval': 'status-waiting'
+    active: 'status-open',
+    open: 'status-open',
+    closed: 'status-closed',
+    draft: 'status-draft',
+    waiting_approval: 'status-waiting',
   }
   return map[status || ''] || 'status-unknown'
 })
@@ -331,21 +444,21 @@ function getNextcloudPreviewUrl(fileId: number, x = 400, y = 200, autoScale = tr
 // Short Description
 const shortDescription = computed(() => {
   if (!props.inquiry.description) return ''
-  
+
   const plainText = props.inquiry.description.replace(/<[^>]*>/g, '')
   const maxLen = props.compact ? 60 : 100
-  
+
   if (plainText.length > maxLen) {
     return `${plainText.substring(0, maxLen)}…`
   }
-  
+
   return plainText
 })
 
 // Get hierarchy path for location and category display
 function getHierarchyPath(items, targetId) {
   if (!items || !Array.isArray(items)) return ''
-  
+
   const itemMap = {}
 
   items.forEach((item) => {
@@ -371,22 +484,26 @@ function getHierarchyPath(items, targetId) {
 }
 
 // Location and Category paths
-const locationPath = computed(() => getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId))
-const categoryPath = computed(() => getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId))
+const locationPath = computed(() =>
+  getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId)
+)
+const categoryPath = computed(() =>
+  getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId)
+)
 
 const truncatedLocation = computed(() => {
   if (!locationPath.value) return ''
   const maxLen = props.compact ? 12 : 15
-  return locationPath.value.length > maxLen 
-    ? `${locationPath.value.substring(0, maxLen)}…` 
+  return locationPath.value.length > maxLen
+    ? `${locationPath.value.substring(0, maxLen)}…`
     : locationPath.value
 })
 
 const truncatedCategory = computed(() => {
   if (!categoryPath.value) return ''
   const maxLen = props.compact ? 12 : 15
-  return categoryPath.value.length > maxLen 
-    ? `${categoryPath.value.substring(0, maxLen)}…` 
+  return categoryPath.value.length > maxLen
+    ? `${categoryPath.value.substring(0, maxLen)}…`
     : categoryPath.value
 })
 
@@ -394,62 +511,66 @@ const truncatedCategory = computed(() => {
 const truncatedAuthorName = computed(() => {
   const name = props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
   const maxLen = props.compact ? 15 : 20
-  return name.length > maxLen 
-    ? `${name.substring(0, maxLen)}…` 
-    : name
+  return name.length > maxLen ? `${name.substring(0, maxLen)}…` : name
 })
 
 // Time formatting
 const formattedTime = computed(() => {
   if (!props.inquiry.status?.created) return ''
-  
+
   const created = new Date(props.inquiry.status.created * 1000)
   const now = new Date()
   const diff = now.getTime() - created.getTime()
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const minutes = Math.floor(diff / (1000 * 60))
-  
+
   if (days > 30) {
     return created.toLocaleDateString()
-  } if (days > 0) {
+  }
+  if (days > 0) {
     return t('agora', '{days}d ago', { days })
-  } if (hours > 0) {
+  }
+  if (hours > 0) {
     return t('agora', '{hours}h ago', { hours })
-  } if (minutes > 0) {
+  }
+  if (minutes > 0) {
     return t('agora', '{minutes}m ago', { minutes })
-  } 
-    return t('agora', 'Just now')
+  }
+  return t('agora', 'Just now')
 })
 
 // Expiry
-const showExpiryBadge = computed(() => !!props.inquiry.configuration?.expire && props.inquiry.configuration.expire > 0)
+const showExpiryBadge = computed(
+  () => !!props.inquiry.configuration?.expire && props.inquiry.configuration.expire > 0
+)
 
 const expiryText = computed(() => {
   if (!props.inquiry.configuration?.expire) return ''
-  
+
   const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
   const now = new Date()
   const diff = expiryDate.getTime() - now.getTime()
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  
+
   if (days > 0) {
     return t('agora', '{days} days left', { days })
-  } if (hours > 0) {
+  }
+  if (hours > 0) {
     return t('agora', '{hours} hours left', { hours })
-  } 
-    return t('agora', 'Expiring soon')
+  }
+  return t('agora', 'Expiring soon')
 })
 
 const expiryBadgeClass = computed(() => {
   if (!props.inquiry.configuration?.expire) return ''
-  
+
   const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
   const now = new Date()
   const diff = expiryDate.getTime() - now.getTime()
   const hours = diff / (1000 * 60 * 60)
-  
+
   if (hours < 24) return 'expiry-soon'
   if (hours < 72) return 'expiry-warning'
   return 'expiry-normal'
@@ -480,58 +601,58 @@ function handleCommentsClick(e: Event) {
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  
+
   // Compact mode
   &.is-compact {
     .card-content {
       padding: 12px 14px;
       gap: 6px;
     }
-    
+
     .card-title {
       font-size: 15px;
       -webkit-line-clamp: 2;
     }
-    
+
     .card-description {
       font-size: 13px;
       -webkit-line-clamp: 1;
     }
-    
+
     .card-meta-info .meta-item {
       padding: 2px 6px;
       font-size: 11px;
-      
+
       .meta-text {
         max-width: 80px;
       }
     }
-    
+
     .stat-author .author-info .author-name {
       font-size: 12px;
       max-width: 80px;
     }
-    
+
     .stat-counters .counter-item {
       font-size: 12px;
     }
   }
-  
+
   // Horizontal layout
   &.is-horizontal {
     flex-direction: row;
     min-height: 280px;
     max-height: 360px;
-    
+
     .card-cover {
       width: 200px;
       height: 100%;
       min-height: 100%;
       position: relative;
-      
+
       &.horizontal-cover {
         position: relative;
-        
+
         .cover-actions {
           position: absolute;
           bottom: 0;
@@ -543,7 +664,7 @@ function handleCommentsClick(e: Event) {
           padding: 16px 12px;
           background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
           backdrop-filter: blur(4px);
-          
+
           .cover-support,
           .cover-comments {
             display: flex;
@@ -556,13 +677,13 @@ function handleCommentsClick(e: Event) {
             cursor: pointer;
             transition: all 0.2s ease;
             font-weight: 500;
-            
+
             &:hover {
               background: rgba(255, 255, 255, 0.25);
               transform: scale(1.05);
             }
           }
-          
+
           .cover-comments {
             .counter-icon {
               color: white;
@@ -575,7 +696,7 @@ function handleCommentsClick(e: Event) {
         }
       }
     }
-    
+
     .card-content.horizontal-content {
       flex: 1;
       width: calc(100% - 200px);
@@ -585,113 +706,113 @@ function handleCommentsClick(e: Event) {
       gap: 10px;
       border-radius: 0 12px 12px 0;
     }
-    
+
     .card-title {
       font-size: 20px;
       line-height: 1.3;
       -webkit-line-clamp: 2;
     }
-    
+
     .card-description {
       font-size: 14px;
       line-height: 1.6;
       -webkit-line-clamp: 3;
       flex: 1;
     }
-    
+
     .card-meta-info {
       margin-top: 2px;
       gap: 8px;
-      
+
       .meta-item {
         padding: 4px 10px;
         font-size: 12px;
-        
+
         .meta-text {
           max-width: 140px;
         }
       }
     }
-    
+
     .card-stats {
       padding-top: 10px;
       margin-top: 2px;
     }
-    
+
     .stat-author .author-info .author-name {
       font-size: 13px;
       max-width: 140px;
     }
-    
+
     &.is-compact {
       min-height: 220px;
       max-height: 280px;
-      
+
       .card-cover {
         width: 160px;
       }
-      
+
       .card-content.horizontal-content {
         width: calc(100% - 160px);
         padding: 16px 18px;
       }
-      
+
       .card-title {
         font-size: 17px;
       }
     }
   }
-  
+
   &.is-interactive {
     cursor: pointer;
-    
+
     &:hover {
       transform: translateY(-4px);
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
       border-color: var(--color-primary-element);
       background: var(--color-background-dark);
-      
+
       .card-cover .cover-overlay {
         opacity: 0.2;
       }
     }
   }
-  
+
   &.is-horizontal.is-interactive:hover {
     transform: translateX(-4px) translateY(-4px);
   }
-  
+
   &.is-active {
     border-color: var(--color-primary-element);
     box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
   }
-  
+
   &.is-dense {
     border-radius: 10px;
-    
+
     .card-content {
       padding: 14px;
     }
-    
+
     .card-title {
       font-size: 16px;
     }
-    
+
     .card-description {
       -webkit-line-clamp: 1;
     }
-    
+
     &.is-horizontal {
       .card-cover {
         width: 160px;
       }
-      
+
       .card-content.horizontal-content {
         width: calc(100% - 160px);
       }
     }
   }
-  
+
   &.has-cover .card-header {
     margin-top: 4px;
   }
@@ -701,14 +822,14 @@ function handleCommentsClick(e: Event) {
   position: relative;
   height: 160px;
   overflow: hidden;
-  
+
   .cover-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
   }
-  
+
   .cover-overlay {
     position: absolute;
     top: 0;
@@ -718,7 +839,7 @@ function handleCommentsClick(e: Event) {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  
+
   .inquiry-card:hover & .cover-image {
     transform: scale(1.05);
   }
@@ -732,7 +853,7 @@ function handleCommentsClick(e: Event) {
   flex-direction: column;
   gap: 10px;
   flex: 1;
-  
+
   &.no-padding {
     padding: 12px 14px;
   }
@@ -751,13 +872,17 @@ function handleCommentsClick(e: Event) {
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: linear-gradient(135deg, var(--color-primary-element-light), rgba(var(--color-primary-rgb), 0.1));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-element-light),
+    rgba(var(--color-primary-rgb), 0.1)
+  );
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
   color: var(--color-primary-element);
   border: 1px solid rgba(var(--color-primary-rgb), 0.2);
-  
+
   .type-icon {
     color: var(--color-primary-element);
   }
@@ -773,31 +898,31 @@ function handleCommentsClick(e: Event) {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  
+
   &.status-open {
     background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
     color: #16a34a;
     border: 1px solid rgba(34, 197, 94, 0.2);
   }
-  
+
   &.status-closed {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
     color: #dc2626;
     border: 1px solid rgba(239, 68, 68, 0.2);
   }
-  
+
   &.status-draft {
     background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.05));
     color: #64748b;
     border: 1px solid rgba(148, 163, 184, 0.2);
   }
-  
+
   &.status-waiting {
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
     color: #f59e0b;
     border: 1px solid rgba(245, 158, 11, 0.2);
   }
-  
+
   &.status-unknown {
     background: var(--color-background-hover);
     color: var(--color-text-lighter);
@@ -833,7 +958,7 @@ function handleCommentsClick(e: Event) {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 2px;
-  
+
   .meta-item {
     display: inline-flex;
     align-items: center;
@@ -844,19 +969,19 @@ function handleCommentsClick(e: Event) {
     background: var(--color-background-dark);
     border-radius: 12px;
     border: 1px solid var(--color-border);
-    
+
     .meta-icon {
       opacity: 0.7;
     }
-    
+
     &.location .meta-icon {
       color: #3b82f6;
     }
-    
+
     &.category .meta-icon {
       color: #8b5cf6;
     }
-    
+
     .meta-text {
       max-width: 120px;
       white-space: nowrap;
@@ -879,17 +1004,17 @@ function handleCommentsClick(e: Event) {
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   .author-avatar {
     border: 2px solid var(--color-main-background);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
-  
+
   .author-info {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    
+
     .author-name {
       font-size: 13px;
       font-weight: 500;
@@ -899,14 +1024,14 @@ function handleCommentsClick(e: Event) {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
+
     .post-time {
       display: flex;
       align-items: center;
       gap: 4px;
       font-size: 11px;
       color: var(--color-text-maxcontrast);
-      
+
       .calendar-icon {
         opacity: 0.7;
       }
@@ -918,7 +1043,7 @@ function handleCommentsClick(e: Event) {
   display: flex;
   align-items: center;
   gap: 12px;
-  
+
   .counter-item {
     display: inline-flex;
     align-items: center;
@@ -927,43 +1052,43 @@ function handleCommentsClick(e: Event) {
     color: var(--color-text-lighter);
     transition: all 0.2s ease;
     cursor: pointer;
-    
+
     &.supports:hover {
       color: var(--color-primary-element);
-      
+
       .counter-icon {
         opacity: 0.9;
       }
     }
-    
+
     &.supports .counter-icon {
       transition: transform 0.2s ease;
     }
-    
+
     &.supports:hover .counter-icon {
       transform: scale(1.1);
     }
-    
+
     &.comments:hover {
       color: #3b82f6;
-      
+
       .counter-icon {
         opacity: 0.9;
       }
     }
-    
+
     &.participants:hover {
       color: #8b5cf6;
-      
+
       .counter-icon {
         opacity: 0.9;
       }
     }
-    
+
     .counter-icon {
       color: var(--color-text-maxcontrast);
     }
-    
+
     .counter-value {
       font-weight: 600;
     }
@@ -979,26 +1104,26 @@ function handleCommentsClick(e: Event) {
     border-radius: 12px;
     font-size: 12px;
     font-weight: 600;
-    
+
     &.expiry {
       &.expiry-soon {
         background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
         color: #ef4444;
         border: 1px solid rgba(239, 68, 68, 0.2);
       }
-      
+
       &.expiry-warning {
         background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
         color: #f59e0b;
         border: 1px solid rgba(245, 158, 11, 0.2);
       }
-      
+
       &.expiry-normal {
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
         color: #10b981;
         border: 1px solid rgba(16, 185, 129, 0.2);
       }
-      
+
       .date-icon {
         opacity: 0.9;
       }
@@ -1010,56 +1135,56 @@ function handleCommentsClick(e: Event) {
 @media (max-width: 768px) {
   .inquiry-card {
     border-radius: 10px;
-    
+
     &.is-horizontal {
       flex-direction: column;
-      
+
       .card-cover {
         width: 100%;
         height: 160px;
-        
+
         &.horizontal-cover .cover-actions {
           padding: 8px;
         }
       }
-      
+
       .card-content.horizontal-content {
         width: 100%;
         border-radius: 0 0 10px 10px;
       }
-      
+
       &.is-compact .card-cover {
         height: 140px;
       }
     }
   }
-  
+
   .card-cover {
     height: 140px;
   }
-  
+
   .card-content {
     border-radius: 8px;
     padding: 16px;
     gap: 8px;
   }
-  
+
   .card-title {
     font-size: 16px;
   }
-  
+
   .card-description {
     font-size: 13px;
   }
-  
+
   .card-meta-info .meta-item .meta-text {
     max-width: 80px;
   }
-  
+
   .stat-counters {
     gap: 10px;
   }
-  
+
   .stat-author .author-info .author-name {
     max-width: 80px;
   }

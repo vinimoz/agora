@@ -3,11 +3,21 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div class="inquiry-timeline" :class="{ 'is-compact': compact }">
-        <!-- Timeline Header (hidden in compact mode) -->
-    <div v-if="!hideControls" class="timeline-header">
+  <div
+    class="inquiry-timeline"
+    :class="{ 'is-compact': compact }"
+  >
+    <!-- Timeline Header (hidden in compact mode) -->
+    <div
+      v-if="!hideControls"
+      class="timeline-header"
+    >
       <div class="header-left">
-        <component :is="Icons.Clock" :size="24" class="timeline-icon" />
+        <component
+          :is="Icons.Clock"
+          :size="24"
+          class="timeline-icon"
+        />
         <h2>{{ t('agora', 'Timeline') }}</h2>
         <span class="timeline-count">{{ filteredInquiries.length }}</span>
       </div>
@@ -17,17 +27,23 @@
           :key="mode.key"
           class="mode-btn"
           :class="{ active: timelineMode === mode.key }"
-          @click="timelineMode = mode.key"
           :title="mode.description"
+          @click="timelineMode = mode.key"
         >
-          <component :is="mode.icon" :size="18" />
+          <component
+            :is="mode.icon"
+            :size="18"
+          />
           {{ mode.label }}
         </button>
       </div>
     </div>
 
-        <!-- Timeline Filters (hidden in compact mode) -->
-    <div v-if="!hideControls" class="timeline-filters">
+    <!-- Timeline Filters (hidden in compact mode) -->
+    <div
+      v-if="!hideControls"
+      class="timeline-filters"
+    >
       <div class="filter-group">
         <button
           v-for="filter in filters"
@@ -36,7 +52,10 @@
           :class="{ active: activeFilter === filter.key }"
           @click="activeFilter = filter.key"
         >
-          <component :is="filter.icon" :size="14" />
+          <component
+            :is="filter.icon"
+            :size="14"
+          />
           {{ filter.label }}
         </button>
       </div>
@@ -46,7 +65,10 @@
           :class="{ active: showArchived }"
           @click="showArchived = !showArchived"
         >
-          <component :is="Icons.Archive" :size="14" />
+          <component
+            :is="Icons.Archive"
+            :size="14"
+          />
           {{ t('agora', 'Archived') }}
         </button>
       </div>
@@ -56,8 +78,15 @@
     <div class="timeline-container">
       <!-- Mode A: Inquiries Timeline -->
       <template v-if="timelineMode === 'inquiries'">
-		        <div v-if="visibleInquiries.length === 0" class="empty-state">
-          <component :is="Icons.Clock" :size="48" class="empty-icon" />
+        <div
+          v-if="visibleInquiries.length === 0"
+          class="empty-state"
+        >
+          <component
+            :is="Icons.Clock"
+            :size="48"
+            class="empty-icon"
+          />
           <h3>{{ t('agora', 'No inquiries on timeline') }}</h3>
           <p>{{ t('agora', 'There are no inquiries matching your filters') }}</p>
         </div>
@@ -87,13 +116,22 @@
 
       <!-- Mode B: Process Timeline -->
       <template v-else-if="timelineMode === 'process'">
-        <div v-if="selectedInquiry" class="process-timeline">
+        <div
+          v-if="selectedInquiry"
+          class="process-timeline"
+        >
           <div class="process-header">
             <div class="process-title">
-              <component :is="Icons.GitBranch" :size="20" />
+              <component
+                :is="Icons.GitBranch"
+                :size="20"
+              />
               <h3>{{ t('agora', 'Process for') }}: {{ selectedInquiry.title }}</h3>
             </div>
-            <span class="process-status" :class="getProcessStatusClass(selectedInquiry)">
+            <span
+              class="process-status"
+              :class="getProcessStatusClass(selectedInquiry)"
+            >
               {{ getProcessStatusText(selectedInquiry) }}
             </span>
           </div>
@@ -106,35 +144,56 @@
               :class="{
                 completed: step.completed,
                 active: step.active,
-                'is-last': index === processSteps.length - 1
+                'is-last': index === processSteps.length - 1,
               }"
             >
               <div class="step-indicator">
                 <div class="step-dot">
                   <component
-                    v-if="step.completed"
                     :is="Icons.Check"
+                    v-if="step.completed"
                     :size="12"
                     class="step-check"
                   />
                 </div>
-                <div v-if="index < processSteps.length - 1" class="step-line" />
+                <div
+                  v-if="index < processSteps.length - 1"
+                  class="step-line"
+                />
               </div>
               <div class="step-content">
-                <div class="step-title">{{ step.label }}</div>
-                <div v-if="step.date" class="step-date">
-                  <component :is="Icons.Calendar" :size="12" />
+                <div class="step-title">
+                  {{ step.label }}
+                </div>
+                <div
+                  v-if="step.date"
+                  class="step-date"
+                >
+                  <component
+                    :is="Icons.Calendar"
+                    :size="12"
+                  />
                   {{ formatDate(step.date) }}
                 </div>
-                <div v-if="step.description" class="step-description">
+                <div
+                  v-if="step.description"
+                  class="step-description"
+                >
                   {{ step.description }}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div v-else class="empty-state">
-          <component :is="Icons.GitBranch" :size="48" class="empty-icon" />
+        <div
+          v-else
+          class="empty-state"
+        >
+          <component
+            :is="Icons.GitBranch"
+            :size="48"
+            class="empty-icon"
+          />
           <h3>{{ t('agora', 'No inquiry selected') }}</h3>
           <p>{{ t('agora', 'Select an inquiry to view its process timeline') }}</p>
         </div>
@@ -142,7 +201,10 @@
 
       <!-- Mode C: Historical Timeline -->
       <template v-else-if="timelineMode === 'historical'">
-        <div v-if="historicalEvents.length > 0" class="historical-timeline">
+        <div
+          v-if="historicalEvents.length > 0"
+          class="historical-timeline"
+        >
           <div
             v-for="(event, index) in historicalEvents"
             :key="event.id"
@@ -154,34 +216,67 @@
               <span class="date-month">{{ formatDateMonth(event.date) }}</span>
             </div>
             <div class="event-connector">
-              <div class="event-dot" :class="event.type">
-                <component :is="event.icon" :size="16" />
+              <div
+                class="event-dot"
+                :class="event.type"
+              >
+                <component
+                  :is="event.icon"
+                  :size="16"
+                />
               </div>
-              <div v-if="index < historicalEvents.length - 1" class="event-line" />
+              <div
+                v-if="index < historicalEvents.length - 1"
+                class="event-line"
+              />
             </div>
             <div class="event-content">
-              <div class="event-title">{{ event.title }}</div>
-              <div v-if="event.description" class="event-description">
+              <div class="event-title">
+                {{ event.title }}
+              </div>
+              <div
+                v-if="event.description"
+                class="event-description"
+              >
                 {{ event.description }}
               </div>
-              <div v-if="event.inquiry" class="event-inquiry">
-                <component :is="Icons.Folder" :size="12" />
+              <div
+                v-if="event.inquiry"
+                class="event-inquiry"
+              >
+                <component
+                  :is="Icons.Folder"
+                  :size="12"
+                />
                 <span>{{ event.inquiry.title }}</span>
               </div>
             </div>
           </div>
         </div>
-        <div v-else class="empty-state">
-          <component :is="Icons.History" :size="48" class="empty-icon" />
+        <div
+          v-else
+          class="empty-state"
+        >
+          <component
+            :is="Icons.History"
+            :size="48"
+            class="empty-icon"
+          />
           <h3>{{ t('agora', 'No historical events') }}</h3>
           <p>{{ t('agora', 'Historical events will appear here as they occur') }}</p>
         </div>
-	      <!-- Compact mode footer -->
-      <div v-if="compact && hasMore" class="timeline-view-all">
-        <button type="button" @click="emit('viewAll')">
-          {{ t('agora', 'View all') }} →
-        </button>
-      </div>
+        <!-- Compact mode footer -->
+        <div
+          v-if="compact && hasMore"
+          class="timeline-view-all"
+        >
+          <button
+            type="button"
+            @click="emit('viewAll')"
+          >
+            {{ t('agora', 'View all') }} →
+          </button>
+        </div>
       </template>
     </div>
   </div>
@@ -269,11 +364,11 @@ watch(
   (isCompact) => {
     if (isCompact) timelineMode.value = 'inquiries'
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 const selectedInquiry = computed(() =>
-  props.inquiries.find(i => i.id === props.selectedInquiryId),
+  props.inquiries.find((i) => i.id === props.selectedInquiryId)
 )
 
 // ---------------------------------------------------------------------------
@@ -284,14 +379,14 @@ const filteredInquiries = computed(() => {
   let items = [...props.inquiries]
 
   if (activeFilter.value !== 'all') {
-    items = items.filter(i => {
+    items = items.filter((i) => {
       const status = i.status?.inquiryStatus || 'draft'
       return status === activeFilter.value
     })
   }
 
   if (!showArchived.value) {
-    items = items.filter(i => !i.status?.isArchived)
+    items = items.filter((i) => !i.status?.isArchived)
   }
 
   return items.sort((a, b) => (b.status?.created || 0) - (a.status?.created || 0))
@@ -308,14 +403,12 @@ const visibleInquiries = computed(() => {
   return filteredInquiries.value
 })
 
-const hasMore = computed(
-  () => props.limit > 0 && filteredInquiries.value.length > props.limit,
-)
+const hasMore = computed(() => props.limit > 0 && filteredInquiries.value.length > props.limit)
 
 const groupedInquiries = computed(() => {
   const groups: Record<string, Inquiry[]> = {}
 
-  visibleInquiries.value.forEach(inquiry => {
+  visibleInquiries.value.forEach((inquiry) => {
     const date = inquiry.status?.created
     if (!date) return
 
@@ -340,7 +433,7 @@ const processSteps = computed(() => {
     const currentPhase =
       (selectedInquiry.value.miscFields?.processPhase as string | undefined) ||
       props.processPhases[0]?.key
-    const phaseIndex = props.processPhases.findIndex(p => p.key === currentPhase)
+    const phaseIndex = props.processPhases.findIndex((p) => p.key === currentPhase)
 
     return props.processPhases.map((phase, index) => ({
       key: phase.key,
@@ -372,7 +465,7 @@ const processSteps = computed(() => {
 const historicalEvents = computed(() => {
   const events: any[] = []
 
-  props.inquiries.forEach(inquiry => {
+  props.inquiries.forEach((inquiry) => {
     if (inquiry.status?.created) {
       events.push({
         id: `created-${inquiry.id}`,
@@ -389,7 +482,11 @@ const historicalEvents = computed(() => {
       const statusMap: Record<string, { icon: any; type: string; label: string }> = {
         active: { icon: Icons.CheckCircle, type: 'active', label: t('agora', 'Activated') },
         closed: { icon: Icons.Close, type: 'closed', label: t('agora', 'Closed') },
-        waiting_approval: { icon: Icons.Clock, type: 'pending', label: t('agora', 'Submitted for approval') },
+        waiting_approval: {
+          icon: Icons.Clock,
+          type: 'pending',
+          label: t('agora', 'Submitted for approval'),
+        },
       }
 
       const statusInfo = statusMap[inquiry.status.inquiryStatus]
@@ -936,7 +1033,8 @@ function handleClick(inquiry: Inquiry) {
 }
 
 @keyframes pulse-dot {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.2);
   }
   50% {

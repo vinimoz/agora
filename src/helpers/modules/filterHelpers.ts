@@ -14,20 +14,15 @@ import type { ScopeFilter } from '../../Types/experience.types'
  * @param filter - Filter criteria
  * @see Complete Vocabulary Definition - Section 13: Filter
  */
-export function applyFilters<T extends Record<string, any>>(
-  data: T[],
-  filter?: ScopeFilter
-): T[] {
+export function applyFilters<T extends Record<string, any>>(data: T[], filter?: ScopeFilter): T[] {
   if (!filter) return data
 
-  return data.filter(item => {
+  return data.filter((item) => {
     // ============================================================
     // INQUIRY TYPE FILTER - for inquiries
     // ============================================================
     if (filter.inquiry_type) {
-      const types = Array.isArray(filter.inquiry_type) 
-        ? filter.inquiry_type 
-        : [filter.inquiry_type]
+      const types = Array.isArray(filter.inquiry_type) ? filter.inquiry_type : [filter.inquiry_type]
       const itemType = item.inquiryType || item.type
       if (!types.includes(itemType)) {
         return false
@@ -38,9 +33,7 @@ export function applyFilters<T extends Record<string, any>>(
     // GROUP TYPE FILTER - for inquiry_groups
     // ============================================================
     if (filter.group_type) {
-      const types = Array.isArray(filter.group_type) 
-        ? filter.group_type 
-        : [filter.group_type]
+      const types = Array.isArray(filter.group_type) ? filter.group_type : [filter.group_type]
       const itemType = item.groupType || item.type
       if (!types.includes(itemType)) {
         return false
@@ -154,7 +147,7 @@ export function applyFilters<T extends Record<string, any>>(
       // Filter by tags
       if (selection.tags && selection.tags.length > 0) {
         const itemTags = item.tags || item.miscFields?.tags || []
-        const hasMatchingTag = selection.tags.some(tag => {
+        const hasMatchingTag = selection.tags.some((tag) => {
           // Skip template variables
           if (tag.startsWith('{') && tag.endsWith('}')) return true
           return itemTags.includes(tag)
@@ -185,11 +178,18 @@ export function applyFilters<T extends Record<string, any>>(
     // CUSTOM FILTERS (via miscFields)
     // ============================================================
     const reservedKeys = [
-      'inquiry_type', 'group_type', 'type', 'status', 'family', 
-      'date', 'selection', 'from', 'to'
+      'inquiry_type',
+      'group_type',
+      'type',
+      'status',
+      'family',
+      'date',
+      'selection',
+      'from',
+      'to',
     ]
-    
-    Object.keys(filter).forEach(key => {
+
+    Object.keys(filter).forEach((key) => {
       if (reservedKeys.includes(key)) return
       const filterValue = filter[key]
       const itemValue = item.miscFields?.[key] || item[key]
@@ -242,17 +242,15 @@ export function applySort<T extends Record<string, any>>(
 
     // Date comparison
     if (aVal instanceof Date && bVal instanceof Date) {
-      return sort.direction === 'asc' 
-        ? aVal.getTime() - bVal.getTime() 
+      return sort.direction === 'asc'
+        ? aVal.getTime() - bVal.getTime()
         : bVal.getTime() - aVal.getTime()
     }
 
     // String comparison
     const aStr = String(aVal || '').toLowerCase()
     const bStr = String(bVal || '').toLowerCase()
-    return sort.direction === 'asc' 
-      ? aStr.localeCompare(bStr) 
-      : bStr.localeCompare(aStr)
+    return sort.direction === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr)
   })
 }
 
@@ -261,13 +259,10 @@ export function applySort<T extends Record<string, any>>(
  * @param data - Array of items to paginate
  * @param pagination - Pagination criteria
  */
-export function applyPagination<T>(
-  data: T[],
-  pagination?: { limit: number; offset: number }
-): T[] {
+export function applyPagination<T>(data: T[], pagination?: { limit: number; offset: number }): T[] {
   if (!pagination) return data
   if (pagination.limit <= 0) return []
-  
+
   const start = pagination.offset || 0
   const end = start + pagination.limit
   return data.slice(start, end)
@@ -276,13 +271,13 @@ export function applyPagination<T>(
 /**
  * Process data through all scope filters
  * Combines filter, sort, and pagination
- * 
+ *
  * @param data - Raw data array
  * @param options - Processing options
  * @param options.filter - Filter criteria
  * @param options.sort - Sorting criteria
  * @param options.pagination - Pagination criteria
- * 
+ *
  * @see Complete Vocabulary Definition - Section 10-12: Matrix CONTENT × SOURCE
  */
 export function processScopeData<T extends Record<string, any>>(
@@ -294,27 +289,27 @@ export function processScopeData<T extends Record<string, any>>(
   }
 ): T[] {
   let result = data
-  
+
   // Apply filters first
   result = applyFilters(result, options.filter)
-  
+
   // Then sort
   result = applySort(result, options.sort)
-  
+
   // Finally paginate
   result = applyPagination(result, options.pagination)
-  
+
   return result
 }
 
 /**
  * Process data for a specific zone in display_architecture
- * 
+ *
  * @param data - Raw data array
  * @param zone - The zone configuration
  * @param zone.scope - Scope configuration
  * @param zone.filter - Filter configuration (at zone level)
- * 
+ *
  * @see Complete Vocabulary Definition - Section 16: ValidatedUIDefinition
  */
 export function processZoneData<T extends Record<string, any>>(
@@ -331,6 +326,6 @@ export function processZoneData<T extends Record<string, any>>(
   return processScopeData(data, {
     filter: zone.filter,
     sort: zone.scope?.sort,
-    pagination: zone.scope?.pagination
+    pagination: zone.scope?.pagination,
   })
 }

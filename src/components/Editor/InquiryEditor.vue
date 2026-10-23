@@ -5,7 +5,10 @@
 
 <template>
   <!-- Main editor container that fills its parent -->
-  <div ref="editorContainer" class="editor-container">
+  <div
+    ref="editorContainer"
+    class="editor-container"
+  >
     <!-- Toolbar with all major formatting options -->
     <div v-if="!props.readonly">
       <input
@@ -14,9 +17,12 @@
         accept="image/*"
         style="display: none"
         @change="handleImageUpload"
-      />
+      >
 
-      <div v-if="editor" class="editor-toolbar">
+      <div
+        v-if="editor"
+        class="editor-toolbar"
+      >
         <!-- Text formatting -->
         <NcButton
           type="button"
@@ -56,17 +62,25 @@
         </NcButton>
 
         <!-- Heading selector - Fixed version -->
-        <select 
+        <select
           v-model="selectedHeading"
           :title="t('agora', 'Text heading')"
           :aria-label="t('agora', 'Text heading')"
           class="heading-select"
           @change="setHeading"
         >
-          <option value="paragraph">{{ t('agora', 'Normal text') }}</option>
-          <option value="h1">{{ t('agora', 'Heading 1') }}</option>
-          <option value="h2">{{ t('agora', 'Heading 2') }}</option>
-          <option value="h3">{{ t('agora', 'Heading 3') }}</option>
+          <option value="paragraph">
+            {{ t('agora', 'Normal text') }}
+          </option>
+          <option value="h1">
+            {{ t('agora', 'Heading 1') }}
+          </option>
+          <option value="h2">
+            {{ t('agora', 'Heading 2') }}
+          </option>
+          <option value="h3">
+            {{ t('agora', 'Heading 3') }}
+          </option>
         </select>
 
         <!-- Lists -->
@@ -261,12 +275,12 @@
           accept=".docx"
           style="display: none"
           @change="handleWordImport"
-        />
+        >
 
         <!-- AI integration -->
-        <NcAssistantButton 
-          :title="t('agora', 'Generate with ai')" 
-          :aria-label="t('agora', 'Generate with ai')" 
+        <NcAssistantButton
+          :title="t('agora', 'Generate with ai')"
+          :aria-label="t('agora', 'Generate with ai')"
           :disabled="aiLoading"
           @click="openAIModal"
         />
@@ -275,10 +289,17 @@
 
     <!-- Editor Content -->
     <div class="editor-content-wrapper">
-      <EditorContent :editor="editor" class="editor-content" />
+      <EditorContent
+        :editor="editor"
+        class="editor-content"
+      />
     </div>
 
-    <NcModal v-if="showAIModal" :name="t('agora', 'Generate content with ai')" @close="closeAIModal">
+    <NcModal
+      v-if="showAIModal"
+      :name="t('agora', 'Generate content with ai')"
+      @close="closeAIModal"
+    >
       <NcAssistantContent>
         <div class="container">
           <NcAssistantIcon />
@@ -286,14 +307,19 @@
             <h3 class="heading">
               {{ t('agora', 'Generate content with ai') }}
             </h3>
-            
+
             <div class="form-group">
               <label for="ai-prompt">{{ t('agora', 'Describe what you want to generate') }}</label>
               <!-- Use raw textarea for full control over height -->
               <textarea
                 id="ai-prompt"
                 v-model="aiPrompt"
-                :placeholder="t('agora', 'E.g. Write a professional introduction for a business inquiry about … (you can edit this prompt)')"
+                :placeholder="
+                  t(
+                    'agora',
+                    'E.g. Write a professional introduction for a business inquiry about … (you can edit this prompt)'
+                  )
+                "
                 class="ai-prompt-textarea"
                 rows="8"
                 @input="onPromptUpdate"
@@ -301,7 +327,10 @@
             </div>
 
             <!-- Generated content preview with NcRichText -->
-            <div v-if="aiGeneratedContent" class="ai-preview">
+            <div
+              v-if="aiGeneratedContent"
+              class="ai-preview"
+            >
               <h3>{{ t('agora', 'Generated content preview') }}</h3>
               <div class="preview-content">
                 <NcRichText
@@ -312,17 +341,26 @@
                   class="rich-text-preview"
                 />
                 <div class="content-length">
-                  {{ t('agora', 'Content length: {length} characters', { length: aiGeneratedContent.length }) }}
+                  {{
+                    t('agora', 'Content length: {length} characters', {
+                      length: aiGeneratedContent.length,
+                    })
+                  }}
                 </div>
               </div>
             </div>
 
             <div class="modal-actions">
               <!-- Loading icon outside the button -->
-              <NcLoadingIcon v-if="aiLoading" :size="20" class="loading-icon" />
+              <NcLoadingIcon
+                v-if="aiLoading"
+                :size="20"
+                class="loading-icon"
+              />
               <NcButton
                 type="secondary"
-                @click="closeAIModal">
+                @click="closeAIModal"
+              >
                 {{ t('agora', 'Cancel') }}
               </NcButton>
               <NcButton
@@ -423,13 +461,18 @@ const openAIModal = () => {
   if (description && description.trim().length > 0) {
     const plainDesc = stripHtml(description).trim()
     // Limit to 500 characters to keep prompt concise
-    const descExcerpt = plainDesc.length > 500 ? `${plainDesc.substring(0, 500)  }…` : plainDesc
-    prompt = t('agora', 'Given the inquiry titled "{title}" with the following description:\n\n{description}\n\nPlease generate or improve the content for this inquiry. You can modify the instructions below:')
+    const descExcerpt = plainDesc.length > 500 ? `${plainDesc.substring(0, 500)}…` : plainDesc
+    prompt = t(
+      'agora',
+      'Given the inquiry titled "{title}" with the following description:\n\n{description}\n\nPlease generate or improve the content for this inquiry. You can modify the instructions below:'
+    )
       .replace('{title}', title)
       .replace('{description}', descExcerpt)
   } else {
-    prompt = t('agora', 'Write content for an inquiry titled "{title}". You can modify the instructions below:')
-      .replace('{title}', title)
+    prompt = t(
+      'agora',
+      'Write content for an inquiry titled "{title}". You can modify the instructions below:'
+    ).replace('{title}', title)
   }
 
   aiPrompt.value = prompt
@@ -486,20 +529,22 @@ const handleImageUpload = async (event) => {
 
   try {
     const response = await attachmentsStore.upload(inquiryStore.id, file)
-    
+
     // Use preview URL with original image dimensions
     const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true)
 
     if (editor.value) {
       // Insert the image with original size and centered by default
-      editor.value.chain()
+      editor.value
+        .chain()
         .focus()
-        .insertContent(`<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`)
+        .insertContent(
+          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`
+        )
         .run()
 
       showSuccess(t('agora', 'Image inserted'))
     }
-
   } catch (error) {
     console.error('Image upload failed:', error)
     showError(t('agora', 'Image upload failed'))
@@ -515,14 +560,14 @@ const CustomImage = Image.extend({
       ...this.parent?.(),
       align: {
         default: 'center',
-        parseHTML: element => element.getAttribute('data-align') || 'center',
-        renderHTML: attributes => ({
-            'data-align': attributes.align,
-            class: `editor-image image-align-${attributes.align}`
-          })
-      }
+        parseHTML: (element) => element.getAttribute('data-align') || 'center',
+        renderHTML: (attributes) => ({
+          'data-align': attributes.align,
+          class: `editor-image image-align-${attributes.align}`,
+        }),
+      },
     }
-  }
+  },
 })
 
 const editor = useEditor({
@@ -578,7 +623,7 @@ const editor = useEditor({
     handleDOMEvents: {
       drop: (view, event) => {
         const files = Array.from(event.dataTransfer?.files || [])
-        const imageFile = files.find(file => file.type.startsWith('image'))
+        const imageFile = files.find((file) => file.type.startsWith('image'))
         if (imageFile) {
           handlePastedImage(imageFile)
           return true
@@ -589,7 +634,7 @@ const editor = useEditor({
 
     handlePaste: (view, event) => {
       const items = Array.from(event.clipboardData?.items || [])
-      const imageItem = items.find(item => item.type.startsWith('image'))
+      const imageItem = items.find((item) => item.type.startsWith('image'))
 
       if (imageItem) {
         const file = imageItem.getAsFile()
@@ -602,7 +647,7 @@ const editor = useEditor({
     },
     handleDrop: (view, event) => {
       const files = Array.from(event.dataTransfer?.files || [])
-      const imageFile = files.find(file => file.type.startsWith('image'))
+      const imageFile = files.find((file) => file.type.startsWith('image'))
 
       if (imageFile) {
         handlePastedImage(imageFile)
@@ -622,7 +667,7 @@ const editor = useEditor({
 
 const handlePastedImage = async (file) => {
   try {
-    const response = await attachmentsStore.upload(inquiryStore.id, file,false)
+    const response = await attachmentsStore.upload(inquiryStore.id, file, false)
 
     const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true)
 
@@ -634,15 +679,17 @@ const handlePastedImage = async (file) => {
     }
 
     if (editor.value) {
-      editor.value.chain()
+      editor.value
+        .chain()
         .focus()
-        .insertContent(`<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`)
+        .insertContent(
+          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`
+        )
         .run()
 
       attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
       showSuccess(t('agora', 'Image inserted'))
     }
-
   } catch (error) {
     console.error('Pasted image upload failed:', error)
     showError(t('agora', 'Failed to insert image'))
@@ -658,28 +705,25 @@ const isImageSelected = computed(() => {
 // Get current image alignment
 const getSelectedImageAlign = () => {
   if (!editor.value || !isImageSelected.value) return 'center'
-  
+
   const { state } = editor.value
   const { from } = state.selection
-  
+
   // Find the image node at the current position
   const node = state.doc.nodeAt(from)
   if (node && node.type.name === 'image') {
     return node.attrs.align || 'center'
   }
-  
+
   return 'center'
 }
 
 // Align image - proper TipTap way
 const alignImage = (alignment) => {
   if (!editor.value || !isImageSelected.value) return
-  
+
   // Update the image attributes with the new alignment
-  editor.value.chain()
-    .focus()
-    .updateAttributes('image', { align: alignment })
-    .run()
+  editor.value.chain().focus().updateAttributes('image', { align: alignment }).run()
 }
 
 // Sync store changes to editor
@@ -693,27 +737,31 @@ watch(
         }
       })
     }
-  },
+  }
 )
 
 // Handle heading selection - Fixed implementation
 const selectedHeading = ref('paragraph')
 
 // Watch for heading changes with safety checks
-watch(() => {
-  if (!editor.value) return null
-  return editor.value.getAttributes('heading')
-}, (attrs) => {
-  if (attrs && attrs.level) {
-    selectedHeading.value = `h${attrs.level}`
-  } else {
-    selectedHeading.value = 'paragraph'
-  }
-}, { immediate: true })
+watch(
+  () => {
+    if (!editor.value) return null
+    return editor.value.getAttributes('heading')
+  },
+  (attrs) => {
+    if (attrs && attrs.level) {
+      selectedHeading.value = `h${attrs.level}`
+    } else {
+      selectedHeading.value = 'paragraph'
+    }
+  },
+  { immediate: true }
+)
 
 const setHeading = () => {
   if (!editor.value) return
-  
+
   if (selectedHeading.value === 'paragraph') {
     editor.value.chain().focus().setParagraph().run()
   } else {
@@ -903,8 +951,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* AI Preview styles */

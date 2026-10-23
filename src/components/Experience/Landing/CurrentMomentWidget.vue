@@ -2,15 +2,22 @@
   <section class="current-moment">
     <header class="section-header">
       <div class="header-left">
-        <component :is="Icons.Flash" :size="22" class="header-icon" />
+        <component
+          :is="Icons.Flash"
+          :size="22"
+          class="header-icon"
+        />
         <div>
           <h2>{{ t('agora', 'Right now') }}</h2>
-          <p class="section-subtitle">{{ t('agora', 'Topics that need your attention') }}</p>
+          <p class="section-subtitle">
+            {{ t('agora', 'Topics that need your attention') }}
+          </p>
         </div>
       </div>
-      <a class="header-link" @click="emit('viewAll')">
-        {{ t('agora', 'View all') }} →
-      </a>
+      <a
+        class="header-link"
+        @click="emit('viewAll')"
+      > {{ t('agora', 'View all') }} → </a>
     </header>
 
     <div class="moment-grid">
@@ -21,7 +28,10 @@
         @click="emit('click', inquiry)"
       >
         <div class="card-top">
-          <span class="type-badge" :style="{ background: getTypeColor(inquiry.type) }">
+          <span
+            class="type-badge"
+            :style="{ background: getTypeColor(inquiry.type) }"
+          >
             {{ getTypeLabel(inquiry.type) }}
           </span>
           <span class="deadline">{{ getDeadline(inquiry) }}</span>
@@ -34,13 +44,21 @@
         />
 
         <div class="card-body">
-          <h3 class="card-title">{{ inquiry.title }}</h3>
-          <p v-if="inquiry.description" class="card-question">
+          <h3 class="card-title">
+            {{ inquiry.title }}
+          </h3>
+          <p
+            v-if="inquiry.description"
+            class="card-question"
+          >
             {{ stripHtml(inquiry.description) }}
           </p>
 
           <!-- Progress bar for votes/participation -->
-          <div v-if="showProgress(inquiry)" class="progress-bar">
+          <div
+            v-if="showProgress(inquiry)"
+            class="progress-bar"
+          >
             <div
               class="progress-fill"
               :style="{ width: getProgress(inquiry) + '%', background: getTypeColor(inquiry.type) }"
@@ -49,7 +67,10 @@
           </div>
         </div>
 
-        <button class="card-action" :style="{ color: getTypeColor(inquiry.type) }">
+        <button
+          class="card-action"
+          :style="{ color: getTypeColor(inquiry.type) }"
+        >
           {{ getActionLabel(inquiry.type) }} →
         </button>
       </article>
@@ -66,18 +87,28 @@ const props = defineProps<{ inquiries: Inquiry[] }>()
 const emit = defineEmits<{ click: [inquiry: Inquiry]; viewAll: [] }>()
 
 const TYPE_META: Record<string, { color: string; label: string; action: string }> = {
-  vote:         { color: '#16a34a', label: 'VOTE',         action: 'Vote now' },
-  debate:       { color: '#2563eb', label: 'DEBATE',       action: 'Join the debate' },
+  vote: { color: '#16a34a', label: 'VOTE', action: 'Vote now' },
+  debate: { color: '#2563eb', label: 'DEBATE', action: 'Join the debate' },
   consultation: { color: '#f59e0b', label: 'CONSULTATION', action: 'Answer the survey' },
-  proposal:     { color: '#ea580c', label: 'PROPOSAL',     action: 'View proposals' },
-  poll:         { color: '#16a34a', label: 'POLL',         action: 'Vote now' },
-  discussion:   { color: '#2563eb', label: 'DISCUSSION',   action: 'Join the debate' },
+  proposal: { color: '#ea580c', label: 'PROPOSAL', action: 'View proposals' },
+  poll: { color: '#16a34a', label: 'POLL', action: 'Vote now' },
+  discussion: { color: '#2563eb', label: 'DISCUSSION', action: 'Join the debate' },
 }
 
-function meta(type: string) { return TYPE_META[type] || { color: '#6b7280', label: type?.toUpperCase() || 'INQUIRY', action: 'Open' } }
-function getTypeColor(type: string) { return meta(type).color }
-function getTypeLabel(type: string) { return meta(type).label }
-function getActionLabel(type: string) { return t('agora', meta(type).action) }
+function meta(type: string) {
+  return (
+    TYPE_META[type] || { color: '#6b7280', label: type?.toUpperCase() || 'INQUIRY', action: 'Open' }
+  )
+}
+function getTypeColor(type: string) {
+  return meta(type).color
+}
+function getTypeLabel(type: string) {
+  return meta(type).label
+}
+function getActionLabel(type: string) {
+  return t('agora', meta(type).action)
+}
 
 function getCoverUrl(inquiry: Inquiry): string | null {
   if (!inquiry.coverId) return null
@@ -127,7 +158,9 @@ function getProgressLabel(inquiry: Inquiry): string {
       align-items: center;
       gap: 10px;
 
-      .header-icon { color: var(--color-primary-element); }
+      .header-icon {
+        color: var(--color-primary-element);
+      }
 
       h2 {
         margin: 0;
@@ -149,7 +182,9 @@ function getProgressLabel(inquiry: Inquiry): string {
       cursor: pointer;
       font-weight: 500;
 
-      &:hover { text-decoration: underline; }
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -167,7 +202,10 @@ function getProgressLabel(inquiry: Inquiry): string {
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
 
     &:hover {
       transform: translateY(-3px);
@@ -261,11 +299,21 @@ function getProgressLabel(inquiry: Inquiry): string {
       text-align: left;
       transition: background 0.15s ease;
 
-      &:hover { background: var(--color-background-hover); }
+      &:hover {
+        background: var(--color-background-hover);
+      }
     }
   }
 
-  @media (max-width: 1100px) { .moment-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px)  { .moment-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) {
+    .moment-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .moment-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 }
 </style>

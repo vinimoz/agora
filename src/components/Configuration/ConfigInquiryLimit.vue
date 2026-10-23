@@ -44,7 +44,11 @@ function validateLimit() {
 
 <template>
   <div>
-    <NcCheckboxRadioSwitch v-model="useLimit" type="switch" @update:model-value="validateLimit()">
+    <NcCheckboxRadioSwitch
+      v-model="useLimit"
+      type="switch"
+      @update:model-value="validateLimit()"
+    >
       {{ t('agora', 'Limit "yes" inquiries per participant') }}
     </NcCheckboxRadioSwitch>
 

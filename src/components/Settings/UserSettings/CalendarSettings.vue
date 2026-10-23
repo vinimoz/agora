@@ -42,16 +42,26 @@ const clickedCalendar = (calendar) => {
         {{ t('agora', 'Use calendar lookup for conflicting calendar events') }}
       </NcCheckboxRadioSwitch>
 
-      <div v-show="preferencesStore.user.calendarPeek" class="settings_details">
+      <div
+        v-show="preferencesStore.user.calendarPeek"
+        class="settings_details"
+      >
         {{ t('agora', 'Select the calendars to use for lookup') }}
 
-        <div v-for="calendar in calendarChoices" :key="calendar.key" class="calendar-item">
+        <div
+          v-for="calendar in calendarChoices"
+          :key="calendar.key"
+          class="calendar-item"
+        >
           <NcCheckboxRadioSwitch
             :model-value="calendar.selected"
             type="switch"
             @update:model-value="clickedCalendar(calendar)"
           >
-            <span class="bully" :style="{ backgroundColor: calendar.displayColor }" />
+            <span
+              class="bully"
+              :style="{ backgroundColor: calendar.displayColor }"
+            />
             {{ calendar.name }}
           </NcCheckboxRadioSwitch>
         </div>

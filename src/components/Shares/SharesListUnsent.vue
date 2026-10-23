@@ -51,7 +51,10 @@ async function sendAllInvitations() {
 </script>
 
 <template>
-  <ConfigBox v-if="sharesStore.unsentInvitations.length" :name="t('agora', 'Unsent invitations')">
+  <ConfigBox
+    v-if="sharesStore.unsentInvitations.length"
+    :name="t('agora', 'Unsent invitations')"
+  >
     <template #icon>
       <EmailAlertIcon />
     </template>
@@ -67,8 +70,17 @@ async function sendAllInvitations() {
         </template>
       </NcButton>
     </template>
-    <TransitionGroup tag="div" name="list" :css="false" class="shares-list">
-      <ShareItem v-for="share in sharesStore.unsentInvitations" :key="share.id" :share="share" />
+    <TransitionGroup
+      tag="div"
+      name="list"
+      :css="false"
+      class="shares-list"
+    >
+      <ShareItem
+        v-for="share in sharesStore.unsentInvitations"
+        :key="share.id"
+        :share="share"
+      />
     </TransitionGroup>
   </ConfigBox>
 </template>

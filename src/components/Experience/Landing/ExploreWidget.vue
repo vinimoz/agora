@@ -2,26 +2,44 @@
   <section class="explore">
     <header class="section-header">
       <div class="header-left">
-        <component :is="Icons.Compass" :size="22" class="header-icon" />
+        <component
+          :is="Icons.Compass"
+          :size="22"
+          class="header-icon"
+        />
         <div>
           <h2>{{ t('agora', 'Explore / Participate') }}</h2>
-          <p class="section-subtitle">{{ t('agora', 'Discover, propose, debate…') }}</p>
+          <p class="section-subtitle">
+            {{ t('agora', 'Discover, propose, debate…') }}
+          </p>
         </div>
       </div>
-      <a class="header-link" @click="emit('viewAll')">
+      <a
+        class="header-link"
+        @click="emit('viewAll')"
+      >
         {{ t('agora', 'View all categories') }} →
       </a>
     </header>
 
     <div class="explore-body">
       <!-- Empty state: only when no category has any inquiry -->
-      <div v-if="categories.length === 0" class="categories-empty">
-        <component :is="Icons.Compass" :size="32" />
+      <div
+        v-if="categories.length === 0"
+        class="categories-empty"
+      >
+        <component
+          :is="Icons.Compass"
+          :size="32"
+        />
         <p>{{ t('agora', 'No active categories yet') }}</p>
       </div>
 
       <!-- Grid: only when there is at least one category -->
-      <div v-else class="categories-grid">
+      <div
+        v-else
+        class="categories-grid"
+      >
         <div
           v-for="cat in categories"
           :key="cat.key"
@@ -30,7 +48,10 @@
           @click="emit('category', cat.key)"
         >
           <span class="tile-icon">
-            <component :is="cat.icon" :size="20" />
+            <component
+              :is="cat.icon"
+              :size="20"
+            />
           </span>
           <div class="tile-text">
             <span class="tile-label">{{ cat.label }}</span>
@@ -42,7 +63,10 @@
       <aside class="cta-card">
         <h3>{{ t('agora', 'An idea for your city?') }}</h3>
         <p>{{ t('agora', 'Propose, debate, vote!') }}</p>
-        <button class="cta-button" @click="emit('create')">
+        <button
+          class="cta-button"
+          @click="emit('create')"
+        >
           {{ t('agora', 'Create a proposal') }}
         </button>
       </aside>
@@ -81,7 +105,6 @@ const defaultCreateType = computed(() => {
 function onCreate() {
   emit('create', { inquiryType: defaultCreateType.value })
 }
-
 
 const sessionStore = useSessionStore()
 
@@ -149,7 +172,9 @@ const categories = computed(() => {
       align-items: center;
       gap: 10px;
 
-      .header-icon { color: var(--color-primary-element); }
+      .header-icon {
+        color: var(--color-primary-element);
+      }
 
       h2 {
         margin: 0;
@@ -170,7 +195,9 @@ const categories = computed(() => {
       cursor: pointer;
       font-weight: 500;
 
-      &:hover { text-decoration: underline; }
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -217,7 +244,9 @@ const categories = computed(() => {
     border-radius: 10px;
     cursor: pointer;
     background: color-mix(in srgb, var(--tile-color) 6%, transparent);
-    transition: background 0.15s ease, transform 0.15s ease;
+    transition:
+      background 0.15s ease,
+      transform 0.15s ease;
 
     &:hover {
       background: color-mix(in srgb, var(--tile-color) 12%, transparent);
@@ -302,7 +331,9 @@ const categories = computed(() => {
       font-size: 13px;
       cursor: pointer;
       align-self: flex-start;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
       position: relative;
 
       &:hover {
@@ -313,8 +344,12 @@ const categories = computed(() => {
   }
 
   @media (max-width: 900px) {
-    .explore-body { grid-template-columns: 1fr; }
-    .categories-grid { grid-template-columns: repeat(2, 1fr); }
+    .explore-body {
+      grid-template-columns: 1fr;
+    }
+    .categories-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }
 </style>

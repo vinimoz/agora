@@ -42,19 +42,38 @@ const expiryClass = richObject?.inquiry?.expiry
 </script>
 
 <template>
-  <div v-if="richObject" class="agora_widget">
+  <div
+    v-if="richObject"
+    class="agora_widget"
+  >
     <div class="widget_header">
-      <AgoraAppIcon :size="20" class="title-icon" />
-      <a class="title" :href="richObject.inquiry.url" target="_blank">
+      <AgoraAppIcon
+        :size="20"
+        class="title-icon"
+      />
+      <a
+        class="title"
+        :href="richObject.inquiry.url"
+        target="_blank"
+      >
         {{ richObject.inquiry.title }}
       </a>
-      <BadgeSmallDiv v-if="richObject.inquiry.participated" class="success">
+      <BadgeSmallDiv
+        v-if="richObject.inquiry.participated"
+        class="success"
+      >
         {{ t('agora', 'participated') }}
       </BadgeSmallDiv>
-      <BadgeSmallDiv v-else-if="richObject.inquiry.expired" class="error">
+      <BadgeSmallDiv
+        v-else-if="richObject.inquiry.expired"
+        class="error"
+      >
         {{ t('agora', 'closed') }}
       </BadgeSmallDiv>
-      <BadgeSmallDiv v-else-if="richObject.inquiry.expiry > 0" :class="expiryClass">
+      <BadgeSmallDiv
+        v-else-if="richObject.inquiry.expiry > 0"
+        :class="expiryClass"
+      >
         <template #icon>
           <ExpirationIcon :size="16" />
         </template>
@@ -66,7 +85,10 @@ const expiryClass = richObject?.inquiry?.expiry
         {{ richObject.inquiry.description }}
       </span>
     </div>
-    <div v-if="richObject.inquiry.ownerId" class="widget_footer">
+    <div
+      v-if="richObject.inquiry.ownerId"
+      class="widget_footer"
+    >
       <span>{{ t('agora', 'By') }}</span>
       <NcUserBubble
         :user="richObject.inquiry.ownerId"

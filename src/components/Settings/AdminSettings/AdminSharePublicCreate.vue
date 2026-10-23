@@ -23,7 +23,10 @@ const appSettingsStore = useAppSettingsStore()
     >
       {{ t('agora', 'Enable public shares of inquiries globally') }}
     </NcCheckboxRadioSwitch>
-    <div v-if="!appSettingsStore.allowPublicShares" class="settings_details">
+    <div
+      v-if="!appSettingsStore.allowPublicShares"
+      class="settings_details"
+    >
       <NcSelect
         v-model="appSettingsStore.publicSharesGroups"
         :input-label="t('agora', 'Enable only for the following groups')"

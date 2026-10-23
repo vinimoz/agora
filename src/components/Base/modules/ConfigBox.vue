@@ -19,7 +19,10 @@ const { name, info = '', indented = false } = defineProps<Props>()
   <div class="config-box">
     <div class="config-box__header">
       <slot name="icon" />
-      <div :title="info" :class="['config-box__title', { indented }]">
+      <div
+        :title="info"
+        :class="['config-box__title', { indented }]"
+      >
         {{ name }}
         <InformationIcon v-if="info" />
       </div>

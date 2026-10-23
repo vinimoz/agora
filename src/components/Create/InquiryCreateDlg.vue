@@ -23,13 +23,13 @@ import {
   getAvailableInquiryTypesForCreation,
   getInquiryTypeOptions,
   getInquiryTypeData,
-  type InquiryType
+  type InquiryType,
 } from '../../helpers/modules/InquiryHelper.ts'
 
 // Define props
 interface Props {
   inquiryType?: InquiryType | null
-  family: string | null,
+  family: string | null
   responseType?: string | null
   selectedMode?: string
   availableGroups?: string[]
@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
   selectedMode: null,
   availableGroups: () => [],
   parentInquiryId: null,
-  defaultTitle: null
+  defaultTitle: null,
 })
 
 const emit = defineEmits<{
@@ -72,7 +72,9 @@ type CreateVisibilityType = Extract<VisibilityType, 'private' | 'groups'>
 const inquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || [])
 
 // Filter out official and suggestion types for creation
-const availableInquiryTypes = computed(() => getAvailableInquiryTypesForCreation(inquiryTypes.value))
+const availableInquiryTypes = computed(() =>
+  getAvailableInquiryTypesForCreation(inquiryTypes.value)
+)
 
 // Inquiry type options for radio group
 const inquiryTypeOptions = computed(() => getInquiryTypeOptions(availableInquiryTypes.value))
@@ -92,7 +94,9 @@ const selectedType = computed(() => {
 })
 
 // Data for display
-const currentInquiryTypeData = computed(() => getInquiryTypeData(selectedType.value, inquiryTypes.value))
+const currentInquiryTypeData = computed(() =>
+  getInquiryTypeData(selectedType.value, inquiryTypes.value)
+)
 
 // Check if type is predefined (don't show selector)
 const hasPredefinedType = computed(() => !!(props.inquiryType || props.responseType))
@@ -108,18 +112,26 @@ const updateLocalInquiryType = (newType: string) => {
 }
 
 // Watch to pre-fill type when prop changes
-watch(() => props.inquiryType, (newType) => {
-  if (newType && newType.inquiry_type) {
-    localInquiryType.value = newType.inquiry_type
-  }
-}, { immediate: true })
+watch(
+  () => props.inquiryType,
+  (newType) => {
+    if (newType && newType.inquiry_type) {
+      localInquiryType.value = newType.inquiry_type
+    }
+  },
+  { immediate: true }
+)
 
 // Watch to pre-fill title
-watch(() => props.defaultTitle, (newTitle) => {
-  if (newTitle) {
-    inquiryTitle.value = newTitle
-  }
-}, { immediate: true })
+watch(
+  () => props.defaultTitle,
+  (newTitle) => {
+    if (newTitle) {
+      inquiryTitle.value = newTitle
+    }
+  },
+  { immediate: true }
+)
 
 const titleIsEmpty = computed(() => inquiryTitle.value.trim() === '')
 const disableAddButton = computed(() => titleIsEmpty.value || adding.value)
@@ -216,9 +228,15 @@ function resetInquiry() {
 
 <template>
   <!-- Overlay pour le fond flou -->
-  <div class="dialog-overlay" @click="emit('close')">
+  <div
+    class="dialog-overlay"
+    @click="emit('close')"
+  >
     <!-- Dialog container -->
-    <div class="create-dialog" @click.stop>
+    <div
+      class="create-dialog"
+      @click.stop
+    >
       <!-- Access Configuration -->
       <ConfigBox
         v-if="availableGroups.length > 0"
@@ -230,7 +248,7 @@ function resetInquiry() {
         <div class="access-settings">
           <NcRadioGroup
             :model-value="visibilityType"
-            :label="t('agora','Choose who is opening this inquiry')"
+            :label="t('agora', 'Choose who is opening this inquiry')"
             class="access-radio-group"
             :description="t('agora', 'Choose who is opening this inquiry')"
             @update:model-value="visibilityType = $event"
@@ -245,7 +263,10 @@ function resetInquiry() {
           </NcRadioGroup>
 
           <!-- Group Selection -->
-          <div v-if="visibilityType === 'groups'" class="groups-selection">
+          <div
+            v-if="visibilityType === 'groups'"
+            class="groups-selection"
+          >
             <h4 class="groups-title">
               {{ t('agora', 'Select group') }}
             </h4>
@@ -253,7 +274,9 @@ function resetInquiry() {
               <NcRadioGroup
                 :model-value="selectedGroup"
                 :label="t('agora', 'Choose the group that will own this inquiry')"
-                :description="t('agora', 'Choose which of your groups is responsible for this inquiry')"
+                :description="
+                  t('agora', 'Choose which of your groups is responsible for this inquiry')
+                "
                 @update:model-value="selectGroup($event)"
               >
                 <div
@@ -301,7 +324,12 @@ function resetInquiry() {
                           >ⓘ</span>
                         </template>
                         <div class="tooltip-content">
-                          {{ t('agora', 'Everyone can see and participate in this inquiry. The selected group is recorded as the owner (useful for reporting, moderation and follow-up).') }}
+                          {{
+                            t(
+                              'agora',
+                              'Everyone can see and participate in this inquiry. The selected group is recorded as the owner (useful for reporting, moderation and follow-up).'
+                            )
+                          }}
                         </div>
                       </NcPopover>
                     </span>
@@ -330,7 +358,12 @@ function resetInquiry() {
                           >ⓘ</span>
                         </template>
                         <div class="tooltip-content">
-                          {{ t('agora', 'Only members of the selected group can see and participate in this inquiry. It will not be visible to other users.') }}
+                          {{
+                            t(
+                              'agora',
+                              'Only members of the selected group can see and participate in this inquiry. It will not be visible to other users.'
+                            )
+                          }}
                         </div>
                       </NcPopover>
                     </span>
@@ -346,10 +379,20 @@ function resetInquiry() {
                 class="group-mode-help"
               >
                 <template v-if="groupVisibilityMode === 'open'">
-                  {{ t('agora', 'The inquiry is public; the group is only the owner. Choose this if you want the group to be credited or responsible for the inquiry, but everyone can still take part.') }}
+                  {{
+                    t(
+                      'agora',
+                      'The inquiry is public; the group is only the owner. Choose this if you want the group to be credited or responsible for the inquiry, but everyone can still take part.'
+                    )
+                  }}
                 </template>
                 <template v-else>
-                  {{ t('agora', 'The inquiry is private to the group. Choose this if only members of the selected group should see and take part in the inquiry.') }}
+                  {{
+                    t(
+                      'agora',
+                      'The inquiry is private to the group. Choose this if only members of the selected group should see and take part in the inquiry.'
+                    )
+                  }}
                 </template>
               </NcNoteCard>
             </div>
@@ -401,7 +444,10 @@ function resetInquiry() {
         </template>
         <div class="selected-type">
           <strong>{{ currentInquiryTypeData?.label }}</strong>
-          <p v-if="currentInquiryTypeData?.description" class="type-description">
+          <p
+            v-if="currentInquiryTypeData?.description"
+            class="type-description"
+          >
             {{ currentInquiryTypeData.description }}
           </p>
         </div>

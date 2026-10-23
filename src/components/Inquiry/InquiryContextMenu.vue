@@ -34,7 +34,6 @@ import UserBubble from '../User/UserBubble.vue'
 import BadgeDiv from '../Base/modules/BadgeDiv.vue'
 import ActionInquiryUnified from '../Actions/modules/ActionInquiryUnified.vue'
 
-
 type InputProps = {
   success: boolean
   error: boolean
@@ -59,37 +58,32 @@ const activeTab = ref<TabType>('profile')
 // ---- Computed ----
 const isExternalShare = computed(() => sessionStore.share?.type === 'external')
 const hasEmail = computed(() => !!sessionStore.share?.user?.emailAddress)
-const displayName = computed(() => sessionStore.share?.user?.displayName || sessionStore.currentUser?.displayName || 'User')
+const displayName = computed(
+  () => sessionStore.share?.user?.displayName || sessionStore.currentUser?.displayName || 'User'
+)
 const isSubscribed = computed(() => subscriptionStore.subscribed)
 
 // ---- Inquiry Information ----
-const creationDateTime = computed(() =>
-  DateTime.fromSeconds(inquiryStore.status.created)
-)
+const creationDateTime = computed(() => DateTime.fromSeconds(inquiryStore.status.created))
 
 const expirationDateTime = computed(() =>
-  inquiryStore.configuration.expire
-    ? DateTime.fromSeconds(inquiryStore.configuration.expire)
-    : null
+  inquiryStore.configuration.expire ? DateTime.fromSeconds(inquiryStore.configuration.expire) : null
 )
 
 const accessCaption = computed(() => {
   const visibility = inquiryStore.configuration.visibility
   const map: Record<string, string> = {
-    'private': t('agora', 'Private'),
-    'groups': t('agora', 'Groups only'),
-    'participants': t('agora', 'Participants only'),
-    'everyone': t('agora', 'Public'),
+    private: t('agora', 'Private'),
+    groups: t('agora', 'Groups only'),
+    participants: t('agora', 'Participants only'),
+    everyone: t('agora', 'Public'),
   }
   return map[visibility] || visibility
 })
 
 const resultsCaption = computed(() => {
   const showResults = inquiryStore.configuration.showResults as
-    | 'always'
-    | 'closed'
-    | 'never'
-    | undefined
+    'always' | 'closed' | 'never' | undefined
   if (showResults === 'closed' && !inquiryStore.isClosed) {
     return t('agora', 'Hidden until closed')
   }
@@ -121,10 +115,10 @@ const trendingLevel = computed(() => {
 const moderationStatus = computed(() => {
   const status = inquiryStore.status.moderationStatus
   const map: Record<string, { label: string; color: string }> = {
-    'draft': { label: t('agora', 'Draft'), color: 'var(--color-text-lighter)' },
-    'pending': { label: t('agora', 'Pending'), color: 'var(--color-warning)' },
-    'accepted': { label: t('agora', 'Accepted'), color: 'var(--color-primary-element)' },
-    'rejected': { label: t('agora', 'Rejected'), color: 'var(--color-error)' },
+    draft: { label: t('agora', 'Draft'), color: 'var(--color-text-lighter)' },
+    pending: { label: t('agora', 'Pending'), color: 'var(--color-warning)' },
+    accepted: { label: t('agora', 'Accepted'), color: 'var(--color-primary-element)' },
+    rejected: { label: t('agora', 'Rejected'), color: 'var(--color-error)' },
   }
   return map[status] || { label: status, color: 'var(--color-text-lighter)' }
 })
@@ -132,11 +126,11 @@ const moderationStatus = computed(() => {
 const publicationStatus = computed(() => {
   const status = inquiryStore.status.publicationStatus
   const map: Record<string, string> = {
-    'draft': t('agora', 'Draft'),
-    'pending': t('agora', 'Pending review'),
-    'published': t('agora', 'Published'),
-    'archived': t('agora', 'Archived'),
-    'deleted': t('agora', 'Deleted'),
+    draft: t('agora', 'Draft'),
+    pending: t('agora', 'Pending review'),
+    published: t('agora', 'Published'),
+    archived: t('agora', 'Archived'),
+    deleted: t('agora', 'Deleted'),
   }
   return map[status] || status
 })
@@ -187,9 +181,7 @@ async function toggleSubscription() {
   try {
     await subscriptionStore.write()
     showSuccess(
-      subscriptionStore.subscribed
-        ? t('agora', 'Subscribed')
-        : t('agora', 'Unsubscribed')
+      subscriptionStore.subscribed ? t('agora', 'Subscribed') : t('agora', 'Unsubscribed')
     )
   } catch {
     showError(t('agora', 'Could not update subscription'))
@@ -217,10 +209,12 @@ async function resendInvitation() {
 }
 
 async function copyLink() {
-  const personalLink = window.location.origin + router.resolve({
-    name: 'publicInquiry',
-    params: { token: sessionStore.publicToken },
-  }).href
+  const personalLink =
+    window.location.origin +
+    router.resolve({
+      name: 'publicInquiry',
+      params: { token: sessionStore.publicToken },
+    }).href
 
   try {
     await navigator.clipboard.writeText(personalLink)
@@ -327,52 +321,84 @@ async function submitEmail() {
 <template>
   <div class="user-context">
     <!-- Trigger Button -->
-    <button 
-      class="user-trigger" 
-      @click="togglePanel"
+    <button
+      class="user-trigger"
       :aria-label="t('agora', 'User settings')"
       :title="t('agora', 'User settings')"
+      @click="togglePanel"
     >
-      <component :is="UserIcons.Settings" :size="24" class="user-icon" />
-      <component :is="NavigationIcons.ChevronDown" :size="14" class="dropdown-arrow" />
+      <component
+        :is="UserIcons.Settings"
+        :size="24"
+        class="user-icon"
+      />
+      <component
+        :is="NavigationIcons.ChevronDown"
+        :size="14"
+        class="dropdown-arrow"
+      />
     </button>
 
     <!-- Panel -->
-    <div v-if="showPanel" class="context-panel" @click.stop>
+    <div
+      v-if="showPanel"
+      class="context-panel"
+      @click.stop
+    >
       <div class="panel-header">
         <div class="panel-header-left">
-          <component :is="UserIcons.Settings" :size="20" />
-          <h3 class="panel-title">{{ t('agora', 'Settings') }}</h3>
+          <component
+            :is="UserIcons.Settings"
+            :size="20"
+          />
+          <h3 class="panel-title">
+            {{ t('agora', 'Settings') }}
+          </h3>
         </div>
-        <button class="close-btn" @click="showPanel = false">
-          <component :is="InquiryGeneralIcons.Close" :size="18" />
+        <button
+          class="close-btn"
+          @click="showPanel = false"
+        >
+          <component
+            :is="InquiryGeneralIcons.Close"
+            :size="18"
+          />
         </button>
       </div>
 
       <!-- Tabs -->
       <div class="tabs">
-        <button 
-          class="tab-btn" 
+        <button
+          class="tab-btn"
           :class="{ active: activeTab === 'profile' }"
           @click="switchTab('profile')"
         >
-          <component :is="StatusIcons.AccountMultiple" :size="16" />
+          <component
+            :is="StatusIcons.AccountMultiple"
+            :size="16"
+          />
           {{ t('agora', 'Profile') }}
         </button>
-        <button 
-          class="tab-btn" 
+        <button
+          class="tab-btn"
           :class="{ active: activeTab === 'info' }"
           @click="switchTab('info')"
         >
-          <component :is="InquiryGeneralIcons.Info" :size="16" />
+          <component
+            :is="InquiryGeneralIcons.Info"
+            :size="16"
+          />
           {{ t('agora', 'Info') }}
         </button>
-        <button 
-          class="tab-btn" 
+        <button
+          class="tab-btn"
           :class="{ active: activeTab === 'actions' }"
           @click="switchTab('actions')"
         >
-          <component :is="InquiryGeneralIcons.Tools" :size="16" />
+          <component
+            :is="InquiryGeneralIcons.Tools"
+            :size="16"
+          />
           {{ t('agora', 'Actions') }}
         </button>
       </div>
@@ -380,26 +406,47 @@ async function submitEmail() {
       <!-- Tab Content -->
       <div class="tab-content">
         <!-- PROFILE TAB -->
-        <div v-show="activeTab === 'profile'" class="tab-panel">
+        <div
+          v-show="activeTab === 'profile'"
+          class="tab-panel"
+        >
           <div class="user-info">
-            <UserBubble :user="sessionStore.currentUser" :size="48" />
+            <UserBubble
+              :user="sessionStore.currentUser"
+              :size="48"
+            />
             <div class="user-info-text">
               <span class="user-name">{{ displayName }}</span>
-              <span class="user-email" v-if="hasEmail">
+              <span
+                v-if="hasEmail"
+                class="user-email"
+              >
                 {{ sessionStore.share.user.emailAddress }}
               </span>
-              <span class="user-role" v-if="sessionStore.currentUser.isAdmin">
+              <span
+                v-if="sessionStore.currentUser.isAdmin"
+                class="user-role"
+              >
                 {{ t('agora', 'Administrator') }}
               </span>
-              <span class="user-role" v-if="sessionStore.currentUser.isModerator">
+              <span
+                v-if="sessionStore.currentUser.isModerator"
+                class="user-role"
+              >
                 {{ t('agora', 'Moderator') }}
               </span>
             </div>
           </div>
 
-          <NcActions class="settings-actions" :force-menu="true">
+          <NcActions
+            class="settings-actions"
+            :force-menu="true"
+          >
             <template v-if="isExternalShare">
-              <NcActionButton :name="t('agora', 'Copy link')" @click="copyLink()">
+              <NcActionButton
+                :name="t('agora', 'Copy link')"
+                @click="copyLink()"
+              >
                 <template #icon>
                   <component :is="UserIcons.ListView" />
                 </template>
@@ -467,21 +514,33 @@ async function submitEmail() {
         </div>
 
         <!-- INFO TAB -->
-        <div v-show="activeTab === 'info'" class="tab-panel info-panel">
+        <div
+          v-show="activeTab === 'info'"
+          class="tab-panel info-panel"
+        >
           <!-- Status -->
           <div class="info-section">
             <div class="status-row">
-              <span class="status-badge" :style="{ color: moderationStatus.color }">
+              <span
+                class="status-badge"
+                :style="{ color: moderationStatus.color }"
+              >
                 {{ moderationStatus.label }}
               </span>
               <span class="publication-badge">
                 {{ publicationStatus }}
               </span>
             </div>
-            
-            <BadgeDiv v-if="trendingLevel" class="trending-badge">
+
+            <BadgeDiv
+              v-if="trendingLevel"
+              class="trending-badge"
+            >
               <template #icon>
-                <component :is="InquiryGeneralIcons.Activity" :size="16" />
+                <component
+                  :is="InquiryGeneralIcons.Activity"
+                  :size="16"
+                />
               </template>
               <span :style="{ color: trendingLevel.color, fontWeight: 'bold' }">
                 {{ trendingLevel.label }}
@@ -492,61 +551,100 @@ async function submitEmail() {
 
           <!-- Owner Info -->
           <div class="info-section">
-            <div class="section-label">{{ t('agora', 'Owner') }}</div>
+            <div class="section-label">
+              {{ t('agora', 'Owner') }}
+            </div>
             <BadgeDiv>
               <template #icon>
-                <component :is="StatusIcons.Owner" :size="16" />
+                <component
+                  :is="StatusIcons.Owner"
+                  :size="16"
+                />
               </template>
-              <UserBubble :user="owner" :size="24" />
+              <UserBubble
+                :user="owner"
+                :size="24"
+              />
             </BadgeDiv>
             <BadgeDiv v-if="ownerEmail">
               <template #icon>
-                <component :is="StatusIcons.EmailIcon" :size="16" />
+                <component
+                  :is="StatusIcons.EmailIcon"
+                  :size="16"
+                />
               </template>
               {{ ownerEmail }}
             </BadgeDiv>
             <div class="owner-badges">
-              <span v-if="ownerIsAdmin" class="role-badge admin">{{ t('agora', 'Admin') }}</span>
-              <span v-if="ownerIsModerator" class="role-badge moderator">{{ t('agora', 'Moderator') }}</span>
+              <span
+                v-if="ownerIsAdmin"
+                class="role-badge admin"
+              >{{ t('agora', 'Admin') }}</span>
+              <span
+                v-if="ownerIsModerator"
+                class="role-badge moderator"
+              >{{
+                t('agora', 'Moderator')
+              }}</span>
             </div>
           </div>
 
           <!-- Current User Status -->
           <div class="info-section">
-            <div class="section-label">{{ t('agora', 'Your Status') }}</div>
+            <div class="section-label">
+              {{ t('agora', 'Your Status') }}
+            </div>
             <BadgeDiv>
               <template #icon>
-                <component :is="StatusIcons.AccountMultiple" :size="16" />
+                <component
+                  :is="StatusIcons.AccountMultiple"
+                  :size="16"
+                />
               </template>
               {{ t('agora', 'Role:') }} {{ userRole }}
             </BadgeDiv>
             <BadgeDiv v-if="isOwner">
               <template #icon>
-                <component :is="StatusIcons.Owner" :size="16" />
+                <component
+                  :is="StatusIcons.Owner"
+                  :size="16"
+                />
               </template>
               {{ t('agora', 'You are the owner') }}
             </BadgeDiv>
             <BadgeDiv v-if="isInvolved">
               <template #icon>
-                <component :is="InquiryGeneralIcons.Comment" :size="16" />
+                <component
+                  :is="InquiryGeneralIcons.Comment"
+                  :size="16"
+                />
               </template>
               {{ t('agora', 'You are involved') }}
             </BadgeDiv>
             <BadgeDiv v-if="hasSupported">
               <template #icon>
-                <component :is="InquiryGeneralIcons.ThumbUp" :size="16" />
+                <component
+                  :is="InquiryGeneralIcons.ThumbUp"
+                  :size="16"
+                />
               </template>
               {{ t('agora', 'You have supported this') }}
             </BadgeDiv>
             <BadgeDiv v-if="countInquiries > 0">
               <template #icon>
-                <component :is="StatusIcons.Plus" :size="16" />
+                <component
+                  :is="StatusIcons.Plus"
+                  :size="16"
+                />
               </template>
               {{ n('agora', '%n inquiry created', '%n inquiries created', countInquiries) }}
             </BadgeDiv>
             <BadgeDiv v-if="orphanedInquiries > 0">
               <template #icon>
-                <component :is="StatusIcons.AlertCircleOutline" :size="16" />
+                <component
+                  :is="StatusIcons.AlertCircleOutline"
+                  :size="16"
+                />
               </template>
               {{ n('agora', '%n orphaned inquiry', '%n orphaned inquiries', orphanedInquiries) }}
             </BadgeDiv>
@@ -554,28 +652,46 @@ async function submitEmail() {
 
           <!-- Inquiry Basic Info -->
           <div class="info-section">
-            <div class="section-label">{{ t('agora', 'Inquiry Details') }}</div>
+            <div class="section-label">
+              {{ t('agora', 'Inquiry Details') }}
+            </div>
             <BadgeDiv>
               <template #icon>
-                <component :is="inquiryStore.configuration.visibility === 'private' ? StatusIcons.PrivateInquiry : StatusIcons.OpenInquiry" :size="16" />
+                <component
+                  :is="
+                    inquiryStore.configuration.visibility === 'private'
+                      ? StatusIcons.PrivateInquiry
+                      : StatusIcons.OpenInquiry
+                  "
+                  :size="16"
+                />
               </template>
               {{ accessCaption }}
             </BadgeDiv>
             <BadgeDiv>
               <template #icon>
-                <component :is="StatusIcons.Creation" :size="16" />
+                <component
+                  :is="StatusIcons.Creation"
+                  :size="16"
+                />
               </template>
               {{ t('agora', 'Created') }} {{ creationDateTime.toRelative() }}
             </BadgeDiv>
             <BadgeDiv v-if="inquiryStore.configuration.expire">
               <template #icon>
-                <component :is="StatusIcons.Expiration" :size="16" />
+                <component
+                  :is="StatusIcons.Expiration"
+                  :size="16"
+                />
               </template>
               {{ t('agora', 'Closes') }} {{ expirationDateTime?.toRelative() }}
             </BadgeDiv>
             <BadgeDiv>
               <template #icon>
-                <component :is="StatusIcons.Timezone" :size="16" />
+                <component
+                  :is="StatusIcons.Timezone"
+                  :size="16"
+                />
               </template>
               {{ currentTimeZone }}
             </BadgeDiv>
@@ -583,34 +699,64 @@ async function submitEmail() {
 
           <!-- Stats -->
           <div class="info-section">
-            <div class="section-label">{{ t('agora', 'Statistics') }}</div>
-            <BadgeDiv v-if="inquiryStore.status.countParticipants && inquiryStore.permissions.seeResults">
+            <div class="section-label">
+              {{ t('agora', 'Statistics') }}
+            </div>
+            <BadgeDiv
+              v-if="inquiryStore.status.countParticipants && inquiryStore.permissions.seeResults"
+            >
               <template #icon>
-                <component :is="StatusIcons.Participants" :size="16" />
+                <component
+                  :is="StatusIcons.Participants"
+                  :size="16"
+                />
               </template>
-              {{ n('agora', '%n participant', '%n participants', inquiryStore.status.countParticipants) }}
+              {{
+                n(
+                  'agora',
+                  '%n participant',
+                  '%n participants',
+                  inquiryStore.status.countParticipants
+                )
+              }}
             </BadgeDiv>
             <BadgeDiv>
               <template #icon>
-                <component :is="StatusIcons.Options" :size="16" />
+                <component
+                  :is="StatusIcons.Options"
+                  :size="16"
+                />
               </template>
               {{ n('agora', '%n option', '%n options', optionsStore.options.length) }}
             </BadgeDiv>
             <BadgeDiv v-if="childCount > 0">
               <template #icon>
-                <component :is="InquiryGeneralIcons.FileTree" :size="16" />
+                <component
+                  :is="InquiryGeneralIcons.FileTree"
+                  :size="16"
+                />
               </template>
               {{ n('agora', '%n child inquiry', '%n child inquiries', childCount) }}
             </BadgeDiv>
             <BadgeDiv>
               <template #icon>
-                <component :is="inquiryStore.configuration.showResults === 'never' ? StatusIcons.HideResults : StatusIcons.ShowResults" :size="16" />
+                <component
+                  :is="
+                    inquiryStore.configuration.showResults === 'never'
+                      ? StatusIcons.HideResults
+                      : StatusIcons.ShowResults
+                  "
+                  :size="16"
+                />
               </template>
               {{ resultsCaption }}
             </BadgeDiv>
             <BadgeDiv v-if="inquiryStore.status.isAnonymous">
               <template #icon>
-                <component :is="StatusIcons.AnonymousIcon" :size="16" />
+                <component
+                  :is="StatusIcons.AnonymousIcon"
+                  :size="16"
+                />
               </template>
               {{ t('agora', 'Anonymous') }}
             </BadgeDiv>
@@ -618,21 +764,37 @@ async function submitEmail() {
         </div>
 
         <!-- ACTIONS TAB - Uses InquiryItemActions -->
-        <div v-show="activeTab === 'actions'" class="tab-panel actions-panel">
+        <div
+          v-show="activeTab === 'actions'"
+          class="tab-panel actions-panel"
+        >
           <div class="action-group">
-            <div class="section-label">{{ t('agora', 'Inquiry Actions') }}</div>
+            <div class="section-label">
+              {{ t('agora', 'Inquiry Actions') }}
+            </div>
             <ActionInquiryUnified :inquiry="inquiryStore" />
           </div>
 
-          <div class="action-group" v-if="isExternalShare">
-            <div class="section-label">{{ t('agora', 'Subscription') }}</div>
-            <NcActions class="settings-actions" :force-menu="true">
+          <div
+            v-if="isExternalShare"
+            class="action-group"
+          >
+            <div class="section-label">
+              {{ t('agora', 'Subscription') }}
+            </div>
+            <NcActions
+              class="settings-actions"
+              :force-menu="true"
+            >
               <NcActionCheckbox
                 v-model="subscriptionStore.subscribed"
                 @change="toggleSubscription"
               >
                 <template #icon>
-                  <component :is="isSubscribed ? InquiryGeneralIcons.Bell : InquiryGeneralIcons.BellOutline" :size="20" />
+                  <component
+                    :is="isSubscribed ? InquiryGeneralIcons.Bell : InquiryGeneralIcons.BellOutline"
+                    :size="20"
+                  />
                 </template>
                 {{ isSubscribed ? t('agora', 'Unsubscribe') : t('agora', 'Subscribe') }}
               </NcActionCheckbox>
@@ -1087,4 +1249,4 @@ async function submitEmail() {
     padding: 12px;
   }
 }
-</style> 
+</style>

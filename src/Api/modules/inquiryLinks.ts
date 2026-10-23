@@ -30,7 +30,8 @@ const inquiryLinks = {
       method: 'GET',
       url: `inquiry/${inquiryId}/links`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getLinksByInquiry.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.getLinksByInquiry.name].handleRequestCancellation().token,
     })
   },
 
@@ -43,7 +44,8 @@ const inquiryLinks = {
       method: 'GET',
       url: `links/target/${targetApp}/${targetType}/${targetId}`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getLinksByTarget.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.getLinksByTarget.name].handleRequestCancellation().token,
     })
   },
 
@@ -52,7 +54,8 @@ const inquiryLinks = {
       method: 'GET',
       url: `links/target-app/${targetApp}`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getLinksByTargetApp.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.getLinksByTargetApp.name].handleRequestCancellation().token,
     })
   },
 
@@ -90,7 +93,8 @@ const inquiryLinks = {
       method: 'POST',
       url: `inquiry/${inquiryId}/links`,
       data: { links },
-      cancelToken: cancelTokenHandlerObject[this.createMultipleLinks.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.createMultipleLinks.name].handleRequestCancellation().token,
     })
   },
 
@@ -121,7 +125,8 @@ const inquiryLinks = {
     return httpInstance.request({
       method: 'DELETE',
       url: `inquiry/${inquiryId}/links`,
-      cancelToken: cancelTokenHandlerObject[this.deleteLinksByInquiry.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.deleteLinksByInquiry.name].handleRequestCancellation().token,
     })
   },
 
@@ -148,16 +153,20 @@ const inquiryLinks = {
       method: 'POST',
       url: 'link/deck-card',
       data: { title: data.title, description: data.description || '', stackId: data.stackId || 1 },
-      cancelToken: cancelTokenHandlerObject[this.createDeckCard.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.createDeckCard.name].handleRequestCancellation().token,
     })
   },
 
-  createCospendExpense(data: CreateAppResourceData): Promise<AxiosResponse<{ app: string; id: number }>> {
+  createCospendExpense(
+    data: CreateAppResourceData
+  ): Promise<AxiosResponse<{ app: string; id: number }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'link/cospend-expense',
       data: { amount: data.amount || 0, description: data.description || '' },
-      cancelToken: cancelTokenHandlerObject[this.createCospendExpense.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.createCospendExpense.name].handleRequestCancellation().token,
     })
   },
 }

@@ -200,9 +200,18 @@ onMounted(() => {
         @keyup.enter="emit('submit')"
       />
 
-      <Spinner v-if="checking" class="signaling-icon spinner" />
-      <AlertIcon v-else-if="error" class="signaling-icon error" />
-      <CheckIcon v-else-if="success" class="signaling-icon success" />
+      <Spinner
+        v-if="checking"
+        class="signaling-icon spinner"
+      />
+      <AlertIcon
+        v-else-if="error"
+        class="signaling-icon error"
+      />
+      <CheckIcon
+        v-else-if="success"
+        class="signaling-icon success"
+      />
       <ArrowRightIcon
         v-else-if="showSubmit"
         class="signaling-icon submit"
@@ -223,10 +232,17 @@ onMounted(() => {
         class="modifier subtract"
         @click="subtract()"
       />
-      <PlusIcon v-if="useNumModifiers && useNumericVariant" class="modifier add" @click="add()" />
+      <PlusIcon
+        v-if="useNumModifiers && useNumericVariant"
+        class="modifier add"
+        @click="add()"
+      />
     </div>
 
-    <div v-if="helperText !== null" :class="['helper', computedSignalingClass]">
+    <div
+      v-if="helperText !== null"
+      :class="['helper', computedSignalingClass]"
+    >
       {{ helperText }}
     </div>
   </div>

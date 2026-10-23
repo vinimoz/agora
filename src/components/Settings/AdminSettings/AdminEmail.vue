@@ -41,7 +41,11 @@ const markedDisclaimer = computed(() => {
         <span>{{ t('agora', 'Additional email disclaimer') }}</span>
         <LanguageMarkdownIcon />
       </div>
-      <NcCheckboxRadioSwitch v-model="preview" type="switch" @change="appSettingsStore.write()">
+      <NcCheckboxRadioSwitch
+        v-model="preview"
+        type="switch"
+        @change="appSettingsStore.write()"
+      >
         {{ t('agora', 'Preview') }}
       </NcCheckboxRadioSwitch>
     </div>
@@ -51,7 +55,11 @@ const markedDisclaimer = computed(() => {
       @change="appSettingsStore.write()"
     />
     <!-- eslint-disable-next-line vue/no-v-html -->
-    <div v-show="preview" class="inquiries-markdown" v-html="markedDisclaimer" />
+    <div
+      v-show="preview"
+      class="inquiries-markdown"
+      v-html="markedDisclaimer"
+    />
   </div>
 </template>
 

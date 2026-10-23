@@ -21,7 +21,11 @@ async function clickAction() {
 
 <template>
   <div class="action option-date-add">
-    <NcButton :variant="'primary'" :aria-label="buttonAriaLabel" @click="clickAction">
+    <NcButton
+      :variant="'primary'"
+      :aria-label="buttonAriaLabel"
+      @click="clickAction"
+    >
       <template #icon>
         <AddDateIcon />
       </template>

@@ -30,18 +30,20 @@ import {
   SideBarTabMisc,
 } from '../components/SideBar/index.js'
 
-
 const inquiryStore = useInquiryStore()
 const sessionStore = useSessionStore()
 
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
 
-
 // Compute isReadonly
 const isReadonly = computed(() => {
   const user = sessionStore.currentUser
-  if (inquiryStore.status.moderationStatus === 'rejected' || inquiryStore.status.moderationStatus === 'pending') return true
+  if (
+    inquiryStore.status.moderationStatus === 'rejected' ||
+    inquiryStore.status.moderationStatus === 'pending'
+  )
+    return true
   if (!user) {
     return true
   }
@@ -80,61 +82,60 @@ function closeSideBar() {
 </script>
 
 <template>
-    <aside v-if="shouldDisplay && inquiryStore">
-        <NcAppSidebar
-                v-show="showSidebar"
-                v-model="activeTab"
-                :name="t('agora', 'Details')"
-                @close="closeSideBar()"
-                >
-         <NcAppSidebarTab
-                        v-if="canComment(context)"
-                        id="comments"
-                        :order="1"
-                        :name="t('agora', 'Comments')"
-                        >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.Comment" />
-                        </template>
-                <SideBarTabComments />
-        </NcAppSidebarTab>
-        
-        <NcAppSidebarTab
-                        v-if="canEdit(context) || canView(context)"
-                        id="misc"
-                        :order="2"
-                        :name="t('agora', 'Settings')"
-                        >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.Map" />
-                        </template>
-                <SideBarTabMisc :is-readonly="isReadonly"/>
-        </NcAppSidebarTab>
+  <aside v-if="shouldDisplay && inquiryStore">
+    <NcAppSidebar
+      v-show="showSidebar"
+      v-model="activeTab"
+      :name="t('agora', 'Details')"
+      @close="closeSideBar()"
+    >
+      <NcAppSidebarTab
+        v-if="canComment(context)"
+        id="comments"
+        :order="1"
+        :name="t('agora', 'Comments')"
+      >
+        <template #icon>
+          <component :is="InquiryGeneralIcons.Comment" />
+        </template>
+        <SideBarTabComments />
+      </NcAppSidebarTab>
 
-        <NcAppSidebarTab
-                v-if="canUseResource(context)"
-                id="links"
-                :order="4"
-                :name="t('agora', 'Resources')"
-                >
-                <template #icon>
-                    <component :is="InquiryGeneralIcons.LinkIcon" />
-                </template>
-                <SideBarTabResources :inquiry="inquiryStore"/>
-        </NcAppSidebarTab>
-        
-        <NcAppSidebarTab
-                v-if="canEdit(context)"
-                id="access"
-                :order="5"
-                :name="t('agora', 'Access')"
-                >
-                <template #icon>
-                    <component :is="InquiryGeneralIcons.Share" />
-                </template>
-                <SideBarTabAccess :inquiry="inquiryStore"/>
-        </NcAppSidebarTab>
+      <NcAppSidebarTab
+        v-if="canEdit(context) || canView(context)"
+        id="misc"
+        :order="2"
+        :name="t('agora', 'Settings')"
+      >
+        <template #icon>
+          <component :is="InquiryGeneralIcons.Map" />
+        </template>
+        <SideBarTabMisc :is-readonly="isReadonly" />
+      </NcAppSidebarTab>
 
-        </NcAppSidebar>
-    </aside>
+      <NcAppSidebarTab
+        v-if="canUseResource(context)"
+        id="links"
+        :order="4"
+        :name="t('agora', 'Resources')"
+      >
+        <template #icon>
+          <component :is="InquiryGeneralIcons.LinkIcon" />
+        </template>
+        <SideBarTabResources :inquiry="inquiryStore" />
+      </NcAppSidebarTab>
+
+      <NcAppSidebarTab
+        v-if="canShare(context)"
+        id="access"
+        :order="5"
+        :name="t('agora', 'Access')"
+      >
+        <template #icon>
+          <component :is="InquiryGeneralIcons.Share" />
+        </template>
+        <SideBarTabAccess :inquiry="inquiryStore" />
+      </NcAppSidebarTab>
+    </NcAppSidebar>
+  </aside>
 </template>

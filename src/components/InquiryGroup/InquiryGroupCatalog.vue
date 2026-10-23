@@ -6,7 +6,10 @@
 <template>
   <div class="inquiry-group-catalog">
     <!-- Family Filter Tabs -->
-    <div v-if="families.length > 1" class="catalog-filters">
+    <div
+      v-if="families.length > 1"
+      class="catalog-filters"
+    >
       <div class="family-tabs">
         <button
           v-for="family in families"
@@ -15,7 +18,10 @@
           :class="{ active: selectedFamily === family.key }"
           @click="selectFamily(family.key)"
         >
-          <component :is="family.icon" :size="18" />
+          <component
+            :is="family.icon"
+            :size="18"
+          />
           <span>{{ family.label }}</span>
           <span class="count">{{ getFamilyCount(family.key) }}</span>
         </button>
@@ -39,22 +45,33 @@
           <div class="group-card">
             <div class="card-header">
               <div class="card-icon">
-                <component :is="getGroupTypeIcon(group.type)" :size="24" />
+                <component
+                  :is="getGroupTypeIcon(group.type)"
+                  :size="24"
+                />
               </div>
-              <h3 class="card-title">{{ group.title }}</h3>
+              <h3 class="card-title">
+                {{ group.title }}
+              </h3>
             </div>
-            
-            <p v-if="group.description" class="card-description">
+
+            <p
+              v-if="group.description"
+              class="card-description"
+            >
               {{ truncateText(group.description, 100) }}
             </p>
-            
+
             <div class="card-stats">
               <span class="stat">
                 <span class="stat-icon">📝</span>
                 <span class="stat-value">{{ group.inquiryIds?.length || 0 }}</span>
                 <span class="stat-label">{{ t('agora', 'inquiries') }}</span>
               </span>
-              <span v-if="getGroupChildren(group).length > 0" class="stat">
+              <span
+                v-if="getGroupChildren(group).length > 0"
+                class="stat"
+              >
                 <span class="stat-icon">👥</span>
                 <span class="stat-value">{{ getGroupChildren(group).length }}</span>
                 <span class="stat-label">{{ t('agora', 'subgroups') }}</span>
@@ -62,15 +79,23 @@
             </div>
 
             <!-- Experience badge -->
-            <div v-if="group.ui?.displayArchitecture" class="card-badge experience-badge">
+            <div
+              v-if="group.ui?.displayArchitecture"
+              class="card-badge experience-badge"
+            >
               ✨ {{ t('agora', 'Custom experience') }}
             </div>
           </div>
         </div>
 
         <!-- Empty state -->
-        <div v-if="filteredGroups.length === 0" class="empty-state">
-          <div class="empty-icon">📂</div>
+        <div
+          v-if="filteredGroups.length === 0"
+          class="empty-state"
+        >
+          <div class="empty-icon">
+            📂
+          </div>
           <h4>{{ t('agora', 'No groups found') }}</h4>
           <p>{{ t('agora', 'There are no active groups in this category') }}</p>
         </div>
@@ -78,7 +103,10 @@
     </div>
 
     <!-- Archived Groups -->
-    <div v-if="archivedGroups.length > 0" class="catalog-section archived-section">
+    <div
+      v-if="archivedGroups.length > 0"
+      class="catalog-section archived-section"
+    >
       <div class="section-header">
         <h2>{{ t('agora', 'Archived Groups') }}</h2>
         <span class="section-count archived">{{ archivedGroups.length }}</span>
@@ -128,40 +156,48 @@ const selectedFamily = ref<string | null>(null)
 // Get all unique families from groups
 const availableFamilies = computed(() => {
   if (props.families) return props.families
-  
+
   const familiesSet = new Set<string>()
-  props.groups.forEach(group => {
-    const typeData = getInquiryGroupTypeData(group.type, sessionStore.appSettings.inquiryGroupTypeTab)
+  props.groups.forEach((group) => {
+    const typeData = getInquiryGroupTypeData(
+      group.type,
+      sessionStore.appSettings.inquiryGroupTypeTab
+    )
     if (typeData?.family) {
       familiesSet.add(typeData.family)
     }
   })
-  
-  return Array.from(familiesSet).map(key => ({
+
+  return Array.from(familiesSet).map((key) => ({
     key,
     label: key,
-    icon: 'div'
+    icon: 'div',
   }))
 })
 
 // Filter groups by selected family
 const filteredGroups = computed(() => {
-  let result = props.groups.filter(g => g.status.groupStatus !== 'archived')
-  
+  let result = props.groups.filter((g) => g.status.groupStatus !== 'archived')
+
   if (selectedFamily.value) {
-    result = result.filter(group => {
-      const typeData = getInquiryGroupTypeData(group.type, sessionStore.appSettings.inquiryGroupTypeTab)
+    result = result.filter((group) => {
+      const typeData = getInquiryGroupTypeData(
+        group.type,
+        sessionStore.appSettings.inquiryGroupTypeTab
+      )
       return typeData?.family === selectedFamily.value
     })
   }
-  
+
   return result.sort((a, b) => a.title.localeCompare(b.title))
 })
 
 // Archived groups
-const archivedGroups = computed(() => props.groups
-    .filter(g => g.status.groupStatus === 'archived')
-    .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()))
+const archivedGroups = computed(() =>
+  props.groups
+    .filter((g) => g.status.groupStatus === 'archived')
+    .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())
+)
 
 function getGroupTypeIcon(type: string) {
   const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
@@ -169,12 +205,15 @@ function getGroupTypeIcon(type: string) {
 }
 
 function getGroupChildren(group: InquiryGroup) {
-  return inquiryGroupsStore.inquiryGroups.filter(g => g.parentId === group.id)
+  return inquiryGroupsStore.inquiryGroups.filter((g) => g.parentId === group.id)
 }
 
 function getFamilyCount(familyKey: string): number {
-  return props.groups.filter(group => {
-    const typeData = getInquiryGroupTypeData(group.type, sessionStore.appSettings.inquiryGroupTypeTab)
+  return props.groups.filter((group) => {
+    const typeData = getInquiryGroupTypeData(
+      group.type,
+      sessionStore.appSettings.inquiryGroupTypeTab
+    )
     return typeData?.family === familyKey && group.status.groupStatus !== 'archived'
   }).length
 }
@@ -192,7 +231,7 @@ function selectGroup(group: InquiryGroup) {
 
 function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
-  return `${text.slice(0, maxLength)  }…`
+  return `${text.slice(0, maxLength)}…`
 }
 
 function formatDate(timestamp: number) {

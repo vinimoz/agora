@@ -15,25 +15,19 @@ const emit = defineEmits(['change'])
 const inquiryStore = useInquiryStore()
 const sessionStore = useSessionStore()
 const description =
-	inquiryStore.owner.id === sessionStore.currentUser.id
-		? t(
-				'agora',
-				'Force confidential comments (only visible to you and the author)',
-			)
-		: t(
-				'agora',
-				'Force confidential comments (only visible to {displayName} and the author)',
-				{
-					displayName: inquiryStore.owner.displayName,
-				},
-			)
+  inquiryStore.owner.id === sessionStore.currentUser.id
+    ? t('agora', 'Force confidential comments (only visible to you and the author)')
+    : t('agora', 'Force confidential comments (only visible to {displayName} and the author)', {
+        displayName: inquiryStore.owner.displayName,
+      })
 </script>
 
 <template>
-	<NcCheckboxRadioSwitch
-		v-model="inquiryStore.configuration.forceConfidentialComments"
-		type="switch"
-		@update:model-value="emit('change')">
-		{{ description }}
-	</NcCheckboxRadioSwitch>
+  <NcCheckboxRadioSwitch
+    v-model="inquiryStore.configuration.forceConfidentialComments"
+    type="switch"
+    @update:model-value="emit('change')"
+  >
+    {{ description }}
+  </NcCheckboxRadioSwitch>
 </template>

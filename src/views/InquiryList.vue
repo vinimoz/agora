@@ -18,7 +18,8 @@ import { HeaderBar, IntersectionObserver } from '../components/Base/index.ts'
 import { AgoraAppIcon } from '../components/AppIcons/index.ts'
 import InquiryItem from '../components/Inquiry/InquiryItem.vue'
 import InquiryFilter from '../components/Inquiry/InquiryFilter.vue'
-import { FilterType, useInquiriesStore } from '../stores/inquiries.ts'
+import { useInquiriesStore } from '../stores/inquiries.ts'
+import { FilterType } from '../Types/index.ts'
 import InquiryListSort from '../components/Inquiry/InquiryListSort.vue'
 import InquiryTimeline from '../components/InquiryGroup/InquiryTimeline.vue'
 import InquiryFeed from '../components/InquiryGroup/InquiryFeed.vue'
@@ -33,14 +34,17 @@ import { InquiryGeneralIcons } from '../utils/icons.ts'
 import InquiryReel from '../components/Inquiry/InquiryReel.vue'
 import LandingBreadcrumb from '../components/Experience/Landing/LandingBreadcrumb.vue'
 import { getInquiryTypeData } from '../helpers/modules/InquiryHelper.ts'
-import type { Inquiry } from '../Types'
+import type { Inquiry } from '../Types/inquiry.types.ts'
 
-const props = withDefaults(defineProps<{
-  showFilterBar?: boolean | null
-}>(), { showFilterBar: null })
+const props = withDefaults(
+  defineProps<{
+    showFilterBar?: boolean | null
+  }>(),
+  { showFilterBar: null }
+)
 
 const showFilterBarResolved = computed(() =>
-  props.showFilterBar !== null ? props.showFilterBar : showFilterBar.value,
+  props.showFilterBar !== null ? props.showFilterBar : showFilterBar.value
 )
 
 const inquiriesStore = useInquiriesStore()
@@ -95,7 +99,7 @@ const landingLabel = computed(() => {
 
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
-  set: (value) => inquiriesStore.setFamilyType(value || null)
+  set: (value) => inquiriesStore.setFamilyType(value || null),
 })
 
 // Main mode (create/view) and sub mode (table/list/reel)
@@ -111,8 +115,6 @@ const isGridView = computed(() => subMode.value === 'table-view')
 const isListView = computed(() => subMode.value === 'list-view')
 const isReelView = computed(() => subMode.value === 'reel-view')
 
-
-
 // Handle main mode change
 function handleMainModeChange(mode: string) {
   mainMode.value = mode
@@ -122,16 +124,15 @@ function handleMainModeChange(mode: string) {
       name: 'home',
       query: {
         viewMode: 'create',
-      }
+      },
     })
   } else if (mode === 'group') {
     router.push({
       name: 'home',
-      params: {
-      },
+      params: {},
       query: {
         ...route.query,
-      }
+      },
     })
   } else {
     router.push({
@@ -139,7 +140,7 @@ function handleMainModeChange(mode: string) {
       query: {
         ...route.query,
         viewMode: 'view',
-      }
+      },
     })
   }
 }
@@ -163,16 +164,14 @@ const title = computed(() => {
   return inquiriesStore.categories[route.params.type as FilterType].titleExt
 })
 
-const isFeedOrTimeline = computed(
-  () => subMode.value === 'feed' || subMode.value === 'timeline'
-)
+const isFeedOrTimeline = computed(() => subMode.value === 'feed' || subMode.value === 'timeline')
 
 const showMore = computed(
   () =>
     inquiriesStore.chunkedList.length < inquiriesStore.inquiriesFilteredSorted.length &&
     inquiriesStore.meta.status !== 'loading' &&
     !isReelView.value &&
-    !isFeedOrTimeline.value,
+    !isFeedOrTimeline.value
 )
 
 const countLoadedInquiries = computed(() =>
@@ -230,7 +229,6 @@ async function loadMore() {
   }
 }
 
-
 function openInquiry(inquiry: Inquiry) {
   if (!inquiry?.id) return
   router.push({
@@ -254,7 +252,11 @@ function openInquiry(inquiry: Inquiry) {
 // for the next steps without touching the store.
 
 const APPLICABLE_SUB_MODES: ReadonlyArray<ViewMode> = [
-  'table-view', 'list-view', 'reel-view', 'feed', 'timeline',
+  'table-view',
+  'list-view',
+  'reel-view',
+  'feed',
+  'timeline',
 ]
 
 function applyRouteFilters() {
@@ -277,34 +279,33 @@ function applyRouteFilters() {
   }
 
   // ---- display ----
-const display = route.query.display as ViewMode | undefined
-if (display && APPLICABLE_SUB_MODES.includes(display)) {
-  subMode.value = display
-}
-if (display === 'timeline') {
-  inquiriesStore.sort.by = 'expire'
-  inquiriesStore.sort.reverse = false
-} else if (display === 'feed') {
-  // reset — otherwise a prior timeline visit leaves the sort in expire-asc
-  inquiriesStore.sort.by = 'created'
-  inquiriesStore.sort.reverse = true
-}
+  const display = route.query.display as ViewMode | undefined
+  if (display && APPLICABLE_SUB_MODES.includes(display)) {
+    subMode.value = display
+  }
+  if (display === 'timeline') {
+    inquiriesStore.sort.by = 'expire'
+    inquiriesStore.sort.reverse = false
+  } else if (display === 'feed') {
+    // reset — otherwise a prior timeline visit leaves the sort in expire-asc
+    inquiriesStore.sort.by = 'created'
+    inquiriesStore.sort.reverse = true
+  }
 
+  const filterOverride = route.query.filter as FilterType | undefined
+  const typeParam = route.params.type as FilterType | undefined
 
-const filterOverride = route.query.filter as FilterType | undefined
-const typeParam = route.params.type as FilterType | undefined
+  let nextFilter: FilterType = 'relevant'
+  if (filterOverride && inquiriesStore.categories[filterOverride]) {
+    nextFilter = filterOverride
+  } else if (typeParam && inquiriesStore.categories[typeParam]) {
+    nextFilter = typeParam
+  }
 
-let nextFilter: FilterType = 'relevant'
-if (filterOverride && inquiriesStore.categories[filterOverride]) {
-  nextFilter = filterOverride
-} else if (typeParam && inquiriesStore.categories[typeParam]) {
-  nextFilter = typeParam
-}
-
-if (inquiriesStore.currentFilter !== nextFilter) {
-  inquiriesStore.currentFilter = nextFilter
-  inquiriesStore.resetChunks()
-}
+  if (inquiriesStore.currentFilter !== nextFilter) {
+    inquiriesStore.currentFilter = nextFilter
+    inquiriesStore.resetChunks()
+  }
 
   // ---- reserved params (parsed but not yet acted upon) ----
   // route.query.q          → will feed the search bar
@@ -343,7 +344,7 @@ watch(
   () => route.fullPath,
   () => {
     applyRouteFilters()
-  },
+  }
 )
 
 watch(subMode, (newMode) => {
@@ -351,601 +352,651 @@ watch(subMode, (newMode) => {
     inquiriesStore.addChunk()
   }
 })
-
 </script>
 
 <template>
-    <NcAppContent class="inquiry-list">
-			    <HeaderBar>
-    <template #title>
-        <LandingBreadcrumb v-if="isLandingMode" :label="landingLabel" />
+  <NcAppContent class="inquiry-list">
+    <HeaderBar>
+      <template #title>
+        <LandingBreadcrumb
+          v-if="isLandingMode"
+          :label="landingLabel"
+        />
         <span v-else>{{ title }}</span>
-    </template>
-    {{ description }}
+      </template>
+      {{ description }}
 
-    <template #right>
+      <template #right>
         <div class="header-controls">
-            <div class="mode-switchers">
-                <div class="main-mode-switcher">
-                    <!-- Create mode button -->
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="mainMode"
-                        value="create"
-                        name="main_mode_radio"
-                        type="radio"
-                        button-variant-grouped="horizontal"
-                        class="mode-switch"
-                        @update:model-value="handleMainModeChange"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.Plus" size="32" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-
-                    <!-- Group mode button -->
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="mainMode"
-                        value="group"
-                        name="main_mode_radio"
-                        type="radio"
-                        button-variant-grouped="horizontal"
-                        class="mode-switch"
-                        @update:model-value="handleMainModeChange"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.Bank" size="32" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-
-                    <!-- Table view button -->
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="subMode"
-                        value="table-view"
-                        name="sub_mode_radio"
-                        type="radio"
-                        button-variant-grouped="horizontal"
-                        class="mode-switch sub-mode"
-                        @update:model-value="handleSubModeChange"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.Table" size="16" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-
-                    <!-- List view button -->
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="subMode"
-                        value="list-view"
-                        name="sub_mode_radio"
-                        type="radio"
-                        button-variant-grouped="horizontal"
-                        class="mode-switch sub-mode"
-                        @update:model-value="handleSubModeChange"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.ViewListOutline" size="16" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-
-                    <!-- Reel view button -->
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="subMode"
-                        value="reel-view"
-                        name="sub_mode_radio"
-                        type="radio"
-                        button-variant-grouped="horizontal"
-                        class="mode-switch sub-mode"
-                        @update:model-value="handleSubModeChange"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.ViewCarousel" size="16" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-                </div>
-            </div>
-
-            <div class="right-controls">
-                <InquiryListSort />
-                
-                <!-- Reel controls -->
-                <template v-if="isReelView">
-                    <!-- Vertical orientation button -->
-		    <div class="reel-controls">
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="reelOrientation"
-                        value="vertical"
-                        name="reel_orientation"
-                        type="radio"
-                        button-variant-grouped="horizontal"
-                        class="mode-switch"
-                        @update:model-value="reelOrientation = $event"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.ViewVertical" size="16" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-
-                    <!-- Horizontal orientation button -->
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="reelOrientation"
-                        value="horizontal"
-                        name="reel_orientation"
-                        type="radio"
-                        button-variant-grouped="horizontal"
-                        class="mode-switch"
-                        @update:model-value="reelOrientation = $event"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.ViewHorizontal" size="16" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-
-                    <NcCheckboxRadioSwitch
-                        :button-variant="true"
-                        :model-value="showReelArrows"
-                        type="button"
-                        class="mode-switch"
-                        @click="showReelArrows = !showReelArrows"
-                    >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.ArrowLeftRight" size="16" />
-                        </template>
-                    </NcCheckboxRadioSwitch>
-		  </div>
+          <div class="mode-switchers">
+            <div class="main-mode-switcher">
+              <!-- Create mode button -->
+              <NcCheckboxRadioSwitch
+                :button-variant="true"
+                :model-value="mainMode"
+                value="create"
+                name="main_mode_radio"
+                type="radio"
+                button-variant-grouped="horizontal"
+                class="mode-switch"
+                @update:model-value="handleMainModeChange"
+              >
+                <template #icon>
+                  <component
+                    :is="InquiryGeneralIcons.Plus"
+                    size="32"
+                  />
                 </template>
+              </NcCheckboxRadioSwitch>
 
-                <ActionToggleSidebar
-                    v-if="inquiryGroupsStore.currentInquiryGroup?.owner.id === sessionStore.currentUser.id"
-                />
+              <!-- Group mode button -->
+              <NcCheckboxRadioSwitch
+                :button-variant="true"
+                :model-value="mainMode"
+                value="group"
+                name="main_mode_radio"
+                type="radio"
+                button-variant-grouped="horizontal"
+                class="mode-switch"
+                @update:model-value="handleMainModeChange"
+              >
+                <template #icon>
+                  <component
+                    :is="InquiryGeneralIcons.Bank"
+                    size="32"
+                  />
+                </template>
+              </NcCheckboxRadioSwitch>
+
+              <!-- Table view button -->
+              <NcCheckboxRadioSwitch
+                :button-variant="true"
+                :model-value="subMode"
+                value="table-view"
+                name="sub_mode_radio"
+                type="radio"
+                button-variant-grouped="horizontal"
+                class="mode-switch sub-mode"
+                @update:model-value="handleSubModeChange"
+              >
+                <template #icon>
+                  <component
+                    :is="InquiryGeneralIcons.Table"
+                    size="16"
+                  />
+                </template>
+              </NcCheckboxRadioSwitch>
+
+              <!-- List view button -->
+              <NcCheckboxRadioSwitch
+                :button-variant="true"
+                :model-value="subMode"
+                value="list-view"
+                name="sub_mode_radio"
+                type="radio"
+                button-variant-grouped="horizontal"
+                class="mode-switch sub-mode"
+                @update:model-value="handleSubModeChange"
+              >
+                <template #icon>
+                  <component
+                    :is="InquiryGeneralIcons.ViewListOutline"
+                    size="16"
+                  />
+                </template>
+              </NcCheckboxRadioSwitch>
+
+              <!-- Reel view button -->
+              <NcCheckboxRadioSwitch
+                :button-variant="true"
+                :model-value="subMode"
+                value="reel-view"
+                name="sub_mode_radio"
+                type="radio"
+                button-variant-grouped="horizontal"
+                class="mode-switch sub-mode"
+                @update:model-value="handleSubModeChange"
+              >
+                <template #icon>
+                  <component
+                    :is="InquiryGeneralIcons.ViewCarousel"
+                    size="16"
+                  />
+                </template>
+              </NcCheckboxRadioSwitch>
             </div>
+          </div>
+
+          <div class="right-controls">
+            <InquiryListSort />
+
+            <!-- Reel controls -->
+            <template v-if="isReelView">
+              <!-- Vertical orientation button -->
+              <div class="reel-controls">
+                <NcCheckboxRadioSwitch
+                  :button-variant="true"
+                  :model-value="reelOrientation"
+                  value="vertical"
+                  name="reel_orientation"
+                  type="radio"
+                  button-variant-grouped="horizontal"
+                  class="mode-switch"
+                  @update:model-value="reelOrientation = $event"
+                >
+                  <template #icon>
+                    <component
+                      :is="InquiryGeneralIcons.ViewVertical"
+                      size="16"
+                    />
+                  </template>
+                </NcCheckboxRadioSwitch>
+
+                <!-- Horizontal orientation button -->
+                <NcCheckboxRadioSwitch
+                  :button-variant="true"
+                  :model-value="reelOrientation"
+                  value="horizontal"
+                  name="reel_orientation"
+                  type="radio"
+                  button-variant-grouped="horizontal"
+                  class="mode-switch"
+                  @update:model-value="reelOrientation = $event"
+                >
+                  <template #icon>
+                    <component
+                      :is="InquiryGeneralIcons.ViewHorizontal"
+                      size="16"
+                    />
+                  </template>
+                </NcCheckboxRadioSwitch>
+
+                <NcCheckboxRadioSwitch
+                  :button-variant="true"
+                  :model-value="showReelArrows"
+                  type="button"
+                  class="mode-switch"
+                  @click="showReelArrows = !showReelArrows"
+                >
+                  <template #icon>
+                    <component
+                      :is="InquiryGeneralIcons.ArrowLeftRight"
+                      size="16"
+                    />
+                  </template>
+                </NcCheckboxRadioSwitch>
+              </div>
+            </template>
+
+            <ActionToggleSidebar
+              v-if="
+                inquiryGroupsStore.currentInquiryGroup?.owner.id === sessionStore.currentUser.id
+              "
+            />
+          </div>
         </div>
-    </template>
+      </template>
     </HeaderBar>
 
     <InquiryFilter
-  	v-if="showFilterBar"
-  	:family-type="selectedFamily"
-	/>
+      v-if="showFilterBar"
+      :family-type="selectedFamily"
+    />
 
     <div class="area__main">
-        <!-- Reel View -->
-        <div v-if="!emptyInquiryListnoInquiries && isReelView" class="reel-wrapper">
-            <InquiryReel
-                :inquiries="inquiriesStore.chunkedList"
-                :orientation="reelOrientation"
-                :show-arrows="showReelArrows"
-                :show-progress="true"
-                @change="(index) => { /* Track current index if needed */ }"
-			    />
-	</div>
-	<div v-else-if="subMode === 'timeline'" class="timeline-wrapper">
-		<InquiryTimeline
-				:inquiries="inquiriesStore.chunkedList"
-				compact
-				:limit="20"
-				@click="openInquiry"
-				@viewAll="loadMore"
-				/>
-	</div>
-	<!-- Feed view -->
-	<div v-else-if="subMode === 'feed'" class="feed-wrapper">
-		<InquiryFeed
-				:inquiries="inquiriesStore.chunkedList"
-				@click="openInquiry"
-				/>
-	</div>
+      <!-- Reel View -->
+      <div
+        v-if="!emptyInquiryListnoInquiries && isReelView"
+        class="reel-wrapper"
+      >
+        <InquiryReel
+          :inquiries="inquiriesStore.chunkedList"
+          :orientation="reelOrientation"
+          :show-arrows="showReelArrows"
+          :show-progress="true"
+          @change="
+            (index) => {
+              /* Track current index if needed */
+            }
+          "
+        />
+      </div>
+      <div
+        v-else-if="subMode === 'timeline'"
+        class="timeline-wrapper"
+      >
+        <InquiryTimeline
+          :inquiries="inquiriesStore.chunkedList"
+          compact
+          :limit="20"
+          @click="openInquiry"
+          @view-all="loadMore"
+        />
+      </div>
+      <!-- Feed view -->
+      <div
+        v-else-if="subMode === 'feed'"
+        class="feed-wrapper"
+      >
+        <InquiryFeed
+          :inquiries="inquiriesStore.chunkedList"
+          @click="openInquiry"
+        />
+      </div>
 
-	<!-- Table and List Views -->
-	<TransitionGroup
-			v-if="!emptyInquiryListnoInquiries && (subMode === 'table-view' || subMode === 'list-view')"
-			tag="div"
-			name="list"
-			:class="[
-				'inquiry-list__container',
-				isGridView ? 'inquiry-list__grid' : 'inquiry-list__list',
-				]"
-			>
-			<InquiryItem
-					v-for="inquiry in inquiriesStore.chunkedList"
-					:key="inquiry.id"
-					:inquiry="inquiry"
-					:grid-view="isGridView"
-					>
-					<template #actions>
-						<InquiryItemActions
-								v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
-								:key="`actions-${inquiry.id}`"
-								:inquiry="inquiry"
-								/>
-					</template>
-			</InquiryItem>
-	</TransitionGroup>
+      <!-- Table and List Views -->
+      <TransitionGroup
+        v-if="!emptyInquiryListnoInquiries && (subMode === 'table-view' || subMode === 'list-view')"
+        tag="div"
+        name="list"
+        :class="[
+          'inquiry-list__container',
+          isGridView ? 'inquiry-list__grid' : 'inquiry-list__list',
+        ]"
+      >
+        <InquiryItem
+          v-for="inquiry in inquiriesStore.chunkedList"
+          :key="inquiry.id"
+          :inquiry="inquiry"
+          :grid-view="isGridView"
+        >
+          <template #actions>
+            <InquiryItemActions
+              v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
+              :key="`actions-${inquiry.id}`"
+              :inquiry="inquiry"
+            />
+          </template>
+        </InquiryItem>
+      </TransitionGroup>
 
-	<IntersectionObserver
-			v-if="showMore"
-			key="observer"
-			class="observer_section"
-			@visible="loadMore"
-			>
-			<div class="clickable_load_more" @click="loadMore">
-				{{ infoLoaded }}
-				{{ t('agora', 'Click here to load more') }}
-			</div>
-	</IntersectionObserver>
+      <IntersectionObserver
+        v-if="showMore"
+        key="observer"
+        class="observer_section"
+        @visible="loadMore"
+      >
+        <div
+          class="clickable_load_more"
+          @click="loadMore"
+        >
+          {{ infoLoaded }}
+          {{ t('agora', 'Click here to load more') }}
+        </div>
+      </IntersectionObserver>
 
-	<NcEmptyContent v-if="emptyInquiryListnoInquiries && (subMode === 'table-view' || subMode === 'list-view')" v-bind="emptyContentProps">
-	<template #icon>
-		<AgoraAppIcon />
-	</template>
-	</NcEmptyContent>
+      <NcEmptyContent
+        v-if="emptyInquiryListnoInquiries && (subMode === 'table-view' || subMode === 'list-view')"
+        v-bind="emptyContentProps"
+      >
+        <template #icon>
+          <AgoraAppIcon />
+        </template>
+      </NcEmptyContent>
     </div>
 
-    <LoadingOverlay :show="inquiriesStore.meta.status === 'loading'" v-bind="loadingOverlayProps" />
-    </NcAppContent>
+    <LoadingOverlay
+      :show="inquiriesStore.meta.status === 'loading'"
+      v-bind="loadingOverlayProps"
+    />
+  </NcAppContent>
 </template>
 
 <style lang="scss" scoped>
 .inquiry-list {
-	.area__main {
-		width: 100%;
-		height: 100%;
-		min-height: 400px;
-	}
+  .area__main {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+  }
 }
 
 .family-type-badge {
-	display: inline-block;
-	background: var(--color-primary-element-light);
-	color: var(--color-primary-text);
-	padding: 4px 12px;
-	border-radius: 20px;
-	font-size: 28px;
-	font-weight: 500;
-	margin: 0 0 16px 0;
-	letter-spacing: 2px;
-	animation: slideIn 0.3s ease-out;
+  display: inline-block;
+  background: var(--color-primary-element-light);
+  color: var(--color-primary-text);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+  letter-spacing: 2px;
+  animation: slideIn 0.3s ease-out;
 }
 
 .header-controls {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	width: 100%;
-	justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 .mode-switchers {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .right-controls {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-	    .reel-controls {
-		    display: flex;
-		    align-items: center;
-		    background: var(--color-background-dark);
-		    border-radius: 10px;
-		    padding: 4px;
-		    border: 1px solid var(--color-border);
+.reel-controls {
+  display: flex;
+  align-items: center;
+  background: var(--color-background-dark);
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
 
-		    :deep(.checkbox-radio-switch__label) {
-			    border-inline-start: none !important;
-		    }
-	    }
+  :deep(.checkbox-radio-switch__label) {
+    border-inline-start: none !important;
+  }
+}
 
-	    .reel-wrapper {
-		    width: 100%;
-		    height: 600px;
-		    max-height: calc(100vh - 250px);
-		    padding: 16px;
-		    box-sizing: border-box;
+.reel-wrapper {
+  width: 100%;
+  height: 600px;
+  max-height: calc(100vh - 250px);
+  padding: 16px;
+  box-sizing: border-box;
 
-		    @media (max-width: 768px) {
-			    height: 500px;
-			    padding: 8px;
-		    }
+  @media (max-width: 768px) {
+    height: 500px;
+    padding: 8px;
+  }
 
-		    @media (max-width: 480px) {
-			    height: 400px;
-			    padding: 4px;
-		    }
-	    }
+  @media (max-width: 480px) {
+    height: 400px;
+    padding: 4px;
+  }
+}
 
-	    .main-mode-switcher {
-		    display: flex;
-		    align-items: center;
-		    gap: 0;
-		    background: var(--color-background-dark);
-		    border-radius: 10px;
-		    padding: 4px;
-		    border: 1px solid var(--color-border);
+.main-mode-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--color-background-dark);
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
 
-		    .mode-switch {
-			    margin: 0;
+  .mode-switch {
+    margin: 0;
 
-			    :deep(.checkbox-radio-switch__label) {
-				    display: flex;
-				    align-items: center;
-				    gap: 6px;
-				    padding: 8px 12px;
-				    border-radius: 8px;
-				    font-weight: 500;
-				    font-size: 13px;
-				    transition: all 0.2s ease;
-				    cursor: pointer;
+    :deep(.checkbox-radio-switch__label) {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      cursor: pointer;
 
-				    &:hover {
-					    background: var(--color-background-hover);
-				    }
-			    }
+      &:hover {
+        background: var(--color-background-hover);
+      }
+    }
 
-			    :deep(input:checked + .checkbox-radio-switch__label) {
-				    background: var(--color-primary-element);
-				    color: var(--color-primary-text);
-				    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-			    }
+    :deep(input:checked + .checkbox-radio-switch__label) {
+      background: var(--color-primary-element);
+      color: var(--color-primary-text);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-			    // For button type (checkbox toggles)
-			    :deep(.checkbox-radio-switch--button) {
-				    &.active {
-					    background: var(--color-primary-element);
-					    color: var(--color-primary-text);
-					    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-				    }
-			    }
+    // For button type (checkbox toggles)
+    :deep(.checkbox-radio-switch--button) {
+      &.active {
+        background: var(--color-primary-element);
+        color: var(--color-primary-text);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
 
-			    :deep(.material-design-icon) {
-				    width: 16px;
-				    height: 16px;
-			    }
-		    }
-	    }
+    :deep(.material-design-icon) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
 
-	    :deep(.header-bar__right) {
-		    display: flex;
-		    align-items: center;
-		    gap: 12px;
-		    width: 100%;
-	    }
+:deep(.header-bar__right) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
 
-	    .inquiry-list__container {
-		    width: 100%;
-		    padding-bottom: 14px;
-		    box-sizing: border-box;
-	    }
+.inquiry-list__container {
+  width: 100%;
+  padding-bottom: 14px;
+  box-sizing: border-box;
+}
 
-	    .inquiry-list__list {
-		    display: flex;
-		    flex-direction: column;
-		    gap: 12px;
-	    }
+.inquiry-list__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-	    .inquiry-list__grid {
-		    display: grid;
-		    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-		    gap: 20px;
-		    padding: 16px;
-		    width: 100%;
-		    box-sizing: border-box;
-		    align-items: stretch;
+.inquiry-list__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: stretch;
 
-		    .inquiry-item {
-			    border: 1px solid var(--color-border);
-			    border-radius: 12px;
-			    padding: 10px;
-			    background-color: var(--color-main-background);
-			    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-			    transition: all 0.2s ease;
-			    height: 100%;
-			    min-height: 80px;
-			    display: flex;
-			    flex-direction: column;
+  .inquiry-item {
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 10px;
+    background-color: var(--color-main-background);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    height: 100%;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
 
-			    &:hover {
-				    transform: translateY(-2px);
-				    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-			    }
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
 
-			    .inquiry-item__header {
-				    margin-bottom: 16px;
-				    flex-grow: 1;
+    .inquiry-item__header {
+      margin-bottom: 16px;
+      flex-grow: 1;
 
-				    .inquiry-item__title {
-					    font-size: 16px;
-					    font-weight: 600;
-					    line-height: 1.4;
-					    margin-bottom: 12px;
-					    color: var(--color-main-text);
-					    word-break: break-word;
-				    }
-			    }
+      .inquiry-item__title {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 12px;
+        color: var(--color-main-text);
+        word-break: break-word;
+      }
+    }
 
-			    .inquiry-item__meta {
-				    display: flex;
-				    flex-wrap: wrap;
-				    gap: 10px;
-				    margin-bottom: 16px;
-				    font-size: 13px;
-				    color: var(--color-text-lighter);
+    .inquiry-item__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--color-text-lighter);
 
-				    .meta-item {
-					    display: flex;
-					    align-items: center;
-					    gap: 6px;
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
 
-					    .material-design-icon {
-						    width: 16px;
-						    height: 16px;
-						    flex-shrink: 0;
-					    }
-				    }
-			    }
+        .material-design-icon {
+          width: 16px;
+          height: 16px;
+          flex-shrink: 0;
+        }
+      }
+    }
 
-			    .inquiry-item__actions {
-				    margin-top: auto;
-				    padding-top: 16px;
-				    border-top: 1px solid var(--color-border-light);
-				    display: flex;
-				    justify-content: flex-end;
-				    gap: 10px;
-			    }
-		    }
+    .inquiry-item__actions {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--color-border-light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  }
 
-		    @media (max-width: 1400px) {
-			    grid-template-columns: repeat(3, 1fr);
-		    }
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 
-		    @media (max-width: 1024px) {
-			    grid-template-columns: repeat(2, 1fr);
-			    gap: 16px;
-			    padding: 12px;
-		    }
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 12px;
+  }
 
-		    @media (max-width: 768px) {
-			    grid-template-columns: 1fr;
-			    gap: 12px;
-			    padding: 8px;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 8px;
 
-			    .inquiry-item {
-				    padding: 16px;
-				    min-height: 160px;
-			    }
-		    }
-	    }
+    .inquiry-item {
+      padding: 16px;
+      min-height: 160px;
+    }
+  }
+}
 
-	    .observer_section {
-		    display: flex;
-		    justify-content: center;
-		    align-items: center;
-		    padding: 20px 0;
-		    grid-column: 1 / -1;
-		    width: 100%;
-	    }
+.observer_section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  grid-column: 1 / -1;
+  width: 100%;
+}
 
-	    .clickable_load_more {
-		    cursor: pointer;
-		    font-weight: 600;
-		    text-align: center;
-		    padding: 20px;
-		    background-color: var(--color-background-dark);
-		    border-radius: 12px;
-		    margin: 0 16px;
-		    color: var(--color-text-lighter);
-		    transition: background-color 0.2s ease;
+.clickable_load_more {
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  padding: 20px;
+  background-color: var(--color-background-dark);
+  border-radius: 12px;
+  margin: 0 16px;
+  color: var(--color-text-lighter);
+  transition: background-color 0.2s ease;
 
-		    &:hover {
-			    background-color: var(--color-background-darker);
-			    color: var(--color-main-text);
-		    }
-	    }
+  &:hover {
+    background-color: var(--color-background-darker);
+    color: var(--color-main-text);
+  }
+}
 
-	    .app-content {
-		    width: 100%;
+.app-content {
+  width: 100%;
 
-		    .app-content-wrapper {
-			    width: 100%;
-			    max-width: none;
-		    }
-	    }
+  .app-content-wrapper {
+    width: 100%;
+    max-width: none;
+  }
+}
 
-	    @media (min-width: 1600px) {
-		    .inquiry-list__grid {
-			    /* 1fr is minmax(auto, 1fr), so a wide card refuses to shrink and the
+@media (min-width: 1600px) {
+  .inquiry-list__grid {
+    /* 1fr is minmax(auto, 1fr), so a wide card refuses to shrink and the
 			       grid overflows its column. minmax(0, 1fr) lets the columns share
 			    the width they actually have. */
-			    grid-template-columns: repeat(4, minmax(0, 1fr));
-		    }
-	    }
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
 
-	    @media (max-width: 1024px) {
-		    .header-controls {
-			    flex-direction: row;
-			    gap: 12px;
-			    align-items: center;
-			    justify-content: flex-end;
-		    }
+@media (max-width: 1024px) {
+  .header-controls {
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+  }
 
-		    .reel-wrapper {
-			    height: 500px;
-		    }
-	    }
+  .reel-wrapper {
+    height: 500px;
+  }
+}
 
-	    @media (max-width: 768px) {
-		    :deep(.header-bar__right) {
-			    flex-wrap: wrap;
-			    justify-content: flex-end;
-			    gap: 8px;
-		    }
+@media (max-width: 768px) {
+  :deep(.header-bar__right) {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
 
-		    .header-controls {
-			    flex-direction: column;
-			    gap: 8px;
-			    align-items: stretch;
-		    }
+  .header-controls {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
 
-		    .mode-switchers {
-			    flex-direction: column;
-			    gap: 8px;
-			    width: 100%;
-		    }
+  .mode-switchers {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
 
-		    .main-mode-switcher {
-			    width: 100%;
-			    justify-content: center;
-		    }
+  .main-mode-switcher {
+    width: 100%;
+    justify-content: center;
+  }
 
-		    .mode-switch {
-			    :deep(.checkbox-radio-switch__label) {
-				    flex: 1;
-				    justify-content: center;
-			    }
-		    }
+  .mode-switch {
+    :deep(.checkbox-radio-switch__label) {
+      flex: 1;
+      justify-content: center;
+    }
+  }
 
-		    .right-controls {
-			    justify-content: center;
-			    flex-wrap: wrap;
-		    }
+  .right-controls {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 
-		    .reel-wrapper {
-			    height: 400px;
-		    }
-	    }
+  .reel-wrapper {
+    height: 400px;
+  }
+}
 
-	    @media (max-width: 480px) {
-		    .main-mode-switcher .mode-switch :deep(.checkbox-radio-switch__label) {
-			    padding: 8px 10px;
-			    font-size: 12px;
+@media (max-width: 480px) {
+  .main-mode-switcher .mode-switch :deep(.checkbox-radio-switch__label) {
+    padding: 8px 10px;
+    font-size: 12px;
 
-			    .material-design-icon {
-				    width: 14px;
-				    height: 14px;
-			    }
-		    }
+    .material-design-icon {
+      width: 14px;
+      height: 14px;
+    }
+  }
 
-		    .right-controls {
-			    flex-wrap: wrap;
-			    justify-content: center;
-			    gap: 6px;
-		    }
+  .right-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
 
-		    .reel-wrapper {
-			    height: 350px;
-			    padding: 4px;
-		    }
-	    }
+  .reel-wrapper {
+    height: 350px;
+    padding: 4px;
+  }
+}
 </style>

@@ -17,8 +17,6 @@ export function useViewableInquiries(): ComputedRef<Inquiry[]> {
   const inquiriesStore = useInquiriesStore()
 
   return computed(() =>
-    inquiriesStore.inquiries.filter(
-      (i) => !i.status?.isArchived && i.permissions?.view === true,
-    ),
+    inquiriesStore.inquiries.filter((i) => !i.status?.isArchived && i.permissions?.view === true)
   )
 }

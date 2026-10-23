@@ -63,7 +63,10 @@ const cardType = computed(() =>
 </script>
 
 <template>
-  <CardDiv :heading="t('agora', 'Limited inquiries')" :type="cardType">
+  <CardDiv
+    :heading="t('agora', 'Limited inquiries')"
+    :type="cardType"
+  >
     <span v-if="inquiryStore.configuration.maxInquiriesPerOption">
       {{ optionsAvailableText }}
     </span>
@@ -73,7 +76,7 @@ const cardType = computed(() =>
     <div
       v-if="
         inquiryStore.currentUserStatus.orphanedInquiries &&
-        inquiryStore.configuration.maxInquiriesPerUser
+          inquiryStore.configuration.maxInquiriesPerUser
       "
     >
       <b>{{ orphanedInquiriesText }}</b>
@@ -82,7 +85,7 @@ const cardType = computed(() =>
     <template
       v-if="
         inquiryStore.currentUserStatus.orphanedInquiries &&
-        inquiryStore.configuration.maxInquiriesPerUser
+          inquiryStore.configuration.maxInquiriesPerUser
       "
       #button
     >

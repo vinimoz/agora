@@ -44,7 +44,10 @@ onMounted(() => {
       {{ description }}
     </slot>
     <div class="canvas">
-      <img :src="qrUri" :alt="encodeText" />
+      <img
+        :src="qrUri"
+        :alt="encodeText"
+      >
     </div>
     <h3>{{ subTitle }}</h3>
     <p />

@@ -11,7 +11,7 @@ let lastUpdated = 0
 let http: AxiosInstance
 let consecutiveErrors = 0
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 interface WorkerMessageData {
   updateType: string
@@ -32,7 +32,6 @@ interface WorkerResponseMessage {
   updates?: unknown[]
   lastUpdate?: number
 }
-
 
 // Worker message handler
 self.onmessage = async (props: MessageEvent<WorkerMessageData>) => {
@@ -66,7 +65,7 @@ self.onmessage = async (props: MessageEvent<WorkerMessageData>) => {
         Accept: 'application/json',
         'Nc-Agora-Client-Id': watcherId,
       },
-      validateStatus: status => [200, 304].includes(status),
+      validateStatus: (status) => [200, 304].includes(status),
     })
   }
 
@@ -111,7 +110,7 @@ self.onmessage = async (props: MessageEvent<WorkerMessageData>) => {
         })
       }
     } catch {
-      consecutiveErrors+=1
+      consecutiveErrors += 1
 
       sendMessage({
         type: 'warning',
@@ -162,4 +161,3 @@ self.onmessage = async (props: MessageEvent<WorkerMessageData>) => {
     while (true) await run()
   }
 }
-

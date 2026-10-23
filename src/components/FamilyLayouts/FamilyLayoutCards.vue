@@ -5,51 +5,69 @@
 <template>
   <div class="cards-layout">
     <!-- grid -->
-    <div v-if="viewMode === 'grid'" class="options-grid">
+    <div
+      v-if="viewMode === 'grid'"
+      class="options-grid"
+    >
       <ItemCard
         v-for="item in filtered"
         :key="`${item.kind}-${item.id}`"
         :item="item"
         :parent-id="parentId"
-	:target-type="targetType"
-	:family-type="familyKey"
+        :target-type="targetType"
+        :family-type="familyKey"
         @click="emit('openDetail', item)"
       />
     </div>
 
     <!-- list -->
-    <div v-else-if="viewMode === 'list'" class="options-list">
+    <div
+      v-else-if="viewMode === 'list'"
+      class="options-list"
+    >
       <ItemCard
         v-for="item in filtered"
         :key="`${item.kind}-${item.id}`"
         :item="item"
         :parent-id="parentId"
-	:target-type="targetType"
-	:family-type="familyKey"
+        :target-type="targetType"
+        :family-type="familyKey"
         @click="emit('openDetail', item)"
       />
     </div>
 
     <!-- compact -->
-    <div v-else class="options-compact">
+    <div
+      v-else
+      class="options-compact"
+    >
       <ItemCard
         v-for="item in filtered"
         :key="`${item.kind}-${item.id}`"
         :item="item"
         :parent-id="parentId"
-	:target-type="targetType"
-	:family-type="familyKey"
+        :target-type="targetType"
+        :family-type="familyKey"
         @click="emit('openDetail', item)"
       />
     </div>
 
     <!-- empty -->
-    <div v-if="items.length === 0" class="empty-state">
-      <component :is="getFamilyIcon()" :size="48" />
+    <div
+      v-if="items.length === 0"
+      class="empty-state"
+    >
+      <component
+        :is="getFamilyIcon()"
+        :size="48"
+      />
       <h4>{{ t('agora', 'No options yet') }}</h4>
       <p>{{ t('agora', 'Be the first to contribute') }}</p>
 
-      <div v-if="optionTypes.length > 0" class="quick-add-actions">
+      <div
+        v-if="optionTypes.length > 0"
+        class="quick-add-actions"
+      >
         <NcButton
           v-for="type in optionTypes"
           :key="type.option_type"
@@ -57,7 +75,10 @@
           @click="emit('addOption', type.option_type)"
         >
           <template #icon>
-            <component :is="getOptionTypeIcon(type.option_type)" :size="16" />
+            <component
+              :is="getOptionTypeIcon(type.option_type)"
+              :size="16"
+            />
           </template>
           {{ type.label }}
         </NcButton>
@@ -65,15 +86,42 @@
     </div>
 
     <!-- view toggle -->
-    <div v-if="items.length > 0 && hasMultipleViewModes" class="view-mode-toggle">
-      <NcButton :type="viewMode === 'grid' ? 'primary' : 'tertiary'" @click="viewMode = 'grid'">
-        <template #icon><component :is="InquiryOptionIcons.Grid" :size="18" /></template>
+    <div
+      v-if="items.length > 0 && hasMultipleViewModes"
+      class="view-mode-toggle"
+    >
+      <NcButton
+        :type="viewMode === 'grid' ? 'primary' : 'tertiary'"
+        @click="viewMode = 'grid'"
+      >
+        <template #icon>
+          <component
+            :is="InquiryOptionIcons.Grid"
+            :size="18"
+          />
+        </template>
       </NcButton>
-      <NcButton :type="viewMode === 'list' ? 'primary' : 'tertiary'" @click="viewMode = 'list'">
-        <template #icon><component :is="InquiryOptionIcons.List" :size="18" /></template>
+      <NcButton
+        :type="viewMode === 'list' ? 'primary' : 'tertiary'"
+        @click="viewMode = 'list'"
+      >
+        <template #icon>
+          <component
+            :is="InquiryOptionIcons.List"
+            :size="18"
+          />
+        </template>
       </NcButton>
-      <NcButton :type="viewMode === 'compact' ? 'primary' : 'tertiary'" @click="viewMode = 'compact'">
-        <template #icon><component :is="InquiryOptionIcons.Collapse" :size="18" /></template>
+      <NcButton
+        :type="viewMode === 'compact' ? 'primary' : 'tertiary'"
+        @click="viewMode = 'compact'"
+      >
+        <template #icon>
+          <component
+            :is="InquiryOptionIcons.Collapse"
+            :size="18"
+          />
+        </template>
       </NcButton>
     </div>
   </div>
@@ -113,23 +161,25 @@ const emit = defineEmits<{
 
 const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
 
-const filtered = computed(() =>
-  getItemsForFamily(props.items, familyKey.value)
-)
+const filtered = computed(() => getItemsForFamily(props.items, familyKey.value))
 
 // Debug
-console.log('[Cards] familyKey =', familyKey.value, '| items =', props.items.length, '| filtered =', filtered.value.length)
+console.log(
+  '[Cards] familyKey =',
+  familyKey.value,
+  '| items =',
+  props.items.length,
+  '| filtered =',
+  filtered.value.length
+)
 
 const viewMode = ref<'grid' | 'list' | 'compact'>('grid')
 
-const hasMultipleViewModes = computed(() =>
-  (props.family?.ui as any)?.viewModes?.length > 1
-)
+const hasMultipleViewModes = computed(() => (props.family?.ui as any)?.viewModes?.length > 1)
 
 const getFamilyIcon = () => getFamilyIconComponent(props.family?.key || 'default')
-const getOptionTypeIcon = (type: string) =>
-  getOptionTypeIconComponent(type, props.optionTypes)
-console.log(" ITEMS IN CARD  ",props.items)
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, props.optionTypes)
+console.log(' ITEMS IN CARD  ', props.items)
 </script>
 
 <style scoped lang="scss">
@@ -173,20 +223,39 @@ console.log(" ITEMS IN CARD  ",props.items)
     border: 2px dashed var(--color-border);
     border-radius: 16px;
 
-    svg { color: var(--color-text-lighter); margin-bottom: 20px; }
-    h4 { margin: 0 0 8px 0; font-size: 18px; }
-    p { margin: 0 0 24px 0; color: var(--color-text-lighter); font-style: italic; }
+    svg {
+      color: var(--color-text-lighter);
+      margin-bottom: 20px;
+    }
+    h4 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+    }
+    p {
+      margin: 0 0 24px 0;
+      color: var(--color-text-lighter);
+      font-style: italic;
+    }
 
     .quick-add-actions {
-      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
   }
 }
 
 @media (max-width: 768px) {
   .cards-layout {
-    .view-mode-toggle { position: static; margin-bottom: 16px; justify-content: center; }
-    .options-grid { grid-template-columns: 1fr; }
+    .view-mode-toggle {
+      position: static;
+      margin-bottom: 16px;
+      justify-content: center;
+    }
+    .options-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

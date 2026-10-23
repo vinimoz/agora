@@ -46,35 +46,38 @@ const formErrors = ref({
 
 // Computed
 const availableGroupStatuses = computed(() => [
-    { id: 'draft', label: t('agora', 'Draft'), icon: StatusIcons.Draft },
-    { id: 'active', label: t('agora', 'Active'), icon: StatusIcons.Active },
-    { id: 'archived', label: t('agora', 'Archived'), icon: StatusIcons.Archived },
-  ])
+  { id: 'draft', label: t('agora', 'Draft'), icon: StatusIcons.Draft },
+  { id: 'active', label: t('agora', 'Active'), icon: StatusIcons.Active },
+  { id: 'archived', label: t('agora', 'Archived'), icon: StatusIcons.Archived },
+])
 
-const statusOptions = computed(() => 
-  availableGroupStatuses.value.map(status => ({
+const statusOptions = computed(() =>
+  availableGroupStatuses.value.map((status) => ({
     id: status.id,
     label: status.label,
   }))
 )
 
-const canEditGroup = computed(() => inquiryGroupStore.currentUserStatus?.isOwner || 
-         sessionStore.currentUser.type === 'admin' ||
-         inquiryGroupStore.allowEdit)
+const canEditGroup = computed(
+  () =>
+    inquiryGroupStore.currentUserStatus?.isOwner ||
+    sessionStore.currentUser.type === 'admin' ||
+    inquiryGroupStore.allowEdit
+)
 
 // Methods
 const loadGroup = async () => {
   if (!inquiryGroupStore.id) return
-  
+
   loading.value = true
   try {
     await inquiryGroupStore.load(inquiryGroupStore.id)
-    
+
     // Load cover image
     if (inquiryGroupStore.coverId) {
       currentCoverUrl.value = getNextcloudPreviewUrl(inquiryGroupStore.coverId)
     }
-    
+
     // Initialize last save data
     lastSaveData = JSON.stringify(getSaveableData())
   } catch (error) {
@@ -101,7 +104,7 @@ const triggerImageUpload = () => {
  */
 const handleImageUpload = async (event: Event) => {
   if (!canEditGroup.value) return
-  
+
   const file = (event.target as HTMLInputElement).files?.[0]
   if (!file) return
 
@@ -119,7 +122,7 @@ const handleImageUpload = async (event: Event) => {
 
   try {
     autoSaving.value = true
-    
+
     const response = await attachmentsStore.uploadGroup(inquiryGroupStore.id, file, true)
 
     const attachment = {
@@ -134,7 +137,7 @@ const handleImageUpload = async (event: Event) => {
     attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
     currentCoverUrl.value = getNextcloudPreviewUrl(attachment.fileId as number)
     inquiryGroupStore.coverId = attachment.fileId as number
-    
+
     // Auto-save after image upload
     await autoSaveGroup()
     showSuccess(t('agora', '{file} uploaded', { file: response.name ?? file.name }))
@@ -151,13 +154,13 @@ const handleImageUpload = async (event: Event) => {
 }
 
 const getSaveableData = () => ({
-    title: inquiryGroupStore.title.trim(),
-    titleExt: inquiryGroupStore.titleExt.trim(),
-    description: inquiryGroupStore.description.trim(),
-    groupStatus: inquiryGroupStore.status.groupStatus,
-    expire: inquiryGroupStore.expire,
-    coverId: inquiryGroupStore.coverId,
-  })
+  title: inquiryGroupStore.title.trim(),
+  titleExt: inquiryGroupStore.titleExt.trim(),
+  description: inquiryGroupStore.description.trim(),
+  groupStatus: inquiryGroupStore.status.groupStatus,
+  expire: inquiryGroupStore.expire,
+  coverId: inquiryGroupStore.coverId,
+})
 
 const validateForm = () => {
   let isValid = true
@@ -186,7 +189,7 @@ const validateForm = () => {
 
 const autoSaveGroup = async () => {
   if (!canEditGroup.value) return
-  
+
   if (!validateForm()) {
     return
   }
@@ -206,10 +209,10 @@ const autoSaveGroup = async () => {
   autoSaving.value = true
   try {
     await inquiryGroupStore.update(getSaveableData())
-    
+
     // Update last saved data
     lastSaveData = currentData
-    
+
     // Show success feedback (optional, you might want to show this less frequently)
     // showSuccess(t('agora', 'Settings saved'))
     emit('saved')
@@ -223,12 +226,12 @@ const autoSaveGroup = async () => {
 
 const debouncedSave = () => {
   if (!canEditGroup.value) return
-  
+
   // Clear any existing timeout
   if (saveTimeout) {
     clearTimeout(saveTimeout)
   }
-  
+
   // Set new timeout for auto-save (1 second delay)
   saveTimeout = setTimeout(() => {
     autoSaveGroup()
@@ -237,12 +240,12 @@ const debouncedSave = () => {
 
 const removeCoverImage = async () => {
   if (!canEditGroup.value) return
-  
+
   try {
     autoSaving.value = true
     currentCoverUrl.value = ''
     inquiryGroupStore.coverId = null
-    
+
     // Auto-save after removing cover image
     await autoSaveGroup()
     showSuccess(t('agora', 'Cover image removed'))
@@ -260,10 +263,13 @@ const formatDate = (timestamp: number | null) => {
 }
 
 const getFormFieldState = (field: keyof typeof formErrors) => ({
-    error: !!formErrors.value[field],
-    success: !formErrors.value[field] && inquiryGroupStore[field as keyof typeof inquiryGroupStore] ? true : undefined,
-    helperText: formErrors.value[field],
-  })
+  error: !!formErrors.value[field],
+  success:
+    !formErrors.value[field] && inquiryGroupStore[field as keyof typeof inquiryGroupStore]
+      ? true
+      : undefined,
+  helperText: formErrors.value[field],
+})
 
 // Watchers for auto-save
 watch(() => inquiryGroupStore.title, debouncedSave, { deep: true })
@@ -291,9 +297,14 @@ onMounted(() => {
     <!-- Header -->
     <div class="sidebar-header">
       <h2>{{ t('agora', 'Group configuration') }}</h2>
-      <p class="subtitle">{{ inquiryGroupStore.title || t('agora', 'Untitled group') }}</p>
-      
-      <div v-if="!canEditGroup" class="readonly-notice">
+      <p class="subtitle">
+        {{ inquiryGroupStore.title || t('agora', 'Untitled group') }}
+      </p>
+
+      <div
+        v-if="!canEditGroup"
+        class="readonly-notice"
+      >
         <component :is="InquiryGeneralIcons.AlertCircle" />
         <span>{{ t('agora', 'Read-only mode') }}</span>
       </div>
@@ -305,7 +316,7 @@ onMounted(() => {
         <component :is="InquiryGeneralIcons.Image" />
         {{ t('agora', 'Cover image') }}
       </h3>
-      
+
       <div class="cover-section">
         <input
           ref="imageFileInput"
@@ -315,26 +326,32 @@ onMounted(() => {
           :aria-label="t('agora', 'Select cover image')"
           :disabled="!canEditGroup"
           @change="handleImageUpload"
-        />
+        >
 
-        <div 
-          v-if="currentCoverUrl" 
+        <div
+          v-if="currentCoverUrl"
           class="cover-preview"
-          :class="{ 'readonly': !canEditGroup }"
+          :class="{ readonly: !canEditGroup }"
           @click="triggerImageUpload"
         >
-          <img 
-            :src="currentCoverUrl" 
+          <img
+            :src="currentCoverUrl"
             :alt="t('agora', 'Cover image')"
             class="cover-image"
-          />
-          <div v-if="canEditGroup" class="cover-overlay">
-            <NcButton type="primary" class="change-cover-btn">
+          >
+          <div
+            v-if="canEditGroup"
+            class="cover-overlay"
+          >
+            <NcButton
+              type="primary"
+              class="change-cover-btn"
+            >
               <component :is="InquiryGeneralIcons.Edit" />
               {{ t('agora', 'Change') }}
             </NcButton>
-            <NcButton 
-              type="error" 
+            <NcButton
+              type="error"
               class="remove-cover-btn"
               @click.stop="removeCoverImage"
             >
@@ -343,26 +360,33 @@ onMounted(() => {
           </div>
         </div>
 
-        <div 
+        <div
           v-else
           class="cover-placeholder"
-          :class="{ 'readonly': !canEditGroup }"
+          :class="{ readonly: !canEditGroup }"
           @click="triggerImageUpload"
         >
           <div class="placeholder-content">
-            <component :is="InquiryGeneralIcons.Image" class="placeholder-icon" />
-            <NcButton 
-              type="primary" 
+            <component
+              :is="InquiryGeneralIcons.Image"
+              class="placeholder-icon"
+            />
+            <NcButton
+              type="primary"
               class="add-cover-btn"
               :disabled="!canEditGroup || autoSaving"
             >
               {{ t('agora', 'Add cover image') }}
             </NcButton>
-            <p class="placeholder-text">{{ t('agora', 'Click to add a cover image') }}</p>
+            <p class="placeholder-text">
+              {{ t('agora', 'Click to add a cover image') }}
+            </p>
           </div>
         </div>
-        
-        <p class="cover-help">{{ t('agora', 'Recommended size: 1200×400 pixels') }}</p>
+
+        <p class="cover-help">
+          {{ t('agora', 'Recommended size: 1200×400 pixels') }}
+        </p>
       </div>
     </div>
 
@@ -372,7 +396,7 @@ onMounted(() => {
         <component :is="InquiryGeneralIcons.Title" />
         {{ t('agora', 'Basic information') }}
       </h3>
-      
+
       <div class="form-fields">
         <!-- Title Field - Full width -->
         <NcTextArea
@@ -390,7 +414,7 @@ onMounted(() => {
             <component :is="InquiryGeneralIcons.Text" />
           </template>
         </NcTextArea>
-        
+
         <!-- Extended Title Field - Full width -->
         <NcTextArea
           v-model="inquiryGroupStore.titleExt"
@@ -416,7 +440,7 @@ onMounted(() => {
         <component :is="InquiryGeneralIcons.Description" />
         {{ t('agora', 'Description') }}
       </h3>
-      
+
       <div class="form-group">
         <NcTextArea
           v-model="inquiryGroupStore.description"
@@ -427,7 +451,10 @@ onMounted(() => {
         />
         <div class="character-count">
           {{ inquiryGroupStore.description.length }}/2000
-          <span v-if="formErrors.description" class="error-text">
+          <span
+            v-if="formErrors.description"
+            class="error-text"
+          >
             {{ formErrors.description }}
           </span>
         </div>
@@ -440,7 +467,7 @@ onMounted(() => {
         <component :is="InquiryGeneralIcons.Status" />
         {{ t('agora', 'Status & settings') }}
       </h3>
-      
+
       <div class="form-fields">
         <!-- Status Field -->
         <div class="form-group full-width">
@@ -454,18 +481,23 @@ onMounted(() => {
             :disabled="!canEditGroup || autoSaving"
             class="form-select"
           />
-          <p class="form-help">{{ t('agora', 'Current status of the group') }}</p>
+          <p class="form-help">
+            {{ t('agora', 'Current status of the group') }}
+          </p>
         </div>
-        
+
         <!-- Expiration Field -->
-        <div v-if="inquiryGroupStore.expire" class="form-group full-width">
+        <div
+          v-if="inquiryGroupStore.expire"
+          class="form-group full-width"
+        >
           <label class="form-label">
             {{ t('agora', 'Expiration') }}
           </label>
           <div class="expiration-info">
             <p>{{ formatDate(inquiryGroupStore.expire) }}</p>
-            <NcButton 
-              type="secondary" 
+            <NcButton
+              type="secondary"
               size="small"
               :disabled="!canEditGroup || autoSaving"
               @click="inquiryGroupStore.expire = null"
@@ -478,21 +510,33 @@ onMounted(() => {
     </div>
 
     <!-- Auto-save Status -->
-    <div v-if="canEditGroup" class="auto-save-status">
-      <div v-if="autoSaving" class="saving-indicator">
-        <div class="saving-spinner"></div>
+    <div
+      v-if="canEditGroup"
+      class="auto-save-status"
+    >
+      <div
+        v-if="autoSaving"
+        class="saving-indicator"
+      >
+        <div class="saving-spinner" />
         <span>{{ t('agora', 'Saving changes …') }}</span>
       </div>
-      <div v-else class="saved-indicator">
+      <div
+        v-else
+        class="saved-indicator"
+      >
         <component :is="InquiryGeneralIcons.CheckCircle" />
         <span>{{ t('agora', 'Changes saved') }}</span>
       </div>
     </div>
-    
+
     <!-- Loading State -->
-    <div v-if="loading" class="loading-overlay">
+    <div
+      v-if="loading"
+      class="loading-overlay"
+    >
       <div class="loading-content">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner" />
         <p>{{ t('agora', 'Loading group settings …') }}</p>
       </div>
     </div>
@@ -510,20 +554,20 @@ onMounted(() => {
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 2px solid var(--color-border);
-  
+
   h2 {
     font-size: 20px;
     font-weight: 600;
     color: var(--color-main-text);
     margin-bottom: 4px;
   }
-  
+
   .subtitle {
     font-size: 14px;
     color: var(--color-text-lighter);
     margin: 0 0 8px 0;
   }
-  
+
   .readonly-notice {
     display: flex;
     align-items: center;
@@ -534,7 +578,7 @@ onMounted(() => {
     border-radius: 8px;
     font-size: 13px;
     color: var(--color-warning-text);
-    
+
     svg {
       color: var(--color-warning);
     }
@@ -543,7 +587,7 @@ onMounted(() => {
 
 .settings-section {
   margin-bottom: 28px;
-  
+
   .section-title {
     display: flex;
     align-items: center;
@@ -552,7 +596,7 @@ onMounted(() => {
     font-weight: 600;
     color: var(--color-main-text);
     margin-bottom: 16px;
-    
+
     svg {
       color: var(--color-primary-element);
     }
@@ -567,23 +611,23 @@ onMounted(() => {
     border-radius: 12px;
     overflow: hidden;
     border: 2px solid var(--color-border);
-    
+
     &:not(.readonly) {
       cursor: pointer;
-      
+
       &:hover {
         .cover-overlay {
           opacity: 1;
         }
       }
     }
-    
+
     .cover-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
+
     .cover-overlay {
       position: absolute;
       top: 0;
@@ -597,7 +641,7 @@ onMounted(() => {
       gap: 12px;
       opacity: 0;
       transition: opacity 0.3s ease;
-      
+
       .change-cover-btn,
       .remove-cover-btn {
         padding: 8px 16px;
@@ -605,7 +649,7 @@ onMounted(() => {
       }
     }
   }
-  
+
   .cover-placeholder {
     width: 100%;
     height: 100px;
@@ -613,20 +657,20 @@ onMounted(() => {
     border-radius: 12px;
     background: var(--color-background-dark);
     transition: all 0.2s ease;
-    
+
     &:not(.readonly) {
       cursor: pointer;
-      
+
       &:hover {
         border-color: var(--color-primary);
         background: var(--color-background-hover);
-        
+
         .placeholder-icon {
           color: var(--color-primary);
         }
       }
     }
-    
+
     .placeholder-content {
       height: 100%;
       display: flex;
@@ -634,17 +678,17 @@ onMounted(() => {
       align-items: center;
       justify-content: center;
       text-align: center;
-      
+
       .placeholder-icon {
         color: var(--color-text-lighter);
         margin-bottom: 12px;
         transition: color 0.2s ease;
       }
-      
+
       .add-cover-btn {
         margin-bottom: 8px;
       }
-      
+
       .placeholder-text {
         font-size: 12px;
         color: var(--color-text-lighter);
@@ -652,7 +696,7 @@ onMounted(() => {
       }
     }
   }
-  
+
   .cover-help {
     font-size: 12px;
     color: var(--color-text-lighter);
@@ -670,29 +714,29 @@ onMounted(() => {
 
 :deep(.form-input) {
   width: 100%;
-  
+
   &.full-width {
     margin-bottom: 8px;
   }
-  
+
   .input-field__input-wrapper {
     .input-field__icon {
       color: var(--color-primary-element);
     }
-    
+
     .input-field__input {
       &:disabled {
         background: var(--color-background-dark);
         cursor: not-allowed;
       }
     }
-    
+
     &.input-field__input-wrapper--error {
       .input-field__icon {
         color: var(--color-error);
       }
     }
-    
+
     &.input-field__input-wrapper--success {
       .input-field__icon {
         color: var(--color-success);
@@ -705,7 +749,7 @@ onMounted(() => {
   &.full-width {
     width: 100%;
   }
-  
+
   .form-label {
     display: block;
     font-size: 14px;
@@ -713,33 +757,33 @@ onMounted(() => {
     color: var(--color-main-text);
     margin-bottom: 8px;
   }
-  
+
   .form-textarea {
     width: 100%;
-    
+
     &.large {
       min-height: 260px;
     }
-    
+
     &:disabled {
       background: var(--color-background-dark);
       cursor: not-allowed;
     }
   }
-  
+
   .form-help {
     font-size: 12px;
     color: var(--color-text-lighter);
     margin-top: 6px;
     margin-bottom: 0;
   }
-  
+
   .character-count {
     font-size: 12px;
     color: var(--color-text-lighter);
     margin-top: 6px;
     text-align: right;
-    
+
     .error-text {
       color: var(--color-error);
       margin-left: 8px;
@@ -752,7 +796,7 @@ onMounted(() => {
   background: var(--color-warning-light);
   border: 1px solid var(--color-warning);
   border-radius: 8px;
-  
+
   p {
     margin: 0 0 8px 0;
     font-size: 14px;
@@ -762,12 +806,12 @@ onMounted(() => {
 
 .form-select {
   width: 100%;
-  
+
   :deep(.multiselect) {
     &[disabled] {
       opacity: 0.5;
       cursor: not-allowed;
-      
+
       .multiselect__tags {
         background: var(--color-background-dark);
       }
@@ -779,7 +823,7 @@ onMounted(() => {
   margin-top: 32px;
   padding-top: 20px;
   border-top: 2px solid var(--color-border);
-  
+
   .saving-indicator,
   .saved-indicator {
     display: flex;
@@ -787,10 +831,10 @@ onMounted(() => {
     gap: 8px;
     font-size: 14px;
   }
-  
+
   .saving-indicator {
     color: var(--color-text-lighter);
-    
+
     .saving-spinner {
       width: 16px;
       height: 16px;
@@ -800,10 +844,10 @@ onMounted(() => {
       animation: spin 1s linear infinite;
     }
   }
-  
+
   .saved-indicator {
     color: var(--color-success);
-    
+
     svg {
       color: var(--color-success);
     }
@@ -821,10 +865,10 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  
+
   .loading-content {
     text-align: center;
-    
+
     .loading-spinner {
       width: 40px;
       height: 40px;
@@ -834,7 +878,7 @@ onMounted(() => {
       animation: spin 1s linear infinite;
       margin: 0 auto 16px;
     }
-    
+
     p {
       font-size: 14px;
       color: var(--color-main-text);
@@ -844,7 +888,9 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .hidden {

@@ -12,20 +12,17 @@ import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
 import { createDefault, type User } from '../../Types'
 
 interface Props {
-	user: User
+  user: User
 }
 
 const { user = createDefault<User>() } = defineProps<Props>()
 
 const bubbleProps = computed(() => ({
-	user: user.isNoUser || user.isGuest ? undefined : user.id,
-	displayName:
-		user.type === 'deleted'
-			? t('agora', 'Deleted participant')
-			: user.displayName,
+  user: user.isNoUser || user.isGuest ? undefined : user.id,
+  displayName: user.type === 'deleted' ? t('agora', 'Deleted participant') : user.displayName,
 }))
 </script>
 
 <template>
-	<NcUserBubble v-bind="bubbleProps" />
+  <NcUserBubble v-bind="bubbleProps" />
 </template>

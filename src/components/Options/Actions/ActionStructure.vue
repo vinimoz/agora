@@ -1,7 +1,5 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
+AGPL-3.0-or-later */
 
 <template>
   <ImportDocumentModal
@@ -25,7 +23,7 @@ interface Props {
 
 const emit = defineEmits<{
   close: []
-  'actionCompleted': [result: unknown]
+  actionCompleted: [result: unknown]
 }>()
 
 const handleClose = () => {
@@ -36,7 +34,7 @@ const handleImported = (result: unknown) => {
   emit('actionCompleted', {
     ...result,
     refreshOptions: true,
-    message: 'Document imported successfully'
+    message: 'Document imported successfully',
   })
 }
 </script>

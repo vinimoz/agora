@@ -9,33 +9,54 @@
     :class="[
       `mode-${mode}`,
       { 'is-active': isActive },
-      `status-${inquiry.status?.inquiryStatus || 'draft'}`
+      `status-${inquiry.status?.inquiryStatus || 'draft'}`,
     ]"
     @click="handleClick"
   >
     <!-- Status Dot -->
-    <div class="item-status-dot" :class="statusDotClass">
-      <component :is="statusIcon" :size="12" />
+    <div
+      class="item-status-dot"
+      :class="statusDotClass"
+    >
+      <component
+        :is="statusIcon"
+        :size="12"
+      />
     </div>
 
     <!-- Content -->
     <div class="item-content">
       <div class="item-header">
         <div class="item-title-wrapper">
-          <component :is="typeIcon" :size="mode === 'compact' ? 16 : 20" class="item-type-icon" />
-          <h4 class="item-title">{{ inquiry.title }}</h4>
+          <component
+            :is="typeIcon"
+            :size="mode === 'compact' ? 16 : 20"
+            class="item-type-icon"
+          />
+          <h4 class="item-title">
+            {{ inquiry.title }}
+          </h4>
         </div>
         <span class="item-time">{{ formatTime(inquiry.status?.created) }}</span>
       </div>
 
       <!-- Description (detailed mode) -->
-      <p v-if="mode === 'detailed' && shortDescription" class="item-description">
+      <p
+        v-if="mode === 'detailed' && shortDescription"
+        class="item-description"
+      >
         {{ shortDescription }}
       </p>
 
       <!-- Meta (detailed mode) -->
-      <div v-if="mode === 'detailed'" class="item-meta">
-        <div v-if="inquiry.ownedGroup || inquiry.owner?.displayName" class="meta-author">
+      <div
+        v-if="mode === 'detailed'"
+        class="item-meta"
+      >
+        <div
+          v-if="inquiry.ownedGroup || inquiry.owner?.displayName"
+          class="meta-author"
+        >
           <NcAvatar
             v-if="inquiry.ownedGroup"
             :display-name="inquiry.ownedGroup"
@@ -51,33 +72,67 @@
           <span>{{ inquiry.ownedGroup || inquiry.owner?.displayName }}</span>
         </div>
 
-        <div v-if="inquiry.status?.countComments" class="meta-item">
-          <component :is="Icons.Comment" :size="12" />
+        <div
+          v-if="inquiry.status?.countComments"
+          class="meta-item"
+        >
+          <component
+            :is="Icons.Comment"
+            :size="12"
+          />
           <span>{{ inquiry.status.countComments }}</span>
         </div>
 
-        <div v-if="inquiry.status?.countSupports" class="meta-item">
-          <component :is="Icons.ThumbUp" :size="12" />
+        <div
+          v-if="inquiry.status?.countSupports"
+          class="meta-item"
+        >
+          <component
+            :is="Icons.ThumbUp"
+            :size="12"
+          />
           <span>{{ inquiry.status.countSupports }}</span>
         </div>
 
-        <div v-if="inquiry.status?.countParticipants" class="meta-item">
-          <component :is="Icons.Users" :size="12" />
+        <div
+          v-if="inquiry.status?.countParticipants"
+          class="meta-item"
+        >
+          <component
+            :is="Icons.Users"
+            :size="12"
+          />
           <span>{{ inquiry.status.countParticipants }}</span>
         </div>
 
-        <div v-if="inquiry.configuration?.expire" class="meta-item expiry" :class="expiryClass">
-          <component :is="Icons.Clock" :size="12" />
+        <div
+          v-if="inquiry.configuration?.expire"
+          class="meta-item expiry"
+          :class="expiryClass"
+        >
+          <component
+            :is="Icons.Clock"
+            :size="12"
+          />
           <span>{{ getExpiryText(inquiry) }}</span>
         </div>
       </div>
 
       <!-- Status badge (compact mode) -->
-      <div v-if="mode === 'compact'" class="item-badges">
-        <span class="status-badge" :class="statusBadgeClass">
+      <div
+        v-if="mode === 'compact'"
+        class="item-badges"
+      >
+        <span
+          class="status-badge"
+          :class="statusBadgeClass"
+        >
           {{ statusText }}
         </span>
-        <span v-if="inquiry.status?.isArchived" class="archived-badge">
+        <span
+          v-if="inquiry.status?.isArchived"
+          class="archived-badge"
+        >
           {{ t('agora', 'Archived') }}
         </span>
       </div>
@@ -101,7 +156,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isActive: false
+  isActive: false,
 })
 
 const emit = defineEmits<{
@@ -119,16 +174,16 @@ const typeIcon = computed(() => {
     return typeData.value.icon
   }
   const iconMap: Record<string, any> = {
-    'survey': Icons.ClipboardList,
-    'poll': Icons.CheckCircle,
-    'question': Icons.Question,
-    'discussion': Icons.MessageSquare,
-    'news': Icons.Newspaper,
-    'announcement': Icons.Megaphone,
-    'meeting': Icons.Users,
-    'document': Icons.Document,
-    'proposal': Icons.Scale,
-    'general': Icons.FolderMultiple,
+    survey: Icons.ClipboardList,
+    poll: Icons.CheckCircle,
+    question: Icons.Question,
+    discussion: Icons.MessageSquare,
+    news: Icons.Newspaper,
+    announcement: Icons.Megaphone,
+    meeting: Icons.Users,
+    document: Icons.Document,
+    proposal: Icons.Scale,
+    general: Icons.FolderMultiple,
   }
   return iconMap[props.inquiry.type?.toLowerCase()] || Icons.FolderMultiple
 })
@@ -136,11 +191,11 @@ const typeIcon = computed(() => {
 const statusIcon = computed(() => {
   const status = props.inquiry.status?.inquiryStatus || 'draft'
   const map: Record<string, any> = {
-    'active': Icons.CheckCircle,
-    'closed': Icons.Close,
-    'draft': Icons.Edit,
-    'waiting_approval': Icons.Clock,
-    'rejected': Icons.Close
+    active: Icons.CheckCircle,
+    closed: Icons.Close,
+    draft: Icons.Edit,
+    waiting_approval: Icons.Clock,
+    rejected: Icons.Close,
   }
   return map[status] || Icons.Circle
 })
@@ -158,11 +213,11 @@ const statusBadgeClass = computed(() => {
 const statusText = computed(() => {
   const status = props.inquiry.status?.inquiryStatus || 'draft'
   const map: Record<string, string> = {
-    'active': t('agora', 'Active'),
-    'closed': t('agora', 'Closed'),
-    'draft': t('agora', 'Draft'),
-    'waiting_approval': t('agora', 'Pending'),
-    'rejected': t('agora', 'Rejected')
+    active: t('agora', 'Active'),
+    closed: t('agora', 'Closed'),
+    draft: t('agora', 'Draft'),
+    waiting_approval: t('agora', 'Pending'),
+    rejected: t('agora', 'Rejected'),
   }
   return map[status] || status
 })
@@ -236,10 +291,18 @@ function handleClick() {
   }
 
   // Status-specific border colors
-  &.status-active { border-left-color: var(--color-success); }
-  &.status-closed { border-left-color: var(--color-error); }
-  &.status-draft { border-left-color: var(--color-text-lighter); }
-  &.status-waiting_approval { border-left-color: var(--color-warning); }
+  &.status-active {
+    border-left-color: var(--color-success);
+  }
+  &.status-closed {
+    border-left-color: var(--color-error);
+  }
+  &.status-draft {
+    border-left-color: var(--color-text-lighter);
+  }
+  &.status-waiting_approval {
+    border-left-color: var(--color-warning);
+  }
 
   .item-status-dot {
     display: flex;
@@ -353,10 +416,18 @@ function handleClick() {
       }
 
       &.expiry {
-        &.expiry-expired { color: var(--color-error); }
-        &.expiry-soon { color: var(--color-warning); }
-        &.expiry-warning { color: #f59e0b; }
-        &.expiry-normal { color: var(--color-success); }
+        &.expiry-expired {
+          color: var(--color-error);
+        }
+        &.expiry-soon {
+          color: var(--color-warning);
+        }
+        &.expiry-warning {
+          color: #f59e0b;
+        }
+        &.expiry-normal {
+          color: var(--color-success);
+        }
       }
     }
   }

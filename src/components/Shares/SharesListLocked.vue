@@ -20,12 +20,24 @@ const configBoxProps = {
 </script>
 
 <template>
-  <ConfigBox v-if="sharesStore.locked.length" v-bind="configBoxProps.lockedShares">
+  <ConfigBox
+    v-if="sharesStore.locked.length"
+    v-bind="configBoxProps.lockedShares"
+  >
     <template #icon>
       <LockedIcon />
     </template>
-    <TransitionGroup tag="div" name="list" :css="false" class="shares-list">
-      <ShareItem v-for="share in sharesStore.locked" :key="share.id" :share="share" />
+    <TransitionGroup
+      tag="div"
+      name="list"
+      :css="false"
+      class="shares-list"
+    >
+      <ShareItem
+        v-for="share in sharesStore.locked"
+        :key="share.id"
+        :share="share"
+      />
     </TransitionGroup>
   </ConfigBox>
 </template>

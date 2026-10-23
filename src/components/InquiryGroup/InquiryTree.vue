@@ -8,38 +8,56 @@
     <!-- Tree Controls -->
     <div class="tree-controls">
       <div class="controls-left">
-        <button 
+        <button
           class="control-btn"
           :title="t('agora', 'Expand all')"
           @click="expandAll"
         >
-          <component :is="Icons.Plus" :size="28" />
+          <component
+            :is="Icons.Plus"
+            :size="28"
+          />
         </button>
-        <button 
+        <button
           class="control-btn"
           :title="t('agora', 'Collapse all')"
           @click="collapseAll"
         >
-          <component :is="Icons.Minus" :size="28" />
+          <component
+            :is="Icons.Minus"
+            :size="28"
+          />
         </button>
         <span class="tree-count">{{ flattenedNodes.length }} items</span>
       </div>
       <div class="controls-right">
-        <input 
-          v-model="searchQuery" 
-          type="text" 
+        <input
+          v-model="searchQuery"
+          type="text"
           class="search-input"
           :placeholder="t('agora', 'Search...')"
-        />
+        >
       </div>
     </div>
 
     <!-- Tree Content -->
     <div class="tree-container">
-      <div v-if="filteredRoots.length === 0" class="empty-state">
-        <component :is="Icons.Tree" :size="48" />
+      <div
+        v-if="filteredRoots.length === 0"
+        class="empty-state"
+      >
+        <component
+          :is="Icons.Tree"
+          :size="48"
+        />
         <h3>{{ t('agora', 'No items to display') }}</h3>
-        <p>{{ searchQuery ? t('agora', 'No results found for your search') : t('agora', 'This tree is empty') }}</p>
+        <p>
+          {{
+            searchQuery
+              ? t('agora', 'No results found for your search')
+              : t('agora', 'This tree is empty')
+          }}
+        </p>
       </div>
 
       <TreeBranch
@@ -85,12 +103,12 @@ const selectedId = ref<number | null>(null)
 const treeData = computed<TreeNode[]>(() => {
   const map = new Map<number, TreeNode>()
   const roots: TreeNode[] = []
-  
+
   // Create nodes
-  props.inquiries.forEach(inquiry => {
+  props.inquiries.forEach((inquiry) => {
     map.set(inquiry.id, { ...inquiry, children: [] })
   })
-  
+
   // Build relationships
   map.forEach((node) => {
     const parentId = node.parentId || props.parentId
@@ -103,35 +121,36 @@ const treeData = computed<TreeNode[]>(() => {
       }
     }
   })
-  
+
   return roots
 })
 
 const filteredRoots = computed(() => {
   if (!searchQuery.value) return treeData.value
-  
+
   const query = searchQuery.value.toLowerCase()
-  
+
   function filterNode(node: TreeNode): TreeNode | null {
-    const matches = node.title.toLowerCase().includes(query) ||
-                    node.description?.toLowerCase().includes(query) ||
-                    false
-    
+    const matches =
+      node.title.toLowerCase().includes(query) ||
+      node.description?.toLowerCase().includes(query) ||
+      false
+
     const filteredChildren = node.children
-      .map(child => filterNode(child))
+      .map((child) => filterNode(child))
       .filter((child): child is TreeNode => child !== null)
-    
+
     if (matches || filteredChildren.length > 0) {
       return {
         ...node,
-        children: filteredChildren
+        children: filteredChildren,
       }
     }
     return null
   }
-  
+
   return treeData.value
-    .map(node => filterNode(node))
+    .map((node) => filterNode(node))
     .filter((node): node is TreeNode => node !== null)
 })
 
@@ -139,7 +158,7 @@ const filteredRoots = computed(() => {
 const flattenedNodes = computed(() => {
   function flatten(nodes: TreeNode[]): TreeNode[] {
     let result: TreeNode[] = []
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       result.push(node)
       result = result.concat(flatten(node.children))
     })
@@ -161,7 +180,7 @@ function isExpanded(id: number): boolean {
 }
 
 function expandAll() {
-  flattenedNodes.value.forEach(node => {
+  flattenedNodes.value.forEach((node) => {
     if (node.children.length > 0) {
       expandedNodes.value.add(node.id)
     }

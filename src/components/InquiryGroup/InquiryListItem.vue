@@ -16,19 +16,25 @@
   >
     <!-- Icon slot -->
     <template #icon>
-      <component :is="typeIconComponent" :size="20" />
+      <component
+        :is="typeIconComponent"
+        :size="20"
+      />
     </template>
 
     <!-- Subtitle with metadata -->
     <template #subname>
       <div class="inquiry-subtitle">
         <!-- Short Description (2 lines max) -->
-        <span v-if="shortDescription" class="subtitle-description">
+        <span
+          v-if="shortDescription"
+          class="subtitle-description"
+        >
           {{ shortDescription }}
         </span>
       </div>
     </template>
-    
+
     <!-- Details slot - Status and dates -->
     <template #details>
       <div class="inquiry-details">
@@ -36,15 +42,26 @@
         <span class="detail-item owner">
           {{ ownerDisplayName }}
         </span>
-        
+
         <!-- Creation date -->
-        <span v-if="formattedCreationDate" class="detail-item date">
+        <span
+          v-if="formattedCreationDate"
+          class="detail-item date"
+        >
           {{ formattedCreationDate }}
         </span>
-        
+
         <!-- Expiry -->
-        <span v-if="showExpiryBadge" class="subtitle-expiry" :class="expiryBadgeClass">
-          <component :is="InquiryGeneralIcons.ClockOutline" class="expiry-icon" :size="12" />
+        <span
+          v-if="showExpiryBadge"
+          class="subtitle-expiry"
+          :class="expiryBadgeClass"
+        >
+          <component
+            :is="InquiryGeneralIcons.ClockOutline"
+            class="expiry-icon"
+            :size="12"
+          />
           {{ expiryText }}
         </span>
       </div>
@@ -52,7 +69,10 @@
   </NcListItem>
 
   <!-- Fallback when inquiry is null/undefined -->
-  <div v-else class="inquiry-placeholder">
+  <div
+    v-else
+    class="inquiry-placeholder"
+  >
     <span class="placeholder-icon">📄</span>
     <span class="placeholder-text">{{ t('agora', 'Inquiry not available') }}</span>
   </div>
@@ -75,7 +95,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isActive: false
+  isActive: false,
 })
 
 const emit = defineEmits<{
@@ -94,7 +114,7 @@ const InquiryGeneralIconsComponents = InquiryGeneralIcons
 const listItemDetails = computed(() => {
   // Guard: if no inquiry, return empty string
   if (!props.inquiry) return ''
-  
+
   const details = []
   if (props.inquiry.owner?.displayName || props.inquiry.ownedGroup) {
     details.push(ownerDisplayName.value)
@@ -123,7 +143,7 @@ const listItemAriaLabel = computed(() => {
   }
   return t('agora', 'Inquiry: {title}. Created by {owner}', {
     title: props.inquiry.title,
-    owner: ownerDisplayName.value
+    owner: ownerDisplayName.value,
   })
 })
 
@@ -150,7 +170,7 @@ const typeData = computed(() => {
 const typeIconComponent = computed(() => {
   // Guard: if no inquiry, return default icon
   if (!props.inquiry) return InquiryGeneralIconsComponents.FolderMultiple
-  
+
   if (typeData.value?.icon) {
     const iconName = typeData.value.icon
     if (typeof iconName === 'string' && InquiryGeneralIconsComponents[iconName]) {
@@ -160,21 +180,21 @@ const typeIconComponent = computed(() => {
       return iconName
     }
   }
-  
+
   const iconMap = {
-    'survey': 'ClipboardList',
-    'poll': 'CheckCircle',
-    'question': 'Question',
-    'discussion': 'MessageSquare',
-    'news': 'Newspaper',
-    'announcement': 'Megaphone',
-    'meeting': 'Users',
-    'document': 'Document',
-    'proposal': 'Scale',
-    'general': 'FolderMultiple',
-    'draft': 'Empty',
+    survey: 'ClipboardList',
+    poll: 'CheckCircle',
+    question: 'Question',
+    discussion: 'MessageSquare',
+    news: 'Newspaper',
+    announcement: 'Megaphone',
+    meeting: 'Users',
+    document: 'Document',
+    proposal: 'Scale',
+    general: 'FolderMultiple',
+    draft: 'Empty',
   }
-  
+
   const iconName = iconMap[props.inquiry.type?.toLowerCase()] || 'FolderMultiple'
   return InquiryGeneralIconsComponents[iconName] || InquiryGeneralIconsComponents.FolderMultiple
 })
@@ -185,13 +205,13 @@ const typeIconComponent = computed(() => {
 
 const shortDescription = computed(() => {
   if (!props.inquiry?.description) return ''
-  
+
   const plainText = props.inquiry.description.replace(/<[^>]*>/g, '')
-  
+
   if (plainText.length > 100) {
     return `${plainText.substring(0, 100)}…`
   }
-  
+
   return plainText
 })
 
@@ -202,7 +222,9 @@ const shortDescription = computed(() => {
 const formattedCreationDate = computed(() => {
   if (!props.inquiry?.status?.created) return ''
   try {
-    return DateTime.fromMillis(props.inquiry.status.created * 1000).toLocaleString(DateTime.DATE_MED)
+    return DateTime.fromMillis(props.inquiry.status.created * 1000).toLocaleString(
+      DateTime.DATE_MED
+    )
   } catch {
     return ''
   }
@@ -219,29 +241,30 @@ const showExpiryBadge = computed(() => {
 
 const expiryText = computed(() => {
   if (!props.inquiry?.configuration?.expire) return ''
-  
+
   const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
   const now = new Date()
   const diff = expiryDate.getTime() - now.getTime()
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  
+
   if (days > 0) {
     return t('agora', '{days}d', { days })
-  } if (hours > 0) {
+  }
+  if (hours > 0) {
     return t('agora', '{hours}h', { hours })
-  } 
+  }
   return t('agora', 'Soon')
 })
 
 const expiryBadgeClass = computed(() => {
   if (!props.inquiry?.configuration?.expire) return ''
-  
+
   const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
   const now = new Date()
   const diff = expiryDate.getTime() - now.getTime()
   const hours = diff / (1000 * 60 * 60)
-  
+
   if (hours < 24) return 'expiry-soon'
   if (hours < 72) return 'expiry-warning'
   return 'expiry-normal'
@@ -297,12 +320,12 @@ function handleClick() {
   .detail-item {
     font-size: 12px;
     color: var(--color-text-lighter);
-    
+
     &.owner {
       font-weight: 500;
       color: var(--color-text-lighter);
     }
-    
+
     &.date {
       color: var(--color-text-maxcontrast);
     }
@@ -360,7 +383,11 @@ function handleClick() {
   }
 
   &.active {
-    background: linear-gradient(135deg, var(--color-primary-element-light), rgba(var(--color-primary-rgb), 0.05));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-element-light),
+      rgba(var(--color-primary-rgb), 0.05)
+    );
     border-left: 4px solid var(--color-primary-element);
     border-color: var(--color-primary-element);
     box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.15);
@@ -482,11 +509,11 @@ function handleClick() {
   .inquiry-placeholder {
     padding: 12px 14px;
     min-height: 76px;
-    
+
     .placeholder-icon {
       font-size: 18px;
     }
-    
+
     .placeholder-text {
       font-size: 13px;
     }
@@ -531,11 +558,11 @@ function handleClick() {
     padding: 10px 12px;
     min-height: 72px;
     gap: 8px;
-    
+
     .placeholder-icon {
       font-size: 16px;
     }
-    
+
     .placeholder-text {
       font-size: 12px;
     }

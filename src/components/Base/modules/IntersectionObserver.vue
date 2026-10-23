@@ -42,7 +42,13 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="observerTarget">
-    <NcLoadingIcon v-if="loading" :size="15" />
-    <slot v-else :in-viewport="model" />
+    <NcLoadingIcon
+      v-if="loading"
+      :size="15"
+    />
+    <slot
+      v-else
+      :in-viewport="model"
+    />
   </div>
 </template>

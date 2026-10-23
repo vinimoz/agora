@@ -279,13 +279,16 @@ async function submitRegistration(): Promise<void> {
           "
           :helper-text="emailAddressHint"
           type="email"
-          :label="t('agora','Email')"
+          :label="t('agora', 'Email')"
           inputmode="email"
           @input="validateEmailAddress()"
           @submit="submitRegistration()"
         />
 
-        <NcCheckboxRadioSwitch v-if="offerCookies" v-model="saveCookie">
+        <NcCheckboxRadioSwitch
+          v-if="offerCookies"
+          v-model="saveCookie"
+        >
           {{ t('agora', 'Remember me for 30 days') }}
         </NcCheckboxRadioSwitch>
 
@@ -313,7 +316,11 @@ async function submitRegistration(): Promise<void> {
               </template>
             </NcButton>
 
-            <NcButton :variant="'primary'" :disabled="disableSubmit" @click="submitRegistration()">
+            <NcButton
+              :variant="'primary'"
+              :disabled="disableSubmit"
+              @click="submitRegistration()"
+            >
               <template #default>
                 {{ t('agora', 'OK') }}
               </template>
@@ -322,9 +329,15 @@ async function submitRegistration(): Promise<void> {
         </div>
       </div>
 
-      <div v-if="sessionStore.appSettings.showLogin" class="registration__login">
+      <div
+        v-if="sessionStore.appSettings.showLogin"
+        class="registration__login"
+      >
         <h2>{{ t('agora', 'Registered accounts') }}</h2>
-        <NcButton wide @click="login()">
+        <NcButton
+          wide
+          @click="login()"
+        >
           <template #default>
             {{ t('agora', 'Login') }}
           </template>

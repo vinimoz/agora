@@ -21,12 +21,16 @@ const participation = {
   // PARTICIPATION
   // ============================================================
 
-  getParticipation(targetType: string, targetId: number): Promise<AxiosResponse<{ participation: ParticipationPolicy }>> {
+  getParticipation(
+    targetType: string,
+    targetId: number
+  ): Promise<AxiosResponse<{ participation: ParticipationPolicy }>> {
     return httpInstance.request({
       method: 'GET',
       url: `participation/${targetType}/${targetId}`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getParticipation.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.getParticipation.name].handleRequestCancellation().token,
     })
   },
 
@@ -41,16 +45,21 @@ const participation = {
       url: `participation/${targetType}/${targetId}`,
       data: { policyType, policyConfig },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.setParticipation.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.setParticipation.name].handleRequestCancellation().token,
     })
   },
 
-  deleteParticipation(targetType: string, targetId: number): Promise<AxiosResponse<{ deleted: boolean }>> {
+  deleteParticipation(
+    targetType: string,
+    targetId: number
+  ): Promise<AxiosResponse<{ deleted: boolean }>> {
     return httpInstance.request({
       method: 'DELETE',
       url: `participation/${targetType}/${targetId}`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.deleteParticipation.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.deleteParticipation.name].handleRequestCancellation().token,
     })
   },
 
@@ -62,7 +71,8 @@ const participation = {
     return httpInstance.request({
       method: 'GET',
       url: `participation/${targetType}/${targetId}/lottery/status`,
-      cancelToken: cancelTokenHandlerObject[this.getLotteryStatus.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.getLotteryStatus.name].handleRequestCancellation().token,
     })
   },
 
@@ -70,7 +80,8 @@ const participation = {
     return httpInstance.request({
       method: 'GET',
       url: `participation/${targetType}/${targetId}/lottery/pool`,
-      cancelToken: cancelTokenHandlerObject[this.getEligiblePool.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.getEligiblePool.name].handleRequestCancellation().token,
     })
   },
 
@@ -87,7 +98,8 @@ const participation = {
     return httpInstance.request({
       method: 'POST',
       url: `participation/${targetType}/${targetId}/lottery/validate`,
-      cancelToken: cancelTokenHandlerObject[this.validateLottery.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.validateLottery.name].handleRequestCancellation().token,
     })
   },
 
@@ -95,7 +107,8 @@ const participation = {
     return httpInstance.request({
       method: 'POST',
       url: `participation/${targetType}/${targetId}/lottery/reset`,
-      cancelToken: cancelTokenHandlerObject[this.resetLottery.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.resetLottery.name].handleRequestCancellation().token,
     })
   },
 
@@ -104,7 +117,8 @@ const participation = {
       method: 'POST',
       url: `participation/${targetType}/${targetId}/lottery/cancel`,
       data: { reason },
-      cancelToken: cancelTokenHandlerObject[this.cancelLottery.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.cancelLottery.name].handleRequestCancellation().token,
     })
   },
 }

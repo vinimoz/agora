@@ -15,59 +15,59 @@ export * from './share.types'
 
 // ─── Group types ─────────────────────────────────────────────
 export type {
-	InquiryGroup,
-	InquiryGroupType,
-	InquiryGroupConfiguration,
-	InquiryGroupStatus,
-	InquiryGroupWorkflowStatus,
-	InquiryGroupUIConfig,
-	InquiryGroupPermissions,
-	CurrentUserInquiryGroupStatus,
-	VisibilityInquiryGroupType,
+  InquiryGroup,
+  InquiryGroupType,
+  InquiryGroupConfiguration,
+  InquiryGroupStatus,
+  InquiryGroupWorkflowStatus,
+  InquiryGroupUIConfig,
+  InquiryGroupPermissions,
+  CurrentUserInquiryGroupStatus,
+  VisibilityInquiryGroupType,
 } from './inquiryGroups.types'
 
 // ─── Voting / engine types ───────────────────────────────────
 export type {
-	// Result shapes
-	BinaryResult,
-	TernaryResult,
-	ScoreResult,
-	StarResult,
-	RankingResult,
-	CondorcetResult,
-	MajorityJudgmentResult,
-	ReactionResult,
-	ApprovalResult,
-	ApprovalDelibResult,
-	TrendingResult,
-	BordaResult,
-	QuadraticResult,
-	TokenWeightedResult,
-	PhasedVotingResult,
-	SupportResultData,
+  // Result shapes
+  BinaryResult,
+  TernaryResult,
+  ScoreResult,
+  StarResult,
+  RankingResult,
+  CondorcetResult,
+  MajorityJudgmentResult,
+  ReactionResult,
+  ApprovalResult,
+  ApprovalDelibResult,
+  TrendingResult,
+  BordaResult,
+  QuadraticResult,
+  TokenWeightedResult,
+  PhasedVotingResult,
+  SupportResultData,
 
-	// Support primitives
-	SupportFeature,
-	SupportValue,
-	SupportData,
-	SupportTemplate,
-	VotingEngine,
-	VotingConfiguration,
-	VotingOptions,
-	Phase,
+  // Support primitives
+  SupportFeature,
+  SupportValue,
+  SupportData,
+  SupportTemplate,
+  VotingEngine,
+  VotingConfiguration,
+  VotingOptions,
+  Phase,
 
-	// Engine metadata
-	EngineDefinition,
-	EngineInfo,
-	ConfigSchemaField,
+  // Engine metadata
+  EngineDefinition,
+  EngineInfo,
+  ConfigSchemaField,
 } from './votingType'
 
 export {
-	ENGINE_DEFINITIONS,
-	getAvailableEngines,
-	initializeEngineConfig,
-	isValidSupportFeature,
-	isValidPhase,
+  ENGINE_DEFINITIONS,
+  getAvailableEngines,
+  initializeEngineConfig,
+  isValidSupportFeature,
+  isValidPhase,
 } from './votingType'
 
 // ─── Experience types ────────────────────────────────────────
@@ -75,21 +75,21 @@ export * from './experience.types'
 
 // ─── Utilities ───────────────────────────────────────────────
 export function createDefault<T>(): T {
-	return {} as T
+  return {} as T
 }
 
 export enum Event {
-	TransitionsOff = 'agora:transitions:off',
-	TransitionsOn = 'agora:transitions:on',
-	UpdateInquiry = 'agora:inquiry:update',
-	LoadInquiry = 'agora:inquiry:load',
-	SidebarChangeTab = 'agora:sidebar:changeTab',
-	SidebarToggle = 'agora:sidebar:toggle',
-	ChangeShares = 'agora:change:shares',
-	UpdateOptions = 'agora:options:update',
-	AddDate = 'agora:options:add-date',
-	UpdateComments = 'agora:comments:update',
-	UpdateSupports = 'agora:supports:update',
-	UpdateActivity = 'agora:activity:update',
-	ShowSettings = 'agora:settings:show',
+  TransitionsOff = 'agora:transitions:off',
+  TransitionsOn = 'agora:transitions:on',
+  UpdateInquiry = 'agora:inquiry:update',
+  LoadInquiry = 'agora:inquiry:load',
+  SidebarChangeTab = 'agora:sidebar:changeTab',
+  SidebarToggle = 'agora:sidebar:toggle',
+  ChangeShares = 'agora:change:shares',
+  UpdateOptions = 'agora:options:update',
+  AddDate = 'agora:options:add-date',
+  UpdateComments = 'agora:comments:update',
+  UpdateSupports = 'agora:supports:update',
+  UpdateActivity = 'agora:activity:update',
+  ShowSettings = 'agora:settings:show',
 }

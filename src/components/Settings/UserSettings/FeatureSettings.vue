@@ -31,7 +31,6 @@ const defaultDisplayMode = computed({
     preferencesStore.user.defaultDisplayMode = value ? 'create' : 'view'
   },
 })
-
 </script>
 
 <template>
@@ -63,7 +62,12 @@ const defaultDisplayMode = computed({
         {{ t('agora', 'Default display mode') }}
       </NcCheckboxRadioSwitch>
       <div class="settings_details">
-        {{ t('agora', 'Would you like to display the application in creation mode or view mode? The initial default setting is view mode.') }}
+        {{
+          t(
+            'agora',
+            'Would you like to display the application in creation mode or view mode? The initial default setting is view mode.'
+          )
+        }}
       </div>
     </div>
 

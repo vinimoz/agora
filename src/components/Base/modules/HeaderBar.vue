@@ -20,7 +20,10 @@ function toggleClamp() {
   <div class="header_bar">
     <div class="header_bar_top">
       <div class="bar_top_left">
-        <div :class="['header_avatar', { clamped }]" @click="toggleClamp()">
+        <div
+          :class="['header_avatar', { clamped }]"
+          @click="toggleClamp()"
+        >
           <slot name="avatar" />
         </div>
         <div class="bar_top_left_sub">

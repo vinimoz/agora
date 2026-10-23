@@ -3,7 +3,11 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div class="vote-input-ternary" role="group" :aria-label="item.title">
+  <div
+    class="vote-input-ternary"
+    role="group"
+    :aria-label="item.title"
+  >
     <NcButton
       v-for="choice in ternaryItems"
       :key="choice.value"
@@ -13,8 +17,15 @@
       @click="vote(choice.value)"
     >
       <template #icon>
-        <CheckIcon v-if="isSelected(choice.value)" :size="20" />
-        <component :is="choice.icon" v-else :size="20" />
+        <CheckIcon
+          v-if="isSelected(choice.value)"
+          :size="20"
+        />
+        <component
+          :is="choice.icon"
+          v-else
+          :size="20"
+        />
       </template>
       {{ choice.label }}
     </NcButton>
@@ -27,7 +38,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import { ThumbsUp, Minus, ThumbsDown } from 'lucide-vue-next'
-import type { SupportData, Item } from '../../Types/index'
+import type { SupportData, Item } from '../../../Types/index'
 
 const props = defineProps<{
   item: Item

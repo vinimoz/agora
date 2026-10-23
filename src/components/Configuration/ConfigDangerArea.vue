@@ -30,10 +30,10 @@ function toggleArchive() {
   try {
     inquiryStore.toggleArchive({ inquiryId: inquiryStore.id })
   } catch {
-  showError(
+    showError(
       inquiryStore.status.isArchived
-      	? t('agora', 'Error restoring inquiry.')
-      	: t('agora', 'Error archiving inquiry.'),
+        ? t('agora', 'Error restoring inquiry.')
+        : t('agora', 'Error archiving inquiry.')
     )
   }
 }
@@ -49,57 +49,60 @@ function routeAway() {
 </script>
 
 <template>
-	<div class="delete-area">
-		<NcButton @click="toggleArchive()">
-		<template #icon>
-			<RestoreInquiryIcon v-if="inquiryStore.status.isArchived" />
-			<ArchiveInquiryIcon v-else />
-		</template>
-		<template #default>
-			{{
-			inquiryStore.status.isArchived
-			? t('agora', 'Restore inquiry')
-			: t('agora', 'Archive inquiry')
-			}}
-		</template>
-		</NcButton>
+  <div class="delete-area">
+    <NcButton @click="toggleArchive()">
+      <template #icon>
+        <RestoreInquiryIcon v-if="inquiryStore.status.isArchived" />
+        <ArchiveInquiryIcon v-else />
+      </template>
+      <template #default>
+        {{
+          inquiryStore.status.isArchived
+            ? t('agora', 'Restore inquiry')
+            : t('agora', 'Archive inquiry')
+        }}
+      </template>
+    </NcButton>
 
-		<NcButton :variant="'error'" @click="showDeleteDialog = true">
-		<template #icon>
-			<DeleteInquiryIcon />
-		</template>
-		<template #default>
-			{{ t('agora', 'Delete inquiry') }}
-		</template>
-		</NcButton>
-		<NcButton @click="showTransferDialog = true">
-		<template #icon>
-			<TransferInquiryIcon />
-		</template>
-		<template #default>
-			{{ t('agora', 'Transfer inquiry') }}
-		</template>
-		</NcButton>
-	</div>
-	<DeleteInquiryDialog
-			v-model="showDeleteDialog"
-			:inquiry="inquiryStore"
-			@deleted="routeAway"
-			@close="showDeleteDialog = false"
-			/>
-	<TransferInquiryDialog
-			v-model="showTransferDialog"
-			:inquiry="inquiryStore"
-			@access-denied="routeAway"
-			@close="showTransferDialog = false"
-			/>
+    <NcButton
+      :variant="'error'"
+      @click="showDeleteDialog = true"
+    >
+      <template #icon>
+        <DeleteInquiryIcon />
+      </template>
+      <template #default>
+        {{ t('agora', 'Delete inquiry') }}
+      </template>
+    </NcButton>
+    <NcButton @click="showTransferDialog = true">
+      <template #icon>
+        <TransferInquiryIcon />
+      </template>
+      <template #default>
+        {{ t('agora', 'Transfer inquiry') }}
+      </template>
+    </NcButton>
+  </div>
+  <DeleteInquiryDialog
+    v-model="showDeleteDialog"
+    :inquiry="inquiryStore"
+    @deleted="routeAway"
+    @close="showDeleteDialog = false"
+  />
+  <TransferInquiryDialog
+    v-model="showTransferDialog"
+    :inquiry="inquiryStore"
+    @access-denied="routeAway"
+    @close="showTransferDialog = false"
+  />
 </template>
 
 <style lang="scss">
 .delete-area {
-	display: flex;
-	gap: 8px;
-	justify-content: space-between;
-	flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 </style>

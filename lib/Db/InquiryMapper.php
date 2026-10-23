@@ -19,10 +19,12 @@ use OCA\Agora\Db\GroupRelation;
 use OCA\Agora\Db\GroupRelationMapper;
 use OCA\Agora\Db\UserRelation;
 use OCA\Agora\Db\UserRelationMapper;
+use OCA\Agora\Db\Participation;
+use OCA\Agora\Db\ParticipationMapper;
+use OCA\Agora\Db\LotterySelection;
 use OCA\Agora\Db\Support;
 use OCA\Agora\Db\SupportResult;
 use OCA\Agora\Db\SupportEngine;
-use OCA\Agora\Db\Participation;
 use OCA\Agora\Db\Trending;
 use OCP\IGroupManager;
 use Psr\Log\LoggerInterface;
@@ -38,15 +40,13 @@ class InquiryMapper extends QBMapper
 	public const PARTICIPATION_TABLE = Participation::TABLE;
 	public const CONCAT_SEPARATOR = ',';
 
-	/**
-	 * Merged constructor: 1.8 (with all share/group deps) + main's logger.
-	 */
 	public function __construct(
 		IDBConnection $db,
 		private UserSession $userSession,
 		private IGroupManager $groupManager,
 		private GroupRelationMapper $groupRelationMapper,
 		private UserRelationMapper $userRelationMapper,
+		private ParticipationMapper $participationMapper,
 		private LoggerInterface $logger,
 	) {
 		parent::__construct($db, Inquiry::TABLE, Inquiry::class);
@@ -141,9 +141,9 @@ class InquiryMapper extends QBMapper
 
 		$inquiry = $this->findEntity($qb);
 
-		$inquiry->setVisibilityGroups(
-			$this->getVisibilityGroupsForInquiry($id)
-		);
+		$inquiry->setVisibilityGroups($this->getVisibilityGroupsForInquiry($id));
+		$inquiry->setVisibilityUsers($this->getUserIdsForVisibility($id));
+		$this->loadParticipation($inquiry);
 
 		return $inquiry;
 	}
@@ -250,6 +250,98 @@ class InquiryMapper extends QBMapper
 		return $this->findEntities($qb);
 	}
 
+	// ── Participation loading ──
+
+	/**
+	 * Attach the fully-loaded Participation (policy + user/group relations +
+	 * lottery run data) to an inquiry.
+	 *
+	 * FIX: if no Participation row exists but the inquiry has
+	 * visibility=participants with participation relations, derive a synthetic
+	 * Participation object from the relations so that direct loads (find/get)
+	 * honour the intended audience.
+	 *
+	 * Validation is disabled here — legacy incompatible data must not break
+	 * fetching.
+	 */
+	private function loadParticipation(Inquiry $inquiry): void
+	{
+		$policy = null;
+		try {
+			$policy = $this->participationMapper->findByTargetWithRelations(
+				Participation::TARGET_INQUIRY,
+				$inquiry->getId()
+			);
+		} catch (\Throwable $e) {
+			$this->logger->warning(
+				'Failed to load participation for inquiry ' . $inquiry->getId() . ': ' . $e->getMessage(),
+				['app' => 'agora']
+			);
+		}
+
+		// Fallback: derive a synthetic policy from relations when
+		// visibility=participants and no Participation row exists.
+		if ($policy === null
+			&& $inquiry->getVisibility() === Inquiry::VISIBILITY_PARTICIPANTS) {
+			$policy = $this->deriveParticipationFromRelations($inquiry);
+			if ($policy !== null) {
+				$this->logger->info(
+					'Derived Participation for inquiry ' . $inquiry->getId()
+						. ' from relations (no participation row present)',
+					['app' => 'agora']
+				);
+			}
+		}
+
+		$inquiry->setParticipationPolicy($policy, false);
+	}
+
+	/**
+	 * Build a synthetic Participation when a `visibility=participants` inquiry
+	 * has participation relations but no Participation row.
+	 *
+	 * Inference rules (first match wins):
+	 *   - participation GROUP relations → POLICY_GROUPS
+	 *   - participation USER  relations → POLICY_USERS
+	 *   - otherwise → null (treated as "none")
+	 */
+	private function deriveParticipationFromRelations(Inquiry $inquiry): ?Participation
+	{
+		$inquiryId = $inquiry->getId();
+
+		$groupIds = $this->groupRelationMapper->getGroupIdsForTarget(
+			GroupRelation::TARGET_INQUIRY,
+			$inquiryId,
+			GroupRelation::RELATION_PARTICIPATION
+		);
+
+		if (!empty($groupIds)) {
+			$policy = new Participation();
+			$policy->setTargetType(Participation::TARGET_INQUIRY);
+			$policy->setTargetId($inquiryId);
+			$policy->setPolicyType(Participation::POLICY_GROUPS);
+			$policy->setPolicyConfig(['group_ids' => $groupIds]);
+			return $policy;
+		}
+
+		$userIds = $this->userRelationMapper->getUserIdsForTarget(
+			UserRelation::TARGET_INQUIRY,
+			$inquiryId,
+			UserRelation::RELATION_PARTICIPATION
+		);
+
+		if (!empty($userIds)) {
+			$policy = new Participation();
+			$policy->setTargetType(Participation::TARGET_INQUIRY);
+			$policy->setTargetId($inquiryId);
+			$policy->setPolicyType(Participation::POLICY_USERS);
+			$policy->setPolicyConfig(['user_ids' => $userIds]);
+			return $policy;
+		}
+
+		return null;
+	}
+
 	// ── User relation helpers ──
 
 	public function getUserIdsForVisibility(int $inquiryId): array
@@ -290,11 +382,15 @@ class InquiryMapper extends QBMapper
 		);
 	}
 
-	// ── Visibility filter (1.8) merged with main's share/group logic ──
+	// ── Visibility filter ──
 
 	/**
-	 * Apply visibility filter using GroupRelationMapper and UserRelationMapper.
-	 * Merged: 1.8's visibility-based logic + main's owner override and share-expansion.
+	 * Apply visibility filter enforcing the five rules:
+	 *   private      → owner only
+	 *   groups       → member of a visibility group
+	 *   users        → explicitly listed user
+	 *   participants → audience derived from the Participation policy
+	 *   everyone     → any logged-in user
 	 */
 	protected function applyVisibilityFilter(
 		IQueryBuilder &$qb,
@@ -312,6 +408,22 @@ class InquiryMapper extends QBMapper
 
 		$userGroupIds = $this->getUserGroupIds($currentUserId);
 
+				$this->logger->info('agora visibility filter', [
+			'app' => 'agora',
+			'userId' => $currentUserId,
+			'userGroupIds' => $userGroupIds,
+			'groupsVisibleInquiries' => $this->groupRelationMapper->getTargetIdsForGroups(
+				GroupRelation::TARGET_INQUIRY,
+				GroupRelation::RELATION_VISIBILITY,
+				$userGroupIds ?: ['']
+			),
+			'participationVisibleInquiries' => $this->groupRelationMapper->getTargetIdsForGroups(
+				GroupRelation::TARGET_INQUIRY,
+				GroupRelation::RELATION_PARTICIPATION,
+				$userGroupIds ?: ['']
+			),
+				]);
+
 		$orConditions = [];
 
 		// 1. Owner override
@@ -326,7 +438,7 @@ class InquiryMapper extends QBMapper
 			$qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)
 		);
 
-		// 3. Private (owner only — already covered but kept for clarity)
+		// 3. Private (owner only — kept for clarity alongside #1)
 		$orConditions[] = $qb->expr()->andX(
 			$qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PRIVATE)),
 			$qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId))
@@ -368,13 +480,26 @@ class InquiryMapper extends QBMapper
 			);
 		}
 
-		// 6. Participants — via joined support table
-		$orConditions[] = $qb->expr()->andX(
-			$qb->expr()->eq(self::TABLE . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)),
-			$qb->expr()->isNotNull('current_user_support.user_id')
+		// 6. Participants — audience derived from the policy (FIXED)
+		$participantInquiryIds = $this->getParticipantsVisibilityInquiryIds(
+			$currentUserId,
+			$userGroupIds
 		);
 
-		// 7. From main: moderator pending — always visible
+		if (!empty($participantInquiryIds)) {
+			$orConditions[] = $qb->expr()->andX(
+				$qb->expr()->eq(
+					self::TABLE . '.visibility',
+					$qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)
+				),
+				$qb->expr()->in(
+					self::TABLE . '.id',
+					$qb->createNamedParameter($participantInquiryIds, IQueryBuilder::PARAM_INT_ARRAY)
+				)
+			);
+		}
+
+		// 7. Moderator pending — always visible
 		$user = $this->userSession->getCurrentUser();
 		if ($user !== null && $user->getIsModerator()) {
 			$orConditions[] = $qb->expr()->eq(
@@ -387,86 +512,208 @@ class InquiryMapper extends QBMapper
 	}
 
 	/**
-	 * Apply participation filter using ParticipationMapper, GroupRelationMapper, and UserRelationMapper
+	 * Resolve which `visibility=participants` inquiries the current user may see,
+	 * according to each inquiry's Participation policy:
+	 *
+	 *   no policy row   → derive from participation relations (FIXED)
+	 *                     - group relation present → treat as POLICY_GROUPS
+	 *                     - user  relation present → treat as POLICY_USERS
+	 *                     - neither                → not visible
+	 *   everyone        → every logged-in user
+	 *   users           → user_ids list
+	 *   groups          → group_ids membership
+	 *   lottery         → user was selected (pending or accepted)
+	 *
+	 * NOTE: The previous version returned `[]` as soon as the policies query
+	 * came back empty. That silently hid inquiries like #2 (which only has a
+	 * participation group relation and no `agora_participation` row).
 	 */
-	protected function applyParticipationFilter(
-		IQueryBuilder &$qb,
-		?string $currentUserId
-	): void {
-		if ($currentUserId === null) {
-			$qb->andWhere(
-				$qb->expr()->orX(
-					$qb->expr()->isNull('participation.id'),
-					$qb->expr()->eq('participation.policy_type', $qb->createNamedParameter(Participation::POLICY_EVERYONE))
-				)
-			);
-			return;
+	private function getParticipantsVisibilityInquiryIds(
+		string $currentUserId,
+		array $userGroupIds
+	): array {
+		// 1. All inquiries with visibility=participants (non-deleted)
+		$qb = $this->db->getQueryBuilder();
+		$qb->select(self::TABLE . '.id')
+			->from($this->getTableName(), self::TABLE)
+			->where($qb->expr()->eq(
+				self::TABLE . '.visibility',
+				$qb->createNamedParameter(Inquiry::VISIBILITY_PARTICIPANTS)
+			))
+			->andWhere($qb->expr()->eq(
+				self::TABLE . '.deleted',
+				$qb->expr()->literal(0, IQueryBuilder::PARAM_INT)
+			));
+
+		$stmt = $qb->executeQuery();
+		$allIds = array_map(static fn(array $row): int => (int)$row['id'], $stmt->fetchAll());
+		$stmt->closeCursor();
+
+		if (empty($allIds)) {
+			return [];
 		}
 
-		$userGroupIds = $this->getUserGroupIds($currentUserId);
+		// 2. Bulk-fetch policies (may be empty — DO NOT early-return)
+		$policyQb = $this->db->getQueryBuilder();
+		$policyQb->select('*')
+			->from(Participation::TABLE)
+			->where($policyQb->expr()->eq(
+				'target_type',
+				$policyQb->createNamedParameter(Participation::TARGET_INQUIRY, IQueryBuilder::PARAM_STR)
+			))
+			->andWhere($policyQb->expr()->in(
+				'target_id',
+				$policyQb->createNamedParameter($allIds, IQueryBuilder::PARAM_INT_ARRAY)
+			));
 
-		$orConditions = [
-			$qb->expr()->isNull('participation.id')
-		];
+		$pStmt = $policyQb->executeQuery();
+		$policies = [];
+		while ($row = $pStmt->fetch()) {
+			$policies[(int)$row['target_id']] = $row;
+		}
+		$pStmt->closeCursor();
 
-		$orConditions[] = $qb->expr()->eq(
-			'participation.policy_type',
-			$qb->createNamedParameter(Participation::POLICY_EVERYONE)
-		);
-
-		$allowedParticipationIds = $this->userRelationMapper->getTargetIdsForUsers(
-			Participation::TARGET_ENGINE,
+		// 3. Pre-resolve user / group participation memberships
+		$userParticipationIds = $this->userRelationMapper->getTargetIdsForUsers(
+			UserRelation::TARGET_INQUIRY,
 			UserRelation::RELATION_PARTICIPATION,
 			[$currentUserId]
 		);
 
-		if (!empty($allowedParticipationIds)) {
-			$orConditions[] = $qb->expr()->andX(
-				$qb->expr()->eq('participation.policy_type', $qb->createNamedParameter(Participation::POLICY_USERS)),
-				$qb->expr()->in(
-					self::TABLE . '.id',
-					$qb->createNamedParameter($allowedParticipationIds, IQueryBuilder::PARAM_INT_ARRAY)
-				)
-			);
-		}
-
-		if (!empty($userGroupIds)) {
-			$allowedParticipationIds = $this->groupRelationMapper->getTargetIdsForGroups(
+		$groupParticipationIds = !empty($userGroupIds)
+			? $this->groupRelationMapper->getTargetIdsForGroups(
 				GroupRelation::TARGET_INQUIRY,
 				GroupRelation::RELATION_PARTICIPATION,
 				$userGroupIds
-			);
+			)
+			: [];
 
-			if (!empty($allowedParticipationIds)) {
-				$orConditions[] = $qb->expr()->andX(
-					$qb->expr()->eq('participation.policy_type', $qb->createNamedParameter(Participation::POLICY_GROUPS)),
-					$qb->expr()->in(
-						self::TABLE . '.id',
-						$qb->createNamedParameter($allowedParticipationIds, IQueryBuilder::PARAM_INT_ARRAY)
+		// 4. Pre-resolve lottery wins for the current user.
+		//    LotterySelection has NO inquiry_id column → JOIN through Participation.
+		$userLotteryIds = [];
+		try {
+			$lotteryQb = $this->db->getQueryBuilder();
+			$lotteryQb->selectDistinct('p.target_id')
+				->from(LotterySelection::TABLE, 'ls')
+				->innerJoin(
+					'ls',
+					Participation::TABLE,
+					'p',
+					$lotteryQb->expr()->eq('p.id', 'ls.participation_id')
+				)
+				->where($lotteryQb->expr()->eq(
+					'p.target_type',
+					$lotteryQb->createNamedParameter(Participation::TARGET_INQUIRY, IQueryBuilder::PARAM_STR)
+				))
+				->andWhere($lotteryQb->expr()->in(
+					'p.target_id',
+					$lotteryQb->createNamedParameter($allIds, IQueryBuilder::PARAM_INT_ARRAY)
+				))
+				->andWhere($lotteryQb->expr()->eq(
+					'ls.selected_user_id',
+					$lotteryQb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+				))
+				->andWhere($lotteryQb->expr()->in(
+					'ls.status',
+					$lotteryQb->createNamedParameter(
+						[LotterySelection::STATUS_PENDING, LotterySelection::STATUS_ACCEPTED],
+						IQueryBuilder::PARAM_STR_ARRAY
 					)
-				);
+				));
+
+			$lStmt = $lotteryQb->executeQuery();
+			$userLotteryIds = array_map(
+				static fn(array $row): int => (int)$row['target_id'],
+				$lStmt->fetchAll()
+			);
+			$lStmt->closeCursor();
+		} catch (\Throwable $e) {
+			$this->logger->warning(
+				'Lottery lookup failed while expanding visibility=participants: ' . $e->getMessage(),
+				['app' => 'agora']
+			);
+		}
+
+		// 5. Compute the allowed set
+		$allowed = [];
+		foreach ($allIds as $inquiryId) {
+			$policy = $policies[$inquiryId] ?? null;
+
+			// ── Fallback: no Participation row → derive from relations ──
+			// A participating user/group relation alone is enough to consider
+			// the inquiry visible to that user/group.
+			if ($policy === null) {
+				if (in_array($inquiryId, $userParticipationIds, false)
+					|| in_array($inquiryId, $groupParticipationIds, false)
+					|| in_array($inquiryId, $userLotteryIds, false)) {
+					$allowed[] = $inquiryId;
+				}
+				continue;
+			}
+
+			// ── Normal path: explicit Participation row ──
+			switch ($policy['policy_type'] ?? null) {
+				case Participation::POLICY_EVERYONE:
+					$allowed[] = $inquiryId;
+					break;
+
+				case Participation::POLICY_USERS:
+					if (in_array($inquiryId, $userParticipationIds, false)) {
+						$allowed[] = $inquiryId;
+					}
+					break;
+
+				case Participation::POLICY_GROUPS:
+					if (in_array($inquiryId, $groupParticipationIds, false)) {
+						$allowed[] = $inquiryId;
+					}
+					break;
+
+				case Participation::POLICY_LOTTERY:
+					if (in_array($inquiryId, $userLotteryIds, false)) {
+						$allowed[] = $inquiryId;
+					}
+					break;
+
+				default:
+					// Unknown or legacy → not visible
+					break;
 			}
 		}
 
-		$orConditions[] = $qb->expr()->eq(
-			'participation.policy_type',
-			$qb->createNamedParameter(Participation::POLICY_LOTTERY)
-		);
-
-		$qb->andWhere($qb->expr()->orX(...$orConditions));
+		return $allowed;
 	}
 
+		/**
+	 * Resolve the current user's group IDs.
+	 *
+	 * OCA\Agora\UserSession::getCurrentUser() returns the app's User wrapper,
+	 * which is NOT an \OCP\IUser — it exposes getGroups() instead. Using
+	 * `instanceof IUser` therefore always fails and returns [], which silently
+	 * disabled every groups-based visibility check.
+	 */
 	private function getUserGroupIds(string $userId): array
 	{
 		try {
-			$user = $this->userSession->getUser();
-			if ($user !== null && $user instanceof \OCP\IUser) {
+			$user = $this->userSession->getCurrentUser();
+			if ($user === null) {
+				return [];
+			}
+
+			// Agora's User wrapper
+			if (method_exists($user, 'getGroups')) {
+				$groups = $user->getGroups();
+				return is_array($groups) ? array_values($groups) : [];
+			}
+
+			// Raw IUser fallback
+			if ($user instanceof \OCP\IUser) {
 				return $this->groupManager->getUserGroupIds($user);
 			}
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->logger->error('Could not get user groups: ' . $e->getMessage(), [
 				'app' => 'agora',
-				'userId' => $userId
+				'userId' => $userId,
 			]);
 		}
 		return [];
@@ -480,9 +727,11 @@ class InquiryMapper extends QBMapper
 
 		foreach ($inquiries as $inquiry) {
 			$this->loadDynamicFields($inquiry);
+			$this->loadParticipation($inquiry);
 		}
 
 		$this->loadVisibilityGroups($inquiries);
+		$this->loadVisibilityUsers($inquiries);
 	}
 
 	// ── Query methods ──
@@ -495,9 +744,9 @@ class InquiryMapper extends QBMapper
 		$inquiry = $this->findEntity($qb);
 
 		$this->loadDynamicFields($inquiry);
-		$inquiry->setVisibilityGroups(
-			$this->getVisibilityGroupsForInquiry($id)
-		);
+		$this->loadParticipation($inquiry);
+		$inquiry->setVisibilityGroups($this->getVisibilityGroupsForInquiry($id));
+		$inquiry->setVisibilityUsers($this->getUserIdsForVisibility($id));
 
 		return $inquiry;
 	}
@@ -600,7 +849,6 @@ class InquiryMapper extends QBMapper
 			$qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId)));
 		}
 
-		// From main — row-level visibility
 		$this->applyVisibilityFilter($qb, $currentUserId);
 
 		$stmt = $qb->executeQuery();
@@ -691,6 +939,26 @@ class InquiryMapper extends QBMapper
 			if ($inquiry instanceof Inquiry) {
 				$id = $inquiry->getId();
 				$inquiry->setVisibilityGroups($groupsByTarget[$id] ?? []);
+			}
+		}
+	}
+
+	/**
+	 * Symmetric counterpart to loadVisibilityGroups() for the `users` visibility.
+	 * Uses a per-inquiry loop because UserRelationMapper has no bulk-by-targets
+	 * API today. If one is added, switch to that.
+	 */
+	public function loadVisibilityUsers(array $inquiries): void
+	{
+		if (empty($inquiries)) {
+			return;
+		}
+
+		foreach ($inquiries as $inquiry) {
+			if ($inquiry instanceof Inquiry) {
+				$inquiry->setVisibilityUsers(
+					$this->getUserIdsForVisibility($inquiry->getId())
+				);
 			}
 		}
 	}
@@ -1066,7 +1334,6 @@ class InquiryMapper extends QBMapper
 			$joinAlias,
 			$qb->expr()->andX(
 				$qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id'),
-				// Merged: main's access guards → visibility equivalents
 				$qb->expr()->orX(
 					$qb->expr()->eq($joinAlias . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_EVERYONE)),
 					$qb->expr()->eq($joinAlias . '.visibility', $qb->createNamedParameter(Inquiry::VISIBILITY_GROUPS))
@@ -1101,37 +1368,6 @@ class InquiryMapper extends QBMapper
 		);
 	}
 
-	protected function joinParticipation(
-		IQueryBuilder &$qb,
-		string $fromAlias,
-		?string $currentUserId
-	): void {
-		$qb->leftJoin(
-			$fromAlias,
-			Participation::TABLE,
-			'participation',
-			$qb->expr()->andX(
-				$qb->expr()->eq('participation.target_type', $qb->expr()->literal('inquiry')),
-				$qb->expr()->eq('participation.target_id', $fromAlias . '.id')
-			)
-		);
-
-		$qb->addSelect([
-			'participation.id AS participation_id',
-			'participation.policy_type AS participation_policy_type',
-			'participation.policy_config AS participation_policy_config',
-			'participation.created_at AS participation_created_at',
-			'participation.updated_at AS participation_updated_at',
-			'participation.created_by AS participation_created_by'
-		]);
-
-		$this->applyParticipationFilter($qb, $currentUserId);
-	}
-
-	/**
-	 * From main: join a computed `is_shared` flag based on whether the current
-	 * user has any non-deleted Share row on this inquiry (directly or via groups).
-	 */
 	protected function joinIsShared(
 		IQueryBuilder &$qb,
 		string $fromAlias,
@@ -1298,9 +1534,6 @@ class InquiryMapper extends QBMapper
 		}
 	}
 
-	/**
-	 * Join trending scores to the query
-	 */
 	protected function joinTrendingScores(
 		IQueryBuilder &$qb,
 		string $fromAlias,
@@ -1321,9 +1554,6 @@ class InquiryMapper extends QBMapper
 		);
 	}
 
-	/**
-	 * Get trending scores for multiple inquiries in a single query
-	 */
 	public function loadTrendingScoresForInquiries(array $inquiries): array
 	{
 		if (empty($inquiries)) {

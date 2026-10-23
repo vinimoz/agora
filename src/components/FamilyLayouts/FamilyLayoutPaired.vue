@@ -31,7 +31,10 @@
     <!-- ========================================== -->
     <!-- CANVAS VIEW - Primary debate experience   -->
     <!-- ========================================== -->
-    <div v-if="currentView === 'canvas'" class="debate-canvas">
+    <div
+      v-if="currentView === 'canvas'"
+      class="debate-canvas"
+    >
       <!-- Question at the top -->
       <div class="debate-question">
         <h2>{{ debateQuestion }}</h2>
@@ -47,9 +50,16 @@
         }"
       >
         <!-- FOR Column -->
-        <div v-if="hasForPositions" class="debate-column for-column">
+        <div
+          v-if="hasForPositions"
+          class="debate-column for-column"
+        >
           <div class="column-header">
-            <component :is="InquiryOptionIcons.ThumbUp" :size="20" class="for-icon" />
+            <component
+              :is="InquiryOptionIcons.ThumbUp"
+              :size="20"
+              class="for-icon"
+            />
             <h3>{{ getOptionTypeLabel('position_for') }}</h3>
             <span class="column-count">{{ getOptionsByType('position_for').length }}</span>
           </div>
@@ -79,56 +89,92 @@
               class="add-position-btn"
               @click="openAddOptionDialog('position_for')"
             >
-              <component :is="InquiryOptionIcons.Plus" :size="16" />
+              <component
+                :is="InquiryOptionIcons.Plus"
+                :size="16"
+              />
               {{ t('agora', 'Add position') }}
             </button>
           </div>
         </div>
 
         <!-- Debate Axis Center - Only shown when pairs exist -->
-        <div v-if="hasDetectedPairs" class="debate-center">
+        <div
+          v-if="hasDetectedPairs"
+          class="debate-center"
+        >
           <!-- Balance Indicator -->
           <div class="balance-indicator">
             <div class="balance-bar">
-              <div class="balance-fill for-fill" :style="{ width: `${debateBalance.for}%` }"></div>
+              <div
+                class="balance-fill for-fill"
+                :style="{ width: `${debateBalance.for}%` }"
+              />
               <div
                 v-if="hasAgainstPositions"
                 class="balance-fill against-fill"
                 :style="{ width: `${debateBalance.against}%` }"
-              ></div>
+              />
             </div>
             <div class="balance-stats">
-              <span class="for-stats">{{ t('agora', '{count} for', { count: debateBalance.forCount }) }}</span>
-              <span class="against-stats">{{ t('agora', '{count} against', { count: debateBalance.againstCount }) }}</span>
+              <span class="for-stats">{{
+                t('agora', '{count} for', { count: debateBalance.forCount })
+              }}</span>
+              <span class="against-stats">{{
+                t('agora', '{count} against', { count: debateBalance.againstCount })
+              }}</span>
             </div>
           </div>
 
           <!-- Metrics -->
           <div class="center-metrics">
             <div class="metric-item">
-              <component :is="InquiryOptionIcons.Users" :size="14" />
+              <component
+                :is="InquiryOptionIcons.Users"
+                :size="14"
+              />
               <span>{{ debateMetrics.participants }}</span>
             </div>
             <div class="metric-item">
-              <component :is="InquiryOptionIcons.Comment" :size="14" />
+              <component
+                :is="InquiryOptionIcons.Comment"
+                :size="14"
+              />
               <span>{{ debateMetrics.arguments }}</span>
             </div>
             <div class="metric-item">
-              <component :is="InquiryOptionIcons.AlertCircle" :size="14" />
+              <component
+                :is="InquiryOptionIcons.AlertCircle"
+                :size="14"
+              />
               <span>{{ debateMetrics.objections }}</span>
             </div>
           </div>
 
           <!-- Paired options info -->
-          <div v-if="detectedPairs.length > 0" class="paired-info">
+          <div
+            v-if="detectedPairs.length > 0"
+            class="paired-info"
+          >
             <div class="paired-info-header">
-              <component :is="InquiryOptionIcons.Link" :size="14" />
+              <component
+                :is="InquiryOptionIcons.Link"
+                :size="14"
+              />
               <span>{{ t('agora', 'Paired options') }}</span>
             </div>
             <div class="paired-info-content">
-              <div v-for="pair in detectedPairs" :key="pair.left + pair.right" class="pair-item">
+              <div
+                v-for="pair in detectedPairs"
+                :key="pair.left + pair.right"
+                class="pair-item"
+              >
                 <span class="pair-left">{{ getOptionTypeLabel(pair.left) }}</span>
-                <component :is="InquiryOptionIcons.SwapHorizontal" :size="12" class="pair-icon" />
+                <component
+                  :is="InquiryOptionIcons.SwapHorizontal"
+                  :size="12"
+                  class="pair-icon"
+                />
                 <span class="pair-right">{{ getOptionTypeLabel(pair.right) }}</span>
               </div>
             </div>
@@ -136,12 +182,22 @@
         </div>
 
         <!-- If no pairs detected, show minimal center -->
-        <div v-else class="debate-center no-pairs"></div>
+        <div
+          v-else
+          class="debate-center no-pairs"
+        />
 
         <!-- AGAINST Column -->
-        <div v-if="hasAgainstPositions" class="debate-column against-column">
+        <div
+          v-if="hasAgainstPositions"
+          class="debate-column against-column"
+        >
           <div class="column-header">
-            <component :is="InquiryOptionIcons.ThumbDown" :size="20" class="against-icon" />
+            <component
+              :is="InquiryOptionIcons.ThumbDown"
+              :size="20"
+              class="against-icon"
+            />
             <h3>{{ getOptionTypeLabel('position_against') }}</h3>
             <span class="column-count">{{ getOptionsByType('position_against').length }}</span>
           </div>
@@ -171,7 +227,10 @@
               class="add-position-btn"
               @click="openAddOptionDialog('position_against')"
             >
-              <component :is="InquiryOptionIcons.Plus" :size="16" />
+              <component
+                :is="InquiryOptionIcons.Plus"
+                :size="16"
+              />
               {{ t('agora', 'Add position') }}
             </button>
           </div>
@@ -179,9 +238,15 @@
       </div>
 
       <!-- Unpaired options displayed horizontally at the bottom -->
-      <div v-if="hasUnpairedOptions" class="unpaired-options">
+      <div
+        v-if="hasUnpairedOptions"
+        class="unpaired-options"
+      >
         <div class="unpaired-header">
-          <component :is="InquiryOptionIcons.Options" :size="16" />
+          <component
+            :is="InquiryOptionIcons.Options"
+            :size="16"
+          />
           <h4>{{ t('agora', 'Neutral options') }}</h4>
           <span class="unpaired-count">{{ unpairedOptions.length }}</span>
         </div>
@@ -208,11 +273,20 @@
       </div>
 
       <!-- Expanded View for selected option -->
-      <div v-if="selectedOption && expandedOptionId === selectedOption.id" class="expanded-view">
+      <div
+        v-if="selectedOption && expandedOptionId === selectedOption.id"
+        class="expanded-view"
+      >
         <div class="expanded-content">
           <div class="expanded-header">
-            <button class="close-expanded" @click="closeExpandedView">
-              <component :is="InquiryOptionIcons.Close" :size="20" />
+            <button
+              class="close-expanded"
+              @click="closeExpandedView"
+            >
+              <component
+                :is="InquiryOptionIcons.Close"
+                :size="20"
+              />
             </button>
             <div class="expanded-title">
               <component
@@ -238,9 +312,15 @@
             </div>
 
             <!-- Child options displayed horizontally -->
-            <div v-if="getChildrenCount(selectedOption.id) > 0" class="child-options">
+            <div
+              v-if="getChildrenCount(selectedOption.id) > 0"
+              class="child-options"
+            >
               <div class="child-header">
-                <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
+                <component
+                  :is="InquiryOptionIcons.MessageReplyText"
+                  :size="14"
+                />
                 <span>{{ t('agora', 'Arguments & responses') }}</span>
                 <span class="child-count">{{ getChildrenCount(selectedOption.id) }}</span>
               </div>
@@ -271,7 +351,10 @@
                 @click="addResponse(selectedOption)"
               >
                 <template #icon>
-                  <component :is="InquiryOptionIcons.Plus" :size="14" />
+                  <component
+                    :is="InquiryOptionIcons.Plus"
+                    :size="14"
+                  />
                 </template>
                 {{ t('agora', 'Add argument') }}
               </NcButton>
@@ -284,18 +367,27 @@
     <!-- ========================================== -->
     <!-- EXPLORE VIEW - Tree navigation            -->
     <!-- ========================================== -->
-    <div v-else-if="currentView === 'explore'" class="explore-view">
+    <div
+      v-else-if="currentView === 'explore'"
+      class="explore-view"
+    >
       <div class="explore-container">
         <!-- Left: Tree Navigation -->
         <div class="explore-nav">
           <div class="nav-header">
-            <component :is="InquiryOptionIcons.List" :size="18" />
+            <component
+              :is="InquiryOptionIcons.List"
+              :size="18"
+            />
             <h4>{{ t('agora', 'Debate Tree') }}</h4>
           </div>
 
           <div class="nav-tree">
             <!-- Recursive tree rendering with all levels -->
-            <template v-for="node in optionTree" :key="node.id">
+            <template
+              v-for="node in optionTree"
+              :key="node.id"
+            >
               <DebateTreeNode
                 :node="node"
                 :selected-id="selectedOptionId"
@@ -310,7 +402,10 @@
         <div class="explore-detail">
           <div class="detail-header">
             <div class="detail-title">
-              <component :is="InquiryOptionIcons.MessageReplyText" :size="18" />
+              <component
+                :is="InquiryOptionIcons.MessageReplyText"
+                :size="18"
+              />
               <h4>
                 {{
                   selectedOption
@@ -359,7 +454,11 @@
                   <span class="response-count">{{ children.length }}</span>
                 </div>
 
-                <div v-for="child in children" :key="child.id" class="argument-wrapper">
+                <div
+                  v-for="child in children"
+                  :key="child.id"
+                  class="argument-wrapper"
+                >
                   <ItemCard
                     :item="child"
                     :parent-id="parentId"
@@ -372,18 +471,34 @@
               </div>
 
               <!-- Add response -->
-              <div v-if="canAddChild(selectedOption)" class="add-response-area">
-                <NcButton type="tertiary" size="small" @click="addResponse(selectedOption)">
+              <div
+                v-if="canAddChild(selectedOption)"
+                class="add-response-area"
+              >
+                <NcButton
+                  type="tertiary"
+                  size="small"
+                  @click="addResponse(selectedOption)"
+                >
                   <template #icon>
-                    <component :is="InquiryOptionIcons.Plus" :size="14" />
+                    <component
+                      :is="InquiryOptionIcons.Plus"
+                      :size="14"
+                    />
                   </template>
                   {{ t('agora', 'Add argument') }}
                 </NcButton>
               </div>
             </template>
 
-            <div v-else class="empty-detail">
-              <component :is="InquiryOptionIcons.ArrowRight" :size="32" />
+            <div
+              v-else
+              class="empty-detail"
+            >
+              <component
+                :is="InquiryOptionIcons.ArrowRight"
+                :size="32"
+              />
               <p>{{ t('agora', 'Click an item in the debate tree') }}</p>
             </div>
           </div>
@@ -394,7 +509,10 @@
     <!-- ========================================== -->
     <!-- ARGUMENT MAP VIEW - Navigable network     -->
     <!-- ========================================== -->
-    <div v-else-if="currentView === 'map'" class="map-view">
+    <div
+      v-else-if="currentView === 'map'"
+      class="map-view"
+    >
       <div class="map-container">
         <div class="map-header">
           <h3>{{ t('agora', 'Argument Map') }}</h3>
@@ -404,8 +522,15 @@
         <div class="map-canvas">
           <div class="map-network">
             <!-- All root options as branches -->
-            <div v-if="rootOptions.length > 0" class="map-level branches-level">
-              <div v-for="option in rootOptions" :key="option.id" class="map-branch">
+            <div
+              v-if="rootOptions.length > 0"
+              class="map-level branches-level"
+            >
+              <div
+                v-for="option in rootOptions"
+                :key="option.id"
+                class="map-branch"
+              >
                 <div
                   class="map-node branch-node"
                   :class="{
@@ -425,14 +550,20 @@
                     />
                     <span class="node-label">{{ getOptionLabel(option) }}</span>
                     <span class="node-type">{{ getOptionTypeLabel(option.type) }}</span>
-                    <span v-if="getChildrenCount(option.id) > 0" class="node-badge">
+                    <span
+                      v-if="getChildrenCount(option.id) > 0"
+                      class="node-badge"
+                    >
                       {{ getChildrenCount(option.id) }}
                     </span>
                   </div>
                 </div>
 
                 <!-- Children nodes with ItemCard in compact mode -->
-                <div v-if="getChildrenCount(option.id) > 0" class="map-children">
+                <div
+                  v-if="getChildrenCount(option.id) > 0"
+                  class="map-children"
+                >
                   <div
                     v-for="child in getChildrenForOption(option.id)"
                     :key="child.id"
@@ -460,7 +591,10 @@
                     </div>
 
                     <!-- Grandchildren -->
-                    <div v-if="getChildrenCount(child.id) > 0" class="map-grandchildren">
+                    <div
+                      v-if="getChildrenCount(child.id) > 0"
+                      class="map-grandchildren"
+                    >
                       <div
                         v-for="grandchild in getChildrenForOption(child.id).slice(0, 3)"
                         :key="grandchild.id"
@@ -472,7 +606,10 @@
                           <span class="node-label">{{ getOptionLabel(grandchild) }}</span>
                         </div>
                       </div>
-                      <div v-if="getChildrenCount(child.id) > 3" class="map-more">
+                      <div
+                        v-if="getChildrenCount(child.id) > 3"
+                        class="map-more"
+                      >
                         +{{ getChildrenCount(child.id) - 3 }}
                       </div>
                     </div>
@@ -482,8 +619,14 @@
             </div>
 
             <!-- Empty state -->
-            <div v-if="rootOptions.length === 0" class="map-empty">
-              <component :is="InquiryOptionIcons.Graph" :size="48" />
+            <div
+              v-if="rootOptions.length === 0"
+              class="map-empty"
+            >
+              <component
+                :is="InquiryOptionIcons.Graph"
+                :size="48"
+              />
               <p>{{ t('agora', 'No options to display') }}</p>
               <span class="map-hint">{{
                 t('agora', 'Add an option to start building the argument map')
@@ -494,23 +637,23 @@
 
         <div class="map-legend">
           <div class="legend-item">
-            <span class="legend-color position-for"></span>
+            <span class="legend-color position-for" />
             <span>{{ getOptionTypeLabel('position_for') }}</span>
           </div>
           <div class="legend-item">
-            <span class="legend-color position-against"></span>
+            <span class="legend-color position-against" />
             <span>{{ getOptionTypeLabel('position_against') }}</span>
           </div>
           <div class="legend-item">
-            <span class="legend-color neutral"></span>
+            <span class="legend-color neutral" />
             <span>{{ t('agora', 'Other options') }}</span>
           </div>
           <div class="legend-item">
-            <span class="legend-color child"></span>
+            <span class="legend-color child" />
             <span>{{ t('agora', 'Arguments / Children') }}</span>
           </div>
           <div class="legend-item">
-            <span class="legend-color selected"></span>
+            <span class="legend-color selected" />
             <span>{{ t('agora', 'Selected') }}</span>
           </div>
         </div>
@@ -582,13 +725,9 @@ const showBackButton = computed(() => navigationHistory.value.length > 0)
 // Get ALL option types for this family (for icon lookups, child creation)
 // ============================================
 
-
 const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
 
-const familyOptions = computed(() =>
-  getItemsForFamily(props.items, familyKey.value)
-)
-
+const familyOptions = computed(() => getItemsForFamily(props.items, familyKey.value))
 
 const allFamilyOptionTypes = computed(() =>
   getOptionTypesForFamily(
@@ -675,7 +814,7 @@ const debateBalance = computed(() => {
     for: Math.round((forPositions.length / total) * 100),
     against: Math.round((againstPositions.length / total) * 100),
     forCount: forPositions.length,
-    againstCount: againstPositions.length
+    againstCount: againstPositions.length,
   }
 })
 
@@ -870,7 +1009,7 @@ const addResponse = (option: Option) => {
   }
 }
 
-console.log(" ITEMS IN PAIRED ",props.items)
+console.log(' ITEMS IN PAIRED ', props.items)
 </script>
 
 <style scoped lang="scss">

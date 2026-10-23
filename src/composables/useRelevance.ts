@@ -13,23 +13,24 @@ export function useRelevance() {
   const weights = computed(() => {
     const w = session.appSettings?.home?.relevance?.weights
     return {
-      owner:        w?.owner        ?? 100,
-      participant:  w?.participant  ?? 60,
-      space:        w?.space        ?? 40,
-      city:         w?.city         ?? 30,
+      owner: w?.owner ?? 100,
+      participant: w?.participant ?? 60,
+      space: w?.space ?? 40,
+      city: w?.city ?? 30,
       municipality: w?.municipality ?? 15,
-      activePhase:  w?.activePhase  ?? 20,
-      new:          w?.new          ?? 10,
+      activePhase: w?.activePhase ?? 20,
+      new: w?.new ?? 10,
     }
   })
 
-  const tierLabels = computed(() =>
-    session.appSettings?.home?.relevance?.tiers ?? [
-      { key: 'for_you', label: 'For you' },
-      { key: 'local',   label: 'Local' },
-      { key: 'region',  label: 'Region' },
-      { key: 'public',  label: 'Public' },
-    ],
+  const tierLabels = computed(
+    () =>
+      session.appSettings?.home?.relevance?.tiers ?? [
+        { key: 'for_you', label: 'For you' },
+        { key: 'local', label: 'Local' },
+        { key: 'region', label: 'Region' },
+        { key: 'public', label: 'Public' },
+      ]
   )
 
   function score(inquiry: Inquiry) {
@@ -40,10 +41,14 @@ export function useRelevance() {
     let tier: RelevanceTier = 'public'
 
     if (inquiry.owner?.id === ctx.userId) {
-      score += w.owner; reasons.push('owner'); tier = 'for_you'
+      score += w.owner
+      reasons.push('owner')
+      tier = 'for_you'
     }
     if (ctx.spaces.some((s) => inquiry.inquiryGroups?.includes(s.id))) {
-      score += w.space; reasons.push('your space'); if (tier === 'public') tier = 'for_you'
+      score += w.space
+      reasons.push('your space')
+      if (tier === 'public') tier = 'for_you'
     }
     // Participation is not on Inquiry directly in your schema — extend later:
     // if (inquiry.currentUserStatus?.isInvolved) { ... }
@@ -51,16 +56,30 @@ export function useRelevance() {
     const inquiryLocation = (inquiry.miscFields?.location as string) || ''
     const explicit = ctx.location
     if (tier === 'public' && explicit.city && inquiryLocation === explicit.city) {
-      score += w.city; reasons.push('your city'); tier = 'local'
-    } else if (tier === 'public' && explicit.municipality && inquiryLocation === explicit.municipality) {
-      score += w.municipality; reasons.push('your area'); tier = 'region'
+      score += w.city
+      reasons.push('your city')
+      tier = 'local'
+    } else if (
+      tier === 'public' &&
+      explicit.municipality &&
+      inquiryLocation === explicit.municipality
+    ) {
+      score += w.municipality
+      reasons.push('your area')
+      tier = 'region'
     }
 
     // Active phase — if you expose `miscFields.activePhase`:
-    if (inquiry.miscFields?.activePhase) { score += w.activePhase; reasons.push('active phase') }
+    if (inquiry.miscFields?.activePhase) {
+      score += w.activePhase
+      reasons.push('active phase')
+    }
 
     const ageDays = (Date.now() / 1000 - (inquiry.status?.created || 0)) / 86400
-    if (ageDays < 7) { score += w.new; reasons.push('new') }
+    if (ageDays < 7) {
+      score += w.new
+      reasons.push('new')
+    }
 
     return { inquiry, score, tier, reasons }
   }
@@ -71,7 +90,10 @@ export function useRelevance() {
 
   function byTier(list: Inquiry[]) {
     const out: Record<RelevanceTier, ReturnType<typeof score>[]> = {
-      for_you: [], local: [], region: [], public: [],
+      for_you: [],
+      local: [],
+      region: [],
+      public: [],
     }
     for (const s of rank(list)) out[s.tier].push(s)
     return out

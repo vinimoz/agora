@@ -1,4 +1,3 @@
-
 <!--
   SPDX-FileCopyrightText: 2024 Nextcloud contributors
   SPDX-License-Identifier: AGPL-3.0-or-later
@@ -6,17 +5,29 @@
 <template>
   <div class="consensus-flow-layout">
     <!-- Consensus Progress Header -->
-    <div v-if="uiConfig.show_consensus_meter" class="consensus-progress-header">
+    <div
+      v-if="uiConfig.show_consensus_meter"
+      class="consensus-progress-header"
+    >
       <div class="progress-header-content">
         <div class="status-indicator">
-          <div class="health-indicator" :class="consensusHealth.class">
-            <component :is="consensusHealth.icon" :size="20" />
+          <div
+            class="health-indicator"
+            :class="consensusHealth.class"
+          >
+            <component
+              :is="consensusHealth.icon"
+              :size="20"
+            />
             <span class="health-label">{{ consensusHealth.label }}</span>
           </div>
           <span class="health-description">{{ consensusHealth.description }}</span>
         </div>
 
-        <div v-if="uiConfig.visualize_progress" class="progress-steps">
+        <div
+          v-if="uiConfig.visualize_progress"
+          class="progress-steps"
+        >
           <div
             v-for="step in progressSteps"
             :key="step.id"
@@ -28,10 +39,16 @@
             }"
           >
             <div class="step-icon">
-              <component :is="step.icon" :size="16" />
+              <component
+                :is="step.icon"
+                :size="16"
+              />
             </div>
             <span class="step-label">{{ step.label }}</span>
-            <span v-if="step.count !== undefined" class="step-count">
+            <span
+              v-if="step.count !== undefined"
+              class="step-count"
+            >
               {{ step.count }}
             </span>
           </div>
@@ -44,8 +61,14 @@
             :type="action.key === 'continue_discussion' ? 'primary' : 'secondary'"
             @click="handleAction(action.key)"
           >
-            <template v-if="action.icon" #icon>
-              <component :is="getActionIcon(action.icon)" :size="16" />
+            <template
+              v-if="action.icon"
+              #icon
+            >
+              <component
+                :is="getActionIcon(action.icon)"
+                :size="16"
+              />
             </template>
             {{ t('agora', action.label) }}
           </NcButton>
@@ -53,7 +76,10 @@
       </div>
 
       <!-- Quorum/Progress Bar -->
-      <div v-if="showQuorumProgress" class="quorum-progress">
+      <div
+        v-if="showQuorumProgress"
+        class="quorum-progress"
+      >
         <div class="progress-bar-container">
           <div
             class="progress-bar"
@@ -70,7 +96,10 @@
               })
             }}
           </span>
-          <span v-if="quorumNeeded" class="quorum-badge">
+          <span
+            v-if="quorumNeeded"
+            class="quorum-badge"
+          >
             {{
               t('agora', 'Quorum: {count}/{total}', {
                 count: objectionsQuorum,
@@ -83,11 +112,20 @@
     </div>
 
     <!-- Blocking Objections -->
-    <div v-if="blockingObjections.length > 0" class="consensus-section">
+    <div
+      v-if="blockingObjections.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title blocking">
-        <component :is="InquiryOptionIcons.AlertCircle" :size="16" />
+        <component
+          :is="InquiryOptionIcons.AlertCircle"
+          :size="16"
+        />
         {{ t('agora', 'Blocking objections') }} ({{ blockingObjections.length }})
-        <span v-if="blockedCount > 0" class="status-badge blocked">
+        <span
+          v-if="blockedCount > 0"
+          class="status-badge blocked"
+        >
           {{ t('agora', '{count} blocked', { count: blockedCount }) }}
         </span>
       </h4>
@@ -118,9 +156,15 @@
     </div>
 
     <!-- Active Discussions -->
-    <div v-if="activeDiscussions.length > 0" class="consensus-section">
+    <div
+      v-if="activeDiscussions.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title discussion">
-        <component :is="InquiryOptionIcons.MessageSquare" :size="16" />
+        <component
+          :is="InquiryOptionIcons.MessageSquare"
+          :size="16"
+        />
         {{ t('agora', 'Active discussions') }} ({{ activeDiscussions.length }})
       </h4>
       <div class="options-list">
@@ -141,9 +185,15 @@
     </div>
 
     <!-- Proposed Resolutions -->
-    <div v-if="proposedResolutions.length > 0" class="consensus-section">
+    <div
+      v-if="proposedResolutions.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title resolution">
-        <component :is="InquiryOptionIcons.FileText" :size="16" />
+        <component
+          :is="InquiryOptionIcons.FileText"
+          :size="16"
+        />
         {{ t('agora', 'Proposed resolutions') }} ({{ proposedResolutions.length }})
       </h4>
       <div class="options-list">
@@ -162,11 +212,20 @@
     </div>
 
     <!-- Resolved Concerns -->
-    <div v-if="resolvedConcerns.length > 0" class="consensus-section">
+    <div
+      v-if="resolvedConcerns.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title resolved">
-        <component :is="InquiryOptionIcons.CheckCircle" :size="16" />
+        <component
+          :is="InquiryOptionIcons.CheckCircle"
+          :size="16"
+        />
         {{ t('agora', 'Resolved concerns') }} ({{ resolvedConcerns.length }})
-        <span v-if="recentlyResolved > 0" class="status-badge resolved">
+        <span
+          v-if="recentlyResolved > 0"
+          class="status-badge resolved"
+        >
           {{ t('agora', '{count} recently resolved', { count: recentlyResolved }) }}
         </span>
       </h4>
@@ -187,9 +246,15 @@
     </div>
 
     <!-- Non-blocking Exceptions -->
-    <div v-if="exceptions.length > 0" class="consensus-section">
+    <div
+      v-if="exceptions.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title non-blocking">
-        <component :is="InquiryOptionIcons.AlertOutline" :size="16" />
+        <component
+          :is="InquiryOptionIcons.AlertOutline"
+          :size="16"
+        />
         {{ t('agora', 'Exceptions') }} ({{ exceptions.length }})
       </h4>
       <div class="options-list">
@@ -206,9 +271,15 @@
     </div>
 
     <!-- Consultation Questions -->
-    <div v-if="consultationQuestions.length > 0" class="consensus-section">
+    <div
+      v-if="consultationQuestions.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title consultation">
-        <component :is="InquiryOptionIcons.HelpCircle" :size="16" />
+        <component
+          :is="InquiryOptionIcons.HelpCircle"
+          :size="16"
+        />
         {{ t('agora', 'Consultation questions') }} ({{ consultationQuestions.length }})
       </h4>
       <div class="options-list">
@@ -225,9 +296,15 @@
     </div>
 
     <!-- Recommendations -->
-    <div v-if="recommendations.length > 0" class="consensus-section">
+    <div
+      v-if="recommendations.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title recommendation">
-        <component :is="InquiryOptionIcons.ThumbUp" :size="16" />
+        <component
+          :is="InquiryOptionIcons.ThumbUp"
+          :size="16"
+        />
         {{ t('agora', 'Recommendations') }} ({{ recommendations.length }})
       </h4>
       <div class="options-list">
@@ -244,9 +321,15 @@
     </div>
 
     <!-- Consents given -->
-    <div v-if="consents.length > 0" class="consensus-section">
+    <div
+      v-if="consents.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title consent">
-        <component :is="InquiryOptionIcons.CheckCircle" :size="16" />
+        <component
+          :is="InquiryOptionIcons.CheckCircle"
+          :size="16"
+        />
         {{ t('agora', 'Consent given') }} ({{ consents.length }})
       </h4>
       <div class="options-list">
@@ -263,9 +346,15 @@
     </div>
 
     <!-- Other items (not shown in any section above) -->
-    <div v-if="otherItems.length > 0" class="consensus-section">
+    <div
+      v-if="otherItems.length > 0"
+      class="consensus-section"
+    >
       <h4 class="section-title">
-        <component :is="InquiryOptionIcons.Options" :size="16" />
+        <component
+          :is="InquiryOptionIcons.Options"
+          :size="16"
+        />
         {{ t('agora', 'Other items') }} ({{ otherItems.length }})
       </h4>
       <div class="options-list">
@@ -282,16 +371,17 @@
     </div>
 
     <!-- Empty state -->
-    <div v-if="allItems.length === 0" class="empty-state">
-      <component :is="InquiryOptionIcons.AlertCircle" :size="48" />
+    <div
+      v-if="allItems.length === 0"
+      class="empty-state"
+    >
+      <component
+        :is="InquiryOptionIcons.AlertCircle"
+        :size="48"
+      />
       <h4>{{ t('agora', 'No consensus items yet') }}</h4>
       <p>
-        {{
-          t(
-            'agora',
-            'Add objections, exceptions, consultation questions, or recommendations',
-          )
-        }}
+        {{ t('agora', 'Add objections, exceptions, consultation questions, or recommendations') }}
       </p>
 
       <div class="quick-add-actions">
@@ -302,7 +392,10 @@
           @click="$emit('addOption', type.option_type)"
         >
           <template #icon>
-            <component :is="getOptionTypeIcon(type.option_type)" :size="16" />
+            <component
+              :is="getOptionTypeIcon(type.option_type)"
+              :size="16"
+            />
           </template>
           {{ type.label }}
         </NcButton>
@@ -369,9 +462,7 @@ const emit = defineEmits<{
 // ========================================
 // Family filtering
 // ========================================
-const familyKey = computed(
-  () => props.familyKey ?? props.family?.family_type ?? '',
-)
+const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
 
 const filtered = computed(() => getItemsForFamily(props.items, familyKey.value))
 
@@ -384,52 +475,42 @@ const getOptionStatus = (item: Item) => item.statusKey
 // Filtered sections
 // ========================================
 const blockingObjections = computed(() =>
-  filtered.value.filter(
-    (i) => i.type === 'objection' || i.type === 'blocking_objection',
-  ),
+  filtered.value.filter((i) => i.type === 'objection' || i.type === 'blocking_objection')
 )
 
 const activeDiscussions = computed(() =>
   filtered.value.filter(
     (i) =>
       (i.type === 'objection' || i.type === 'blocking_objection') &&
-      i.statusKey === 'under_discussion',
-  ),
+      i.statusKey === 'under_discussion'
+  )
 )
 
 const proposedResolutions = computed(() =>
-  filtered.value.filter(
-    (i) => i.type === 'resolution' && i.statusKey === 'proposed',
-  ),
+  filtered.value.filter((i) => i.type === 'resolution' && i.statusKey === 'proposed')
 )
 
 const resolvedConcerns = computed(() =>
   filtered.value.filter(
     (i) =>
       (i.type === 'objection' || i.type === 'blocking_objection') &&
-      (i.statusKey === 'resolved' || i.statusKey === 'accepted'),
-  ),
+      (i.statusKey === 'resolved' || i.statusKey === 'accepted')
+  )
 )
 
 const exceptions = computed(() =>
-  filtered.value.filter(
-    (i) => i.type === 'exception' || i.type === 'non_blocking_objection',
-  ),
+  filtered.value.filter((i) => i.type === 'exception' || i.type === 'non_blocking_objection')
 )
 
 const consents = computed(() =>
-  filtered.value.filter((i) => i.type === 'consent' || i.type === 'agreement'),
+  filtered.value.filter((i) => i.type === 'consent' || i.type === 'agreement')
 )
 
 const consultationQuestions = computed(() =>
-  filtered.value.filter(
-    (i) => i.type === 'consultation_question' || i.type === 'question',
-  ),
+  filtered.value.filter((i) => i.type === 'consultation_question' || i.type === 'question')
 )
 
-const recommendations = computed(() =>
-  filtered.value.filter((i) => i.type === 'recommendation'),
-)
+const recommendations = computed(() => filtered.value.filter((i) => i.type === 'recommendation'))
 
 /** Items not shown in any section above */
 const otherItems = computed(() => {
@@ -455,8 +536,7 @@ const recentlyResolved = computed(() => {
   return resolvedConcerns.value.filter((i) => {
     const raw = i.raw as Record<string, unknown>
     const ts = (raw.resolved_at ?? (raw.miscFields as Record<string, unknown>)?.resolved_at) as
-      | string
-      | undefined
+      string | undefined
     if (!ts) return false
     return (now - new Date(ts).getTime()) / 1000 / 60 < threshold
   }).length
@@ -470,7 +550,7 @@ const objectionsQuorum = computed(() =>
     const raw = i.raw as Record<string, unknown>
     const status = raw.status as Record<string, number> | undefined
     return sum + (status?.countSupports || 0)
-  }, 0),
+  }, 0)
 )
 
 // ========================================
@@ -549,9 +629,7 @@ const availableActions = computed(() => {
 const totalObjections = computed(() => blockingObjections.value.length)
 const resolvedObjections = computed(() => resolvedConcerns.value.length)
 const blockedCount = computed(
-  () =>
-    blockingObjections.value.filter((i) => getOptionStatus(i) === 'blocked')
-      .length,
+  () => blockingObjections.value.filter((i) => getOptionStatus(i) === 'blocked').length
 )
 
 // ========================================
@@ -563,10 +641,7 @@ const quorumPercentage = computed(() => {
 })
 
 const showQuorumProgress = computed(
-  () =>
-    !!props.quorumNeeded &&
-    props.quorumNeeded > 0 &&
-    totalObjections.value > 0,
+  () => !!props.quorumNeeded && props.quorumNeeded > 0 && totalObjections.value > 0
 )
 
 const quorumProgressClass = computed(() => {
@@ -584,8 +659,7 @@ const consensusHealth = computed(() => {
   const hasActiveDiscussions = activeDiscussions.value.length > 0
   const hasProposedResolutions = proposedResolutions.value.length > 0
   const allResolved =
-    resolvedObjections.value === totalObjections.value &&
-    totalObjections.value > 0
+    resolvedObjections.value === totalObjections.value && totalObjections.value > 0
 
   if (props.consensusStatus === 'resolved') {
     return {
@@ -601,11 +675,9 @@ const consensusHealth = computed(() => {
       class: 'blocked',
       icon: InquiryOptionIcons.AlertCircle,
       label: t('agora', 'Blocked'),
-      description: t(
-        'agora',
-        'Consensus blocked by {count} unresolved objections',
-        { count: blockedCount.value },
-      ),
+      description: t('agora', 'Consensus blocked by {count} unresolved objections', {
+        count: blockedCount.value,
+      }),
     }
   }
 
@@ -614,11 +686,9 @@ const consensusHealth = computed(() => {
       class: 'progressing',
       icon: InquiryOptionIcons.MessageSquare,
       label: t('agora', 'Progressing'),
-      description: t(
-        'agora',
-        'Consensus progressing with {count} active discussions',
-        { count: activeDiscussions.value.length },
-      ),
+      description: t('agora', 'Consensus progressing with {count} active discussions', {
+        count: activeDiscussions.value.length,
+      }),
     }
   }
 
@@ -664,8 +734,7 @@ const progressSteps = computed(() => [
     id: 'consultation',
     label: t('agora', 'Consultation'),
     icon: InquiryOptionIcons.MessageSquare,
-    completed:
-      consultationQuestions.value.length > 0 || exceptions.value.length > 0,
+    completed: consultationQuestions.value.length > 0 || exceptions.value.length > 0,
     active: consultationQuestions.value.length > 0,
     count: consultationQuestions.value.length,
   },
@@ -673,8 +742,7 @@ const progressSteps = computed(() => [
     id: 'discussion',
     label: t('agora', 'Discussion'),
     icon: InquiryOptionIcons.MessageSquare,
-    completed:
-      activeDiscussions.value.length === 0 && resolvedObjections.value > 0,
+    completed: activeDiscussions.value.length === 0 && resolvedObjections.value > 0,
     active: activeDiscussions.value.length > 0,
     blocked: blockedCount.value > 0,
     count: activeDiscussions.value.length,
@@ -683,9 +751,7 @@ const progressSteps = computed(() => [
     id: 'resolution',
     label: t('agora', 'Resolution'),
     icon: InquiryOptionIcons.FileText,
-    completed:
-      resolvedObjections.value === totalObjections.value &&
-      totalObjections.value > 0,
+    completed: resolvedObjections.value === totalObjections.value && totalObjections.value > 0,
     active: proposedResolutions.value.length > 0,
     count: proposedResolutions.value.length,
   },
@@ -695,8 +761,7 @@ const progressSteps = computed(() => [
     icon: InquiryOptionIcons.CheckCircle,
     completed:
       props.consensusStatus === 'resolved' ||
-      (resolvedObjections.value === totalObjections.value &&
-        totalObjections.value > 0),
+      (resolvedObjections.value === totalObjections.value && totalObjections.value > 0),
     active: props.consensusStatus === 'ready',
   },
 ])
@@ -705,15 +770,8 @@ const progressSteps = computed(() => [
 // Available types for quick add
 // ========================================
 const availableTypes = computed(() => {
-  const rootTypes = [
-    'objection',
-    'exception',
-    'consultation_question',
-    'recommendation',
-  ]
-  return (props.familyOptionTypes ?? []).filter((type) =>
-    rootTypes.includes(type.option_type),
-  )
+  const rootTypes = ['objection', 'exception', 'consultation_question', 'recommendation']
+  return (props.familyOptionTypes ?? []).filter((type) => rootTypes.includes(type.option_type))
 })
 
 const getOptionTypeIcon = (type: string) =>
@@ -898,15 +956,15 @@ const getOptionTypeIcon = (type: string) =>
       margin: 0 0 16px 0;
       font-size: 18px;
       font-weight: 600;
-      
+
       &.blocking {
         color: var(--color-error);
       }
-      
+
       &.non-blocking {
         color: var(--color-warning);
       }
-      
+
       &.consent {
         color: var(--color-success);
       }

@@ -31,21 +31,36 @@
         @change-grade="(itemId, grade) => $emit('update:grades', { ...grades, [itemId]: grade })"
         @update:score="(itemId, score) => $emit('update:scores', { ...scores, [itemId]: score })"
         @update:star="(itemId, star) => $emit('update:scores', { ...scores, [itemId]: star })"
-        @update:reaction="(itemId, reaction) => $emit('update:reactions', { ...reactions, [itemId]: reaction })"
-        @update:quadratic="(itemId, votes) => $emit('update:quadraticVotes', { ...quadraticVotes, [itemId]: votes })"
-        @update:token_weight="(itemId, weight) => $emit('update:tokenWeights', { ...tokenWeights, [itemId]: weight })"
+        @update:reaction="
+          (itemId, reaction) => $emit('update:reactions', { ...reactions, [itemId]: reaction })
+        "
+        @update:quadratic="
+          (itemId, votes) => $emit('update:quadraticVotes', { ...quadraticVotes, [itemId]: votes })
+        "
+        @update:token_weight="
+          (itemId, weight) => $emit('update:tokenWeights', { ...tokenWeights, [itemId]: weight })
+        "
         @open-supports-modal="(itemId) => $emit('openSupportsModal', itemId)"
       />
     </div>
 
     <!-- Empty state -->
-    <div v-if="items.length === 0" class="empty-state">
-      <component :is="emptyIcon" :size="48" />
+    <div
+      v-if="items.length === 0"
+      class="empty-state"
+    >
+      <component
+        :is="emptyIcon"
+        :size="48"
+      />
       <p>{{ t('agora', 'No items available') }}</p>
     </div>
 
     <!-- Submit section -->
-    <div v-if="showSubmitButton && !autoSave" class="submit-vote-section">
+    <div
+      v-if="showSubmitButton && !autoSave"
+      class="submit-vote-section"
+    >
       <div class="submit-container">
         <NcButton
           type="primary"
@@ -65,12 +80,20 @@
           size="large"
           @click="$emit('removeMyVote')"
         >
-          <template #icon><X :size="18" /></template>
+          <template #icon>
+            <X :size="18" />
+          </template>
           {{ t('agora', 'Remove my vote') }}
         </NcButton>
 
-        <div v-if="voteSelectionInfo" class="selection-info">
-          <component :is="infoIcon" :size="14" />
+        <div
+          v-if="voteSelectionInfo"
+          class="selection-info"
+        >
+          <component
+            :is="infoIcon"
+            :size="14"
+          />
           <span>{{ voteSelectionInfo }}</span>
         </div>
       </div>
@@ -136,11 +159,9 @@ const emit = defineEmits<{
 
 void emit
 
-const emptyIcon = computed(
-  () => InquiryOptionIcons.Inbox ?? InquiryGeneralIcons.File,
-)
+const emptyIcon = computed(() => InquiryOptionIcons.Inbox ?? InquiryGeneralIcons.File)
 const infoIcon = computed(
-  () => InquiryOptionIcons.Info ?? InquiryGeneralIcons.Info ?? InquiryGeneralIcons.File,
+  () => InquiryOptionIcons.Info ?? InquiryGeneralIcons.Info ?? InquiryGeneralIcons.File
 )
 
 const showSubmitButton = computed(
@@ -148,7 +169,7 @@ const showSubmitButton = computed(
     props.canVote &&
     props.activeEngine?.status === 'active' &&
     props.effectiveEngineId !== 'trending' &&
-    props.items.length > 0,
+    props.items.length > 0
 )
 
 const getSubmitButtonText = (): string => {

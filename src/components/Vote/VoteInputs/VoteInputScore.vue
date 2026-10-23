@@ -13,7 +13,7 @@
         :style="{ '--progress': getProgress(currentValue ?? defaultValue) + '%' }"
         @input="handleSliderInput"
         @change="handleSliderChange"
-      />
+      >
       <span class="score-value">{{ displayValue }}</span>
     </div>
     <NcButton
@@ -31,7 +31,7 @@
 import { ref, computed, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type { Option, Inquiry } from '../../Types/index'
+import type { Option, Inquiry } from '../../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
@@ -116,7 +116,9 @@ function getProgress(value: number): number {
         border: 2px solid white;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         transition: transform 0.1s;
-        &:hover { transform: scale(1.2); }
+        &:hover {
+          transform: scale(1.2);
+        }
       }
       &::-moz-range-thumb {
         width: 18px;

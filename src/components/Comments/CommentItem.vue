@@ -18,7 +18,7 @@ import { useInquiryStore } from '../../stores/inquiry'
 import { useCommentsStore } from '../../stores/comments'
 import { usePreferencesStore } from '../../stores/preferences'
 
-import type { Comment } from '../../stores/comments.types'
+import type { Comment } from '../../Types/comments.types.ts'
 
 const sessionStore = useSessionStore()
 const inquiryStore = useInquiryStore()
@@ -59,7 +59,6 @@ const timestamp = computed(() => {
   return props.comment?.timestamp || 0
 })
 
-
 const commentedDateTime = computed(() => {
   try {
     return DateTime.fromSeconds(timestamp.value)
@@ -71,10 +70,11 @@ const commentedDateTime = computed(() => {
 const isCurrentUser = computed(() => sessionStore.currentUser?.id === user.value.id)
 
 // Check if any comment in group is confidential
-const isConfidential = computed(() => comments.value.some(c => c && c.confidential > 0))
+const isConfidential = computed(() => comments.value.some((c) => c && c.confidential > 0))
 
-const deletable = computed(() => user.value.id === sessionStore.currentUser?.id
-    || inquiryStore.currentUserStatus?.isOwner)
+const deletable = computed(
+  () => user.value.id === sessionStore.currentUser?.id || inquiryStore.currentUserStatus?.isOwner
+)
 
 // Format time for multiple comments
 const timeRange = computed(() => {
@@ -145,34 +145,40 @@ const position = computed(() => {
   userPositionsGrouped.set(userId, newPosition)
   return newPosition
 })
-
 </script>
 <template>
-  <div 
+  <div
     v-if="comments.length > 0"
     :class="[
       'comment-item',
-      { 
+      {
         'current-user': isCurrentUser,
-        'grouped': isGroupMode,
-        'single': !isGroupMode,
+        grouped: isGroupMode,
+        single: !isGroupMode,
         'avatar-left': position === 'left',
         'avatar-right': position === 'right',
-        'has-multiple': comments.length > 1
-      }
+        'has-multiple': comments.length > 1,
+      },
     ]"
   >
     <!-- Avatar - only show in grouped mode, hidden in single mode -->
-    <div v-if="isGroupMode" class="comment-item__avatar">
+    <div
+      v-if="isGroupMode"
+      class="comment-item__avatar"
+    >
       <UserItem
         v-if="!preferencesStore.user?.useCommentsAlternativeStyling"
         :user="user"
-        hide-names />
-      <UserBubble v-else :user="user" />
+        hide-names
+      />
+      <UserBubble
+        v-else
+        :user="user"
+      />
     </div>
 
     <!-- Content - full width in single mode -->
-    <div 
+    <div
       class="comment-item__content"
       :class="{ 'full-width': !isGroupMode }"
     >
@@ -183,16 +189,26 @@ const position = computed(() => {
         </span>
         <span
           class="comment-item__date"
-          :title="commentedDateTime.toLocaleString(DateTime.DATETIME_SHORT)">
+          :title="commentedDateTime.toLocaleString(DateTime.DATETIME_SHORT)"
+        >
           {{ commentedDateTime.toRelative() }}
         </span>
-        <span v-if="timeRange" class="comment-item__timerange">
+        <span
+          v-if="timeRange"
+          class="comment-item__timerange"
+        >
           {{ timeRange }}
         </span>
-        <span v-if="isConfidential" class="comment-item__confidential">
+        <span
+          v-if="isConfidential"
+          class="comment-item__confidential"
+        >
           {{ t('agora', 'Confidential') }}
         </span>
-        <span v-if="comments.length > 1" class="comment-item__count">
+        <span
+          v-if="comments.length > 1"
+          class="comment-item__count"
+        >
           {{ comments.length }}
         </span>
       </div>
@@ -203,7 +219,7 @@ const position = computed(() => {
           v-for="(singleComment, index) in comments"
           :key="singleComment?.id || index"
           class="comment-item__single"
-          :class="{ 'deleted': singleComment?.deleted }"
+          :class="{ deleted: singleComment?.deleted }"
         >
           <!-- Comment text - smaller font for single mode -->
           <div class="comment-item__text">
@@ -215,11 +231,14 @@ const position = computed(() => {
           <div class="comment-item__actions">
             <ActionDelete
               v-if="deletable && singleComment"
-              :name="singleComment.deleted ? t('agora', 'Restore comment') : t('agora', 'Delete comment')"
+              :name="
+                singleComment.deleted ? t('agora', 'Restore comment') : t('agora', 'Delete comment')
+              "
               :restore="!!singleComment.deleted"
               :timeout="0"
               @restore="restoreComment(singleComment)"
-              @delete="deleteComment(singleComment)" />
+              @delete="deleteComment(singleComment)"
+            />
           </div>
         </div>
       </div>
@@ -232,7 +251,7 @@ const position = computed(() => {
   display: flex;
   margin-bottom: 8px; // Reduced from 12px
   gap: 8px; // Reduced from 12px
-  
+
   // For single mode (option comments) - no avatar, smaller box
   &.single {
     .comment-item__content {
@@ -241,55 +260,55 @@ const position = computed(() => {
       border-radius: 8px; // Smaller radius
       padding: 6px 10px; // Reduced padding
       margin-left: 0; // No margin since no avatar
-      
+
       .comment-item__user {
         font-size: 0.8em; // Smaller
       }
-      
+
       .comment-item__date {
         font-size: 0.7em; // Smaller
       }
-      
+
       .comment-item__text {
         font-size: 0.85em; // Smaller
         line-height: 1.4;
       }
     }
-    
+
     // Header always left in single mode
     .comment-item__header {
       justify-content: flex-start;
     }
   }
-  
+
   // For grouped mode
   &.grouped {
     .comment-item__content {
       background: var(--color-background-dark);
       border-radius: 10px; // Slightly smaller
       padding: 8px 12px; // Reduced padding
-      
+
       .comment-item__single {
         margin-bottom: 6px;
         padding-bottom: 6px;
-        
+
         &:last-child {
           margin-bottom: 0;
           padding-bottom: 0;
         }
       }
     }
-    
+
     // Avatar positioning only affects grouped mode
     &.avatar-left {
       flex-direction: row;
     }
-    
+
     &.avatar-right {
       flex-direction: row-reverse;
     }
   }
-  
+
   // Current user styling
   &.current-user {
     .comment-item__content {
@@ -308,11 +327,11 @@ const position = computed(() => {
   flex: 1;
   min-width: 0;
   transition: all 0.2s ease;
-  
+
   &.full-width {
     width: 100%;
   }
-  
+
   &:hover {
     background: var(--color-background-hover);
     border-color: var(--color-primary-element);
@@ -325,7 +344,7 @@ const position = computed(() => {
   gap: 6px; // Reduced gap
   margin-bottom: 4px; // Reduced margin
   flex-wrap: wrap;
-  
+
   // Always left aligned
   justify-content: flex-start !important;
 }
@@ -339,7 +358,7 @@ const position = computed(() => {
 .comment-item__date {
   opacity: 0.5;
   font-size: 0.75em; // Smaller
-  
+
   &::before {
     content: '•';
     margin-right: 4px;
@@ -361,7 +380,7 @@ const position = computed(() => {
   background: var(--color-background-darker);
   padding: 2px 6px;
   border-radius: 8px;
-  
+
   &::before {
     content: '🔒';
     margin-right: 4px;
@@ -387,7 +406,7 @@ const position = computed(() => {
 
 .comment-item__single {
   position: relative;
-  
+
   &.deleted {
     opacity: 0.6;
   }
@@ -398,11 +417,11 @@ const position = computed(() => {
   line-height: 1.5;
   word-break: break-word;
   padding-right: 36px; // Slightly less space
-  
+
   :deep(a) {
     color: var(--color-primary-element);
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
@@ -415,7 +434,7 @@ const position = computed(() => {
   top: 0;
   opacity: 0;
   transition: opacity 0.2s ease;
-  
+
   :deep(.action-delete) {
     button {
       height: 24px !important;
@@ -443,7 +462,7 @@ const position = computed(() => {
   background: var(--color-background-dark);
   border-radius: 12px;
   border: 1px solid var(--color-border);
-  
+
   :deep(.nc-rich-contenteditable) {
     flex: 1;
     min-height: 36px;
@@ -452,7 +471,7 @@ const position = computed(() => {
     background: var(--color-main-background);
     border-radius: 8px;
     padding: 8px 12px;
-    
+
     &:focus {
       border-color: var(--color-primary-element);
     }
@@ -464,15 +483,15 @@ const position = computed(() => {
   .comment-item {
     margin-bottom: 6px;
   }
-  
+
   .comment-item__text {
     padding-right: 30px;
     font-size: 0.85em;
   }
-  
+
   .comment-input {
     flex-direction: column;
-    
+
     button {
       align-self: flex-end;
     }

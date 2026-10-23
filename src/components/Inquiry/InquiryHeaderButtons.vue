@@ -8,7 +8,6 @@ import { computed, defineAsyncComponent, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import UserMenu from '../User/UserMenu.vue'
 import { useInquiryStore } from '../../stores/inquiry.ts'
 import { ActionToggleSidebar } from '../Actions/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
@@ -28,14 +27,18 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-   <Collapsible v-if="inquiryStore.description" class="sticky-left" v-bind="collapsibleProps" />
+  <Collapsible
+    v-if="inquiryStore.description"
+    class="sticky-left"
+    v-bind="collapsibleProps"
+  />
   <div class="inquiry-header-buttons">
-  <ActionToggleSidebar
+    <ActionToggleSidebar
       v-if="
         inquiryStore.permissions.edit ||
-        sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.inquiryComment
+          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.inquiryComment
       "
-      /> 
+    />
   </div>
 </template>
 

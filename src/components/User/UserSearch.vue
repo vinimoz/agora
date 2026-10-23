@@ -22,7 +22,7 @@ interface Props {
   closeOnSelect?: boolean
   inputLabel?: string
   multiple?: boolean
-  disabled?: boolean          // ← ADDED
+  disabled?: boolean // ← ADDED
 }
 
 const emit = defineEmits<{
@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
   searchTypes: () => [SEARCH_TYPE_ALL],
   closeOnSelect: false,
   multiple: false,
-  disabled: false,            // ← ADDED (prevents undefined in template)
+  disabled: false, // ← ADDED (prevents undefined in template)
 })
 
 const users = ref<User[]>([])
@@ -52,7 +52,7 @@ const loadUsersAsync = debounce(async function (query: string) {
   isLoading.value = true
   try {
     const response = await AppSettingsAPI.getUsers(query, props.searchTypes)
-    users.value = response.data.siteusers.map(u => ({
+    users.value = response.data.siteusers.map((u) => ({
       ...u,
       user: u.displayName,
     }))
@@ -99,7 +99,10 @@ function optionSelected(user: User | User[]) {
     @option:selected="optionSelected"
   >
     <template #selection="{ values, isOpen }">
-      <span v-if="values.length && !isOpen" class="multiselect__single">
+      <span
+        v-if="values.length && !isOpen"
+        class="multiselect__single"
+      >
         {{ values.length }} {{ multiple ? 'items selected' : 'item selected' }}
       </span>
     </template>

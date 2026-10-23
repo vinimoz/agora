@@ -39,7 +39,10 @@ async function addPublicShare() {
 </script>
 
 <template>
-  <UserItem v-bind="userItemProps" class="add-public">
+  <UserItem
+    v-bind="userItemProps"
+    class="add-public"
+  >
     <template #status>
       <div class="inquiry-status" />
     </template>

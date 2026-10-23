@@ -13,9 +13,10 @@
         @mouseleave="hoverValue = null"
       />
     </div>
-    <span v-if="currentValue" class="current-rating">
-      {{ currentValue }} / {{ maxStars }}
-    </span>
+    <span
+      v-if="currentValue"
+      class="current-rating"
+    > {{ currentValue }} / {{ maxStars }} </span>
     <NcButton
       v-if="currentValue"
       type="tertiary"
@@ -31,7 +32,7 @@
 import { ref, computed } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { Star, X } from 'lucide-vue-next'
-import type { Option, Inquiry } from '../../Types/index'
+import type { Option, Inquiry } from '../../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>

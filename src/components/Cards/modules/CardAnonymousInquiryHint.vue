@@ -13,18 +13,22 @@ const inquiryStore = useInquiryStore()
 </script>
 
 <template>
-  <CardDiv v-if="inquiryStore.status.isRealAnonymous" type="info">
+  <CardDiv
+    v-if="inquiryStore.status.isRealAnonymous"
+    type="info"
+  >
     {{
       t(
         'inquiries',
         'This inquiry is an anonymous inquiry for everyone, including the owner. Deanonymizing is disabled for this inquiry.'
       )
     }}
-    {{
-      t('agora', 'But be aware that your name is not stored in an encrypted or obfuscated way.')
-    }}
+    {{ t('agora', 'But be aware that your name is not stored in an encrypted or obfuscated way.') }}
   </CardDiv>
-  <CardDiv v-else :type="cardType">
+  <CardDiv
+    v-else
+    :type="cardType"
+  >
     {{
       t(
         'inquiries',

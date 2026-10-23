@@ -26,7 +26,13 @@ import { useInquiriesStore } from '../../../stores/inquiries.ts'
 import { useInquiryStore } from '../../../stores/inquiry.ts'
 import { StatusResults, Event } from '../../../Types/index.ts'
 import { deleteCookieByValue, findCookieByValue } from '../../../helpers/index.ts'
-import { canArchive, canRestore, canDelete, canTransfer, createInquiryContext } from '../../../utils/permissions.ts'
+import {
+  canArchive,
+  canRestore,
+  canDelete,
+  canTransfer,
+  createInquiryContext,
+} from '../../../utils/permissions.ts'
 import DeleteInquiryDialog from '../../Modals/DeleteInquiryDialog.vue'
 import TransferInquiryDialog from '../../Modals/TransferInquiryDialog.vue'
 import ArchiveRestoreInquiryDialog from '../../Modals/ArchiveRestoreInquiryDialog.vue'
@@ -77,10 +83,12 @@ function logout() {
 }
 
 async function copyLink() {
-  const personalLink = window.location.origin + router.resolve({
-    name: 'publicInquiry',
-    params: { token: sessionStore.publicToken },
-  }).href
+  const personalLink =
+    window.location.origin +
+    router.resolve({
+      name: 'publicInquiry',
+      params: { token: sessionStore.publicToken },
+    }).href
 
   try {
     await navigator.clipboard.writeText(personalLink)
@@ -208,9 +216,7 @@ async function toggleSubscription() {
   try {
     await subscriptionStore.write()
     showSuccess(
-      subscriptionStore.subscribed
-        ? t('agora', 'Subscribed')
-        : t('agora', 'Unsubscribed')
+      subscriptionStore.subscribed ? t('agora', 'Subscribed') : t('agora', 'Unsubscribed')
     )
   } catch {
     showError(t('agora', 'Could not update subscription'))
@@ -250,13 +256,15 @@ async function getAddresses() {
 const onInquiryDeleted = () => {
   showSuccess(t('agora', 'Inquiry successfully deleted'))
   emit(Event.UpdateInquiry, { store: 'inquiries', message: t('agora', 'Inquiry deleted') })
-  router.push({
-    name: 'list',
-    params: { type: 'relevant' },
-    query: { viewMode: 'view' },
-  }).finally(() => {
-    isNavigating.value = false
-  })
+  router
+    .push({
+      name: 'list',
+      params: { type: 'relevant' },
+      query: { viewMode: 'view' },
+    })
+    .finally(() => {
+      isNavigating.value = false
+    })
 }
 </script>
 
@@ -265,9 +273,15 @@ const onInquiryDeleted = () => {
     <!-- ============================= -->
     <!-- PROFILE / USER SECTION        -->
     <!-- ============================= -->
-    <section v-if="isExternalShare" class="action-section">
+    <section
+      v-if="isExternalShare"
+      class="action-section"
+    >
       <header class="section-header">
-        <component :is="StatusIcons.AccountMultiple" :size="16" />
+        <component
+          :is="StatusIcons.AccountMultiple"
+          :size="16"
+        />
         <span class="section-title">{{ t('agora', 'Profile') }}</span>
       </header>
 
@@ -277,9 +291,15 @@ const onInquiryDeleted = () => {
         :inline="0"
         menu-name="Profile"
       >
-        <NcActionButton :name="t('agora', 'Copy link')" @click="copyLink()">
+        <NcActionButton
+          :name="t('agora', 'Copy link')"
+          @click="copyLink()"
+        >
           <template #icon>
-            <component :is="UserIcons.ListView" :size="20" />
+            <component
+              :is="UserIcons.ListView"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Copy link') }}
         </NcActionButton>
@@ -291,7 +311,10 @@ const onInquiryDeleted = () => {
           @submit="submitDisplayName"
         >
           <template #icon>
-            <component :is="UserIcons.EditAccount" :size="20" />
+            <component
+              :is="UserIcons.EditAccount"
+              :size="20"
+            />
           </template>
         </NcActionInput>
 
@@ -302,7 +325,10 @@ const onInquiryDeleted = () => {
           @submit="submitEmail"
         >
           <template #icon>
-            <component :is="UserIcons.EditEmail" :size="20" />
+            <component
+              :is="UserIcons.EditEmail"
+              :size="20"
+            />
           </template>
         </NcActionInput>
 
@@ -312,7 +338,10 @@ const onInquiryDeleted = () => {
           @click="resendInvitation()"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Share" :size="20" />
+            <component
+              :is="InquiryGeneralIcons.Share"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Resend invitation') }}
         </NcActionButton>
@@ -323,7 +352,10 @@ const onInquiryDeleted = () => {
           @click="deleteEmailAddress"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Delete" :size="20" />
+            <component
+              :is="InquiryGeneralIcons.Delete"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Remove email') }}
         </NcActionButton>
@@ -336,7 +368,10 @@ const onInquiryDeleted = () => {
           @click="logout()"
         >
           <template #icon>
-            <component :is="UserIcons.Logout" :size="20" />
+            <component
+              :is="UserIcons.Logout"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Logout') }}
         </NcActionButton>
@@ -351,7 +386,10 @@ const onInquiryDeleted = () => {
       class="action-section"
     >
       <header class="section-header">
-        <component :is="InquiryGeneralIcons.Bell" :size="16" />
+        <component
+          :is="InquiryGeneralIcons.Bell"
+          :size="16"
+        />
         <span class="section-title">{{ t('agora', 'Notifications') }}</span>
       </header>
 
@@ -380,11 +418,21 @@ const onInquiryDeleted = () => {
     <!-- INQUIRY ACTIONS SECTION       -->
     <!-- ============================= -->
     <section
-      v-if="canArchiveAction || canRestoreAction || canDeleteAction || canTransferAction || inquiryStore.permissions.edit || inquiryStore.viewMode === 'list-view'"
+      v-if="
+        canArchiveAction ||
+          canRestoreAction ||
+          canDeleteAction ||
+          canTransferAction ||
+          inquiryStore.permissions.edit ||
+          inquiryStore.viewMode === 'list-view'
+      "
       class="action-section"
     >
       <header class="section-header">
-        <component :is="InquiryGeneralIcons.Tools" :size="16" />
+        <component
+          :is="InquiryGeneralIcons.Tools"
+          :size="16"
+        />
         <span class="section-title">{{ t('agora', 'Inquiry') }}</span>
       </header>
 
@@ -401,7 +449,10 @@ const onInquiryDeleted = () => {
           @click="toggleArchive()"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Archive" :size="20" />
+            <component
+              :is="InquiryGeneralIcons.Archive"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Archive inquiry') }}
         </NcActionButton>
@@ -413,7 +464,10 @@ const onInquiryDeleted = () => {
           @click="showArchiveRestoreDialog = true"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Restore" :size="20" />
+            <component
+              :is="InquiryGeneralIcons.Restore"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Restore inquiry') }}
         </NcActionButton>
@@ -425,7 +479,10 @@ const onInquiryDeleted = () => {
           @click="showDeleteDialog = true"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Delete" :size="20" />
+            <component
+              :is="InquiryGeneralIcons.Delete"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Delete inquiry') }}
         </NcActionButton>
@@ -437,7 +494,10 @@ const onInquiryDeleted = () => {
           @click="showTransferDialog = true"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Transfer" :size="20" />
+            <component
+              :is="InquiryGeneralIcons.Transfer"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Transfer ownership') }}
         </NcActionButton>
@@ -451,7 +511,10 @@ const onInquiryDeleted = () => {
           @click="getAddresses()"
         >
           <template #icon>
-            <component :is="StatusIcons.EmailIcon" :size="20" />
+            <component
+              :is="StatusIcons.EmailIcon"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Copy participant emails') }}
         </NcActionButton>
@@ -463,7 +526,10 @@ const onInquiryDeleted = () => {
           @click="resetInquiries()"
         >
           <template #icon>
-            <component :is="UserIcons.Reset" :size="20" />
+            <component
+              :is="UserIcons.Reset"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Reset your inquiries') }}
         </NcActionButton>
@@ -557,7 +623,9 @@ const onInquiryDeleted = () => {
     color: var(--color-main-text);
     background: var(--color-background-dark);
     border: 1px solid transparent;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
 
     &:hover,
     &:focus-visible {

@@ -2,10 +2,17 @@
   <section class="upcoming-widget">
     <header class="section-header">
       <div class="header-left">
-        <component :is="Icons.Calendar" :size="20" class="header-icon" />
+        <component
+          :is="Icons.Calendar"
+          :size="20"
+          class="header-icon"
+        />
         <h2>{{ t('agora', 'Upcoming') }}</h2>
       </div>
-      <a class="header-link" @click="emit('viewAll')">{{ t('agora', 'View all') }}</a>
+      <a
+        class="header-link"
+        @click="emit('viewAll')"
+      >{{ t('agora', 'View all') }}</a>
     </header>
 
     <ul class="events-list">
@@ -20,12 +27,19 @@
           <span class="date-month">{{ event.month }}</span>
         </div>
         <div class="event-body">
-          <h3 class="event-title">{{ event.title }}</h3>
-          <p class="event-location">{{ event.location }} – {{ event.time }}</p>
+          <h3 class="event-title">
+            {{ event.title }}
+          </h3>
+          <p class="event-location">
+            {{ event.location }} – {{ event.time }}
+          </p>
         </div>
       </li>
 
-      <li v-if="events.length === 0" class="events-empty">
+      <li
+        v-if="events.length === 0"
+        class="events-empty"
+      >
         <p>{{ t('agora', 'No upcoming events') }}</p>
       </li>
     </ul>
@@ -67,7 +81,9 @@ const emit = defineEmits<{ click: [event: UpcomingEvent]; viewAll: [] }>()
       align-items: center;
       gap: 8px;
 
-      .header-icon { color: var(--color-primary-element); }
+      .header-icon {
+        color: var(--color-primary-element);
+      }
 
       h2 {
         margin: 0;
@@ -81,7 +97,9 @@ const emit = defineEmits<{ click: [event: UpcomingEvent]; viewAll: [] }>()
       color: var(--color-primary-element);
       cursor: pointer;
 
-      &:hover { text-decoration: underline; }
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -102,7 +120,9 @@ const emit = defineEmits<{ click: [event: UpcomingEvent]; viewAll: [] }>()
     border-radius: 10px;
     transition: background 0.15s ease;
 
-    &:hover { background: var(--color-background-hover); }
+    &:hover {
+      background: var(--color-background-hover);
+    }
 
     .event-date {
       display: flex;

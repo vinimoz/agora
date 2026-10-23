@@ -35,7 +35,7 @@ export function useHomeConfig() {
         ...HOME_DEFAULTS.relevance,
         ...override.relevance,
         // Preserve nested defaults if the override supplies only one half
-        tiers:   override.relevance?.tiers   ?? HOME_DEFAULTS.relevance.tiers,
+        tiers: override.relevance?.tiers ?? HOME_DEFAULTS.relevance.tiers,
         weights: {
           ...HOME_DEFAULTS.relevance.weights,
           ...override.relevance?.weights,

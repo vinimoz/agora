@@ -74,36 +74,36 @@ import AlertOctagon from '@iconify-icons/mdi/alert-octagon-outline'
 import ShieldAlertOutline from '@iconify-icons/mdi/shield-alert-outline'
 import ShieldAccount from '@iconify-icons/mdi/shield-account'
 import Storefront from '@iconify-icons/mdi/storefront'
-import Leaf       from '@iconify-icons/mdi/leaf'
-import Compass    from '@iconify-icons/mdi/compass-outline'
-import Apps             from '@iconify-icons/mdi/apps'
-import Folder           from '@iconify-icons/mdi/folder'
-import DotsHorizontal   from '@iconify-icons/mdi/dots-horizontal'
-import MapMarker        from '@iconify-icons/mdi/map-marker'
-import WeatherSunny     from '@iconify-icons/mdi/weather-sunny'
-import Compare          from '@iconify-icons/mdi/compare'
-import Book             from '@iconify-icons/mdi/book'
+import Leaf from '@iconify-icons/mdi/leaf'
+import Compass from '@iconify-icons/mdi/compass-outline'
+import Apps from '@iconify-icons/mdi/apps'
+import Folder from '@iconify-icons/mdi/folder'
+import DotsHorizontal from '@iconify-icons/mdi/dots-horizontal'
+import MapMarker from '@iconify-icons/mdi/map-marker'
+import WeatherSunny from '@iconify-icons/mdi/weather-sunny'
+import Compare from '@iconify-icons/mdi/compare'
+import Book from '@iconify-icons/mdi/book'
 
-import Printer from '@iconify-icons/mdi/printer'  // For 'Printer' ✓
-import FileCompare from '@iconify-icons/mdi/file-compare'  // For 'Diff' ✓
-import FileExport from '@iconify-icons/mdi/file-export'  // For 'FileExport' ✓
-import ContentDuplicate from '@iconify-icons/mdi/content-duplicate'  // For 'ContentCopy' ✓
-import CallMerge from '@iconify-icons/mdi/call-merge'  // For 'CallMerge' ✓
-import ChartLine from '@iconify-icons/mdi/chart-line'  // For 'ChartLine' ✓
-import ArrowRightBold from '@iconify-icons/mdi/arrow-right-bold'  // For 'ArrowRightBold' ✓
-import CalendarClock from '@iconify-icons/mdi/calendar-clock'  // For 'CalendarClock' ✓
-import Clock from '@iconify-icons/mdi/clock'  // For 'Clock' ✓
-import CheckboxMarkedCircleOutline from '@iconify-icons/mdi/checkbox-marked-circle-outline'  // For 'Task' ✓
-import Alert from '@iconify-icons/mdi/alert'  // For 'Warning' ✓
-import History from '@iconify-icons/mdi/history'  // For 'History' ✓
-import ClockAlertOutline from '@iconify-icons/mdi/clock-alert-outline'  // For 'ClockAlert' ✓
-import TextBox from '@iconify-icons/mdi/text-box'  // For 'TextBox' ✓
-import ProgressClock from '@iconify-icons/mdi/progress-clock'  // For 'ProgressCheck' ✓
-import AccountTie from '@iconify-icons/mdi/account-tie'  // For 'AccountReview' ✓
-import TextBoxMultiple from '@iconify-icons/mdi/text-box-multiple'  // For 'Summarize' ✓
-import ChartArc from '@iconify-icons/mdi/chart-arc'  // For 'Graph' ✓
-import FileReport from '@iconify-icons/mdi/file-report'  // For 'Report' ✓
-import NoteMultiple from '@iconify-icons/mdi/note-multiple'  // For 'Minutes' ✓
+import Printer from '@iconify-icons/mdi/printer' // For 'Printer' ✓
+import FileCompare from '@iconify-icons/mdi/file-compare' // For 'Diff' ✓
+import FileExport from '@iconify-icons/mdi/file-export' // For 'FileExport' ✓
+import ContentDuplicate from '@iconify-icons/mdi/content-duplicate' // For 'ContentCopy' ✓
+import CallMerge from '@iconify-icons/mdi/call-merge' // For 'CallMerge' ✓
+import ChartLine from '@iconify-icons/mdi/chart-line' // For 'ChartLine' ✓
+import ArrowRightBold from '@iconify-icons/mdi/arrow-right-bold' // For 'ArrowRightBold' ✓
+import CalendarClock from '@iconify-icons/mdi/calendar-clock' // For 'CalendarClock' ✓
+import Clock from '@iconify-icons/mdi/clock' // For 'Clock' ✓
+import CheckboxMarkedCircleOutline from '@iconify-icons/mdi/checkbox-marked-circle-outline' // For 'Task' ✓
+import Alert from '@iconify-icons/mdi/alert' // For 'Warning' ✓
+import History from '@iconify-icons/mdi/history' // For 'History' ✓
+import ClockAlertOutline from '@iconify-icons/mdi/clock-alert-outline' // For 'ClockAlert' ✓
+import TextBox from '@iconify-icons/mdi/text-box' // For 'TextBox' ✓
+import ProgressClock from '@iconify-icons/mdi/progress-clock' // For 'ProgressCheck' ✓
+import AccountTie from '@iconify-icons/mdi/account-tie' // For 'AccountReview' ✓
+import TextBoxMultiple from '@iconify-icons/mdi/text-box-multiple' // For 'Summarize' ✓
+import ChartArc from '@iconify-icons/mdi/chart-arc' // For 'Graph' ✓
+import FileReport from '@iconify-icons/mdi/file-report' // For 'Report' ✓
+import NoteMultiple from '@iconify-icons/mdi/note-multiple' // For 'Minutes' ✓
 import CrownOutline from '@iconify-icons/mdi/crown-outline'
 import AccountGroupOutline from '@iconify-icons/mdi/account-group-outline'
 import FormatListCheckbox from '@iconify-icons/mdi/format-list-checkbox'
@@ -113,17 +113,16 @@ import Monitor from '@iconify-icons/mdi/monitor'
 import MonitorLock from '@iconify-icons/mdi/monitor-lock'
 import MonitorOff from '@iconify-icons/mdi/monitor-off'
 
-
 // For 'ViewKanban' - use one of these alternatives:
 
-import Reply from '@iconify-icons/mdi/reply'          
-// import Grid from '@iconify-icons/mdi/grid'               
-// import List from '@iconify-icons/mdi/format-list-bulleted' 
-// import Columns from '@iconify-icons/mdi/view-columns' 
+import Reply from '@iconify-icons/mdi/reply'
+// import Grid from '@iconify-icons/mdi/grid'
+// import List from '@iconify-icons/mdi/format-list-bulleted'
+// import Columns from '@iconify-icons/mdi/view-columns'
 // import Rows from '@iconify-icons/mdi/view-list'
 // import Timeline from '@iconify-icons/mdi/timeline'
 import ArrowUp from '@iconify-icons/mdi/arrow-up'
-import ArrowDown from '@iconify-icons/mdi/arrow-down' 
+import ArrowDown from '@iconify-icons/mdi/arrow-down'
 // Families
 // import ChatProcessing from '@iconify-icons/mdi/chat-processing' // Discussion
 
@@ -137,7 +136,7 @@ import ArrowDown from '@iconify-icons/mdi/arrow-down'
 // Consensus actions
 import MapOutline from '@iconify-icons/mdi/map-outline'
 
-// import Circle from '@iconify-icons/mdi/circle'    
+// import Circle from '@iconify-icons/mdi/circle'
 import Information from '@iconify-icons/mdi/information'
 // import CloseCircle from '@iconify-icons/mdi/close-circle'
 import Update from '@iconify-icons/mdi/update'
@@ -253,7 +252,6 @@ import Tools from '@iconify-icons/mdi/tools'
 import FileChart from '@iconify-icons/mdi/file-chart'
 import ShieldOutline from '@iconify-icons/mdi/shield-outline'
 
-
 // -------------------------------
 // User related icons
 // -------------------------------
@@ -279,7 +277,6 @@ import ViewCarousel from '@iconify-icons/mdi/view-carousel'
 import ArrowLeftRight from '@iconify-icons/mdi/arrow-left-right'
 import ViewGrid from '@iconify-icons/mdi/view-grid'
 import ViewDashboard from '@iconify-icons/mdi/view-dashboard'
-
 
 // -------------------------------
 // Share related icons
@@ -323,8 +320,8 @@ export const makeIconComponent = (icon: Component, color = '#000', size = 24) =>
 
 export const InquiryGeneralIcons: Record<string, Component> = {
   Storefront: makeIconComponent(Storefront, '#00695C'),
-  Leaf:       makeIconComponent(Leaf,       '#2E7D32'),
-  Compass:    makeIconComponent(Compass,    '#00838F'),
+  Leaf: makeIconComponent(Leaf, '#2E7D32'),
+  Compass: makeIconComponent(Compass, '#00838F'),
   ViewCarousel: makeIconComponent(ViewCarousel, '#607D8B'),
   ViewVertical: makeIconComponent(ViewGrid, '#1976D2'),
   ViewHorizontal: makeIconComponent(ViewDashboard, '#1976D2'),
@@ -346,7 +343,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Empty: makeIconComponent(InboxRemove, '#999'),
   Drag: makeIconComponent(DragHorizontal, '#999'),
   FolderMultiple: makeIconComponent(FolderMultiple, '#546E7A'),
-  ViewKanban: makeIconComponent(ViewDashboard, '#607D8B'),  // Using view-dashboard as alternative
+  ViewKanban: makeIconComponent(ViewDashboard, '#607D8B'), // Using view-dashboard as alternative
   IdCard: makeIconComponent(IdCard, '#546E7A'),
   Newspaper: makeIconComponent(Newspaper, '#546E7A'),
   Megaphone: makeIconComponent(Megaphone, '#C62828'),
@@ -360,14 +357,14 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Users: makeIconComponent(AccountGroup, '#2196F3'),
   HomeGroup: makeIconComponent(HomeGroup, '#795548'),
   BookOpen: makeIconComponent(BookOpen, '#3949AB'),
-  Apps:            makeIconComponent(Apps,           '#1976D2'),
-  Folder:          makeIconComponent(Folder,         '#546E7A'),
-  DotsHorizontal:  makeIconComponent(DotsHorizontal, '#757575'),
-  MapMarker:       makeIconComponent(MapMarker,      '#D32F2F'),
-  WeatherSunny:    makeIconComponent(WeatherSunny,   '#FFB300'),
-  Compare:         makeIconComponent(Compare,        '#00ACC1'),
-  Book:            makeIconComponent(Book,           '#3949AB'),
-  SwapHorizontal:  makeIconComponent(SwapHorizontal, '#00BCD4'),
+  Apps: makeIconComponent(Apps, '#1976D2'),
+  Folder: makeIconComponent(Folder, '#546E7A'),
+  DotsHorizontal: makeIconComponent(DotsHorizontal, '#757575'),
+  MapMarker: makeIconComponent(MapMarker, '#D32F2F'),
+  WeatherSunny: makeIconComponent(WeatherSunny, '#FFB300'),
+  Compare: makeIconComponent(Compare, '#00ACC1'),
+  Book: makeIconComponent(Book, '#3949AB'),
+  SwapHorizontal: makeIconComponent(SwapHorizontal, '#00BCD4'),
   MessageSquare: makeIconComponent(ChatOutline, '#1565C0'),
   UsersCog: makeIconComponent(UsersCog, '#607D8B'),
   CommentProcessing: makeIconComponent(CommentProcessing, '#FF5722'),
@@ -408,7 +405,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   ThumbDown: makeIconComponent(ThumbDownOutline, '#C62828'),
   Thumb: makeIconComponent(ThumbUp, '#1976D2'),
   TownHall: makeIconComponent(TownHall, '#1976D2'),
-  Timeline: makeIconComponent(CalendarMultiselect, '#607D8B'), 
+  Timeline: makeIconComponent(CalendarMultiselect, '#607D8B'),
   Talk: makeIconComponent(ChatOutline, '#0097A7'),
   CommentAlert: makeIconComponent(CommentAlert, '#0097A7'),
   Collectives: makeIconComponent(AccountGroup, '#6D4C41'),
@@ -446,7 +443,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   AccountMultipleCheck: makeIconComponent(AccountMultipleCheck, '#1B5E20'),
   LightbulbOn: makeIconComponent(LightbulbOn, '#F57C00'),
   Bullhorn: makeIconComponent(Bullhorn, '#EF6C00'),
-Information: makeIconComponent(Information, '#1976D2'), 
+  Information: makeIconComponent(Information, '#1976D2'),
   Check: makeIconComponent(Check, '#689F38'),
   CommentQuote: makeIconComponent(CommentQuote, '#7B1FA2'),
   ViewListOutline: makeIconComponent(ViewListOutline, '#0D47A1'),
@@ -557,7 +554,7 @@ export const OptionIcons: Record<string, Component> = {
 
 export const NavigationIcons: Record<string, Component> = {
   Share: makeIconComponent(ShareIcon, '#03A9F4'),
-  Apps:            makeIconComponent(Apps,           '#1976D2'),
+  Apps: makeIconComponent(Apps, '#1976D2'),
   ShieldAlert: makeIconComponent(ShieldAlert, '#D32F2F'),
   ShieldRemove: makeIconComponent(ShieldRemove, '#D32F2F'),
   Administration: makeIconComponent(ShieldCrown, '#FF8F00'),
@@ -589,7 +586,6 @@ export const NavigationIcons: Record<string, Component> = {
   // Services
   Tool: makeIconComponent(Tools, '#546E7A'),
   Calendar: makeIconComponent(Calendar, '#1976D2'),
-
 }
 
 export const BadgeIcons: Record<string, Component> = {
@@ -608,18 +604,18 @@ export const BadgeIcons: Record<string, Component> = {
 export const getBadgeIcon = (name: string) => BadgeIcons[name] || BadgeIcons.Comments
 
 export const StatusIcons: Record<string, Component> = {
-	Owner: makeIconComponent(CrownOutline, '#F9A825'),                    // Gold crown
-  OpenInquiry: makeIconComponent(Earth, '#43A047'),                    // Green globe
-  PrivateInquiry: makeIconComponent(Key, '#D32F2F'),                  // Red key
-  Participants: makeIconComponent(AccountGroupOutline, '#1E88E5'),    // Blue group
-  Options: makeIconComponent(FormatListCheckbox, '#6D4C41'),          // Brown checkbox list
+  Owner: makeIconComponent(CrownOutline, '#F9A825'), // Gold crown
+  OpenInquiry: makeIconComponent(Earth, '#43A047'), // Green globe
+  PrivateInquiry: makeIconComponent(Key, '#D32F2F'), // Red key
+  Participants: makeIconComponent(AccountGroupOutline, '#1E88E5'), // Blue group
+  Options: makeIconComponent(FormatListCheckbox, '#6D4C41'), // Brown checkbox list
   ProposalsAllowed: makeIconComponent(HandExtendedOutline, '#2E7D32'), // Green hand
-  Timezone: makeIconComponent(MapClockOutline, '#5D4037'),            // Dark brown clock map
-  ShowResults: makeIconComponent(Monitor, '#1976D2'),                // Blue monitor
-  ShowResultsOnClosed: makeIconComponent(MonitorLock, '#FF8F00'),     // Orange monitor with lock
-  HideResults: makeIconComponent(MonitorOff, '#9E9E9E'),             // Gray monitor off
-  Subscribed: makeIconComponent(BellOutline, '#FFA000'),             // Orange bell
-  AnonymousIcon: makeIconComponent(AnonymousIcon, '#757575'),            // Gray incognito (if not already defined)
+  Timezone: makeIconComponent(MapClockOutline, '#5D4037'), // Dark brown clock map
+  ShowResults: makeIconComponent(Monitor, '#1976D2'), // Blue monitor
+  ShowResultsOnClosed: makeIconComponent(MonitorLock, '#FF8F00'), // Orange monitor with lock
+  HideResults: makeIconComponent(MonitorOff, '#9E9E9E'), // Gray monitor off
+  Subscribed: makeIconComponent(BellOutline, '#FFA000'), // Orange bell
+  AnonymousIcon: makeIconComponent(AnonymousIcon, '#757575'), // Gray incognito (if not already defined)
   Unpublished: makeIconComponent(PublishOff, '#757575'),
   Archived: makeIconComponent(Archive, '#455A64'),
   Closed: makeIconComponent(Lock, '#5D4037'),
@@ -669,7 +665,7 @@ export const InquiryOptionIcons = {
   Settings: makeIconComponent(Presentation, '#607D8B'),
   Code: makeIconComponent(CodeTags, '#9C27B0'),
   CategoryOther: makeIconComponent(TagOutline, '#795548'),
-  
+
   // Families
   Vote: makeIconComponent(Vote, '#1565C0'),
 
@@ -683,32 +679,31 @@ export const InquiryOptionIcons = {
   // Vote option types
   Account: makeIconComponent(Account),
 
-  Summarize: makeIconComponent(TextBoxMultiple, '#607D8B'),  // Using text-box-multiple
-  Graph: makeIconComponent(ChartArc, '#607D8B'),  // Using chart-arc for Graph
-  FilePdf: makeIconComponent(FilePdf, '#607D8B'),  // Using file-pdf-box
+  Summarize: makeIconComponent(TextBoxMultiple, '#607D8B'), // Using text-box-multiple
+  Graph: makeIconComponent(ChartArc, '#607D8B'), // Using chart-arc for Graph
+  FilePdf: makeIconComponent(FilePdf, '#607D8B'), // Using file-pdf-box
   Markdown: makeIconComponent(Markdown, '#607D8B'),
   Printer: makeIconComponent(Printer, '#607D8B'),
-  Diff: makeIconComponent(FileCompare, '#607D8B'),  // Using file-compare for Diff
+  Diff: makeIconComponent(FileCompare, '#607D8B'), // Using file-compare for Diff
   Report: makeIconComponent(FileReport, '#607D8B'),
   Minutes: makeIconComponent(NoteMultiple, '#607D8B'),
   FileExport: makeIconComponent(FileExport, '#607D8B'),
-  ProgressCheck: makeIconComponent(ProgressClock, '#607D8B'),  // Using progress-clock
-  ContentCopy: makeIconComponent(ContentDuplicate, '#607D8B'),  // Using content-duplicate
+  ProgressCheck: makeIconComponent(ProgressClock, '#607D8B'), // Using progress-clock
+  ContentCopy: makeIconComponent(ContentDuplicate, '#607D8B'), // Using content-duplicate
   CallMerge: makeIconComponent(CallMerge, '#607D8B'),
-  AccountReview: makeIconComponent(AccountTie, '#607D8B'),  // Using account-tie
-  ViewKanban: makeIconComponent(ViewDashboard, '#607D8B'),  // Using view-dashboard as alternative
+  AccountReview: makeIconComponent(AccountTie, '#607D8B'), // Using account-tie
+  ViewKanban: makeIconComponent(ViewDashboard, '#607D8B'), // Using view-dashboard as alternative
   ChartLine: makeIconComponent(ChartLine, '#607D8B'),
   ArrowRightBold: makeIconComponent(ArrowRightBold, '#607D8B'),
   CalendarClock: makeIconComponent(CalendarClock, '#607D8B'),
   Clock: makeIconComponent(Clock, '#607D8B'),
-  Task: makeIconComponent(CheckboxMarkedCircleOutline, '#607D8B'),  // Using checkbox-marked-circle-outline
-  Warning: makeIconComponent(Alert, '#607D8B'),  // Using Alert for Warning
+  Task: makeIconComponent(CheckboxMarkedCircleOutline, '#607D8B'), // Using checkbox-marked-circle-outline
+  Warning: makeIconComponent(Alert, '#607D8B'), // Using Alert for Warning
   History: makeIconComponent(History, '#607D8B'),
-  ClockAlert: makeIconComponent(ClockAlertOutline, '#607D8B'),  // Using clock-alert-outline
+  ClockAlert: makeIconComponent(ClockAlertOutline, '#607D8B'), // Using clock-alert-outline
   TextBox: makeIconComponent(TextBox, '#607D8B'),
   Layers: makeIconComponent(Layers, '#5D4037'),
   ArrowRight: makeIconComponent(ArrowRight, '#5E35B1'),
-
 
   // ======================
   // Families
@@ -716,7 +711,7 @@ export const InquiryOptionIcons = {
   ThumbUp: makeIconComponent(ThumbUp, '#2E7D32'),
   ThumbDown: makeIconComponent(ThumbDown, '#D32F2F'),
   Checkmark: makeIconComponent(CheckCircle, '#2E7D32'),
-  
+
   // ======================
   // Decision
   // ======================
@@ -767,9 +762,8 @@ export const InquiryOptionIcons = {
   AlertOutline: makeIconComponent(AlertOutline, '#FF9800'),
   HelpCircle: makeIconComponent(HelpCircle, '#03A9F4'),
   CheckCircle: makeIconComponent(CheckCircle, '#4CAF50'),
-  Play: makeIconComponent(Play, '#2E7D32'),   
-  Tune: makeIconComponent(Tune, '#6A1B9A'), 
-
+  Play: makeIconComponent(Play, '#2E7D32'),
+  Tune: makeIconComponent(Tune, '#6A1B9A'),
 
   // Stats
   BarChart2: makeIconComponent(ChartBar, '#673AB7'),
@@ -779,20 +773,20 @@ export const InquiryOptionIcons = {
   ChevronRight: makeIconComponent(ChevronRight, '#9E9E9E'),
   Calendar: makeIconComponent(Calendar, '#3949AB'),
 
-   MessageReplyText: makeIconComponent(Reply, '#2196F3'),
-  Grid: makeIconComponent(ViewListOutline, '#607D8B'), 
+  MessageReplyText: makeIconComponent(Reply, '#2196F3'),
+  Grid: makeIconComponent(ViewListOutline, '#607D8B'),
   List: makeIconComponent(FormatListBulleted, '#607D8B'),
   FormatListBulleted: makeIconComponent(FormatListBulleted, '#607D8B'),
-  Collapse: makeIconComponent(ChevronUp, '#607D8B'), 
+  Collapse: makeIconComponent(ChevronUp, '#607D8B'),
   Scale: makeIconComponent(Scale, '#607D8B'),
-  Columns: makeIconComponent(ViewListOutline, '#607D8B'), 
-  Rows: makeIconComponent(FormatListBulleted, '#607D8B'), 
-  Timeline: makeIconComponent(CalendarMultiselect, '#607D8B'), 
+  Columns: makeIconComponent(ViewListOutline, '#607D8B'),
+  Rows: makeIconComponent(FormatListBulleted, '#607D8B'),
+  Timeline: makeIconComponent(CalendarMultiselect, '#607D8B'),
   ArrowUp: makeIconComponent(ArrowUp, '#607D8B'),
   ArrowDown: makeIconComponent(ArrowDown, '#607D8B'),
   Circle: makeIconComponent(CircleIcon, '#607D8B'),
   Information: makeIconComponent(InformationVariant, '#607D8B'),
-  CloseCircle: makeIconComponent(Close, '#F44336'), 
+  CloseCircle: makeIconComponent(Close, '#F44336'),
   ClockOutline: makeIconComponent(ClockOutline, '#FFA000'),
 }
 

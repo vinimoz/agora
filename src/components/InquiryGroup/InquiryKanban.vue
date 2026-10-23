@@ -8,11 +8,21 @@
     <!-- Kanban Header -->
     <div class="kanban-header">
       <div class="header-left">
-        <component :is="Icons.ViewKanban" :size="24" class="kanban-icon" />
+        <component
+          :is="Icons.ViewKanban"
+          :size="24"
+          class="kanban-icon"
+        />
         <h2>{{ t('agora', 'Kanban Board') }}</h2>
         <span class="kanban-count">{{ inquiries.length }}</span>
-        <span v-if="useProcessColumns" class="process-badge">
-          <component :is="Icons.GitBranch" :size="12" />
+        <span
+          v-if="useProcessColumns"
+          class="process-badge"
+        >
+          <component
+            :is="Icons.GitBranch"
+            :size="12"
+          />
           {{ t('agora', 'Process') }}
         </span>
       </div>
@@ -24,7 +34,10 @@
           :class="{ active: groupBy === option.key }"
           @click="groupBy = option.key"
         >
-          <component :is="option.icon" :size="14" />
+          <component
+            :is="option.icon"
+            :size="14"
+          />
           {{ option.label }}
         </button>
       </div>
@@ -42,13 +55,27 @@
       >
         <div class="column-header">
           <div class="column-title-wrapper">
-            <component :is="getColumnIcon(columnKey)" :size="16" class="column-icon" />
+            <component
+              :is="getColumnIcon(columnKey)"
+              :size="16"
+              class="column-icon"
+            />
             <span class="column-title">{{ getColumnLabel(columnKey) }}</span>
             <span class="column-count">{{ column.length }}</span>
           </div>
-          <div v-if="canAddToColumn(columnKey)" class="column-actions">
-            <button class="add-btn" @click="handleAdd(columnKey)" :title="t('agora', 'Add to column')">
-              <component :is="Icons.Plus" :size="16" />
+          <div
+            v-if="canAddToColumn(columnKey)"
+            class="column-actions"
+          >
+            <button
+              class="add-btn"
+              :title="t('agora', 'Add to column')"
+              @click="handleAdd(columnKey)"
+            >
+              <component
+                :is="Icons.Plus"
+                :size="16"
+              />
             </button>
           </div>
         </div>
@@ -65,8 +92,14 @@
         </div>
 
         <!-- Empty state for column -->
-        <div v-if="column.length === 0" class="column-empty">
-          <component :is="Icons.Inbox" :size="32" />
+        <div
+          v-if="column.length === 0"
+          class="column-empty"
+        >
+          <component
+            :is="Icons.Inbox"
+            :size="32"
+          />
           <span>{{ t('agora', 'No items') }}</span>
         </div>
       </div>
@@ -90,7 +123,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  processPhases: () => []
+  processPhases: () => [],
 })
 
 const emit = defineEmits<{
@@ -114,7 +147,7 @@ const groupingOptions = computed(() => {
   const options = [
     { key: 'status', label: t('agora', 'Status'), icon: Icons.CheckCircle },
     { key: 'type', label: t('agora', 'Type'), icon: Icons.Folder },
-    { key: 'family', label: t('agora', 'Family'), icon: Icons.Layers }
+    { key: 'family', label: t('agora', 'Family'), icon: Icons.Layers },
   ]
   if (useProcessColumns.value) {
     options.unshift({ key: 'process', label: t('agora', 'Process'), icon: Icons.GitBranch })
@@ -130,7 +163,7 @@ const groupedColumns = computed(() => {
   const groups: Record<string, Inquiry[]> = {}
   const groupKey = groupBy.value
 
-  props.inquiries.forEach(inquiry => {
+  props.inquiries.forEach((inquiry) => {
     let key: string
 
     switch (groupKey) {
@@ -159,7 +192,7 @@ const groupedColumns = computed(() => {
   // Sort columns by predefined order
   const sortedKeys = sortColumnKeys(Object.keys(groups))
   const sortedGroups: Record<string, Inquiry[]> = {}
-  sortedKeys.forEach(key => {
+  sortedKeys.forEach((key) => {
     sortedGroups[key] = groups[key]
   })
 
@@ -168,7 +201,7 @@ const groupedColumns = computed(() => {
 
 function sortColumnKeys(keys: string[]): string[] {
   if (groupBy.value === 'process') {
-    const order = props.processPhases.map(p => p.key)
+    const order = props.processPhases.map((p) => p.key)
     return keys.sort((a, b) => {
       const idxA = order.indexOf(a)
       const idxB = order.indexOf(b)
@@ -193,7 +226,7 @@ function sortColumnKeys(keys: string[]): string[] {
 
   if (groupBy.value === 'type') {
     const types = sessionStore.appSettings?.inquiryTypeTab || []
-    const order = types.map(t => t.typeKey || t.label)
+    const order = types.map((t) => t.typeKey || t.label)
     return keys.sort((a, b) => {
       const idxA = order.indexOf(a)
       const idxB = order.indexOf(b)
@@ -209,18 +242,18 @@ function sortColumnKeys(keys: string[]): string[] {
 
 function getColumnLabel(key: string): string {
   if (groupBy.value === 'process') {
-    const phase = props.processPhases.find(p => p.key === key)
+    const phase = props.processPhases.find((p) => p.key === key)
     return phase?.label || key
   }
 
   if (groupBy.value === 'status') {
     const map: Record<string, string> = {
-      'active': t('agora', 'Active'),
-      'open': t('agora', 'Open'),
-      'closed': t('agora', 'Closed'),
-      'draft': t('agora', 'Draft'),
-      'waiting_approval': t('agora', 'Pending'),
-      'rejected': t('agora', 'Rejected')
+      active: t('agora', 'Active'),
+      open: t('agora', 'Open'),
+      closed: t('agora', 'Closed'),
+      draft: t('agora', 'Draft'),
+      waiting_approval: t('agora', 'Pending'),
+      rejected: t('agora', 'Rejected'),
     }
     return map[key] || key
   }
@@ -233,11 +266,11 @@ function getColumnLabel(key: string): string {
 
   if (groupBy.value === 'family') {
     const map: Record<string, string> = {
-      'default': t('agora', 'Default'),
-      'proposal': t('agora', 'Proposals'),
-      'poll': t('agora', 'Polls'),
-      'survey': t('agora', 'Surveys'),
-      'discussion': t('agora', 'Discussions')
+      default: t('agora', 'Default'),
+      proposal: t('agora', 'Proposals'),
+      poll: t('agora', 'Polls'),
+      survey: t('agora', 'Surveys'),
+      discussion: t('agora', 'Discussions'),
     }
     return map[key] || key
   }
@@ -247,7 +280,7 @@ function getColumnLabel(key: string): string {
 
 function getColumnIcon(key: string): any {
   if (groupBy.value === 'process') {
-    const phase = props.processPhases.find(p => p.key === key)
+    const phase = props.processPhases.find((p) => p.key === key)
     if (phase?.icon) {
       return Icons[phase.icon] || Icons.Circle
     }
@@ -256,12 +289,12 @@ function getColumnIcon(key: string): any {
 
   if (groupBy.value === 'status') {
     const map: Record<string, any> = {
-      'active': Icons.CheckCircle,
-      'open': Icons.CheckCircle,
-      'closed': Icons.Close,
-      'draft': Icons.Edit,
-      'waiting_approval': Icons.Clock,
-      'rejected': Icons.Close
+      active: Icons.CheckCircle,
+      open: Icons.CheckCircle,
+      closed: Icons.Close,
+      draft: Icons.Edit,
+      waiting_approval: Icons.Clock,
+      rejected: Icons.Close,
     }
     return map[key] || Icons.Circle
   }
@@ -302,13 +335,13 @@ function handleDragStart(event: DragEvent, inquiry: Inquiry) {
 function handleDrop(columnKey: string, event: DragEvent) {
   if (!event.dataTransfer) return
   const inquiryId = parseInt(event.dataTransfer.getData('text/plain'))
-  const inquiry = props.inquiries.find(i => i.id === inquiryId)
+  const inquiry = props.inquiries.find((i) => i.id === inquiryId)
   if (!inquiry) return
 
   // Find which column the inquiry is currently in
   let fromColumn = ''
   for (const [key, items] of Object.entries(groupedColumns.value)) {
-    if (items.some(i => i.id === inquiryId)) {
+    if (items.some((i) => i.id === inquiryId)) {
       fromColumn = key
       break
     }

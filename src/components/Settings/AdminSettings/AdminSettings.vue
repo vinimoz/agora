@@ -24,9 +24,9 @@ const domains = [
   { id: 'option', label: t('agora', 'Option Families') },
 ]
 
-const activeDomainId = ref('inquiry')         // 'inquiry' | 'option'
-const selectedFamily = ref(null)              // family object when drilled in
-const activeSubTab = ref('types')             // 'types' | 'group-types'
+const activeDomainId = ref('inquiry') // 'inquiry' | 'option'
+const selectedFamily = ref(null) // family object when drilled in
+const activeSubTab = ref('types') // 'types' | 'group-types'
 const selectedType = ref(null)
 const settingsModalOpen = ref(false)
 
@@ -42,25 +42,19 @@ const subTabs = computed(() => {
       { id: 'group-types', label: t('agora', 'Inquiry Group Types') },
     ]
   }
-  return [
-    { id: 'types', label: t('agora', 'Option Types') },
-  ]
+  return [{ id: 'types', label: t('agora', 'Option Types') }]
 })
 
 /** Which component renders right now */
 const currentComponent = computed(() => {
   // Level 1 — no family selected → show family list
   if (!selectedFamily.value) {
-    return activeDomainId.value === 'inquiry'
-      ? AdminFamiliesManager
-      : AdminOptionFamiliesManager
+    return activeDomainId.value === 'inquiry' ? AdminFamiliesManager : AdminOptionFamiliesManager
   }
 
   // Level 2 — family selected → show sub-manager
   if (activeDomainId.value === 'inquiry') {
-    return activeSubTab.value === 'group-types'
-      ? AdminInquiryGroupTypesManager
-      : AdminTypesManager
+    return activeSubTab.value === 'group-types' ? AdminInquiryGroupTypesManager : AdminTypesManager
   }
   return AdminOptionTypesManager
 })
@@ -101,7 +95,10 @@ const handleSettingsModalClose = () => {
     <!-- ============================================================
          LEVEL 1 — Domain tabs (hidden once you drill in)
          ============================================================ -->
-    <nav v-if="!selectedFamily" class="domain-tabs">
+    <nav
+      v-if="!selectedFamily"
+      class="domain-tabs"
+    >
       <button
         v-for="domain in domains"
         :key="domain.id"
@@ -127,7 +124,10 @@ const handleSettingsModalClose = () => {
         </div>
       </div>
 
-      <nav class="sub-tabs" :class="{ single: subTabs.length === 1 }">
+      <nav
+        class="sub-tabs"
+        :class="{ single: subTabs.length === 1 }"
+      >
         <button
           v-for="tab in subTabs"
           :key="tab.id"

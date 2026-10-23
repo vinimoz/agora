@@ -9,7 +9,9 @@
       class="rank-select"
       :disabled="disabled"
     >
-      <option :value="null">{{ t('agora', 'Not ranked') }}</option>
+      <option :value="null">
+        {{ t('agora', 'Not ranked') }}
+      </option>
       <option
         v-for="i in maxRank"
         :key="i"
@@ -43,9 +45,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'changeRank': [rank: number | null]
+  changeRank: [rank: number | null]
 }>()
-
 
 const maxRank = computed(() => {
   const max = props.engineConfig.max_rank

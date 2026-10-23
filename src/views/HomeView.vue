@@ -59,8 +59,7 @@ const showCreateDialog = computed(() => route.query.viewMode === 'create')
 
 const createDialogType = computed(() => {
   const key =
-    (route.query.inquiryType as string | undefined) ??
-    (route.query.type as string | undefined)
+    (route.query.inquiryType as string | undefined) ?? (route.query.type as string | undefined)
   if (!key) return null
   const types = sessionStore.appSettings.inquiryTypeTab || []
   return types.find((t) => t.inquiry_type === key) ?? null
@@ -105,15 +104,14 @@ function handleCreateInquiry(options: { type?: string; family?: string } = {}) {
     ...route.query,
     viewMode: 'create',
   }
-  console.log(" INQUIRY TYPE ", options.type )
-  console.log(" INQUIRY FAMILY TYPE ", options.family )
+  console.log(' INQUIRY TYPE ', options.type)
+  console.log(' INQUIRY FAMILY TYPE ', options.family)
   if (options.type) query.inquiryType = options.type
   if (options.family) query.family = options.family
-  
+
   // Stay on Home. Don't push to the non-existent `group` route.
   router.push({ name: 'home', query })
 }
-
 
 // The landing only ever wants the viewable, non-archived set. Per-zone
 // filtering / sorting / pagination is applied downstream by
@@ -121,7 +119,7 @@ function handleCreateInquiry(options: { type?: string; family?: string } = {}) {
 const inquiries = useViewableInquiries()
 
 const groups = computed<InquiryGroup[]>(() =>
-  groupsStore.inquiryGroupsSorted.filter((g) => g.parentId === null),
+  groupsStore.inquiryGroupsSorted.filter((g) => g.parentId === null)
 )
 
 onMounted(() => {
@@ -172,7 +170,7 @@ function onNavigate(target: any) {
         params: { type: 'relevant' },
         query: { family: 'collective', display: 'feed' },
       })
-     case 'create':
+    case 'create':
       return handleCreateInquiry({
         type: target.inquiryType,
         family: target.family,
@@ -252,7 +250,7 @@ function handleHeroAction(key: string) {
         query: { filter: 'to_vote' },
       })
     case 'propose':
-      return handleCreateInquiry({type: 'proposal'})
+      return handleCreateInquiry({ type: 'proposal' })
     case 'debate':
       return router.push({
         name: 'explore',
@@ -263,5 +261,4 @@ function handleHeroAction(key: string) {
       return router.push({ name: 'explore' })
   }
 }
-
 </script>

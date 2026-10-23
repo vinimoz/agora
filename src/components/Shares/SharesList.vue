@@ -68,13 +68,19 @@ async function addShare(user: User) {
 
     <SharePublicAdd
       v-if="
-        sessionStore.appPermissions.publicShares &&
-        sessionStore.appPermissions.addSharesExternal
+        sessionStore.appPermissions.publicShares && sessionStore.appPermissions.addSharesExternal
       "
     />
 
-    <div v-if="sharesStore.active.length" class="shares-list shared">
-      <TransitionGroup tag="div" name="list" :css="false">
+    <div
+      v-if="sharesStore.active.length"
+      class="shares-list shared"
+    >
+      <TransitionGroup
+        tag="div"
+        name="list"
+        :css="false"
+      >
         <ShareItem
           v-for="share in sharesStore.active"
           :key="share.id"
@@ -84,7 +90,11 @@ async function addShare(user: User) {
       </TransitionGroup>
     </div>
 
-    <NcModal v-if="qrModal" size="small" @close="qrModal = false">
+    <NcModal
+      v-if="qrModal"
+      size="small"
+      @close="qrModal = false"
+    >
       <QrModal
         :name="inquiryStore.title"
         :description="inquiryStore.description"

@@ -314,18 +314,18 @@ export const useSupportResultStore = defineStore('supportResult', () => {
   }
 
   function setResults(newResults: SupportResult[]): void {
-  if (!newResults?.length) return
-  // Remove duplicates by id and add new ones
-  const existingIds = new Set(results.value.map(r => r.id))
-  const fresh = newResults.filter(r => !existingIds.has(r.id))
-  results.value.push(...fresh)
-  // Update currentResults map
-  fresh.forEach(result => {
-    const key = `${result.target_type}-${result.target_id}`
-    currentResults.value.set(key, result.result)
-  })
-  lastCalculated.value = Date.now()
-}
+    if (!newResults?.length) return
+    // Remove duplicates by id and add new ones
+    const existingIds = new Set(results.value.map((r) => r.id))
+    const fresh = newResults.filter((r) => !existingIds.has(r.id))
+    results.value.push(...fresh)
+    // Update currentResults map
+    fresh.forEach((result) => {
+      const key = `${result.target_type}-${result.target_id}`
+      currentResults.value.set(key, result.result)
+    })
+    lastCalculated.value = Date.now()
+  }
 
   function needsRecalculation(engineId: number, maxAge: number = 60000): boolean {
     if (!lastCalculated.value) return true

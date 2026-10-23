@@ -102,10 +102,16 @@ function addAnotherInquiry() {
     :button-variant="'primary'"
   >
     <template #icon>
-      <PlusIcon :size="20" decorative />
+      <PlusIcon
+        :size="20"
+        decorative
+      />
     </template>
     <template #modal-content>
-      <InquiryCreateDlg @added="addedInquiry" @close="showModal = false" />
+      <InquiryCreateDlg
+        @added="addedInquiry"
+        @close="showModal = false"
+      />
     </template>
   </ButtonModal>
   <NcDialog

@@ -8,19 +8,14 @@ import { t } from '@nextcloud/l10n'
 import { IconProps } from './types'
 import { computed } from 'vue'
 
-const {
-  size = 24,
-  supported = false,
-} = defineProps<IconProps & { supported?: boolean }>()
+const { size = 24, supported = false } = defineProps<IconProps & { supported?: boolean }>()
 
 const emojiSymbol = computed(() => '👍')
 
-const iconColor = computed(() => 
-  supported ? '#facc15' : '#9ca3af'
-)
+const iconColor = computed(() => (supported ? '#facc15' : '#9ca3af'))
 
 const dynamicTitle = computed(() =>
-  supported 
+  supported
     ? t('agora', 'Supported - click to remove support')
     : t('agora', 'Not supported - click to support')
 )
@@ -30,9 +25,9 @@ const dynamicTitle = computed(() =>
   <span
     :aria-label="dynamicTitle"
     class="emoji-thumb-icon"
-    :class="{ 
-      'supported': supported,
-      'not-supported': !supported
+    :class="{
+      supported: supported,
+      'not-supported': !supported,
     }"
     role="img"
     :title="dynamicTitle"

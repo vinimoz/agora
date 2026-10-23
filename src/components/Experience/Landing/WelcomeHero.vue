@@ -1,29 +1,47 @@
 <template>
-  <div class="welcome-hero" :style="heroStyle">
+  <div
+    class="welcome-hero"
+    :style="heroStyle"
+  >
     <div class="hero-content">
-      <span v-if="cityName" class="hero-city">{{ cityName }}</span>
-      <h1 class="hero-title">{{ title }}</h1>
-      <p class="hero-subtitle">{{ subtitle }}</p>
-      <p v-if="tagline" class="hero-tagline">{{ tagline }}</p>
+      <span
+        v-if="cityName"
+        class="hero-city"
+      >{{ cityName }}</span>
+      <h1 class="hero-title">
+        {{ title }}
+      </h1>
+      <p class="hero-subtitle">
+        {{ subtitle }}
+      </p>
+      <p
+        v-if="tagline"
+        class="hero-tagline"
+      >
+        {{ tagline }}
+      </p>
 
-<div v-if="stats" class="hero-stats">
-  <div class="stat">
-    <span class="stat-value">{{ stats.shared }}</span>
-    <span class="stat-label">{{ t('agora', 'Shared with you') }}</span>
-  </div>
-  <div class="stat">
-    <span class="stat-value">{{ stats.participated }}</span>
-    <span class="stat-label">{{ t('agora', 'You participated in') }}</span>
-  </div>
-  <div class="stat">
-    <span class="stat-value">{{ stats.owned }}</span>
-    <span class="stat-label">{{ t('agora', 'Your inquiries') }}</span>
-  </div>
-  <div class="stat">
-    <span class="stat-value">{{ stats.groupInquiries }}</span>
-    <span class="stat-label">{{ t('agora', 'In your groups') }}</span>
-  </div>
-</div>
+      <div
+        v-if="stats"
+        class="hero-stats"
+      >
+        <div class="stat">
+          <span class="stat-value">{{ stats.shared }}</span>
+          <span class="stat-label">{{ t('agora', 'Shared with you') }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">{{ stats.participated }}</span>
+          <span class="stat-label">{{ t('agora', 'You participated in') }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">{{ stats.owned }}</span>
+          <span class="stat-label">{{ t('agora', 'Your inquiries') }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">{{ stats.groupInquiries }}</span>
+          <span class="stat-label">{{ t('agora', 'In your groups') }}</span>
+        </div>
+      </div>
 
       <div class="hero-actions">
         <button
@@ -34,7 +52,10 @@
           @click="emit('action', action.key)"
         >
           <span class="action-icon">
-            <component :is="action.icon" :size="22" />
+            <component
+              :is="action.icon"
+              :size="22"
+            />
           </span>
           <span class="action-text">
             <span class="action-label">{{ action.label }}</span>
@@ -44,8 +65,14 @@
       </div>
     </div>
 
-    <div v-if="weather" class="hero-weather">
-      <component :is="Icons.WeatherSunny" :size="22" />
+    <div
+      v-if="weather"
+      class="hero-weather"
+    >
+      <component
+        :is="Icons.WeatherSunny"
+        :size="22"
+      />
       <span class="temp">{{ weather.temp }}°C</span>
       <span class="location">{{ weather.location }}</span>
     </div>
@@ -61,8 +88,8 @@ import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
 const props = defineProps<{
   title?: string
   subtitle?: string
-  tagline?: string                
-  cityName?: string            
+  tagline?: string
+  cityName?: string
   backgroundUrl?: string
   actions?: any[]
   weather?: { temp: number; location: string } | null
@@ -73,8 +100,8 @@ const emit = defineEmits<{ action: [key: string] }>()
 
 const title = computed(() => props.title || t('agora', 'Welcome to Agora'))
 const subtitle = computed(
-  () => props.subtitle ||
-    t('agora', 'Your civic space for a more direct and participatory democracy'),
+  () =>
+    props.subtitle || t('agora', 'Your civic space for a more direct and participatory democracy')
 )
 
 /**
@@ -105,12 +132,39 @@ const heroStyle = computed(() => {
   }
 })
 
-const actions = computed(() => props.actions || [
-  { key: 'participate', label: t('agora','Participate'), hint: t('agora','Give your opinion'), icon: Icons.CheckCircle,    color: '#16a34a' },
-  { key: 'decide',      label: t('agora','Decide'),      hint: t('agora','Vote and deliberate'), icon: Icons.Scale,        color: '#7c3aed' },
-  { key: 'propose',     label: t('agora','Propose'),     hint: t('agora','Share your ideas'),    icon: Icons.Lightbulb,    color: '#f59e0b' },
-  { key: 'debate',      label: t('agora','Debate'),      hint: t('agora','Exchange with others'), icon: Icons.MessageSquare, color: '#0ea5e9' },
-])
+const actions = computed(
+  () =>
+    props.actions || [
+      {
+        key: 'participate',
+        label: t('agora', 'Participate'),
+        hint: t('agora', 'Give your opinion'),
+        icon: Icons.CheckCircle,
+        color: '#16a34a',
+      },
+      {
+        key: 'decide',
+        label: t('agora', 'Decide'),
+        hint: t('agora', 'Vote and deliberate'),
+        icon: Icons.Scale,
+        color: '#7c3aed',
+      },
+      {
+        key: 'propose',
+        label: t('agora', 'Propose'),
+        hint: t('agora', 'Share your ideas'),
+        icon: Icons.Lightbulb,
+        color: '#f59e0b',
+      },
+      {
+        key: 'debate',
+        label: t('agora', 'Debate'),
+        hint: t('agora', 'Exchange with others'),
+        icon: Icons.MessageSquare,
+        color: '#0ea5e9',
+      },
+    ]
+)
 </script>
 
 <style lang="scss" scoped>
@@ -155,34 +209,34 @@ const actions = computed(() => props.actions || [
     line-height: 1.15;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   }
-.hero-stats {
-  display: flex;
-  gap: 24px;
-  margin: 0 0 20px 0;
-  padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(6px);
-  border-radius: 12px;
-  width: fit-content;
-
-  .stat {
+  .hero-stats {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 1.2;
+    gap: 24px;
+    margin: 0 0 20px 0;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    width: fit-content;
 
-    .stat-value {
-      font-size: 22px;
-      font-weight: 800;
-    }
-    .stat-label {
-      font-size: 11px;
-      opacity: 0.85;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.2;
+
+      .stat-value {
+        font-size: 22px;
+        font-weight: 800;
+      }
+      .stat-label {
+        font-size: 11px;
+        opacity: 0.85;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
     }
   }
-}
 
   .hero-subtitle {
     margin: 0 0 24px 0;
@@ -213,7 +267,9 @@ const actions = computed(() => props.actions || [
     color: var(--color-main-text);
     cursor: pointer;
     text-align: left;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
 
     &:hover {
       transform: translateY(-2px);

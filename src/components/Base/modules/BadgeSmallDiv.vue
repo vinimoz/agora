@@ -8,7 +8,10 @@ const { tag = 'span' } = defineProps<{ tag?: string }>()
 </script>
 
 <template>
-  <Component :is="tag" class="badge-small">
+  <Component
+    :is="tag"
+    class="badge-small"
+  >
     <slot name="icon" />
     <span v-if="$slots.default">
       <slot />

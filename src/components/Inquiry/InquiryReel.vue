@@ -3,17 +3,26 @@
 - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div class="inquiry-reel" :class="orientation">
+  <div
+    class="inquiry-reel"
+    :class="orientation"
+  >
     <button
       v-if="showArrows && hasPrevious"
       class="reel-nav-btn prev-btn"
       :aria-label="t('agora', 'Previous inquiry')"
       @click="goToPrevious"
     >
-      <component :is="isVertical ? ArrowUp : ArrowLeft" size="32" />
+      <component
+        :is="isVertical ? ArrowUp : ArrowLeft"
+        size="32"
+      />
     </button>
 
-    <div ref="reelContainer" class="reel-container">
+    <div
+      ref="reelContainer"
+      class="reel-container"
+    >
       <div
         class="reel-track"
         :style="trackStyle"
@@ -27,7 +36,11 @@
           class="reel-item"
           :class="{ active: currentIndex === index }"
         >
-          <InquiryItem :inquiry="inquiry" :grid-view="true" class="reel-inquiry-item">
+          <InquiryItem
+            :inquiry="inquiry"
+            :grid-view="true"
+            class="reel-inquiry-item"
+          >
             <template #actions>
               <InquiryItemActions
                 v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
@@ -38,7 +51,10 @@
             </template>
           </InquiryItem>
 
-          <div v-if="showProgress" class="reel-progress">
+          <div
+            v-if="showProgress"
+            class="reel-progress"
+          >
             <div
               class="reel-progress-bar"
               :style="{ width: `${((currentIndex + 1) / inquiries.length) * 100}%` }"
@@ -54,11 +70,17 @@
       :aria-label="t('agora', 'Next inquiry')"
       @click="goToNext"
     >
-      <component :is="isVertical ? ArrowDown : ArrowRight" size="32" />
+      <component
+        :is="isVertical ? ArrowDown : ArrowRight"
+        size="32"
+      />
     </button>
 
     <!-- Dot indicators -->
-    <div v-if="inquiries.length > 1" class="reel-dots">
+    <div
+      v-if="inquiries.length > 1"
+      class="reel-dots"
+    >
       <button
         v-for="(_, index) in inquiries"
         :key="index"
@@ -93,10 +115,9 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'change', index: number): void
- }>()
+}>()
 
 const sessionStore = useSessionStore()
-
 
 const currentIndex = ref(0)
 const isTransitioning = ref(false)

@@ -3,14 +3,27 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <section v-if="rootTypes.length > 0" class="family-group-types">
-    <header v-if="showHeader" class="section-header">
+  <section
+    v-if="rootTypes.length > 0"
+    class="family-group-types"
+  >
+    <header
+      v-if="showHeader"
+      class="section-header"
+    >
       <div class="header-left">
-        <component :is="headerIcon" :size="20" class="header-icon" />
+        <component
+          :is="headerIcon"
+          :size="20"
+          class="header-icon"
+        />
         <h2>{{ resolvedTitle }}</h2>
       </div>
     </header>
-    <p v-if="showHeader && resolvedSubtitle" class="section-subtitle">
+    <p
+      v-if="showHeader && resolvedSubtitle"
+      class="section-subtitle"
+    >
       {{ resolvedSubtitle }}
     </p>
 
@@ -23,13 +36,21 @@
         @click="emit('select', type.group_type)"
       >
         <span class="type-icon">
-          <component :is="type.icon" :size="22" />
+          <component
+            :is="type.icon"
+            :size="22"
+          />
         </span>
         <span class="type-label">{{ type.label }}</span>
       </button>
     </div>
 
-    <button v-if="showCta" type="button" class="types-cta" @click="emit('all')">
+    <button
+      v-if="showCta"
+      type="button"
+      class="types-cta"
+      @click="emit('all')"
+    >
       {{ resolvedCta }} →
     </button>
   </section>
@@ -73,7 +94,7 @@ const props = withDefaults(
     title: '',
     subtitle: '',
     ctaLabel: '',
-  },
+  }
 )
 
 const emit = defineEmits<{
@@ -86,10 +107,11 @@ const sessionStore = useSessionStore()
 // ---------------------------------------------------------------------------
 // Family config — source of all labels/icons
 // ---------------------------------------------------------------------------
-const familyConfig = computed(() =>
-  (sessionStore.appSettings?.inquiryFamilyTab || []).find(
-    (f: any) => f.family_type === props.family,
-  ) ?? null,
+const familyConfig = computed(
+  () =>
+    (sessionStore.appSettings?.inquiryFamilyTab || []).find(
+      (f: any) => f.family_type === props.family
+    ) ?? null
 )
 
 const headerIcon = computed(() => {
@@ -97,13 +119,9 @@ const headerIcon = computed(() => {
   return (name && (Icons as any)[name]) || Icons.FolderMultiple
 })
 
-const resolvedTitle = computed(
-  () => props.title || familyConfig.value?.label || props.family,
-)
+const resolvedTitle = computed(() => props.title || familyConfig.value?.label || props.family)
 
-const resolvedSubtitle = computed(
-  () => props.subtitle || familyConfig.value?.description || '',
-)
+const resolvedSubtitle = computed(() => props.subtitle || familyConfig.value?.description || '')
 
 const resolvedCta = computed(() => {
   if (props.ctaLabel) return props.ctaLabel
@@ -142,7 +160,9 @@ const rootTypes = computed(() => {
     align-items: center;
     gap: 8px;
 
-    .header-icon { color: var(--color-primary-element); }
+    .header-icon {
+      color: var(--color-primary-element);
+    }
 
     h2 {
       margin: 0;
@@ -182,7 +202,9 @@ const rootTypes = computed(() => {
       transform: translateY(-2px);
     }
 
-    .type-icon { color: var(--color-primary-element); }
+    .type-icon {
+      color: var(--color-primary-element);
+    }
 
     .type-label {
       font-size: 10px;
@@ -206,7 +228,9 @@ const rootTypes = computed(() => {
     cursor: pointer;
     transition: background 0.15s ease;
 
-    &:hover { background: var(--color-primary-element-hover); }
+    &:hover {
+      background: var(--color-primary-element-hover);
+    }
   }
 }
 </style>

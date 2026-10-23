@@ -4,7 +4,10 @@
 -->
 
 <template>
-  <div class="display-mode-switcher" :title="t('agora', 'Switch display mode')">
+  <div
+    class="display-mode-switcher"
+    :title="t('agora', 'Switch display mode')"
+  >
     <button
       v-for="mode in availableModes"
       :key="mode"
@@ -13,7 +16,10 @@
       :title="getModeLabel(mode)"
       @click="emit('change', mode)"
     >
-      <component :is="getModeIcon(mode)" :size="18" />
+      <component
+        :is="getModeIcon(mode)"
+        :size="18"
+      />
     </button>
   </div>
 </template>

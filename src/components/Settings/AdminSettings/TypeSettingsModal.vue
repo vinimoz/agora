@@ -19,24 +19,23 @@ defineEmits(['close'])
 const props = defineProps({
   selectedType: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
-
 
 const activeSettingsTab = ref('user-rights')
 
 const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default
 
 const settingsTabs = [
-  { 
-    id: 'user-rights', 
-    label: t('agora', 'Inquiry features'), 
+  {
+    id: 'user-rights',
+    label: t('agora', 'Inquiry features'),
     component: AdminTypeRights,
   },
-  { 
-    id: 'status', 
-    label: t('agora', 'Inquiry status'), 
+  {
+    id: 'status',
+    label: t('agora', 'Inquiry status'),
     component: AdminTypeStatus,
   },
 ]
@@ -52,14 +51,22 @@ const updateTypeRights = (typeKey, rights) => {
     <div class="modal-header">
       <div class="type-info">
         <div class="type-icon">
-          <component :is="getIconComponent(selectedType.icon)" :size="20" />
+          <component
+            :is="getIconComponent(selectedType.icon)"
+            :size="20"
+          />
         </div>
         <div class="type-details">
           <h3>{{ props.selectedType.label }}</h3>
-          <p class="type-key">{{ props.selectedType.inquiry_type }}</p>
+          <p class="type-key">
+            {{ props.selectedType.inquiry_type }}
+          </p>
         </div>
       </div>
-      <button class="close-button" @click="$emit('close')">
+      <button
+        class="close-button"
+        @click="$emit('close')"
+      >
         {{ t('agora', 'Close') }}
       </button>
     </div>
@@ -77,8 +84,8 @@ const updateTypeRights = (typeKey, rights) => {
     </div>
 
     <div class="settings-content">
-      <component 
-        :is="settingsTabs.find(t => t.id === activeSettingsTab)?.component"
+      <component
+        :is="settingsTabs.find((t) => t.id === activeSettingsTab)?.component"
         :selected-type="props.selectedType"
         @update-rights="updateTypeRights"
       />

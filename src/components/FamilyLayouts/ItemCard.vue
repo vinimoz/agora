@@ -3,21 +3,21 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div 
-    v-if="item" 
+  <div
+    v-if="item"
     :class="[
       'item-card',
       `type-${itemType}`,
-      { 
-        'compact': compact,
-        'inline': inline,
-        'official': official,
-        'highlight': highlight,
+      {
+        compact: compact,
+        inline: inline,
+        official: official,
+        highlight: highlight,
         'show-poll': showPoll,
         'has-support': hasSupportFeature,
         'has-comments': allowComment,
-        'has-progress-bar': progressBar 
-      }
+        'has-progress-bar': progressBar,
+      },
     ]"
     @click="handleCardClick"
   >
@@ -25,18 +25,28 @@
     <div class="card-header">
       <!-- Left side: Type icon and date -->
       <div class="header-left">
-        <div class="type-icon" :style="{ color: itemTypeColor }">
-          <component :is="itemIcon" :size="compact ? 16 : 20" />
+        <div
+          class="type-icon"
+          :style="{ color: itemTypeColor }"
+        >
+          <component
+            :is="itemIcon"
+            :size="compact ? 16 : 20"
+          />
         </div>
-        
+
         <div class="header-meta">
           <span class="item-type-label">{{ itemTypeLabel }}</span>
           <span class="timestamp">{{ formatDate(itemCreatedAt) }}</span>
         </div>
       </div>
-      
+
       <!-- Right side: Actions menu - only in normal mode -->
-      <div v-if="!inline && canEditOrDelete && showAction" class="header-right" @click.stop>
+      <div
+        v-if="!inline && canEditOrDelete && showAction"
+        class="header-right"
+        @click.stop
+      >
         <NcActions
           v-if="canEditOrDelete"
           :force-menu="true"
@@ -50,7 +60,10 @@
             @click="confirmDelete"
           >
             <template #icon>
-              <component :is="InquiryOptionIcons.Delete" :size="20" />
+              <component
+                :is="InquiryOptionIcons.Delete"
+                :size="20"
+              />
             </template>
             {{ t('agora', 'Delete') }}
           </NcActionButton>
@@ -61,12 +74,20 @@
     <!-- Second Box: Title and Description -->
     <div class="card-content">
       <!-- Title -->
-      <div v-if="showTitle" class="content-section title-section">
-        <h3 class="card-title">{{ itemTitle }}</h3>
+      <div
+        v-if="showTitle"
+        class="content-section title-section"
+      >
+        <h3 class="card-title">
+          {{ itemTitle }}
+        </h3>
       </div>
-      
+
       <!-- Description/Text -->
-      <div v-if="itemText && (!compact || !showTitle)" class="content-section description-section">
+      <div
+        v-if="itemText && (!compact || !showTitle)"
+        class="content-section description-section"
+      >
         <div class="card-text">
           {{ truncateText(itemText, textMaxLength) }}
         </div>
@@ -74,12 +95,15 @@
     </div>
 
     <!-- Progress Bar Section - Only shown when progressBar is true -->
-    <div v-if="progressBar" class="progress-bar-section">
+    <div
+      v-if="progressBar"
+      class="progress-bar-section"
+    >
       <div class="progress-bar-container">
-        <div 
-          class="progress-bar-fill" 
+        <div
+          class="progress-bar-fill"
           :style="{ width: `${progressPercentage}%` }"
-        ></div>
+        />
       </div>
       <div class="progress-stats">
         <span class="progress-label">{{ t('agora', 'Progress') }}</span>
@@ -88,12 +112,21 @@
     </div>
 
     <!-- Separator - hide in inline mode -->
-    <div v-if="!inline" class="section-separator"></div>
+    <div
+      v-if="!inline"
+      class="section-separator"
+    />
 
     <!-- Support and Comments in single line (normal mode) -->
-    <div v-if="!inline && (hasSupportFeature || allowComment) && !progressBar" class="card-features">
+    <div
+      v-if="!inline && (hasSupportFeature || allowComment) && !progressBar"
+      class="card-features"
+    >
       <!-- Support feature -->
-      <div v-if="hasSupportFeature && itemContext" class="feature-item support-feature">
+      <div
+        v-if="hasSupportFeature && itemContext"
+        class="feature-item support-feature"
+      >
         <SupportFeature
           :item="supportItem"
           :item-type="targetType"
@@ -104,31 +137,51 @@
           @click.stop
         />
       </div>
-      
+
       <!-- Comments feature -->
-      <div v-if="allowComment" class="feature-item comments-feature" @click.stop="$emit('comment', item)">
+      <div
+        v-if="allowComment"
+        class="feature-item comments-feature"
+        @click.stop="$emit('comment', item)"
+      >
         <div class="feature-content">
-          <component :is="InquiryOptionIcons.Comment" :size="compact ? 14 : 16" class="feature-icon" />
+          <component
+            :is="InquiryOptionIcons.Comment"
+            :size="compact ? 14 : 16"
+            class="feature-icon"
+          />
           <span class="feature-count">{{ commentCount }}</span>
         </div>
       </div>
     </div>
 
     <!-- Child items (responses) -->
-    <div v-if="!inline && hasChildItems && !compact && !progressBar" class="card-children">
+    <div
+      v-if="!inline && hasChildItems && !compact && !progressBar"
+      class="card-children"
+    >
       <div class="children-header">
-        <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
+        <component
+          :is="InquiryOptionIcons.MessageReplyText"
+          :size="14"
+        />
         <span class="children-title">{{ t('agora', 'Responses') }}</span>
       </div>
 
       <div class="children-list">
-        <div v-if="childItemsTotal === 0" class="no-children">
+        <div
+          v-if="childItemsTotal === 0"
+          class="no-children"
+        >
           <span class="no-children-text">{{ t('agora', 'None') }}</span>
         </div>
 
-        <div v-else class="children-summary">
-          <div 
-            v-for="childType in childItemTypes" 
+        <div
+          v-else
+          class="children-summary"
+        >
+          <div
+            v-for="childType in childItemTypes"
             :key="childType"
             class="child-type-summary"
             @mouseenter="showChildTooltip(childType)"
@@ -136,27 +189,39 @@
             @click.stop="$emit('viewChildren', item, childType)"
           >
             <div class="child-type-info">
-              <component :is="getChildItemTypeIcon(childType)" :size="inline ? 10 : 12" />
+              <component
+                :is="getChildItemTypeIcon(childType)"
+                :size="inline ? 10 : 12"
+              />
               <span class="child-count">{{ childItemsByType[childType] || 0 }}</span>
             </div>
-            
+
             <!-- Tooltip showing child items of this type -->
-            <div v-if="activeTooltip === childType && childItemsByType[childType] > 0" class="child-tooltip">
+            <div
+              v-if="activeTooltip === childType && childItemsByType[childType] > 0"
+              class="child-tooltip"
+            >
               <div class="tooltip-header">
                 <strong>{{ getChildItemTypeLabel(childType) }}</strong>
                 <span class="tooltip-count">{{ childItemsByType[childType] }} {{ t('agora', 'items') }}</span>
               </div>
               <div class="tooltip-children">
-                <div 
-                  v-for="child in getChildrenByType(childType)" 
+                <div
+                  v-for="child in getChildrenByType(childType)"
                   :key="child.id"
                   class="tooltip-child-item"
                   @click.stop="$emit('click', child)"
                 >
-                  <component :is="getChildItemTypeIcon(child.type)" :size="10" />
+                  <component
+                    :is="getChildItemTypeIcon(child.type)"
+                    :size="10"
+                  />
                   <span class="child-title">{{ getItemTitle(child) }}</span>
                 </div>
-                <div v-if="childItemsByType[childType] > 3" class="tooltip-more">
+                <div
+                  v-if="childItemsByType[childType] > 3"
+                  class="tooltip-more"
+                >
                   {{ t('agora', 'and {count} more …', { count: childItemsByType[childType] - 3 }) }}
                 </div>
               </div>
@@ -167,17 +232,29 @@
     </div>
 
     <!-- Inline mode features row -->
-    <div v-if="inline" class="inline-features-row">
+    <div
+      v-if="inline"
+      class="inline-features-row"
+    >
       <!-- Child responses -->
-      <div v-if="hasChildItems && !compact && !progressBar" class="inline-feature-item child-items">
+      <div
+        v-if="hasChildItems && !compact && !progressBar"
+        class="inline-feature-item child-items"
+      >
         <div class="children-list">
-          <div v-if="childItemsTotal === 0" class="no-children">
+          <div
+            v-if="childItemsTotal === 0"
+            class="no-children"
+          >
             <span class="no-children-text">{{ t('agora', 'None') }}</span>
           </div>
 
-          <div v-else class="children-summary">
-            <div 
-              v-for="childType in childItemTypes" 
+          <div
+            v-else
+            class="children-summary"
+          >
+            <div
+              v-for="childType in childItemTypes"
               :key="childType"
               class="child-type-summary"
               @mouseenter="showChildTooltip(childType)"
@@ -185,28 +262,42 @@
               @click.stop="$emit('viewChildren', item, childType)"
             >
               <div class="child-type-info">
-                <component :is="getChildItemTypeIcon(childType)" :size="10" />
+                <component
+                  :is="getChildItemTypeIcon(childType)"
+                  :size="10"
+                />
                 <span class="child-count">{{ childItemsByType[childType] || 0 }}</span>
               </div>
-              
+
               <!-- Tooltip showing child items of this type -->
-              <div v-if="activeTooltip === childType && childItemsByType[childType] > 0" class="child-tooltip">
+              <div
+                v-if="activeTooltip === childType && childItemsByType[childType] > 0"
+                class="child-tooltip"
+              >
                 <div class="tooltip-header">
                   <strong>{{ getChildItemTypeLabel(childType) }}</strong>
                   <span class="tooltip-count">{{ childItemsByType[childType] }} {{ t('agora', 'items') }}</span>
                 </div>
                 <div class="tooltip-children">
-                  <div 
-                    v-for="child in getChildrenByType(childType)" 
+                  <div
+                    v-for="child in getChildrenByType(childType)"
                     :key="child.id"
                     class="tooltip-child-item"
                     @click.stop="$emit('click', child)"
                   >
-                    <component :is="getChildItemTypeIcon(child.type)" :size="10" />
+                    <component
+                      :is="getChildItemTypeIcon(child.type)"
+                      :size="10"
+                    />
                     <span class="child-title">{{ getItemTitle(child) }}</span>
                   </div>
-                  <div v-if="childItemsByType[childType] > 3" class="tooltip-more">
-                    {{ t('agora', 'and {count} more …', { count: childItemsByType[childType] - 3 }) }}
+                  <div
+                    v-if="childItemsByType[childType] > 3"
+                    class="tooltip-more"
+                  >
+                    {{
+                      t('agora', 'and {count} more …', { count: childItemsByType[childType] - 3 })
+                    }}
                   </div>
                 </div>
               </div>
@@ -216,7 +307,10 @@
       </div>
 
       <!-- Support feature -->
-      <div v-if="hasSupportFeature" class="inline-feature-item support-feature">
+      <div
+        v-if="hasSupportFeature"
+        class="inline-feature-item support-feature"
+      >
         <SupportFeature
           :item="supportItem"
           :item-type="targetType"
@@ -227,20 +321,32 @@
           @click.stop
         />
       </div>
-      
+
       <!-- Comments feature -->
-      <div v-if="allowComment && !progressBar" class="inline-feature-item comments-feature" @click.stop="$emit('comment', item)">
+      <div
+        v-if="allowComment && !progressBar"
+        class="inline-feature-item comments-feature"
+        @click.stop="$emit('comment', item)"
+      >
         <div class="feature-content">
-          <component :is="InquiryOptionIcons.Comment" :size="14" class="feature-icon" />
+          <component
+            :is="InquiryOptionIcons.Comment"
+            :size="14"
+            class="feature-icon"
+          />
           <span class="feature-count">{{ commentCount }}</span>
         </div>
       </div>
 
       <!-- Spacer to push actions to the right -->
-      <div class="inline-spacer"></div>
+      <div class="inline-spacer" />
 
       <!-- Actions menu for inline mode -->
-      <div v-if="canEditOrDelete && showAction" class="inline-actions" @click.stop>
+      <div
+        v-if="canEditOrDelete && showAction"
+        class="inline-actions"
+        @click.stop
+      >
         <NcActions
           :force-menu="true"
           :aria-label="t('agora', 'Item actions')"
@@ -253,7 +359,10 @@
             @click="confirmDelete"
           >
             <template #icon>
-              <component :is="InquiryOptionIcons.Delete" :size="20" />
+              <component
+                :is="InquiryOptionIcons.Delete"
+                :size="20"
+              />
             </template>
             {{ t('agora', 'Delete') }}
           </NcActionButton>
@@ -262,7 +371,10 @@
     </div>
 
     <!-- Footer: Owner info -->
-    <div v-if="!inline" class="card-footer">
+    <div
+      v-if="!inline"
+      class="card-footer"
+    >
       <div class="owner-info">
         <NcAvatar
           v-if="ownerId"
@@ -293,17 +405,12 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import { SupportFeature } from '../Base/index.ts'
 import { isImportedFromView as checkImported } from '../../helpers/modules/InquiryOptionHelper'
 
-
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
 import { useInquiriesStore } from '../../stores/inquiries'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import {
-  createOptionContext,
-  canEditOption,
-  canDeleteOption,
-} from '../../utils/permissions.ts'
+import { createOptionContext, canEditOption, canDeleteOption } from '../../utils/permissions.ts'
 
 // ---- Unified types ----
 import type { Item } from '../../Types/index.ts'
@@ -329,7 +436,7 @@ import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
 export type TargetType = 'option' | 'inquiry'
 
 const props = defineProps<{
-  item: Item                   
+  item: Item
   parentId: number
   targetType: TargetType
   compact?: boolean
@@ -372,34 +479,26 @@ const itemCreatedAt = computed(() => {
   return Date.now()
 })
 
-
-const ownerId      = computed(() => raw.value?.owner?.id ?? null)
-const ownerName    = computed(() => raw.value?.owner?.displayName ?? null)
+const ownerId = computed(() => raw.value?.owner?.id ?? null)
+const ownerName = computed(() => raw.value?.owner?.displayName ?? null)
 const commentCount = computed(() => raw.value?.status?.countComments ?? 0)
 
-const isImportedFromView = computed(() =>
-  checkImported(raw.value, props.familyType || '')
-)
+const isImportedFromView = computed(() => checkImported(raw.value, props.familyType || ''))
 
 const sessionStore = useSessionStore()
 const optionsStore = useOptionsStore()
 const inquiriesStore = useInquiriesStore()
 
-
 // ---- SupportFeature still wants the raw object ----
 const supportItem = computed(() => raw.value)
 
 const itemContext = computed(() => {
-   if (!props.item || !raw.value) return null
-  return createOptionContext(raw.value) 
+  if (!props.item || !raw.value) return null
+  return createOptionContext(raw.value)
 })
 
-const canEdit = computed(() =>
-  itemContext.value ? canEditOption(itemContext.value) : false
-)
-const canDelete = computed(() =>
-  itemContext.value ? canDeleteOption(itemContext.value) : false
-)
+const canEdit = computed(() => (itemContext.value ? canEditOption(itemContext.value) : false))
+const canDelete = computed(() => (itemContext.value ? canDeleteOption(itemContext.value) : false))
 const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
 // ---- Type lookups stay the same ----
@@ -414,13 +513,9 @@ const itemTypeLabel = computed(() =>
   )
 )
 
-const itemIcon = computed(() =>
-  getOptionTypeIconComponent(itemType.value, allItemTypes.value)
-)
+const itemIcon = computed(() => getOptionTypeIconComponent(itemType.value, allItemTypes.value))
 
-const itemTypeColor = computed(() =>
-  getOptionTypeColor(itemType.value, allItemTypes.value)
-)
+const itemTypeColor = computed(() => getOptionTypeColor(itemType.value, allItemTypes.value))
 
 const showTitle = computed(() =>
   props.targetType === 'inquiry' ? true : usesTitle(itemType.value, allItemTypes.value)
@@ -433,10 +528,8 @@ const allowComment = computed(() =>
 const hasSupportFeature = computed(() =>
   props.targetType === 'inquiry'
     ? false
-    : itemContext.value !== null
-      && hasSupportFeatureHelper(itemType.value, allItemTypes.value)
+    : itemContext.value !== null && hasSupportFeatureHelper(itemType.value, allItemTypes.value)
 )
-
 
 const allowedChildTypes = computed(() =>
   props.targetType === 'inquiry' ? [] : getAllowedResponses(itemType.value, allItemTypes.value)
@@ -447,13 +540,15 @@ const hasChildItems = computed(() => allowedChildTypes.value.length > 0)
 // ---- Child lookup: optionsStore only knows about options ----
 const childItems = computed(() => {
   if (props.targetType !== 'option') return []
-  return optionsStore.options.filter(opt => opt.parentId === props.item.id)
+  return optionsStore.options.filter((opt) => opt.parentId === props.item.id)
 })
 
 const childItemsByType = computed(() => {
   const counts: Record<string, number> = {}
-  allowedChildTypes.value.forEach(type => { counts[type] = 0 })
-  childItems.value.forEach(child => {
+  allowedChildTypes.value.forEach((type) => {
+    counts[type] = 0
+  })
+  childItems.value.forEach((child) => {
     if (counts[child.type] !== undefined) counts[child.type]++
   })
   return counts
@@ -464,13 +559,13 @@ const childItemsTotal = computed(() =>
 )
 
 const childItemTypes = computed(() =>
-  Object.keys(childItemsByType.value).filter(t => childItemsByType.value[t] > 0)
+  Object.keys(childItemsByType.value).filter((t) => childItemsByType.value[t] > 0)
 )
 
 const getChildItemTypeIcon = (type: string) => getOptionTypeIconComponent(type, allItemTypes.value)
 const getChildItemTypeLabel = (type: string) => getOptionTypeLabel(type, allItemTypes.value, type)
 const getChildrenByType = (type: string) =>
-  childItems.value.filter(c => c.type === type).slice(0, 3)
+  childItems.value.filter((c) => c.type === type).slice(0, 3)
 
 // ---- Delete / remove-from-view: unwrap for API calls ----
 const deleteItem = async () => {
@@ -481,7 +576,7 @@ const deleteItem = async () => {
       await inquiriesStore.deleteInquiry(props.item.id)
     }
     emit('delete', props.item.id)
-     emit('updated')
+    emit('updated')
     showSuccess(t('agora', 'Item deleted successfully'))
   } catch (err) {
     console.error(err)
@@ -507,18 +602,31 @@ const removeFromCurrentView = async () => {
 
 // ---- Misc ----
 const activeTooltip = ref<string | null>(null)
-const showChildTooltip = (t: string) => { activeTooltip.value = t }
-const hideChildTooltip = () => { activeTooltip.value = null }
+const showChildTooltip = (t: string) => {
+  activeTooltip.value = t
+}
+const hideChildTooltip = () => {
+  activeTooltip.value = null
+}
 const showDeleteDialog = ref(false)
 
-const confirmDelete = () => { showDeleteDialog.value = true }
-const handleConfirmDelete = () => { deleteItem() }
-const handleRemoveFromView = () => { removeFromCurrentView() }
+const confirmDelete = () => {
+  showDeleteDialog.value = true
+}
+const handleConfirmDelete = () => {
+  deleteItem()
+}
+const handleRemoveFromView = () => {
+  removeFromCurrentView()
+}
 
 const formatDate = (ts: number) => {
   const d = ts ? new Date(ts * 1000) : new Date()
   return new Intl.DateTimeFormat(undefined, {
-    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   }).format(d)
 }
 
@@ -899,21 +1007,25 @@ const handleCardClick = () => {
 
   .progress-bar-section {
     margin: 8px 0 12px 0;
-    
+
     .progress-bar-container {
       background: var(--color-background-dark);
       border-radius: 10px;
       height: 8px;
       overflow: hidden;
       margin-bottom: 6px;
-      
+
       .progress-bar-fill {
-        background: linear-gradient(90deg, var(--color-primary-element-light), var(--color-primary-element));
+        background: linear-gradient(
+          90deg,
+          var(--color-primary-element-light),
+          var(--color-primary-element)
+        );
         height: 100%;
         border-radius: 10px;
         transition: width 0.3s ease;
         position: relative;
-        
+
         &::after {
           content: '';
           position: absolute;
@@ -921,25 +1033,27 @@ const handleCardClick = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(90deg, 
-            rgba(255, 255, 255, 0.2) 0%, 
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.2) 0%,
             rgba(255, 255, 255, 0) 50%,
-            rgba(255, 255, 255, 0.2) 100%);
+            rgba(255, 255, 255, 0.2) 100%
+          );
           animation: shimmer 2s infinite;
         }
       }
     }
-    
+
     .progress-stats {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 11px;
-      
+
       .progress-label {
         color: var(--color-text-lighter);
       }
-      
+
       .progress-percentage {
         font-weight: 600;
         color: var(--color-primary-element);
@@ -970,58 +1084,58 @@ const handleCardClick = () => {
     align-items: center;
     padding: 8px 12px;
     margin-bottom: 4px;
-    
+
     .card-features,
     .card-children,
     .card-footer {
       display: none;
     }
-    
+
     .card-header {
       margin-bottom: 0;
       min-height: unset;
       flex: 0 0 auto;
       width: auto;
-      
+
       .header-left {
         gap: 8px;
-        
+
         .type-icon {
           width: 24px;
           height: 24px;
-          
+
           svg {
             width: 16px;
             height: 16px;
           }
         }
-        
+
         .header-meta {
           flex-direction: row;
           align-items: center;
           gap: 6px;
-          
+
           .item-type-label {
             font-size: 12px;
           }
-          
+
           .timestamp {
             font-size: 11px;
           }
         }
       }
-      
+
       .header-right {
         display: none;
       }
     }
-    
+
     .card-content {
       margin-bottom: 0;
       flex: 1;
       min-width: 0;
       padding: 0 10px;
-      
+
       .content-section {
         &.title-section {
           .card-title {
@@ -1032,39 +1146,39 @@ const handleCardClick = () => {
             text-overflow: ellipsis;
           }
         }
-        
+
         &.description-section {
           display: none;
         }
       }
     }
-    
+
     .section-separator {
       display: none;
     }
-    
+
     .inline-features-row {
       display: flex;
       align-items: center;
       gap: 12px;
       flex: 0 0 auto;
-      
+
       .inline-spacer {
         flex: 1;
         min-width: 6px;
       }
-      
+
       .inline-feature-item {
         display: flex;
         align-items: center;
         height: 24px;
-        
+
         &.child-items {
           .children-list {
             .children-summary {
               display: flex;
               gap: 4px;
-              
+
               .child-type-summary {
                 position: relative;
                 display: flex;
@@ -1076,17 +1190,17 @@ const handleCardClick = () => {
                 cursor: pointer;
                 font-size: 11px;
                 line-height: 1;
-                
+
                 .child-type-info {
                   display: flex;
                   align-items: center;
                   gap: 3px;
-                  
+
                   svg {
                     width: 14px;
                     height: 14px;
                   }
-                  
+
                   .child-count {
                     font-size: 10px;
                     font-weight: 600;
@@ -1094,7 +1208,7 @@ const handleCardClick = () => {
                 }
               }
             }
-            
+
             .no-children {
               padding: 3px 8px;
               background: var(--color-background-dark);
@@ -1107,39 +1221,39 @@ const handleCardClick = () => {
             }
           }
         }
-        
+
         &.support-feature {
           :deep(.support-feature-container) {
             display: flex;
             align-items: center;
             gap: 4px;
-            
+
             .support-button {
               height: 22px;
               display: flex;
               align-items: center;
               justify-content: center;
-              
+
               svg {
                 width: 14px;
                 height: 14px;
               }
             }
-            
+
             .support-stats {
               display: flex;
               align-items: center;
               gap: 3px;
               font-size: 11px;
               line-height: 1;
-              
+
               .stat-value {
                 font-weight: 600;
               }
             }
           }
         }
-        
+
         &.comments-feature {
           .feature-content {
             display: flex;
@@ -1150,16 +1264,16 @@ const handleCardClick = () => {
             cursor: pointer;
             height: 22px;
             line-height: 1;
-            
+
             &:hover {
               background: var(--color-background-hover);
             }
-            
+
             .feature-icon {
               width: 14px;
               height: 14px;
             }
-            
+
             .feature-count {
               font-size: 11px;
               font-weight: 600;
@@ -1167,10 +1281,10 @@ const handleCardClick = () => {
           }
         }
       }
-      
+
       .inline-actions {
         flex-shrink: 0;
-        
+
         .card-actions {
           :deep(button) {
             min-height: 24px;
@@ -1185,7 +1299,7 @@ const handleCardClick = () => {
               opacity: 1;
               color: var(--color-primary-element);
             }
-            
+
             svg {
               width: 16px;
               height: 16px;
@@ -1194,7 +1308,7 @@ const handleCardClick = () => {
         }
       }
     }
-    
+
     .child-tooltip {
       position: absolute;
       bottom: 100%;
@@ -1280,7 +1394,7 @@ const handleCardClick = () => {
         }
       }
     }
-    
+
     &:hover {
       transform: translateY(-1px);
       background: var(--color-background-hover);
@@ -1313,7 +1427,7 @@ const handleCardClick = () => {
   .card-children {
     display: none;
   }
-  
+
   &.inline {
     .inline-features-row {
       .inline-feature-item {
@@ -1333,24 +1447,24 @@ const handleCardClick = () => {
 
     &.inline {
       flex-wrap: wrap;
-      
+
       .card-header {
         width: 100%;
       }
-      
+
       .card-content {
         width: 100%;
         padding: 4px 0;
       }
-      
+
       .inline-features-row {
         width: 100%;
         flex-wrap: wrap;
-        
+
         .inline-spacer {
           display: none;
         }
-        
+
         .inline-actions {
           margin-left: auto;
         }

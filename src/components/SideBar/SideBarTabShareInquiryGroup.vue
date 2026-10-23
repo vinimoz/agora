@@ -37,7 +37,10 @@ onBeforeRouteUpdate(async () => {
         )
       }}
     </div>
-    <SharesList class="shares effective" :info="infoText" />
+    <SharesList
+      class="shares effective"
+      :info="infoText"
+    />
   </div>
 </template>
 

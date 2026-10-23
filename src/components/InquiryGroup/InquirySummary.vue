@@ -1,31 +1,58 @@
-	<!--
+<!--
   - SPDX-FileCopyrightText: 2018-2025 Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-  <div 
+  <div
     v-if="inquiry"
-    class="inquiry-summary" :class="summaryClasses" @click="handleClick">
+    class="inquiry-summary"
+    :class="summaryClasses"
+    @click="handleClick"
+  >
     <!-- Compact Mode -->
-    <div v-if="compact || displayMode === 'summary'" class="summary-compact">
-      <div v-if="showType" class="compact-type-badge" :class="typeBadgeClass">
-        <component :is="typeIconComponent" class="compact-type-icon" />
+    <div
+      v-if="compact || displayMode === 'summary'"
+      class="summary-compact"
+    >
+      <div
+        v-if="showType"
+        class="compact-type-badge"
+        :class="typeBadgeClass"
+      >
+        <component
+          :is="typeIconComponent"
+          class="compact-type-icon"
+        />
       </div>
 
       <div class="compact-content">
         <div class="compact-title-row">
-          <div class="compact-title" :title="inquiry.title">
+          <div
+            class="compact-title"
+            :title="inquiry.title"
+          >
             {{ truncatedTitle }}
           </div>
-          <div v-if="showExpiry && showExpiryBadge" class="compact-expiry-badge" :class="expiryBadgeClass">
-            <component :is="InquiryGeneralIcons.ClockOutline" class="expiry-icon" :size="12" />
+          <div
+            v-if="showExpiry && showExpiryBadge"
+            class="compact-expiry-badge"
+            :class="expiryBadgeClass"
+          >
+            <component
+              :is="InquiryGeneralIcons.ClockOutline"
+              class="expiry-icon"
+              :size="12"
+            />
             <span>{{ expiryText }}</span>
           </div>
         </div>
 
         <div class="compact-meta">
-          <div v-if="showAuthor" class="compact-author">
+          <div
+            v-if="showAuthor"
+            class="compact-author"
+          >
             <NcAvatar
               v-if="inquiry.ownedGroup"
               :display-name="inquiry.ownedGroup"
@@ -45,8 +72,14 @@
             <span class="author-name">{{ truncatedAuthorName }}</span>
           </div>
 
-          <div v-if="showStats" class="compact-stats">
-            <div v-if="showSupport" class="stat-item supports">
+          <div
+            v-if="showStats"
+            class="compact-stats"
+          >
+            <div
+              v-if="showSupport"
+              class="stat-item supports"
+            >
               <SupportFeature
                 :item="inquiry"
                 item-type="inquiry"
@@ -57,12 +90,26 @@
                 @click.stop
               />
             </div>
-            <div v-if="showComments && inquiry.status?.countComments" class="stat-item comments">
-              <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="10" />
+            <div
+              v-if="showComments && inquiry.status?.countComments"
+              class="stat-item comments"
+            >
+              <component
+                :is="InquiryGeneralIconsComponents.Comment"
+                class="comments-icon"
+                :size="10"
+              />
               <span>{{ inquiry.status.countComments }}</span>
             </div>
-            <div v-if="showParticipants && inquiry.status?.countParticipants" class="stat-item participants">
-              <component :is="InquiryGeneralIconsComponents.Users" class="participants-icon" :size="10" />
+            <div
+              v-if="showParticipants && inquiry.status?.countParticipants"
+              class="stat-item participants"
+            >
+              <component
+                :is="InquiryGeneralIconsComponents.Users"
+                class="participants-icon"
+                :size="10"
+              />
               <span>{{ inquiry.status.countParticipants }}</span>
             </div>
           </div>
@@ -71,27 +118,65 @@
     </div>
 
     <!-- Regular Mode -->
-    <div v-else class="summary-regular">
+    <div
+      v-else
+      class="summary-regular"
+    >
       <!-- Cover Image -->
-      <div v-if="showCover && coverUrl" class="summary-cover">
-        <img :src="coverUrl" :alt="inquiry.title" class="cover-image" @load="handleImageLoad" />
-        <div class="cover-overlay"></div>
+      <div
+        v-if="showCover && coverUrl"
+        class="summary-cover"
+      >
+        <img
+          :src="coverUrl"
+          :alt="inquiry.title"
+          class="cover-image"
+          @load="handleImageLoad"
+        >
+        <div class="cover-overlay" />
       </div>
 
       <!-- Header with Type -->
-      <div v-if="showType || showStatus" class="summary-header">
-        <div v-if="showType" class="header-type-badge" :class="typeBadgeClass">
-          <component :is="typeIconComponent" class="type-icon" :size="14" />
+      <div
+        v-if="showType || showStatus"
+        class="summary-header"
+      >
+        <div
+          v-if="showType"
+          class="header-type-badge"
+          :class="typeBadgeClass"
+        >
+          <component
+            :is="typeIconComponent"
+            class="type-icon"
+            :size="14"
+          />
           <span class="type-label">{{ typeLabel }}</span>
         </div>
 
         <div class="header-right">
-          <div v-if="showStatus && currentInquiryStatus" class="status-badge" :class="statusBadgeClass">
-            <component :is="statusIconComponent" class="status-icon" :size="12" />
+          <div
+            v-if="showStatus && currentInquiryStatus"
+            class="status-badge"
+            :class="statusBadgeClass"
+          >
+            <component
+              :is="statusIconComponent"
+              class="status-icon"
+              :size="12"
+            />
             {{ statusText }}
           </div>
-          <div v-if="showExpiry && showExpiryBadge" class="expiry-badge" :class="expiryBadgeClass">
-            <component :is="InquiryGeneralIcons.ClockOutline" class="expiry-icon" :size="12" />
+          <div
+            v-if="showExpiry && showExpiryBadge"
+            class="expiry-badge"
+            :class="expiryBadgeClass"
+          >
+            <component
+              :is="InquiryGeneralIcons.ClockOutline"
+              class="expiry-icon"
+              :size="12"
+            />
             <span>{{ expiryText }}</span>
           </div>
         </div>
@@ -100,32 +185,61 @@
       <!-- Main Content -->
       <div class="summary-content">
         <!-- Title -->
-        <div class="summary-title" :title="inquiry.title">
+        <div
+          class="summary-title"
+          :title="inquiry.title"
+        >
           {{ inquiry.title }}
         </div>
 
         <!-- Description -->
-        <div v-if="showDescription && safeDescription" class="summary-description" v-html="safeDescription">
-        </div>
+        <div
+          v-if="showDescription && safeDescription"
+          class="summary-description"
+          v-html="safeDescription"
+        />
 
         <!-- Meta: Location & Category -->
-        <div v-if="showMeta" class="summary-meta">
-          <div v-if="locationPath" class="meta-item location">
-            <component :is="InquiryGeneralIconsComponents.Location" class="meta-icon" :size="12" />
+        <div
+          v-if="showMeta"
+          class="summary-meta"
+        >
+          <div
+            v-if="locationPath"
+            class="meta-item location"
+          >
+            <component
+              :is="InquiryGeneralIconsComponents.Location"
+              class="meta-icon"
+              :size="12"
+            />
             <span class="meta-text">{{ truncatedLocation }}</span>
           </div>
-          
-          <div v-if="categoryPath" class="meta-item category">
-            <component :is="InquiryGeneralIconsComponents.Category" class="meta-icon" :size="12" />
+
+          <div
+            v-if="categoryPath"
+            class="meta-item category"
+          >
+            <component
+              :is="InquiryGeneralIconsComponents.Category"
+              class="meta-icon"
+              :size="12"
+            />
             <span class="meta-text">{{ truncatedCategory }}</span>
           </div>
         </div>
       </div>
 
       <!-- Footer with Author and Stats -->
-      <div v-if="showAuthor || showStats" class="summary-footer">
+      <div
+        v-if="showAuthor || showStats"
+        class="summary-footer"
+      >
         <!-- Author Info -->
-        <div v-if="showAuthor" class="footer-author">
+        <div
+          v-if="showAuthor"
+          class="footer-author"
+        >
           <NcAvatar
             v-if="inquiry.ownedGroup"
             :display-name="inquiry.ownedGroup"
@@ -142,17 +256,29 @@
             :show-name="false"
           />
           <div class="author-info">
-            <div class="author-name">{{ ownerDisplayName }}</div>
+            <div class="author-name">
+              {{ ownerDisplayName }}
+            </div>
             <div class="post-time">
-              <component :is="InquiryGeneralIconsComponents.Calendar" class="calendar-icon" :size="12" />
+              <component
+                :is="InquiryGeneralIconsComponents.Calendar"
+                class="calendar-icon"
+                :size="12"
+              />
               <span>{{ formattedTime }}</span>
             </div>
           </div>
         </div>
 
         <!-- Stats -->
-        <div v-if="showStats" class="footer-stats">
-          <div v-if="showSupport" class="stat-item supports">
+        <div
+          v-if="showStats"
+          class="footer-stats"
+        >
+          <div
+            v-if="showSupport"
+            class="stat-item supports"
+          >
             <SupportFeature
               :item="inquiry"
               item-type="inquiry"
@@ -163,12 +289,26 @@
               @click.stop
             />
           </div>
-          <div v-if="showComments && inquiry.status?.countComments" class="stat-item comments">
-            <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="16" />
+          <div
+            v-if="showComments && inquiry.status?.countComments"
+            class="stat-item comments"
+          >
+            <component
+              :is="InquiryGeneralIconsComponents.Comment"
+              class="comments-icon"
+              :size="16"
+            />
             <span>{{ inquiry.status.countComments }}</span>
           </div>
-          <div v-if="showParticipants && inquiry.status?.countParticipants" class="stat-item participants">
-            <component :is="InquiryGeneralIconsComponents.Users" class="participants-icon" :size="16" />
+          <div
+            v-if="showParticipants && inquiry.status?.countParticipants"
+            class="stat-item participants"
+          >
+            <component
+              :is="InquiryGeneralIconsComponents.Users"
+              class="participants-icon"
+              :size="16"
+            />
             <span>{{ inquiry.status.countParticipants }}</span>
           </div>
         </div>
@@ -193,7 +333,7 @@ interface Props {
   inquiries?: Inquiry[]
   compact?: boolean
   interactive?: boolean
-  
+
   // Display feature toggles
   showIcon?: boolean
   showCover?: boolean
@@ -207,7 +347,7 @@ interface Props {
   showComments?: boolean
   showSupport?: boolean
   showParticipants?: boolean
-  
+
   // Display mode
   displayMode?: 'summary' | 'compact' | 'regular'
 }
@@ -227,7 +367,7 @@ const props = withDefaults(defineProps<Props>(), {
   showComments: true,
   showSupport: true,
   showParticipants: true,
-  displayMode: 'regular'
+  displayMode: 'regular',
 })
 
 const emit = defineEmits<{
@@ -245,7 +385,7 @@ const summaryClasses = computed(() => ({
   'is-compact': props.compact || props.displayMode === 'summary',
   'is-interactive': props.interactive,
   'has-expiry': props.showExpiry && showExpiryBadge.value,
-  'has-cover': props.showCover && !!coverUrl.value
+  'has-cover': props.showCover && !!coverUrl.value,
 }))
 
 // Context for permissions
@@ -269,17 +409,17 @@ const typeIconComponent = computed(() => {
   }
 
   const iconMap = {
-    'survey': 'ClipboardList',
-    'poll': 'CheckCircle',
-    'question': 'Question',
-    'discussion': 'MessageSquare',
-    'news': 'Newspaper',
-    'announcement': 'Megaphone',
-    'meeting': 'Users',
-    'document': 'Document',
-    'proposal': 'Scale',
-    'general': 'FolderMultiple',
-    'draft': 'Empty',
+    survey: 'ClipboardList',
+    poll: 'CheckCircle',
+    question: 'Question',
+    discussion: 'MessageSquare',
+    news: 'Newspaper',
+    announcement: 'Megaphone',
+    meeting: 'Users',
+    document: 'Document',
+    proposal: 'Scale',
+    general: 'FolderMultiple',
+    draft: 'Empty',
   }
 
   const iconName = iconMap[props.inquiry.type?.toLowerCase()] || 'FolderMultiple'
@@ -294,22 +434,22 @@ const typeBadgeClass = computed(() => {
 // Status
 const currentInquiryStatus = computed(() => {
   if (!props.inquiry.status?.inquiryStatus) return null
-  
+
   const specialStatuses = {
-    'draft': {
+    draft: {
       statusKey: 'draft',
       label: 'Draft',
       icon: 'draft',
       inquiryType: props.inquiry.type,
       order: 0,
     },
-    'waiting_approval': {
+    waiting_approval: {
       statusKey: 'waiting_approval',
       label: 'Waiting Approval',
       icon: 'waitingapproval',
       inquiryType: props.inquiry.type,
       order: 1,
-    }
+    },
   }
 
   const currentStatus = props.inquiry.status.inquiryStatus
@@ -317,15 +457,20 @@ const currentInquiryStatus = computed(() => {
     return specialStatuses[currentStatus]
   }
 
-  const statusesFromSettings = sessionStore.appSettings?.inquiryStatusTab
-    ?.filter((status) => status.inquiryType === props.inquiry.type) || []
-    
-  return statusesFromSettings.find(
-    (status) => status.statusKey === currentStatus
-  ) || specialStatuses.draft
+  const statusesFromSettings =
+    sessionStore.appSettings?.inquiryStatusTab?.filter(
+      (status) => status.inquiryType === props.inquiry.type
+    ) || []
+
+  return (
+    statusesFromSettings.find((status) => status.statusKey === currentStatus) ||
+    specialStatuses.draft
+  )
 })
 
-const statusText = computed(() => currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : '')
+const statusText = computed(() =>
+  currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : ''
+)
 
 const statusIconComponent = computed(() => {
   if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
@@ -336,18 +481,18 @@ const statusIconComponent = computed(() => {
 const statusBadgeClass = computed(() => {
   const status = props.inquiry.status?.inquiryStatus
   const map: Record<string, string> = {
-    'active': 'status-open',
-    'open': 'status-open',
-    'closed': 'status-closed',
-    'draft': 'status-draft',
-    'waiting_approval': 'status-waiting'
+    active: 'status-open',
+    open: 'status-open',
+    closed: 'status-closed',
+    draft: 'status-draft',
+    waiting_approval: 'status-waiting',
   }
   return map[status || ''] || 'status-unknown'
 })
 
 // Owner display
-const ownerDisplayName = computed(() => 
-  props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
+const ownerDisplayName = computed(
+  () => props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
 )
 
 // Truncated text
@@ -361,9 +506,7 @@ const truncatedTitle = computed(() => {
 
 const truncatedAuthorName = computed(() => {
   const name = ownerDisplayName.value
-  return name.length > 15
-    ? `${name.substring(0, 15)}…`
-    : name
+  return name.length > 15 ? `${name.substring(0, 15)}…` : name
 })
 
 // Safe description handling
@@ -398,7 +541,9 @@ function handleImageLoad() {
 }
 
 // Expiry handling
-const showExpiryBadge = computed(() => !!props.inquiry.configuration?.expire && props.inquiry.configuration.expire > 0)
+const showExpiryBadge = computed(
+  () => !!props.inquiry.configuration?.expire && props.inquiry.configuration.expire > 0
+)
 
 const expiryText = computed(() => {
   if (!props.inquiry.configuration?.expire) return ''
@@ -411,10 +556,11 @@ const expiryText = computed(() => {
 
   if (days > 0) {
     return t('agora', '{days}d', { days })
-  } if (hours > 0) {
+  }
+  if (hours > 0) {
     return t('agora', '{hours}h', { hours })
-  } 
-    return t('agora', 'Soon')
+  }
+  return t('agora', 'Soon')
 })
 
 const expiryBadgeClass = computed(() => {
@@ -443,20 +589,23 @@ const formattedTime = computed(() => {
 
   if (days > 30) {
     return created.toLocaleDateString()
-  } if (days > 0) {
+  }
+  if (days > 0) {
     return t('agora', '{days} days ago', { days })
-  } if (hours > 0) {
+  }
+  if (hours > 0) {
     return t('agora', '{hours} hours ago', { hours })
-  } if (minutes > 0) {
+  }
+  if (minutes > 0) {
     return t('agora', '{minutes} minutes ago', { minutes })
-  } 
-    return t('agora', 'Just now')
+  }
+  return t('agora', 'Just now')
 })
 
 // Location and Category paths
 function getHierarchyPath(items, targetId) {
   if (!items || !Array.isArray(items)) return ''
-  
+
   const itemMap = {}
 
   items.forEach((item) => {
@@ -481,20 +630,24 @@ function getHierarchyPath(items, targetId) {
   return buildPath(itemMap[targetId])
 }
 
-const locationPath = computed(() => getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId))
-const categoryPath = computed(() => getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId))
+const locationPath = computed(() =>
+  getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId)
+)
+const categoryPath = computed(() =>
+  getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId)
+)
 
 const truncatedLocation = computed(() => {
   if (!locationPath.value) return ''
-  return locationPath.value.length > 20 
-    ? `${locationPath.value.substring(0, 20)}…` 
+  return locationPath.value.length > 20
+    ? `${locationPath.value.substring(0, 20)}…`
     : locationPath.value
 })
 
 const truncatedCategory = computed(() => {
   if (!categoryPath.value) return ''
-  return categoryPath.value.length > 20 
-    ? `${categoryPath.value.substring(0, 20)}…` 
+  return categoryPath.value.length > 20
+    ? `${categoryPath.value.substring(0, 20)}…`
     : categoryPath.value
 })
 
@@ -510,27 +663,27 @@ function handleClick() {
   font-family: var(--font-family);
   background: var(--color-main-background);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   &.is-interactive {
     cursor: pointer;
-    
+
     &:hover {
       .summary-regular {
         transform: translateY(-2px);
-        box-shadow: 
+        box-shadow:
           0 4px 12px rgba(0, 0, 0, 0.1),
           0 2px 6px rgba(0, 0, 0, 0.05);
       }
-      
+
       .summary-compact {
         transform: translateY(-1px);
-        box-shadow: 
+        box-shadow:
           0 2px 8px rgba(0, 0, 0, 0.08),
           0 1px 4px rgba(0, 0, 0, 0.04);
       }
     }
   }
-  
+
   &:focus-visible {
     outline: 2px solid var(--color-primary-element);
     outline-offset: 2px;
@@ -550,7 +703,7 @@ function handleClick() {
   transition: all 0.2s ease;
   min-height: 64px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  
+
   .compact-type-badge {
     flex-shrink: 0;
     width: 32px;
@@ -561,19 +714,19 @@ function handleClick() {
     justify-content: center;
     background: var(--color-background-dark);
     border: 1px solid var(--color-border);
-    
+
     .compact-type-icon {
       width: 16px;
       height: 16px;
       color: var(--color-primary-element);
     }
   }
-  
+
   .compact-content {
     flex: 1;
     min-width: 0;
   }
-  
+
   .compact-title-row {
     display: flex;
     justify-content: space-between;
@@ -581,7 +734,7 @@ function handleClick() {
     gap: 8px;
     margin-bottom: 6px;
   }
-  
+
   .compact-title {
     flex: 1;
     font-size: 14px;
@@ -592,7 +745,7 @@ function handleClick() {
     text-overflow: ellipsis;
     line-height: 1.4;
   }
-  
+
   .compact-expiry-badge {
     flex-shrink: 0;
     display: flex;
@@ -604,49 +757,49 @@ function handleClick() {
     font-weight: 600;
     background: var(--color-background-dark);
     border: 1px solid var(--color-border);
-    
+
     &.expiry-soon {
       background: rgba(239, 68, 68, 0.08);
       color: #ef4444;
       border-color: rgba(239, 68, 68, 0.2);
     }
-    
+
     &.expiry-warning {
       background: rgba(245, 158, 11, 0.08);
       color: #f59e0b;
       border-color: rgba(245, 158, 11, 0.2);
     }
-    
+
     &.expiry-normal {
       background: rgba(16, 185, 129, 0.08);
       color: #10b981;
       border-color: rgba(16, 185, 129, 0.2);
     }
-    
+
     .expiry-icon {
       color: inherit;
     }
   }
-  
+
   .compact-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 8px;
   }
-  
+
   .compact-author {
     display: flex;
     align-items: center;
     gap: 8px;
     flex: 1;
-    
+
     .author-avatar {
       flex-shrink: 0;
       border: 1px solid var(--color-main-background);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
-    
+
     .author-name {
       font-size: 12px;
       color: var(--color-text-lighter);
@@ -656,12 +809,12 @@ function handleClick() {
       font-weight: 500;
     }
   }
-  
+
   .compact-stats {
     display: flex;
     align-items: center;
     gap: 12px;
-    
+
     .stat-item {
       display: flex;
       align-items: center;
@@ -673,21 +826,21 @@ function handleClick() {
       border-radius: 6px;
       background: var(--color-background-dark);
       border: 1px solid var(--color-border);
-      
+
       .support-icon,
       .comments-icon {
         color: inherit;
         opacity: 0.8;
       }
-      
+
       &.supports {
         transition: all 0.2s ease;
-        
+
         &.is-supported {
           background: rgba(var(--color-primary-rgb), 0.1);
           color: var(--color-primary-element);
           border-color: rgba(var(--color-primary-rgb), 0.2);
-          
+
           .support-icon {
             opacity: 1;
           }
@@ -710,7 +863,7 @@ function handleClick() {
   display: flex;
   flex-direction: column;
   background: var(--color-main-background);
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -722,7 +875,7 @@ function handleClick() {
     opacity: 0;
     transition: opacity 0.2s ease;
   }
-  
+
   &:hover::before {
     opacity: 0.8;
   }
@@ -734,27 +887,23 @@ function handleClick() {
   margin: -20px -20px 16px -20px;
   overflow: hidden;
   border-radius: 8px 8px 0 0;
-  
+
   .cover-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
   }
-  
+
   .cover-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      to bottom, 
-      rgba(0, 0, 0, 0.1) 0%, 
-      rgba(0, 0, 0, 0.3) 100%
-    );
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
   }
-  
+
   &:hover .cover-image {
     transform: scale(1.02);
   }
@@ -781,12 +930,12 @@ function handleClick() {
   color: var(--color-text-lighter);
   border: 1px solid var(--color-border);
   transition: all 0.2s ease;
-  
+
   &:hover {
     border-color: var(--color-primary-element);
     color: var(--color-primary-element);
   }
-  
+
   .type-icon {
     color: var(--color-primary-element);
   }
@@ -808,25 +957,25 @@ function handleClick() {
   font-weight: 600;
   background: var(--color-background-dark);
   border: 1px solid var(--color-border);
-  
+
   &.expiry-soon {
     background: rgba(239, 68, 68, 0.08);
     color: #ef4444;
     border-color: rgba(239, 68, 68, 0.2);
   }
-  
+
   &.expiry-warning {
     background: rgba(245, 158, 11, 0.08);
     color: #f59e0b;
     border-color: rgba(245, 158, 11, 0.2);
   }
-  
+
   &.expiry-normal {
     background: rgba(16, 185, 129, 0.08);
     color: #10b981;
     border-color: rgba(16, 185, 129, 0.2);
   }
-  
+
   .expiry-icon {
     color: inherit;
   }
@@ -855,7 +1004,7 @@ function handleClick() {
   color: var(--color-text-lighter);
   margin: 16px 0;
   flex: 1;
-  
+
   :deep(*) {
     margin: 0;
     padding: 0;
@@ -863,28 +1012,28 @@ function handleClick() {
     line-height: inherit;
     color: inherit;
   }
-  
+
   :deep(a) {
     color: var(--color-primary-element);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: border-color 0.2s ease;
-    
+
     &:hover {
       border-bottom-color: var(--color-primary-element);
     }
   }
-  
+
   :deep(ul),
   :deep(ol) {
     padding-left: 18px;
     margin: 10px 0;
   }
-  
+
   :deep(li) {
     margin-bottom: 4px;
   }
-  
+
   :deep(p) {
     margin: 10px 0;
   }
@@ -895,7 +1044,7 @@ function handleClick() {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
-  
+
   .meta-item {
     display: inline-flex;
     align-items: center;
@@ -906,19 +1055,19 @@ function handleClick() {
     background: var(--color-background-dark);
     border-radius: 12px;
     border: 1px solid var(--color-border);
-    
+
     .meta-icon {
       opacity: 0.7;
     }
-    
+
     &.location .meta-icon {
       color: #3b82f6;
     }
-    
+
     &.category .meta-icon {
       color: #8b5cf6;
     }
-    
+
     .meta-text {
       max-width: 100px;
       white-space: nowrap;
@@ -944,17 +1093,17 @@ function handleClick() {
   gap: 10px;
   flex: 1;
   min-width: 0;
-  
+
   .author-avatar {
     flex-shrink: 0;
     border: 1px solid var(--color-main-background);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
-  
+
   .author-info {
     min-width: 0;
   }
-  
+
   .author-name {
     font-size: 13px;
     font-weight: 600;
@@ -964,7 +1113,7 @@ function handleClick() {
     text-overflow: ellipsis;
     margin-bottom: 2px;
   }
-  
+
   .post-time {
     display: flex;
     align-items: center;
@@ -972,7 +1121,7 @@ function handleClick() {
     font-size: 11px;
     font-weight: 500;
     color: var(--color-text-maxcontrast);
-    
+
     .calendar-icon {
       color: var(--color-text-maxcontrast);
       opacity: 0.7;
@@ -984,7 +1133,7 @@ function handleClick() {
   display: flex;
   align-items: center;
   gap: 12px;
-  
+
   .stat-item {
     display: flex;
     align-items: center;
@@ -997,19 +1146,19 @@ function handleClick() {
     color: var(--color-text-lighter);
     border: 1px solid var(--color-border);
     transition: all 0.2s ease;
-    
+
     .support-icon,
     .comments-icon {
       color: inherit;
       opacity: 0.8;
     }
-    
+
     &.supports {
       &.is-supported {
         background: rgba(var(--color-primary-rgb), 0.1);
         color: var(--color-primary-element);
         border-color: rgba(var(--color-primary-rgb), 0.2);
-        
+
         .support-icon {
           opacity: 1;
         }
@@ -1023,61 +1172,81 @@ function handleClick() {
   &.type-proposal {
     background: rgba(16, 185, 129, 0.08) !important;
     border-color: rgba(16, 185, 129, 0.2) !important;
-    .type-icon { color: #10b981 !important; }
+    .type-icon {
+      color: #10b981 !important;
+    }
   }
-  
+
   &.type-survey {
     background: rgba(59, 130, 246, 0.08) !important;
     border-color: rgba(59, 130, 246, 0.2) !important;
-    .type-icon { color: #3b82f6 !important; }
+    .type-icon {
+      color: #3b82f6 !important;
+    }
   }
-  
+
   &.type-poll {
     background: rgba(139, 92, 246, 0.08) !important;
     border-color: rgba(139, 92, 246, 0.2) !important;
-    .type-icon { color: #8b5cf6 !important; }
+    .type-icon {
+      color: #8b5cf6 !important;
+    }
   }
-  
+
   &.type-question {
     background: rgba(245, 158, 11, 0.08) !important;
     border-color: rgba(245, 158, 11, 0.2) !important;
-    .type-icon { color: #f59e0b !important; }
+    .type-icon {
+      color: #f59e0b !important;
+    }
   }
-  
+
   &.type-discussion {
     background: rgba(6, 182, 212, 0.08) !important;
     border-color: rgba(6, 182, 212, 0.2) !important;
-    .type-icon { color: #06b6d4 !important; }
+    .type-icon {
+      color: #06b6d4 !important;
+    }
   }
-  
+
   &.type-news {
     background: rgba(236, 72, 153, 0.08) !important;
     border-color: rgba(236, 72, 153, 0.2) !important;
-    .type-icon { color: #ec4899 !important; }
+    .type-icon {
+      color: #ec4899 !important;
+    }
   }
-  
+
   &.type-announcement {
     background: rgba(168, 85, 247, 0.08) !important;
     border-color: rgba(168, 85, 247, 0.2) !important;
-    .type-icon { color: #a855f7 !important; }
+    .type-icon {
+      color: #a855f7 !important;
+    }
   }
-  
+
   &.type-meeting {
     background: rgba(14, 165, 233, 0.08) !important;
     border-color: rgba(14, 165, 233, 0.2) !important;
-    .type-icon { color: #0ea5e9 !important; }
+    .type-icon {
+      color: #0ea5e9 !important;
+    }
   }
-  
+
   &.type-document {
     background: rgba(99, 102, 241, 0.08) !important;
     border-color: rgba(99, 102, 241, 0.2) !important;
-    .type-icon { color: #6366f1 !important; }
+    .type-icon {
+      color: #6366f1 !important;
+    }
   }
-  
+
   &.type-default {
     background: rgba(107, 114, 128, 0.08) !important;
     border-color: rgba(107, 114, 128, 0.2) !important;
-    .type-icon { color: #6b7280 !important; }
+    .type-icon {
+      color: #6b7280 !important;
+    }
   }
 }
 
@@ -1086,16 +1255,16 @@ function handleClick() {
   .summary-regular {
     padding: 16px;
   }
-  
+
   .summary-cover {
     height: 140px;
     margin: -16px -16px 12px -16px;
   }
-  
+
   .summary-title {
     font-size: 16px;
   }
-  
+
   .summary-description {
     font-size: 13px;
   }
@@ -1105,51 +1274,51 @@ function handleClick() {
   .summary-regular {
     border-radius: 6px;
   }
-  
+
   .summary-cover {
     height: 120px;
     border-radius: 6px 6px 0 0;
   }
-  
+
   .summary-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .header-right {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .footer-stats {
     gap: 8px;
-    
+
     .stat-item {
       padding: 4px 10px;
       font-size: 12px;
     }
   }
-  
+
   .summary-footer {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
-  
+
   .footer-stats {
     justify-content: flex-start;
   }
-  
+
   .compact-stats {
     gap: 8px;
-    
+
     .stat-item {
       padding: 2px 6px;
       font-size: 10px;
     }
   }
-  
+
   .compact-meta {
     flex-direction: column;
     align-items: flex-start;
@@ -1162,39 +1331,39 @@ function handleClick() {
     padding: 10px 12px;
     gap: 10px;
     min-height: 56px;
-    
+
     .compact-type-badge {
       width: 28px;
       height: 28px;
-      
+
       .compact-type-icon {
         width: 14px;
         height: 14px;
       }
     }
   }
-  
+
   .summary-regular {
     padding: 12px;
   }
-  
+
   .summary-cover {
     height: 100px;
     margin: -12px -12px 10px -12px;
   }
-  
+
   .summary-title {
     font-size: 15px;
     margin-bottom: 8px;
   }
-  
+
   .summary-description {
     margin: 12px 0;
   }
-  
+
   .footer-author {
     gap: 8px;
-    
+
     .author-avatar {
       width: 20px;
       height: 20px;

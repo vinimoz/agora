@@ -63,7 +63,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: Option | Inquiry | null]
-  'selected': [item: Option | Inquiry]
+  selected: [item: Option | Inquiry]
 }>()
 
 const optionsStore = useOptionsStore()
@@ -75,9 +75,7 @@ const isSearching = ref(false)
 const localOptions = ref<(Option | Inquiry)[]>([])
 
 onMounted(() => {
-  localOptions.value = props.type === 'options'
-    ? optionsStore.options
-    : inquiriesStore.inquiries
+  localOptions.value = props.type === 'options' ? optionsStore.options : inquiriesStore.inquiries
 })
 
 const initSelected = () => {
@@ -101,17 +99,21 @@ const initSelected = () => {
   }
 }
 
-watch(() => props.modelValue, () => {
-  initSelected()
-}, { immediate: true, deep: true })
+watch(
+  () => props.modelValue,
+  () => {
+    initSelected()
+  },
+  { immediate: true, deep: true }
+)
 
 watch(
-  () => props.type === 'options' ? optionsStore.options : inquiriesStore.inquiries,
+  () => (props.type === 'options' ? optionsStore.options : inquiriesStore.inquiries),
   (newOptions) => {
     localOptions.value = newOptions
     initSelected()
   },
-  { deep: true },
+  { deep: true }
 )
 
 const filteredResults = computed(() => {

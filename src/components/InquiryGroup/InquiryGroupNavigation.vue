@@ -8,36 +8,53 @@
     <!-- Header -->
     <div class="nav-header">
       <div class="header-left">
-        <component :is="Icons.Folder" :size="18" class="header-icon" />
+        <component
+          :is="Icons.Folder"
+          :size="18"
+          class="header-icon"
+        />
         <span class="header-title">{{ t('agora', 'Groups') }}</span>
         <span class="nav-count">{{ groups.length }}</span>
       </div>
       <div class="header-right">
-        <button 
+        <button
           v-if="showCreateButton && canCreateGroup"
           class="create-btn"
           :title="t('agora', 'Create group')"
           @click="handleCreate"
         >
-          <component :is="Icons.Plus" :size="16" />
+          <component
+            :is="Icons.Plus"
+            :size="16"
+          />
         </button>
       </div>
     </div>
 
     <!-- Search -->
-    <div v-if="groups.length > 5" class="nav-search">
-      <component :is="Icons.Search" :size="14" class="search-icon" />
+    <div
+      v-if="groups.length > 5"
+      class="nav-search"
+    >
+      <component
+        :is="Icons.Search"
+        :size="14"
+        class="search-icon"
+      />
       <input
         v-model="searchQuery"
         type="text"
         class="search-input"
         :placeholder="t('agora', 'Search groups...')"
         @input="handleSearch"
-      />
+      >
     </div>
 
     <!-- Navigation List -->
-    <div ref="navListRef" class="nav-list">
+    <div
+      ref="navListRef"
+      class="nav-list"
+    >
       <!-- Root Groups -->
       <div
         v-for="group in filteredGroups"
@@ -49,10 +66,10 @@
           :class="{
             active: isActive(group),
             'has-children': getChildren(group).length > 0,
-            'expanded': expandedGroups.has(group.id),
+            expanded: expandedGroups.has(group.id),
             'level-0': getDepth(group) === 0,
             'level-1': getDepth(group) === 1,
-            'level-2': getDepth(group) >= 2
+            'level-2': getDepth(group) >= 2,
           }"
           @click="handleClick(group)"
         >
@@ -63,49 +80,81 @@
             :title="expandedGroups.has(group.id) ? t('agora', 'Collapse') : t('agora', 'Expand')"
             @click.stop="toggleGroup(group.id)"
           >
-            <component 
-              :is="expandedGroups.has(group.id) ? Icons.ChevronDown : Icons.ChevronRight" 
-              :size="14" 
+            <component
+              :is="expandedGroups.has(group.id) ? Icons.ChevronDown : Icons.ChevronRight"
+              :size="14"
             />
           </button>
-          <span v-else class="toggle-placeholder"></span>
+          <span
+            v-else
+            class="toggle-placeholder"
+          />
 
           <!-- Group Icon -->
-          <div class="nav-icon" :class="getIconClass(group)">
-            <component :is="getGroupIcon(group.type)" :size="16" />
+          <div
+            class="nav-icon"
+            :class="getIconClass(group)"
+          >
+            <component
+              :is="getGroupIcon(group.type)"
+              :size="16"
+            />
           </div>
 
           <!-- Group Info -->
           <div class="nav-content">
             <div class="nav-label">
               <span class="group-title">{{ group.title }}</span>
-              <span v-if="group.groupStatus === 'archived'" class="status-badge archived">
+              <span
+                v-if="group.groupStatus === 'archived'"
+                class="status-badge archived"
+              >
                 {{ t('agora', 'Archived') }}
               </span>
-              <span v-if="group.groupStatus === 'draft'" class="status-badge draft">
+              <span
+                v-if="group.groupStatus === 'draft'"
+                class="status-badge draft"
+              >
                 {{ t('agora', 'Draft') }}
               </span>
             </div>
-            <div v-if="group.description" class="nav-description">
+            <div
+              v-if="group.description"
+              class="nav-description"
+            >
               {{ truncateText(group.description, 60) }}
             </div>
           </div>
 
           <!-- Badges -->
           <div class="nav-badges">
-            <span v-if="group.inquiryIds?.length" class="nav-badge" :title="t('agora', 'Inquiries')">
-              <component :is="Icons.ClipboardList" :size="12" />
+            <span
+              v-if="group.inquiryIds?.length"
+              class="nav-badge"
+              :title="t('agora', 'Inquiries')"
+            >
+              <component
+                :is="Icons.ClipboardList"
+                :size="12"
+              />
               {{ group.inquiryIds.length }}
             </span>
-            <span v-if="getChildren(group).length > 0" class="nav-badge children" :title="t('agora', 'Subgroups')">
-              <component :is="Icons.Folder" :size="12" />
+            <span
+              v-if="getChildren(group).length > 0"
+              class="nav-badge children"
+              :title="t('agora', 'Subgroups')"
+            >
+              <component
+                :is="Icons.Folder"
+                :size="12"
+              />
               {{ getChildren(group).length }}
             </span>
           </div>
         </div>
 
         <!-- Children -->
-        <div 
+        <div
           v-if="getChildren(group).length > 0 && expandedGroups.has(group.id)"
           class="nav-children"
         >
@@ -123,17 +172,33 @@
       </div>
 
       <!-- Empty State -->
-      <div v-if="filteredGroups.length === 0" class="empty-state">
-        <component :is="Icons.FolderOpen" :size="32" class="empty-icon" />
-        <p>{{ searchQuery ? t('agora', 'No groups match your search') : t('agora', 'No groups available') }}</p>
-        <NcButton 
+      <div
+        v-if="filteredGroups.length === 0"
+        class="empty-state"
+      >
+        <component
+          :is="Icons.FolderOpen"
+          :size="32"
+          class="empty-icon"
+        />
+        <p>
+          {{
+            searchQuery
+              ? t('agora', 'No groups match your search')
+              : t('agora', 'No groups available')
+          }}
+        </p>
+        <NcButton
           v-if="showCreateButton && canCreateGroup"
           type="primary"
           size="small"
           @click="handleCreate"
         >
           <template #icon>
-            <component :is="Icons.Plus" :size="14" />
+            <component
+              :is="Icons.Plus"
+              :size="14"
+            />
           </template>
           {{ t('agora', 'Create group') }}
         </NcButton>
@@ -186,13 +251,15 @@ const navListRef = ref<HTMLElement | null>(null)
 // ============================================================
 // COMPUTED
 // ============================================================
-const canCreateGroup = computed(() => sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor)
+const canCreateGroup = computed(
+  () => sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor
+)
 
 const filteredGroups = computed(() => {
   if (!searchQuery.value) return props.groups
-  
+
   const query = searchQuery.value.toLowerCase()
-  return props.groups.filter(group => {
+  return props.groups.filter((group) => {
     const titleMatch = group.title.toLowerCase().includes(query)
     const descMatch = group.description?.toLowerCase().includes(query) || false
     return titleMatch || descMatch
@@ -216,14 +283,14 @@ function getChildren(group: InquiryGroup): InquiryGroup[] {
   // Find children from the full groups list
   // This assumes the parent component has access to all groups
   // If not, we need to use the store
-  return props.groups.filter(g => g.parentId === group.id)
+  return props.groups.filter((g) => g.parentId === group.id)
 }
 
 function getDepth(group: InquiryGroup): number {
   let depth = 0
   let current = group
   while (current.parentId) {
-    const parent = props.groups.find(g => g.id === current.parentId)
+    const parent = props.groups.find((g) => g.id === current.parentId)
     if (!parent) break
     depth++
     current = parent
@@ -261,7 +328,7 @@ function handleSearch() {
 
 function truncateText(text: string, maxLength: number): string {
   if (!text) return ''
-  return text.length > maxLength ? `${text.substring(0, maxLength)  }…` : text
+  return text.length > maxLength ? `${text.substring(0, maxLength)}…` : text
 }
 
 // ============================================================
@@ -270,11 +337,11 @@ function truncateText(text: string, maxLength: number): string {
 onMounted(() => {
   // Auto-expand the active group's parents
   if (props.activeId) {
-    const activeGroup = props.groups.find(g => g.id === props.activeId)
+    const activeGroup = props.groups.find((g) => g.id === props.activeId)
     if (activeGroup) {
       let current = activeGroup
       while (current.parentId) {
-        const parent = props.groups.find(g => g.id === current.parentId)
+        const parent = props.groups.find((g) => g.id === current.parentId)
         if (parent) {
           expandedGroups.value.add(parent.id)
           current = parent
@@ -485,13 +552,27 @@ onMounted(() => {
       flex-shrink: 0;
       color: white;
 
-      &.icon-project { background: #3b82f6; }
-      &.icon-consultation { background: #8b5cf6; }
-      &.icon-decision { background: #10b981; }
-      &.icon-initiative { background: #f59e0b; }
-      &.icon-commission { background: #ec4899; }
-      &.icon-chapter { background: #06b6d4; }
-      &.icon-default { background: #6b7280; }
+      &.icon-project {
+        background: #3b82f6;
+      }
+      &.icon-consultation {
+        background: #8b5cf6;
+      }
+      &.icon-decision {
+        background: #10b981;
+      }
+      &.icon-initiative {
+        background: #f59e0b;
+      }
+      &.icon-commission {
+        background: #ec4899;
+      }
+      &.icon-chapter {
+        background: #06b6d4;
+      }
+      &.icon-default {
+        background: #6b7280;
+      }
     }
 
     .nav-content {
@@ -580,7 +661,7 @@ onMounted(() => {
     :deep(.inquiry-group-navigation) {
       border: none;
       border-radius: 0;
-      
+
       .nav-header {
         display: none;
       }

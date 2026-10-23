@@ -21,19 +21,16 @@ export function useSearch(type: 'options' | 'inquiries', inquiryId?: number) {
       // Filter by inquiryId if provided
       let filtered = optionsStore.options
       if (inquiryId) {
-        filtered = filtered.filter(opt => opt.targetId === inquiryId)
+        filtered = filtered.filter((opt) => opt.targetId === inquiryId)
       }
 
-      return filtered.filter(opt =>
-        opt.id.toString().includes(q) ||
-        opt.title?.toLowerCase().includes(q)
+      return filtered.filter(
+        (opt) => opt.id.toString().includes(q) || opt.title?.toLowerCase().includes(q)
       )
-    } 
-      return inquiriesStore.inquiries.filter(inq =>
-        inq.id.toString().includes(q) ||
-        inq.title?.toLowerCase().includes(q)
-      )
-    
+    }
+    return inquiriesStore.inquiries.filter(
+      (inq) => inq.id.toString().includes(q) || inq.title?.toLowerCase().includes(q)
+    )
   })
 
   return { query, results }

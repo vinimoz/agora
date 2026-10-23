@@ -36,17 +36,17 @@ import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { useSupportResultStore } from './supportResult.ts'
 
 import type {
-	Inquiry,
-	InquiryStatus,
-	InquiryConfiguration,
-	InquiryPermissions,
-	CurrentUserStatus,
-	InquiryMeta,
-	VisibilityType,
-	PublicationStatus,
-	ModerationWorkflowStatus,
-	InquiryWorkflowStatus,
-	SortParticipants,
+  Inquiry,
+  InquiryStatus,
+  InquiryConfiguration,
+  InquiryPermissions,
+  CurrentUserStatus,
+  InquiryMeta,
+  VisibilityType,
+  PublicationStatus,
+  ModerationWorkflowStatus,
+  InquiryWorkflowStatus,
+  SortParticipants,
 } from '@/Types'
 
 const markedPrefix = {
@@ -147,34 +147,33 @@ export const useInquiryStore = defineStore('inquiry', {
   }),
 
   getters: {
-
-  /** Full, serializable */
-  inquiryData(): Inquiry {
-    return {
-      id: this.id,
-      type: this.type,
-      family: this.family,
-      coverId: this.coverId,
-      title: this.title,
-      description: this.description,
-      descriptionSafe: this.descriptionSafe,
-      parentId: this.parentId,
-      locationId: this.locationId,
-      categoryId: this.categoryId,
-      owner: this.owner,
-      ownedGroup: this.ownedGroup,
-      inquiryGroups: this.inquiryGroups,
-      childs: this.childs,
-      miscFields: this.miscFields,
-      configuration: this.configuration,
-      status: this.status,
-      currentUserStatus: this.currentUserStatus,
-      permissions: this.permissions,
-      revealParticipants: this.revealParticipants,
-      sortParticipants: this.sortParticipants,
-      meta: this.meta,
-    }
-  },
+    /** Full, serializable */
+    inquiryData(): Inquiry {
+      return {
+        id: this.id,
+        type: this.type,
+        family: this.family,
+        coverId: this.coverId,
+        title: this.title,
+        description: this.description,
+        descriptionSafe: this.descriptionSafe,
+        parentId: this.parentId,
+        locationId: this.locationId,
+        categoryId: this.categoryId,
+        owner: this.owner,
+        ownedGroup: this.ownedGroup,
+        inquiryGroups: this.inquiryGroups,
+        childs: this.childs,
+        miscFields: this.miscFields,
+        configuration: this.configuration,
+        status: this.status,
+        currentUserStatus: this.currentUserStatus,
+        permissions: this.permissions,
+        revealParticipants: this.revealParticipants,
+        sortParticipants: this.sortParticipants,
+        meta: this.meta,
+      }
+    },
 
     isConfirmationAllowed(state): boolean {
       return state.permissions.confirmOptions || !this.isClosed
@@ -219,18 +218,17 @@ export const useInquiryStore = defineStore('inquiry', {
   },
 
   actions: {
+    syncToCollectionStore(): void {
+      if (this.id === 0) return
+      const inquiriesStore = useInquiriesStore()
+      inquiriesStore.addInquiryToStore(this.inquiryData)
+    },
 
-  syncToCollectionStore(): void {
-    if (this.id === 0) return
-    const inquiriesStore = useInquiriesStore()
-    inquiriesStore.addInquiryToStore(this.inquiryData)
-  },
-
-  syncDeletionToCollectionStore(): void {
-    if (this.id === 0) return
-    const inquiriesStore = useInquiriesStore()
-    inquiriesStore.inquiries = inquiriesStore.inquiries.filter(i => i.id !== this.id)
-  },
+    syncDeletionToCollectionStore(): void {
+      if (this.id === 0) return
+      const inquiriesStore = useInquiriesStore()
+      inquiriesStore.inquiries = inquiriesStore.inquiries.filter((i) => i.id !== this.id)
+    },
 
     reset(): void {
       this.$reset()
@@ -268,8 +266,8 @@ export const useInquiryStore = defineStore('inquiry', {
         if (action === 'submit_for_accepted') {
           this.status.moderationStatus = 'accepted'
           this.status.publicationStatus = 'published'
-	  const firstKey = appSettingsStore.getFirstStatusKeyByInquiryType(this.type)
-	  this.status.inquiryStatus = (firstKey ?? 'draft') as InquiryWorkflowStatus
+          const firstKey = appSettingsStore.getFirstStatusKeyByInquiryType(this.type)
+          this.status.inquiryStatus = (firstKey ?? 'draft') as InquiryWorkflowStatus
           this.configuration.visibility = 'everyone'
         } else if (action === 'submit_for_rejected') {
           this.status.moderationStatus = 'rejected'
@@ -344,7 +342,7 @@ export const useInquiryStore = defineStore('inquiry', {
             return PublicAPI.getInquiry(sessionStore.route.params.token)
           }
           if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'page') {
-            console.log(" TOOOOOOOO LATE ",inquiryId)
+            console.log(' TOOOOOOOO LATE ', inquiryId)
             return InquiriesAPI.getFullInquiry(inquiryId ?? sessionStore.currentInquiryId)
           }
           return Promise.resolve(null)
@@ -366,7 +364,7 @@ export const useInquiryStore = defineStore('inquiry', {
         supportResultStore.setResults(response.data.supportResult || [])
         await supportEngineStore.initializeFromInquiry(this.id, response.data.supportEngine)
         this.configuration.supportEngine = response.data.supportEngine
-       // this.status.supportResult = response.data.supportResult
+        // this.status.supportResult = response.data.supportResult
         inquiriesStore.setFamilyType(this.family)
 
         if (sessionStore.currentUser?.id && inquiry.owner?.id === sessionStore.currentUser.id) {
@@ -478,7 +476,7 @@ export const useInquiryStore = defineStore('inquiry', {
       try {
         await InquiriesAPI.updateMiscField(this.id, value)
         this.miscFields[key] = value
-	this.syncToCollectionStore()
+        this.syncToCollectionStore()
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
           return
@@ -499,7 +497,7 @@ export const useInquiryStore = defineStore('inquiry', {
         this.status.inquiryStatus = status
         if (response?.data?.inquiry) {
           this.$patch(response.data.inquiry)
-	  this.syncToCollectionStore()
+          this.syncToCollectionStore()
         }
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') return
@@ -516,7 +514,7 @@ export const useInquiryStore = defineStore('inquiry', {
       try {
         await InquiriesAPI.updateModerationStatus(this.id, status)
         this.status.moderationStatus = status
-	this.syncToCollectionStore() 
+        this.syncToCollectionStore()
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
           return
@@ -535,7 +533,7 @@ export const useInquiryStore = defineStore('inquiry', {
         const response = await InquiriesAPI.lockAnonymous(this.id)
         if (response?.data?.inquiry) {
           this.$patch(response.data.inquiry)
-	  this.syncToCollectionStore()
+          this.syncToCollectionStore()
         } else {
           this.status.isAnonymous = true
         }
@@ -559,7 +557,7 @@ export const useInquiryStore = defineStore('inquiry', {
         try {
           const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
           this.$patch(response.data.inquiry)
-	  this.syncToCollectionStore()
+          this.syncToCollectionStore()
           emit(Event.UpdateInquiry, {
             store: 'inquiry',
             message: t('agora', 'Inquiry updated'),

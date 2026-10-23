@@ -16,28 +16,48 @@
         </div>
         <h3>{{ t('agora', 'Generate Options with AI') }}</h3>
         <p class="modal-description">
-          {{ t('agora', 'Describe what options you want to create. The AI will generate suggestions based on your description and the current discussion.') }}
+          {{
+            t(
+              'agora',
+              'Describe what options you want to create. The AI will generate suggestions based on your description and the current discussion.'
+            )
+          }}
         </p>
       </div>
 
       <div class="modal-content">
-        <div class="form-group" :class="{ 'disabled': isLoading }">
-          <label for="ai-prompt">{{ t('agora', 'What kind of options do you want to create?') }}</label>
+        <div
+          class="form-group"
+          :class="{ disabled: isLoading }"
+        >
+          <label for="ai-prompt">{{
+            t('agora', 'What kind of options do you want to create?')
+          }}</label>
           <NcTextField
             id="ai-prompt"
             v-model:value="prompt"
-            :placeholder="t('agora', 'E.g. Generate options for reducing carbon emissions in our city')"
+            :placeholder="
+              t('agora', 'E.g. Generate options for reducing carbon emissions in our city')
+            "
             type="textarea"
             :rows="4"
             :label="t('agora', 'Describe your options')"
             :disabled="isLoading"
           />
           <p class="hint-text">
-            {{ t('agora', 'Be specific. The AI will use your inquiry context to generate relevant options.') }}
+            {{
+              t(
+                'agora',
+                'Be specific. The AI will use your inquiry context to generate relevant options.'
+              )
+            }}
           </p>
         </div>
 
-        <div class="form-group" :class="{ 'disabled': isLoading }">
+        <div
+          class="form-group"
+          :class="{ disabled: isLoading }"
+        >
           <label for="option-count">{{ t('agora', 'Number of options to generate') }}</label>
           <div class="count-selector">
             <NcButton
@@ -64,12 +84,16 @@
         </div>
 
         <!-- Loading indicator -->
-        <div v-if="isLoading" class="loading-indicator">
-          <NcLoadingIcon :size="24" appearance="auto" />
+        <div
+          v-if="isLoading"
+          class="loading-indicator"
+        >
+          <NcLoadingIcon
+            :size="24"
+            appearance="auto"
+          />
           <span>{{ t('agora', 'Generating options...') }}</span>
-          <span class="loading-dots">
-            <span>.</span><span>.</span><span>.</span>
-          </span>
+          <span class="loading-dots"> <span>.</span><span>.</span><span>.</span> </span>
         </div>
       </div>
 
@@ -86,8 +110,15 @@
           :disabled="!prompt.trim() || isLoading"
           @click="handleGenerate"
         >
-          <Sparkles v-if="!isLoading" :size="16" />
-          <NcLoadingIcon v-else :size="16" appearance="auto" />
+          <Sparkles
+            v-if="!isLoading"
+            :size="16"
+          />
+          <NcLoadingIcon
+            v-else
+            :size="16"
+            appearance="auto"
+          />
           {{ isLoading ? t('agora', 'Generating...') : t('agora', 'Generate Options') }}
         </NcButton>
       </div>
@@ -143,33 +174,44 @@ const initialize = () => {
 initialize()
 
 // Watch for show prop to reset state when modal opens
-watch(() => props.show, (newVal) => {
-  if (newVal) {
-    initialize()
-    // Focus the textarea after a short delay
-    nextTick(() => {
-      const textarea = document.querySelector('#ai-prompt textarea') as HTMLTextAreaElement
-      if (textarea) {
-        textarea.focus()
-      }
-    })
-  }
-}, { immediate: true })
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      initialize()
+      // Focus the textarea after a short delay
+      nextTick(() => {
+        const textarea = document.querySelector('#ai-prompt textarea') as HTMLTextAreaElement
+        if (textarea) {
+          textarea.focus()
+        }
+      })
+    }
+  },
+  { immediate: true }
+)
 
 // Watch for loading prop changes from parent
-watch(() => props.loading, (newVal) => {
-  // If parent loading becomes false and local loading was true, reset local
-  if (!newVal && localLoading.value) {
-    localLoading.value = false
-  }
-}, { immediate: true })
+watch(
+  () => props.loading,
+  (newVal) => {
+    // If parent loading becomes false and local loading was true, reset local
+    if (!newVal && localLoading.value) {
+      localLoading.value = false
+    }
+  },
+  { immediate: true }
+)
 
 // Watch for initialPrompt changes
-watch(() => props.initialPrompt, (newVal) => {
-  if (newVal && !prompt.value) {
-    prompt.value = newVal
+watch(
+  () => props.initialPrompt,
+  (newVal) => {
+    if (newVal && !prompt.value) {
+      prompt.value = newVal
+    }
   }
-})
+)
 
 const incrementCount = () => {
   if (count.value < 10) count.value++
@@ -189,7 +231,7 @@ const handleGenerate = () => {
   if (prompt.value.trim() && !isLoading.value) {
     // Set local loading state immediately
     localLoading.value = true
-    
+
     // Emit the generate event
     emit('generate', prompt.value, count.value)
   }
@@ -203,7 +245,7 @@ const resetLoading = () => {
 // Expose for parent component to control loading state
 defineExpose({
   resetLoading,
-  isLoading
+  isLoading,
 })
 </script>
 
@@ -217,7 +259,11 @@ defineExpose({
   .modal-header {
     text-align: center;
     padding: 32px 32px 24px;
-    background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-primary-element-rgb), 0.05) 0%,
+      rgba(var(--color-primary-element-rgb), 0.02) 100%
+    );
     border-bottom: 1px solid var(--color-border);
 
     .header-icon {
@@ -226,7 +272,11 @@ defineExpose({
       justify-content: center;
       width: 64px;
       height: 64px;
-      background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-element) 0%,
+        var(--color-primary-element-light) 100%
+      );
       border-radius: 32px;
       margin-bottom: 16px;
       color: white;
@@ -301,11 +351,15 @@ defineExpose({
       .loading-dots {
         display: inline-flex;
         gap: 2px;
-        
+
         span {
           animation: dotPulse 1.4s infinite;
-          &:nth-child(2) { animation-delay: 0.2s; }
-          &:nth-child(3) { animation-delay: 0.4s; }
+          &:nth-child(2) {
+            animation-delay: 0.2s;
+          }
+          &:nth-child(3) {
+            animation-delay: 0.4s;
+          }
         }
       }
     }
@@ -327,8 +381,14 @@ defineExpose({
 }
 
 @keyframes dotPulse {
-  0%, 80%, 100% { opacity: 0; }
-  40% { opacity: 1; }
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
 }
 
 // Ensure textarea is properly styled when disabled

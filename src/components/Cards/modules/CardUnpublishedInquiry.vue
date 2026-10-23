@@ -16,8 +16,7 @@ const cardType = 'warning'
 <template>
   <CardDiv :type="cardType">
     {{ t('agora', 'This inquiry is unpublished') }}
-    <span v-if="inquiriesStore.inquiries.length"
-      >{{ t('agora', 'Existing participants will still have access') }}
+    <span v-if="inquiriesStore.inquiries.length">{{ t('agora', 'Existing participants will still have access') }}
     </span>
     {{ t('agora', 'Invite users or allow internal access for all site users') }}
     <template #button>

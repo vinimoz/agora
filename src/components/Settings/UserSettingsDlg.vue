@@ -38,12 +38,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NcAppSettingsDialog v-model:open="show" show-navigation>
-    <NcAppSettingsSection id="div-settings" :name="t('agora', 'Personal preferences')">
+  <NcAppSettingsDialog
+    v-model:open="show"
+    show-navigation
+  >
+    <NcAppSettingsSection
+      id="div-settings"
+      :name="t('agora', 'Personal preferences')"
+    >
       <FeatureSettings />
     </NcAppSettingsSection>
 
-    <NcAppSettingsSection id="styles" :name="t('agora', 'Styles')">
+    <NcAppSettingsSection
+      id="styles"
+      :name="t('agora', 'Styles')"
+    >
       <StyleSettings />
     </NcAppSettingsSection>
   </NcAppSettingsDialog>

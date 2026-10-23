@@ -11,7 +11,11 @@
   >
     <div class="modal-content">
       <div class="export-header">
-        <component :is="InquiryGeneralIcons.Export" :size="48" class="header-icon" />
+        <component
+          :is="InquiryGeneralIcons.Export"
+          :size="48"
+          class="header-icon"
+        />
         <h2>{{ t('agora', 'Export results') }}</h2>
         <p>{{ t('agora', 'Export voting results in your preferred format') }}</p>
       </div>
@@ -28,17 +32,26 @@
       <div class="form-group">
         <label>{{ t('agora', 'Options') }}</label>
         <div class="checkbox-group">
-          <NcCheckboxRadioSwitch v-model="includeMetadata" type="switch">
+          <NcCheckboxRadioSwitch
+            v-model="includeMetadata"
+            type="switch"
+          >
             {{ t('agora', 'Include metadata') }}
           </NcCheckboxRadioSwitch>
-          <NcCheckboxRadioSwitch v-model="includeTimestamps" type="switch">
+          <NcCheckboxRadioSwitch
+            v-model="includeTimestamps"
+            type="switch"
+          >
             {{ t('agora', 'Include timestamps') }}
           </NcCheckboxRadioSwitch>
         </div>
       </div>
 
       <div class="modal-actions">
-        <NcButton type="tertiary" @click="handleClose">
+        <NcButton
+          type="tertiary"
+          @click="handleClose"
+        >
           {{ t('agora', 'Cancel') }}
         </NcButton>
         <NcButton
@@ -47,7 +60,10 @@
           @click="exportResults"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Download" :size="20" />
+            <component
+              :is="InquiryGeneralIcons.Download"
+              :size="20"
+            />
           </template>
           {{ t('agora', 'Export') }}
         </NcButton>
@@ -64,7 +80,7 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import { InquiryGeneralIcons} from '../../../utils/icons.ts'
+import { InquiryGeneralIcons } from '../../../utils/icons.ts'
 
 interface Props {
   show: boolean
@@ -91,7 +107,7 @@ const exportFormats = [
 
 const exportResults = async () => {
   exporting.value = true
-  
+
   try {
     // TODO: Call actual export API
     // await exportService.exportResults({
@@ -100,14 +116,16 @@ const exportResults = async () => {
     //   includeMetadata: includeMetadata.value,
     //   includeTimestamps: includeTimestamps.value
     // })
-    
+
     // Simulate API call
-   // await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    showSuccess(t('agora', 'To be implemented, results exported successfully as {format}', { 
-      format: exportFormat.value.toUpperCase() 
-    }))
-    
+    // await new Promise(resolve => setTimeout(resolve, 1000))
+
+    showSuccess(
+      t('agora', 'To be implemented, results exported successfully as {format}', {
+        format: exportFormat.value.toUpperCase(),
+      })
+    )
+
     emit('exported')
     handleClose()
   } catch (error) {

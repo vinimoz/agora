@@ -11,7 +11,10 @@
   >
     <div class="success-modal">
       <div class="success-icon">
-        <CheckCircle :size="48" class="success-color" />
+        <CheckCircle
+          :size="48"
+          class="success-color"
+        />
       </div>
       <h3>{{ t('agora', 'Options Created Successfully!') }}</h3>
       <p class="success-message">

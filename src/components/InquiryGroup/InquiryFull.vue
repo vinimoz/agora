@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-    import { ref, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcModal from '@nextcloud/vue/components/NcModal'
@@ -33,14 +33,12 @@ interface Props {
 
 const props = defineProps<Props>()
 
-
 const sessionStore = useSessionStore()
 const inquiriesStore = useInquiriesStore()
 
 // State
 const showSidebar = ref(false)
 const currentSupportValue = ref(props.inquiry.currentUserStatus?.supportValue || null)
-
 
 // Update openComments function
 function openSidebar() {
@@ -60,7 +58,9 @@ const context = computed(() => createInquiryContext(props.inquiry, sessionStore.
 const canSupportValue = computed(() => canSupport(context))
 const canCommentValue = computed(() => canComment(context))
 
-const inquiryTypeData = computed(() => getInquiryTypeData(props.inquiry.type, sessionStore.appSettings?.inquiryTypeTab || []))
+const inquiryTypeData = computed(() =>
+  getInquiryTypeData(props.inquiry.type, sessionStore.appSettings?.inquiryTypeTab || [])
+)
 
 const typeIconComponent = computed(() => {
   if (inquiryTypeData.value?.icon) {
@@ -74,15 +74,15 @@ const typeIconComponent = computed(() => {
   }
 
   const iconMap = {
-    'proposal': InquiryGeneralIcons.Scale,
-    'survey': InquiryGeneralIcons.ClipboardList,
-    'poll': InquiryGeneralIcons.CheckCircle,
-    'question': InquiryGeneralIcons.Question,
-    'discussion': InquiryGeneralIcons.MessageSquare,
-    'news': InquiryGeneralIcons.Newspaper,
-    'announcement': InquiryGeneralIcons.Megaphone,
-    'meeting': InquiryGeneralIcons.Users,
-    'document': InquiryGeneralIcons.Document,
+    proposal: InquiryGeneralIcons.Scale,
+    survey: InquiryGeneralIcons.ClipboardList,
+    poll: InquiryGeneralIcons.CheckCircle,
+    question: InquiryGeneralIcons.Question,
+    discussion: InquiryGeneralIcons.MessageSquare,
+    news: InquiryGeneralIcons.Newspaper,
+    announcement: InquiryGeneralIcons.Megaphone,
+    meeting: InquiryGeneralIcons.Users,
+    document: InquiryGeneralIcons.Document,
   }
 
   return iconMap[props.inquiry.type] || InquiryGeneralIcons.FolderMultiple
@@ -90,23 +90,23 @@ const typeIconComponent = computed(() => {
 
 // Status
 const currentInquiryStatus = computed(() => {
-   if (!storeInquiry.value.status?.inquiryStatus) return null
+  if (!storeInquiry.value.status?.inquiryStatus) return null
 
   const specialStatuses = {
-    'draft': {
+    draft: {
       statusKey: 'draft',
       label: t('agora', 'Draft'),
       icon: 'draft',
       inquiryType: props.inquiry.type,
       order: 0,
     },
-    'waiting_approval': {
+    waiting_approval: {
       statusKey: 'waiting_approval',
       label: t('agora', 'Pending approval'),
       icon: 'waitingapproval',
       inquiryType: props.inquiry.type,
       order: 1,
-    }
+    },
   }
 
   const currentStatus = props.inquiry.status.inquiryStatus
@@ -114,16 +114,20 @@ const currentInquiryStatus = computed(() => {
     return specialStatuses[currentStatus]
   }
 
-  const statusesFromSettings = sessionStore.appSettings?.inquiryStatusTab
-    ?.filter((status) => status.inquiryType === props.inquiry.type) || []
+  const statusesFromSettings =
+    sessionStore.appSettings?.inquiryStatusTab?.filter(
+      (status) => status.inquiryType === props.inquiry.type
+    ) || []
 
-  return statusesFromSettings.find(
-    (status) => status.statusKey === currentStatus
-  ) || specialStatuses.draft
+  return (
+    statusesFromSettings.find((status) => status.statusKey === currentStatus) ||
+    specialStatuses.draft
+  )
 })
 
-
-const statusText = computed(() => currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : '')
+const statusText = computed(() =>
+  currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : ''
+)
 
 const statusIconComponent = computed(() => {
   if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
@@ -137,14 +141,16 @@ const isSupported = computed(() => storeInquiry.value.currentUserStatus?.hasSupp
 // Replace all props.inquiry references with storeInquiry computed property
 const storeInquiry = computed(() => {
   // First try to find the inquiry in the inquiries store
-  const fromStore = inquiriesStore.inquiries.find(i => i.id === props.inquiry.id)
+  const fromStore = inquiriesStore.inquiries.find((i) => i.id === props.inquiry.id)
   // If not found, use the prop (fallback)
   return fromStore || props.inquiry
 })
 
 // Quorum
 
-const hasQuorum = computed(() => storeInquiry.value.configuration?.quorum && storeInquiry.value.configuration.quorum > 0)
+const hasQuorum = computed(
+  () => storeInquiry.value.configuration?.quorum && storeInquiry.value.configuration.quorum > 0
+)
 const quorumValue = computed(() => storeInquiry.value.configuration?.quorum || 0)
 
 // Cover image
@@ -152,7 +158,6 @@ const coverUrl = computed(() => {
   if (!storeInquiry.value.coverId || storeInquiry.value.coverId === 0) return ''
   return getNextcloudPreviewUrl(storeInquiry.value.coverId)
 })
-
 
 function getNextcloudPreviewUrl(fileId: number, x = 1200, y = 400, autoScale = true) {
   const baseUrl = window.location.origin
@@ -191,7 +196,9 @@ function getHierarchyPath(items, targetId) {
 const formattedCreationDate = computed(() => {
   if (!props.inquiry.status?.created) return ''
   try {
-    return DateTime.fromMillis(props.inquiry.status.created * 1000).toLocaleString(DateTime.DATE_FULL)
+    return DateTime.fromMillis(props.inquiry.status.created * 1000).toLocaleString(
+      DateTime.DATE_FULL
+    )
   } catch {
     return ''
   }
@@ -204,12 +211,12 @@ const formattedLastInteraction = computed(() => {
     const now = DateTime.now()
 
     if (date.hasSame(now, 'day')) {
-      return `${t('agora', 'Today')  } ${  date.toLocaleString(DateTime.TIME_SIMPLE)}`
-    } if (date.hasSame(now.minus({ days: 1 }), 'day')) {
-      return `${t('agora', 'Yesterday')  } ${  date.toLocaleString(DateTime.TIME_SIMPLE)}`
-    } 
-      return date.toRelative()
-
+      return `${t('agora', 'Today')} ${date.toLocaleString(DateTime.TIME_SIMPLE)}`
+    }
+    if (date.hasSame(now.minus({ days: 1 }), 'day')) {
+      return `${t('agora', 'Yesterday')} ${date.toLocaleString(DateTime.TIME_SIMPLE)}`
+    }
+    return date.toRelative()
   } catch {
     return ''
   }
@@ -226,10 +233,9 @@ const timeExpirationRelative = computed(() => {
 // Participants count
 const participantsCount = computed(() => storeInquiry.value.status?.countParticipants || 0)
 
-
 // Content
 const sanitizedContent = computed(() => {
- const content = storeInquiry.value.descriptionSafe || storeInquiry.value.description
+  const content = storeInquiry.value.descriptionSafe || storeInquiry.value.description
   if (!content || content.trim() === '') {
     return `<div class="no-content">
               <p>${t('agora', 'No description available')}</p>
@@ -238,31 +244,65 @@ const sanitizedContent = computed(() => {
 
   return DOMPurify.sanitize(content, {
     ALLOWED_TAGS: [
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'p', 'br', 'strong', 'em', 'u', 's',
-      'ul', 'ol', 'li',
-      'blockquote', 'pre', 'code',
-      'img', 'figure', 'figcaption',
-      'table', 'thead', 'tbody', 'tr', 'th', 'td',
-      'a', 'span', 'div',
-      'hr'
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'p',
+      'br',
+      'strong',
+      'em',
+      'u',
+      's',
+      'ul',
+      'ol',
+      'li',
+      'blockquote',
+      'pre',
+      'code',
+      'img',
+      'figure',
+      'figcaption',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'a',
+      'span',
+      'div',
+      'hr',
     ],
     ALLOWED_ATTR: [
-      'href', 'target', 'rel', 'title',
-      'src', 'alt', 'width', 'height', 'loading',
-      'class', 'id', 'style'
-    ]
+      'href',
+      'target',
+      'rel',
+      'title',
+      'src',
+      'alt',
+      'width',
+      'height',
+      'loading',
+      'class',
+      'id',
+      'style',
+    ],
   })
 })
 
 // Resources
-const hasResources = computed(() => storeInquiry.value.miscFields && Object.keys(storeInquiry.value.miscFields).length > 0)
+const hasResources = computed(
+  () => storeInquiry.value.miscFields && Object.keys(storeInquiry.value.miscFields).length > 0
+)
 
 // Helper to get available fields
 function getAvailableFields(inquiryType: string, inquiryTypeTab: InquiryType[]) {
   if (!inquiryTypeTab || !Array.isArray(inquiryTypeTab)) return []
 
-  const typeConfig = inquiryTypeTab.find(tab => tab.key === inquiryType)
+  const typeConfig = inquiryTypeTab.find((tab) => tab.key === inquiryType)
   if (!typeConfig || !typeConfig.fields) return []
 
   return typeConfig.fields
@@ -310,7 +350,7 @@ function getDisplayValue(value: unknown, field: FieldConfig): string {
   }
 
   if (field.type === 'enum' && field.allowed_values) {
-    const enumValue = field.allowed_values.find(v => 
+    const enumValue = field.allowed_values.find((v) =>
       typeof v === 'object' ? v.value === value : v === value
     )
 
@@ -319,9 +359,7 @@ function getDisplayValue(value: unknown, field: FieldConfig): string {
     }
 
     if (typeof value === 'string') {
-      return value
-        .replace(/_/g, ' ')
-        .replace(/\b\w/g, l => l.toUpperCase())
+      return value.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
   }
 
@@ -374,27 +412,29 @@ const dynamicFields = computed(() => {
   }
 })
 
-
 // Get fields that should be displayed
-const displayFields = computed(() => dynamicFields.value
-    .map(field => {
+const displayFields = computed(() =>
+  dynamicFields.value
+    .map((field) => {
       const value = getMiscValue(field.key)
       return {
         ...field,
         value,
         displayValue: getDisplayValue(value, field),
-        hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value)
+        hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value),
       }
     })
-    .filter(field => field.hasValue))
-
+    .filter((field) => field.hasValue)
+)
 
 // Watch for changes in support value - now watching storeInquiry
-watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
-  currentSupportValue.value = newValue || null
-}, { immediate: true })
-
-
+watch(
+  () => storeInquiry.value.currentUserStatus?.supportValue,
+  (newValue) => {
+    currentSupportValue.value = newValue || null
+  },
+  { immediate: true }
+)
 </script>
 <!-- InquiryFull.vue - Professional Redesign -->
 <template>
@@ -402,30 +442,45 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
     <!-- Main Content -->
     <div class="full-view-wrapper">
       <div class="full-view-content">
-
         <!-- Cover Image with Overlay Content -->
-        <div v-if="coverUrl" class="cover-hero">
+        <div
+          v-if="coverUrl"
+          class="cover-hero"
+        >
           <img
             :src="coverUrl"
             :alt="t('agora', 'Inquiry cover image')"
             class="cover-image"
-          />
+          >
           <div class="cover-overlay">
             <!-- Type & Status Badges -->
             <div class="cover-badges">
               <div class="type-badge">
-                <component :is="typeIconComponent" class="type-icon" :size="16" />
+                <component
+                  :is="typeIconComponent"
+                  class="type-icon"
+                  :size="16"
+                />
                 <span class="type-label">{{ inquiryTypeData.label }}</span>
               </div>
 
-              <div v-if="currentInquiryStatus" class="status-badge">
-                <component :is="statusIconComponent" class="status-icon" :size="12" />
+              <div
+                v-if="currentInquiryStatus"
+                class="status-badge"
+              >
+                <component
+                  :is="statusIconComponent"
+                  class="status-icon"
+                  :size="12"
+                />
                 <span>{{ statusText }}</span>
               </div>
             </div>
 
             <!-- Title -->
-            <h1 class="cover-title">{{ storeInquiry.title }}</h1>
+            <h1 class="cover-title">
+              {{ storeInquiry.title }}
+            </h1>
 
             <!-- Quick Actions Bar -->
             <div class="cover-actions">
@@ -433,10 +488,15 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
               <button
                 v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'binary'"
                 class="action-button support-button"
-                :class="{ 'active': isSupported }"
+                :class="{ active: isSupported }"
                 @click="onToggleSupport"
               >
-                <component :is="ThumbIcon" class="action-icon" :size="18" :supported="isSupported" />
+                <component
+                  :is="ThumbIcon"
+                  class="action-icon"
+                  :size="18"
+                  :supported="isSupported"
+                />
                 <span class="action-text">
                   {{ isSupported ? t('agora', 'Supported') : t('agora', 'Support') }}
                 </span>
@@ -449,14 +509,22 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
                 class="action-button comments-button"
                 @click="openSidebar"
               >
-                <component :is="InquiryGeneralIcons.Comment" class="action-icon" :size="18" />
+                <component
+                  :is="InquiryGeneralIcons.Comment"
+                  class="action-icon"
+                  :size="18"
+                />
                 <span class="action-text">{{ t('agora', 'Comments') }}</span>
                 <span class="action-count">{{ storeInquiry.status?.countComments || 0 }}</span>
               </button>
 
               <!-- Participants -->
               <div class="action-button participants-button">
-                <component :is="InquiryGeneralIcons.Users" class="action-icon" :size="18" />
+                <component
+                  :is="InquiryGeneralIcons.Users"
+                  class="action-icon"
+                  :size="18"
+                />
                 <span class="action-text">{{ t('agora', 'Participants') }}</span>
                 <span class="action-count">{{ participantsCount }}</span>
               </div>
@@ -465,31 +533,52 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
         </div>
 
         <!-- Header without cover -->
-        <div v-else class="header-section">
+        <div
+          v-else
+          class="header-section"
+        >
           <div class="header-content">
             <div class="header-badges">
               <div class="type-badge">
-                <component :is="typeIconComponent" class="type-icon" :size="16" />
+                <component
+                  :is="typeIconComponent"
+                  class="type-icon"
+                  :size="16"
+                />
                 <span class="type-label">{{ inquiryTypeData.label }}</span>
               </div>
 
-              <div v-if="currentInquiryStatus" class="status-badge">
-                <component :is="statusIconComponent" class="status-icon" :size="12" />
+              <div
+                v-if="currentInquiryStatus"
+                class="status-badge"
+              >
+                <component
+                  :is="statusIconComponent"
+                  class="status-icon"
+                  :size="12"
+                />
                 <span>{{ statusText }}</span>
               </div>
             </div>
 
-            <h1 class="page-title">{{ storeInquiry.title }}</h1>
+            <h1 class="page-title">
+              {{ storeInquiry.title }}
+            </h1>
 
             <!-- Quick Actions Bar -->
             <div class="header-actions">
               <button
                 v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'binary'"
                 class="action-button support-button"
-                :class="{ 'active': isSupported }"
+                :class="{ active: isSupported }"
                 @click="onToggleSupport"
               >
-                <component :is="ThumbIcon" class="action-icon" :size="18" :supported="isSupported" />
+                <component
+                  :is="ThumbIcon"
+                  class="action-icon"
+                  :size="18"
+                  :supported="isSupported"
+                />
                 <span class="action-text">
                   {{ isSupported ? t('agora', 'Supported') : t('agora', 'Support') }}
                 </span>
@@ -501,13 +590,21 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
                 class="action-button comments-button"
                 @click="openSidebar"
               >
-                <component :is="InquiryGeneralIcons.Comment" class="action-icon" :size="18" />
+                <component
+                  :is="InquiryGeneralIcons.Comment"
+                  class="action-icon"
+                  :size="18"
+                />
                 <span class="action-text">{{ t('agora', 'Comments') }}</span>
                 <span class="action-count">{{ storeInquiry.status?.countComments || 0 }}</span>
               </button>
 
               <div class="action-button participants-button">
-                <component :is="InquiryGeneralIcons.Users" class="action-icon" :size="18" />
+                <component
+                  :is="InquiryGeneralIcons.Users"
+                  class="action-icon"
+                  :size="18"
+                />
                 <span class="action-text">{{ t('agora', 'Participants') }}</span>
                 <span class="action-count">{{ participantsCount }}</span>
               </div>
@@ -545,18 +642,32 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
 
           <!-- Right side metadata -->
           <div class="meta-actions">
-            <div v-if="hasQuorum" class="meta-item">
+            <div
+              v-if="hasQuorum"
+              class="meta-item"
+            >
               <span class="meta-label">{{ t('agora', 'Quorum') }}:</span>
               <span class="meta-value">{{ storeInquiry.status?.countSupports || 0 }} / {{ quorumValue }}</span>
             </div>
 
-            <div v-if="timeExpirationRelative" class="meta-item">
-              <component :is="InquiryGeneralIcons.Expiration" class="meta-icon" :size="14" />
+            <div
+              v-if="timeExpirationRelative"
+              class="meta-item"
+            >
+              <component
+                :is="InquiryGeneralIcons.Expiration"
+                class="meta-icon"
+                :size="14"
+              />
               <span class="meta-value">{{ timeExpirationRelative }}</span>
             </div>
 
             <div class="meta-item">
-              <component :is="InquiryGeneralIcons.Updated" class="meta-icon" :size="14" />
+              <component
+                :is="InquiryGeneralIcons.Updated"
+                class="meta-icon"
+                :size="14"
+              />
               <span class="meta-value">{{ formattedLastInteraction }}</span>
             </div>
           </div>
@@ -568,22 +679,36 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
             <!-- Location -->
             <div class="meta-card">
               <div class="meta-card-header">
-                <component :is="InquiryGeneralIcons.Location" class="meta-card-icon" :size="18" />
+                <component
+                  :is="InquiryGeneralIcons.Location"
+                  class="meta-card-icon"
+                  :size="18"
+                />
                 <span class="meta-card-title">{{ t('agora', 'Location') }}</span>
               </div>
               <div class="meta-card-content">
-                {{ getHierarchyPath(sessionStore.appSettings.locationTab, storeInquiry.locationId) || t('agora', 'Inherited from parent') }}
+                {{
+                  getHierarchyPath(sessionStore.appSettings.locationTab, storeInquiry.locationId) ||
+                    t('agora', 'Inherited from parent')
+                }}
               </div>
             </div>
 
             <!-- Category -->
             <div class="meta-card">
               <div class="meta-card-header">
-                <component :is="InquiryGeneralIcons.Category" class="meta-card-icon" :size="18" />
+                <component
+                  :is="InquiryGeneralIcons.Category"
+                  class="meta-card-icon"
+                  :size="18"
+                />
                 <span class="meta-card-title">{{ t('agora', 'Category') }}</span>
               </div>
               <div class="meta-card-content">
-                {{ getHierarchyPath(sessionStore.appSettings.categoryTab, storeInquiry.categoryId) || t('agora', 'Inherited from parent') }}
+                {{
+                  getHierarchyPath(sessionStore.appSettings.categoryTab, storeInquiry.categoryId) ||
+                    t('agora', 'Inherited from parent')
+                }}
               </div>
             </div>
           </div>
@@ -592,16 +717,26 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
         <!-- Description Content -->
         <div class="description-section">
           <div class="section-header">
-            <h2 class="section-title">{{ t('agora', 'Description') }}</h2>
+            <h2 class="section-title">
+              {{ t('agora', 'Description') }}
+            </h2>
           </div>
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <div class="description-content" v-html="sanitizedContent"></div>
+          <div
+            class="description-content"
+            v-html="sanitizedContent"
+          />
         </div>
 
         <!-- Resources Section - Only if has resources -->
-        <div v-if="hasResources" class="resources-section">
+        <div
+          v-if="hasResources"
+          class="resources-section"
+        >
           <div class="section-header">
-            <h2 class="section-title">{{ t('agora', 'Resources') }}</h2>
+            <h2 class="section-title">
+              {{ t('agora', 'Resources') }}
+            </h2>
           </div>
           <div class="resources-content">
             <SideBarTabResources :inquiry="storeInquiry" />
@@ -609,33 +744,51 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
         </div>
 
         <!-- Additional Information - Only if has fields -->
-        <div v-if="displayFields.length > 0" class="additional-info-section">
+        <div
+          v-if="displayFields.length > 0"
+          class="additional-info-section"
+        >
           <div class="section-header">
-            <h2 class="section-title">{{ t('agora', 'Additional information') }}</h2>
+            <h2 class="section-title">
+              {{ t('agora', 'Additional information') }}
+            </h2>
           </div>
           <div class="info-grid">
-            <div v-for="field in displayFields" :key="field.key" class="info-item">
-              <div class="info-label">{{ field.label }}</div>
-              <div class="info-value">{{ field.displayValue }}</div>
+            <div
+              v-for="field in displayFields"
+              :key="field.key"
+              class="info-item"
+            >
+              <div class="info-label">
+                {{ field.label }}
+              </div>
+              <div class="info-value">
+                {{ field.displayValue }}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Ternary Support Section - Only for ternary support -->
-        <div v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'" class="ternary-support-section">
+        <div
+          v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'"
+          class="ternary-support-section"
+        >
           <div class="section-header">
-            <h2 class="section-title">{{ t('agora', 'Express your position') }}</h2>
+            <h2 class="section-title">
+              {{ t('agora', 'Express your position') }}
+            </h2>
           </div>
 
-                            <SupportFeature
-                                    :item="storeInquiry"
-                                    item-type="inquiry"
-                                    :context="context"
-                                    :show-quorum="true"
-                                    :show-details-on-hover="true"
-                                    :icon-size="22"
-                                    @click.stop
-                                    />
+          <SupportFeature
+            :item="storeInquiry"
+            item-type="inquiry"
+            :context="context"
+            :show-quorum="true"
+            :show-details-on-hover="true"
+            :icon-size="22"
+            @click.stop
+          />
         </div>
       </div>
     </div>
@@ -648,7 +801,9 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
     >
       <template #header>
         <div class="modal-header">
-          <h2 class="modal-title">{{ storeInquiry.title }}</h2>
+          <h2 class="modal-title">
+            {{ storeInquiry.title }}
+          </h2>
           <span class="modal-subtitle">{{ t('agora', 'Comments') }}</span>
         </div>
       </template>
@@ -677,7 +832,7 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
   height: 100%;
   border-radius: 12px;
   background: var(--color-surface);
-  overflow: hidden;     
+  overflow: hidden;
 }
 
 .full-view-wrapper {
@@ -721,7 +876,12 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      transparent 100%
+    );
     padding: 48px 48px 24px;
     color: white;
   }

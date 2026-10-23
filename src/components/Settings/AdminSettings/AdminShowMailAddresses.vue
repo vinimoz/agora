@@ -23,7 +23,10 @@ const appSettingsStore = useAppSettingsStore()
     >
       {{ t('agora', 'Show email addresses of internal accounts') }}
     </NcCheckboxRadioSwitch>
-    <div v-if="!appSettingsStore.showMailAddresses" class="settings_details">
+    <div
+      v-if="!appSettingsStore.showMailAddresses"
+      class="settings_details"
+    >
       <NcSelect
         v-model="appSettingsStore.showMailAddressesGroups"
         :input-label="t('agora', 'Show only to members of the following groups')"

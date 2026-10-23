@@ -24,7 +24,10 @@ const appSettingsStore = useAppSettingsStore()
     >
       {{ t('agora', 'Enable unrestricted owners globally') }}
     </NcCheckboxRadioSwitch>
-    <div v-if="!appSettingsStore.unrestrictedOwner" class="settings_details">
+    <div
+      v-if="!appSettingsStore.unrestrictedOwner"
+      class="settings_details"
+    >
       <NcSelect
         v-model="appSettingsStore.unrestrictedOwnerGroups"
         :input-label="t('agora', 'Enable only for the following groups')"

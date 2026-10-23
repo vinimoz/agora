@@ -7,10 +7,16 @@
   <div class="activity-feed">
     <div class="feed-header">
       <div class="header-left">
-        <component :is="Icons.Bell" :size="20" />
+        <component
+          :is="Icons.Bell"
+          :size="20"
+        />
         <h3>{{ t('agora', 'Activity') }}</h3>
       </div>
-      <button class="mark-all-btn" @click="markAllRead">
+      <button
+        class="mark-all-btn"
+        @click="markAllRead"
+      >
         {{ t('agora', 'Mark all read') }}
       </button>
     </div>
@@ -22,21 +28,38 @@
         class="activity-item"
         :class="{ 'is-unread': !activity.read }"
       >
-        <div class="activity-icon" :class="activity.type">
-          <component :is="getActivityIcon(activity)" :size="18" />
+        <div
+          class="activity-icon"
+          :class="activity.type"
+        >
+          <component
+            :is="getActivityIcon(activity)"
+            :size="18"
+          />
         </div>
         <div class="activity-content">
           <div class="activity-text">
             <strong>{{ activity.user }}</strong>
             {{ activity.action }}
-            <span v-if="activity.target" class="activity-target">{{ activity.target }}</span>
+            <span
+              v-if="activity.target"
+              class="activity-target"
+            >{{ activity.target }}</span>
           </div>
-          <div class="activity-time">{{ formatTime(activity.timestamp) }}</div>
+          <div class="activity-time">
+            {{ formatTime(activity.timestamp) }}
+          </div>
         </div>
       </div>
 
-      <div v-if="feedActivities.length === 0" class="empty-state">
-        <component :is="Icons.BellOff" :size="32" />
+      <div
+        v-if="feedActivities.length === 0"
+        class="empty-state"
+      >
+        <component
+          :is="Icons.BellOff"
+          :size="32"
+        />
         <p>{{ t('agora', 'No recent activity') }}</p>
       </div>
     </div>
@@ -103,11 +126,14 @@ onMounted(() => {
   loadActivities()
 })
 
-watch(() => sessionStore.currentInquiryId, () => {
-  loadActivities()
-  // Note: readStatus persists across inquiries; activity IDs are globally unique,
-  // so it's safe to keep them.
-})
+watch(
+  () => sessionStore.currentInquiryId,
+  () => {
+    loadActivities()
+    // Note: readStatus persists across inquiries; activity IDs are globally unique,
+    // so it's safe to keep them.
+  }
+)
 
 function getActivityIcon(activity: any) {
   const icons: Record<string, any> = {
@@ -219,11 +245,26 @@ function markAllRead() {
     justify-content: center;
     flex-shrink: 0;
 
-    &.comment { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-    &.support { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-    &.create { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-    &.update { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-    &.close { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    &.comment {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    &.support {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+    &.create {
+      background: rgba(139, 92, 246, 0.1);
+      color: #8b5cf6;
+    }
+    &.update {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+    &.close {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
   }
 
   .activity-content {

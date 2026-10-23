@@ -78,30 +78,34 @@ const getSafeNumberValue = (value: unknown): string => {
 // ============================================================
 const normalizeAllowedValues = (allowedValues: any): Array<{ value: string; label: string }> => {
   if (!allowedValues) return []
-  
+
   if (Array.isArray(allowedValues)) {
     if (allowedValues.length > 0 && typeof allowedValues[0] === 'string') {
-      return allowedValues.map(val => ({
+      return allowedValues.map((val) => ({
         value: val,
-        label: val.charAt(0).toUpperCase() + val.slice(1)
+        label: val.charAt(0).toUpperCase() + val.slice(1),
       }))
     }
-    if (allowedValues.length > 0 && typeof allowedValues[0] === 'object' && 'value' in allowedValues[0]) {
-      return allowedValues.map(item => ({
+    if (
+      allowedValues.length > 0 &&
+      typeof allowedValues[0] === 'object' &&
+      'value' in allowedValues[0]
+    ) {
+      return allowedValues.map((item) => ({
         value: item.value,
-        label: item.label || item.value
+        label: item.label || item.value,
       }))
     }
     return allowedValues
   }
-  
+
   if (typeof allowedValues === 'object' && allowedValues !== null) {
     return Object.entries(allowedValues).map(([value, label]) => ({
       value,
-      label: String(label)
+      label: String(label),
     }))
   }
-  
+
   return []
 }
 
@@ -110,10 +114,10 @@ const normalizeAllowedValues = (allowedValues: any): Array<{ value: string; labe
 // ============================================================
 function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[] {
   if (!Array.isArray(list)) return []
-  
+
   let result: BaseEntry[] = []
   const items = list.filter((item) => item?.parentId === parentId)
-  
+
   for (const item of items) {
     result.push({
       ...item,
@@ -122,7 +126,7 @@ function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[]
     const children = buildHierarchy(list, item.id, depth + 1)
     result = result.concat(children)
   }
-  
+
   return result
 }
 
@@ -133,7 +137,7 @@ const hierarchicalLocation = computed(() => {
   if (!Array.isArray(sessionStore.appSettings?.locationTab)) {
     return []
   }
-  
+
   try {
     return buildHierarchy(sessionStore.appSettings.locationTab).map((item) => ({
       value: item.id,
@@ -150,7 +154,7 @@ const hierarchicalCategory = computed(() => {
   if (!Array.isArray(sessionStore.appSettings?.categoryTab)) {
     return []
   }
-  
+
   try {
     return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
       value: item.id,
@@ -165,7 +169,7 @@ const hierarchicalCategory = computed(() => {
 
 function getHierarchyPath(items: BaseEntry[], targetId: number | string): string {
   if (!items || !Array.isArray(items)) return ''
-  
+
   const itemMap: Record<string, BaseEntry> = {}
   items.forEach((item) => {
     itemMap[String(item.id)] = item
@@ -219,20 +223,24 @@ const getMiscValue = (key: string): any => {
     if (!inquiryGroupStore.miscFields || typeof inquiryGroupStore.miscFields !== 'object' || !key) {
       return null
     }
-    
+
     const value = inquiryGroupStore.miscFields[key]
     if (!value) return null
-    
+
     if (typeof value === 'string') {
       if (!isNaN(Number(value)) && value.trim() !== '') {
         return Number(value)
       }
       if (value.startsWith('{') || value.startsWith('[')) {
-        try { return JSON.parse(value) } catch { return value }
+        try {
+          return JSON.parse(value)
+        } catch {
+          return value
+        }
       }
       return value
     }
-    
+
     return value
   } catch (e) {
     console.warn(`Error getting misc value for ${key}:`, e)
@@ -264,7 +272,7 @@ const getDisplayValue = (value: MiscValue, field: Field) => {
         return String(value)
       case 'enum': {
         const normalized = normalizeAllowedValues(field.allowed_values)
-        const found = normalized.find(opt => opt.value === String(value))
+        const found = normalized.find((opt) => opt.value === String(value))
         return found?.label || String(value)
       }
       case 'users':
@@ -295,17 +303,18 @@ const shouldDisplayField = (field: Field, value: MiscValue) => {
   return true
 }
 
-const displayFields = computed(() => dynamicFields.value
-  .map(field => {
-    const value = getMiscValue(field.key)
-    return {
-      ...field,
-      value,
-      displayValue: getDisplayValue(value, field),
-      hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value)
-    }
-  })
-  .filter(field => field.hasValue)
+const displayFields = computed(() =>
+  dynamicFields.value
+    .map((field) => {
+      const value = getMiscValue(field.key)
+      return {
+        ...field,
+        value,
+        displayValue: getDisplayValue(value, field),
+        hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value),
+      }
+    })
+    .filter((field) => field.hasValue)
 )
 
 // ============================================================
@@ -314,12 +323,12 @@ const displayFields = computed(() => dynamicFields.value
 const getEnumModelValue = (field: Field) => {
   const value = getMiscValue(field.key) || field.default
   const options = normalizeAllowedValues(field.allowed_values)
-  
+
   if (typeof value === 'object' && value !== null && 'value' in value) {
-    return options.find(opt => opt.value === value.value) || value
+    return options.find((opt) => opt.value === value.value) || value
   }
-  
-  const found = options.find(opt => opt.value === String(value))
+
+  const found = options.find((opt) => opt.value === String(value))
   return found || value
 }
 
@@ -345,18 +354,24 @@ const updateFieldValue = (fieldKey: string, value: any, fieldType: string) => {
   }
 
   let processedValue = value
-  
+
   if (typeof value === 'object' && value !== null && 'value' in value) {
     processedValue = value.value
   }
-  
+
   if ((fieldType === 'users' || fieldType === 'groups') && value && typeof value === 'object') {
     processedValue = value.id || value.displayName || value
   }
 
-  if (fieldType === 'boolean' || fieldType === 'enum' || fieldType === 'datetime' || 
-      fieldType === 'users' || fieldType === 'groups' || fieldType === 'location' || 
-      fieldType === 'category') {
+  if (
+    fieldType === 'boolean' ||
+    fieldType === 'enum' ||
+    fieldType === 'datetime' ||
+    fieldType === 'users' ||
+    fieldType === 'groups' ||
+    fieldType === 'location' ||
+    fieldType === 'category'
+  ) {
     saveFieldToDatabase(fieldKey, processedValue)
   } else {
     saveTimeouts.value[fieldKey] = setTimeout(() => {
@@ -384,7 +399,7 @@ const saveFieldToDatabase = async (fieldKey: string, value: any) => {
     }
 
     await inquiryGroupStore.updateMiscField(fieldKey, stringValue)
-    
+
     // Update local field value cache
     localFieldValues.value[fieldKey] = stringValue
   } catch (e) {
@@ -416,13 +431,13 @@ const getFormattedDate = (key: string) => {
     const day = parseInt(strValue.substring(8, 10))
     const hours = parseInt(strValue.substring(11, 13))
     const minutes = parseInt(strValue.substring(14, 16))
-    
+
     if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
       return new Date(year, month, day, hours || 0, minutes || 0)
     }
     return null
   } catch (e) {
-    console.error("Manual date construction failed:", e)
+    console.error('Manual date construction failed:', e)
     return null
   }
 }
@@ -431,7 +446,7 @@ const getFormattedDate = (key: string) => {
 // INITIALIZE
 // ============================================================
 const initializeMiscFields = () => {
-  dynamicFields.value.forEach(field => {
+  dynamicFields.value.forEach((field) => {
     if (inquiryGroupStore.miscFields[field.key] === undefined) {
       let defaultValue = field.default
       if (defaultValue === null || defaultValue === undefined) {
@@ -452,7 +467,7 @@ const initializeMiscFields = () => {
 }
 
 const initializeLocalCheckboxes = () => {
-  dynamicFields.value.forEach(field => {
+  dynamicFields.value.forEach((field) => {
     if (field.type === 'boolean') {
       const raw = getMiscValue(field.key)
       localCheckboxes.value[field.key] = raw === true || raw === 'true'
@@ -467,13 +482,13 @@ const loadMiscData = () => {
     initializeMiscFields()
     initializeLocalCheckboxes()
 
-    dynamicFields.value.forEach(field => {
+    dynamicFields.value.forEach((field) => {
       if (field.type === 'users' || field.type === 'groups') {
         const existingValue = getMiscValue(field.key)
         if (existingValue) {
           selectedUsers.value[field.key] = {
             id: existingValue,
-            displayName: existingValue
+            displayName: existingValue,
           } as User
         }
       }
@@ -498,25 +513,43 @@ onMounted(() => {
   <div class="sidebar-tab-misc">
     <div class="tab-content">
       <!-- Loading state -->
-      <div v-if="isLoading" class="loading-state">
-        <div class="icon-loading"></div>
+      <div
+        v-if="isLoading"
+        class="loading-state"
+      >
+        <div class="icon-loading" />
         <p>{{ t('Loading settings...') }}</p>
       </div>
 
       <!-- Error state -->
-      <div v-else-if="error" class="error-state">
-        <component :is="StatusIcons.AlertCircleOutline" class="error-icon" />
+      <div
+        v-else-if="error"
+        class="error-state"
+      >
+        <component
+          :is="StatusIcons.AlertCircleOutline"
+          class="error-icon"
+        />
         <p>{{ error }}</p>
       </div>
 
       <!-- No data state -->
-      <div v-else-if="!displayFields.length && isReadonly" class="no-data-state">
-        <component :is="StatusIcons.Info" class="no-data-icon" />
+      <div
+        v-else-if="!displayFields.length && isReadonly"
+        class="no-data-state"
+      >
+        <component
+          :is="StatusIcons.Info"
+          class="no-data-icon"
+        />
         <p>{{ t('No additional settings configured.') }}</p>
       </div>
 
       <!-- Readonly mode -->
-      <div v-else-if="isReadonly" class="misc-fields-readonly">
+      <div
+        v-else-if="isReadonly"
+        class="misc-fields-readonly"
+      >
         <div class="misc-fields-list">
           <div
             v-for="field in displayFields"
@@ -526,7 +559,10 @@ onMounted(() => {
             <div class="field-row">
               <label class="field-label">{{ field.label }}:</label>
               <div class="field-value">
-                <pre v-if="field.type === 'json'" class="json-value">{{ field.displayValue }}</pre>
+                <pre
+                  v-if="field.type === 'json'"
+                  class="json-value"
+                >{{ field.displayValue }}</pre>
                 <span v-else>{{ field.displayValue }}</span>
               </div>
             </div>
@@ -535,9 +571,15 @@ onMounted(() => {
       </div>
 
       <!-- Editable fields -->
-      <div v-else class="misc-fields-edit">
-        <div v-if="isSaving" class="saving-indicator">
-          <div class="icon-loading-small"></div>
+      <div
+        v-else
+        class="misc-fields-edit"
+      >
+        <div
+          v-if="isSaving"
+          class="saving-indicator"
+        >
+          <div class="icon-loading-small" />
           <span>{{ t('agora', 'Saving …') }}</span>
         </div>
 
@@ -548,7 +590,10 @@ onMounted(() => {
             class="edit-field-item"
           >
             <!-- Checkbox field -->
-            <div v-if="field.type === 'boolean'" class="checkbox-field">
+            <div
+              v-if="field.type === 'boolean'"
+              class="checkbox-field"
+            >
               <div class="checkbox-wrapper">
                 <input
                   :id="`checkbox-${field.key}`"
@@ -556,29 +601,58 @@ onMounted(() => {
                   :checked="getCheckboxValue(field.key)"
                   :name="field.key"
                   :disabled="isSaving"
-                  @change="(e) => updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')"
-                />
-                <label :for="`checkbox-${field.key}`" class="checkbox-label">
+                  @change="
+                    (e) =>
+                      updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')
+                  "
+                >
+                <label
+                  :for="`checkbox-${field.key}`"
+                  class="checkbox-label"
+                >
                   {{ field.label }}
-                  <span v-if="!field.required" class="optional-label">({{ t('agora','optional') }})</span>
+                  <span
+                    v-if="!field.required"
+                    class="optional-label"
+                  >({{ t('agora', 'optional') }})</span>
                 </label>
               </div>
             </div>
 
             <!-- Other fields -->
-            <div v-else class="standard-field">
+            <div
+              v-else
+              class="standard-field"
+            >
               <label class="edit-field-label">
                 {{ field.label }}
-                <span v-if="field.required" class="required-asterisk">*</span>
-                <span v-else class="optional-label">({{ t('agora','optional') }})</span>
+                <span
+                  v-if="field.required"
+                  class="required-asterisk"
+                >*</span>
+                <span
+                  v-else
+                  class="optional-label"
+                >({{ t('agora', 'optional') }})</span>
               </label>
 
               <div class="edit-field-input">
                 <!-- ============================================================
                      ============================================================ -->
-                <div v-if="field.type === 'location'" class="location-field">
-                  <div v-if="showLocationAsLabel" class="metadata-value">
-                    {{ getHierarchyPath(sessionStore.appSettings?.locationTab, getMiscValue(field.key)) || t('agora', 'Inherited from parent') }}
+                <div
+                  v-if="field.type === 'location'"
+                  class="location-field"
+                >
+                  <div
+                    v-if="showLocationAsLabel"
+                    class="metadata-value"
+                  >
+                    {{
+                      getHierarchyPath(
+                        sessionStore.appSettings?.locationTab,
+                        getMiscValue(field.key)
+                      ) || t('agora', 'Inherited from parent')
+                    }}
                   </div>
                   <NcSelect
                     v-else
@@ -598,9 +672,20 @@ onMounted(() => {
 
                 <!-- ============================================================
                      ============================================================ -->
-                <div v-else-if="field.type === 'category'" class="category-field">
-                  <div v-if="showCategoryAsLabel" class="metadata-value">
-                    {{ getHierarchyPath(sessionStore.appSettings?.categoryTab, getMiscValue(field.key)) || t('agora', 'Inherited from parent') }}
+                <div
+                  v-else-if="field.type === 'category'"
+                  class="category-field"
+                >
+                  <div
+                    v-if="showCategoryAsLabel"
+                    class="metadata-value"
+                  >
+                    {{
+                      getHierarchyPath(
+                        sessionStore.appSettings?.categoryTab,
+                        getMiscValue(field.key)
+                      ) || t('agora', 'Inherited from parent')
+                    }}
                   </div>
                   <NcSelect
                     v-else
@@ -642,7 +727,10 @@ onMounted(() => {
                   type="number"
                   :label="field.label"
                   :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val ? parseInt(val) : null, 'integer')"
+                  @update:model-value="
+                    (val: string) =>
+                      updateFieldValue(field.key, val ? parseInt(val) : null, 'integer')
+                  "
                 />
 
                 <!-- ============================================================
@@ -654,7 +742,9 @@ onMounted(() => {
                   type="date"
                   :label="field.label"
                   :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
+                  @update:model-value="
+                    (val: string) => updateFieldValue(field.key, val, 'datetime')
+                  "
                 />
 
                 <!-- ============================================================
@@ -673,21 +763,26 @@ onMounted(() => {
                 <!-- ============================================================
                      JSON FIELD
                      ============================================================ -->
-                <div v-else-if="field.type === 'json'" class="json-field">
+                <div
+                  v-else-if="field.type === 'json'"
+                  class="json-field"
+                >
                   <NcInputField
                     :model-value="getSafeStringValue(getMiscValue(field.key))"
                     type="textarea"
                     :rows="5"
                     :label="field.label"
                     :disabled="isSaving"
-                    @update:model-value="(val: string) => {
-                      try {
-                        const parsed = val ? JSON.parse(val) : null
-                        updateFieldValue(field.key, parsed, 'json')
-                      } catch {
-                        updateFieldValue(field.key, val, 'json')
+                    @update:model-value="
+                      (val: string) => {
+                        try {
+                          const parsed = val ? JSON.parse(val) : null
+                          updateFieldValue(field.key, parsed, 'json')
+                        } catch {
+                          updateFieldValue(field.key, val, 'json')
+                        }
                       }
-                    }"
+                    "
                   />
                 </div>
 
@@ -705,7 +800,10 @@ onMounted(() => {
               </div>
             </div>
 
-            <div v-if="field.description" class="field-description">
+            <div
+              v-if="field.description"
+              class="field-description"
+            >
               {{ field.description }}
             </div>
           </div>
@@ -717,211 +815,211 @@ onMounted(() => {
 
 <style scoped>
 .optional-label {
-    color: var(--color-text-maxcontrast);
-    font-size: 0.75rem;
-    font-weight: normal;
-    font-style: italic;
-    margin-left: 4px;
+  color: var(--color-text-maxcontrast);
+  font-size: 0.75rem;
+  font-weight: normal;
+  font-style: italic;
+  margin-left: 4px;
 }
 
 .checkbox-main-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .checkbox-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .standard-field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .sidebar-tab-misc {
-    padding: 12px;
-    height: 100%;
+  padding: 12px;
+  height: 100%;
 }
 
 .tab-content {
-    height: 100%;
-    overflow-y: auto;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .field-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 8px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
 }
 
 .field-label {
-    font-weight: 600;
-    min-width: 120px;
-    color: var(--color-text-lighter);
+  font-weight: 600;
+  min-width: 120px;
+  color: var(--color-text-lighter);
 }
 
 .field-value {
-    flex: 1;
-    word-break: break-word;
+  flex: 1;
+  word-break: break-word;
 }
 
 .loading-state,
 .error-state,
 .no-data-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    text-align: center;
-    color: var(--color-text-maxcontrast);
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-maxcontrast);
+  height: 100%;
 }
 
 .loading-state .icon-loading,
 .error-state .icon-error {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 1rem;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 1rem;
 }
 
 .loading-state .icon-loading {
-    background-image: var(--icon-loading);
-    animation: rotate 1s linear infinite;
+  background-image: var(--icon-loading);
+  animation: rotate 1s linear infinite;
 }
 
 .error-icon,
 .no-data-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 1rem;
-    opacity: 0.5;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+  opacity: 0.5;
 }
 
 /* Readonly styles */
 .misc-fields-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .misc-field-item {
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 16px;
 }
 
 .misc-field-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .field-row {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .field-label {
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--color-text-lighter);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-lighter);
 }
 
 .field-value {
-    font-size: 0.875rem;
-    word-break: break-word;
-    line-height: 1.4;
+  font-size: 0.875rem;
+  word-break: break-word;
+  line-height: 1.4;
 }
 
 .json-value {
-    background: var(--color-background-dark);
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    white-space: pre-wrap;
-    word-break: break-all;
-    max-height: 150px;
-    overflow-y: auto;
-    margin: 0;
-    font-family: monospace;
+  background: var(--color-background-dark);
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 150px;
+  overflow-y: auto;
+  margin: 0;
+  font-family: monospace;
 }
 
 /* Saving indicator */
 .saving-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: var(--color-background-dark);
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    color: var(--color-text-maxcontrast);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-background-dark);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-maxcontrast);
 }
 
 .icon-loading-small {
-    width: 16px;
-    height: 16px;
-    background-image: var(--icon-loading);
-    animation: rotate 1s linear infinite;
+  width: 16px;
+  height: 16px;
+  background-image: var(--icon-loading);
+  animation: rotate 1s linear infinite;
 }
 
 /* Edit mode styles */
 .edit-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .edit-field-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 1rem;
-    background: var(--color-background-dark);
-    border-radius: 8px;
-    border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 1rem;
+  background: var(--color-background-dark);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
 }
 
 .edit-field-label {
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--color-text-lighter);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-lighter);
 }
 
 .required-asterisk {
-    color: var(--color-error);
+  color: var(--color-error);
 }
 
 .optional-label {
-    color: var(--color-text-maxcontrast);
-    font-size: 0.75rem;
-    font-weight: normal;
+  color: var(--color-text-maxcontrast);
+  font-size: 0.75rem;
+  font-weight: normal;
 }
 
 .field-description {
-    font-size: 0.75rem;
-    color: var(--color-text-maxcontrast);
-    font-style: italic;
+  font-size: 0.75rem;
+  color: var(--color-text-maxcontrast);
+  font-style: italic;
 }
 
 .json-field {
-    width: 100%;
+  width: 100%;
 }
 
 @keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

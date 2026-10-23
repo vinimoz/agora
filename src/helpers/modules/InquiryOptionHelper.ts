@@ -40,10 +40,11 @@ export {
   groupItemsByType,
   searchItemsByTitle,
   filterItemsByStatus,
-  filterItemsByType
+  filterItemsByType,
 } from './GenericItemHelper'
 
-export const isImportedFromView = (option: Option, familyKey: string): boolean => !( option.family === familyKey )
+export const isImportedFromView = (option: Option, familyKey: string): boolean =>
+  !(option.family === familyKey)
 
 /**
  * Get option item data
@@ -55,17 +56,17 @@ export function getOptionItemData(item: InquiryOptionType | null, fallbackLabel:
     return {
       icon: InquiryGeneralIcons.File,
       label: fallbackLabel,
-      description: ''
+      description: '',
     }
   }
 
   // Get icon component directly from InquiryGeneralIcons
   const iconName = item?.icon || 'File'
-  
+
   return {
     icon: InquiryOptionIcons[iconName] || InquiryGeneralIcons.Activity,
     label: item.label || fallbackLabel,
-    description: item.description || ''
+    description: item.description || '',
   }
 }
 
@@ -75,31 +76,31 @@ export function getOptionItemData(item: InquiryOptionType | null, fallbackLabel:
  * @param familyKey
  */
 export function getRandomColorForFamily(familyKey: string): string {
-    // Predefined nice colors that work well in UI
-    const niceColors = [
-        '#4A86E8', // Blue
-        '#6AA84F', // Green
-        '#F1C232', // Yellow
-        '#CC0000', // Red
-        '#E69138', // Orange
-        '#A64D79', // Purple
-        '#45818E', // Teal
-        '#674EA7', // Violet
-        '#3D85C6', // Sky Blue
-        '#5B9B46', // Forest Green
-        '#B45F06', // Brown
-        '#AA00FF', // Magenta
-    ]
-    
-    // Simple hash function to get consistent index
-    let hash = 0
-    for (let i = 0; i < familyKey.length; i++) {
-        hash = familyKey.charCodeAt(i) + ((hash << 5) - hash)
-    }
-    
-    // Get index from hash
-    const index = Math.abs(hash) % niceColors.length
-    return niceColors[index]
+  // Predefined nice colors that work well in UI
+  const niceColors = [
+    '#4A86E8', // Blue
+    '#6AA84F', // Green
+    '#F1C232', // Yellow
+    '#CC0000', // Red
+    '#E69138', // Orange
+    '#A64D79', // Purple
+    '#45818E', // Teal
+    '#674EA7', // Violet
+    '#3D85C6', // Sky Blue
+    '#5B9B46', // Forest Green
+    '#B45F06', // Brown
+    '#AA00FF', // Magenta
+  ]
+
+  // Simple hash function to get consistent index
+  let hash = 0
+  for (let i = 0; i < familyKey.length; i++) {
+    hash = familyKey.charCodeAt(i) + ((hash << 5) - hash)
+  }
+
+  // Get index from hash
+  const index = Math.abs(hash) % niceColors.length
+  return niceColors[index]
 }
 
 /**
@@ -107,26 +108,26 @@ export function getRandomColorForFamily(familyKey: string): string {
  * @param familyKey
  */
 export function getFamilyColor(familyKey: string): string {
-    // First check if we have a predefined color for common families
-    const predefinedColors: Record<string, string> = {
-        'debate': '#4A86E8',      // Blue
-        'structure': '#3D85C6',   // Sky Blue
-        'consensus': '#6AA84F',   // Green
-        'decision': '#CC0000',    // Red
-        'proposal': '#E69138',    // Orange
-        'workflow': '#A64D79',    // Purple
-        'process': '#45818E',     // Teal
-        'vote': '#4A818E',     // Teal
-        'default': '#999999',     // Gray
-    }
-    
-    // Check predefined first
-    if (predefinedColors[familyKey]) {
-        return predefinedColors[familyKey]
-    }
-    
-    // Fallback to random but consistent color
-    return getRandomColorForFamily(familyKey)
+  // First check if we have a predefined color for common families
+  const predefinedColors: Record<string, string> = {
+    debate: '#4A86E8', // Blue
+    structure: '#3D85C6', // Sky Blue
+    consensus: '#6AA84F', // Green
+    decision: '#CC0000', // Red
+    proposal: '#E69138', // Orange
+    workflow: '#A64D79', // Purple
+    process: '#45818E', // Teal
+    vote: '#4A818E', // Teal
+    default: '#999999', // Gray
+  }
+
+  // Check predefined first
+  if (predefinedColors[familyKey]) {
+    return predefinedColors[familyKey]
+  }
+
+  // Fallback to random but consistent color
+  return getRandomColorForFamily(familyKey)
 }
 
 /**
@@ -138,7 +139,6 @@ export function getAllowedOptionTypes(
   inquiryTypeConfig: InquiryType | undefined,
   optionTypes: InquiryOptionType[]
 ): InquiryOptionType[] {
-  
   // Return empty array if inquiryTypeConfig is undefined
   if (!inquiryTypeConfig) {
     return []
@@ -164,9 +164,9 @@ export function getAllowedOptionTypes(
 
   // Ensure we have a proper array of option types
   const rawOptionTypes = toRaw(optionTypes)
-  
+
   let allOptionTypes: InquiryOptionType[] = []
-  
+
   if (Array.isArray(rawOptionTypes)) {
     allOptionTypes = rawOptionTypes
   } else if (rawOptionTypes && typeof rawOptionTypes === 'object') {
@@ -176,17 +176,15 @@ export function getAllowedOptionTypes(
   // Filtrer selon allowedOptionTypeKeys - check BOTH property names!
   const result = allOptionTypes.filter((opt) => {
     if (!opt) return false
-    
+
     // Get the option type value - could be in option_type or optionType
     const optionTypeValue = opt.option_type
-    
-    return typeof optionTypeValue === 'string' && 
-           allowedOptionTypeKeys.includes(optionTypeValue)
+
+    return typeof optionTypeValue === 'string' && allowedOptionTypeKeys.includes(optionTypeValue)
   })
 
   return result
 }
-
 
 /**
  * Get the support feature type as a string
@@ -198,10 +196,10 @@ export function getSupportFeatureType(
   optionTypes: InquiryOptionType[]
 ): 'ternary' | 'binary' | 'simple' | 'none' {
   if (!optionTypeKey) return 'none'
-  
+
   const hasSupport = hasSupportFeature(optionTypeKey, optionTypes)
   if (!hasSupport) return 'none'
-  
+
   const label = getSupportFeatureLabel(optionTypeKey, optionTypes).toLowerCase()
   if (label.includes('ternary')) return 'ternary'
   if (label.includes('binary')) return 'binary'
@@ -214,7 +212,7 @@ export function getSupportFeatureType(
  */
 export function getAllFamilyKeys(optionTypes: InquiryOptionType[]): string[] {
   const families = new Set<string>()
-  optionTypes.forEach(opt => {
+  optionTypes.forEach((opt) => {
     if (opt.family) {
       families.add(opt.family)
     }
@@ -232,33 +230,34 @@ export function getOptionsCountByFamily(
   optionTypes: InquiryOptionType[]
 ): Record<string, number> {
   const counts: Record<string, number> = {}
-  
-  options.forEach(option => {
+
+  options.forEach((option) => {
     const family = getOptionTypeFamily(option.type, optionTypes)
     counts[family] = (counts[family] || 0) + 1
   })
-  
+
   return counts
 }
-
 
 /**
  * Group option types by their family
  * @param optionTypes
  */
-export function groupOptionTypesByFamily(optionTypes: InquiryOptionType[]): Record<string, InquiryOptionType[]> {
+export function groupOptionTypesByFamily(
+  optionTypes: InquiryOptionType[]
+): Record<string, InquiryOptionType[]> {
   const grouped: Record<string, InquiryOptionType[]> = {}
-  
-  optionTypes.forEach(optionType => {
+
+  optionTypes.forEach((optionType) => {
     const family = optionType.family || 'default'
-    
+
     if (!grouped[family]) {
       grouped[family] = []
     }
-    
+
     grouped[family].push(optionType)
   })
-  
+
   return grouped
 }
 
@@ -271,25 +270,25 @@ export function getFamilyIconName(familyKey: string): string {
   try {
     // Try to get the store - this only works in setup context
     const appSettingsStore = useAppSettingsStore()
-        
+
     // Check if optionFamilyTab exists and is an array
     if (appSettingsStore?.optionFamilyTab && Array.isArray(appSettingsStore.optionFamilyTab)) {
       // Find the family config by family_type
       const familyConfig = appSettingsStore.optionFamilyTab.find(
-    (item: FamilyConfig) => item?.family_type === familyKey  
-    )
+        (item: FamilyConfig) => item?.family_type === familyKey
+      )
       if (familyConfig?.icon) {
         return familyConfig.icon
       }
     }
-      
+
     // If not found in appSettings, try fallback data
     const fallbackData = getFamilyFallbackData()
     const fallback = fallbackData[familyKey] || fallbackData.default
     if (fallback?.icon) {
       return fallback.icon
     }
-    
+
     return 'File'
   } catch (error) {
     // Store not available (called outside setup), return default
@@ -298,17 +297,15 @@ export function getFamilyIconName(familyKey: string): string {
   }
 }
 
-
 /**
  * Get the icon component for a family
  * @param familyKey - The family key
  */
 export function getFamilyIconComponent(familyKey: string): Component {
   const iconName = getFamilyIconName(familyKey)
-  
+
   return InquiryOptionIcons[iconName] || InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
 }
-
 
 /**
  * Get family UI configuration
@@ -320,7 +317,7 @@ export function getFamilyUIConfig(
   familyData?: OptionFamily
 ): Record<string, unknown> {
   const defaultUIConfig: Record<string, unknown> = {
-    layout: getLayoutForFamily(familyKey)
+    layout: getLayoutForFamily(familyKey),
   }
 
   // Try to get from familyData first
@@ -373,10 +370,7 @@ export function getFamilyRules(
  * @param familyKey
  * @param familyData
  */
-export function getFamilyFeatures(
-  familyKey: string,
-  familyData?: OptionFamily
-): string[] {
+export function getFamilyFeatures(familyKey: string, familyData?: OptionFamily): string[] {
   if (familyData?.features) {
     return familyData.features
   }
@@ -431,23 +425,22 @@ export function getFamiliesWithOptionTypes(
   inquiryTypes: InquiryType[] | Record<string, InquiryType>,
   optionTypes: InquiryOptionType[]
 ): Array<{
-  key: string;
-  name: string;
-  label: string;
-  description: string;
-  icon: string;
-  ui: Record<string, unknown>;
-  rules: Record<string, unknown>;
-  features: string[];
-  actions: Array<{ key: string; label: string; icon?: string }>;
-  optionTypes: InquiryOptionType[];
+  key: string
+  name: string
+  label: string
+  description: string
+  icon: string
+  ui: Record<string, unknown>
+  rules: Record<string, unknown>
+  features: string[]
+  actions: Array<{ key: string; label: string; icon?: string }>
+  optionTypes: InquiryOptionType[]
 }> {
-
   // Get the inquiry type config - handle both array and object
   let inquiryTypeConfig: InquiryType | undefined
 
   if (Array.isArray(inquiryTypes)) {
-    inquiryTypeConfig = inquiryTypes.find(t => t?.inquiry_type === inquiryTypeKey)
+    inquiryTypeConfig = inquiryTypes.find((t) => t?.inquiry_type === inquiryTypeKey)
   } else {
     inquiryTypeConfig = inquiryTypes[inquiryTypeKey]
   }
@@ -476,7 +469,6 @@ export function getFamiliesWithOptionTypes(
 
   // Convert to array format
   return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
-    
     // PRIORITY 1: Get from appSettings.optionFamilyTab if available
     let familyConfig = null
     if (appSettingsStore?.optionFamilyTab) {
@@ -485,13 +477,13 @@ export function getFamiliesWithOptionTypes(
         (item: unknown) => item.family_type === familyKey
       )
     }
-    
+
     // PRIORITY 2: Get from fallback data
     const fallback = fallbackData[familyKey] || fallbackData.default || {}
 
     // Try to get icon from first option type in this family (lowest priority)
     const firstOptionType = familyOptionTypes[0]
-    
+
     // Determine icon in priority order:
     // 1. From app settings config
     // 2. From fallback data
@@ -502,7 +494,7 @@ export function getFamiliesWithOptionTypes(
     // Format label if not provided
     const formattedLabel = familyKey
       .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ')
 
     // Build family data with priority: appSettings > fallback > defaults
@@ -516,7 +508,7 @@ export function getFamiliesWithOptionTypes(
       ui: familyConfig?.ui || fallback.ui,
       rules: familyConfig?.rules || fallback.rules,
       features: familyConfig?.features || fallback.features,
-      actions: familyConfig?.actions || fallback.actions
+      actions: familyConfig?.actions || fallback.actions,
     }
 
     return {
@@ -530,19 +522,17 @@ export function getFamiliesWithOptionTypes(
       rules: getFamilyRules(familyKey, familyData),
       features: getFamilyFeatures(familyKey, familyData),
       actions: getFamilyActions(familyKey, familyData),
-      optionTypes: familyOptionTypes
+      optionTypes: familyOptionTypes,
     }
   })
 }
-
-
 
 /**
  * Get fallback data for families
  */
 export function getFamilyFallbackData(): Record<string, OptionFamily> {
   return {
-    'debate': {
+    debate: {
       name: 'Debate',
       label: t('agora', 'Debate'),
       description: t('agora', 'Debate positions, arguments, and alternatives'),
@@ -550,20 +540,20 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       ui: {
         layout: 'paired',
         show_metrics: true,
-        thread_visualization: 'tree'
+        thread_visualization: 'tree',
       },
       rules: {
         require_initial_position: true,
-        max_thread_depth: 10
+        max_thread_depth: 10,
       },
       features: ['argument_rating', 'thread_collapsing', 'consensus_indicators'],
       actions: [
         { key: 'export_thread', label: t('agora', 'Export Debate Thread'), icon: 'Download' },
         { key: 'generate_summary', label: t('agora', 'Generate Summary'), icon: 'Summarize' },
-        { key: 'visualize_network', label: t('agora', 'View Argument Network'), icon: 'Graph' }
-      ]
+        { key: 'visualize_network', label: t('agora', 'View Argument Network'), icon: 'Graph' },
+      ],
     },
-    'structure': {
+    structure: {
       name: 'Structure',
       label: t('agora', 'Structure'),
       description: t('agora', 'Structured documents with chapters and articles'),
@@ -572,12 +562,12 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         layout: 'tree',
         show_toc: true,
         collapsible_sections: true,
-        breadcrumb_navigation: true
+        breadcrumb_navigation: true,
       },
       rules: {
         max_depth: 5,
         require_numeric_notation: true,
-        allow_cross_references: true
+        allow_cross_references: true,
       },
       features: ['version_control', 'change_tracking', 'commentary'],
       actions: [
@@ -585,10 +575,10 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         { key: 'export_pdf', label: t('agora', 'Export as PDF'), icon: 'FilePdf' },
         { key: 'export_markdown', label: t('agora', 'Export as Markdown'), icon: 'Markdown' },
         { key: 'print_view', label: t('agora', 'Print View'), icon: 'Printer' },
-        { key: 'compare_versions', label: t('agora', 'Compare Versions'), icon: 'Diff' }
-      ]
+        { key: 'compare_versions', label: t('agora', 'Compare Versions'), icon: 'Diff' },
+      ],
     },
-    'consensus': {
+    consensus: {
       name: 'Consensus',
       label: t('agora', 'Consensus'),
       description: t('agora', 'Consultation questions and consensus building'),
@@ -597,21 +587,29 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         layout: 'consensus_flow',
         show_consensus_meter: true,
         highlight_objections: true,
-        visualize_progress: true
+        visualize_progress: true,
       },
       rules: {
         consensus_threshold: 0.8,
-        require_objection_response: true
+        require_objection_response: true,
       },
       features: ['consensus_tracking', 'objection_management', 'poll_integration'],
       actions: [
-        { key: 'export_consensus_report', label: t('agora', 'Export Consensus Report'), icon: 'Report' },
+        {
+          key: 'export_consensus_report',
+          label: t('agora', 'Export Consensus Report'),
+          icon: 'Report',
+        },
         { key: 'generate_minutes', label: t('agora', 'Generate Minutes'), icon: 'Minutes' },
         { key: 'visualize_consensus', label: t('agora', 'View Consensus Map'), icon: 'Map' },
-        { key: 'schedule_facilitation', label: t('agora', 'Schedule Facilitation'), icon: 'Calendar' }
-      ]
+        {
+          key: 'schedule_facilitation',
+          label: t('agora', 'Schedule Facilitation'),
+          icon: 'Calendar',
+        },
+      ],
     },
-    'decision': {
+    decision: {
       name: 'Decision',
       label: t('agora', 'Decision'),
       description: t('agora', 'Official decisions and results'),
@@ -620,21 +618,29 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         layout: 'cards',
         show_metadata: true,
         highlight_authority: true,
-        timeline_view: true
+        timeline_view: true,
       },
       rules: {
         require_official_endorsement: true,
-        min_approval_count: 1
+        min_approval_count: 1,
       },
       features: ['legal_binding', 'appeal_mechanism', 'implementation_tracking'],
       actions: [
-        { key: 'generate_legal_document', label: t('agora', 'Generate Legal Document'), icon: 'Gavel' },
+        {
+          key: 'generate_legal_document',
+          label: t('agora', 'Generate Legal Document'),
+          icon: 'Gavel',
+        },
         { key: 'export_decision', label: t('agora', 'Export Decision'), icon: 'FileExport' },
         { key: 'notify_stakeholders', label: t('agora', 'Notify Stakeholders'), icon: 'Bell' },
-        { key: 'track_implementation', label: t('agora', 'Track Implementation'), icon: 'ProgressCheck' }
-      ]
+        {
+          key: 'track_implementation',
+          label: t('agora', 'Track Implementation'),
+          icon: 'ProgressCheck',
+        },
+      ],
     },
-    'proposal': {
+    proposal: {
       name: 'Proposal',
       label: t('agora', 'Proposal'),
       description: t('agora', 'Initial proposals and suggestions'),
@@ -643,21 +649,25 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         layout: 'cards',
         show_support_meter: true,
         highlight_impact: true,
-        proposal_template: 'standard'
+        proposal_template: 'standard',
       },
       rules: {
         requires_impact_assessment: true,
-        min_support_threshold: 5
+        min_support_threshold: 5,
       },
       features: ['budget_estimation', 'impact_analysis', 'community_feedback'],
       actions: [
         { key: 'duplicate_proposal', label: t('agora', 'Duplicate Proposal'), icon: 'ContentCopy' },
         { key: 'merge_proposals', label: t('agora', 'Merge with Similar'), icon: 'CallMerge' },
         { key: 'export_proposal', label: t('agora', 'Export Proposal'), icon: 'FileExport' },
-        { key: 'request_review', label: t('agora', 'Request Expert Review'), icon: 'AccountReview' }
-      ]
+        {
+          key: 'request_review',
+          label: t('agora', 'Request Expert Review'),
+          icon: 'AccountReview',
+        },
+      ],
     },
-    'workflow': {
+    workflow: {
       name: 'Workflow',
       label: t('agora', 'Workflow'),
       description: t('agora', 'Project and decision workflow management'),
@@ -666,21 +676,21 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         layout: 'kanban',
         show_swimlanes: true,
         wip_limits: true,
-        cycle_time_visualization: true
+        cycle_time_visualization: true,
       },
       rules: {
         require_status_transitions: true,
-        enforce_wip_limits: true
+        enforce_wip_limits: true,
       },
       features: ['automated_transitions', 'blocker_detection', 'sla_tracking'],
       actions: [
         { key: 'export_board', label: t('agora', 'Export Board'), icon: 'FileExport' },
         { key: 'generate_flow_report', label: t('agora', 'Flow Report'), icon: 'ChartLine' },
         { key: 'configure_workflow', label: t('agora', 'Configure Workflow'), icon: 'Cog' },
-        { key: 'bulk_transition', label: t('agora', 'Bulk Transition'), icon: 'ArrowRightBold' }
-      ]
+        { key: 'bulk_transition', label: t('agora', 'Bulk Transition'), icon: 'ArrowRightBold' },
+      ],
     },
-    'process': {
+    process: {
       name: 'Process',
       label: t('agora', 'Process'),
       description: t('agora', 'Timeline and procedural events'),
@@ -689,32 +699,36 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         layout: 'timeline',
         show_gantt: true,
         milestone_highlight: true,
-        dependency_lines: true
+        dependency_lines: true,
       },
       rules: {
         chronological_order: true,
-        require_dates: true
+        require_dates: true,
       },
       features: ['gantt_chart', 'critical_path', 'resource_allocation'],
       actions: [
         { key: 'export_gantt', label: t('agora', 'Export Gantt'), icon: 'FileExport' },
         { key: 'print_timeline', label: t('agora', 'Print Timeline'), icon: 'Printer' },
         { key: 'adjust_schedule', label: t('agora', 'Adjust Schedule'), icon: 'CalendarClock' },
-        { key: 'identify_bottlenecks', label: t('agora', 'Identify Bottlenecks'), icon: 'AlertCircle' }
-      ]
+        {
+          key: 'identify_bottlenecks',
+          label: t('agora', 'Identify Bottlenecks'),
+          icon: 'AlertCircle',
+        },
+      ],
     },
-    'default': {
+    default: {
       name: 'Options',
       label: t('agora', 'Options'),
       description: t('agora', 'Various option types'),
       icon: 'File',
       ui: {
-        layout: 'cards'
+        layout: 'cards',
       },
       rules: {},
       features: [],
-      actions: []
-    }
+      actions: [],
+    },
   }
 }
 
@@ -727,9 +741,7 @@ export function getOptionTypesForFamily(
   familyKey: string,
   allowedOptionTypes: InquiryOptionType[]
 ): InquiryOptionType[] {
-  return allowedOptionTypes.filter(optionType => 
-    optionType.family === familyKey
-  )
+  return allowedOptionTypes.filter((optionType) => optionType.family === familyKey)
 }
 
 /**
@@ -737,11 +749,11 @@ export function getOptionTypesForFamily(
  * @param optionTypes
  */
 export function getOptionTypeOptions(optionTypes: InquiryOptionType[]) {
-  return optionTypes.map(type => ({
+  return optionTypes.map((type) => ({
     value: type.option_type,
     label: type.label,
     description: type.description,
-    icon: type.icon
+    icon: type.icon,
   }))
 }
 
@@ -756,9 +768,10 @@ export function findOptionType(
 ): InquiryOptionType | null {
   if (!optionType || !optionTypes?.length) return null
 
-  return optionTypes.find(opt =>
-    opt.option_type === optionType || opt.optionType === optionType
-  ) || null
+  return (
+    optionTypes.find((opt) => opt.option_type === optionType || opt.optionType === optionType) ||
+    null
+  )
 }
 
 /**
@@ -798,7 +811,7 @@ export function getOptionTypeLabel(
 export function getOptionTypeIconComponent(
   optionType: string | null | undefined,
   optionTypes: InquiryOptionType[]
-): Component  {
+): Component {
   if (!optionType) return InquiryOptionIcons.File
 
   const found = findOptionType(optionType, optionTypes)
@@ -806,7 +819,6 @@ export function getOptionTypeIconComponent(
 
   return InquiryOptionIcons[iconName] || InquiryOptionIcons.File
 }
-
 
 /**
  * Get option type icon name as string
@@ -910,13 +922,13 @@ export function getAvailableResponseTypes(
 }> {
   const allowedKeys = getAllowedResponses(optionType, allOptionTypes)
   return allowedKeys
-    .map(key => {
+    .map((key) => {
       const found = findOptionType(key, allOptionTypes)
       return {
         option_type: key,
         label: found?.label || key,
         icon: found?.icon || 'File',
-        description: found?.description || found?.text || ''
+        description: found?.description || found?.text || '',
       }
     })
     .sort((a, b) => a.label.localeCompare(b.label))
@@ -1026,28 +1038,28 @@ export function getAllowedLayouts(
 
   // Get family if not provided
   const family = familyKey || getOptionTypeFamily(optionType, optionTypes)
-  
+
   // Get family UI config
   const uiConfig = getFamilyUIConfig(family)
-  
+
   // Check if family has allowed_layouts in its UI config
   if (uiConfig?.allowed_layouts && Array.isArray(uiConfig.allowed_layouts)) {
     return uiConfig.allowed_layouts
   }
-  
+
   // Fallback to default layouts based on family
   const defaultLayouts: Record<string, string[]> = {
-    'debate': ['paired', 'cards', 'list'],
-    'structure': ['tree', 'cards', 'list'],
-    'consensus': ['consensus_flow', 'cards', 'list'],
-    'decision': ['cards', 'list', 'results'],
-    'proposal': ['cards', 'list', 'results'],
-    'workflow': ['kanban', 'cards', 'list', 'timeline'],
-    'process': ['timeline', 'cards', 'list', 'kanban'],
-    'vote': ['timeline', 'cards', 'list', 'kanban'],
-    'default': ['cards', 'list']
+    debate: ['paired', 'cards', 'list'],
+    structure: ['tree', 'cards', 'list'],
+    consensus: ['consensus_flow', 'cards', 'list'],
+    decision: ['cards', 'list', 'results'],
+    proposal: ['cards', 'list', 'results'],
+    workflow: ['kanban', 'cards', 'list', 'timeline'],
+    process: ['timeline', 'cards', 'list', 'kanban'],
+    vote: ['timeline', 'cards', 'list', 'kanban'],
+    default: ['cards', 'list'],
   }
-  
+
   return defaultLayouts[family] || defaultLayouts.default
 }
 
@@ -1066,24 +1078,24 @@ export function getDefaultLayout(
 
   const family = familyKey || getOptionTypeFamily(optionType, optionTypes)
   const uiConfig = getFamilyUIConfig(family)
-  
+
   // Check if family has default_layout in its UI config
   if (uiConfig?.default_layout) {
     return uiConfig.default_layout
   }
-  
+
   // Fallback to family-based default
   const defaultLayoutMap: Record<string, string> = {
-    'debate': 'paired',
-    'structure': 'tree',
-    'consensus': 'consensus_flow',
-    'decision': 'cards',
-    'proposal': 'cards',
-    'workflow': 'kanban',
-    'process': 'timeline',
-    'vote': 'vote'
+    debate: 'paired',
+    structure: 'tree',
+    consensus: 'consensus_flow',
+    decision: 'cards',
+    proposal: 'cards',
+    workflow: 'kanban',
+    process: 'timeline',
+    vote: 'vote',
   }
-  
+
   return defaultLayoutMap[family] || 'cards'
 }
 
@@ -1102,12 +1114,11 @@ export function shouldShowInLayout(
   if (option.miscFields?.force_layouts && Array.isArray(option.miscFields.force_layouts)) {
     return option.miscFields.force_layouts.includes(layout)
   }
-  
+
   // Otherwise check based on option type's family allowed layouts
   const allowedLayouts = getAllowedLayouts(option.type, optionTypes)
   return allowedLayouts.includes(layout)
 }
-
 
 /**
  * Get layout for family
@@ -1122,7 +1133,7 @@ export const getLayoutForFamily = (familyKey: string): string => {
     proposal: 'cards',
     workflow: 'kanban',
     process: 'timeline',
-    vote: 'vote'
+    vote: 'vote',
   }
 
   return layoutMap[familyKey] || 'cards'
@@ -1165,19 +1176,18 @@ export function getAllowedLayoutsForType(
 
   // Fallback to default layouts based on family
   const defaultLayouts: Record<string, string[]> = {
-    'debate': ['paired', 'cards', 'list'],
-    'structure': ['tree', 'cards', 'list'],
-    'consensus': ['consensus_flow', 'cards', 'list'],
-    'decision': ['cards', 'list', 'results'],
-    'proposal': ['cards', 'list', 'results'],
-    'workflow': ['kanban', 'cards', 'list', 'timeline'],
-    'process': ['timeline', 'cards', 'list', 'kanban'],
-    'default': ['cards', 'list']
+    debate: ['paired', 'cards', 'list'],
+    structure: ['tree', 'cards', 'list'],
+    consensus: ['consensus_flow', 'cards', 'list'],
+    decision: ['cards', 'list', 'results'],
+    proposal: ['cards', 'list', 'results'],
+    workflow: ['kanban', 'cards', 'list', 'timeline'],
+    process: ['timeline', 'cards', 'list', 'kanban'],
+    default: ['cards', 'list'],
   }
 
   return defaultLayouts[family] || defaultLayouts.default
 }
-
 
 /**
  * Get available foreign options that can be added to a layout
@@ -1193,7 +1203,7 @@ export function getAvailableForeignOptionsForLayout(
   familyKey: string | undefined,
   optionTypes: InquiryOptionType[]
 ): Option[] {
-  return allOptions.filter(option => {
+  return allOptions.filter((option) => {
     // Skip options that already belong to this family (if familyKey is provided)
     if (familyKey) {
       const optionFamily = getOptionTypeFamily(option.type, optionTypes)
@@ -1206,7 +1216,6 @@ export function getAvailableForeignOptionsForLayout(
     return canShowInLayout(option, layout, optionTypes)
   })
 }
-
 
 /**
  * Check if an option should be displayed in timeline layout
@@ -1224,12 +1233,12 @@ export function shouldShowInTimeline(
 ): boolean {
   // Get the option's family
   const optionFamily = getOptionTypeFamily(option.type, optionTypes)
-  
+
   // If target family is specified and option belongs to it, include it
   if (targetFamily && optionFamily === targetFamily) {
     return true
   }
-  
+
   // Otherwise check if it has timeline dates
   return hasTimelineDates(option)
 }
@@ -1245,7 +1254,7 @@ export function filterOptionsForTimeline(
   optionTypes: InquiryOptionType[],
   targetFamily?: string
 ): Option[] {
-  return options.filter(option => shouldShowInTimeline(option, optionTypes, targetFamily))
+  return options.filter((option) => shouldShowInTimeline(option, optionTypes, targetFamily))
 }
 
 /**
@@ -1256,16 +1265,16 @@ export function filterOptionsForTimeline(
 export function addLayoutToOption(option: Option, layout: string): Option {
   const miscFields = { ...(option.miscFields || {}) }
   const currentLayouts = getForceLayouts(option)
-  
+
   if (!currentLayouts.includes(layout)) {
     currentLayouts.push(layout)
     // Store as JSON string for consistency
     miscFields.force_layouts = JSON.stringify(currentLayouts)
   }
-  
+
   return {
     ...option,
-    miscFields
+    miscFields,
   }
 }
 
@@ -1277,17 +1286,17 @@ export function addLayoutToOption(option: Option, layout: string): Option {
 export function removeLayoutFromOption(option: Option, layout: string): Option {
   const miscFields = { ...(option.miscFields || {}) }
   const currentLayouts = getForceLayouts(option)
-  const updatedLayouts = currentLayouts.filter(l => l !== layout)
-  
+  const updatedLayouts = currentLayouts.filter((l) => l !== layout)
+
   if (updatedLayouts.length === 0) {
     delete miscFields.force_layouts
   } else {
     miscFields.force_layouts = JSON.stringify(updatedLayouts)
   }
-  
+
   return {
     ...option,
-    miscFields
+    miscFields,
   }
 }
 
@@ -1304,7 +1313,7 @@ export function getDefaultLayoutForFamily(familyKey: string): string {
     proposal: 'cards',
     workflow: 'kanban',
     process: 'timeline',
-    vote: 'cards'
+    vote: 'cards',
   }
   return layoutMap[familyKey] || 'cards'
 }
@@ -1323,7 +1332,7 @@ export function getAllowedLayoutsForFamily(familyKey: string): string[] {
     workflow: ['kanban', 'cards', 'list', 'timeline'],
     process: ['timeline', 'cards', 'list', 'kanban'],
     vote: ['cards', 'list', 'results'],
-    default: ['cards', 'list']
+    default: ['cards', 'list'],
   }
   return layoutsMap[familyKey] || layoutsMap.default
 }
@@ -1331,14 +1340,11 @@ export function getAllowedLayoutsForFamily(familyKey: string): string[] {
 /**
  * Check if an option should be shown in a specific layout
  * This is used for checking if an option can be added to a layout
- * 
+ *
  * @param option - The option
  * @param layout - The layout to check
  */
-export function canShowInLayout(
-  option: Option,
-  layout: string
-): boolean {
+export function canShowInLayout(option: Option, layout: string): boolean {
   // Simply check if the layout is in force_layouts
   const forceLayouts = getForceLayouts(option)
   return forceLayouts.includes(layout)
@@ -1349,13 +1355,12 @@ export function canShowInLayout(
  * Shows options that:
  * 1. Belong to the target family (if specified), OR
  * 2. Have force_layouts containing this layout
- * 
+ *
  * @param options - All options
  * @param layout - The layout to filter for (e.g., 'timeline', 'kanban')
  * @param optionTypes - All option types
  * @param targetFamily - Optional family to include all options from (e.g., 'process' for timeline, 'workflow' for kanban)
  */
-
 
 export function filterOptionsByLayout(
   options: Option[],
@@ -1363,7 +1368,7 @@ export function filterOptionsByLayout(
   optionTypes: InquiryOptionType[],
   targetFamily?: string
 ): Option[] {
-  return options.filter(option => {
+  return options.filter((option) => {
     const optionFamily = getOptionTypeFamily(option.type, optionTypes)
     const forceLayouts = getForceLayouts(option)
     const hasForceLayout = forceLayouts.includes(layout)
@@ -1404,7 +1409,6 @@ function formatDateToISO(date: Date | string | null): string | null {
   return `${year}-${month}-${day}`
 }
 
-
 /**
  * Update timeline dates for an option (preserves force_layouts)
  * @param option - The option to update
@@ -1421,15 +1425,13 @@ export async function updateTimelineDates(
   try {
     // Update dates while preserving existing force_layouts
     const updatedOption = setTimelineDates(option, startDate, endDate)
-    
+
     await optionsStore.updateOption({ option: updatedOption })
-    
   } catch (error) {
     console.error('Failed to update timeline dates:', error)
     throw error
   }
 }
-
 
 /**
  * Timeline-specific helper functions for managing dates
@@ -1463,7 +1465,6 @@ export async function setTimelineDatesForOption(
 
     // Update the option
     await optionsStore.updateOption({ option: finalOption })
-
   } catch (error) {
     console.error('Failed to set timeline dates:', error)
     throw error
@@ -1490,11 +1491,10 @@ export async function clearTimelineDates(
 
     const updatedOption = {
       ...option,
-      miscFields
+      miscFields,
     }
 
     await optionsStore.updateOption({ option: updatedOption })
-
   } catch (error) {
     console.error('Failed to clear timeline dates:', error)
     throw error
@@ -1505,7 +1505,6 @@ export async function clearTimelineDates(
 // /////////////////////////////////
 // ////////////////////////////////
 
-
 /**
  * Smart detection of paired option types
  * Uses multiple strategies to find pairs
@@ -1515,8 +1514,8 @@ export async function clearTimelineDates(
 export function detectPairedOptionTypes(
   optionTypes: InquiryOptionType[],
   family?: string
-): Array<{ left: string, right: string, label: string }> {
-  const pairs: Array<{ left: string, right: string, label: string }> = []
+): Array<{ left: string; right: string; label: string }> {
+  const pairs: Array<{ left: string; right: string; label: string }> = []
 
   // Strategy 1: Based on naming conventions
   const namingPairs = detectPairsByNaming(optionTypes, family)
@@ -1543,8 +1542,8 @@ export function detectPairedOptionTypes(
 function detectPairsByNaming(
   optionTypes: InquiryOptionType[],
   family?: string
-): Array<{ left: string, right: string, label: string }> {
-  const pairs: Array<{ left: string, right: string, label: string }> = []
+): Array<{ left: string; right: string; label: string }> {
+  const pairs: Array<{ left: string; right: string; label: string }> = []
   const processed = new Set<string>()
 
   // Common prefixes that indicate pairs
@@ -1552,19 +1551,19 @@ function detectPairsByNaming(
 
   // Common suffixes that indicate opposites
   const opposites: Record<string, string> = {
-    'for': 'against',
-    'yes': 'no',
-    'pro': 'contra',
-    'support': 'oppose',
-    'agree': 'disagree',
-    'approve': 'reject',
-    'accept': 'decline'
+    for: 'against',
+    yes: 'no',
+    pro: 'contra',
+    support: 'oppose',
+    agree: 'disagree',
+    approve: 'reject',
+    accept: 'decline',
   }
 
   for (const type of optionTypes) {
-  // eslint-disable-next-line 
+    // eslint-disable-next-line
     if (family && type.family !== family) continue
-  // eslint-disable-next-line 
+    // eslint-disable-next-line
     if (processed.has(type.option_type)) continue
 
     const typeName = type.option_type
@@ -1578,12 +1577,12 @@ function detectPairsByNaming(
         for (const [key, value] of Object.entries(opposites)) {
           if (suffix === key) {
             const pairedName = prefix + value
-            const pairedType = optionTypes.find(t => t.option_type === pairedName)
+            const pairedType = optionTypes.find((t) => t.option_type === pairedName)
             if (pairedType) {
               pairs.push({
                 left: typeName,
                 right: pairedName,
-                label: type.family || 'Options'
+                label: type.family || 'Options',
               })
               processed.add(typeName)
               processed.add(pairedName)
@@ -1607,26 +1606,26 @@ function detectPairsByNaming(
 function detectPairsByResponses(
   optionTypes: InquiryOptionType[],
   family?: string
-): Array<{ left: string, right: string, label: string }> {
-  const pairs: Array<{ left: string, right: string, label: string }> = []
+): Array<{ left: string; right: string; label: string }> {
+  const pairs: Array<{ left: string; right: string; label: string }> = []
   const processed = new Set<string>()
 
   for (const type of optionTypes) {
-  // eslint-disable-next-line 
+    // eslint-disable-next-line
     if (family && type.family !== family) continue
-  // eslint-disable-next-line 
+    // eslint-disable-next-line
     if (processed.has(type.option_type)) continue
 
     const allowed = type.allowed_response || []
     for (const responseType of allowed) {
       // Check if the response type also has this type in its allowed_response
-      const responseTypeDef = optionTypes.find(t => t.option_type === responseType)
+      const responseTypeDef = optionTypes.find((t) => t.option_type === responseType)
       if (responseTypeDef && responseTypeDef.allowed_response?.includes(type.option_type)) {
         // This is a mutual relationship - they're paired
         pairs.push({
           left: type.option_type,
           right: responseType,
-          label: type.family || 'Options'
+          label: type.family || 'Options',
         })
         processed.add(type.option_type)
         processed.add(responseType)
@@ -1646,71 +1645,51 @@ function detectPairsByResponses(
 function detectPairsByFamily(
   optionTypes: InquiryOptionType[],
   family?: string
-): Array<{ left: string, right: string, label: string }> {
-  const pairs: Array<{ left: string, right: string, label: string }> = []
+): Array<{ left: string; right: string; label: string }> {
+  const pairs: Array<{ left: string; right: string; label: string }> = []
 
-  const familyPatterns: Record<string, Array<{ left: string, right: string }>> = {
-    'debate': [
+  const familyPatterns: Record<string, Array<{ left: string; right: string }>> = {
+    debate: [
       { left: 'position_for', right: 'position_against' },
-      { left: 'argument_for', right: 'argument_against' }
+      { left: 'argument_for', right: 'argument_against' },
     ],
-    'vote': [
-      { left: 'candidate', right: 'official_result' }
-    ],
-    'proposal': [
-      { left: 'proposal', right: 'amendment' }
-    ],
-    'structure': [
+    vote: [{ left: 'candidate', right: 'official_result' }],
+    proposal: [{ left: 'proposal', right: 'amendment' }],
+    structure: [
       { left: 'chapter', right: 'section' },
       { left: 'section', right: 'article' },
-      { left: 'article', right: 'amendment' }
+      { left: 'article', right: 'amendment' },
     ],
-    'workflow': [
-      { left: 'workflow_item', right: 'workflow_blocker' }
-    ],
-    'decision': [
-      { left: 'proposal', right: 'official_result' }
-    ],
-    'process': [
+    workflow: [{ left: 'workflow_item', right: 'workflow_blocker' }],
+    decision: [{ left: 'proposal', right: 'official_result' }],
+    process: [
       { left: 'process_phase', right: 'process_event' },
-      { left: 'process_event', right: 'milestone' }
+      { left: 'process_event', right: 'milestone' },
     ],
-    'official': [
-      { left: 'official', right: 'official_summary' }
-    ],
-    'administrative': [
-      { left: 'admin_request', right: 'official' }
-    ],
-    'service': [
-      { left: 'service_request', right: 'official' }
-    ],
-    'oversight': [
-      { left: 'investigation_request', right: 'official' }
-    ],
-    'legislative': [
-      { left: 'law_proposal', right: 'amendment' }
-    ],
-    'collective': [
-      { left: 'consultation_question', right: 'poll_option' }
-    ],
-    'consensus': [
+    official: [{ left: 'official', right: 'official_summary' }],
+    administrative: [{ left: 'admin_request', right: 'official' }],
+    service: [{ left: 'service_request', right: 'official' }],
+    oversight: [{ left: 'investigation_request', right: 'official' }],
+    legislative: [{ left: 'law_proposal', right: 'amendment' }],
+    collective: [{ left: 'consultation_question', right: 'poll_option' }],
+    consensus: [
       { left: 'consultation_question', right: 'objection' },
-      { left: 'objection', right: 'exception' }
-    ]
+      { left: 'objection', right: 'exception' },
+    ],
   }
 
   // Use family-specific patterns if provided
   const patterns = family ? familyPatterns[family] || [] : []
 
   for (const pattern of patterns) {
-    const leftExists = optionTypes.some(t => t.option_type === pattern.left)
-    const rightExists = optionTypes.some(t => t.option_type === pattern.right)
+    const leftExists = optionTypes.some((t) => t.option_type === pattern.left)
+    const rightExists = optionTypes.some((t) => t.option_type === pattern.right)
 
     if (leftExists && rightExists) {
       pairs.push({
         left: pattern.left,
         right: pattern.right,
-        label: family || 'Options'
+        label: family || 'Options',
       })
     }
   }
@@ -1723,10 +1702,10 @@ function detectPairsByFamily(
  * @param pairs
  */
 function deduplicatePairs(
-  pairs: Array<{ left: string, right: string, label: string }>
-): Array<{ left: string, right: string, label: string }> {
+  pairs: Array<{ left: string; right: string; label: string }>
+): Array<{ left: string; right: string; label: string }> {
   const seen = new Set<string>()
-  const result: Array<{ left: string, right: string, label: string }> = []
+  const result: Array<{ left: string; right: string; label: string }> = []
 
   for (const pair of pairs) {
     const key = [pair.left, pair.right].sort().join('|')
@@ -1748,9 +1727,7 @@ export function getRootOptionTypesForFamily(
   optionTypes: InquiryOptionType[],
   family?: string
 ): InquiryOptionType[] {
-  const types = family
-    ? optionTypes.filter(t => t.family === family)
-    : optionTypes
+  const types = family ? optionTypes.filter((t) => t.family === family) : optionTypes
 
   const pairedTypes = new Set<string>()
   const pairs = detectPairedOptionTypes(optionTypes, family)
@@ -1760,12 +1737,12 @@ export function getRootOptionTypesForFamily(
     pairedTypes.add(pair.right)
   }
 
-  return types.filter(type => {
+  return types.filter((type) => {
     // Root if it's part of a pair OR not a child of anything
     if (pairedTypes.has(type.option_type)) return true
 
-    const isChildOfSomething = optionTypes.some(parent =>
-      parent.allowed_response?.includes(type.option_type) ?? false
+    const isChildOfSomething = optionTypes.some(
+      (parent) => parent.allowed_response?.includes(type.option_type) ?? false
     )
     return !isChildOfSomething
   })
@@ -1779,19 +1756,18 @@ export function getRootOptionTypesForFamily(
  * @return Filtered options
  */
 export function getFamilyOptionsByTarget(
-    options: Option[],
-    optionTypes: InquiryOptionType[],  // To be fixed ignored 
-    familyKey: string,
-    targetId: number
+  options: Option[],
+  optionTypes: InquiryOptionType[], // To be fixed ignored
+  familyKey: string,
+  targetId: number
 ): Option[] {
-    // Prefer the option's own `family` field when it's set, otherwise derive
-    // it from the option type definition.
-    return options.filter((option) => {
-        if (option.targetId !== targetId) return false
-        const optionFamily =
-            option.family || getOptionTypeFamily(option.type, optionTypes)
-        return optionFamily === familyKey
-    })
+  // Prefer the option's own `family` field when it's set, otherwise derive
+  // it from the option type definition.
+  return options.filter((option) => {
+    if (option.targetId !== targetId) return false
+    const optionFamily = option.family || getOptionTypeFamily(option.type, optionTypes)
+    return optionFamily === familyKey
+  })
 }
 
 /**
@@ -1803,18 +1779,13 @@ export function getFamilyOptionsByTarget(
  * @return Root options (no parent)
  */
 export function getFamilyRootOptionsByTarget(
-    options: Option[],
-    optionTypes: InquiryOptionType[],
-    familyKey: string,
-    targetId: number
+  options: Option[],
+  optionTypes: InquiryOptionType[],
+  familyKey: string,
+  targetId: number
 ): Option[] {
-    const familyOptions = getFamilyOptionsByTarget(
-        options,
-        optionTypes,
-        familyKey,
-        targetId,
-    )
-    return familyOptions.filter((opt) => !opt.parentId || opt.parentId === 0)
+  const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
+  return familyOptions.filter((opt) => !opt.parentId || opt.parentId === 0)
 }
 
 /**
@@ -1827,19 +1798,14 @@ export function getFamilyRootOptionsByTarget(
  * @return Child options
  */
 export function getFamilyChildOptionsByTarget(
-    options: Option[],
-    optionTypes: InquiryOptionType[],
-    familyKey: string,
-    targetId: number,
-    parentId: number
+  options: Option[],
+  optionTypes: InquiryOptionType[],
+  familyKey: string,
+  targetId: number,
+  parentId: number
 ): Option[] {
-    const familyOptions = getFamilyOptionsByTarget(
-        options,
-        optionTypes,
-        familyKey,
-        targetId,
-    )
-    return familyOptions.filter((opt) => opt.parentId === parentId)
+  const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
+  return familyOptions.filter((opt) => opt.parentId === parentId)
 }
 
 /**
@@ -1850,21 +1816,21 @@ export function getFamilyChildOptionsByTarget(
  * @return Record with family keys as keys and option counts as values
  */
 export function getOptionsCountByFamilyAndTarget(
-    options: Option[],
-    optionTypes: InquiryOptionType[],
-    targetId: number
+  options: Option[],
+  optionTypes: InquiryOptionType[],
+  targetId: number
 ): Record<string, number> {
-    const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {}
 
-    // Filter options by targetId first
-    const targetOptions = options.filter(opt => opt.targetId === targetId)
+  // Filter options by targetId first
+  const targetOptions = options.filter((opt) => opt.targetId === targetId)
 
-    targetOptions.forEach(option => {
-        const family = getOptionTypeFamily(option.type, optionTypes)
-        counts[family] = (counts[family] || 0) + 1
-    })
+  targetOptions.forEach((option) => {
+    const family = getOptionTypeFamily(option.type, optionTypes)
+    counts[family] = (counts[family] || 0) + 1
+  })
 
-    return counts
+  return counts
 }
 
 /**
@@ -1876,11 +1842,11 @@ export function getOptionsCountByFamilyAndTarget(
  * @return boolean
  */
 export function isOptionInFamilyAndTarget(
-    option: Option,
-    optionTypes: InquiryOptionType[],
-    familyKey: string,
-    targetId: number
+  option: Option,
+  optionTypes: InquiryOptionType[],
+  familyKey: string,
+  targetId: number
 ): boolean {
-    const optionFamily = getOptionTypeFamily(option.type, optionTypes)
-    return optionFamily === familyKey && option.targetId === targetId
+  const optionFamily = getOptionTypeFamily(option.type, optionTypes)
+  return optionFamily === familyKey && option.targetId === targetId
 }

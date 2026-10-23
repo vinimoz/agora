@@ -1,7 +1,10 @@
 <!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
-  <div class="vote-input-container" :class="`engine-${engineId}`">
+  <div
+    class="vote-input-container"
+    :class="`engine-${engineId}`"
+  >
     <!-- Binary -->
     <VoteInputBinary
       v-if="engineId === 'binary'"
@@ -190,7 +193,6 @@ const props = defineProps<{
   totalItems?: number
 }>()
 
-
 const emit = defineEmits<{
   vote: [value: SupportValue]
   approvalToggle: [itemId: number]
@@ -204,8 +206,8 @@ const emit = defineEmits<{
   'update:token_weight': [itemId: number, weight: number | null]
 }>()
 
-console.log(" PROPS ITEM ",props.item)
-console.log(" USER VOTEEEEEEEEEEEEEEE ",props.userVote)
+console.log(' PROPS ITEM ', props.item)
+console.log(' USER VOTEEEEEEEEEEEEEEE ', props.userVote)
 
 function handleVote(value: SupportValue) {
   emit('vote', value)

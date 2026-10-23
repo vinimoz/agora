@@ -6,13 +6,12 @@
 // Experience Architecture Types - Single Source of Truth
 // ============================================================
 
-
 export interface HomeSection {
   key: string
   label: string
   order: number
   enabled?: boolean
-  zones: string[]   // keys in displayArchitecture
+  zones: string[] // keys in displayArchitecture
 }
 
 // ---------- Vocabulary: EXPERIENCE ----------
@@ -28,18 +27,18 @@ export const EXPERIENCE_VALUES = [
   'navigation',
   'classic',
 ] as const
-export type ExperienceKey = typeof EXPERIENCE_VALUES[number]
+export type ExperienceKey = (typeof EXPERIENCE_VALUES)[number]
 
 // ---------- Vocabulary: CONTEXT ----------
 export const CONTEXT_TYPE_VALUES = ['group', 'inquiry'] as const
-export type ContextTypeValue = typeof CONTEXT_TYPE_VALUES[number]
+export type ContextTypeValue = (typeof CONTEXT_TYPE_VALUES)[number]
 
 export const CONTEXT_SELECTION_VALUES = ['selected', 'current', 'all'] as const
-export type ContextSelectionValue = typeof CONTEXT_SELECTION_VALUES[number]
+export type ContextSelectionValue = (typeof CONTEXT_SELECTION_VALUES)[number]
 
 // ---------- Vocabulary: LAYOUT ----------
 export const LAYOUT_TYPE_VALUES = ['grid', 'flex', 'sidebar', 'split', 'full'] as const
-export type LayoutTypeValue = typeof LAYOUT_TYPE_VALUES[number]
+export type LayoutTypeValue = (typeof LAYOUT_TYPE_VALUES)[number]
 
 // ---------- Vocabulary: CONTENT ----------
 export const CONTENT_VALUES = [
@@ -51,15 +50,15 @@ export const CONTENT_VALUES = [
   'statistics',
   'activity',
   'hero',
-  'group_types',  
-  'news',          
- // 'services',
-  'events',   
-  'explore',    
-  'promo',        
-  'search',           
+  'group_types',
+  'news',
+  // 'services',
+  'events',
+  'explore',
+  'promo',
+  'search',
 ] as const
-export type ContentValue = typeof CONTENT_VALUES[number]
+export type ContentValue = (typeof CONTENT_VALUES)[number]
 
 // ---------- Vocabulary: SOURCE ----------
 export const SOURCE_VALUES = [
@@ -73,25 +72,24 @@ export const SOURCE_VALUES = [
   'municipal',
   'featured',
 ] as const
-export type SourceValue = typeof SOURCE_VALUES[number]
+export type SourceValue = (typeof SOURCE_VALUES)[number]
 
 export const VALID_SOURCES_BY_CONTENT: Record<ContentValue, SourceValue[]> = {
-  'inquiry_groups': ['children', 'selected_group', 'parent_group', 'group', 'all'],
-  'inquiries':      ['children', 'selected_group', 'group', 'all', 'featured'],
-  'options':        ['selected_inquiry'],
-  'resources':      ['selected_inquiry'],
-  'messages':       ['selected_inquiry'],
-  'statistics':     ['group', 'selected_group', 'selected_inquiry'],
-  'activity':       ['group', 'children', 'all'],
-  'hero':           ['all'],
-  'news':           ['municipal', 'all', 'featured'],
-  'group_types':    ['all', 'featured'],
-  'events':         ['all', 'featured'],
-  'explore':        ['all'],
-  'promo':          ['featured', 'all'],
-  'search':         ['all'],
+  inquiry_groups: ['children', 'selected_group', 'parent_group', 'group', 'all'],
+  inquiries: ['children', 'selected_group', 'group', 'all', 'featured'],
+  options: ['selected_inquiry'],
+  resources: ['selected_inquiry'],
+  messages: ['selected_inquiry'],
+  statistics: ['group', 'selected_group', 'selected_inquiry'],
+  activity: ['group', 'children', 'all'],
+  hero: ['all'],
+  news: ['municipal', 'all', 'featured'],
+  group_types: ['all', 'featured'],
+  events: ['all', 'featured'],
+  explore: ['all'],
+  promo: ['featured', 'all'],
+  search: ['all'],
 }
-
 
 // ---------- Vocabulary: DISPLAY ----------
 export const DISPLAY_TYPE_VALUES = [
@@ -106,49 +104,64 @@ export const DISPLAY_TYPE_VALUES = [
   'widget',
   'tool',
   'tiles',
-  'banner',        
-  'news_list',    
-  'quick_actions',    
-  'calendar',      
+  'banner',
+  'news_list',
+  'quick_actions',
+  'calendar',
   'category_grid',
-  'search_bar', 
+  'search_bar',
   'promo_card',
   'current_moment',
   'my_spaces',
-
 ] as const
-export type DisplayType = typeof DISPLAY_TYPE_VALUES[number]
-
+export type DisplayType = (typeof DISPLAY_TYPE_VALUES)[number]
 
 /** @deprecated alias kept for backwards compatibility – use `DisplayType`. */
 export type DisplayTypeValue = DisplayType
 
 export const VALID_DISPLAYS_BY_CONTENT: Record<ContentValue, DisplayType[]> = {
-  'inquiry_groups': ['list', 'cards', 'tree', 'navigation', 'my_spaces'],
-  'inquiries':      ['list', 'cards', 'book', 'tree', 'feed', 'timeline', 'kanban', 'tool', 'current_moment'],
-  'options':        ['tool'],
-  'resources':      ['list'],
-  'messages':       ['list', 'feed'],                    
-  'statistics':     ['widget', 'list', 'cards'],
-  'activity':       ['feed', 'list'],
-  'hero':           ['banner'],
-  'group_types':    ['tiles',  'list', 'my_spaces'],
-  'news':           ['news_list', 'list'],
-  'events':         ['calendar', 'list'],
-  'explore':        ['category_grid'],
-  'promo':          ['promo_card'],
-  'search':         ['search_bar'],
+  inquiry_groups: ['list', 'cards', 'tree', 'navigation', 'my_spaces'],
+  inquiries: [
+    'list',
+    'cards',
+    'book',
+    'tree',
+    'feed',
+    'timeline',
+    'kanban',
+    'tool',
+    'current_moment',
+  ],
+  options: ['tool'],
+  resources: ['list'],
+  messages: ['list', 'feed'],
+  statistics: ['widget', 'list', 'cards'],
+  activity: ['feed', 'list'],
+  hero: ['banner'],
+  group_types: ['tiles', 'list', 'my_spaces'],
+  news: ['news_list', 'list'],
+  events: ['calendar', 'list'],
+  explore: ['category_grid'],
+  promo: ['promo_card'],
+  search: ['search_bar'],
 }
 
 // ---------- Vocabulary: TOOL ----------
 export const INQUIRY_TOOLS = ['vote', 'timeline', 'kanban'] as const
-export type InquiryTool = typeof INQUIRY_TOOLS[number]
+export type InquiryTool = (typeof INQUIRY_TOOLS)[number]
 
-export const OPTION_TOOLS = ['vote', 'consensus', 'debate', 'timeline', 'kanban', 'structure'] as const
-export type OptionTool = typeof OPTION_TOOLS[number]
+export const OPTION_TOOLS = [
+  'vote',
+  'consensus',
+  'debate',
+  'timeline',
+  'kanban',
+  'structure',
+] as const
+export type OptionTool = (typeof OPTION_TOOLS)[number]
 
 export const MARKETPLACE_TOOLS = ['search', 'filter', 'compare'] as const
-export type MarketplaceTool = typeof MARKETPLACE_TOOLS[number]
+export type MarketplaceTool = (typeof MARKETPLACE_TOOLS)[number]
 
 export const ALL_TOOLS = [
   ...INQUIRY_TOOLS,
@@ -160,41 +173,51 @@ export const ALL_TOOLS = [
   'quorum',
   'support',
 ] as const
-export type ToolKey = typeof ALL_TOOLS[number]
+export type ToolKey = (typeof ALL_TOOLS)[number]
 /** @deprecated alias kept for backwards compatibility – use `ToolKey`. */
 export type ToolValue = ToolKey
 
 export const VALID_TOOLS_BY_CONTENT: Record<ContentValue, ToolKey[]> = {
-  'inquiry_groups': [],
-  'inquiries':      [
+  inquiry_groups: [],
+  inquiries: [
     ...INQUIRY_TOOLS,
-    'wiki', 'analytics', 'resources', 'quorum', 'support',
-    'search', 'filter', 'compare',                          // marketplace needs these
+    'wiki',
+    'analytics',
+    'resources',
+    'quorum',
+    'support',
+    'search',
+    'filter',
+    'compare', // marketplace needs these
   ],
-  'options':        [...OPTION_TOOLS, 'wiki', 'analytics', 'resources'],
-  'resources':      [],
-  'messages':       [],
-  'statistics':     [],
-  'activity':       [],
-  'hero':           [],
-  'news':           [],
-  'group_types':    [],
-  'events':         [],
-  'explore':        [],
-  'promo':          [],
-  'search':         ['search'],
+  options: [...OPTION_TOOLS, 'wiki', 'analytics', 'resources'],
+  resources: [],
+  messages: [],
+  statistics: [],
+  activity: [],
+  hero: [],
+  news: [],
+  group_types: [],
+  events: [],
+  explore: [],
+  promo: [],
+  search: ['search'],
 }
 
 // ---------- Vocabulary: INTERACTION ----------
 export const INTERACTION_ACTIONS = [
-  'select', 'open', 'navigate', 'vote', 'edit', 'comment', 'support',
+  'select',
+  'open',
+  'navigate',
+  'vote',
+  'edit',
+  'comment',
+  'support',
 ] as const
-export type InteractionAction = typeof INTERACTION_ACTIONS[number]
+export type InteractionAction = (typeof INTERACTION_ACTIONS)[number]
 //
-export const INTERACTION_TARGETS = [
-  'same_view', 'dialog', 'page', 'panel', 'modal',
-] as const
-export type InteractionTarget = typeof INTERACTION_TARGETS[number]
+export const INTERACTION_TARGETS = ['same_view', 'dialog', 'page', 'panel', 'modal'] as const
+export type InteractionTarget = (typeof INTERACTION_TARGETS)[number]
 
 // ============================================================
 // Re-usable filter & scope
@@ -230,10 +253,10 @@ export interface Scope {
 
 // ---------- Grid position ----------
 export interface GridPosition {
-  row: number          // 1-based
-  column: number       // 1-based
-  rowSpan?: number     // default 1
-  columnSpan?: number  // default 1
+  row: number // 1-based
+  column: number // 1-based
+  rowSpan?: number // default 1
+  columnSpan?: number // default 1
 }
 
 // ---------- Display Zone ----------
@@ -273,6 +296,14 @@ export interface DisplayZone {
       interactive?: boolean
       openMode?: 'page' | 'panel' | 'modal' | 'dialog' | 'none'
       cardsPerRow?: number
+      /** Restrict zone to options from these families */
+      families?: string[]
+      /** Presentation variant hint (e.g. 'chips', 'grid') */
+      variant?: string
+      /** Max items to render in the zone */
+      limit?: number
+      /** Hide the zone's toolbar / pagination controls */
+      hideControls?: boolean
     }
   }
 
@@ -297,6 +328,7 @@ export interface ExperienceArchitecture {
   defaultExperience?: ExperienceKey
   /** Default display mode for this experience */
   defaultDisplay?: DisplayType
+  defaultTool?: ToolKey
   /** Layout configuration */
   layout: {
     type: LayoutTypeValue
@@ -343,32 +375,38 @@ export interface ValidatedUIDefinition {
   experience: ExperienceKey
   context: { type: ContextTypeValue; selection: ContextSelectionValue }
   layout: { type: LayoutTypeValue; columns?: number; rows?: number; responsive?: boolean }
-  displayArchitecture: Record<string, {
-    content: ContentValue
-    scope: { source: SourceValue; filter?: ScopeFilter }
-    position: GridPosition
-    display: {
-      type: DisplayType
-      tool?: ToolKey
-      pagination?: 'infinite' | 'paged'
-      mode?: 'compact' | 'horizontal' | 'detailed' | 'summary'
-      cardsPerRow?: number
-      options?: DisplayZone['display']['options']
+  displayArchitecture: Record<
+    string,
+    {
+      content: ContentValue
+      scope: { source: SourceValue; filter?: ScopeFilter }
+      position: GridPosition
+      display: {
+        type: DisplayType
+        tool?: ToolKey
+        pagination?: 'infinite' | 'paged'
+        mode?: 'compact' | 'horizontal' | 'detailed' | 'summary'
+        cardsPerRow?: number
+        options?: DisplayZone['display']['options']
+      }
+      interaction?: { action: InteractionAction; target: InteractionTarget }
     }
-    interaction?: { action: InteractionAction; target: InteractionTarget }
-  }>
+  >
 }
 
-export function validateUIDefinition(
-  ui: Partial<ValidatedUIDefinition>,
-): { valid: boolean; errors: string[] } {
+export function validateUIDefinition(ui: Partial<ValidatedUIDefinition>): {
+  valid: boolean
+  errors: string[]
+} {
   const errors: string[] = []
 
   // Experience
   if (!ui.experience) {
     errors.push('experience is required')
   } else if (!EXPERIENCE_VALUES.includes(ui.experience as ExperienceKey)) {
-    errors.push(`invalid experience: ${ui.experience}. Must be one of: ${EXPERIENCE_VALUES.join(', ')}`)
+    errors.push(
+      `invalid experience: ${ui.experience}. Must be one of: ${EXPERIENCE_VALUES.join(', ')}`
+    )
   }
 
   // Context
@@ -376,10 +414,17 @@ export function validateUIDefinition(
     errors.push('context is required')
   } else {
     if (!ui.context.type || !CONTEXT_TYPE_VALUES.includes(ui.context.type as ContextTypeValue)) {
-      errors.push(`invalid context.type: ${ui.context.type}. Must be one of: ${CONTEXT_TYPE_VALUES.join(', ')}`)
+      errors.push(
+        `invalid context.type: ${ui.context.type}. Must be one of: ${CONTEXT_TYPE_VALUES.join(', ')}`
+      )
     }
-    if (!ui.context.selection || !CONTEXT_SELECTION_VALUES.includes(ui.context.selection as ContextSelectionValue)) {
-      errors.push(`invalid context.selection: ${ui.context.selection}. Must be one of: ${CONTEXT_SELECTION_VALUES.join(', ')}`)
+    if (
+      !ui.context.selection ||
+      !CONTEXT_SELECTION_VALUES.includes(ui.context.selection as ContextSelectionValue)
+    ) {
+      errors.push(
+        `invalid context.selection: ${ui.context.selection}. Must be one of: ${CONTEXT_SELECTION_VALUES.join(', ')}`
+      )
     }
   }
 
@@ -388,7 +433,9 @@ export function validateUIDefinition(
     errors.push('layout is required')
   } else {
     if (!ui.layout.type || !LAYOUT_TYPE_VALUES.includes(ui.layout.type as LayoutTypeValue)) {
-      errors.push(`invalid layout.type: ${ui.layout.type}. Must be one of: ${LAYOUT_TYPE_VALUES.join(', ')}`)
+      errors.push(
+        `invalid layout.type: ${ui.layout.type}. Must be one of: ${LAYOUT_TYPE_VALUES.join(', ')}`
+      )
     }
     if (ui.layout.type === 'grid') {
       if (!ui.layout.columns || ui.layout.columns < 1) {
@@ -410,17 +457,23 @@ export function validateUIDefinition(
     for (const [zoneKey, zone] of Object.entries(ui.displayArchitecture)) {
       // content
       if (!zone.content || !CONTENT_VALUES.includes(zone.content as ContentValue)) {
-        errors.push(`invalid content in ${zoneKey}: ${zone.content}. Must be one of: ${CONTENT_VALUES.join(', ')}`)
+        errors.push(
+          `invalid content in ${zoneKey}: ${zone.content}. Must be one of: ${CONTENT_VALUES.join(', ')}`
+        )
       }
 
       // scope.source
       if (zone.scope) {
         if (!zone.scope.source || !SOURCE_VALUES.includes(zone.scope.source as SourceValue)) {
-          errors.push(`invalid scope.source in ${zoneKey}: ${zone.scope.source}. Must be one of: ${SOURCE_VALUES.join(', ')}`)
+          errors.push(
+            `invalid scope.source in ${zoneKey}: ${zone.scope.source}. Must be one of: ${SOURCE_VALUES.join(', ')}`
+          )
         }
         const validSources = VALID_SOURCES_BY_CONTENT[zone.content as ContentValue]
         if (validSources && !validSources.includes(zone.scope.source as SourceValue)) {
-          errors.push(`invalid source '${zone.scope.source}' for content '${zone.content}' in ${zoneKey}. Allowed: ${validSources.join(', ')}`)
+          errors.push(
+            `invalid source '${zone.scope.source}' for content '${zone.content}' in ${zoneKey}. Allowed: ${validSources.join(', ')}`
+          )
         }
       }
 
@@ -430,25 +483,36 @@ export function validateUIDefinition(
       } else {
         const p = zone.position
         if (!p.row || p.row < 1) errors.push(`position.row must be >= 1 for zone ${zoneKey}`)
-        if (!p.column || p.column < 1) errors.push(`position.column must be >= 1 for zone ${zoneKey}`)
+        if (!p.column || p.column < 1)
+          errors.push(`position.column must be >= 1 for zone ${zoneKey}`)
         if (ui.layout?.type === 'grid') {
           const rowSpan = p.rowSpan || 1
           const colSpan = p.columnSpan || 1
-          if (p.row > rows) errors.push(`position.row (${p.row}) exceeds layout.rows (${rows}) for zone ${zoneKey}`)
-          if (p.column > cols) errors.push(`position.column (${p.column}) exceeds layout.columns (${cols}) for zone ${zoneKey}`)
-          if (p.row + rowSpan - 1 > rows) errors.push(`position.row + rowSpan exceeds layout.rows for zone ${zoneKey}`)
-          if (p.column + colSpan - 1 > cols) errors.push(`position.column + columnSpan exceeds layout.columns for zone ${zoneKey}`)
+          if (p.row > rows)
+            errors.push(`position.row (${p.row}) exceeds layout.rows (${rows}) for zone ${zoneKey}`)
+          if (p.column > cols)
+            errors.push(
+              `position.column (${p.column}) exceeds layout.columns (${cols}) for zone ${zoneKey}`
+            )
+          if (p.row + rowSpan - 1 > rows)
+            errors.push(`position.row + rowSpan exceeds layout.rows for zone ${zoneKey}`)
+          if (p.column + colSpan - 1 > cols)
+            errors.push(`position.column + columnSpan exceeds layout.columns for zone ${zoneKey}`)
         }
       }
 
       // display.type
       if (zone.display) {
         if (!zone.display.type || !DISPLAY_TYPE_VALUES.includes(zone.display.type as DisplayType)) {
-          errors.push(`invalid display.type in ${zoneKey}: ${zone.display.type}. Must be one of: ${DISPLAY_TYPE_VALUES.join(', ')}`)
+          errors.push(
+            `invalid display.type in ${zoneKey}: ${zone.display.type}. Must be one of: ${DISPLAY_TYPE_VALUES.join(', ')}`
+          )
         }
         const validDisplays = VALID_DISPLAYS_BY_CONTENT[zone.content as ContentValue]
         if (validDisplays && !validDisplays.includes(zone.display.type as DisplayType)) {
-          errors.push(`invalid display.type '${zone.display.type}' for content '${zone.content}' in ${zoneKey}. Allowed: ${validDisplays.join(', ')}`)
+          errors.push(
+            `invalid display.type '${zone.display.type}' for content '${zone.content}' in ${zoneKey}. Allowed: ${validDisplays.join(', ')}`
+          )
         }
         if (zone.display.type === 'tool') {
           if (!zone.display.tool) {
@@ -456,7 +520,9 @@ export function validateUIDefinition(
           } else {
             const validTools = VALID_TOOLS_BY_CONTENT[zone.content as ContentValue]
             if (validTools && !validTools.includes(zone.display.tool as ToolKey)) {
-              errors.push(`invalid tool '${zone.display.tool}' for content '${zone.content}' in ${zoneKey}. Allowed: ${validTools.join(', ')}`)
+              errors.push(
+                `invalid tool '${zone.display.tool}' for content '${zone.content}' in ${zoneKey}. Allowed: ${validTools.join(', ')}`
+              )
             }
           }
         }
@@ -464,11 +530,21 @@ export function validateUIDefinition(
 
       // interaction
       if (zone.interaction) {
-        if (zone.interaction.action && !INTERACTION_ACTIONS.includes(zone.interaction.action as InteractionAction)) {
-          errors.push(`invalid interaction.action in ${zoneKey}: ${zone.interaction.action}. Must be one of: ${INTERACTION_ACTIONS.join(', ')}`)
+        if (
+          zone.interaction.action &&
+          !INTERACTION_ACTIONS.includes(zone.interaction.action as InteractionAction)
+        ) {
+          errors.push(
+            `invalid interaction.action in ${zoneKey}: ${zone.interaction.action}. Must be one of: ${INTERACTION_ACTIONS.join(', ')}`
+          )
         }
-        if (zone.interaction.target && !INTERACTION_TARGETS.includes(zone.interaction.target as InteractionTarget)) {
-          errors.push(`invalid interaction.target in ${zoneKey}: ${zone.interaction.target}. Must be one of: ${INTERACTION_TARGETS.join(', ')}`)
+        if (
+          zone.interaction.target &&
+          !INTERACTION_TARGETS.includes(zone.interaction.target as InteractionTarget)
+        ) {
+          errors.push(
+            `invalid interaction.target in ${zoneKey}: ${zone.interaction.target}. Must be one of: ${INTERACTION_TARGETS.join(', ')}`
+          )
         }
       }
     }

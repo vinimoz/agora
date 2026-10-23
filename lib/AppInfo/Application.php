@@ -245,6 +245,7 @@ class Application extends App implements IBootstrap
                     $c->get(IGroupManager::class),
                     $c->get(GroupRelationMapper::class),
                     $c->get(UserRelationMapper::class),
+                    $c->get(ParticipationMapper::class),
                     $c->get(LoggerInterface::class),
                 );
             }

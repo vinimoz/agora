@@ -13,11 +13,11 @@ import { SentResults } from '../Api/modules/shares.ts'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
 import { useInquiryGroupStore } from './inquiryGroup.ts'
 import type {
-	Share,
-	Shares,
-	ShareType,
-	SharePurpose,
-	PublicInquiryEmailConditions,
+  Share,
+  Shares,
+  ShareType,
+  SharePurpose,
+  PublicInquiryEmailConditions,
 } from '../Types/index.ts'
 
 export type { Share, Shares, ShareType, SharePurpose, PublicInquiryEmailConditions }
@@ -63,60 +63,59 @@ export const useSharesStore = defineStore('shares', {
   },
 
   actions: {
+    async load(purpose: SharePurpose = 'inquiry'): Promise<void> {
+      let inquiryOrInquiryGroupId: number = 0
 
-async load(purpose: SharePurpose = 'inquiry'): Promise<void> {
-  let inquiryOrInquiryGroupId: number = 0
+      if (purpose === 'inquiryGroup') {
+        const inquiryGroupStore = useInquiryGroupStore()
+        Logger.info('Loading group shares')
 
-  if (purpose === 'inquiryGroup') {
-    const inquiryGroupStore = useInquiryGroupStore()
-    Logger.info('Loading group shares')
+        // Fixed: was `!inquiryGroupStore.id === 0` (always false)
+        if (inquiryGroupStore.id === 0) {
+          throw new Error('Current group is not set')
+        }
+        inquiryOrInquiryGroupId = inquiryGroupStore.id
+      } else {
+        Logger.info('Loading inquiry shares')
+        const sessionStore = useSessionStore()
+        inquiryOrInquiryGroupId = sessionStore.currentInquiryId
+      }
 
-    // Fixed: was `!inquiryGroupStore.id === 0` (always false)
-    if (inquiryGroupStore.id === 0) {
-      throw new Error('Current group is not set')
-    }
-    inquiryOrInquiryGroupId = inquiryGroupStore.id
-  } else {
-    Logger.info('Loading inquiry shares')
-    const sessionStore = useSessionStore()
-    inquiryOrInquiryGroupId = sessionStore.currentInquiryId
-  }
+      try {
+        const response = await SharesAPI.getShares(inquiryOrInquiryGroupId, purpose)
+        this.shares = response.data.shares
+      } catch (error) {
+        this.handleError(error, 'Error loading shares', { inquiryId: inquiryOrInquiryGroupId })
+      }
+    },
 
-  try {
-    const response = await SharesAPI.getShares(inquiryOrInquiryGroupId, purpose)
-    this.shares = response.data.shares
-  } catch (error) {
-    this.handleError(error, 'Error loading shares', { inquiryId: inquiryOrInquiryGroupId })
-  }
-},
+    async add(user: User, purpose: SharePurpose = 'inquiry'): Promise<void> {
+      let inquiryOrInquiryGroupId: number = 0
 
-async add(user: User, purpose: SharePurpose = 'inquiry'): Promise<void> {
-  let inquiryOrInquiryGroupId: number = 0
+      if (purpose === 'inquiryGroup') {
+        // Fixed: was `useInquiryGroupsStore()` (plural store has no `id`)
+        const inquiryGroupStore = useInquiryGroupStore()
 
-  if (purpose === 'inquiryGroup') {
-    // Fixed: was `useInquiryGroupsStore()` (plural store has no `id`)
-    const inquiryGroupStore = useInquiryGroupStore()
+        if (inquiryGroupStore.id === 0) {
+          throw new Error('Current group is not set')
+        }
+        inquiryOrInquiryGroupId = inquiryGroupStore.id
+      } else {
+        const sessionStore = useSessionStore()
+        inquiryOrInquiryGroupId = sessionStore.currentInquiryId
+      }
 
-    if (inquiryGroupStore.id === 0) {
-      throw new Error('Current group is not set')
-    }
-    inquiryOrInquiryGroupId = inquiryGroupStore.id
-  } else {
-    const sessionStore = useSessionStore()
-    inquiryOrInquiryGroupId = sessionStore.currentInquiryId
-  }
-
-  try {
-    const response = await SharesAPI.addUserShare(inquiryOrInquiryGroupId, user, purpose)
-    this.shares.push(response.data.share)
-  } catch (error) {
-    this.handleError(error, 'Error adding user share', {
-      purpose,
-      id: inquiryOrInquiryGroupId,
-      payload: user,
-    })
-  }
-},
+      try {
+        const response = await SharesAPI.addUserShare(inquiryOrInquiryGroupId, user, purpose)
+        this.shares.push(response.data.share)
+      } catch (error) {
+        this.handleError(error, 'Error adding user share', {
+          purpose,
+          id: inquiryOrInquiryGroupId,
+          payload: user,
+        })
+      }
+    },
 
     async addPublicShare(): Promise<void> {
       const sessionStore = useSessionStore()

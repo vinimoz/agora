@@ -4,9 +4,19 @@
 -->
 <template>
   <div class="vote-input-ranking">
-    <select v-model="localRank" class="rank-select" @change="handleChange">
-      <option :value="null">{{ t('agora', 'Not ranked') }}</option>
-      <option v-for="i in maxRank" :key="i" :value="i">
+    <select
+      v-model="localRank"
+      class="rank-select"
+      @change="handleChange"
+    >
+      <option :value="null">
+        {{ t('agora', 'Not ranked') }}
+      </option>
+      <option
+        v-for="i in maxRank"
+        :key="i"
+        :value="i"
+      >
         {{ t('agora', 'Rank {n}', { n: i }) }}
       </option>
     </select>
@@ -16,7 +26,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
-import type { Option, Inquiry } from '../../Types/index'
+import type { Option, Inquiry } from '../../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
@@ -34,14 +44,14 @@ const maxRank = computed(() => {
 })
 
 const emit = defineEmits<{
-  'changeRank': [rank: number | null]
+  changeRank: [rank: number | null]
 }>()
 
 const localRank = computed({
   get: () => props.rank ?? null,
   set: (value) => {
     emit('changeRank', value)
-  }
+  },
 })
 
 function handleChange(event: Event) {

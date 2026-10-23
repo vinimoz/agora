@@ -8,16 +8,11 @@ import { UserSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 
-export type ViewMode =
-  | 'table-view'
-  | 'list-view'
-  | 'reel-view'
-  | 'feed'
-  | 'timeline'
+export type ViewMode = 'table-view' | 'list-view' | 'reel-view' | 'feed' | 'timeline'
 
 export type UserPreferences = {
   defaultViewInquiry: ViewMode
-  defaultDisplayMode?: string   // ← added
+  defaultDisplayMode?: string // ← added
   inquiryCombo: number[]
   relevantOffset: number
   useNewInquiryDialogInNavigation: boolean
@@ -47,7 +42,7 @@ export const usePreferencesStore = defineStore('preferences', {
       useCommentsAlternativeStyling: false,
       useAlternativeStyling: false,
       verboseInquiriesList: false,
-      defaultDisplayMode: 'view'
+      defaultDisplayMode: 'view',
     },
     session: {
       manualViewInquiry: '',
@@ -75,7 +70,6 @@ export const usePreferencesStore = defineStore('preferences', {
   },
 
   actions: {
-
     setViewInquiry(viewMode: ViewMode) {
       this.session.manualViewInquiry = viewMode
     },
@@ -110,12 +104,11 @@ export const usePreferencesStore = defineStore('preferences', {
     },
 
     async setUserPreference<K extends keyof UserPreferences>(
-  key: K,
-  value: UserPreferences[K],
-): Promise<void> {
-  this.user[key] = value
-  await this.write()
-},
-
+      key: K,
+      value: UserPreferences[K]
+    ): Promise<void> {
+      this.user[key] = value
+      await this.write()
+    },
   },
 })

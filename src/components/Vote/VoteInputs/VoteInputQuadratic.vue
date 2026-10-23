@@ -21,8 +21,15 @@
         <Plus :size="14" />
       </NcButton>
     </div>
-    <div v-if="currentValue !== null && currentValue > 0" class="cost-info">
-      <NcProgressBar :value="costPercentage" size="small" class="cost-progress" />
+    <div
+      v-if="currentValue !== null && currentValue > 0"
+      class="cost-info"
+    >
+      <NcProgressBar
+        :value="costPercentage"
+        size="small"
+        class="cost-progress"
+      />
       <span class="cost-value">{{ currentCost }}</span>
       <span class="credits-label">{{ t('agora', 'credits') }}</span>
     </div>
@@ -43,7 +50,7 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import { Plus, Minus, X } from 'lucide-vue-next'
-import type {  Item } from '../../Types/index'
+import type { Item } from '../../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>

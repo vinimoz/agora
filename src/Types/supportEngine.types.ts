@@ -7,10 +7,10 @@ import type { Phase } from './votingType'
 import type { SupportEngine } from './support.types'
 
 export interface CreateEngineRequest {
-  engine: string  
-  purpose: string       
-  title: string         
-  description: string          
+  engine: string
+  purpose: string
+  title: string
+  description: string
   inquiry_group_id: number
   inquiry_id: number
   status: 'draft' | 'active' | 'closed'

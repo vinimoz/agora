@@ -25,12 +25,7 @@ import {
   getFamilyIconName,
 } from '../helpers/modules/InquiryOptionHelper.ts'
 
-import type {
-	OptionGroup,
-	OptionsByFamily,
-	OptionsState,
-} from '@/Types'
-
+import type { OptionGroup, OptionsByFamily, OptionsState } from '@/Types'
 
 export const useOptionsStore = defineStore('options', {
   state: (): OptionsState => ({
@@ -44,7 +39,6 @@ export const useOptionsStore = defineStore('options', {
   }),
 
   getters: {
-
     // Get all options for current inquiry
     allOptions(): Option[] {
       return this.options
@@ -76,13 +70,13 @@ export const useOptionsStore = defineStore('options', {
 
       // Add families from settings
       familiesFromSettings.forEach((family: OptionFamily) => {
-	const familyKey = family.family_type || 'default'
+        const familyKey = family.family_type || 'default'
         familiesMap[familyKey] = {
           key: family.family_type,
           name: family.label || family.family_type,
           label: family.label,
           description: family.description || '',
-	color: getFamilyColor(family.family_type || 'default'),
+          color: getFamilyColor(family.family_type || 'default'),
           icon: family.icon || 'File',
           sortOrder: family.sort_order || 999,
           types: [],
@@ -333,664 +327,663 @@ export const useOptionsStore = defineStore('options', {
     },
 
     removeOption(optionId: number): void {
-	    this.options = this.options.filter((opt) => opt.id !== optionId)
-	    this.organizeByFamily()
+      this.options = this.options.filter((opt) => opt.id !== optionId)
+      this.organizeByFamily()
     },
 
     forceUpdateCommentCount(optionId?: number) {
-	    const commentsStore = useCommentsStore()
+      const commentsStore = useCommentsStore()
 
-	    // If optionId is provided, update just that option
-	    if (optionId) {
-		    const option = this.options.find((opt) => opt.id === optionId)
-		    if (option && option.status) {
-			    const count = commentsStore.comments.filter(
-				    (comment) =>
-				    comment.inquiryId === option.targetId &&
-					    comment.optionId === option.id &&
-					    comment.deleted === 0
-			    ).length
-			    option.status.countComments = count
-		    }
-	    } else {
-		    // Otherwise update all options
-		    this.options.forEach((option) => {
-			    if (option.status) {
-				    const count = commentsStore.comments.filter(
-					    (comment) =>
-					    comment.inquiryId === option.targetId &&
-						    comment.optionId === option.id &&
-						    comment.deleted === 0
-				    ).length
-				    option.status.countComments = count
-			    }
-		    })
-	    }
+      // If optionId is provided, update just that option
+      if (optionId) {
+        const option = this.options.find((opt) => opt.id === optionId)
+        if (option && option.status) {
+          const count = commentsStore.comments.filter(
+            (comment) =>
+              comment.inquiryId === option.targetId &&
+              comment.optionId === option.id &&
+              comment.deleted === 0
+          ).length
+          option.status.countComments = count
+        }
+      } else {
+        // Otherwise update all options
+        this.options.forEach((option) => {
+          if (option.status) {
+            const count = commentsStore.comments.filter(
+              (comment) =>
+                comment.inquiryId === option.targetId &&
+                comment.optionId === option.id &&
+                comment.deleted === 0
+            ).length
+            option.status.countComments = count
+          }
+        })
+      }
     },
 
     // Initialize option types from session store
     initializeOptionTypes(): void {
-	    this.families = this.getFamilies
+      this.families = this.getFamilies
 
-	    // Initialize empty arrays for each family
-	    this.families.forEach((family) => {
-		    if (!this.optionsByFamily[family.key]) {
-			    this.optionsByFamily[family.key] = []
-		    }
-	    })
+      // Initialize empty arrays for each family
+      this.families.forEach((family) => {
+        if (!this.optionsByFamily[family.key]) {
+          this.optionsByFamily[family.key] = []
+        }
+      })
     },
     async setOptionStatus(optionId?: number, optionStatus: string): Promise<void> {
-	    try {
-		    if (optionId) {
-			    await OptionsAPI.setOptionStatus(optionId, optionStatus)
-			    this.updateOptionStatus(optionId, optionStatus)
-		    }
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error setting option status:', {
-			    error,
-			    state: this.$state,
-		    })
-		    throw error
-	    }
+      try {
+        if (optionId) {
+          await OptionsAPI.setOptionStatus(optionId, optionStatus)
+          this.updateOptionStatus(optionId, optionStatus)
+        }
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error setting option status:', {
+          error,
+          state: this.$state,
+        })
+        throw error
+      }
     },
 
     async refreshOptionStatus(optionId: number) {
-	    const response = await OptionsAPI.getInquiry(optionId)
-	    const idx = this.inquiries.findIndex((i) => i.id === optionId)
-	    if (idx !== -1) {
-		    // update relevant fields
-		    this.options[idx].status.countSupports = response.data.status.countSupports
-		    this.options[idx].status.supportResult = response.data.status.supportResult
-	    }
+      const response = await OptionsAPI.getInquiry(optionId)
+      const idx = this.inquiries.findIndex((i) => i.id === optionId)
+      if (idx !== -1) {
+        // update relevant fields
+        this.options[idx].status.countSupports = response.data.status.countSupports
+        this.options[idx].status.supportResult = response.data.status.supportResult
+      }
     },
 
     // Load all options for current inquiry
     async load(inquiryId?: number, token?: string): Promise<void> {
-	    const inquiryStore = useInquiryStore()
-	    const sessionStore = useSessionStore()
-	    const targetId = inquiryId || inquiryStore.id
+      const inquiryStore = useInquiryStore()
+      const sessionStore = useSessionStore()
+      const targetId = inquiryId || inquiryStore.id
 
-	    if (!targetId && !token) {
-		    this.error = t('agora', 'No inquiry selected')
-		    return
-	    }
+      if (!targetId && !token) {
+        this.error = t('agora', 'No inquiry selected')
+        return
+      }
 
-	    this.loading = true
-	    this.error = null
+      this.loading = true
+      this.error = null
 
-	    try {
-		    // Initialize option types first
-		    this.initializeOptionTypes()
+      try {
+        // Initialize option types first
+        this.initializeOptionTypes()
 
-		    // Load options - handle both authenticated and public routes
-		    const response = await (() => {
-			    if (token || sessionStore.route?.name === 'publicInquiry') {
-				    const publicToken = token || (sessionStore.route?.params?.token as string)
-				    return PublicAPI.getOptions(publicToken)
-			    }
-			    return OptionsAPI.getOptionsByInquiry(targetId)
-		    })()
+        // Load options - handle both authenticated and public routes
+        const response = await (() => {
+          if (token || sessionStore.route?.name === 'publicInquiry') {
+            const publicToken = token || (sessionStore.route?.params?.token as string)
+            return PublicAPI.getOptions(publicToken)
+          }
+          return OptionsAPI.getOptionsByInquiry(targetId)
+        })()
 
-		    this.options = response.data.options || []
-		    this.lastUpdated = Date.now()
+        this.options = response.data.options || []
+        this.lastUpdated = Date.now()
 
-		    // Organize options by family
-		    this.organizeByFamily()
+        // Organize options by family
+        this.organizeByFamily()
 
-		    emit(Event.OptionsLoaded, {
-			    store: 'options',
-			    message: t('agora', 'Options loaded'),
-			    count: this.options.length,
-		    })
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    this.error = t('agora', 'Failed to load options')
-		    Logger.error('Error loading options:', { error, inquiryId: targetId, token })
-		    throw error
-	    } finally {
-		    this.loading = false
-	    }
+        emit(Event.OptionsLoaded, {
+          store: 'options',
+          message: t('agora', 'Options loaded'),
+          count: this.options.length,
+        })
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        this.error = t('agora', 'Failed to load options')
+        Logger.error('Error loading options:', { error, inquiryId: targetId, token })
+        throw error
+      } finally {
+        this.loading = false
+      }
     },
 
     updateOptionCommentCount(optionId: number, count: number): void {
-	    const option = this.options.find((opt) => opt.id === optionId)
-	    if (option && option.status) {
-		    option.status.countComments = count
-	    }
+      const option = this.options.find((opt) => opt.id === optionId)
+      if (option && option.status) {
+        option.status.countComments = count
+      }
     },
 
     updateOptionStatus(optionId: number, status: string): void {
-	    const option = this.options.find((opt) => opt.id === optionId)
-	    if (option && option.status) {
-		    option.status.optionStatus = status
-	    }
+      const option = this.options.find((opt) => opt.id === optionId)
+      if (option && option.status) {
+        option.status.optionStatus = status
+      }
     },
 
     updateOptionSupportCount(optionId: number, count: number): void {
-	    const option = this.options.find((opt) => opt.id === optionId)
-	    if (option && option.status) {
-		    option.status.countSupports = count
-	    }
+      const option = this.options.find((opt) => opt.id === optionId)
+      if (option && option.status) {
+        option.status.countSupports = count
+      }
     },
 
     // Optional: Update all support-related counts at once
     updateOptionSupportDetails(
-	    optionId: number,
-	    supportData: {
-		    countSupports: number
-		    hasSupported?: boolean
-		    supportValue?: number | null
-	    }
+      optionId: number,
+      supportData: {
+        countSupports: number
+        hasSupported?: boolean
+        supportValue?: number | null
+      }
     ): void {
-	    const option = this.options.find((opt) => opt.id === optionId)
-	    if (option) {
-		    if (option.status) {
-			    option.status.countSupports = supportData.countSupports
-		    }
+      const option = this.options.find((opt) => opt.id === optionId)
+      if (option) {
+        if (option.status) {
+          option.status.countSupports = supportData.countSupports
+        }
 
-		    // Update current user's support status if provided
-		    if (option.currentUserStatus) {
-			    if (supportData.hasSupported !== undefined) {
-				    option.currentUserStatus.hasSupported = supportData.hasSupported
-			    }
-			    if (supportData.supportValue !== undefined) {
-				    option.currentUserStatus.supportValue = supportData.supportValue
-			    }
-		    }
-	    }
+        // Update current user's support status if provided
+        if (option.currentUserStatus) {
+          if (supportData.hasSupported !== undefined) {
+            option.currentUserStatus.hasSupported = supportData.hasSupported
+          }
+          if (supportData.supportValue !== undefined) {
+            option.currentUserStatus.supportValue = supportData.supportValue
+          }
+        }
+      }
     },
 
     // Organize options by family based on type definitions
     organizeByFamily(): void {
-	    // Clear existing groups
-	    this.optionsByFamily = {}
-	    this.groups = []
+      // Clear existing groups
+      this.optionsByFamily = {}
+      this.groups = []
 
-	    // Initialize families
-	    this.families.forEach((family) => {
-		    this.optionsByFamily[family.key] = []
-	    })
+      // Initialize families
+      this.families.forEach((family) => {
+        this.optionsByFamily[family.key] = []
+      })
 
-	    // Group options by family
-	    this.options.forEach((option) => {
-		    const typeInfo = this.getOptionTypeInfo(option.type)
-		    if (typeInfo) {
-			    const familyKey = typeInfo.family
-			    if (!this.optionsByFamily[familyKey]) {
-				    this.optionsByFamily[familyKey] = []
-			    }
-			    this.optionsByFamily[familyKey].push(option)
-		    } else {
-			    if (!this.optionsByFamily.other) {
-				    this.optionsByFamily.other = []
-			    }
-			    this.optionsByFamily.other.push(option)
-		    }
-	    })
+      // Group options by family
+      this.options.forEach((option) => {
+        const typeInfo = this.getOptionTypeInfo(option.type)
+        if (typeInfo) {
+          const familyKey = typeInfo.family
+          if (!this.optionsByFamily[familyKey]) {
+            this.optionsByFamily[familyKey] = []
+          }
+          this.optionsByFamily[familyKey].push(option)
+        } else {
+          if (!this.optionsByFamily.other) {
+            this.optionsByFamily.other = []
+          }
+          this.optionsByFamily.other.push(option)
+        }
+      })
 
-	    // Create option groups for each type within families
-	    this.createOptionGroups()
+      // Create option groups for each type within families
+      this.createOptionGroups()
     },
 
     // Create option groups based on types
     createOptionGroups(): void {
-	    const groups: OptionGroup[] = []
-	    const familiesWithTypes = this.getFamiliesWithTypes
+      const groups: OptionGroup[] = []
+      const familiesWithTypes = this.getFamiliesWithTypes
 
-	    familiesWithTypes.forEach((family) => {
-		    family.types.forEach((type) => {
-			    const typeOptions = this.options.filter((option) => option.type === type.key)
-			    if (typeOptions.length > 0) {
-				    groups.push({
-					    id: type.sortOrder || 0,
-					    name: type.name || type.label || type.key,
-					    description: type.description || '',
-					    family: family.key,
-					    color: type.color || family.color,
-					    icon: type.icon || family.icon,
-					    options: typeOptions,
-				    })
-			    }
-		    })
-	    })
+      familiesWithTypes.forEach((family) => {
+        family.types.forEach((type) => {
+          const typeOptions = this.options.filter((option) => option.type === type.key)
+          if (typeOptions.length > 0) {
+            groups.push({
+              id: type.sortOrder || 0,
+              name: type.name || type.label || type.key,
+              description: type.description || '',
+              family: family.key,
+              color: type.color || family.color,
+              icon: type.icon || family.icon,
+              options: typeOptions,
+            })
+          }
+        })
+      })
 
-	    // Add "Other" group for options without valid type
-	    const otherOptions = this.options.filter((option) => {
-		    const typeInfo = this.getOptionTypeInfo(option.type)
-		    return !typeInfo
-	    })
+      // Add "Other" group for options without valid type
+      const otherOptions = this.options.filter((option) => {
+        const typeInfo = this.getOptionTypeInfo(option.type)
+        return !typeInfo
+      })
 
-	    if (otherOptions.length > 0) {
-		    groups.push({
-			    id: 999,
-			    name: t('agora', 'Other options'),
-			    description: t('agora', 'Options without type classification'),
-			    family: 'other',
-			    color: '#999999',
-			    icon: 'icon-category-other',
-			    options: otherOptions,
-		    })
-	    }
+      if (otherOptions.length > 0) {
+        groups.push({
+          id: 999,
+          name: t('agora', 'Other options'),
+          description: t('agora', 'Options without type classification'),
+          family: 'other',
+          color: '#999999',
+          icon: 'icon-category-other',
+          options: otherOptions,
+        })
+      }
 
-	    // Sort groups by sort order
-	    this.groups = groups.sort((a, b) => a.id - b.id)
+      // Sort groups by sort order
+      this.groups = groups.sort((a, b) => a.id - b.id)
     },
 
     // Update a single option in the store
     updateOption(payload: { option: Option }): void {
-	    const index = this.options.findIndex((option) => option.id === payload.option.id)
+      const index = this.options.findIndex((option) => option.id === payload.option.id)
 
-	    if (index < 0) {
-		    this.options.push(payload.option)
-	    } else {
-		    this.options.splice(index, 1, payload.option)
-	    }
+      if (index < 0) {
+        this.options.push(payload.option)
+      } else {
+        this.options.splice(index, 1, payload.option)
+      }
 
-	    // Reorganize after update
-	    this.organizeByFamily()
+      // Reorganize after update
+      this.organizeByFamily()
     },
 
     // Add a new option with type validation
     async add(payload: {
-	    title: string
-	    text: string
-	    type: string
-	    parentId?: number
-	    miscFields?: Record<string, { key: string; value: string }>
+      title: string
+      text: string
+      type: string
+      parentId?: number
+      miscFields?: Record<string, { key: string; value: string }>
     }): Promise<Option | void> {
-	    const inquiryStore = useInquiryStore()
-	    const sessionStore = useSessionStore()
+      const inquiryStore = useInquiryStore()
+      const sessionStore = useSessionStore()
 
-	    if (!this.canAddOptions) {
-		    showError(t('agora', 'You do not have permission to add options'))
-		    return
-	    }
+      if (!this.canAddOptions) {
+        showError(t('agora', 'You do not have permission to add options'))
+        return
+      }
 
-	    const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[payload.type]
-	    if (!typeInfo) {
-		    showError(t('agora', 'Invalid option type'))
-		    return
-	    }
+      const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[payload.type]
+      if (!typeInfo) {
+        showError(t('agora', 'Invalid option type'))
+        return
+      }
 
-	    if (payload.parentId) {
-		    const parentOption = this.options.find((opt) => opt.id === payload.parentId)
-		    if (parentOption) {
-			    const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[parentOption.type]
-			    if (
-				    parentTypeInfo?.allowed_child_types &&
-				    !parentTypeInfo.allowed_child_types.includes(payload.type)
-			    ) {
-				    showError(
-					    t('agora', 'This option type cannot be added as a child to the selected parent')
-				    )
-				    return
-			    }
-		    }
-	    }
+      if (payload.parentId) {
+        const parentOption = this.options.find((opt) => opt.id === payload.parentId)
+        if (parentOption) {
+          const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[parentOption.type]
+          if (
+            parentTypeInfo?.allowed_child_types &&
+            !parentTypeInfo.allowed_child_types.includes(payload.type)
+          ) {
+            showError(
+              t('agora', 'This option type cannot be added as a child to the selected parent')
+            )
+            return
+          }
+        }
+      }
 
-	    try {
-		    const response = await (() => {
-			    if (sessionStore.route?.name === 'publicInquiry') {
-				    const token = sessionStore.route.params.token as string
-				    return PublicAPI.createOption(token, {
-					    title: payload.title,
-					    text: payload.text,
-					    type: payload.type,
-					    parentId: payload.parentId || 0,
-					    miscFields: payload.miscFields || {},
-				    })
-			    }
-			    return OptionsAPI.createOption({
-				    title: payload.title,
-				    text: payload.text,
-				    type: payload.type,
-				    targetId: inquiryStore.id,
-				    parentId: payload.parentId || 0,
-				    miscFields: payload.miscFields || {},
-			    })
-		    })()
+      try {
+        const response = await (() => {
+          if (sessionStore.route?.name === 'publicInquiry') {
+            const token = sessionStore.route.params.token as string
+            return PublicAPI.createOption(token, {
+              title: payload.title,
+              text: payload.text,
+              type: payload.type,
+              parentId: payload.parentId || 0,
+              miscFields: payload.miscFields || {},
+            })
+          }
+          return OptionsAPI.createOption({
+            title: payload.title,
+            text: payload.text,
+            type: payload.type,
+            targetId: inquiryStore.id,
+            parentId: payload.parentId || 0,
+            miscFields: payload.miscFields || {},
+          })
+        })()
 
-		    const newOption = response.data.option
-		    this.options.push(newOption)
-		    this.organizeByFamily()
+        const newOption = response.data.option
+        this.options.push(newOption)
+        this.organizeByFamily()
 
-		    emit(Event.OptionAdded, {
-			    store: 'options',
-			    message: t('agora', 'Option added'),
-			    option: newOption,
-		    })
+        emit(Event.OptionAdded, {
+          store: 'options',
+          message: t('agora', 'Option added'),
+          option: newOption,
+        })
 
-		    return newOption
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error adding option:', { error, payload })
-		    throw error
-	    }
+        return newOption
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error adding option:', { error, payload })
+        throw error
+      }
     },
 
     async updateOptionFromModal(
-	    optionId: number,
-	    statValue: string,
-	    miscFields: Record<string, { key: string; value: string }>
+      optionId: number,
+      statValue: string,
+      miscFields: Record<string, { key: string; value: string }>
     ): Promise<void> {
-	    try {
-		    // Find the option in the store
-		    const option = this.options.find((opt) => opt.id === optionId)
-		    if (!option) {
-			    throw new Error(t('agora', 'Option not found'))
-		    }
+      try {
+        // Find the option in the store
+        const option = this.options.find((opt) => opt.id === optionId)
+        if (!option) {
+          throw new Error(t('agora', 'Option not found'))
+        }
 
-		    // Prepare the update payload
-		    const updatePayload = {
-			    id: optionId,
-			    status: statValue,
-			    miscFields,
-		    }
+        // Prepare the update payload
+        const updatePayload = {
+          id: optionId,
+          status: statValue,
+          miscFields,
+        }
 
-		    // Call the API to update
-		    await OptionsAPI.updateOption(optionId, updatePayload)
+        // Call the API to update
+        await OptionsAPI.updateOption(optionId, updatePayload)
 
-		    // Update the option in the local store
-		    const index = this.options.findIndex((opt) => opt.id === optionId)
-		    if (index !== -1) {
-			    this.options[index] = {
-				    ...this.options[index],
-				    miscFields: {
-					    ...this.options[index].miscFields,
-					    ...miscFields,
-				    },
-			    }
-		    }
+        // Update the option in the local store
+        const index = this.options.findIndex((opt) => opt.id === optionId)
+        if (index !== -1) {
+          this.options[index] = {
+            ...this.options[index],
+            miscFields: {
+              ...this.options[index].miscFields,
+              ...miscFields,
+            },
+          }
+        }
 
-		    // Also update in option store if it's the current option
-		    const optionStore = useOptionStore()
-		    if (optionStore.id === optionId) {
-			    await optionStore.load(optionId)
-		    }
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error updating option misc fields:', {
-			    error,
-			    optionId,
-			    miscFields,
-		    })
-		    throw error
-	    }
+        // Also update in option store if it's the current option
+        const optionStore = useOptionStore()
+        if (optionStore.id === optionId) {
+          await optionStore.load(optionId)
+        }
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error updating option misc fields:', {
+          error,
+          optionId,
+          miscFields,
+        })
+        throw error
+      }
     },
 
     // Update an existing option
     async update(payload: { option: Option }): Promise<void> {
-	    const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore()
 
-	    try {
-		    const response = await (() => {
-			    if (sessionStore.route?.name === 'publicInquiry') {
-				    const token = sessionStore.route.params.token as string
-				    return PublicAPI.updateOption(token, payload.option)
-			    }
-			    return OptionsAPI.updateOption(payload.option)
-		    })()
+      try {
+        const response = await (() => {
+          if (sessionStore.route?.name === 'publicInquiry') {
+            const token = sessionStore.route.params.token as string
+            return PublicAPI.updateOption(token, payload.option)
+          }
+          return OptionsAPI.updateOption(payload.option)
+        })()
 
-		    this.updateOption({ option: response.data.option })
-	    } catch (error) {
-		    Logger.error('Error updating option', { error, payload })
-		    this.load()
-		    throw error
-	    }
+        this.updateOption({ option: response.data.option })
+      } catch (error) {
+        Logger.error('Error updating option', { error, payload })
+        this.load()
+        throw error
+      }
     },
 
     async deleteOption(optionId: number): Promise<void> {
-	    const optionStore = useOptionStore()
+      const optionStore = useOptionStore()
 
-	    try {
-		    // Load the option if not already loaded
-		    if (optionStore.id !== optionId) {
-			    await optionStore.load(optionId)
-		    }
+      try {
+        // Load the option if not already loaded
+        if (optionStore.id !== optionId) {
+          await optionStore.load(optionId)
+        }
 
-		    // Use the option store's delete method (which handles recursion via backend)
-		    await optionStore.delete()
+        // Use the option store's delete method (which handles recursion via backend)
+        await optionStore.delete()
 
-		    // Remove ALL options that were children (they'll be gone from the list)
-		    // Instead of finding just the parent, we filter out by checking if any option
-		    // has the deleted parent ID or is the parent itself
-		    const deletedIds = this.findAllDescendantIds(optionId)
+        // Remove ALL options that were children (they'll be gone from the list)
+        // Instead of finding just the parent, we filter out by checking if any option
+        // has the deleted parent ID or is the parent itself
+        const deletedIds = this.findAllDescendantIds(optionId)
 
-		    this.options = this.options.filter(opt => !deletedIds.includes(opt.id))
+        this.options = this.options.filter((opt) => !deletedIds.includes(opt.id))
 
-		    // Reorganize groups
-		    this.organizeByFamily()
+        // Reorganize groups
+        this.organizeByFamily()
 
-		    emit(Event.OptionDeleted, {
-			    store: 'options',
-			    message: t('agora', 'Option and children deleted'),
-			    optionId,
-			    deletedIds,
-		    })
-
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error deleting option from options store:', { error, optionId })
-		    throw error
-	    }
+        emit(Event.OptionDeleted, {
+          store: 'options',
+          message: t('agora', 'Option and children deleted'),
+          optionId,
+          deletedIds,
+        })
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error deleting option from options store:', { error, optionId })
+        throw error
+      }
     },
 
     // Helper to find all descendant IDs recursively (uses local store data)
     findAllDescendantIds(optionId: number): number[] {
-	    const result: number[] = [optionId]
+      const result: number[] = [optionId]
 
-	    // Find direct children
-	    const children = this.options.filter(opt => opt.parentId === optionId)
+      // Find direct children
+      const children = this.options.filter((opt) => opt.parentId === optionId)
 
-	    // Recursively find children of children
-	    for (const child of children) {
-		    const descendantIds = this.findAllDescendantIds(child.id)
-		    result.push(...descendantIds)
-	    }
+      // Recursively find children of children
+      for (const child of children) {
+        const descendantIds = this.findAllDescendantIds(child.id)
+        result.push(...descendantIds)
+      }
 
-	    return result
+      return result
     },
 
     // Restore a deleted option
     async restore(payload: { option: Option }): Promise<void> {
-	    const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore()
 
-	    try {
-		    const response = await (() => {
-			    if (sessionStore.route?.name === 'publicInquiry') {
-				    const token = sessionStore.route.params.token as string
-				    return PublicAPI.restoreOption(token, payload.option.id)
-			    }
-			    return OptionsAPI.restoreOption(payload.option.id)
-		    })()
+      try {
+        const response = await (() => {
+          if (sessionStore.route?.name === 'publicInquiry') {
+            const token = sessionStore.route.params.token as string
+            return PublicAPI.restoreOption(token, payload.option.id)
+          }
+          return OptionsAPI.restoreOption(payload.option.id)
+        })()
 
-		    this.updateOption({ option: response.data.option })
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error restoring option', { error, payload })
-		    throw error
-	    }
+        this.updateOption({ option: response.data.option })
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error restoring option', { error, payload })
+        throw error
+      }
     },
 
     // Add support to an option
     async support(optionId: number): Promise<void> {
-	    const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore()
 
-	    try {
-		    const response = await (() => {
-			    if (sessionStore.route?.name === 'publicInquiry') {
-				    const token = sessionStore.route.params.token as string
-				    return PublicAPI.supportOption(token, optionId)
-			    }
-			    return OptionsAPI.supportOption(optionId)
-		    })()
+      try {
+        const response = await (() => {
+          if (sessionStore.route?.name === 'publicInquiry') {
+            const token = sessionStore.route.params.token as string
+            return PublicAPI.supportOption(token, optionId)
+          }
+          return OptionsAPI.supportOption(optionId)
+        })()
 
-		    this.updateOption({ option: response.data.option })
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error supporting option', { error, optionId })
-		    throw error
-	    }
+        this.updateOption({ option: response.data.option })
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error supporting option', { error, optionId })
+        throw error
+      }
     },
 
     // Remove support from an option
     async unsupport(optionId: number): Promise<void> {
-	    const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore()
 
-	    try {
-		    const response = await (() => {
-			    if (sessionStore.route?.name === 'publicInquiry') {
-				    const token = sessionStore.route.params.token as string
-				    return PublicAPI.unsupportOption(token, optionId)
-			    }
-			    return OptionsAPI.unsupportOption(optionId)
-		    })()
+      try {
+        const response = await (() => {
+          if (sessionStore.route?.name === 'publicInquiry') {
+            const token = sessionStore.route.params.token as string
+            return PublicAPI.unsupportOption(token, optionId)
+          }
+          return OptionsAPI.unsupportOption(optionId)
+        })()
 
-		    this.updateOption({ option: response.data.option })
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error unsupporting option', { error, optionId })
-		    throw error
-	    }
+        this.updateOption({ option: response.data.option })
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error unsupporting option', { error, optionId })
+        throw error
+      }
     },
 
     // Get default misc fields for a type
     getDefaultMiscFields(typeKey: string): Record<string, { key: string; value: string }> {
-	    const sessionStore = useSessionStore()
-	    const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey]
-	    const defaults: Record<string, { key: string; value: string }> = {}
+      const sessionStore = useSessionStore()
+      const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey]
+      const defaults: Record<string, { key: string; value: string }> = {}
 
-	    if (typeInfo?.miscFields) {
-		    typeInfo.miscFields.forEach((field) => {
-			    if (field.default !== undefined) {
-				    defaults[field.key] = field.default
-			    }
-		    })
-	    }
+      if (typeInfo?.miscFields) {
+        typeInfo.miscFields.forEach((field) => {
+          if (field.default !== undefined) {
+            defaults[field.key] = field.default
+          }
+        })
+      }
 
-	    return defaults
+      return defaults
     },
 
     // Get allowed child types for a parent option
     getAllowedChildTypes(parentOptionId: number): InquiryOptionType[] {
-	    const parentOption = this.options.find((opt) => opt.id === parentOptionId)
-	    if (!parentOption) return []
+      const parentOption = this.options.find((opt) => opt.id === parentOptionId)
+      if (!parentOption) return []
 
-		    const sessionStore = useSessionStore()
-		    const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[parentOption.type]
+      const sessionStore = useSessionStore()
+      const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[parentOption.type]
 
-		    if (!parentTypeInfo?.allowed_child_types) return []
+      if (!parentTypeInfo?.allowed_child_types) return []
 
-			    return parentTypeInfo.allowed_child_types
-			    .map((typeKey) => sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey])
-			    .filter(Boolean)
-			    .sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
+      return parentTypeInfo.allowed_child_types
+        .map((typeKey) => sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey])
+        .filter(Boolean)
+        .sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
     },
 
     // Get option type display info
     getTypeDisplayInfo(typeKey: string): {
-	    name: string
-	    color: string
-	    icon: string
-	    family: string
+      name: string
+      color: string
+      icon: string
+      family: string
     } {
-	    const sessionStore = useSessionStore()
-	    const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey]
+      const sessionStore = useSessionStore()
+      const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey]
 
-	    if (typeInfo) {
-		    return {
-			    name: typeInfo.name || typeInfo.label || typeKey,
-			    color: typeInfo.color || getFamilyColor(typeInfo.family),
-			    icon: typeInfo.icon || 'File',
-			    family: typeInfo.family,
-		    }
-	    }
+      if (typeInfo) {
+        return {
+          name: typeInfo.name || typeInfo.label || typeKey,
+          color: typeInfo.color || getFamilyColor(typeInfo.family),
+          icon: typeInfo.icon || 'File',
+          family: typeInfo.family,
+        }
+      }
 
-	    return {
-		    name: typeKey,
-		    color: '#999999',
-		    icon: 'File',
-		    family: 'other',
-	    }
+      return {
+        name: typeKey,
+        color: '#999999',
+        icon: 'File',
+        family: 'other',
+      }
     },
 
     // Get family summary statistics
     getFamilySummary(): Array<{
-	    family: string
-	    name: string
-	    color: string
-	    icon: string
-	    count: number
-	    totalSupports: number
-	    totalComments: number
-	    types: Array<{
-		    type: string
-		    name: string
-		    count: number
-	    }>
+      family: string
+      name: string
+      color: string
+      icon: string
+      count: number
+      totalSupports: number
+      totalComments: number
+      types: Array<{
+        type: string
+        name: string
+        count: number
+      }>
     }> {
-	    return this.families
-	    .map((family) => {
-		    const familyOptions = this.getOptionsByFamily(family.key)
-		    const typeCounts: Record<string, number> = {}
+      return this.families
+        .map((family) => {
+          const familyOptions = this.getOptionsByFamily(family.key)
+          const typeCounts: Record<string, number> = {}
 
-		    familyOptions.forEach((option) => {
-			    typeCounts[option.type] = (typeCounts[option.type] || 0) + 1
-		    })
+          familyOptions.forEach((option) => {
+            typeCounts[option.type] = (typeCounts[option.type] || 0) + 1
+          })
 
-		    return {
-			    family: family.key,
-			    name: family.name || family.key,
-			    color: family.color || getFamilyColor(family.key),
-			    icon: family.icon || getFamilyIconName(family.key),
-			    count: familyOptions.length,
-			    totalSupports: familyOptions.reduce(
-				    (total, option) => total + (option.status?.countSupports || 0),
-					    0
-			    ),
-			    totalComments: familyOptions.reduce(
-				    (total, option) => total + (option.status?.countComments || 0),
-					    0
-			    ),
-			    types: Object.entries(typeCounts).map(([type, count]) => ({
-				    type,
-				    name:
-					    this.getOptionTypeInfo(type)?.name || this.getOptionTypeInfo(type)?.label || type,
-				    count,
-			    })),
-		    }
-	    })
-	    .filter((family) => family.count > 0)
+          return {
+            family: family.key,
+            name: family.name || family.key,
+            color: family.color || getFamilyColor(family.key),
+            icon: family.icon || getFamilyIconName(family.key),
+            count: familyOptions.length,
+            totalSupports: familyOptions.reduce(
+              (total, option) => total + (option.status?.countSupports || 0),
+              0
+            ),
+            totalComments: familyOptions.reduce(
+              (total, option) => total + (option.status?.countComments || 0),
+              0
+            ),
+            types: Object.entries(typeCounts).map(([type, count]) => ({
+              type,
+              name:
+                this.getOptionTypeInfo(type)?.name || this.getOptionTypeInfo(type)?.label || type,
+              count,
+            })),
+          }
+        })
+        .filter((family) => family.count > 0)
     },
 
     // Refresh option types from session store
     refreshOptionTypes(): void {
-	    this.initializeOptionTypes()
-	    this.organizeByFamily()
+      this.initializeOptionTypes()
+      this.organizeByFamily()
     },
 
     // Clear all options
     clear(): void {
-	    this.options = []
-	    this.groups = []
-	    this.optionsByFamily = {}
+      this.options = []
+      this.groups = []
+      this.optionsByFamily = {}
     },
   },
 })

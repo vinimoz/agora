@@ -8,7 +8,6 @@ import { router } from './router.ts'
 import App from './App.vue'
 import axios from 'axios'
 
-
 const Agora = createApp(App)
   .use(pinia)
   .use(router)
@@ -18,4 +17,3 @@ const Agora = createApp(App)
 router.isReady().then(() => {
   Agora.mount('#content')
 })
-

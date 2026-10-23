@@ -2,8 +2,14 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 
 <template>
-  <div class="empty-state" :class="{ 'no-engine': !showAddButton }">
-    <component :is="iconComponent" :size="iconSize" />
+  <div
+    class="empty-state"
+    :class="{ 'no-engine': !showAddButton }"
+  >
+    <component
+      :is="iconComponent"
+      :size="iconSize"
+    />
     <h4>{{ title }}</h4>
     <p>{{ description }}</p>
     <NcButton
@@ -63,12 +69,12 @@ const description = computed(() => {
     if (props.canManageVote && !props.isReadonly) {
       return t(
         'agora',
-        'The voting method is configured but no items have been added to the vote yet. Click the button below to add items.',
+        'The voting method is configured but no items have been added to the vote yet. Click the button below to add items.'
       )
     }
     return t(
       'agora',
-      'The voting method is configured but no items have been added to the vote yet.',
+      'The voting method is configured but no items have been added to the vote yet.'
     )
   }
   if (props.showAddButton) {

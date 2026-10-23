@@ -4,43 +4,67 @@
 -->
 
 <template>
-  <div class="tree-branch" :style="{ paddingLeft: `${depth * 20}px` }">
+  <div
+    class="tree-branch"
+    :style="{ paddingLeft: `${depth * 20}px` }"
+  >
     <!-- Node -->
-    <div 
+    <div
       class="tree-node"
       :class="{
         'has-children': node.children.length > 0,
-        'expanded': expanded,
-        'selected': node.id === selectedId,
-        [`depth-${depth}`]: true
+        expanded: expanded,
+        selected: node.id === selectedId,
+        [`depth-${depth}`]: true,
       }"
       @click="handleClick"
     >
       <!-- Toggle Button -->
-      <button 
+      <button
         v-if="node.children.length > 0"
         class="toggle-btn"
         @click.stop="emit('toggle', node.id)"
       >
-        <component :is="expanded ? Icons.ChevronDown : Icons.ChevronRight" :size="16" />
+        <component
+          :is="expanded ? Icons.ChevronDown : Icons.ChevronRight"
+          :size="16"
+        />
       </button>
-      <span v-else class="toggle-placeholder"></span>
+      <span
+        v-else
+        class="toggle-placeholder"
+      />
 
       <!-- Icon -->
-      <div class="node-icon" :class="getTypeClass(node.type)">
-        <component :is="getTypeIcon(node.type)" :size="16" />
+      <div
+        class="node-icon"
+        :class="getTypeClass(node.type)"
+      >
+        <component
+          :is="getTypeIcon(node.type)"
+          :size="16"
+        />
       </div>
 
       <!-- Content -->
       <div class="node-content">
         <div class="node-title">
           {{ node.title }}
-          <span v-if="node.status?.countComments" class="comment-badge">
-            <component :is="Icons.MessageSquare" :size="12" />
+          <span
+            v-if="node.status?.countComments"
+            class="comment-badge"
+          >
+            <component
+              :is="Icons.MessageSquare"
+              :size="12"
+            />
             {{ node.status.countComments }}
           </span>
         </div>
-        <div v-if="node.description" class="node-description">
+        <div
+          v-if="node.description"
+          class="node-description"
+        >
           {{ truncateText(stripHtml(node.description), 80) }}
         </div>
         <div class="node-meta">
@@ -52,7 +76,10 @@
     </div>
 
     <!-- Children -->
-    <div v-if="expanded && node.children.length > 0" class="tree-children">
+    <div
+      v-if="expanded && node.children.length > 0"
+      class="tree-children"
+    >
       <TreeBranch
         v-for="child in node.children"
         :key="child.id"
@@ -113,7 +140,7 @@ function isChildExpanded(id: number): boolean {
 function truncateText(text: string, max: number): string {
   if (!text) return ''
   if (text.length <= max) return text
-  return `${text.substring(0, max)  }…`
+  return `${text.substring(0, max)}…`
 }
 
 function stripHtml(html: string): string {
@@ -164,7 +191,7 @@ function handleClick() {
 
     &.depth-0 {
       font-weight: 600;
-      
+
       .node-title {
         font-size: 16px;
       }
@@ -219,12 +246,30 @@ function handleClick() {
       flex-shrink: 0;
       margin-top: 1px;
 
-      &.type-proposal { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-      &.type-survey { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-      &.type-poll { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-      &.type-discussion { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
-      &.type-question { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-      &.type-default { background: var(--color-background-dark); color: var(--color-text-lighter); }
+      &.type-proposal {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+      &.type-survey {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+      &.type-poll {
+        background: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+      }
+      &.type-discussion {
+        background: rgba(6, 182, 212, 0.1);
+        color: #06b6d4;
+      }
+      &.type-question {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+      &.type-default {
+        background: var(--color-background-dark);
+        color: var(--color-text-lighter);
+      }
     }
 
     .node-content {

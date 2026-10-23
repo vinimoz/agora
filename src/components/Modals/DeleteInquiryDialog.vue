@@ -57,7 +57,10 @@ const dialogProps = {
 </script>
 
 <template>
-  <NcDialog v-model:open="model" v-bind="dialogProps">
+  <NcDialog
+    v-model:open="model"
+    v-bind="dialogProps"
+  >
     <span>
       {{ dialogText }}
     </span>

@@ -6,15 +6,22 @@
 <template>
   <div class="inquiry-feed">
     <!-- Feed Header -->
-    <div v-if="!hideHeader" class="feed-header">
+    <div
+      v-if="!hideHeader"
+      class="feed-header"
+    >
       <div class="feed-header-left">
-        <component :is="Icons.Activity" :size="24" class="feed-icon" />
+        <component
+          :is="Icons.Activity"
+          :size="24"
+          class="feed-icon"
+        />
         <h2>{{ t('agora', 'Activity Feed') }}</h2>
         <span class="feed-count">{{ inquiries.length }}</span>
       </div>
       <div class="feed-header-right">
-        <button 
-          class="filter-btn" 
+        <button
+          class="filter-btn"
           :class="{ active: showAll }"
           @click="showAll = !showAll"
         >
@@ -29,18 +36,27 @@
         v-for="inquiry in filteredInquiries"
         :key="inquiry.id"
         class="feed-item"
-        :class="{ 
+        :class="{
           'is-new': !isRead(inquiry),
-          'is-active': activeId === inquiry.id
+          'is-active': activeId === inquiry.id,
         }"
         @click="handleClick(inquiry)"
       >
         <!-- Timeline Line -->
         <div class="feed-timeline">
-          <div class="timeline-dot" :class="getStatusClass(inquiry)">
-            <component :is="getStatusIcon(inquiry)" :size="14" />
+          <div
+            class="timeline-dot"
+            :class="getStatusClass(inquiry)"
+          >
+            <component
+              :is="getStatusIcon(inquiry)"
+              :size="14"
+            />
           </div>
-          <div v-if="!isLast(inquiry)" class="timeline-line"></div>
+          <div
+            v-if="!isLast(inquiry)"
+            class="timeline-line"
+          />
         </div>
 
         <!-- Feed Content -->
@@ -69,29 +85,49 @@
               </div>
             </div>
             <div class="feed-badges">
-              <span class="type-badge" :class="getTypeClass(inquiry.type)">
-                <component :is="getTypeIcon(inquiry.type)" :size="12" />
+              <span
+                class="type-badge"
+                :class="getTypeClass(inquiry.type)"
+              >
+                <component
+                  :is="getTypeIcon(inquiry.type)"
+                  :size="12"
+                />
                 {{ getTypeLabel(inquiry.type) }}
               </span>
-              <span v-if="isNew(inquiry)" class="new-badge">
+              <span
+                v-if="isNew(inquiry)"
+                class="new-badge"
+              >
                 {{ t('agora', 'New') }}
               </span>
             </div>
           </div>
 
-          <h3 class="feed-title">{{ inquiry.title }}</h3>
-          
-          <p v-if="inquiry.description" class="feed-description">
+          <h3 class="feed-title">
+            {{ inquiry.title }}
+          </h3>
+
+          <p
+            v-if="inquiry.description"
+            class="feed-description"
+          >
             {{ truncateText(stripHtml(inquiry.description), 150) }}
           </p>
 
           <div class="feed-meta">
             <div class="meta-item">
-              <component :is="Icons.MessageSquare" :size="14" />
+              <component
+                :is="Icons.MessageSquare"
+                :size="14"
+              />
               <span>{{ inquiry.status?.countComments || 0 }}</span>
             </div>
             <div class="meta-item">
-              <component :is="Icons.Users" :size="14" />
+              <component
+                :is="Icons.Users"
+                :size="14"
+              />
               <span>{{ inquiry.status?.countParticipants || 0 }}</span>
             </div>
             <div class="meta-item support">
@@ -105,8 +141,15 @@
                 @click.stop
               />
             </div>
-            <div v-if="inquiry.configuration?.expire" class="meta-item expiry" :class="getExpiryClass(inquiry)">
-              <component :is="Icons.Clock" :size="14" />
+            <div
+              v-if="inquiry.configuration?.expire"
+              class="meta-item expiry"
+              :class="getExpiryClass(inquiry)"
+            >
+              <component
+                :is="Icons.Clock"
+                :size="14"
+              />
               <span>{{ getExpiryText(inquiry) }}</span>
             </div>
           </div>
@@ -114,8 +157,15 @@
       </div>
 
       <!-- Empty State -->
-      <div v-if="filteredInquiries.length === 0" class="empty-state">
-        <component :is="Icons.Activity" :size="48" class="empty-icon" />
+      <div
+        v-if="filteredInquiries.length === 0"
+        class="empty-state"
+      >
+        <component
+          :is="Icons.Activity"
+          :size="48"
+          class="empty-icon"
+        />
         <h3>{{ t('agora', 'No activity') }}</h3>
         <p>{{ t('agora', 'There are no recent inquiries to display') }}</p>
       </div>
@@ -135,11 +185,10 @@ import { SupportFeature } from '../Base'
 import type { Inquiry } from '../../Types'
 import { useSessionStore } from '../../stores/session.ts'
 
-
 interface Props {
   inquiries: Inquiry[]
   groupId?: number
-    hideHeader?: boolean
+  hideHeader?: boolean
 }
 const props = withDefaults(defineProps<Props>(), { hideHeader: false })
 
@@ -151,8 +200,8 @@ const showAll = ref(true)
 const activeId = ref<number | null>(null)
 const sessionStore = useSessionStore()
 
-const context = computed(() => 
-  props.inquiries.length > 0 
+const context = computed(() =>
+  props.inquiries.length > 0
     ? createInquiryContext(props.inquiries[0], sessionStore.appSettings)
     : null
 )
@@ -160,7 +209,7 @@ const context = computed(() =>
 const filteredInquiries = computed(() => {
   let items = [...props.inquiries]
   if (!showAll.value) {
-    items = items.filter(i => !isRead(i))
+    items = items.filter((i) => !isRead(i))
   }
   return items.sort((a, b) => (b.status?.created || 0) - (a.status?.created || 0))
 })
@@ -174,7 +223,7 @@ function isNew(inquiry: Inquiry): boolean {
 }
 
 function isLast(inquiry: Inquiry): boolean {
-  const idx = filteredInquiries.value.findIndex(i => i.id === inquiry.id)
+  const idx = filteredInquiries.value.findIndex((i) => i.id === inquiry.id)
   return idx === filteredInquiries.value.length - 1
 }
 
@@ -184,7 +233,7 @@ function getStatusClass(inquiry: Inquiry): string {
     active: 'status-active',
     closed: 'status-closed',
     draft: 'status-draft',
-    waiting_approval: 'status-pending'
+    waiting_approval: 'status-pending',
   }
   return classes[status] || 'status-default'
 }
@@ -195,7 +244,7 @@ function getStatusIcon(inquiry: Inquiry) {
     active: Icons.CheckCircle,
     closed: Icons.Close,
     draft: Icons.Edit,
-    waiting_approval: Icons.Clock
+    waiting_approval: Icons.Clock,
   }
   return icons[status] || Icons.Circle
 }
@@ -249,7 +298,7 @@ function formatTime(timestamp?: number): string {
 function truncateText(text: string, max: number): string {
   if (!text) return ''
   if (text.length <= max) return text
-  return `${text.substring(0, max)  }…`
+  return `${text.substring(0, max)}…`
 }
 
 function stripHtml(html: string): string {
@@ -463,13 +512,31 @@ function handleClick(inquiry: Inquiry) {
           border-radius: 12px;
           font-size: 11px;
           font-weight: 600;
-          
-          &.type-proposal { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-          &.type-survey { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-          &.type-poll { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-          &.type-discussion { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
-          &.type-question { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-          &.type-default { background: var(--color-background-dark); color: var(--color-text-lighter); }
+
+          &.type-proposal {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+          }
+          &.type-survey {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+          }
+          &.type-poll {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+          }
+          &.type-discussion {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+          }
+          &.type-question {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+          }
+          &.type-default {
+            background: var(--color-background-dark);
+            color: var(--color-text-lighter);
+          }
         }
 
         .new-badge {
@@ -530,10 +597,18 @@ function handleClick(inquiry: Inquiry) {
         }
 
         &.expiry {
-          &.expiry-expired { color: var(--color-error); }
-          &.expiry-soon { color: var(--color-warning); }
-          &.expiry-warning { color: #f59e0b; }
-          &.expiry-normal { color: var(--color-success); }
+          &.expiry-expired {
+            color: var(--color-error);
+          }
+          &.expiry-soon {
+            color: var(--color-warning);
+          }
+          &.expiry-warning {
+            color: #f59e0b;
+          }
+          &.expiry-normal {
+            color: var(--color-success);
+          }
         }
       }
     }

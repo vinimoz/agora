@@ -36,9 +36,7 @@ const tagline = computed(() => HOME_DEFAULTS.hero?.tagline || '')
 /* USER ROLES                                                          */
 /* ------------------------------------------------------------------ */
 const isAdmin = computed(() => sessionStore.currentUser?.isAdmin === true)
-const isManager = computed(
-  () => isAdmin.value || sessionStore.currentUser?.isGroupEditor === true,
-)
+const isManager = computed(() => isAdmin.value || sessionStore.currentUser?.isGroupEditor === true)
 
 /* ------------------------------------------------------------------ */
 /* NAV TYPES                                                           */
@@ -165,13 +163,13 @@ const primaryNav = computed<NavItem[]>(() => [
         icon: NavigationIcons.Group,
         to: { name: 'list', params: { type: 'group' } },
       },
-{
-  key: 'rejected',
-  label: t('agora', 'Rejected'),
-  icon: NavigationIcons.ShieldAlert,
-  to: { name: 'list', params: { type: 'reject' } },
-  visible: () => sessionStore.appPermissions.inquiryCreation,
-},
+      {
+        key: 'rejected',
+        label: t('agora', 'Rejected'),
+        icon: NavigationIcons.ShieldAlert,
+        to: { name: 'list', params: { type: 'reject' } },
+        visible: () => sessionStore.appPermissions.inquiryCreation,
+      },
     ],
   },
 
@@ -262,7 +260,11 @@ const primaryNav = computed<NavItem[]>(() => [
     key: 'services',
     label: t('agora', 'Services'),
     icon: InquiryGeneralIcons.Apps,
-    to: { name: 'group-list', params: { slug: '' }, query: { family: 'service', viewMode: 'group' } },
+    to: {
+      name: 'group-list',
+      params: { slug: '' },
+      query: { family: 'service', viewMode: 'group' },
+    },
   },
 
   /* Agenda — dated consultations and deadlines. */
@@ -287,7 +289,7 @@ const primaryNav = computed<NavItem[]>(() => [
 ])
 
 const visiblePrimaryNav = computed(() =>
-  primaryNav.value.filter((item) => !item.visible || item.visible()),
+  primaryNav.value.filter((item) => !item.visible || item.visible())
 )
 
 function hasChildren(item: NavItem): boolean {
@@ -339,17 +341,11 @@ const mySpaceFamilies = computed<SpaceFamily[]>(() => {
 
   return families
     .filter((f: { is_root?: boolean }) => f.is_root !== false)
-    .map((family: {
-      family_type?: string
-      type?: string
-      label?: string
-      icon?: string
-    }) => {
+    .map((family: { family_type?: string; type?: string; label?: string; icon?: string }) => {
       const key = familyKeyOf(family)
       const rootTypes = groupTypes.filter(
         (gt: { family?: string; family_type?: string; is_root?: boolean }) =>
-          gt.is_root === true &&
-          (gt.family === key || gt.family_type === key),
+          gt.is_root === true && (gt.family === key || gt.family_type === key)
       )
       return {
         key,
@@ -411,17 +407,12 @@ function isActive(item: NavItem): boolean {
     item.key === 'news' &&
     route.query.family === 'collective' &&
     route.query.display === 'feed'
-
   ) {
     return true
   }
   if (item.key === 'services' && route.query.family === 'service') return true
   if (item.key === 'agenda' && route.query.display === 'timeline') return true
-  if (
-    item.key === 'archives' &&
-    route.name === 'list' &&
-    route.params.type === 'archived'
-  ) {
+  if (item.key === 'archives' && route.name === 'list' && route.params.type === 'archived') {
     return true
   }
   if (
@@ -500,8 +491,12 @@ onMounted(() => {
           <AgoraAppIcon :size="32" />
         </div>
         <div class="nav-brand__text">
-          <div class="nav-brand__name">Agora</div>
-          <div class="nav-brand__sub">{{ cityName }}</div>
+          <div class="nav-brand__name">
+            Agora
+          </div>
+          <div class="nav-brand__sub">
+            {{ cityName }}
+          </div>
         </div>
       </div>
 
@@ -521,7 +516,10 @@ onMounted(() => {
             <component :is="item.icon" />
           </template>
 
-          <NcAppNavigationList v-if="hasChildren(item)" class="nav-children">
+          <NcAppNavigationList
+            v-if="hasChildren(item)"
+            class="nav-children"
+          >
             <!-- Explore — dynamic families from inquiryFamilyTab -->
             <template v-if="item.key === 'explore'">
               <NcAppNavigationItem
@@ -582,7 +580,10 @@ onMounted(() => {
                 :class="{ 'is-active': isChildActive(child) }"
                 @click="goToChild(child)"
               >
-                <template v-if="child.icon" #icon>
+                <template
+                  v-if="child.icon"
+                  #icon
+                >
                   <component :is="child.icon" />
                 </template>
               </NcAppNavigationItem>
@@ -612,7 +613,10 @@ onMounted(() => {
 
       <!-- Single trailing spacer so the footer illustration never covers
            the last item. Replaces the old blanket padding on every list. -->
-      <div class="nav-end-spacer" aria-hidden="true" />
+      <div
+        class="nav-end-spacer"
+        aria-hidden="true"
+      />
     </template>
 
     <!-- Footer -->
@@ -622,8 +626,13 @@ onMounted(() => {
           :src="islandIllustration"
           alt=""
           class="nav-footer__illustration"
-        />
-        <p v-if="tagline" class="nav-footer__tagline">{{ tagline }}</p>
+        >
+        <p
+          v-if="tagline"
+          class="nav-footer__tagline"
+        >
+          {{ tagline }}
+        </p>
       </div>
     </template>
   </NcAppNavigation>

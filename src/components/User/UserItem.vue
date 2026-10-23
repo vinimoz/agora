@@ -209,8 +209,15 @@ function showMenu() {
     ]"
   >
     <div class="avatar-wrapper">
-      <NcAvatar v-bind="avatarProps" class="user-item__avatar" @click="showMenu()">
-        <template v-if="useIconSlot" #icon>
+      <NcAvatar
+        v-bind="avatarProps"
+        class="user-item__avatar"
+        @click="showMenu()"
+      >
+        <template
+          v-if="useIconSlot"
+          #icon
+        >
           <component
             :is="StatusIcons.LinkIcon"
             v-if="typeComputed === 'public'"
@@ -254,7 +261,10 @@ function showMenu() {
         </template>
       </NcAvatar>
 
-      <div v-if="$slots.menu" class="hover-menu">
+      <div
+        v-if="$slots.menu"
+        class="hover-menu"
+      >
         <slot name="menu" />
       </div>
 
@@ -292,7 +302,10 @@ function showMenu() {
 
     <slot name="status" />
 
-    <div v-if="!hideNames" class="user-item__name">
+    <div
+      v-if="!hideNames"
+      class="user-item__name"
+    >
       <div class="name">
         {{ labelComputed }}
       </div>

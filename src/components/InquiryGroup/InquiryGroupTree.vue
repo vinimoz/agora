@@ -7,27 +7,45 @@
   <div class="inquiry-group-tree">
     <div class="tree-controls">
       <div class="controls-left">
-        <button class="control-btn" @click="expandAll">
-          <component :is="Icons.Plus" :size="18" />
+        <button
+          class="control-btn"
+          @click="expandAll"
+        >
+          <component
+            :is="Icons.Plus"
+            :size="18"
+          />
         </button>
-        <button class="control-btn" @click="collapseAll">
-          <component :is="Icons.Minus" :size="18" />
+        <button
+          class="control-btn"
+          @click="collapseAll"
+        >
+          <component
+            :is="Icons.Minus"
+            :size="18"
+          />
         </button>
         <span class="tree-count">{{ flattenedNodes.length }} groups</span>
       </div>
       <div class="controls-right">
-        <input 
-          v-model="searchQuery" 
-          type="text" 
+        <input
+          v-model="searchQuery"
+          type="text"
           class="search-input"
           :placeholder="t('agora', 'Search groups...')"
-        />
+        >
       </div>
     </div>
 
     <div class="tree-container">
-      <div v-if="filteredRoots.length === 0" class="empty-state">
-        <component :is="Icons.FolderOpen" :size="48" />
+      <div
+        v-if="filteredRoots.length === 0"
+        class="empty-state"
+      >
+        <component
+          :is="Icons.FolderOpen"
+          :size="48"
+        />
         <h3>{{ t('agora', 'No groups to display') }}</h3>
       </div>
 
@@ -73,11 +91,11 @@ const selectedId = ref<number | null>(null)
 const treeData = computed<TreeNode[]>(() => {
   const map = new Map<number, TreeNode>()
   const roots: TreeNode[] = []
-  
-  props.groups.forEach(group => {
+
+  props.groups.forEach((group) => {
     map.set(group.id, { ...group, children: [] })
   })
-  
+
   map.forEach((node) => {
     const parentId = node.parentId || props.parentId
     if (parentId && map.has(parentId)) {
@@ -86,38 +104,40 @@ const treeData = computed<TreeNode[]>(() => {
       roots.push(node)
     }
   })
-  
+
   return roots
 })
 
 const filteredRoots = computed(() => {
   if (!searchQuery.value) return treeData.value
-  
+
   const query = searchQuery.value.toLowerCase()
-  
+
   function filterNode(node: TreeNode): TreeNode | null {
-    const matches = node.title.toLowerCase().includes(query) ||
-                    node.description?.toLowerCase().includes(query) || false
-    
+    const matches =
+      node.title.toLowerCase().includes(query) ||
+      node.description?.toLowerCase().includes(query) ||
+      false
+
     const filteredChildren = node.children
-      .map(child => filterNode(child))
+      .map((child) => filterNode(child))
       .filter((child): child is TreeNode => child !== null)
-    
+
     if (matches || filteredChildren.length > 0) {
       return { ...node, children: filteredChildren }
     }
     return null
   }
-  
+
   return treeData.value
-    .map(node => filterNode(node))
+    .map((node) => filterNode(node))
     .filter((node): node is TreeNode => node !== null)
 })
 
 const flattenedNodes = computed(() => {
   function flatten(nodes: TreeNode[]): TreeNode[] {
     let result: TreeNode[] = []
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       result.push(node)
       result = result.concat(flatten(node.children))
     })
@@ -139,7 +159,7 @@ function isExpanded(id: number): boolean {
 }
 
 function expandAll() {
-  flattenedNodes.value.forEach(node => {
+  flattenedNodes.value.forEach((node) => {
     if (node.children.length > 0) {
       expandedNodes.value.add(node.id)
     }

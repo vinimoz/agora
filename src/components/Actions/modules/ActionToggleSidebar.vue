@@ -23,7 +23,12 @@ function clickAction() {
 
 <template>
   <div class="action toggle-sidebar">
-    <NcButton :variant="'tertiary'" :title="caption" :aria-label="caption" @click="clickAction()">
+    <NcButton
+      :variant="'tertiary'"
+      :title="caption"
+      :aria-label="caption"
+      @click="clickAction()"
+    >
       <template #icon>
         <SidebarIcon />
       </template>

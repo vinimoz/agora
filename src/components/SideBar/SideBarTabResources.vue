@@ -6,11 +6,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
-import { 
-  NcButton, 
-  NcListItem,
-  NcActionButton,
-} from '@nextcloud/vue'
+import { NcButton, NcListItem, NcActionButton } from '@nextcloud/vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { InquiryLink, useInquiryLinksStore } from '../../stores/inquiryLinks'
 import { useInquiryStore } from '../../stores/inquiry'
@@ -18,18 +14,14 @@ import { Attachment, useAttachmentsStore } from '../../stores/attachments'
 import { useSessionStore } from '../../stores/session'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
 import { Inquiry } from '../../Types/index.ts'
-import {
-  canEdit,
-  createInquiryContext,
-} from '../../utils/permissions.ts'
+import { canEdit, createInquiryContext } from '../../utils/permissions.ts'
 
 // Components
 import AddResourceModal from '../Modals/AddResourceModal.vue'
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 })
-
 
 // Props
 const props = defineProps<{
@@ -53,13 +45,13 @@ const currentInquiry = computed(() => {
   if (inquiryStore.id) {
     return inquiryStore
   }
-  console.log(" CURRENT INQUIRY ", props.inquiry)
-  
+  console.log(' CURRENT INQUIRY ', props.inquiry)
+
   // Otherwise, try to find the inquiry by ID in the store or use minimal data
   if (props.inquiry) {
     return props.inquiry
-    }
-  
+  }
+
   return null
 })
 
@@ -73,12 +65,14 @@ interface ResourceItem {
   icon: string
   attachment?: Attachment
   sort_order: number
-  metadata?: string | {
-    hash?: string      
-    title?: string 
-    url?: string
-    description?: string
-  }
+  metadata?:
+    | string
+    | {
+        hash?: string
+        title?: string
+        url?: string
+        description?: string
+      }
   size?: number
 }
 
@@ -88,16 +82,15 @@ interface GroupedResources {
 
 // Context for permissions
 const context = computed(() => {
-    if (!props.inquiry || !props.inquiry.id) {
+  if (!props.inquiry || !props.inquiry.id) {
     return null
   }
-  try  {
-return createInquiryContext(props.inquiry, sessionStore.appSettings)
- } catch (error) {
+  try {
+    return createInquiryContext(props.inquiry, sessionStore.appSettings)
+  } catch (error) {
     console.error('Error creating permission context:', error)
     return null
   }
-
 })
 
 // Helper function to parse metadata
@@ -118,7 +111,8 @@ const groupedResources = computed((): GroupedResources => {
   const groups: GroupedResources = {}
 
   // Add linked resources
-  const links = inquiryLinksStore.getByInquiryId(currentInquiry.value.id)
+  const links = inquiryLinksStore
+    .getByInquiryId(currentInquiry.value.id)
     .sort((a, b) => a.sort_order - b.sort_order)
 
   links.forEach((link: InquiryLink) => {
@@ -133,16 +127,17 @@ const groupedResources = computed((): GroupedResources => {
       type: 'link',
       displayName: getResourceDisplayName(link),
       icon: getAppIcon(link.target_app),
-      metadata // Ensure metadata is parsed object
+      metadata, // Ensure metadata is parsed object
     })
   })
 
   // Add file attachments (excluding cover image)
-  const fileAttachments = attachmentsStore.attachments
-    .filter(att => att.file_id !== currentInquiry.value.coverId)
+  const fileAttachments = attachmentsStore.attachments.filter(
+    (att) => att.file_id !== currentInquiry.value.coverId
+  )
 
   if (fileAttachments.length > 0) {
-    groups.files = fileAttachments.map(attachment => ({
+    groups.files = fileAttachments.map((attachment) => ({
       id: attachment.id,
       target_app: 'files',
       target_type: 'file',
@@ -152,7 +147,7 @@ const groupedResources = computed((): GroupedResources => {
       icon: InquiryGeneralIcons.Document,
       attachment,
       sort_order: 0,
-      size: attachment.size
+      size: attachment.size,
     }))
   }
 
@@ -180,9 +175,7 @@ const getResourceDisplayName = (link: InquiryLink): string => {
 
   // For files, show the filename
   if (link.target_app === 'files') {
-    const attachment = attachmentsStore.attachments.find(att => 
-      att.id?.toString() === resourceId
-    )
+    const attachment = attachmentsStore.attachments.find((att) => att.id?.toString() === resourceId)
     if (attachment) {
       return attachment.name
     }
@@ -232,36 +225,42 @@ const deleteResource = async (resource: ResourceItem) => {
         t('agora', 'Cancel')
       )
 
-      if (!confirmed) return;
+      if (!confirmed) return
 
-      await handleAttachmentDeletion(resource);
-      return;
+      await handleAttachmentDeletion(resource)
+      return
     }
 
     const confirmedLinkDeletion = await confirmDeletion(
-      t('agora', 'Are you sure you want to delete this resource link? This will remove the reference from agora.'),
+      t(
+        'agora',
+        'Are you sure you want to delete this resource link? This will remove the reference from agora.'
+      ),
       t('agora', 'Confirm link deletion'),
       t('agora', 'Delete link'),
       t('agora', 'Cancel')
     )
 
-    if (!confirmedLinkDeletion) return;
+    if (!confirmedLinkDeletion) return
 
-    await inquiryLinksStore.delete(resource.id);
+    await inquiryLinksStore.delete(resource.id)
 
     const confirmedDataDeletion = await confirmDeletion(
-      t('agora', 'Do you also want to permanently delete the associated {app} data? This action cannot be undone.', { app: resource.target_app }),
+      t(
+        'agora',
+        'Do you also want to permanently delete the associated {app} data? This action cannot be undone.',
+        { app: resource.target_app }
+      ),
       t('agora', 'Delete external data?'),
       t('agora', 'Delete everything'),
       t('agora', 'Keep external data')
     )
 
-    await handleSpecificResourceDeletion(resource, confirmedDataDeletion);
-
+    await handleSpecificResourceDeletion(resource, confirmedDataDeletion)
   } catch (error) {
-    console.error('Error deleting resource:', error);
-    const errorMsg = getErrorMessage(resource.target_app);
-    showError(errorMsg);
+    console.error('Error deleting resource:', error)
+    const errorMsg = getErrorMessage(resource.target_app)
+    showError(errorMsg)
   }
 }
 
@@ -271,87 +270,90 @@ const confirmDeletion = (
   title: string,
   confirmText: string = t('agora', 'Delete'),
   cancelText: string = t('agora', 'Cancel')
-): Promise<boolean> => new Promise((resolve) => {
-    window.OC.dialogs.confirm(
-      message,
-      title,
-      (result) => resolve(!!result),
-      {
-        type: 'error',
-        confirm: confirmText,
-        cancel: cancelText,
-      }
-    )
+): Promise<boolean> =>
+  new Promise((resolve) => {
+    window.OC.dialogs.confirm(message, title, (result) => resolve(!!result), {
+      type: 'error',
+      confirm: confirmText,
+      cancel: cancelText,
+    })
   })
 
-const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExternalData: boolean) => {
+const handleSpecificResourceDeletion = async (
+  resource: ResourceItem,
+  deleteExternalData: boolean
+) => {
   const deletionHandlers = {
     cospend: async () => {
       if (deleteExternalData) {
-        await inquiryLinksStore.deleteCospendProjectViaAPI(resource.target_id); 
-        showSuccess(t('agora', 'Cospend project and link deleted successfully'));
+        await inquiryLinksStore.deleteCospendProjectViaAPI(resource.target_id)
+        showSuccess(t('agora', 'Cospend project and link deleted successfully'))
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Cospend project kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Cospend project kept'))
       }
     },
     deck: async () => {
       if (deleteExternalData) {
-        await inquiryLinksStore.deleteDeckViaAPI(resource.target_id);
-        showSuccess(t('agora', 'Deck board and link deleted successfully'));
+        await inquiryLinksStore.deleteDeckViaAPI(resource.target_id)
+        showSuccess(t('agora', 'Deck board and link deleted successfully'))
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Deck board kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Deck board kept'))
       }
     },
     collectives: async () => {
       if (deleteExternalData) {
-        await inquiryLinksStore.deleteCollectiveViaAPI(resource.target_id);
-        showSuccess(t('agora', 'Collective and link deleted successfully'));
+        await inquiryLinksStore.deleteCollectiveViaAPI(resource.target_id)
+        showSuccess(t('agora', 'Collective and link deleted successfully'))
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Collective kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Collective kept'))
       }
     },
     polls: async () => {
       if (deleteExternalData) {
-        await inquiryLinksStore.deletePollViaAPI(resource.target_id);
-        showSuccess(t('agora', 'Poll and link deleted successfully'));
+        await inquiryLinksStore.deletePollViaAPI(resource.target_id)
+        showSuccess(t('agora', 'Poll and link deleted successfully'))
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Poll kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Poll kept'))
       }
     },
     forms: async () => {
       if (deleteExternalData) {
-        await inquiryLinksStore.deleteFormViaAPI(resource.target_id);
-        showSuccess(t('agora', 'Form and link deleted successfully'));
+        await inquiryLinksStore.deleteFormViaAPI(resource.target_id)
+        showSuccess(t('agora', 'Form and link deleted successfully'))
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Form kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Form kept'))
       }
     },
     default: async () => {
-      showSuccess(t('agora', 'Resource link deleted successfully'));
-    }
-  };
+      showSuccess(t('agora', 'Resource link deleted successfully'))
+    },
+  }
 
-  const handler = deletionHandlers[resource.target_app as keyof typeof deletionHandlers] || deletionHandlers.default;
-  await handler();
+  const handler =
+    deletionHandlers[resource.target_app as keyof typeof deletionHandlers] ||
+    deletionHandlers.default
+  await handler()
 }
 
 const handleAttachmentDeletion = async (resource: ResourceItem) => {
-  const attachment = attachmentsStore.attachments.find(att => att.id === resource.id);
+  const attachment = attachmentsStore.attachments.find((att) => att.id === resource.id)
 
   if (!attachment) {
-    console.warn('No attachment found with id:', resource.id);
-    return;
+    console.warn('No attachment found with id:', resource.id)
+    return
   }
 
   // Only delete from server if it's a positive numeric ID
   if (attachment.id && attachment.id > 0) {
-    await attachmentsStore.delete(attachment.id);
+    await attachmentsStore.delete(attachment.id)
   }
 
   // Use filter for immutable update
-  attachmentsStore.attachments = attachmentsStore.attachments.filter(att => att.id !== resource.id);
+  attachmentsStore.attachments = attachmentsStore.attachments.filter(
+    (att) => att.id !== resource.id
+  )
 
-  showSuccess(t('agora', 'File has been removed!'));
+  showSuccess(t('agora', 'File has been removed!'))
 }
 
 const getErrorMessage = (resourceType: string): string => {
@@ -362,10 +364,10 @@ const getErrorMessage = (resourceType: string): string => {
     polls: t('agora', 'Failed to delete poll resource'),
     forms: t('agora', 'Failed to delete form resource'),
     attachment: t('agora', 'Failed to delete file'),
-    default: t('agora', 'Failed to delete resource')
-  };
+    default: t('agora', 'Failed to delete resource'),
+  }
 
-  return messages[resourceType as keyof typeof messages] || messages.default;
+  return messages[resourceType as keyof typeof messages] || messages.default
 }
 
 // Resource display helpers
@@ -394,9 +396,8 @@ const getResourceTarget = (): string => '_blank'
 
 // Add this function to check if resource can be edited
 const canEditResource = (): boolean => {
-   const inquiry = currentInquiry.value
-  console.log(" CAN EDIT RESSOURCE ",currentInquiry.value)
-
+  const inquiry = currentInquiry.value
+  console.log(' CAN EDIT RESSOURCE ', currentInquiry.value)
 
   if (!inquiry) {
     return false
@@ -406,11 +407,10 @@ const canEditResource = (): boolean => {
     return false
   }
 
-
   // Use your permission system if available, otherwise simple owner check
   try {
-      if (context.value === undefined || context.value === null) {
-         return inquiry.currentUserStatus?.isOwner
+    if (context.value === undefined || context.value === null) {
+      return inquiry.currentUserStatus?.isOwner
     }
     return canEdit?.(context.value) ?? inquiry.currentUserStatus?.isOwner
   } catch (error) {
@@ -502,184 +502,218 @@ onMounted(async () => {
 </script>
 
 <template v-if="currentInquiry">
-    <div class="sidebar-links">
-        <div class="sidebar-header">
-            <div class="header-content">
-                <div class="header-text">
-                    <h2>{{ t('agora', 'Linked resources') }}</h2>
-                    <p class="description">{{ t('agora', 'Manage links to other Nextcloud resources and files') }}</p>
-                </div>
-                <NcButton
-                        v-if="currentInquiry && currentInquiry.currentUserStatus?.isOwner"
-                        type="primary"
-                        class="add-resource-btn"
-                        @click="openAddModal"
-                        >
-                        <template #icon>
-                            <component :is="InquiryGeneralIcons.Plus" :size="20" />
-                        </template>
-                {{ t('agora', 'Add resource') }}
-                </NcButton>
-            </div>
+  <div class="sidebar-links">
+    <div class="sidebar-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h2>{{ t('agora', 'Linked resources') }}</h2>
+          <p class="description">
+            {{ t('agora', 'Manage links to other Nextcloud resources and files') }}
+          </p>
         </div>
-
-        <div class="resources-list">
-            <div v-if="isLoading" class="loading-state">
-                {{ t('agora', 'Loading resources …') }}
-            </div>
-
-            <div v-else-if="!hasResources" class="empty-state">
-                <component :is="InquiryGeneralIcons.Link" :size="48" class="empty-icon" />
-                <p>{{ t('agora', 'No linked resources') }}</p>
-                <p class="empty-description">{{ t('agora', 'Add resources or files to connect with other apps') }}</p>
-            </div>
-
-            <div v-else class="resources-groups">
-                <div v-for="(resources, appId) in groupedResources" :key="appId" class="resource-group">
-                    <h3 class="group-title">
-                        <component :is="getAppIcon(appId)" :size="20" class="group-icon" />
-                        {{ getAppName(appId) }}
-                    </h3>
-                    <div class="group-items">
-                        <NcListItem
-                                v-for="resourceItem in resources"
-                                :key="resourceItem.id || resourceItem.target_id"
-                                :name="resourceItem.displayName"
-                                :bold="true"
-                                :force-display-actions="true"
-                                :target="getResourceTarget()"
-                                :href="getResourceHref(resourceItem)"
-                                :to="null"
-                                @click="handleResourceClick"
-                                >
-                                <template #icon>
-                                    <component :is="resourceItem.icon" :size="20" />
-                                </template>
-
-                        <template #indicator>
-                            {{ getResourceSubtitle(resourceItem) }}
-                        </template>
-
-                        <template #actions >
-                            <NcActionButton
-                                    v-if="canEditResource()"
-                                    @click.stop="deleteResource(resourceItem)"
-                                    >
-                                    <template #icon>
-                                        <component :is="InquiryGeneralIcons.Delete" :size="16" />
-                                    </template>
-                            {{ t('agora', 'Delete') }}
-                            </NcActionButton>
-                        </template>
-                        </NcListItem>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <AddResourceModal
-                v-model:open="showAddModal"
-                :available-apps="availableApps"
-                :inquiry="currentInquiry"
-                />
+        <NcButton
+          v-if="currentInquiry && currentInquiry.currentUserStatus?.isOwner"
+          type="primary"
+          class="add-resource-btn"
+          @click="openAddModal"
+        >
+          <template #icon>
+            <component
+              :is="InquiryGeneralIcons.Plus"
+              :size="20"
+            />
+          </template>
+          {{ t('agora', 'Add resource') }}
+        </NcButton>
+      </div>
     </div>
+
+    <div class="resources-list">
+      <div
+        v-if="isLoading"
+        class="loading-state"
+      >
+        {{ t('agora', 'Loading resources …') }}
+      </div>
+
+      <div
+        v-else-if="!hasResources"
+        class="empty-state"
+      >
+        <component
+          :is="InquiryGeneralIcons.Link"
+          :size="48"
+          class="empty-icon"
+        />
+        <p>{{ t('agora', 'No linked resources') }}</p>
+        <p class="empty-description">
+          {{ t('agora', 'Add resources or files to connect with other apps') }}
+        </p>
+      </div>
+
+      <div
+        v-else
+        class="resources-groups"
+      >
+        <div
+          v-for="(resources, appId) in groupedResources"
+          :key="appId"
+          class="resource-group"
+        >
+          <h3 class="group-title">
+            <component
+              :is="getAppIcon(appId)"
+              :size="20"
+              class="group-icon"
+            />
+            {{ getAppName(appId) }}
+          </h3>
+          <div class="group-items">
+            <NcListItem
+              v-for="resourceItem in resources"
+              :key="resourceItem.id || resourceItem.target_id"
+              :name="resourceItem.displayName"
+              :bold="true"
+              :force-display-actions="true"
+              :target="getResourceTarget()"
+              :href="getResourceHref(resourceItem)"
+              :to="null"
+              @click="handleResourceClick"
+            >
+              <template #icon>
+                <component
+                  :is="resourceItem.icon"
+                  :size="20"
+                />
+              </template>
+
+              <template #indicator>
+                {{ getResourceSubtitle(resourceItem) }}
+              </template>
+
+              <template #actions>
+                <NcActionButton
+                  v-if="canEditResource()"
+                  @click.stop="deleteResource(resourceItem)"
+                >
+                  <template #icon>
+                    <component
+                      :is="InquiryGeneralIcons.Delete"
+                      :size="16"
+                    />
+                  </template>
+                  {{ t('agora', 'Delete') }}
+                </NcActionButton>
+              </template>
+            </NcListItem>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <AddResourceModal
+      v-model:open="showAddModal"
+      :available-apps="availableApps"
+      :inquiry="currentInquiry"
+    />
+  </div>
 </template>
 
 <style scoped lang="scss">
 .sidebar-links {
-    padding: var(--default-grid-baseline);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--default-grid-baseline);
+  padding: var(--default-grid-baseline);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--default-grid-baseline);
 
-    .sidebar-header {
-        margin-bottom: var(--default-grid-baseline);
-        border-bottom: 1px solid var(--color-border);
-        padding-bottom: var(--default-grid-baseline);
+  .sidebar-header {
+    margin-bottom: var(--default-grid-baseline);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--default-grid-baseline);
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: var(--default-grid-baseline);
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--default-grid-baseline);
 
-            .header-text {
-                flex-grow: 1;
-
-                h2 {
-                    margin: 0;
-                    font-size: 1.2em;
-                    font-weight: 600;
-                    color: var(--color-text);
-                }
-
-                .description {
-                    margin: calc(var(--default-grid-baseline) / 2) 0 0 0;
-                    font-size: 0.9em;
-                    color: var(--color-text-lighter);
-                }
-            }
-
-            .add-resource-btn {
-                flex-shrink: 0;
-            }
-        }
-    }
-
-    .resources-list {
+      .header-text {
         flex-grow: 1;
-        overflow-y: auto;
 
-        .loading-state,
-        .empty-state {
-            text-align: center;
-            color: var(--color-text-lighter);
-            padding: calc(var(--default-grid-baseline) * 3);
-            font-style: italic;
-
-            .empty-icon {
-                margin-bottom: var(--default-grid-baseline);
-                color: var(--color-border);
-            }
-
-            .empty-description {
-                font-size: 0.9em;
-                margin-top: calc(var(--default-grid-baseline) / 2);
-                margin-bottom: var(--default-grid-baseline);
-            }
+        h2 {
+          margin: 0;
+          font-size: 1.2em;
+          font-weight: 600;
+          color: var(--color-text);
         }
 
-        .resources-groups {
-            display: flex;
-            flex-direction: column;
-            gap: var(--default-grid-baseline);
+        .description {
+          margin: calc(var(--default-grid-baseline) / 2) 0 0 0;
+          font-size: 0.9em;
+          color: var(--color-text-lighter);
         }
+      }
 
-        .resource-group {
-            .group-title {
-                display: flex;
-                align-items: center;
-                gap: calc(var(--default-grid-baseline) / 2);
-                margin: 0 0 calc(var(--default-grid-baseline) / 2) 0;
-                font-size: 1em;
-                font-weight: 600;
-                color: var(--color-text);
-
-                .group-icon {
-                    color: var(--color-primary-element);
-                }
-            }
-
-            .group-items {
-                display: flex;
-                flex-direction: column;
-                gap: 1px;
-                background-color: var(--color-background-dark);
-                border-radius: var(--border-radius);
-                overflow: hidden;
-            }
-        }
+      .add-resource-btn {
+        flex-shrink: 0;
+      }
     }
+  }
+
+  .resources-list {
+    flex-grow: 1;
+    overflow-y: auto;
+
+    .loading-state,
+    .empty-state {
+      text-align: center;
+      color: var(--color-text-lighter);
+      padding: calc(var(--default-grid-baseline) * 3);
+      font-style: italic;
+
+      .empty-icon {
+        margin-bottom: var(--default-grid-baseline);
+        color: var(--color-border);
+      }
+
+      .empty-description {
+        font-size: 0.9em;
+        margin-top: calc(var(--default-grid-baseline) / 2);
+        margin-bottom: var(--default-grid-baseline);
+      }
+    }
+
+    .resources-groups {
+      display: flex;
+      flex-direction: column;
+      gap: var(--default-grid-baseline);
+    }
+
+    .resource-group {
+      .group-title {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--default-grid-baseline) / 2);
+        margin: 0 0 calc(var(--default-grid-baseline) / 2) 0;
+        font-size: 1em;
+        font-weight: 600;
+        color: var(--color-text);
+
+        .group-icon {
+          color: var(--color-primary-element);
+        }
+      }
+
+      .group-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        background-color: var(--color-background-dark);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+      }
+    }
+  }
 }
 </style>

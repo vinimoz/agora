@@ -17,12 +17,9 @@ import { NavigationIcons } from '../utils/icons.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
-import type { InquiryGroupType, InquiryGroup } from '../stores/inquiryGroups.types.ts'
+import type { InquiryGroupType, InquiryGroup } from '../Types/inquiryGroups.types.ts'
 import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
-import {
-  createInquiryGroupContext,
-  canEdit,
-} from '../utils/permissions.ts'
+import { createInquiryGroupContext, canEdit } from '../utils/permissions.ts'
 
 const props = defineProps<{
   slug?: string
@@ -54,16 +51,13 @@ const currentGroup = computed<InquiryGroup | null>(() => {
   return inquiryGroupsStore.bySlug(slug) || null
 })
 
-const activeFamily = computed<string | null>(
-  () => (route.query.family as string) || null,
-)
+const activeFamily = computed<string | null>(() => (route.query.family as string) || null)
 
 const familyLabel = computed(() => {
   const fam = activeFamily.value
   if (!fam) return t('agora', 'Spaces')
   const family = (sessionStore.appSettings?.inquiryFamilyTab || []).find(
-    (f: { family_type?: string; type?: string }) =>
-      (f.family_type || f.type) === fam,
+    (f: { family_type?: string; type?: string }) => (f.family_type || f.type) === fam
   )
   return family?.label ? t('agora', family.label) : fam
 })
@@ -77,13 +71,9 @@ const familyRootTypes = computed<InquiryGroupType[]>(() => {
   return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
     .filter(
       (gt: InquiryGroupType & { family?: string; family_type?: string }) =>
-        gt.is_root === true &&
-        (gt.family === fam || gt.family_type === fam),
+        gt.is_root === true && (gt.family === fam || gt.family_type === fam)
     )
-    .sort(
-      (a: InquiryGroupType, b: InquiryGroupType) =>
-        (a.sort_order || 0) - (b.sort_order || 0),
-    )
+    .sort((a: InquiryGroupType, b: InquiryGroupType) => (a.sort_order || 0) - (b.sort_order || 0))
 })
 
 // -----------------------------------------------------------
@@ -92,11 +82,7 @@ const familyRootTypes = computed<InquiryGroupType[]>(() => {
 const subgroups = computed<InquiryGroup[]>(() => {
   if (!currentGroup.value) return []
   return inquiryGroupsStore.inquiryGroups
-    .filter(
-      (g) =>
-        g.parentId === currentGroup.value!.id &&
-        g.status?.groupStatus !== 'archived',
-    )
+    .filter((g) => g.parentId === currentGroup.value!.id && g.status?.groupStatus !== 'archived')
     .sort((a, b) => a.title.localeCompare(b.title))
 })
 
@@ -116,9 +102,7 @@ const groupInquiries = computed(() => {
 const archivedSubgroups = computed<InquiryGroup[]>(() => {
   if (!currentGroup.value) return []
   return inquiryGroupsStore.inquiryGroups.filter(
-    (g) =>
-      g.parentId === currentGroup.value!.id &&
-      g.status?.groupStatus === 'archived',
+    (g) => g.parentId === currentGroup.value!.id && g.status?.groupStatus === 'archived'
   )
 })
 
@@ -141,10 +125,8 @@ function groupsOfType(typeKey: string): InquiryGroup[] {
     .filter(
       (g) =>
         g.type === typeKey &&
-        (g.parentId === null ||
-          g.parentId === 0 ||
-          (g.parentId as unknown) === undefined) &&
-        g.status?.groupStatus !== 'archived',
+        (g.parentId === null || g.parentId === 0 || (g.parentId as unknown) === undefined) &&
+        g.status?.groupStatus !== 'archived'
     )
     .sort((a, b) => a.title.localeCompare(b.title))
 }
@@ -168,10 +150,7 @@ const hasArchivedSubgroups = computed(() => archivedSubgroups.value.length > 0)
 // Icon helpers
 // -----------------------------------------------------------
 function getGroupTypeIcon(type: string) {
-  const typeData = getInquiryGroupTypeData(
-    type,
-    sessionStore.appSettings.inquiryGroupTypeTab,
-  )
+  const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
   return typeData?.icon || 'Folder'
 }
 
@@ -182,11 +161,7 @@ const currentGroupIcon = computed(() => {
 
 function findTypeDescriptor(typeKey: string): InquiryGroupType | null {
   const types = sessionStore.appSettings?.inquiryGroupTypeTab || []
-  return (
-    types.find(
-      (tt: InquiryGroupType) => (tt.type || tt.group_type) === typeKey,
-    ) || null
-  )
+  return types.find((tt: InquiryGroupType) => (tt.type || tt.group_type) === typeKey) || null
 }
 
 // -----------------------------------------------------------
@@ -229,9 +204,7 @@ function openCreateSubgroup() {
   if (!currentGroup.value) return
   createGroupDlgToggle.value = true
   selectedParentId.value = currentGroup.value.id
-  selectedInquiryGroupTypeForCreation.value = findTypeDescriptor(
-    currentGroup.value.type,
-  )
+  selectedInquiryGroupTypeForCreation.value = findTypeDescriptor(currentGroup.value.type)
 }
 
 function openCreateRootSpace() {
@@ -282,7 +255,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <NcAppNavigation class="agora-navigation" :aria-label="t('agora', 'Agora navigation')">
+  <NcAppNavigation
+    class="agora-navigation"
+    :aria-label="t('agora', 'Agora navigation')"
+  >
     <template #list>
       <!-- ============================================================= -->
       <!-- CASE 1 — Inside a specific space                                -->
@@ -290,18 +266,28 @@ onMounted(() => {
       <template v-if="currentGroup">
         <div class="current-space">
           <div class="space-badge">
-            <component :is="currentGroupIcon" class="space-icon" />
+            <component
+              :is="currentGroupIcon"
+              class="space-icon"
+            />
           </div>
           <div class="space-info">
-            <h3 class="space-title">{{ currentGroup.title }}</h3>
-            <p v-if="currentGroup.titleExt" class="space-subtitle">
+            <h3 class="space-title">
+              {{ currentGroup.title }}
+            </h3>
+            <p
+              v-if="currentGroup.titleExt"
+              class="space-subtitle"
+            >
               {{ currentGroup.titleExt }}
             </p>
           </div>
         </div>
 
         <NcAppNavigationList>
-          <h3 class="navigation-caption">{{ t('agora', 'Navigation') }}</h3>
+          <h3 class="navigation-caption">
+            {{ t('agora', 'Navigation') }}
+          </h3>
 
           <NcAppNavigationItem
             :name="t('agora', 'Overview')"
@@ -310,7 +296,10 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Home" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
 
@@ -322,10 +311,16 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Folder" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Folder"
+                class="navigation-icon"
+              />
             </template>
             <template #counter>
-              <NcCounterBubble :count="subgroups.length" class="navigation-counter" />
+              <NcCounterBubble
+                :count="subgroups.length"
+                class="navigation-counter"
+              />
             </template>
             <ul class="navigation-sublist">
               <NcAppNavigationItem
@@ -353,10 +348,16 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.View" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.View"
+                class="navigation-icon"
+              />
             </template>
             <template #counter>
-              <NcCounterBubble :count="groupInquiries.length" class="navigation-counter" />
+              <NcCounterBubble
+                :count="groupInquiries.length"
+                class="navigation-counter"
+              />
             </template>
             <ul class="navigation-sublist">
               <NcAppNavigationItem
@@ -376,7 +377,10 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Archive" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Archive"
+                class="navigation-icon"
+              />
             </template>
             <template #counter>
               <NcCounterBubble
@@ -390,14 +394,19 @@ onMounted(() => {
         <NcAppNavigationSpacer />
 
         <NcAppNavigationList v-if="canEditCurrent">
-          <h3 class="navigation-caption">{{ t('agora', 'Actions') }}</h3>
+          <h3 class="navigation-caption">
+            {{ t('agora', 'Actions') }}
+          </h3>
 
           <NcAppNavigationItem
             :name="t('agora', 'Create')"
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Plus" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Plus"
+                class="navigation-icon"
+              />
             </template>
             <template #actions>
               <NcActionButton @click="openCreateInquiry">
@@ -424,7 +433,10 @@ onMounted(() => {
             @click="openSettings"
           >
             <template #icon>
-              <component :is="NavigationIcons.Settings" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Settings"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
         </NcAppNavigationList>
@@ -438,7 +450,10 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Home" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
         </NcAppNavigationList>
@@ -450,11 +465,15 @@ onMounted(() => {
       <!-- ============================================================= -->
       <template v-else-if="activeFamily">
         <div class="family-header">
-          <h3 class="family-title">{{ familyLabel }}</h3>
+          <h3 class="family-title">
+            {{ familyLabel }}
+          </h3>
         </div>
 
         <NcAppNavigationList>
-          <h3 class="navigation-caption">{{ t('agora', 'Group types') }}</h3>
+          <h3 class="navigation-caption">
+            {{ t('agora', 'Group types') }}
+          </h3>
 
           <NcAppNavigationItem
             v-for="type in familyRootTypes"
@@ -505,7 +524,10 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Home" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
 
@@ -515,7 +537,10 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Archive" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Archive"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
         </NcAppNavigationList>
@@ -526,7 +551,9 @@ onMounted(() => {
       <!-- ============================================================= -->
       <template v-else>
         <NcAppNavigationList>
-          <h3 class="navigation-caption">{{ t('agora', 'My spaces') }}</h3>
+          <h3 class="navigation-caption">
+            {{ t('agora', 'My spaces') }}
+          </h3>
 
           <NcAppNavigationItem
             v-for="group in rootGroups"
@@ -555,7 +582,9 @@ onMounted(() => {
         <NcAppNavigationSpacer />
 
         <NcAppNavigationList>
-          <h3 class="navigation-caption">{{ t('agora', 'Actions') }}</h3>
+          <h3 class="navigation-caption">
+            {{ t('agora', 'Actions') }}
+          </h3>
 
           <NcAppNavigationItem
             :name="t('agora', 'Create space')"
@@ -563,7 +592,10 @@ onMounted(() => {
             @click="openCreateRootSpace"
           >
             <template #icon>
-              <component :is="NavigationIcons.Plus" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Plus"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
         </NcAppNavigationList>
@@ -577,7 +609,10 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Archive" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Archive"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
 
@@ -587,7 +622,10 @@ onMounted(() => {
             class="navigation-item"
           >
             <template #icon>
-              <component :is="NavigationIcons.Home" class="navigation-icon" />
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
             </template>
           </NcAppNavigationItem>
         </NcAppNavigationList>

@@ -13,7 +13,7 @@ export function useTrending(inquiryId: number) {
   const optionsStore = useOptionsStore()
 
   const calculateTrendingScore = (optionId: number): number => {
-    const option = optionsStore.options.find(o => o.id === optionId)
+    const option = optionsStore.options.find((o) => o.id === optionId)
     if (!option) return 0
 
     // 1. Vote score (40%)
@@ -21,7 +21,7 @@ export function useTrending(inquiryId: number) {
     let voteScore = 0
     if (optionSupports.length > 0) {
       // Normalize support values to a 0-100 scale based on engine type
-      const values = optionSupports.map(s => {
+      const values = optionSupports.map((s) => {
         const v = s.value
         if (typeof v === 'number') return Math.min(100, Math.max(0, v * 10)) // rough normalization
         if (typeof v === 'string') return 100 // any reaction counts as positive
@@ -32,7 +32,9 @@ export function useTrending(inquiryId: number) {
     }
 
     // 2. Comment score (30%)
-    const comments = commentsStore.comments.filter(c => c.optionId === optionId && c.deleted !== 1)
+    const comments = commentsStore.comments.filter(
+      (c) => c.optionId === optionId && c.deleted !== 1
+    )
     let commentScore = 0
     if (comments.length > 0) {
       commentScore = Math.min(100, Math.log2(comments.length + 1) * 25)
@@ -44,18 +46,15 @@ export function useTrending(inquiryId: number) {
 
     // 4. Engagement score (10%)
     const uniqueUserIds = new Set([
-      ...optionSupports.map(s => s.userId),
-      ...comments.map(c => c.userId)
+      ...optionSupports.map((s) => s.userId),
+      ...comments.map((c) => c.userId),
     ])
     const totalParticipants = uniqueUserIds.size
     const engagementScore = Math.min(100, totalParticipants * 10)
 
     // Weighted total
     return Math.round(
-      voteScore * 0.4 +
-      commentScore * 0.3 +
-      recencyScore * 0.2 +
-      engagementScore * 0.1
+      voteScore * 0.4 + commentScore * 0.3 + recencyScore * 0.2 + engagementScore * 0.1
     )
   }
 

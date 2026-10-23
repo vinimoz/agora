@@ -11,15 +11,11 @@ import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import { SupportFeature } from '../Base/index.ts'
-import {
-  canComment,
-  canSupport,
-  createInquiryContext,
-} from '../../utils/permissions.ts'
+import { canComment, canSupport, createInquiryContext } from '../../utils/permissions.ts'
 
 import { InquiryGeneralIcons, BadgeIcons, StatusIcons } from '../../utils/icons.ts'
 
-import {  type Inquiry } from '../../stores/inquiry'
+import { type Inquiry } from '../../stores/inquiry'
 import { useSessionStore } from '../../stores/session.ts'
 import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 
@@ -33,10 +29,8 @@ interface Props {
 
 const { inquiry, noLink = false, gridView = false } = defineProps<Props>()
 
-
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
-
 
 function htmlToFirstLine(html: string): string {
   const tempDiv = document.createElement('div')
@@ -77,7 +71,6 @@ const safeDescription = computed(() => {
 
 const formatDate = (timestamp: number) =>
   DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
-
 
 const formatVoteDate = (dateString: string, locale: string = navigator.language) => {
   if (!dateString) return ''
@@ -150,7 +143,7 @@ const moderationStatusLabel = computed(() => {
 // Get moderation status description
 const moderationStatusDescription = computed(() => {
   if (isModerationRejected.value) {
-    return inquiry.status.moderationReason 
+    return inquiry.status.moderationReason
       ? t('agora', 'Rejected: {reason}', { reason: inquiry.status.moderationReason })
       : t('agora', 'This inquiry has been rejected')
   }
@@ -164,7 +157,9 @@ const moderationStatusDescription = computed(() => {
 const showModerationBanner = computed(() => isModerationRejected.value || isModerationPending.value)
 
 // Get inquiry type data using helper
-const inquiryTypeData = computed(() => getInquiryTypeData(inquiry.type, sessionStore.appSettings.inquiryTypeTab || [], inquiry.type))
+const inquiryTypeData = computed(() =>
+  getInquiryTypeData(inquiry.type, sessionStore.appSettings.inquiryTypeTab || [], inquiry.type)
+)
 
 // Image URL function
 function getNextcloudPreviewUrl(fileId: number, x = 1920, y = 1080, autoScale = true) {
@@ -188,14 +183,22 @@ const gridDescription = computed(() => {
 })
 
 // Citizen inquiry features
-const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquiry.miscFields?.support_end)
+const hasVotePeriod = computed(
+  () => inquiry.miscFields?.support_start && inquiry.miscFields?.support_end
+)
 </script>
 
 <template>
-  <div class="inquiry-item" :class="{ 'grid-view': gridView, 'list-view': !gridView }">
+  <div
+    class="inquiry-item"
+    :class="{ 'grid-view': gridView, 'list-view': !gridView }"
+  >
     <!-- List Mode -->
     <template v-if="!gridView">
-      <div class="item__type" :title="inquiryTypeData.label">
+      <div
+        class="item__type"
+        :title="inquiryTypeData.label"
+      >
         <component
           :is="inquiryTypeData.icon"
           :title="inquiryTypeData.label"
@@ -203,16 +206,26 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
         {{ inquiryTypeData.label }}
       </div>
 
-      <div v-if="noLink" class="item__title" :class="{ closed: inquiry.status.isExpired }">
-        <div class="title" :title="inquiry.title">
+      <div
+        v-if="noLink"
+        class="item__title"
+        :class="{ closed: inquiry.status.isExpired }"
+      >
+        <div
+          class="title"
+          :title="inquiry.title"
+        >
           {{ inquiry.title }}
         </div>
 
         <div class="description_line">
-          <component :is="StatusIcons.Lock" :size="16" />
+          <component
+            :is="StatusIcons.Lock"
+            :size="16"
+          />
           <div class="description">
             {{
-            t('agora', 'No access to this inquiry of {ownerName}', {
+              t('agora', 'No access to this inquiry of {ownerName}', {
                 ownerName: inquiry.owner.displayName,
               })
             }}
@@ -230,7 +243,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
         }"
         :class="{
           closed: inquiry.status.isExpired,
-      active: inquiry.id,
+          active: inquiry.id,
         }"
       >
         <div class="title_line">
@@ -244,7 +257,11 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
         </div>
       </RouterLink>
 
-      <div v-else class="item__title" :class="{ closed: inquiry.status.isExpired }">
+      <div
+        v-else
+        class="item__title"
+        :class="{ closed: inquiry.status.isExpired }"
+      >
         <div class="title_line">
           <span class="title">
             {{ inquiry.title }}
@@ -256,15 +273,22 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
       </div>
 
       <div class="badges">
-        <div v-if="inquiry.parentId" class="item__type">
+        <div
+          v-if="inquiry.parentId"
+          class="item__type"
+        >
           <RouterLink
             class="underline"
             :to="`/inquiry/${inquiry.parentId}`"
           >
-            <component :is="StatusIcons.LinkIcon" :size="20" :title="`id:${inquiry.parentId}`"/>
+            <component
+              :is="StatusIcons.LinkIcon"
+              :size="20"
+              :title="`id:${inquiry.parentId}`"
+            />
           </RouterLink>
-        </div> 
-        
+        </div>
+
         <div v-if="inquiry.type !== 'official'">
           <div
             v-if="inquiryStatusInfo"
@@ -284,7 +308,11 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             class="chip chip--status"
             :title="inquiryStatusLabel"
           >
-            <component :is="inquiryStatusIcon" :size="12" class="icon" />
+            <component
+              :is="inquiryStatusIcon"
+              :size="12"
+              class="icon"
+            />
             <span>{{ inquiryStatusLabel }}</span>
           </div>
         </div>
@@ -295,7 +323,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
           class="chip chip--moderation"
           :class="{
             'chip--moderation-pending': isModerationPending,
-            'chip--moderation-rejected': isModerationRejected
+            'chip--moderation-rejected': isModerationRejected,
           }"
           :title="moderationStatusDescription"
         >
@@ -316,8 +344,15 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             })
           "
         >
-          <component :is="StatusIcons.ForumOutline" :size="12" class="icon" />
-          <NcCounterBubble :count="inquiry.status.countComments || 0" :raw="true" />
+          <component
+            :is="StatusIcons.ForumOutline"
+            :size="12"
+            class="icon"
+          />
+          <NcCounterBubble
+            :count="inquiry.status.countComments || 0"
+            :raw="true"
+          />
         </div>
 
         <div
@@ -344,8 +379,15 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             })
           "
         >
-          <component :is="BadgeIcons.Participated" :size="16" class="icon" />
-          <NcCounterBubble :count="inquiry.status.countParticipants || 0" :raw="true" />
+          <component
+            :is="BadgeIcons.Participated"
+            :size="16"
+            class="icon"
+          />
+          <NcCounterBubble
+            :count="inquiry.status.countParticipants || 0"
+            :raw="true"
+          />
         </div>
 
         <!-- User info section -->
@@ -373,8 +415,15 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
         </div>
 
         <!-- Expire chip -->
-        <div v-if="!hasVotePeriod && inquiry.configuration.expire" class="chip chip--expire">
-          <component :is="InquiryGeneralIcons.Expiration" :size="12" class="icon" />
+        <div
+          v-if="!hasVotePeriod && inquiry.configuration.expire"
+          class="chip chip--expire"
+        >
+          <component
+            :is="InquiryGeneralIcons.Expiration"
+            :size="12"
+            class="icon"
+          />
           <span class="chip-value">{{ timeExpirationRelative }}</span>
         </div>
       </div>
@@ -393,7 +442,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
           class="grid-moderation-banner"
           :class="{
             'moderation-pending': isModerationPending,
-            'moderation-rejected': isModerationRejected
+            'moderation-rejected': isModerationRejected,
           }"
           :title="moderationStatusDescription"
         >
@@ -403,19 +452,28 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             class="icon"
           />
           <span>{{ moderationStatusLabel }}</span>
-          <span v-if="isModerationRejected && inquiry.status.moderationReason" class="reason">
+          <span
+            v-if="isModerationRejected && inquiry.status.moderationReason"
+            class="reason"
+          >
             {{ inquiry.status.moderationReason }}
           </span>
         </div>
 
         <!-- Cover Image with User Avatar + Expiration -->
-        <div class="grid-cover-container" :class="{ 'no-cover': !currentCoverUrl }">
-          <div v-if="currentCoverUrl" class="grid-cover">
+        <div
+          class="grid-cover-container"
+          :class="{ 'no-cover': !currentCoverUrl }"
+        >
+          <div
+            v-if="currentCoverUrl"
+            class="grid-cover"
+          >
             <img
               :src="currentCoverUrl"
               :alt="inquiry.title"
               class="cover-image"
-            />
+            >
           </div>
 
           <!-- User Avatar top left -->
@@ -445,13 +503,20 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             class="expiration-corner"
             :title="t('agora', 'Expires {relativeTime}', { relativeTime: timeExpirationRelative })"
           >
-            <component :is="InquiryGeneralIcons.Expiration" :size="14" class="icon" />
+            <component
+              :is="InquiryGeneralIcons.Expiration"
+              :size="14"
+              class="icon"
+            />
             <span>{{ timeExpirationRelative }}</span>
           </div>
         </div>
 
         <!-- Content -->
-        <div class="grid-content" :class="{ 'no-cover': !currentCoverUrl }">
+        <div
+          class="grid-content"
+          :class="{ 'no-cover': !currentCoverUrl }"
+        >
           <!-- Type + Title -->
           <div class="first-line">
             <div class="type-title">
@@ -477,7 +542,10 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                   {{ inquiry.title }}
                 </h3>
               </RouterLink>
-              <h3 v-else class="grid-title">
+              <h3
+                v-else
+                class="grid-title"
+              >
                 {{ inquiry.title }}
               </h3>
             </div>
@@ -498,9 +566,16 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             <!-- Second Line: Parent Link + Participated + Comments + Supports -->
             <div class="second-line">
               <div class="left-items">
-                <div v-if="inquiry.parentId" class="meta-chip meta-chip--transparent parent-link">
+                <div
+                  v-if="inquiry.parentId"
+                  class="meta-chip meta-chip--transparent parent-link"
+                >
                   <RouterLink :to="`/inquiry/${inquiry.parentId}`">
-                    <component :is="StatusIcons.LinkIcon" :size="16" :title="`id:${inquiry.parentId}`"/>
+                    <component
+                      :is="StatusIcons.LinkIcon"
+                      :size="16"
+                      :title="`id:${inquiry.parentId}`"
+                    />
                   </RouterLink>
                 </div>
 
@@ -513,8 +588,15 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                     })
                   "
                 >
-                  <component :is="BadgeIcons.Participated" :size="14" class="icon" />
-                  <NcCounterBubble :count="inquiry.status.countParticipants || 0" :raw="true" />
+                  <component
+                    :is="BadgeIcons.Participated"
+                    :size="14"
+                    class="icon"
+                  />
+                  <NcCounterBubble
+                    :count="inquiry.status.countParticipants || 0"
+                    :raw="true"
+                  />
                 </div>
               </div>
 
@@ -528,8 +610,15 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                     })
                   "
                 >
-                  <component :is="StatusIcons.ForumOutline" :size="14" class="icon" />
-                  <NcCounterBubble :count="inquiry.status.countComments || 0" :raw="true" />
+                  <component
+                    :is="StatusIcons.ForumOutline"
+                    :size="14"
+                    class="icon"
+                  />
+                  <NcCounterBubble
+                    :count="inquiry.status.countComments || 0"
+                    :raw="true"
+                  />
                 </div>
 
                 <SupportFeature
@@ -548,16 +637,31 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             <!-- Third Line: Dates or Vote Period -->
             <div class="third-line">
               <!-- Vote Period Boxes -->
-              <div v-if="hasVotePeriod" class="vote-period-container">
+              <div
+                v-if="hasVotePeriod"
+                class="vote-period-container"
+              >
                 <div class="vote-date-box start-date">
-                  <component :is="StatusIcons.Calendar" :size="12" class="icon" />
+                  <component
+                    :is="StatusIcons.Calendar"
+                    :size="12"
+                    class="icon"
+                  />
                   <span class="vote-date-label">{{ t('agora', 'Start support:') }}</span>
-                  <span class="vote-date-value">{{ formatVoteDate(inquiry.miscFields.support_start) }}</span>
+                  <span class="vote-date-value">{{
+                    formatVoteDate(inquiry.miscFields.support_start)
+                  }}</span>
                 </div>
                 <div class="vote-date-box end-date">
-                  <component :is="StatusIcons.Expiration" :size="12" class="icon" />
+                  <component
+                    :is="StatusIcons.Expiration"
+                    :size="12"
+                    class="icon"
+                  />
                   <span class="vote-date-label">{{ t('agora', 'End support:') }}</span>
-                  <span class="vote-date-value">{{ formatVoteDate(inquiry.miscFields.support_end) }}</span>
+                  <span class="vote-date-value">{{
+                    formatVoteDate(inquiry.miscFields.support_end)
+                  }}</span>
                 </div>
               </div>
 
@@ -576,7 +680,11 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                       })
                     "
                   >
-                    <component :is="StatusIcons.Updated" :size="12" class="icon" />
+                    <component
+                      :is="StatusIcons.Updated"
+                      :size="12"
+                      class="icon"
+                    />
                     <span>{{ formatDate(inquiry.status.lastInteraction) }}</span>
                   </div>
 
@@ -588,7 +696,11 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                       })
                     "
                   >
-                    <component :is="StatusIcons.Calendar" :size="12" class="icon" />
+                    <component
+                      :is="StatusIcons.Calendar"
+                      :size="12"
+                      class="icon"
+                    />
                     <span>{{ formatDate(inquiry.status.created) }}</span>
                   </div>
                 </div>
@@ -616,696 +728,711 @@ $chip-gap: 6px;
 $chip-font-size: 0.78rem;
 $chip-min-height: 30px;
 
-$chip-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-$chip-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.06);
+$chip-shadow:
+  0 1px 2px rgba(0, 0, 0, 0.06),
+  0 1px 3px rgba(0, 0, 0, 0.04);
+$chip-shadow-hover:
+  0 2px 6px rgba(0, 0, 0, 0.08),
+  0 4px 12px rgba(0, 0, 0, 0.06);
 
 $transition-fast: 0.18s ease;
 $transition-base: 0.25s ease;
 
 .inquiry-item {
-    /* =========================================================
+  /* =========================================================
        Shared chip primitive
        ========================================================= */
-    .chip,
-    .meta-chip {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: $chip-gap;
-        padding: $chip-padding;
-        border-radius: $chip-radius;
-        font-size: $chip-font-size;
-        line-height: 1;
-        min-height: $chip-min-height;
-        white-space: nowrap;
-        color: var(--color-main-text);
-        background-color: $chip-bg;
-        border: 1px solid $chip-border;
-        box-shadow: $chip-shadow;
-        transition: box-shadow $transition-fast, transform $transition-fast,
-                    background-color $transition-fast, border-color $transition-fast;
+  .chip,
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $chip-gap;
+    padding: $chip-padding;
+    border-radius: $chip-radius;
+    font-size: $chip-font-size;
+    line-height: 1;
+    min-height: $chip-min-height;
+    white-space: nowrap;
+    color: var(--color-main-text);
+    background-color: $chip-bg;
+    border: 1px solid $chip-border;
+    box-shadow: $chip-shadow;
+    transition:
+      box-shadow $transition-fast,
+      transform $transition-fast,
+      background-color $transition-fast,
+      border-color $transition-fast;
 
-        .icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--color-text-maxcontrast);
-            flex-shrink: 0;
-        }
-
-        .chip-value {
-            font-weight: 500;
-        }
-
-        :deep(.counter-bubble__counter),
-        :deep(.counter-bubble) {
-            background: transparent !important;
-            font-weight: 600;
-            font-size: $chip-font-size;
-        }
-
-        :deep(.support-feature-wrapper),
-        :deep(.support-feature) {
-            display: inline-flex;
-            align-items: center;
-            gap: $chip-gap;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            min-height: auto;
-        }
-
-        :deep(.quorum-compact) {
-            display: inline-flex;
-            align-items: center;
-            gap: 2px;
-            font-size: 0.68rem;
-            color: var(--color-text-maxcontrast);
-            margin-left: 4px;
-
-            .quorum-target {
-                font-weight: 700;
-                color: var(--color-primary-element);
-            }
-
-            .quorum-label {
-                opacity: 0.75;
-                margin-left: 2px;
-            }
-        }
-
-        &--comments,
-        &--supports,
-        &--expire,
-        &--participants {
-            cursor: default;
-        }
-
-        &--comments:hover,
-        &--supports:hover {
-            box-shadow: $chip-shadow-hover;
-            transform: translateY(-1px);
-        }
-
-        &--participants {
-            .icon {
-                color: var(--color-primary-element);
-            }
-        }
-
-        &--expire {
-            .icon {
-                color: var(--color-warning);
-            }
-        }
-
-        &--status {
-            background-color: var(--color-primary-element-light, #e8f0fe);
-            border-color: transparent;
-
-            .icon {
-                color: var(--color-primary-element);
-            }
-        }
-
-        &--transparent {
-            background-color: transparent;
-            border-color: transparent;
-            box-shadow: none;
-            padding: 0;
-            min-height: auto;
-        }
-
-        &--moderation-pending {
-            background-color: #fff7e6;
-            border-color: #ffd591;
-
-            .icon,
-            .chip-value {
-                color: #d46b08;
-            }
-        }
-
-        &--moderation-rejected {
-            background-color: #fff1f0;
-            border-color: #ffa39e;
-
-            .icon,
-            .chip-value {
-                color: #cf1322;
-            }
-        }
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-maxcontrast);
+      flex-shrink: 0;
     }
 
-    /* =========================================================
+    .chip-value {
+      font-weight: 500;
+    }
+
+    :deep(.counter-bubble__counter),
+    :deep(.counter-bubble) {
+      background: transparent !important;
+      font-weight: 600;
+      font-size: $chip-font-size;
+    }
+
+    :deep(.support-feature-wrapper),
+    :deep(.support-feature) {
+      display: inline-flex;
+      align-items: center;
+      gap: $chip-gap;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      min-height: auto;
+    }
+
+    :deep(.quorum-compact) {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.68rem;
+      color: var(--color-text-maxcontrast);
+      margin-left: 4px;
+
+      .quorum-target {
+        font-weight: 700;
+        color: var(--color-primary-element);
+      }
+
+      .quorum-label {
+        opacity: 0.75;
+        margin-left: 2px;
+      }
+    }
+
+    &--comments,
+    &--supports,
+    &--expire,
+    &--participants {
+      cursor: default;
+    }
+
+    &--comments:hover,
+    &--supports:hover {
+      box-shadow: $chip-shadow-hover;
+      transform: translateY(-1px);
+    }
+
+    &--participants {
+      .icon {
+        color: var(--color-primary-element);
+      }
+    }
+
+    &--expire {
+      .icon {
+        color: var(--color-warning);
+      }
+    }
+
+    &--status {
+      background-color: var(--color-primary-element-light, #e8f0fe);
+      border-color: transparent;
+
+      .icon {
+        color: var(--color-primary-element);
+      }
+    }
+
+    &--transparent {
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      padding: 0;
+      min-height: auto;
+    }
+
+    &--moderation-pending {
+      background-color: #fff7e6;
+      border-color: #ffd591;
+
+      .icon,
+      .chip-value {
+        color: #d46b08;
+      }
+    }
+
+    &--moderation-rejected {
+      background-color: #fff1f0;
+      border-color: #ffa39e;
+
+      .icon,
+      .chip-value {
+        color: #cf1322;
+      }
+    }
+  }
+
+  /* =========================================================
        LIST VIEW
        ========================================================= */
-    &.list-view {
-        display: flex;
-        column-gap: 0.75rem;
-        align-items: center;
-        padding: 0.65rem 0.75rem;
-        border-radius: 10px;
-        border-bottom: 1px solid var(--color-border);
-        margin-bottom: 0.25rem;
-        transition: background-color $transition-fast, box-shadow $transition-fast;
+  &.list-view {
+    display: flex;
+    column-gap: 0.75rem;
+    align-items: center;
+    padding: 0.65rem 0.75rem;
+    border-radius: 10px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 0.25rem;
+    transition:
+      background-color $transition-fast,
+      box-shadow $transition-fast;
 
-        &:hover {
-            background-color: var(--color-background-hover);
-        }
-
-        &.active {
-            background-color: var(--color-primary-element-light);
-        }
-
-        .item__type {
-            flex: 0 0 2.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
-            color: var(--color-text-maxcontrast);
-        }
-
-        .item__title {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-
-            .title_line,
-            .description_line {
-                display: flex;
-                gap: 0.5rem;
-                align-items: center;
-
-                .title,
-                .description {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-
-                .title {
-                    font-weight: 600;
-                    color: var(--color-main-text);
-                    font-size: 0.95rem;
-                }
-            }
-
-            .description_line {
-                opacity: 0.7;
-                font-size: 0.85rem;
-                margin-top: 0.2rem;
-
-                .description {
-                    flex: 1;
-                }
-            }
-        }
-
-        .badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            align-items: center;
-            justify-content: flex-end;
-
-            .user-info-section {
-                display: inline-flex;
-                align-items: center;
-            }
-        }
-
-        .actions {
-            display: flex;
-            flex: 0 0 auto;
-            justify-content: center;
-            align-items: center;
-        }
+    &:hover {
+      background-color: var(--color-background-hover);
     }
 
-    /* =========================================================
+    &.active {
+      background-color: var(--color-primary-element-light);
+    }
+
+    .item__type {
+      flex: 0 0 2.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-text-maxcontrast);
+    }
+
+    .item__title {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+
+      .title_line,
+      .description_line {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        .title,
+        .description {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .title {
+          font-weight: 600;
+          color: var(--color-main-text);
+          font-size: 0.95rem;
+        }
+      }
+
+      .description_line {
+        opacity: 0.7;
+        font-size: 0.85rem;
+        margin-top: 0.2rem;
+
+        .description {
+          flex: 1;
+        }
+      }
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: flex-end;
+
+      .user-info-section {
+        display: inline-flex;
+        align-items: center;
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex: 0 0 auto;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  /* =========================================================
        GRID VIEW
        ========================================================= */
-    &.grid-view {
-        .grid-card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border: 1px solid var(--color-border);
-            border-radius: 14px;
-            background-color: var(--color-main-background);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.05);
-            transition: transform $transition-base, box-shadow $transition-base,
-                        border-color $transition-base;
-            overflow: hidden;
-            position: relative;
+  &.grid-view {
+    .grid-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      background-color: var(--color-main-background);
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 4px 16px rgba(0, 0, 0, 0.05);
+      transition:
+        transform $transition-base,
+        box-shadow $transition-base,
+        border-color $transition-base;
+      overflow: hidden;
+      position: relative;
 
-            &:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.09), 0 10px 30px rgba(0, 0, 0, 0.06);
-                border-color: var(--color-primary-element-light, #c7d8f7);
-            }
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          0 6px 20px rgba(0, 0, 0, 0.09),
+          0 10px 30px rgba(0, 0, 0, 0.06);
+        border-color: var(--color-primary-element-light, #c7d8f7);
+      }
+    }
+
+    /* --------- Moderation banner --------- */
+    .grid-moderation-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 3;
+      position: relative;
+
+      &.moderation-pending {
+        background: linear-gradient(135deg, #fff7e6, #ffe7ba);
+        color: #ad4e00;
+        border-bottom: 1px solid #ffd591;
+      }
+
+      &.moderation-rejected {
+        background: linear-gradient(135deg, #fff1f0, #ffccc7);
+        color: #a8071a;
+        border-bottom: 1px solid #ffa39e;
+      }
+
+      .icon {
+        flex-shrink: 0;
+      }
+
+      .reason {
+        font-weight: 500;
+        opacity: 0.9;
+        margin-left: 4px;
+        font-size: 12px;
+        background: rgba(255, 255, 255, 0.6);
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+    }
+
+    /* --------- Cover + overlays --------- */
+    .grid-cover-container {
+      position: relative;
+      width: 100%;
+
+      .grid-cover {
+        height: 170px;
+        overflow: hidden;
+        background-color: var(--color-background-dark);
+
+        .cover-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          transition: transform 0.5s ease;
+        }
+      }
+
+      .user-avatar-top {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 2;
+
+        .user-avatar-main {
+          border: 3px solid var(--color-main-background);
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+          background-color: var(--color-main-background);
+        }
+      }
+
+      /* Expiration pill top-right (frosted white) */
+      .expiration-corner {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 3;
+
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        padding: 5px 10px;
+        border-radius: $chip-radius;
+
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1;
+        white-space: nowrap;
+
+        color: var(--color-main-text);
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+
+        .icon {
+          color: var(--color-warning);
+        }
+      }
+
+      /* When there is no cover image, add a subtle inset area so the
+               avatar / expire pill still look intentional at the top */
+      &.no-cover {
+        min-height: 88px;
+        background: linear-gradient(
+          135deg,
+          var(--color-background-hover) 0%,
+          var(--color-background-dark) 100%
+        );
+
+        .user-avatar-top {
+          top: 14px;
+          left: 14px;
         }
 
-        /* --------- Moderation banner --------- */
-        .grid-moderation-banner {
+        .expiration-corner {
+          top: 14px;
+          right: 14px;
+          background: $chip-bg;
+          border-color: $chip-border;
+          box-shadow: $chip-shadow;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+        }
+      }
+    }
+
+    /* --------- Content (stacks under cover) --------- */
+    .grid-content {
+      flex: 1;
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .first-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+
+        .type-title {
+          flex: 1;
+          min-width: 0;
+
+          /* Icon + label on the top row */
+          .inquiry-type {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            font-size: 13px;
-            font-weight: 500;
-            z-index: 3;
-            position: relative;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--color-text-maxcontrast);
+            margin-bottom: 6px;
 
-            &.moderation-pending {
-                background: linear-gradient(135deg, #fff7e6, #ffe7ba);
-                color: #ad4e00;
-                border-bottom: 1px solid #ffd591;
+            .type-icon {
+              flex-shrink: 0;
+              color: var(--color-primary-element);
             }
 
-            &.moderation-rejected {
-                background: linear-gradient(135deg, #fff1f0, #ffccc7);
-                color: #a8071a;
-                border-bottom: 1px solid #ffa39e;
+            .type-label {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
+          }
+
+          /* Title underneath the type row */
+          .title-link {
+            text-decoration: none;
+            color: inherit;
+
+            &:hover .grid-title {
+              color: var(--color-primary-element);
+            }
+          }
+
+          .grid-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            line-height: 1.35;
+            margin: 0;
+            color: var(--color-main-text);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: color $transition-fast;
+          }
+        }
+
+        .toggle-view {
+          flex-shrink: 0;
+          margin-left: 8px;
+        }
+      }
+
+      /* Description under the title */
+      .description-line {
+        .grid-description {
+          font-size: 0.85rem;
+          line-height: 1.5;
+          color: var(--color-text-maxcontrast);
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      }
+
+      .bottom-section {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--color-border);
+
+        .second-line {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+
+          .left-items,
+          .right-items {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+
+          .meta-chip {
+            font-size: 0.72rem;
+            min-height: 28px;
+            padding: 4px 9px;
+          }
+        }
+
+        .third-line {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          font-size: 0.72rem;
+          color: var(--color-text-maxcontrast);
+          width: 100%;
+
+          .vote-period-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 8px;
+          }
+
+          .vote-date-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            background-color: $chip-bg;
+            border: 1px solid $chip-border;
+            border-radius: $chip-radius;
+            font-size: 0.72rem;
+            color: var(--color-main-text);
+            box-shadow: $chip-shadow;
+            flex: 1;
+            min-width: 0;
 
             .icon {
-                flex-shrink: 0;
+              color: var(--color-text-maxcontrast);
+              flex-shrink: 0;
             }
 
-            .reason {
-                font-weight: 500;
-                opacity: 0.9;
-                margin-left: 4px;
-                font-size: 12px;
-                background: rgba(255, 255, 255, 0.6);
-                padding: 2px 8px;
-                border-radius: 10px;
-            }
-        }
+            &.start-date {
+              justify-content: flex-start;
 
-        /* --------- Cover + overlays --------- */
-        .grid-cover-container {
-            position: relative;
-            width: 100%;
-
-            .grid-cover {
-                height: 170px;
-                overflow: hidden;
-                background-color: var(--color-background-dark);
-
-                .cover-image {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    object-position: center;
-                    transition: transform 0.5s ease;
-                }
+              .icon {
+                color: var(--color-primary-element);
+              }
             }
 
-            .user-avatar-top {
-                position: absolute;
-                top: 12px;
-                left: 12px;
-                z-index: 2;
+            &.end-date {
+              justify-content: flex-end;
 
-                .user-avatar-main {
-                    border: 3px solid var(--color-main-background);
-                    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-                    background-color: var(--color-main-background);
-                }
+              .icon {
+                color: var(--color-warning);
+              }
             }
 
-            /* Expiration pill top-right (frosted white) */
-            .expiration-corner {
-                position: absolute;
-                top: 12px;
-                right: 12px;
-                z-index: 3;
-
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-
-                padding: 5px 10px;
-                border-radius: $chip-radius;
-
-                font-size: 0.75rem;
-                font-weight: 600;
-                line-height: 1;
-                white-space: nowrap;
-
-                color: var(--color-main-text);
-                background: rgba(255, 255, 255, 0.92);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
-
-                .icon {
-                    color: var(--color-warning);
-                }
+            .vote-date-label {
+              opacity: 0.75;
+              white-space: nowrap;
             }
 
-            /* When there is no cover image, add a subtle inset area so the
-               avatar / expire pill still look intentional at the top */
-            &.no-cover {
-                min-height: 88px;
-                background: linear-gradient(
-                    135deg,
-                    var(--color-background-hover) 0%,
-                    var(--color-background-dark) 100%
-                );
-
-                .user-avatar-top {
-                    top: 14px;
-                    left: 14px;
-                }
-
-                .expiration-corner {
-                    top: 14px;
-                    right: 14px;
-                    background: $chip-bg;
-                    border-color: $chip-border;
-                    box-shadow: $chip-shadow;
-                    backdrop-filter: none;
-                    -webkit-backdrop-filter: none;
-                }
+            .vote-date-value {
+              font-weight: 600;
+              color: var(--color-main-text);
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
-        }
+          }
 
-        /* --------- Content (stacks under cover) --------- */
-        .grid-content {
+          .started-info {
             flex: 1;
-            padding: 18px 18px 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .dates {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 12px;
+            flex-shrink: 0;
 
-            .first-line {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                gap: 12px;
+            .date-item {
+              display: flex;
+              align-items: center;
+              gap: 5px;
+              white-space: nowrap;
 
-                .type-title {
-                    flex: 1;
-                    min-width: 0;
+              .icon {
+                color: var(--color-text-maxcontrast);
+              }
 
-                    /* Icon + label on the top row */
-                    .inquiry-type {
-                        display: flex;
-                        align-items: center;
-                        gap: 6px;
-                        font-size: 11px;
-                        font-weight: 700;
-                        letter-spacing: 0.04em;
-                        text-transform: uppercase;
-                        color: var(--color-text-maxcontrast);
-                        margin-bottom: 6px;
-
-                        .type-icon {
-                            flex-shrink: 0;
-                            color: var(--color-primary-element);
-                        }
-
-                        .type-label {
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                        }
-                    }
-
-                    /* Title underneath the type row */
-                    .title-link {
-                        text-decoration: none;
-                        color: inherit;
-
-                        &:hover .grid-title {
-                            color: var(--color-primary-element);
-                        }
-                    }
-
-                    .grid-title {
-                        font-size: 1.05rem;
-                        font-weight: 700;
-                        line-height: 1.35;
-                        margin: 0;
-                        color: var(--color-main-text);
-                        display: -webkit-box;
-                        -webkit-line-clamp: 2;
-                        -webkit-box-orient: vertical;
-                        overflow: hidden;
-                        transition: color $transition-fast;
-                    }
-                }
-
-                .toggle-view {
-                    flex-shrink: 0;
-                    margin-left: 8px;
-                }
+              &.last-interaction,
+              &.created {
+                opacity: 0.85;
+              }
             }
-
-            /* Description under the title */
-            .description-line {
-                .grid-description {
-                    font-size: 0.85rem;
-                    line-height: 1.5;
-                    color: var(--color-text-maxcontrast);
-                    margin: 0;
-                    display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                    overflow: hidden;
-                }
-            }
-
-            .bottom-section {
-                margin-top: auto;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                padding-top: 10px;
-                border-top: 1px solid var(--color-border);
-
-                .second-line {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 12px;
-
-                    .left-items,
-                    .right-items {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    }
-
-                    .meta-chip {
-                        font-size: 0.72rem;
-                        min-height: 28px;
-                        padding: 4px 9px;
-                    }
-                }
-
-                .third-line {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 12px;
-                    font-size: 0.72rem;
-                    color: var(--color-text-maxcontrast);
-                    width: 100%;
-
-                    .vote-period-container {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        width: 100%;
-                        gap: 8px;
-                    }
-
-                    .vote-date-box {
-                        display: flex;
-                        align-items: center;
-                        gap: 6px;
-                        padding: 5px 9px;
-                        background-color: $chip-bg;
-                        border: 1px solid $chip-border;
-                        border-radius: $chip-radius;
-                        font-size: 0.72rem;
-                        color: var(--color-main-text);
-                        box-shadow: $chip-shadow;
-                        flex: 1;
-                        min-width: 0;
-
-                        .icon {
-                            color: var(--color-text-maxcontrast);
-                            flex-shrink: 0;
-                        }
-
-                        &.start-date {
-                            justify-content: flex-start;
-
-                            .icon {
-                                color: var(--color-primary-element);
-                            }
-                        }
-
-                        &.end-date {
-                            justify-content: flex-end;
-
-                            .icon {
-                                color: var(--color-warning);
-                            }
-                        }
-
-                        .vote-date-label {
-                            opacity: 0.75;
-                            white-space: nowrap;
-                        }
-
-                        .vote-date-value {
-                            font-weight: 600;
-                            color: var(--color-main-text);
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                        }
-                    }
-
-                    .started-info {
-                        flex: 1;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-
-                    .dates {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        flex-shrink: 0;
-
-                        .date-item {
-                            display: flex;
-                            align-items: center;
-                            gap: 5px;
-                            white-space: nowrap;
-
-                            .icon {
-                                color: var(--color-text-maxcontrast);
-                            }
-
-                            &.last-interaction,
-                            &.created {
-                                opacity: 0.85;
-                            }
-                        }
-                    }
-                }
-            }
+          }
         }
+      }
     }
+  }
 }
 
 /* =========================================================
    Responsive
    ========================================================= */
 @media (max-width: 768px) {
-    .inquiry-item.grid-view {
-        .grid-card {
-            border-radius: 12px;
-        }
-
-        .grid-moderation-banner {
-            padding: 8px 12px;
-            font-size: 12px;
-            flex-wrap: wrap;
-
-            .reason {
-                width: 100%;
-                margin-left: 0;
-                margin-top: 4px;
-            }
-        }
-
-        .grid-cover-container {
-            .grid-cover {
-                height: 140px;
-            }
-
-            .user-avatar-top {
-                top: 10px;
-                left: 10px;
-
-                .user-avatar-main {
-                    width: 40px;
-                    height: 40px;
-                }
-            }
-
-            .expiration-corner {
-                top: 10px;
-                right: 10px;
-                font-size: 0.7rem;
-                padding: 4px 8px;
-            }
-
-            &.no-cover {
-                min-height: 76px;
-            }
-        }
-
-        .grid-content {
-            padding: 14px;
-            gap: 10px;
-
-            .first-line {
-                .type-title {
-                    .inquiry-type {
-                        font-size: 10px;
-                    }
-
-                    .grid-title {
-                        font-size: 1rem;
-                    }
-                }
-            }
-
-            .description-line {
-                .grid-description {
-                    font-size: 0.8rem;
-                }
-            }
-
-            .bottom-section {
-                .second-line {
-                    .meta-chip {
-                        font-size: 0.68rem;
-                        padding: 3px 7px;
-                        min-height: 26px;
-                    }
-                }
-
-                .third-line {
-                    font-size: 0.68rem;
-
-                    .vote-date-box {
-                        font-size: 0.68rem;
-                        padding: 4px 7px;
-                    }
-
-                    .dates {
-                        gap: 8px;
-                    }
-                }
-            }
-        }
+  .inquiry-item.grid-view {
+    .grid-card {
+      border-radius: 12px;
     }
+
+    .grid-moderation-banner {
+      padding: 8px 12px;
+      font-size: 12px;
+      flex-wrap: wrap;
+
+      .reason {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 4px;
+      }
+    }
+
+    .grid-cover-container {
+      .grid-cover {
+        height: 140px;
+      }
+
+      .user-avatar-top {
+        top: 10px;
+        left: 10px;
+
+        .user-avatar-main {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .expiration-corner {
+        top: 10px;
+        right: 10px;
+        font-size: 0.7rem;
+        padding: 4px 8px;
+      }
+
+      &.no-cover {
+        min-height: 76px;
+      }
+    }
+
+    .grid-content {
+      padding: 14px;
+      gap: 10px;
+
+      .first-line {
+        .type-title {
+          .inquiry-type {
+            font-size: 10px;
+          }
+
+          .grid-title {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      .description-line {
+        .grid-description {
+          font-size: 0.8rem;
+        }
+      }
+
+      .bottom-section {
+        .second-line {
+          .meta-chip {
+            font-size: 0.68rem;
+            padding: 3px 7px;
+            min-height: 26px;
+          }
+        }
+
+        .third-line {
+          font-size: 0.68rem;
+
+          .vote-date-box {
+            font-size: 0.68rem;
+            padding: 4px 7px;
+          }
+
+          .dates {
+            gap: 8px;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

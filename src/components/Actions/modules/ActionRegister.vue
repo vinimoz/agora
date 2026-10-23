@@ -19,7 +19,11 @@ const registerModalSize = 'large'
 
 <template>
   <div class="action toggle-sidebar">
-    <NcButton :variant="'primary'" :aria-label="caption" @click="showRegistration = true">
+    <NcButton
+      :variant="'primary'"
+      :aria-label="caption"
+      @click="showRegistration = true"
+    >
       {{ caption }}
     </NcButton>
     <NcModal

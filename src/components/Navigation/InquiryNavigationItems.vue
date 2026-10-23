@@ -86,13 +86,22 @@ const onInquiryDeleted = () => {
       <!-- Archive/Restore Button -->
       <NcActionButton
         v-if="canArchive(context) || canRestore(context)"
-        :name="inquiry.status.isArchived ? t('agora', 'Restore inquiry') : t('agora', 'Archive inquiry')"
-        :aria-label="inquiry.status.isArchived ? t('agora', 'Restore inquiry') : t('agora', 'Archive inquiry')"
+        :name="
+          inquiry.status.isArchived ? t('agora', 'Restore inquiry') : t('agora', 'Archive inquiry')
+        "
+        :aria-label="
+          inquiry.status.isArchived ? t('agora', 'Restore inquiry') : t('agora', 'Archive inquiry')
+        "
         close-after-click
         @click="toggleArchive()"
       >
         <template #icon>
-          <component :is="inquiry.status.isArchived ? InquiryGeneralIcons.Restore : InquiryGeneralIcons.Archive" :size="20" />
+          <component
+            :is="
+              inquiry.status.isArchived ? InquiryGeneralIcons.Restore : InquiryGeneralIcons.Archive
+            "
+            :size="20"
+          />
         </template>
       </NcActionButton>
 
@@ -106,7 +115,10 @@ const onInquiryDeleted = () => {
         @click="showDeleteDialog = true"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Delete" :size="20" />
+          <component
+            :is="InquiryGeneralIcons.Delete"
+            :size="20"
+          />
         </template>
       </NcActionButton>
 
@@ -119,7 +131,10 @@ const onInquiryDeleted = () => {
         @click="showTransferDialog = true"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Transfer" :size="20" />
+          <component
+            :is="InquiryGeneralIcons.Transfer"
+            :size="20"
+          />
         </template>
       </NcActionButton>
     </template>

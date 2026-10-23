@@ -155,18 +155,16 @@ export function hasForceLayout(item: AnyItem, layout: string): boolean {
 //   Inquiry → include if force_layouts ∋ familyKey
 // ---------------------------------------------------------------------------
 
-export function getOptionsForFamily(
-  options: Option[],
-  familyKey: string | undefined
-): Option[] {
+export function getOptionsForFamily(options: Option[], familyKey: string | undefined): Option[] {
   if (!familyKey) return []
 
   const layoutKey = getLayoutKeyForFamily(familyKey)
 
-  return options.filter(option =>
-    option.family === familyKey ||
-    hasForceLayout(option, layoutKey) ||
-    hasForceLayout(option, familyKey)
+  return options.filter(
+    (option) =>
+      option.family === familyKey ||
+      hasForceLayout(option, layoutKey) ||
+      hasForceLayout(option, familyKey)
   )
 }
 
@@ -178,21 +176,17 @@ export function getInquiriesForFamily(
 
   const layoutKey = getLayoutKeyForFamily(familyKey)
 
-  return inquiries.filter(inquiry =>
-    hasForceLayout(inquiry, layoutKey) ||
-    hasForceLayout(inquiry, familyKey)
+  return inquiries.filter(
+    (inquiry) => hasForceLayout(inquiry, layoutKey) || hasForceLayout(inquiry, familyKey)
   )
 }
 
-export function getItemsForFamily(
-  items: Item[],
-  familyKey: string | undefined
-): Item[] {
+export function getItemsForFamily(items: Item[], familyKey: string | undefined): Item[] {
   if (!familyKey) return []
 
   const layoutKey = getLayoutKeyForFamily(familyKey)
 
-  return items.filter(item => {
+  return items.filter((item) => {
     if (item.kind === 'option') {
       return (
         getFamily(item) === familyKey ||
@@ -208,28 +202,19 @@ export function getItemsForFamily(
 // Generic helpers (work on raw Option/Inquiry; use item.raw for Item wrappers)
 // ---------------------------------------------------------------------------
 
-export function getItemsByForceLayout<T extends AnyItem>(
-  items: T[],
-  layout: string
-): T[] {
-  return items.filter(item => hasForceLayout(item, layout))
+export function getItemsByForceLayout<T extends AnyItem>(items: T[], layout: string): T[] {
+  return items.filter((item) => hasForceLayout(item, layout))
 }
 
-export function getItemsByFamily<T extends AnyItem>(
-  items: T[],
-  familyKey: string
-): T[] {
-  return items.filter(item => getFamily(item) === familyKey)
+export function getItemsByFamily<T extends AnyItem>(items: T[], familyKey: string): T[] {
+  return items.filter((item) => getFamily(item) === familyKey)
 }
 
 // ---------------------------------------------------------------------------
 // Mutators — operate on raw Option/Inquiry (miscFields lives on raw)
 // ---------------------------------------------------------------------------
 
-export function addForceLayout<T extends Option | Inquiry>(
-  item: T,
-  layout: string
-): T {
+export function addForceLayout<T extends Option | Inquiry>(item: T, layout: string): T {
   const miscFields = { ...(item.miscFields || {}) }
   const currentLayouts = parseForceLayouts(miscFields)
 
@@ -241,13 +226,10 @@ export function addForceLayout<T extends Option | Inquiry>(
   return { ...item, miscFields }
 }
 
-export function removeForceLayout<T extends Option | Inquiry>(
-  item: T,
-  layout: string
-): T {
+export function removeForceLayout<T extends Option | Inquiry>(item: T, layout: string): T {
   const miscFields = { ...(item.miscFields || {}) }
   const currentLayouts = parseForceLayouts(miscFields)
-  const updatedLayouts = currentLayouts.filter(l => l !== layout)
+  const updatedLayouts = currentLayouts.filter((l) => l !== layout)
 
   if (updatedLayouts.length === 0) {
     delete miscFields.force_layouts

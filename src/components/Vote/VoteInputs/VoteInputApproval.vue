@@ -9,8 +9,8 @@
         type="checkbox"
         :checked="isSelected"
         @change="handleToggle"
-      />
-      <span class="checkmark"></span>
+      >
+      <span class="checkmark" />
       <span class="label-text">{{ t('agora', 'Approve') }}</span>
     </label>
   </div>
@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
-import type { Option, Inquiry } from '../../Types/index'
+import type { Option, Inquiry } from '../../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>

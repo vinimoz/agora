@@ -34,6 +34,7 @@ class Participation extends EntityWithUser implements JsonSerializable
     public const TABLE = 'agora_participation';
 
     // Policy types
+    public const POLICY_NONE= 'none';
     public const POLICY_EVERYONE = 'everyone';
     public const POLICY_USERS = 'users';
     public const POLICY_GROUPS = 'groups';

@@ -25,7 +25,7 @@ const comments = {
     return httpInstance.request({
       method: 'POST',
       url: `inquiry/${inquiryId}/comment`,
-      data: { message,optionId, confidential },
+      data: { message, optionId, confidential },
       params: { time: +new Date() },
       cancelToken: cancelTokenHandlerObject[this.addComment.name].handleRequestCancellation().token,
     })

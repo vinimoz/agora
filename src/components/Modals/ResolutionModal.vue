@@ -3,11 +3,17 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <NcModal v-if="visible" size="normal" @close="$emit('close')">
+  <NcModal
+    v-if="visible"
+    size="normal"
+    @close="$emit('close')"
+  >
     <div class="resolution-modal">
       <h3>{{ t('agora', 'Propose Resolution') }}</h3>
       <p class="subtitle">
-        {{ t('agora', 'Propose a resolution for: {title}', { title: option.title || option.text }) }}
+        {{
+          t('agora', 'Propose a resolution for: {title}', { title: option.title || option.text })
+        }}
       </p>
 
       <form @submit.prevent="handleSubmit">
@@ -30,18 +36,35 @@
           <label for="resolution-status">
             {{ t('agora', 'Status') }}
           </label>
-          <select id="resolution-status" v-model="resolutionStatus" class="resolution-select">
-            <option value="proposed">{{ t('agora', 'Proposed') }}</option>
-            <option value="under_review">{{ t('agora', 'Under Review') }}</option>
-            <option value="accepted">{{ t('agora', 'Accepted') }}</option>
+          <select
+            id="resolution-status"
+            v-model="resolutionStatus"
+            class="resolution-select"
+          >
+            <option value="proposed">
+              {{ t('agora', 'Proposed') }}
+            </option>
+            <option value="under_review">
+              {{ t('agora', 'Under Review') }}
+            </option>
+            <option value="accepted">
+              {{ t('agora', 'Accepted') }}
+            </option>
           </select>
         </div>
 
         <div class="modal-actions">
-          <NcButton type="secondary" @click="$emit('close')">
+          <NcButton
+            type="secondary"
+            @click="$emit('close')"
+          >
             {{ t('agora', 'Cancel') }}
           </NcButton>
-          <NcButton type="primary" native-type="submit" :disabled="!resolutionText.trim()">
+          <NcButton
+            type="primary"
+            native-type="submit"
+            :disabled="!resolutionText.trim()"
+          >
             {{ t('agora', 'Propose Resolution') }}
           </NcButton>
         </div>
@@ -57,11 +80,11 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import type { Option } from '../../Types/index.ts'
 
- // eslint-disable-next-line 
+// eslint-disable-next-line
 const props = defineProps<{
   visible: boolean
   option: Option
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   inquiryId: number
 }>()
 
@@ -77,7 +100,7 @@ const handleSubmit = () => {
   if (!resolutionText.value.trim()) return
   emit('submit', {
     text: resolutionText.value,
-    status: resolutionStatus.value
+    status: resolutionStatus.value,
   })
   resolutionText.value = ''
   resolutionStatus.value = 'proposed'

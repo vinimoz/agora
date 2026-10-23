@@ -5,12 +5,24 @@
       class="promo-illustration"
       :style="{ backgroundImage: `url('${resolvedImage}')` }"
     />
-    <div v-else class="promo-illustration promo-illustration--empty" />
+    <div
+      v-else
+      class="promo-illustration promo-illustration--empty"
+    />
 
     <div class="promo-body">
-      <h3 class="promo-title">{{ title }}</h3>
-      <p class="promo-text">{{ text }}</p>
-      <button class="promo-button" @click="emit('action')">{{ cta }}</button>
+      <h3 class="promo-title">
+        {{ title }}
+      </h3>
+      <p class="promo-text">
+        {{ text }}
+      </p>
+      <button
+        class="promo-button"
+        @click="emit('action')"
+      >
+        {{ cta }}
+      </button>
     </div>
   </section>
 </template>
@@ -32,7 +44,7 @@ const props = withDefaults(
     text: () => t('agora', 'Participate in the life of your community!'),
     cta: () => t('agora', 'Discover'),
     imageUrl: '',
-  },
+  }
 )
 
 const emit = defineEmits<{ action: [] }>()
@@ -67,14 +79,14 @@ const resolvedImage = computed(() => resolveImage(props.imageUrl))
 
   .promo-illustration {
     flex: 0 0 40%;
-    min-height: 140px;               /* stop the collapse */
+    min-height: 140px; /* stop the collapse */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-color: rgba(0, 0, 0, 0.12);
 
     &--empty {
-      background-image: linear-gradient(135deg, rgba(255,255,255,.12), rgba(0,0,0,.18));
+      background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.18));
     }
   }
 
@@ -88,8 +100,17 @@ const resolvedImage = computed(() => resolveImage(props.imageUrl))
     gap: 6px;
   }
 
-  .promo-title { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.25; }
-  .promo-text  { margin: 0; font-size: 13px; opacity: .9; }
+  .promo-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .promo-text {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+  }
 
   .promo-button {
     margin-top: 8px;
@@ -102,14 +123,22 @@ const resolvedImage = computed(() => resolveImage(props.imageUrl))
     font-size: 13px;
     cursor: pointer;
     align-self: flex-start;
-    transition: transform .15s ease, box-shadow .15s ease;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
 
-    &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.25); }
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
   }
 
   @media (max-width: 480px) {
     flex-direction: column;
-    .promo-illustration { flex: 0 0 150px; width: 100%; }
+    .promo-illustration {
+      flex: 0 0 150px;
+      width: 100%;
+    }
   }
 }
 </style>

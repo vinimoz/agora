@@ -7,18 +7,29 @@
     <!-- Header Section - Presentation -->
     <section class="presentation-section">
       <div class="presentation-content">
-        <h1 class="presentation-title">{{ t('agora','Présentation') }}</h1>
-        
-        <div v-if="group.description" class="description-container">
-          <div class="description-content" :class="{ expanded: isDescriptionExpanded }">
-            <div ref="descriptionText" class="description-text">
+        <h1 class="presentation-title">
+          {{ t('agora', 'Présentation') }}
+        </h1>
+
+        <div
+          v-if="group.description"
+          class="description-container"
+        >
+          <div
+            class="description-content"
+            :class="{ expanded: isDescriptionExpanded }"
+          >
+            <div
+              ref="descriptionText"
+              class="description-text"
+            >
               <div class="rich-text-display">
                 <p>{{ group.description }}</p>
               </div>
             </div>
-            
-            <button 
-              v-if="isTruncated" 
+
+            <button
+              v-if="isTruncated"
               class="expand-button"
               :aria-expanded="isDescriptionExpanded"
               @click="isDescriptionExpanded = !isDescriptionExpanded"
@@ -26,7 +37,12 @@
               <span class="button-text">
                 {{ isDescriptionExpanded ? t('agora', 'Show less') : t('agora', 'Read more') }}
               </span>
-              <svg width="16" height="16" viewBox="0 0 24 24" :class="{ rotated: isDescriptionExpanded }">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                :class="{ rotated: isDescriptionExpanded }"
+              >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
               </svg>
             </button>
@@ -40,9 +56,15 @@
       <!-- Main Content Area - Takes all remaining space -->
       <main class="layout-main">
         <!-- Header Area Inquiries -->
-        <section v-if="headerInquiries.length > 0" class="inquiry-section header-section">
+        <section
+          v-if="headerInquiries.length > 0"
+          class="inquiry-section header-section"
+        >
           <div class="inquiry-grid header-grid">
-            <template v-for="inquiry in headerInquiries" :key="inquiry.id">
+            <template
+              v-for="inquiry in headerInquiries"
+              :key="inquiry.id"
+            >
               <component
                 :is="getInquiryComponent(inquiry, 'header')"
                 :inquiry="inquiry"
@@ -54,7 +76,10 @@
         </section>
 
         <!-- Main Area Inquiries - Grouped by Type -->
-        <section v-if="mainInquiries.length > 0" class="inquiry-section main-section">
+        <section
+          v-if="mainInquiries.length > 0"
+          class="inquiry-section main-section"
+        >
           <!-- Group by Inquiry Type -->
           <div class="type-groups">
             <div
@@ -63,25 +88,48 @@
               class="type-group"
             >
               <!-- Type Header -->
-              <div class="type-header" @click="toggleType(typeKey)">
+              <div
+                class="type-header"
+                @click="toggleType(typeKey)"
+              >
                 <div class="type-info">
                   <div class="type-icon">
                     <component :is="getInquiryTypeIcon(typeKey)" />
                   </div>
-                  <h3 class="type-name">{{ getInquiryTypeLabel(typeKey) }}</h3>
+                  <h3 class="type-name">
+                    {{ getInquiryTypeLabel(typeKey) }}
+                  </h3>
                   <span class="type-badge">{{ typeGroup.length }}</span>
                 </div>
-                <div class="type-toggle" :class="{ rotated: expandedTypes.includes(typeKey) }">
-                  <svg width="16" height="16" viewBox="0 0 24 24">
+                <div
+                  class="type-toggle"
+                  :class="{ rotated: expandedTypes.includes(typeKey) }"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
                   </svg>
                 </div>
               </div>
-              
+
               <!-- Type Inquiries Grid -->
-              <div v-show="expandedTypes.includes(typeKey)" class="type-inquiries">
-                <div class="inquiry-grid main-grid" :class="{ 'single-full-item': typeGroup.length === 1 && isFullInquiry(typeGroup[0]) }">
-                  <template v-for="inquiry in typeGroup" :key="inquiry.id">
+              <div
+                v-show="expandedTypes.includes(typeKey)"
+                class="type-inquiries"
+              >
+                <div
+                  class="inquiry-grid main-grid"
+                  :class="{
+                    'single-full-item': typeGroup.length === 1 && isFullInquiry(typeGroup[0]),
+                  }"
+                >
+                  <template
+                    v-for="inquiry in typeGroup"
+                    :key="inquiry.id"
+                  >
                     <component
                       :is="getInquiryComponent(inquiry, 'main')"
                       :inquiry="inquiry"
@@ -98,9 +146,15 @@
         </section>
 
         <!-- Footer Area Inquiries -->
-        <section v-if="footerInquiries.length > 0" class="inquiry-section footer-section">
+        <section
+          v-if="footerInquiries.length > 0"
+          class="inquiry-section footer-section"
+        >
           <div class="inquiry-grid footer-grid">
-            <template v-for="inquiry in footerInquiries" :key="inquiry.id">
+            <template
+              v-for="inquiry in footerInquiries"
+              :key="inquiry.id"
+            >
               <component
                 :is="getInquiryComponent(inquiry, 'footer')"
                 :inquiry="inquiry"
@@ -114,9 +168,14 @@
       </main>
 
       <!-- Right Sidebar - Fixed width, stretches to match height -->
-      <aside v-if="hasSidebarInquiries" class="layout-sidebar">
+      <aside
+        v-if="hasSidebarInquiries"
+        class="layout-sidebar"
+      >
         <div class="sidebar-header">
-          <h2 class="sidebar-title">{{ t('agora', 'Enquêtes') }}</h2>
+          <h2 class="sidebar-title">
+            {{ t('agora', 'Enquêtes') }}
+          </h2>
           <span class="inquiry-count">{{ sidebarInquiries.length }}</span>
         </div>
 
@@ -128,24 +187,42 @@
             class="sidebar-type-group"
           >
             <!-- Sidebar Type Header -->
-            <div class="sidebar-type-header" @click="toggleSidebarType(typeKey)">
+            <div
+              class="sidebar-type-header"
+              @click="toggleSidebarType(typeKey)"
+            >
               <div class="sidebar-type-info">
                 <div class="sidebar-type-icon">
                   <component :is="getInquiryTypeIcon(typeKey)" />
                 </div>
-                <h4 class="sidebar-type-name">{{ getInquiryTypeLabel(typeKey) }}</h4>
+                <h4 class="sidebar-type-name">
+                  {{ getInquiryTypeLabel(typeKey) }}
+                </h4>
                 <span class="sidebar-type-badge">{{ typeGroup.length }}</span>
               </div>
-              <div class="sidebar-type-toggle" :class="{ rotated: expandedSidebarTypes.includes(typeKey) }">
-                <svg width="14" height="14" viewBox="0 0 24 24">
+              <div
+                class="sidebar-type-toggle"
+                :class="{ rotated: expandedSidebarTypes.includes(typeKey) }"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                >
                   <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
                 </svg>
               </div>
             </div>
 
             <!-- Sidebar Type Inquiries -->
-            <div v-show="expandedSidebarTypes.includes(typeKey)" class="sidebar-inquiries">
-              <template v-for="inquiry in typeGroup" :key="inquiry.id">
+            <div
+              v-show="expandedSidebarTypes.includes(typeKey)"
+              class="sidebar-inquiries"
+            >
+              <template
+                v-for="inquiry in typeGroup"
+                :key="inquiry.id"
+              >
                 <component
                   :is="getInquiryComponent(inquiry, 'sidebar')"
                   :inquiry="inquiry"
@@ -248,7 +325,7 @@ const expandedSidebarTypes = ref<string[]>([])
 const inquiries = computed(() => {
   const allInquiries = inquiriesStore.inquiries || []
   return props.inquiryIds
-    .map(id => allInquiries.find(inquiry => inquiry.id === id))
+    .map((id) => allInquiries.find((inquiry) => inquiry.id === id))
     .filter(Boolean) as Inquiry[]
 })
 
@@ -276,7 +353,7 @@ const layoutCompatibility = {
   sidebar: ['cards', 'list', 'summary'],
   main: ['rich_html', 'full', 'summary', 'cards', 'list'],
   footer: ['cards', 'summary', 'list'],
-  header: ['cards', 'summary', 'list']
+  header: ['cards', 'summary', 'list'],
 }
 
 // Get layout zone for inquiry
@@ -296,7 +373,7 @@ function getLayoutZone(inquiry: Inquiry): string {
     .map(([layout]) => layout)
 
   const priorityOrder = ['main', 'header', 'sidebar', 'footer']
-  return priorityOrder.find(layout => compatibleLayouts.includes(layout)) || 'main'
+  return priorityOrder.find((layout) => compatibleLayouts.includes(layout)) || 'main'
 }
 
 // Get appropriate render mode for layout zone
@@ -316,7 +393,7 @@ const componentMap = {
   list: InquiryListItem,
   full: InquiryFull,
   rich_html: InquiryRichHTML,
-  summary: InquirySummary
+  summary: InquirySummary,
 }
 
 // Get component for inquiry
@@ -340,7 +417,7 @@ function getInquiryTypeLabel(typeKey: string) {
 function groupInquiriesByType(inquiryList: Inquiry[]) {
   const grouped: Record<string, Inquiry[]> = {}
 
-  inquiryList.forEach(inquiry => {
+  inquiryList.forEach((inquiry) => {
     const type = inquiry.type || 'default'
     if (!grouped[type]) grouped[type] = []
     grouped[type].push(inquiry)
@@ -351,19 +428,19 @@ function groupInquiriesByType(inquiryList: Inquiry[]) {
 
 // Get inquiries for each layout zone
 const sidebarInquiries = computed(() =>
-  inquiries.value.filter(inquiry => getLayoutZone(inquiry) === 'sidebar')
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'sidebar')
 )
 
 const headerInquiries = computed(() =>
-  inquiries.value.filter(inquiry => getLayoutZone(inquiry) === 'header')
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'header')
 )
 
 const mainInquiries = computed(() =>
-  inquiries.value.filter(inquiry => getLayoutZone(inquiry) === 'main')
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'main')
 )
 
 const footerInquiries = computed(() =>
-  inquiries.value.filter(inquiry => getLayoutZone(inquiry) === 'footer')
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'footer')
 )
 
 // Grouped inquiries
@@ -395,25 +472,25 @@ function toggleSidebarType(typeKey: string) {
 // Handle inquiry click
 function handleInquiryClick(inquiry: Inquiry) {
   const openMode = getOpenMode(inquiry)
-  
+
   switch (openMode) {
     case 'modal':
       modalInquiry.value = inquiry
       showModal.value = true
       break
-      
+
     case 'none':
       break
-      
+
     case 'page':
     default:
       router.push({
         name: 'inquiry',
-        params: { id: inquiry.id }
+        params: { id: inquiry.id },
       })
       break
   }
-  
+
   emit('viewInquiry', inquiry.id)
 }
 
@@ -444,7 +521,7 @@ onMounted(() => {
   if (typeKeys.length === 1) {
     expandedTypes.value = [typeKeys[0]]
   }
-  
+
   const sidebarTypeKeys = Object.keys(sidebarInquiriesByType.value)
   if (sidebarTypeKeys.length === 1) {
     expandedSidebarTypes.value = [sidebarTypeKeys[0]]
@@ -566,7 +643,7 @@ onMounted(() => {
     padding: 12px 0 0 0;
     align-items: start; /* On mobile, don't stretch */
   }
-  
+
   @media (max-width: 768px) {
     padding: 8px 0 0 0;
   }
@@ -597,7 +674,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-self: stretch; /* This makes the sidebar stretch to match the main content height */
-  
+
   @media (max-width: 1200px) {
     position: static;
     max-height: none;
@@ -729,7 +806,7 @@ onMounted(() => {
   border: 1px solid var(--color-border);
   background: var(--color-main-background);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -741,11 +818,11 @@ onMounted(() => {
   &.header-section {
     margin-bottom: 0;
   }
-  
+
   &.main-section {
     margin-bottom: 0;
   }
-  
+
   &.footer-section {
     margin-top: 0;
   }
@@ -847,22 +924,22 @@ onMounted(() => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
-    
+
     .full-width {
       grid-column: 1 / -1;
     }
-    
+
     &.single-full-item {
       grid-template-columns: 1fr;
     }
   }
-  
+
   &.header-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 16px;
   }
-  
+
   &.footer-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -883,13 +960,13 @@ onMounted(() => {
   overflow: hidden;
   position: relative;
   background: var(--color-main-background);
-  
+
   &:hover {
     border-color: var(--color-primary-element);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     transform: translateY(-3px);
   }
-  
+
   &.active {
     border-color: var(--color-primary-element);
     box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.15);
@@ -914,33 +991,33 @@ onMounted(() => {
   .footer-item,
   .main-item {
     border-radius: 10px;
-    
+
     &:hover {
       transform: translateY(-2px);
     }
   }
-  
+
   .inquiry-grid.main-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .presentation-section {
     padding: 0 0 12px 0;
   }
-  
+
   .presentation-title {
     font-size: 24px;
   }
-  
+
   .description-content {
     padding: 16px;
   }
-  
+
   .type-header {
     padding: 12px 16px;
   }
-  
+
   .type-inquiries {
     padding: 12px;
   }
@@ -950,15 +1027,15 @@ onMounted(() => {
   .presentation-section {
     padding: 0 0 8px 0;
   }
-  
+
   .presentation-title {
     font-size: 20px;
   }
-  
+
   .description-content {
     padding: 12px;
   }
-  
+
   .description-text {
     font-size: 14px;
   }

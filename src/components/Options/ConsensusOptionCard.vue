@@ -3,20 +3,20 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div 
-    v-if="option" 
+  <div
+    v-if="option"
     :class="[
       'consensus-option-card',
       `type-${option.type}`,
       `status-${currentStatus}`,
-      { 
-        'highlighted': highlight,
+      {
+        highlighted: highlight,
         'has-resolution': hasResolution,
-        'interactive': true,
-        'compact': compact,
-        'inline': inline,
-        'is-blocking': isBlocking
-      }
+        interactive: true,
+        compact: compact,
+        inline: inline,
+        'is-blocking': isBlocking,
+      },
     ]"
     @click="handleCardClick"
   >
@@ -25,37 +25,75 @@
     <!-- ======================================== -->
     <div class="card-header">
       <div class="header-left">
-        <div class="type-icon" :style="{ color: optionTypeColor }">
-          <component :is="optionIcon" :size="compact ? 16 : 20" />
+        <div
+          class="type-icon"
+          :style="{ color: optionTypeColor }"
+        >
+          <component
+            :is="optionIcon"
+            :size="compact ? 16 : 20"
+          />
         </div>
-        
+
         <div class="title-section">
-          <h5 class="option-title">{{ displayTitle }}</h5>
+          <h5 class="option-title">
+            {{ displayTitle }}
+          </h5>
           <div class="meta-info">
-            <span class="type-badge" :class="`type-${option.type}`">
+            <span
+              class="type-badge"
+              :class="`type-${option.type}`"
+            >
               {{ optionTypeLabel }}
             </span>
-            <span v-if="showStatus" class="status-badge" :class="`status-${currentStatus}`">
-              <component :is="getStatusIcon(currentStatus)" :size="12" />
+            <span
+              v-if="showStatus"
+              class="status-badge"
+              :class="`status-${currentStatus}`"
+            >
+              <component
+                :is="getStatusIcon(currentStatus)"
+                :size="12"
+              />
               {{ getStatusLabel(currentStatus) }}
             </span>
-            <span v-if="option.status?.countSupports !== undefined" class="support-count">
-              <component :is="InquiryOptionIcons.Users" :size="12" />
+            <span
+              v-if="option.status?.countSupports !== undefined"
+              class="support-count"
+            >
+              <component
+                :is="InquiryOptionIcons.Users"
+                :size="12"
+              />
               {{ option.status.countSupports }}
             </span>
-            <span class="timestamp">{{ formatDate(option.status?.created || option.createdAt) }}</span>
+            <span class="timestamp">{{
+              formatDate(option.status?.created || option.createdAt)
+            }}</span>
           </div>
         </div>
       </div>
 
       <!-- Resolution indicator -->
-      <div v-if="showResolution && hasResolution" class="resolution-indicator" :class="resolutionStatusClass">
-        <component :is="InquiryOptionIcons.CheckCircle" :size="16" class="resolution-icon" />
+      <div
+        v-if="showResolution && hasResolution"
+        class="resolution-indicator"
+        :class="resolutionStatusClass"
+      >
+        <component
+          :is="InquiryOptionIcons.CheckCircle"
+          :size="16"
+          class="resolution-icon"
+        />
         <span class="resolution-label">{{ resolutionStatusLabel }}</span>
       </div>
 
       <!-- Actions -->
-      <div v-if="canEditOrDelete && showAction" class="header-right" @click.stop>
+      <div
+        v-if="canEditOrDelete && showAction"
+        class="header-right"
+        @click.stop
+      >
         <NcActions
           :force-menu="true"
           :aria-label="t('agora', 'Option actions')"
@@ -67,7 +105,10 @@
             @click="handleEdit"
           >
             <template #icon>
-              <component :is="InquiryOptionIcons.Pencil" :size="20" />
+              <component
+                :is="InquiryOptionIcons.Pencil"
+                :size="20"
+              />
             </template>
             {{ t('agora', 'Edit') }}
           </NcActionButton>
@@ -78,7 +119,10 @@
             @click="confirmDelete"
           >
             <template #icon>
-              <component :is="InquiryOptionIcons.Delete" :size="20" />
+              <component
+                :is="InquiryOptionIcons.Delete"
+                :size="20"
+              />
             </template>
             {{ t('agora', 'Delete') }}
           </NcActionButton>
@@ -90,30 +134,65 @@
     <!-- CONTENT -->
     <!-- ======================================== -->
     <div class="card-content">
-      <p class="option-description">{{ displayText }}</p>
-      
+      <p class="option-description">
+        {{ displayText }}
+      </p>
+
       <!-- Resolution details from child resolution option -->
-      <div v-if="showResolution && resolutionChild" class="resolution-details">
-        <div class="resolution-box" :class="`resolution-status-${resolutionChild.status || 'proposed'}`">
+      <div
+        v-if="showResolution && resolutionChild"
+        class="resolution-details"
+      >
+        <div
+          class="resolution-box"
+          :class="`resolution-status-${resolutionChild.status || 'proposed'}`"
+        >
           <div class="resolution-header">
-            <component :is="InquiryOptionIcons.FileText" :size="14" />
+            <component
+              :is="InquiryOptionIcons.FileText"
+              :size="14"
+            />
             <span class="resolution-title">{{ t('agora', 'Resolution') }}</span>
-            <span class="resolution-status-badge" :class="`status-${resolutionChild.status || 'proposed'}`">
+            <span
+              class="resolution-status-badge"
+              :class="`status-${resolutionChild.status || 'proposed'}`"
+            >
               {{ getStatusLabel(resolutionChild.status || 'proposed') }}
             </span>
           </div>
-          <p class="resolution-text">{{ resolutionChild.text || resolutionChild.resolution_text }}</p>
+          <p class="resolution-text">
+            {{ resolutionChild.text || resolutionChild.resolution_text }}
+          </p>
           <div class="resolution-meta">
             <span class="resolved-date">
-              <component :is="InquiryOptionIcons.Calendar" :size="12" />
-              {{ t('agora', 'Proposed {date}', { date: formatDate(resolutionChild.createdAt || resolutionChild.status?.created) }) }}
+              <component
+                :is="InquiryOptionIcons.Calendar"
+                :size="12"
+              />
+              {{
+                t('agora', 'Proposed {date}', {
+                  date: formatDate(resolutionChild.createdAt || resolutionChild.status?.created),
+                })
+              }}
             </span>
-            <span v-if="resolutionChild.owner" class="resolved-by">
-              <component :is="InquiryOptionIcons.Account" :size="12" />
+            <span
+              v-if="resolutionChild.owner"
+              class="resolved-by"
+            >
+              <component
+                :is="InquiryOptionIcons.Account"
+                :size="12"
+              />
               {{ t('agora', 'by {user}', { user: resolutionChild.owner.displayName }) }}
             </span>
-            <span v-if="resolutionChild.status?.countSupports !== undefined" class="support-count">
-              <component :is="InquiryOptionIcons.ThumbUp" :size="12" />
+            <span
+              v-if="resolutionChild.status?.countSupports !== undefined"
+              class="support-count"
+            >
+              <component
+                :is="InquiryOptionIcons.ThumbUp"
+                :size="12"
+              />
               {{ resolutionChild.status.countSupports }}
             </span>
           </div>
@@ -121,41 +200,63 @@
       </div>
 
       <!-- Discussion summary -->
-      <div v-if="showDiscussion && discussionCount > 0" class="discussion-summary">
+      <div
+        v-if="showDiscussion && discussionCount > 0"
+        class="discussion-summary"
+      >
         <div class="discussion-stats">
           <span class="stat">
-            <component :is="InquiryOptionIcons.MessageSquare" :size="12" />
+            <component
+              :is="InquiryOptionIcons.MessageSquare"
+              :size="12"
+            />
             {{ discussionCount }} {{ t('agora', 'responses') }}
           </span>
-          <span v-if="proposedSolutionCount > 0" class="stat">
-            <component :is="InquiryOptionIcons.FileText" :size="12" />
+          <span
+            v-if="proposedSolutionCount > 0"
+            class="stat"
+          >
+            <component
+              :is="InquiryOptionIcons.FileText"
+              :size="12"
+            />
             {{ proposedSolutionCount }} {{ t('agora', 'proposed solutions') }}
           </span>
-          <span v-if="participantCount > 0" class="stat">
-            <component :is="InquiryOptionIcons.Users" :size="12" />
+          <span
+            v-if="participantCount > 0"
+            class="stat"
+          >
+            <component
+              :is="InquiryOptionIcons.Users"
+              :size="12"
+            />
             {{ participantCount }} {{ t('agora', 'participants') }}
-	  </span>
-	</div>
+          </span>
+        </div>
       </div>
 
       <!-- Raised by info -->
-      <div v-if="raisedByCount > 0" class="raised-by">
-	      <component :is="InquiryOptionIcons.AccountMultiple" :size="12" />
-	      <span>
-		      {{ n(
-		      'agora',
-		      'Raised by %n participant',
-		      'Raised by %n participants',
-		      raisedByCount
-		      ) }}
-	      </span>
+      <div
+        v-if="raisedByCount > 0"
+        class="raised-by"
+      >
+        <component
+          :is="InquiryOptionIcons.AccountMultiple"
+          :size="12"
+        />
+        <span>
+          {{ n('agora', 'Raised by %n participant', 'Raised by %n participants', raisedByCount) }}
+        </span>
       </div>
-      </div>
+    </div>
 
     <!-- ======================================== -->
     <!-- ACTIONS -->
     <!-- ======================================== -->
-    <div class="card-actions" @click.stop>
+    <div
+      class="card-actions"
+      @click.stop
+    >
       <!-- Discuss -->
       <NcButton
         v-if="canDiscuss && canDiscussAction"
@@ -164,7 +265,10 @@
         @click="$emit('discuss', option.id)"
       >
         <template #icon>
-          <component :is="InquiryOptionIcons.MessageSquare" :size="14" />
+          <component
+            :is="InquiryOptionIcons.MessageSquare"
+            :size="14"
+          />
         </template>
         {{ t('agora', 'Discuss') }}
       </NcButton>
@@ -177,7 +281,10 @@
         @click="openResolutionModal"
       >
         <template #icon>
-          <component :is="InquiryOptionIcons.FileText" :size="14" />
+          <component
+            :is="InquiryOptionIcons.FileText"
+            :size="14"
+          />
         </template>
         {{ t('agora', 'Propose Resolution') }}
       </NcButton>
@@ -190,7 +297,10 @@
         @click="acceptResolution"
       >
         <template #icon>
-          <component :is="InquiryOptionIcons.CheckCircle" :size="14" />
+          <component
+            :is="InquiryOptionIcons.CheckCircle"
+            :size="14"
+          />
         </template>
         {{ t('agora', 'Accept Resolution') }}
       </NcButton>
@@ -203,7 +313,10 @@
         @click="implementResolution"
       >
         <template #icon>
-          <component :is="InquiryOptionIcons.Check" :size="14" />
+          <component
+            :is="InquiryOptionIcons.Check"
+            :size="14"
+          />
         </template>
         {{ t('agora', 'Implement') }}
       </NcButton>
@@ -216,15 +329,24 @@
         @click="$emit('reopen', option.id)"
       >
         <template #icon>
-          <component :is="InquiryOptionIcons.Refresh" :size="14" />
+          <component
+            :is="InquiryOptionIcons.Refresh"
+            :size="14"
+          />
         </template>
         {{ t('agora', 'Reopen') }}
       </NcButton>
 
       <!-- Status change dropdown -->
-      <NcActions v-if="canChangeStatus" :force-menu="true">
+      <NcActions
+        v-if="canChangeStatus"
+        :force-menu="true"
+      >
         <template #icon>
-          <component :is="InquiryOptionIcons.Cog" :size="16" />
+          <component
+            :is="InquiryOptionIcons.Cog"
+            :size="16"
+          />
         </template>
         <NcActionButton @click="changeStatus('open')">
           {{ t('agora', 'Mark Open') }}
@@ -253,10 +375,13 @@
     <!-- ======================================== -->
     <!-- QUORUM DISPLAY -->
     <!-- ======================================== -->
-    <div v-if="showQuorum && option.status?.countSupports !== undefined" class="quorum-display">
+    <div
+      v-if="showQuorum && option.status?.countSupports !== undefined"
+      class="quorum-display"
+    >
       <div class="quorum-bar">
-        <div 
-          class="quorum-fill" 
+        <div
+          class="quorum-fill"
           :style="{ width: `${quorumPercentage}%` }"
           :class="quorumClass"
         />
@@ -265,8 +390,15 @@
         <span class="quorum-text">
           {{ option.status.countSupports }} {{ t('agora', 'supports') }}
         </span>
-        <span v-if="quorumNeeded" class="quorum-required">
-          {{ t('agora', 'need {count} more', { count: Math.max(0, quorumNeeded - (option.status.countSupports || 0)) }) }}
+        <span
+          v-if="quorumNeeded"
+          class="quorum-required"
+        >
+          {{
+            t('agora', 'need {count} more', {
+              count: Math.max(0, quorumNeeded - (option.status.countSupports || 0)),
+            })
+          }}
         </span>
       </div>
     </div>
@@ -312,11 +444,7 @@ import {
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { 
-  createOptionContext,
-  canEditOption,
-  canDeleteOption,
-} from '../../utils/permissions.ts'
+import { createOptionContext, canEditOption, canDeleteOption } from '../../utils/permissions.ts'
 import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
 import ResolutionModal from '../Modals/ResolutionModal.vue'
 import type { Option } from '../../Types/index.ts'
@@ -378,11 +506,11 @@ const currentStatus = computed(() => {
   // Get status from option's miscFields or from the option type definition
   const miscStatus = props.option.miscFields?.status
   if (typeof miscStatus === 'string') return miscStatus
-  
+
   // Fallback to option's own status
   const status = props.option.status?.status || props.option.status?.optionStatus
   if (status) return status
-  
+
   // Default based on type
   if (props.option.type === 'objection' || props.option.type === 'blocking_objection') {
     return 'open'
@@ -396,7 +524,9 @@ const currentStatus = computed(() => {
   return 'draft'
 })
 
-const isBlocking = computed(() => props.option.type === 'objection' || props.option.type === 'blocking_objection')
+const isBlocking = computed(
+  () => props.option.type === 'objection' || props.option.type === 'blocking_objection'
+)
 
 // ========================================
 // COMPUTED: Resolution Child
@@ -427,7 +557,6 @@ const getOptionStatus = (option: Option): string => {
   return 'draft'
 }
 
-
 const resolutionChildStatus = computed(() => {
   if (!resolutionChild.value) return null
   return getOptionStatus(resolutionChild.value)
@@ -440,39 +569,41 @@ const resolutionStatusLabel = computed(() => {
   return getStatusLabel(resolutionChildStatus.value || 'proposed')
 })
 
-
-	const resolutionChild = computed(() => 
+const resolutionChild = computed(() =>
   // Use the options store to find children
-   optionsStore.options.find(
-    opt => opt.parentId === props.option.id && opt.type === 'resolution'
-  )
+  optionsStore.options.find((opt) => opt.parentId === props.option.id && opt.type === 'resolution')
 )
-
 
 const resolutionStatusClass = computed(() => {
   if (!resolutionChild.value) return ''
-  const status = resolutionChild.value.status?.status || resolutionChild.value.status?.optionStatus || 'proposed'
+  const status =
+    resolutionChild.value.status?.status || resolutionChild.value.status?.optionStatus || 'proposed'
   return `resolution-${status}`
 })
 
 // ========================================
 // COMPUTED: Discussion Stats
 // ========================================
-	const discussionCount = computed(() => optionsStore.options.filter(
-    opt => opt.parentId === props.option.id && opt.type === 'message'
-  ).length)
+const discussionCount = computed(
+  () =>
+    optionsStore.options.filter((opt) => opt.parentId === props.option.id && opt.type === 'message')
+      .length
+)
 
-const proposedSolutionCount = computed(() => optionsStore.options.filter(
-    opt => opt.parentId === props.option.id && 
-    (opt.type === 'amendment' || opt.type === 'proposal')
-  ).length)
+const proposedSolutionCount = computed(
+  () =>
+    optionsStore.options.filter(
+      (opt) =>
+        opt.parentId === props.option.id && (opt.type === 'amendment' || opt.type === 'proposal')
+    ).length
+)
 
 const participantCount = computed(() => {
   // Count unique participants from children
   const childParticipants = new Set()
   optionsStore.options
-    .filter(opt => opt.parentId === props.option.id)
-    .forEach(opt => {
+    .filter((opt) => opt.parentId === props.option.id)
+    .forEach((opt) => {
       if (opt.owner?.id) childParticipants.add(opt.owner.id)
     })
   return childParticipants.size
@@ -482,8 +613,8 @@ const raisedByCount = computed(() => {
   // Count unique participants who have supported or commented
   const participants = new Set()
   optionsStore.options
-    .filter(opt => opt.parentId === props.option.id)
-    .forEach(opt => {
+    .filter((opt) => opt.parentId === props.option.id)
+    .forEach((opt) => {
       if (opt.owner?.id) participants.add(opt.owner.id)
     })
   return participants.size
@@ -582,18 +713,25 @@ const canDelete = computed(() => {
 
 const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
-const canDiscussAction = computed(() => currentStatus.value === 'open' || 
-         currentStatus.value === 'under_discussion' || 
-         currentStatus.value === 'blocked')
+const canDiscussAction = computed(
+  () =>
+    currentStatus.value === 'open' ||
+    currentStatus.value === 'under_discussion' ||
+    currentStatus.value === 'blocked'
+)
 
 // ========================================
 // COMPUTED: Other
 // ========================================
 const isImportedFromView = computed(() => props.option.family !== props.familyType)
 
-const hasChildren = computed(() => optionsStore.options.some(opt => opt.parentId === props.option.id))
+const hasChildren = computed(() =>
+  optionsStore.options.some((opt) => opt.parentId === props.option.id)
+)
 
-const childrenCount = computed(() => optionsStore.options.filter(opt => opt.parentId === props.option.id).length)
+const childrenCount = computed(
+  () => optionsStore.options.filter((opt) => opt.parentId === props.option.id).length
+)
 
 // ========================================
 // METHODS: Status Helpers
@@ -651,7 +789,7 @@ const formatDate = (date: string | Date | number | undefined) => {
   return new Intl.DateTimeFormat(undefined, {
     month: 'short',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
   }).format(d)
 }
 
@@ -675,8 +813,8 @@ const handleResolutionSubmit = async (resolutionData: { text: string; status: st
       parentId: props.option.id,
       miscFields: {
         resolution_text: { key: 'resolution_text', value: resolutionData.text },
-        status: { key: 'status', value: resolutionData.status }
-      }
+        status: { key: 'status', value: resolutionData.status },
+      },
     })
     showResolutionModal.value = false
     showSuccess(t('agora', 'Resolution proposed successfully'))
@@ -693,16 +831,16 @@ const acceptResolution = async () => {
       id: resolutionChild.value.id,
       miscFields: {
         ...resolutionChild.value.miscFields,
-        status: { key: 'status', value: 'accepted' }
-      }
+        status: { key: 'status', value: 'accepted' },
+      },
     })
     // Also update parent status
     await optionsStore.update({
       id: props.option.id,
       miscFields: {
         ...props.option.miscFields,
-        status: { key: 'status', value: 'addressed' }
-      }
+        status: { key: 'status', value: 'addressed' },
+      },
     })
     showSuccess(t('agora', 'Resolution accepted'))
   } catch (error) {
@@ -718,15 +856,15 @@ const implementResolution = async () => {
       id: resolutionChild.value.id,
       miscFields: {
         ...resolutionChild.value.miscFields,
-        status: { key: 'status', value: 'implemented' }
-      }
+        status: { key: 'status', value: 'implemented' },
+      },
     })
     await optionsStore.update({
       id: props.option.id,
       miscFields: {
         ...props.option.miscFields,
-        status: { key: 'status', value: 'resolved' }
-      }
+        status: { key: 'status', value: 'resolved' },
+      },
     })
     showSuccess(t('agora', 'Resolution implemented successfully'))
   } catch (error) {
@@ -780,8 +918,8 @@ const handleRemoveFromView = async () => {
       ...props.option,
       miscFields: {
         ...props.option.miscFields,
-        force_layouts: updatedLayouts
-      }
+        force_layouts: updatedLayouts,
+      },
     })
     emit('removeFromView', props.option.id, updatedLayouts)
     showSuccess(t('agora', 'Option removed from view'))
@@ -1499,7 +1637,8 @@ const handleRemoveFromView = async () => {
 // ANIMATIONS
 // ========================================
 @keyframes pulse-highlight {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(var(--color-error-rgb), 0.2);
   }
   50% {

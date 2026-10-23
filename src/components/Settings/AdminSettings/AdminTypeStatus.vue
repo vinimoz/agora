@@ -52,7 +52,7 @@ const availableIcons = computed(() =>
 
 // Get statuses for the selected inquiry type
 const statuses = computed(() =>
-  props.selectedType 
+  props.selectedType
     ? appSettingsStore.getStatusesForInquiryType(props.selectedType.inquiry_type)
     : []
 )
@@ -95,10 +95,14 @@ const editStatus = (status) => {
 
 const saveUpdateStatus = () => {
   if (editingStatus.value && props.selectedType) {
-    appSettingsStore.updateStatusForInquiryType(props.selectedType.inquiry_type, editingStatus.value.id, {
-      ...editingStatus.value,
-      icon: editingStatus.value.icon?.id || String(editingStatus.value.icon),
-    })
+    appSettingsStore.updateStatusForInquiryType(
+      props.selectedType.inquiry_type,
+      editingStatus.value.id,
+      {
+        ...editingStatus.value,
+        icon: editingStatus.value.icon?.id || String(editingStatus.value.icon),
+      }
+    )
     editingStatus.value = null
   }
 }
@@ -138,9 +142,14 @@ const cancelEdit = () => {
       </h2>
     </div>
 
-    <div v-if="selectedType" class="status-management">
+    <div
+      v-if="selectedType"
+      class="status-management"
+    >
       <p class="description">
-        {{ t('agora', 'Manage statuses for this inquiry type. Statuses define the workflow stages') }}
+        {{
+          t('agora', 'Manage statuses for this inquiry type. Statuses define the workflow stages')
+        }}
       </p>
 
       <!-- Status list for current inquiry type -->
@@ -153,24 +162,43 @@ const cancelEdit = () => {
           }}
         </h3>
 
-        <div v-if="statuses.length === 0" class="empty-state">
+        <div
+          v-if="statuses.length === 0"
+          class="empty-state"
+        >
           <p>
             {{ t('agora', 'No statuses configured for this inquiry type') }}
           </p>
         </div>
 
-        <div v-else class="status-items">
-          <div v-for="(status, index) in statuses" :key="status.statusKey" class="status-item">
+        <div
+          v-else
+          class="status-items"
+        >
+          <div
+            v-for="(status, index) in statuses"
+            :key="status.statusKey"
+            class="status-item"
+          >
             <div class="status-content">
-              <div class="status-icon" :title="status.icon">
-                <component :is="getIconComponent(status.icon)" :size="20" />
+              <div
+                class="status-icon"
+                :title="status.icon"
+              >
+                <component
+                  :is="getIconComponent(status.icon)"
+                  :size="20"
+                />
               </div>
               <div class="status-info">
                 <h4>{{ status.label }}</h4>
                 <p class="status-key">
                   {{ status.statusKey }}
                 </p>
-                <p v-if="status.description" class="status-description">
+                <p
+                  v-if="status.description"
+                  class="status-description"
+                >
                   {{ status.description }}
                 </p>
                 <div class="status-properties">
@@ -182,7 +210,10 @@ const cancelEdit = () => {
             </div>
 
             <div class="status-actions">
-              <NcButton :disabled="index === 0" @click="moveStatusUp(status.statusKey)">
+              <NcButton
+                :disabled="index === 0"
+                @click="moveStatusUp(status.statusKey)"
+              >
                 {{ t('agora', 'Up') }}
               </NcButton>
               <NcButton
@@ -236,7 +267,10 @@ const cancelEdit = () => {
           />
 
           <div class="checkbox-field">
-            <NcCheckboxRadioSwitch v-model="newStatus.isFinal" type="switch">
+            <NcCheckboxRadioSwitch
+              v-model="newStatus.isFinal"
+              type="switch"
+            >
               {{ t('agora', 'Final status') }}
             </NcCheckboxRadioSwitch>
             <p class="field-description">
@@ -255,7 +289,10 @@ const cancelEdit = () => {
       </div>
 
       <!-- Edit status modal -->
-      <div v-if="editingStatus" class="modal-overlay">
+      <div
+        v-if="editingStatus"
+        class="modal-overlay"
+      >
         <div class="modal-content">
           <h3>{{ t('agora', 'Edit status') }}</h3>
 
@@ -289,7 +326,10 @@ const cancelEdit = () => {
             />
 
             <div class="checkbox-field">
-              <NcCheckboxRadioSwitch v-model="editingStatus.isFinal" type="switch">
+              <NcCheckboxRadioSwitch
+                v-model="editingStatus.isFinal"
+                type="switch"
+              >
                 {{ t('agora', 'Final status') }}
               </NcCheckboxRadioSwitch>
               <p class="field-description">
@@ -314,7 +354,10 @@ const cancelEdit = () => {
       </div>
     </div>
 
-    <div v-else class="no-selection">
+    <div
+      v-else
+      class="no-selection"
+    >
       <p>{{ t('agora', 'No type selected') }}</p>
     </div>
   </div>

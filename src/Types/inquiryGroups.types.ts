@@ -5,7 +5,6 @@
 import type { User, UserType } from './user.types'
 import type { SupportResult, SupportEngine } from './support.types'
 
-
 // Import unified types from experience.types.ts
 import type {
   DisplayZone,
@@ -19,27 +18,17 @@ import type {
 export type { DisplayZone, ExperienceKey, DisplayType, ToolKey }
 
 // ===== SHARED TYPES =====
-export type VisibilityInquiryGroupType =
-	| 'private'
-	| 'groups'
-	| 'users'
-	| 'everyone'
+export type VisibilityInquiryGroupType = 'private' | 'groups' | 'users' | 'everyone'
 
 export type InquiryGroupWorkflowStatus =
-	| 'draft'
-	| 'active'
-	| 'archived'
-	| 'closed'
-	| 'completed'
-	| 'suspended'
-	| 'canceled'
+  'draft' | 'active' | 'archived' | 'closed' | 'completed' | 'suspended' | 'canceled'
 
 export interface InquiryGroupStatus {
-	groupStatus: InquiryGroupWorkflowStatus
-	created: number
-	deleted: number
-	updated: number
-	supportResult: SupportResult[]
+  groupStatus: InquiryGroupWorkflowStatus
+  created: number
+  deleted: number
+  updated: number
+  supportResult: SupportResult[]
 }
 // ============================================================
 // INQUIRY GROUP UI CONFIGURATION
@@ -109,7 +98,7 @@ export interface InquiryGroupStatus {
   created: number
   deleted: number
   updated: number
-  supportResult: SupportResult[] 
+  supportResult: SupportResult[]
 }
 
 // ===== INQUIRY GROUP TYPE =====
@@ -171,7 +160,6 @@ export interface InquiryGroup {
   permissions?: InquiryGroupPermissions
 }
 
-
 export type CurrentUserInquiryGroupStatus = {
   isOwner: boolean
   isLoggedIn: boolean
@@ -180,4 +168,3 @@ export type CurrentUserInquiryGroupStatus = {
   canEdit: boolean
   isProtected: boolean
 }
-

@@ -17,7 +17,10 @@
         @click="handleClick(inquiry)"
       >
         <div class="nav-item-icon">
-          <component :is="getTypeIcon(inquiry.type)" :size="16" />
+          <component
+            :is="getTypeIcon(inquiry.type)"
+            :size="16"
+          />
         </div>
         <div class="nav-item-content">
           <span class="nav-item-title">{{ inquiry.title }}</span>
@@ -25,7 +28,10 @@
             {{ inquiry.owner?.displayName || inquiry.ownedGroup }}
           </span>
         </div>
-        <span v-if="inquiry.status?.countComments" class="nav-item-badge">
+        <span
+          v-if="inquiry.status?.countComments"
+          class="nav-item-badge"
+        >
           {{ inquiry.status.countComments }}
         </span>
       </div>

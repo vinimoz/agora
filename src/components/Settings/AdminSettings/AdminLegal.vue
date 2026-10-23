@@ -34,16 +34,15 @@ const placeholder = computed(() => {
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{
-        t('agora', 'Use the default terms for public inquiries and enable the default footer')
-      }}
+      {{ t('agora', 'Use the default terms for public inquiries and enable the default footer') }}
     </NcCheckboxRadioSwitch>
   </div>
-  <div v-if="!appSettingsStore.useSiteLegalTerms" class="user_settings">
+  <div
+    v-if="!appSettingsStore.useSiteLegalTerms"
+    class="user_settings"
+  >
     <p class="settings-description">
-      {{
-        t('agora', 'If you want to use different terms for public inquiries, enter them below.')
-      }}
+      {{ t('agora', 'If you want to use different terms for public inquiries, enter them below.') }}
     </p>
 
     <InputDiv

@@ -39,7 +39,10 @@ function nextDay() {
         <ChevronLeftIcon />
       </template>
     </NcButton>
-    <NcDateTimePickerNative v-model="model" v-bind="$attrs" />
+    <NcDateTimePickerNative
+      v-model="model"
+      v-bind="$attrs"
+    />
     <NcButton
       v-if="useDayButtons"
       :title="t('agora', 'Next day')"

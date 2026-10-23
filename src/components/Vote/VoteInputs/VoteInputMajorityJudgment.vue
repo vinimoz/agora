@@ -3,7 +3,12 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div ref="group" class="vote-input-majority" role="group" :aria-label="item.title">
+  <div
+    ref="group"
+    class="vote-input-majority"
+    role="group"
+    :aria-label="item.title"
+  >
     <NcButton
       v-for="choice in grades"
       :key="choice"
@@ -12,7 +17,10 @@
       :disabled="disabled"
       @click="emit('changeGrade', choice === grade ? null : choice)"
     >
-      <template v-if="choice === grade" #icon>
+      <template
+        v-if="choice === grade"
+        #icon
+      >
         <CheckIcon :size="20" />
       </template>
       {{ translateGrade(choice) }}
@@ -35,7 +43,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'changeGrade': [grade: string | null]
+  changeGrade: [grade: string | null]
 }>()
 
 const grades = computed(() => {
@@ -54,7 +62,11 @@ const longestWord = computed(() => {
   }
   const style = getComputedStyle(label)
   context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
-  return Math.max(...grades.value.flatMap((g) => translateGrade(g).split(/\s+/)).map((w) => context.measureText(w).width))
+  return Math.max(
+    ...grades.value
+      .flatMap((g) => translateGrade(g).split(/\s+/))
+      .map((w) => context.measureText(w).width)
+  )
 })
 
 // Buttons per row in the grid step: two for an even count, otherwise the
@@ -66,13 +78,18 @@ const perRow = computed(() => (grades.value.length % 2 ? grades.value.length : 2
 $gap: 8px;
 // Borders, inline paddings and check mark box of a pressed large NcButton
 // (@nextcloud/vue 9.6.0), plus 1px of safety.
-$button-extra: calc(2px + 2 * var(--default-grid-baseline) + var(--border-radius-element) + var(--clickable-area-large) - 4px + 1px);
+$button-extra: calc(
+  2px + 2 * var(--default-grid-baseline) + var(--border-radius-element) +
+    var(--clickable-area-large) - 4px + 1px
+);
 
 .vote-input-majority {
   // Width of a button holding the longest word and the check mark.
   --button-width: calc(v-bind(longestWord) * 1px + #{$button-extra});
   // Width of one row holding every button, then of a row of the grid step.
-  --row-width: calc(v-bind('grades.length') * var(--button-width) + (v-bind('grades.length') - 1) * #{$gap});
+  --row-width: calc(
+    v-bind('grades.length') * var(--button-width) + (v-bind('grades.length') - 1) * #{$gap}
+  );
   --pair-width: calc(v-bind(perRow) * var(--button-width) + (v-bind(perRow) - 1) * #{$gap});
   display: flex;
   flex: 1 1 100%;
@@ -85,7 +102,12 @@ $button-extra: calc(2px + 2 * var(--default-grid-baseline) + var(--border-radius
   // The basis never falls below the button width, so that the pressed
   // button, whose paddings are smaller, still gets an equal share.
   > .button-vue {
-    flex: 1 1 clamp(var(--button-width), (var(--row-width) - 100%) * 999, max(40%, (var(--pair-width) - 100%) * 999));
+    flex: 1 1
+      clamp(
+        var(--button-width),
+        (var(--row-width) - 100%) * 999,
+        max(40%, (var(--pair-width) - 100%) * 999)
+      );
   }
 
   // Never truncate a grade: NcButton ends its label with an ellipsis.

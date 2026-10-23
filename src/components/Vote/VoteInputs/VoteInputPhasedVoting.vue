@@ -6,7 +6,9 @@
   <div class="vote-input-phased">
     <div class="round-info">
       <Info :size="14" />
-      <span>{{ t('agora', 'Round {current} of {total}', { current: currentRound, total: totalRounds }) }}</span>
+      <span>{{
+        t('agora', 'Round {current} of {total}', { current: currentRound, total: totalRounds })
+      }}</span>
     </div>
 
     <!-- Simple binary/ternary/approval controls depending on config -->
@@ -19,7 +21,10 @@
         @click="vote(choice.value)"
       >
         <template #icon>
-          <component :is="choice.icon" :size="14" />
+          <component
+            :is="choice.icon"
+            :size="14"
+          />
         </template>
         {{ choice.label }}
       </NcButton>
@@ -41,7 +46,7 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { Info, X, ThumbsUp, ThumbsDown, Minus } from 'lucide-vue-next'
-import type { SupportData, SupportValue } from '../../Types/index'
+import type { SupportData, SupportValue } from '../../../Types/index'
 
 const props = defineProps<{
   userVote?: SupportData

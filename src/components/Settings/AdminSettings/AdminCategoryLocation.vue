@@ -1,7 +1,5 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
+AGPL-3.0-or-later */
 
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
@@ -178,21 +176,33 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
 
 <template>
   <div class="category-location-manager">
-    <div v-if="!isLoaded" class="loading">
+    <div
+      v-if="!isLoaded"
+      class="loading"
+    >
       {{ t('agora', 'Loading categories and locations') }}
     </div>
 
     <div v-else>
       <div class="tabs">
-        <NcButton :class="{ active: activeTab === 'categories' }" @click="activeTab = 'categories'">
+        <NcButton
+          :class="{ active: activeTab === 'categories' }"
+          @click="activeTab = 'categories'"
+        >
           {{ t('agora', 'Categories') }}
         </NcButton>
-        <NcButton :class="{ active: activeTab === 'locations' }" @click="activeTab = 'locations'">
+        <NcButton
+          :class="{ active: activeTab === 'locations' }"
+          @click="activeTab = 'locations'"
+        >
           {{ t('agora', 'Locations') }}
         </NcButton>
       </div>
 
-      <div v-if="activeTab === 'categories'" class="tab-content">
+      <div
+        v-if="activeTab === 'categories'"
+        class="tab-content"
+      >
         <div class="add-form">
           <h3>{{ t('agora', 'Add new category') }}</h3>
           <div class="form-fields">
@@ -207,7 +217,11 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
               :clearable="false"
               :placeholder="t('agora', 'Select parent category')"
             />
-            <NcButton type="primary" :disabled="!newCategory.name.trim()" @click="addCategory">
+            <NcButton
+              type="primary"
+              :disabled="!newCategory.name.trim()"
+              @click="addCategory"
+            >
               {{ t('agora', 'Add category') }}
             </NcButton>
           </div>
@@ -230,7 +244,10 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
         </div>
       </div>
 
-      <div v-if="activeTab === 'locations'" class="tab-content">
+      <div
+        v-if="activeTab === 'locations'"
+        class="tab-content"
+      >
         <div class="add-form">
           <h3>{{ t('agora', 'Add new location') }}</h3>
           <div class="form-fields">
@@ -245,7 +262,11 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
               :clearable="false"
               :placeholder="t('agora', 'Select parent location')"
             />
-            <NcButton type="primary" :disabled="!newLocation.name.trim()" @click="addLocation">
+            <NcButton
+              type="primary"
+              :disabled="!newLocation.name.trim()"
+              @click="addLocation"
+            >
               {{ t('agora', 'Add location') }}
             </NcButton>
           </div>
@@ -268,7 +289,10 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
         </div>
       </div>
 
-      <div v-if="editingItem" class="modal">
+      <div
+        v-if="editingItem"
+        class="modal"
+      >
         <div class="modal-content">
           <h3>
             {{ t('agora', 'Edit') }}
@@ -292,7 +316,10 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
             <NcButton @click="editingItem = null">
               {{ t('agora', 'Cancel') }}
             </NcButton>
-            <NcButton type="primary" @click="saveEdit">
+            <NcButton
+              type="primary"
+              @click="saveEdit"
+            >
               {{ t('agora', 'Save') }}
             </NcButton>
           </div>

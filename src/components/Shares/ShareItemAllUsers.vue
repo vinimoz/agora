@@ -46,6 +46,9 @@ const inquiryAccess = computed({
     <template #status>
       <div class="inquir-status" />
     </template>
-    <NcCheckboxRadioSwitch v-model="inquiryAccess" type="switch" />
+    <NcCheckboxRadioSwitch
+      v-model="inquiryAccess"
+      type="switch"
+    />
   </UserItem>
 </template>

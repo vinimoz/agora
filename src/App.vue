@@ -46,8 +46,8 @@ const appClass = computed(() => [
 const useNavigation = computed(() => sessionStore.userStatus.isLoggedin)
 const useSidebar = computed(
   () =>
-    inquiryStore.permissions.view || (sessionStore.route.name === 'group' &&
-      (inquiryGroupStore.owner === sessionStore.currentUser.id))
+    inquiryStore.permissions.view ||
+    (sessionStore.route.name === 'group' && inquiryGroupStore.owner === sessionStore.currentUser.id)
 )
 
 /**
@@ -113,10 +113,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NcContent app-name="agora" :class="appClass">
-    <router-view v-if="useNavigation" name="navigation" />
+  <NcContent
+    app-name="agora"
+    :class="appClass"
+  >
+    <router-view
+      v-if="useNavigation"
+      name="navigation"
+    />
     <router-view />
-    <router-view v-if="useSidebar" name="sidebar" />
+    <router-view
+      v-if="useSidebar"
+      name="sidebar"
+    />
     <UserSettingsDlg />
   </NcContent>
 </template>

@@ -19,37 +19,42 @@ const props = defineProps({
 })
 
 const dateActivityRelative = computed(() => {
-    const date = new Date(props.activity.datetime)
-    const now = new Date()
-    const diffSeconds = (now.getTime() - date.getTime()) / 1000
+  const date = new Date(props.activity.datetime)
+  const now = new Date()
+  const diffSeconds = (now.getTime() - date.getTime()) / 1000
 
-    // Simple relative time formatter
-    if (diffSeconds < 60) {
-        return 'just now'
-    } if (diffSeconds < 3600) {
-        const minutes = Math.floor(diffSeconds / 60)
-        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
-    } if (diffSeconds < 86400) {
-        const hours = Math.floor(diffSeconds / 3600)
-        return `${hours} hour${hours > 1 ? 's' : ''} ago`
-    } if (diffSeconds < 604800) {
-        const days = Math.floor(diffSeconds / 86400)
-        return `${days} day${days > 1 ? 's' : ''} ago`
-    } 
-        // Fallback to locale date string
-        return date.toLocaleDateString()
-    
+  // Simple relative time formatter
+  if (diffSeconds < 60) {
+    return 'just now'
+  }
+  if (diffSeconds < 3600) {
+    const minutes = Math.floor(diffSeconds / 60)
+    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
+  }
+  if (diffSeconds < 86400) {
+    const hours = Math.floor(diffSeconds / 3600)
+    return `${hours} hour${hours > 1 ? 's' : ''} ago`
+  }
+  if (diffSeconds < 604800) {
+    const days = Math.floor(diffSeconds / 86400)
+    return `${days} day${days > 1 ? 's' : ''} ago`
+  }
+  // Fallback to locale date string
+  return date.toLocaleDateString()
 })
-
 
 const message = computed(() => {
   const subject = props.activity.subject_rich[0]
   const parameters = JSON.parse(JSON.stringify(props.activity.subject_rich[1]))
-if (parameters.after && typeof parameters.after.id === 'string' && parameters.after.id.startsWith('dt:')) {
+  if (
+    parameters.after &&
+    typeof parameters.after.id === 'string' &&
+    parameters.after.id.startsWith('dt:')
+  ) {
     const dateTime = parameters.after.id.slice(3)
     const date = new Date(dateTime)
     parameters.after.name = date.toLocaleString()
-}
+  }
 
   Object.keys(parameters).forEach(function (key) {
     const { type } = parameters[key]
@@ -111,7 +116,10 @@ if (parameters.after && typeof parameters.after.id === 'string' && parameters.af
   <div class="activity-item">
     <div class="activity-item__content">
       <span class="activity-item__date">{{ dateActivityRelative }}</span>
-      <NcRichText :text="message.subject" :arguments="message.parameters" />
+      <NcRichText
+        :text="message.subject"
+        :arguments="message.parameters"
+      />
     </div>
   </div>
 </template>

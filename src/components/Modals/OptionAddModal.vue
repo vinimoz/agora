@@ -13,7 +13,9 @@
       <!-- Header -->
       <div class="modal-header">
         <h2>{{ modalTitle }}</h2>
-        <p class="modal-subtitle">{{ modalSubtitle }}</p>
+        <p class="modal-subtitle">
+          {{ modalSubtitle }}
+        </p>
       </div>
 
       <!-- Form -->
@@ -23,8 +25,14 @@
           <div class="form-column">
             <!-- Option type indicator -->
             <div class="option-type-indicator">
-              <div class="type-icon" :style="{ color: optionTypeColor }">
-                <component :is="optionTypeIcon" :size="24" />
+              <div
+                class="type-icon"
+                :style="{ color: optionTypeColor }"
+              >
+                <component
+                  :is="optionTypeIcon"
+                  :size="24"
+                />
               </div>
               <div class="type-info">
                 <h3>{{ optionTypeLabel }}</h3>
@@ -33,21 +41,36 @@
             </div>
 
             <!-- Parent info (if applicable) -->
-            <div v-if="parentOption" class="parent-info">
+            <div
+              v-if="parentOption"
+              class="parent-info"
+            >
               <div class="parent-label">
-                <component :is="InquiryOptionIcons.ArrowUp" :size="14" />
+                <component
+                  :is="InquiryOptionIcons.ArrowUp"
+                  :size="14"
+                />
                 {{ t('agora', 'Parent') }}:
               </div>
               <div class="parent-details">
-                <component :is="getParentIcon(parentOption)" :size="16" />
+                <component
+                  :is="getParentIcon(parentOption)"
+                  :size="16"
+                />
                 <span>{{ parentOption.label || parentOption.title }}</span>
               </div>
             </div>
 
             <!-- Allowed responses info -->
-            <div v-if="allowedResponses.length > 0" class="responses-info">
+            <div
+              v-if="allowedResponses.length > 0"
+              class="responses-info"
+            >
               <div class="responses-label">
-                <component :is="InquiryOptionIcons.ArrowDown" :size="14" />
+                <component
+                  :is="InquiryOptionIcons.ArrowDown"
+                  :size="14"
+                />
                 {{ t('agora', 'Can have responses') }}:
               </div>
               <div class="responses-list">
@@ -56,7 +79,10 @@
                   :key="response"
                   class="response-type"
                 >
-                  <component :is="getOptionTypeIcon(response)" :size="12" />
+                  <component
+                    :is="getOptionTypeIcon(response)"
+                    :size="12"
+                  />
                   {{ getOptionTypeLabel(response) }}
                 </span>
               </div>
@@ -66,20 +92,38 @@
             <div class="features-info">
               <div class="features-grid">
                 <!-- Support feature -->
-                <div v-if="hasSupportFeature" class="feature-item">
-                  <component :is="InquiryOptionIcons.ThumbUp" :size="16" />
+                <div
+                  v-if="hasSupportFeature"
+                  class="feature-item"
+                >
+                  <component
+                    :is="InquiryOptionIcons.ThumbUp"
+                    :size="16"
+                  />
                   <span class="feature-label">{{ supportFeatureLabel }}</span>
                 </div>
 
                 <!-- Comments feature -->
-                <div v-if="allowComment" class="feature-item">
-                  <component :is="InquiryOptionIcons.Comment" :size="16" />
+                <div
+                  v-if="allowComment"
+                  class="feature-item"
+                >
+                  <component
+                    :is="InquiryOptionIcons.Comment"
+                    :size="16"
+                  />
                   <span class="feature-label">{{ t('agora', 'Comments allowed') }}</span>
                 </div>
 
                 <!-- Statuses -->
-                <div v-if="hasStatuses" class="feature-item">
-                  <component :is="InquiryOptionIcons.Circle" :size="16" />
+                <div
+                  v-if="hasStatuses"
+                  class="feature-item"
+                >
+                  <component
+                    :is="InquiryOptionIcons.Circle"
+                    :size="16"
+                  />
                   <span class="feature-label">{{ t('agora', 'Has statuses') }}</span>
                 </div>
               </div>
@@ -88,7 +132,10 @@
             <!-- Form fields -->
             <div class="form-fields">
               <!-- Label -->
-              <div v-if="useTitle" class="form-field">
+              <div
+                v-if="useTitle"
+                class="form-field"
+              >
                 <label for="option-title">{{ t('agora', 'Title') }} *</label>
                 <NcRichContenteditable
                   id="option-title"
@@ -122,7 +169,10 @@
               </div>
 
               <!-- Use MiscFieldsEditor for all additional fields -->
-              <div v-if="hasAdditionalFields" class="additional-fields-section">
+              <div
+                v-if="hasAdditionalFields"
+                class="additional-fields-section"
+              >
                 <h4>{{ t('agora', 'Additional information') }}</h4>
                 <MiscFieldsEditor
                   :fields="additionalFields"
@@ -144,24 +194,33 @@
           <div class="preview-column">
             <h4>{{ t('agora', 'Preview') }}</h4>
             <div class="preview-card">
-               <ItemCard
+              <ItemCard
                 :item="previewOption"
                 :parent-id="inquiryId"
-	        :target-type="'option'"
+                :target-type="'option'"
                 :show-action="false"
                 :compact="false"
                 prevent-click
-		/> 
-	    </div> 
+              />
+            </div>
 
             <!-- Help text -->
-            <div v-if="optionTypeHelp" class="help-text">
-              <component :is="InquiryOptionIcons.Information" :size="16" />
+            <div
+              v-if="optionTypeHelp"
+              class="help-text"
+            >
+              <component
+                :is="InquiryOptionIcons.Information"
+                :size="16"
+              />
               <p>{{ optionTypeHelp }}</p>
             </div>
 
             <!-- Statuses preview (if available) -->
-            <div v-if="hasStatuses" class="statuses-preview">
+            <div
+              v-if="hasStatuses"
+              class="statuses-preview"
+            >
               <h5>{{ t('agora', 'Available statuses') }}</h5>
               <div class="statuses-list">
                 <span
@@ -170,7 +229,10 @@
                   class="status-badge"
                   :class="`status-${status.value}`"
                 >
-                  <component :is="getStatusIcon(status.value)" :size="12" />
+                  <component
+                    :is="getStatusIcon(status.value)"
+                    :size="12"
+                  />
                   {{ status.label }}
                 </span>
               </div>
@@ -181,19 +243,28 @@
 
       <!-- Footer -->
       <div class="modal-footer">
-        <div v-if="formErrors.length > 0" class="form-errors">
+        <div
+          v-if="formErrors.length > 0"
+          class="form-errors"
+        >
           <span
             v-for="error in formErrors"
             :key="error"
             class="error-item"
           >
-            <component :is="InquiryOptionIcons.AlertCircle" :size="14" />
+            <component
+              :is="InquiryOptionIcons.AlertCircle"
+              :size="14"
+            />
             {{ error }}
           </span>
         </div>
 
         <div class="footer-actions">
-          <NcButton type="tertiary" @click="$emit('close')">
+          <NcButton
+            type="tertiary"
+            @click="$emit('close')"
+          >
             {{ t('agora', 'Cancel') }}
           </NcButton>
           <NcButton
@@ -202,7 +273,10 @@
             @click="createOption"
           >
             <template #icon>
-              <component :is="optionTypeIcon" :size="16" />
+              <component
+                :is="optionTypeIcon"
+                :size="16"
+              />
             </template>
             {{ t('agora', 'Create') }}
           </NcButton>
@@ -213,7 +287,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed,  onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { Component } from 'vue'
 
 import { t } from '@nextcloud/l10n'
@@ -238,14 +312,11 @@ import {
   hasSupportFeature as hasSupportFeatureHelper,
   getSupportFeatureLabel,
   allowsComments,
-  usesTitle
+  usesTitle,
 } from '../../helpers/modules/InquiryOptionHelper'
 
 // Import MiscFields helper
-import { 
-  formatValueForStorage,
-  type MiscField
-} from '../../helpers/modules/MiscFieldsHelper'
+import { formatValueForStorage, type MiscField } from '../../helpers/modules/MiscFieldsHelper'
 
 // Import components
 import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
@@ -273,9 +344,9 @@ const sessionStore = useSessionStore()
 const visible = ref(true)
 const formData = ref({
   title: '',
-  text: ''
+  text: '',
 })
-const miscFieldsValues = ref<Record<string, {key:string, value: unknown}>>({})
+const miscFieldsValues = ref<Record<string, { key: string; value: unknown }>>({})
 const formErrors = ref<string[]>([])
 
 // Computed - using helpers
@@ -288,7 +359,7 @@ const additionalFields = computed<MiscField[]>(() => {
 })
 
 // Handle misc fields updates from editor
-const handleMiscFieldsUpdate = (values: Record<string, {key:string, value: unknown}>) => {
+const handleMiscFieldsUpdate = (values: Record<string, { key: string; value: unknown }>) => {
   miscFieldsValues.value = { ...values }
 }
 
@@ -300,42 +371,36 @@ const modalTitle = computed(() => {
 
 const modalSubtitle = computed(() => optionTypeDescription.value || '')
 
-const optionTypeLabel = computed(() => 
+const optionTypeLabel = computed(() =>
   getOptionTypeLabel(props.optionType, allOptionTypes.value, t('agora', 'Option'))
 )
 
-const optionTypeDescription = computed(() => 
+const optionTypeDescription = computed(() =>
   getOptionTypeDescription(props.optionType, allOptionTypes.value)
 )
 
-const optionTypeIcon = computed(() => 
+const optionTypeIcon = computed(() =>
   getOptionTypeIconComponent(props.optionType, allOptionTypes.value)
 )
 
-const optionTypeColor = computed(() => 
-  getOptionTypeColor(props.optionType, allOptionTypes.value)
-)
+const optionTypeColor = computed(() => getOptionTypeColor(props.optionType, allOptionTypes.value))
 
 const parentOption = computed(() => {
   if (!props.parentId) return null
-  return optionsStore.options.find(opt => opt.id === props.parentId)
+  return optionsStore.options.find((opt) => opt.id === props.parentId)
 })
 
-const allowedResponses = computed(() => 
-  getAllowedResponses(props.optionType, allOptionTypes.value)
-)
+const allowedResponses = computed(() => getAllowedResponses(props.optionType, allOptionTypes.value))
 
-const hasSupportFeature = computed(() => 
+const hasSupportFeature = computed(() =>
   hasSupportFeatureHelper(props.optionType, allOptionTypes.value)
 )
 
-const supportFeatureLabel = computed(() => 
+const supportFeatureLabel = computed(() =>
   getSupportFeatureLabel(props.optionType, allOptionTypes.value)
 )
 
-const allowComment = computed(() => 
-  allowsComments(props.optionType, allOptionTypes.value)
-)
+const allowComment = computed(() => allowsComments(props.optionType, allOptionTypes.value))
 
 const hasStatuses = computed(() => {
   const optionType = findOptionType(props.optionType, allOptionTypes.value)
@@ -359,30 +424,61 @@ const statusesList = computed(() => {
 
 const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
 
-const useTitle = computed(() => 
-  usesTitle(props.optionType, allOptionTypes.value)
-)
+const useTitle = computed(() => usesTitle(props.optionType, allOptionTypes.value))
 
 const optionTypeHelp = computed(() => {
   if (!props.optionType) return ''
 
   const helpTexts: Record<string, string> = {
-    'chapter': t('agora', 'Chapters organize the main sections of your proposal. Add articles and sections within chapters.'),
-    'article': t('agora', 'Articles contain the normative text of your proposal. Amendments can be proposed to modify articles.'),
-    'position_for': t('agora', 'A position in favor of the proposal. Others can add arguments supporting or opposing this position.'),
-    'position_against': t('agora', 'A position against the proposal. This can include conditional opposition.'),
-    'argument_for': t('agora', 'An argument supporting a position. Keep arguments concise and evidence-based.'),
-    'argument_against': t('agora', 'An argument opposing a position. Be constructive in your criticism.'),
-    'alternative': t('agora', 'An alternative proposal that addresses objections while maintaining the original intent.'),
-    'objection': t('agora', 'A formal objection that blocks consensus. Must be resolved before proceeding.'),
-    'exception': t('agora', 'Negative feedback that does not block consensus but should be noted.'),
-    'consultation_question': t('agora', 'A question posed to the collective for consultation and consensus building.'),
-    'poll_option': t('agora', 'A selectable option in a poll for gathering opinions and preferences.'),
-    'official_summary': t('agora', 'Final synthesis or accepted outcome of a discussion or debate.'),
-    'official_result': t('agora', 'Official decision or result, typically locked and authoritative.')
+    chapter: t(
+      'agora',
+      'Chapters organize the main sections of your proposal. Add articles and sections within chapters.'
+    ),
+    article: t(
+      'agora',
+      'Articles contain the normative text of your proposal. Amendments can be proposed to modify articles.'
+    ),
+    position_for: t(
+      'agora',
+      'A position in favor of the proposal. Others can add arguments supporting or opposing this position.'
+    ),
+    position_against: t(
+      'agora',
+      'A position against the proposal. This can include conditional opposition.'
+    ),
+    argument_for: t(
+      'agora',
+      'An argument supporting a position. Keep arguments concise and evidence-based.'
+    ),
+    argument_against: t(
+      'agora',
+      'An argument opposing a position. Be constructive in your criticism.'
+    ),
+    alternative: t(
+      'agora',
+      'An alternative proposal that addresses objections while maintaining the original intent.'
+    ),
+    objection: t(
+      'agora',
+      'A formal objection that blocks consensus. Must be resolved before proceeding.'
+    ),
+    exception: t('agora', 'Negative feedback that does not block consensus but should be noted.'),
+    consultation_question: t(
+      'agora',
+      'A question posed to the collective for consultation and consensus building.'
+    ),
+    poll_option: t(
+      'agora',
+      'A selectable option in a poll for gathering opinions and preferences.'
+    ),
+    official_summary: t('agora', 'Final synthesis or accepted outcome of a discussion or debate.'),
+    official_result: t('agora', 'Official decision or result, typically locked and authoritative.'),
   }
 
-  return helpTexts[props.optionType] || t('agora', 'Create a new option to contribute to the discussion.')
+  return (
+    helpTexts[props.optionType] ||
+    t('agora', 'Create a new option to contribute to the discussion.')
+  )
 })
 
 // Form validation
@@ -391,20 +487,21 @@ const formValid = computed(() =>
 )
 
 // Helper methods
-const getParentIcon = (parent: Option) => getOptionTypeIconComponent(parent.type, allOptionTypes.value)
+const getParentIcon = (parent: Option) =>
+  getOptionTypeIconComponent(parent.type, allOptionTypes.value)
 
 const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
 
 const getStatusIcon = (status: string) => {
   const statusIconMap: Record<string, Component> = {
-    'draft': InquiryOptionIcons.Pencil,
-    'published': InquiryOptionIcons.Check,
-    'accepted': InquiryOptionIcons.CheckCircle,
-    'rejected': InquiryOptionIcons.CloseCircle,
-    'proposed': InquiryOptionIcons.Lightbulb,
-    'under_review': InquiryOptionIcons.ClockOutline,
-    'active': InquiryOptionIcons.Check,
-    'resolved': InquiryOptionIcons.ThumbUp
+    draft: InquiryOptionIcons.Pencil,
+    published: InquiryOptionIcons.Check,
+    accepted: InquiryOptionIcons.CheckCircle,
+    rejected: InquiryOptionIcons.CloseCircle,
+    proposed: InquiryOptionIcons.Lightbulb,
+    under_review: InquiryOptionIcons.ClockOutline,
+    active: InquiryOptionIcons.Check,
+    resolved: InquiryOptionIcons.ThumbUp,
   }
   return statusIconMap[status] || InquiryOptionIcons.Circle
 }
@@ -439,13 +536,13 @@ const previewOption = computed((): Option => {
   const optionType = findOptionType(props.optionType, allOptionTypes.value) || {}
 
   const previewMiscFields: Record<string, string> = {}
-  additionalFields.value.forEach(field => {
+  additionalFields.value.forEach((field) => {
     let value = miscFieldsValues.value[field.key]
-    
+
     if (field.type === 'users' || field.type === 'groups') {
       value = sanitizeValue(value)
     }
-    
+
     if (value !== undefined && value !== null && value !== '') {
       previewMiscFields[field.key] = formatValueForStorage(value, field.type)
     } else if (field.default !== undefined && field.default !== null && field.default !== '') {
@@ -467,14 +564,14 @@ const previewOption = computed((): Option => {
       showResults: 'always',
       allowComment: allowComment.value ? 1 : 0,
       supportFeature: optionType.support_feature || 'none',
-      family: optionType.family || ''
+      family: optionType.family || '',
     },
     miscFields: previewMiscFields,
     ownedGroup: '',
     owner: {
       id: currentUser?.id || 'preview-user',
       displayName: currentUser?.displayName || t('agora', 'Current user'),
-      userRole: currentUser?.userRole || ''
+      userRole: currentUser?.userRole || '',
     },
     currentUserStatus: {
       isInvolved: false,
@@ -484,7 +581,7 @@ const previewOption = computed((): Option => {
       isOwner: true,
       shareToken: '',
       userId: currentUser?.id || '',
-      userRole: currentUser?.userRole || ''
+      userRole: currentUser?.userRole || '',
     },
     status: {
       created: Math.floor(Date.now() / 1000),
@@ -497,7 +594,7 @@ const previewOption = computed((): Option => {
       optionStatus: 'draft',
       countPositiveSupports: 0,
       countNegativeSupports: 0,
-      countNeutralSupports: 0
+      countNeutralSupports: 0,
     },
     permissions: {
       view: true,
@@ -516,22 +613,22 @@ const previewOption = computed((): Option => {
       subscribe: true,
       takeOver: false,
       addOption: true,
-      confirmOption: false
+      confirmOption: false,
     },
     childs: [],
     meta: {
       chunking: {
         size: 0,
-        loaded: 0
+        loaded: 0,
       },
-      status: 'loaded'
+      status: 'loaded',
     },
     inquiryInfo: {
       targetId: props.inquiryId,
       inquiryTitle: '',
       inquiryType: '',
-      inquiryAccess: ''
-    }
+      inquiryAccess: '',
+    },
   }
 })
 
@@ -551,7 +648,7 @@ const createOption = async () => {
     const miscFieldsForStorage: Record<string, string> = {}
 
     // Process all misc fields from the editor
-    additionalFields.value.forEach(field => {
+    additionalFields.value.forEach((field) => {
       let value = miscFieldsValues.value[field.key]
 
       // Handle special types
@@ -579,9 +676,8 @@ const createOption = async () => {
       allowComment: defaultAllowComment,
       family: defaultFamily,
       status: defaultStatus,
-      miscFields: miscFieldsForStorage
+      miscFields: miscFieldsForStorage,
     }
-
 
     const newOption = await optionStore.create(optionData)
 
@@ -593,9 +689,11 @@ const createOption = async () => {
     }
   } catch (error) {
     console.error('[AddOptionModal] Error creating option:', error)
-    formErrors.value.push(t('agora', 'Error creating option: {error}', { 
-      error: (error as Error).message || t('agora', 'Unknown error') 
-    }))
+    formErrors.value.push(
+      t('agora', 'Error creating option: {error}', {
+        error: (error as Error).message || t('agora', 'Unknown error'),
+      })
+    )
   }
 }
 /*
@@ -614,7 +712,6 @@ watch(() => props.optionType, (newType) => {
 }, { immediate: true })
 */
 
-
 // Lifecycle
 onMounted(() => {
   // Focus on text input after mount
@@ -627,355 +724,355 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .add-option-modal {
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
-    max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  max-height: 800px;
 
-    .modal-header {
-        padding: 24px 24px 16px 24px;
-        border-bottom: 1px solid var(--color-border);
+  .modal-header {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid var(--color-border);
 
-        h2 {
-            margin: 0 0 8px 0;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--color-main-text);
-        }
-
-        .modal-subtitle {
-            margin: 0;
-            color: var(--color-text-lighter);
-            font-size: 14px;
-            line-height: 1.4;
-        }
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-main-text);
     }
+
+    .modal-subtitle {
+      margin: 0;
+      color: var(--color-text-lighter);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+  }
+
+  .modal-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 32px;
+      height: 100%;
+
+      @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .form-column {
+        .option-type-indicator {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 24px;
+          padding: 16px;
+          background: var(--color-background-dark);
+          border-radius: 12px;
+          border: 1px solid var(--color-border);
+
+          .type-icon {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-background-darker);
+            border-radius: 10px;
+          }
+
+          .type-info {
+            flex: 1;
+            min-width: 0;
+
+            h3 {
+              margin: 0 0 4px 0;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--color-main-text);
+            }
+
+            p {
+              margin: 0;
+              font-size: 14px;
+              color: var(--color-text-light);
+              line-height: 1.4;
+            }
+          }
+        }
+
+        .parent-info,
+        .responses-info {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 16px;
+          padding: 12px;
+          background: var(--color-background-dark);
+          border-radius: 8px;
+          border: 1px solid var(--color-border);
+
+          .parent-label,
+          .responses-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+          }
+
+          .parent-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+
+            span {
+              font-size: 14px;
+              color: var(--color-main-text);
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+
+          .responses-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex: 1;
+
+            .response-type {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              font-size: 12px;
+              padding: 2px 6px;
+              background: var(--color-background-darker);
+              border-radius: 6px;
+              color: var(--color-text-lighter);
+            }
+          }
+        }
+
+        .features-info {
+          margin-bottom: 24px;
+          padding: 12px;
+          background: var(--color-background-dark);
+          border-radius: 8px;
+          border: 1px solid var(--color-border);
+
+          .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+
+            .feature-item {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              font-size: 13px;
+              color: var(--color-text-light);
+
+              .feature-label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+            }
+          }
+        }
+
+        .form-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          .form-field {
+            label {
+              display: block;
+              margin-bottom: 8px;
+              font-size: 14px;
+              font-weight: 600;
+              color: var(--color-main-text);
+
+              .required {
+                color: var(--color-error);
+                margin-left: 2px;
+              }
+            }
+          }
+
+          .additional-fields-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+
+            h4 {
+              margin: 0 0 16px 0;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--color-main-text);
+            }
+          }
+        }
+      }
+
+      .preview-column {
+        h4 {
+          margin: 0 0 16px 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--color-main-text);
+        }
+
+        .preview-card {
+          margin-bottom: 20px;
+          border: 2px dashed var(--color-border);
+          border-radius: 12px;
+          overflow: hidden;
+        }
+
+        .help-text {
+          padding: 16px;
+          background: var(--color-background-dark);
+          border-radius: 12px;
+          border: 1px solid var(--color-border);
+          margin-bottom: 20px;
+          display: flex;
+          gap: 12px;
+
+          svg {
+            flex-shrink: 0;
+            color: var(--color-text-lighter);
+            margin-top: 2px;
+          }
+
+          p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--color-text-light);
+            line-height: 1.5;
+          }
+        }
+
+        .statuses-preview {
+          h5 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-light);
+          }
+
+          .statuses-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+
+            .status-badge {
+              display: inline-flex;
+              align-items: center;
+              gap: 4px;
+              font-size: 11px;
+              padding: 2px 8px;
+              border-radius: 10px;
+              font-weight: 600;
+
+              &.status-draft {
+                background: var(--color-background-darker);
+                color: var(--color-text-lighter);
+              }
+
+              &.status-published,
+              &.status-accepted,
+              &.status-resolved {
+                background: var(--color-success-light);
+                color: var(--color-success);
+              }
+
+              &.status-rejected {
+                background: var(--color-error-light);
+                color: var(--color-error);
+              }
+
+              &.status-proposed,
+              &.status-active {
+                background: var(--color-warning-light);
+                color: var(--color-warning);
+              }
+
+              &.status-review {
+                background: var(--color-info-light);
+                color: var(--color-info);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-background-dark);
+
+    .form-errors {
+      margin-bottom: 12px;
+
+      .error-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--color-error);
+        margin-bottom: 4px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    height: 90vh;
 
     .modal-content {
-        flex: 1;
-        overflow-y: auto;
-        padding: 24px;
+      padding: 16px;
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 32px;
-            height: 100%;
-
-            @media (max-width: 1024px) {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-
-            .form-column {
-                .option-type-indicator {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    margin-bottom: 24px;
-                    padding: 16px;
-                    background: var(--color-background-dark);
-                    border-radius: 12px;
-                    border: 1px solid var(--color-border);
-
-                    .type-icon {
-                        flex-shrink: 0;
-                        width: 48px;
-                        height: 48px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        background: var(--color-background-darker);
-                        border-radius: 10px;
-                    }
-
-                    .type-info {
-                        flex: 1;
-                        min-width: 0;
-
-                        h3 {
-                            margin: 0 0 4px 0;
-                            font-size: 16px;
-                            font-weight: 600;
-                            color: var(--color-main-text);
-                        }
-
-                        p {
-                            margin: 0;
-                            font-size: 14px;
-                            color: var(--color-text-light);
-                            line-height: 1.4;
-                        }
-                    }
-                }
-
-                .parent-info,
-                .responses-info {
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 12px;
-                    margin-bottom: 16px;
-                    padding: 12px;
-                    background: var(--color-background-dark);
-                    border-radius: 8px;
-                    border: 1px solid var(--color-border);
-
-                    .parent-label,
-                    .responses-label {
-                        font-size: 13px;
-                        font-weight: 600;
-                        color: var(--color-text-light);
-                        display: flex;
-                        align-items: center;
-                        gap: 4px;
-                        flex-shrink: 0;
-                    }
-
-                    .parent-details {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        flex: 1;
-
-                        span {
-                            font-size: 14px;
-                            color: var(--color-main-text);
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                        }
-                    }
-
-                    .responses-list {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 6px;
-                        flex: 1;
-
-                        .response-type {
-                            display: flex;
-                            align-items: center;
-                            gap: 4px;
-                            font-size: 12px;
-                            padding: 2px 6px;
-                            background: var(--color-background-darker);
-                            border-radius: 6px;
-                            color: var(--color-text-lighter);
-                        }
-                    }
-                }
-
-                .features-info {
-                    margin-bottom: 24px;
-                    padding: 12px;
-                    background: var(--color-background-dark);
-                    border-radius: 8px;
-                    border: 1px solid var(--color-border);
-
-                    .features-grid {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                        gap: 12px;
-
-                        .feature-item {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                            font-size: 13px;
-                            color: var(--color-text-light);
-
-                            .feature-label {
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                white-space: nowrap;
-                            }
-                        }
-                    }
-                }
-
-                .form-fields {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 20px;
-
-                    .form-field {
-                        label {
-                            display: block;
-                            margin-bottom: 8px;
-                            font-size: 14px;
-                            font-weight: 600;
-                            color: var(--color-main-text);
-
-                            .required {
-                                color: var(--color-error);
-                                margin-left: 2px;
-                            }
-                        }
-                    }
-
-                    .additional-fields-section {
-                        margin-top: 16px;
-                        padding-top: 16px;
-                        border-top: 1px solid var(--color-border);
-
-                        h4 {
-                            margin: 0 0 16px 0;
-                            font-size: 16px;
-                            font-weight: 600;
-                            color: var(--color-main-text);
-                        }
-                    }
-                }
-            }
-
-            .preview-column {
-                h4 {
-                    margin: 0 0 16px 0;
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: var(--color-main-text);
-                }
-
-                .preview-card {
-                    margin-bottom: 20px;
-                    border: 2px dashed var(--color-border);
-                    border-radius: 12px;
-                    overflow: hidden;
-                }
-
-                .help-text {
-                    padding: 16px;
-                    background: var(--color-background-dark);
-                    border-radius: 12px;
-                    border: 1px solid var(--color-border);
-                    margin-bottom: 20px;
-                    display: flex;
-                    gap: 12px;
-
-                    svg {
-                        flex-shrink: 0;
-                        color: var(--color-text-lighter);
-                        margin-top: 2px;
-                    }
-
-                    p {
-                        margin: 0;
-                        font-size: 13px;
-                        color: var(--color-text-light);
-                        line-height: 1.5;
-                    }
-                }
-
-                .statuses-preview {
-                    h5 {
-                        margin: 0 0 12px 0;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: var(--color-text-light);
-                    }
-
-                    .statuses-list {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 6px;
-
-                        .status-badge {
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 4px;
-                            font-size: 11px;
-                            padding: 2px 8px;
-                            border-radius: 10px;
-                            font-weight: 600;
-
-                            &.status-draft {
-                                background: var(--color-background-darker);
-                                color: var(--color-text-lighter);
-                            }
-
-                            &.status-published,
-                            &.status-accepted,
-                            &.status-resolved {
-                                background: var(--color-success-light);
-                                color: var(--color-success);
-                            }
-
-                            &.status-rejected {
-                                background: var(--color-error-light);
-                                color: var(--color-error);
-                            }
-
-                            &.status-proposed,
-                            &.status-active {
-                                background: var(--color-warning-light);
-                                color: var(--color-warning);
-                            }
-
-                            &.status-review {
-                                background: var(--color-info-light);
-                                color: var(--color-info);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    .modal-footer {
-        padding: 16px 24px;
-        border-top: 1px solid var(--color-border);
-        background: var(--color-background-dark);
-
-        .form-errors {
-            margin-bottom: 12px;
-
-            .error-item {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 13px;
-                color: var(--color-error);
-                margin-bottom: 4px;
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
-            }
-        }
-
-        .footer-actions {
-            display: flex;
-            justify-content: flex-end;
+      .form-grid {
+        .form-column {
+          .option-type-indicator {
+            flex-direction: column;
+            text-align: center;
             gap: 12px;
-        }
-    }
 
-    @media (max-width: 768px) {
-        height: 90vh;
-
-        .modal-content {
-            padding: 16px;
-
-            .form-grid {
-                .form-column {
-                    .option-type-indicator {
-                        flex-direction: column;
-                        text-align: center;
-                        gap: 12px;
-
-                        .type-info {
-                            text-align: center;
-                        }
-                    }
-
-                    .features-info {
-                        .features-grid {
-                            grid-template-columns: 1fr;
-                        }
-                    }
-                }
+            .type-info {
+              text-align: center;
             }
+          }
+
+          .features-info {
+            .features-grid {
+              grid-template-columns: 1fr;
+            }
+          }
         }
+      }
     }
+  }
 }
 </style>

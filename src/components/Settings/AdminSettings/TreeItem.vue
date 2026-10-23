@@ -5,7 +5,10 @@
 
 <template>
   <div class="tree-item">
-    <div class="tree-node" :style="'margin-left: ' + level * 20 + 'px'">
+    <div
+      class="tree-node"
+      :style="'margin-left: ' + level * 20 + 'px'"
+    >
       <span class="tree-label">{{ item.name }}</span>
       <div class="tree-actions">
         <NcButton @click="editItem">
@@ -16,7 +19,10 @@
         </NcButton>
       </div>
     </div>
-    <div v-if="children.length > 0" class="tree-children">
+    <div
+      v-if="children.length > 0"
+      class="tree-children"
+    >
       <TreeItem
         v-for="child in children"
         :key="child.id"

@@ -70,7 +70,10 @@ onMounted(() => {
         </div>
       </template>
 
-      <ShareMenu :share="share" @show-qr-code="emit('showQrCode')" />
+      <ShareMenu
+        :share="share"
+        @show-qr-code="emit('showQrCode')"
+      />
     </UserItem>
   </div>
 </template>

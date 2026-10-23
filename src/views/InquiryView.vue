@@ -19,18 +19,16 @@ import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
 import { useInquiryStore } from '../stores/inquiry.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
 import { useSessionStore } from '../stores/session.ts'
-import Collapsible from '../components/Base/modules/Collapsible.vue'
+// import Collapsible from '../components/Base/modules/Collapsible.vue'
 import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vue'
 import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
 import { createInquiryContext, canEdit } from '../utils/permissions.ts'
 import { loadContext } from '../composables/context'
 
-
 const props = defineProps<{
   id?: string | number
   token?: string | number
 }>()
-
 
 const forceRenderKey = ref(0)
 const selectedMode = ref('response')
@@ -54,11 +52,10 @@ const isPublicRoute = computed(() => route.name === 'publicInquiry' || !!props.t
 
 const identifier = computed(() => {
   if (isPublicRoute.value) {
-    return props.token || route.params.token as string
+    return props.token || (route.params.token as string)
   }
-  return props.id || route.params.id as string
+  return props.id || (route.params.id as string)
 })
-
 
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
@@ -92,11 +89,10 @@ async function loadInquiry() {
     }
 
     if (isPublicRoute.value) {
-      inquiryStore.childs = [] 
+      inquiryStore.childs = []
     } else {
-      const result = inquiriesStore.inquiries.filter(i =>
-        i.parentId === Number(identifier.value) &&
-        i.configuration.visibility !== 'private'
+      const result = inquiriesStore.inquiries.filter(
+        (i) => i.parentId === Number(identifier.value) && i.configuration.visibility !== 'private'
       )
       inquiryStore.childs = result
     }
@@ -116,7 +112,7 @@ async function loadInquiry() {
   } catch (e) {
     console.error('Error in loadInquiry:', e)
     error.value = e as Error
-    
+
     if (isPublicRoute.value) {
       showError(t('agora', 'Failed to load public inquiry. The link may be invalid or expired.'))
     } else {
@@ -141,10 +137,12 @@ const isReadonly = computed(() => {
   if (isPublicRoute.value) {
     return true
   }
-  
+
   const user = sessionStore.currentUser
-  if (inquiryStore.status?.moderationStatus === 'rejected' || 
-      inquiryStore.status?.moderationStatus === 'pending') {
+  if (
+    inquiryStore.status?.moderationStatus === 'rejected' ||
+    inquiryStore.status?.moderationStatus === 'pending'
+  ) {
     return true
   }
   if (!user) {
@@ -157,7 +155,7 @@ const isReadonly = computed(() => {
 
 const enableEditMode = () => {
   if (isPublicRoute.value) return
-  
+
   editMode.value = true
   inquiryStore.status.forceEditMode = true
 }
@@ -193,7 +191,7 @@ const collapsibleProps = computed<CollapsibleProps>(() => ({
 
 const handleSave = async () => {
   if (isPublicRoute.value) return
-  
+
   if (isSaving.value) return
 
   if (!inquiryStore.title || inquiryStore.title.trim() === '') {
@@ -223,16 +221,16 @@ const handleSave = async () => {
 
 const handleAllowedResponse = (responseType: string) => {
   if (isPublicRoute.value) return
-  
-  selectedMode.value = 'response' 
+
+  selectedMode.value = 'response'
   selectedInquiryTypeForCreation.value = responseType
   createDlgToggle.value = true
 }
 
 const handleAllowedTransformation = (transformType: string) => {
   if (isPublicRoute.value) return
-  
-  selectedMode.value = 'transform' 
+
+  selectedMode.value = 'transform'
   selectedInquiryTypeForCreation.value = transformType
   createDlgToggle.value = true
 }
@@ -259,20 +257,30 @@ const handleGroupUpdate = (groups) => {
 </script>
 
 <template>
-  <div v-if="error" class="error-container">
+  <div
+    v-if="error"
+    class="error-container"
+  >
     <h3>{{ t('agora', 'Error loading inquiry') }}</h3>
     <p>{{ error.message }}</p>
     <pre v-if="!isPublicRoute">{{ error.stack }}</pre>
   </div>
 
-  <NcAppContent v-if="isAppLoaded" :key="forceRenderKey" class="inquiry-list">
-    <div v-if="isPublicRoute" class="public-banner">
+  <NcAppContent
+    v-if="isAppLoaded"
+    :key="forceRenderKey"
+    class="inquiry-list"
+  >
+    <div
+      v-if="isPublicRoute"
+      class="public-banner"
+    >
       <span class="public-icon">🔓</span>
       {{ t('agora', 'You are viewing a public inquiry') }}
     </div>
 
-    <InquiryHeaderButtons /> 
-    
+    <InquiryHeaderButtons />
+
     <InquiryActionToolbar
       v-if="editMode && !isPublicRoute"
       :inquiry-store="inquiryStore"
@@ -286,8 +294,8 @@ const handleGroupUpdate = (groups) => {
 
     <div class="area__main">
       <div class="view-content">
-        <InquiryEditViewForm 
-          v-if="editMode || isPublicRoute" 
+        <InquiryEditViewForm
+          v-if="editMode || isPublicRoute"
           :is-readonly="isReadonly"
         />
         <InquiryTransition
@@ -298,20 +306,22 @@ const handleGroupUpdate = (groups) => {
         />
       </div>
 
-      <InquiryInfoCards class="sticky-left" /> 
+      <InquiryInfoCards class="sticky-left" />
     </div>
 
     <InquiryCreateDlg
       v-if="createDlgToggle && !isPublicRoute"
-      :family= "inquiryStore.family"
+      :family="inquiryStore.family"
       :response-type="selectedInquiryTypeForCreation"
       :selected-groups="selectedGroups"
       :selected-mode="selectedMode"
       :available-groups="availableGroups"
       :parent-inquiry-id="inquiryStore.id"
-      :default-title="selectedInquiryTypeForCreation === 'official' 
-        ? t('agora', 'Official response for: {title}', { title: inquiryStore.title })
-        : t('agora', 'Response for: {title}', { title: inquiryStore.title })"
+      :default-title="
+        selectedInquiryTypeForCreation === 'official'
+          ? t('agora', 'Official response for: {title}', { title: inquiryStore.title })
+          : t('agora', 'Response for: {title}', { title: inquiryStore.title })
+      "
       @close="handleCloseDialog"
       @added="inquiryAdded"
       @update:selected-groups="handleGroupUpdate"
@@ -417,7 +427,7 @@ const handleGroupUpdate = (groups) => {
   text-align: center;
   font-size: 0.9em;
   color: var(--color-text-lighter);
-  
+
   .public-icon {
     margin-right: 8px;
   }
@@ -429,12 +439,12 @@ const handleGroupUpdate = (groups) => {
   background-color: var(--color-background-dark);
   border-left: 4px solid var(--color-error);
   border-radius: var(--border-radius);
-  
+
   h3 {
     color: var(--color-error);
     margin-bottom: 10px;
   }
-  
+
   pre {
     margin-top: 10px;
     padding: 10px;

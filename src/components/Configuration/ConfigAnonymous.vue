@@ -81,9 +81,16 @@ const disabledState = computed(
     {{ t('agora', 'Anonymous inquiry') }}
   </NcCheckboxRadioSwitch>
 
-  <NcButton v-if="showLockAnonymous" class="indented" @click="spawnConfirmationDialog(true)">
+  <NcButton
+    v-if="showLockAnonymous"
+    class="indented"
+    @click="spawnConfirmationDialog(true)"
+  >
     {{ t('agora', 'Anonymize inquiry irrevocably') }}
   </NcButton>
 
-  <NcDialog v-model:open="showAnonDialog" v-bind="anonDialog" />
+  <NcDialog
+    v-model:open="showAnonDialog"
+    v-bind="anonDialog"
+  />
 </template>

@@ -12,7 +12,11 @@ const emit = defineEmits(['change'])
 </script>
 
 <template>
-  <textarea v-model="inquiryStore.description" class="edit-description" @change="emit('change')" />
+  <textarea
+    v-model="inquiryStore.description"
+    class="edit-description"
+    @change="emit('change')"
+  />
   <NcCheckboxRadioSwitch
     v-model="inquiryStore.collapseDescription"
     type="switch"

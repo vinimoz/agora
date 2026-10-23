@@ -1,17 +1,13 @@
-!--
-  - SPDX-FileCopyrightText: Nextcloud 2026
-  - SPDX-License-Identifier: AGPL-3.0-or-later
--->
+!-- - SPDX-FileCopyrightText: Nextcloud 2026 - SPDX-License-Identifier: AGPL-3.0-or-later -->
 
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
 import { IconProps } from './types'
 import { computed } from 'vue'
 
-const {
-  size = 24,
-  supportValue = null, 
-} = defineProps<IconProps & { supportValue?: number | null }>()
+const { size = 24, supportValue = null } = defineProps<
+  IconProps & { supportValue?: number | null }
+>()
 
 const emojiSymbol = computed(() => {
   if (supportValue === 1) return '👍'
@@ -39,11 +35,11 @@ const dynamicTitle = computed(() => {
   <span
     :aria-label="dynamicTitle"
     class="emoji-support-icon"
-    :class="{ 
-      'against': supportValue === -1,
-      'neutral': supportValue === 0,
-      'support': supportValue === 1,
-      'no-participation': supportValue === null
+    :class="{
+      against: supportValue === -1,
+      neutral: supportValue === 0,
+      support: supportValue === 1,
+      'no-participation': supportValue === null,
     }"
     role="img"
     :title="dynamicTitle"

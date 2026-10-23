@@ -693,8 +693,10 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'selection',
-    description:
-      t('agora', 'Simple yes/no approval voting for deliberation phase - users can either approve or not'),
+    description: t(
+      'agora',
+      'Simple yes/no approval voting for deliberation phase - users can either approve or not'
+    ),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'list', 'checkbox'],
     compatibleOptionTypes: ['text', 'boolean'],
@@ -713,7 +715,12 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     recommendedViews: ['cards', 'slider'],
     compatibleOptionTypes: ['text', 'number'],
     config_schema: {
-      credits_per_user: { type: 'number', default: 100, label: t('agora', 'Credits per user'), min: 1 },
+      credits_per_user: {
+        type: 'number',
+        default: 100,
+        label: t('agora', 'Credits per user'),
+        min: 1,
+      },
     },
   },
 

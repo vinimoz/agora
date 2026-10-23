@@ -66,7 +66,8 @@ const aiApi = {
       url: `ai/inquiry/${inquiryId}/enhance`,
       data: { prompt },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.enhanceContent.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.enhanceContent.name].handleRequestCancellation().token,
     })
   },
 
@@ -85,7 +86,9 @@ const aiApi = {
       url: `ai/inquiry/${inquiryId}/generate-options`,
       data: { count },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.generateOptionsFromInquiry.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.generateOptionsFromInquiry.name].handleRequestCancellation()
+          .token,
     })
   },
 
@@ -108,7 +111,9 @@ const aiApi = {
       url: `ai/inquiry/${inquiryId}/document-options`,
       data: { documentPath, optionType, options },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.generateDocumentOptions.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.generateDocumentOptions.name].handleRequestCancellation()
+          .token,
     })
   },
 
@@ -126,7 +131,9 @@ const aiApi = {
       url: `ai/inquiry/${inquiryId}/decision-options`,
       data: { constraints },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.generateDecisionOptions.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.generateDecisionOptions.name].handleRequestCancellation()
+          .token,
     })
   },
 
@@ -144,7 +151,8 @@ const aiApi = {
       url: `ai/inquiry/${inquiryId}/creative-ideas`,
       data: { count },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.generateCreativeIdeas.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.generateCreativeIdeas.name].handleRequestCancellation().token,
     })
   },
 
@@ -162,7 +170,8 @@ const aiApi = {
       url: `ai/inquiry/${inquiryId}/summarize`,
       data: { format },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.summarizeInquiry.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.summarizeInquiry.name].handleRequestCancellation().token,
     })
   },
 
@@ -175,7 +184,8 @@ const aiApi = {
       method: 'POST',
       url: `ai/inquiry/${inquiryId}/sentiment`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.analyzeSentiment.name].handleRequestCancellation().token,
+      cancelToken:
+        cancelTokenHandlerObject[this.analyzeSentiment.name].handleRequestCancellation().token,
     })
   },
 }

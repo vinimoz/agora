@@ -40,15 +40,27 @@
       </div>
 
       <div class="modal-content preview-content">
-        <div v-if="loading" class="loading-state">
-          <NcLoadingIcon :size="40" appearance="auto" />
+        <div
+          v-if="loading"
+          class="loading-state"
+        >
+          <NcLoadingIcon
+            :size="40"
+            appearance="auto"
+          />
           <p>{{ t('agora', 'Generating options...') }}</p>
         </div>
-        <div v-else-if="options.length === 0" class="empty-state">
+        <div
+          v-else-if="options.length === 0"
+          class="empty-state"
+        >
           <AlertCircle :size="40" />
           <p>{{ t('agora', 'No options were generated. Please try again.') }}</p>
         </div>
-        <div v-else class="options-grid">
+        <div
+          v-else
+          class="options-grid"
+        >
           <div
             v-for="(option, index) in options"
             :key="index"
@@ -64,15 +76,27 @@
               />
             </div>
             <div class="option-content">
-              <div class="option-number">#{{ index + 1 }}</div>
-              <div class="option-title">{{ option.title || option.text }}</div>
-              <div v-if="option.description" class="option-description">
+              <div class="option-number">
+                #{{ index + 1 }}
+              </div>
+              <div class="option-title">
+                {{ option.title || option.text }}
+              </div>
+              <div
+                v-if="option.description"
+                class="option-description"
+              >
                 {{ option.description }}
               </div>
-              <div v-if="option.pros && option.pros.length" class="option-tags">
-                <span v-for="pro in option.pros" :key="pro" class="tag pro">
-                  👍 {{ pro }}
-                </span>
+              <div
+                v-if="option.pros && option.pros.length"
+                class="option-tags"
+              >
+                <span
+                  v-for="pro in option.pros"
+                  :key="pro"
+                  class="tag pro"
+                > 👍 {{ pro }} </span>
               </div>
             </div>
           </div>
@@ -88,8 +112,8 @@
         </NcButton>
         <NcButton
           type="secondary"
-          @click="handleRegenerate"
           :disabled="loading"
+          @click="handleRegenerate"
         >
           <RefreshCw :size="16" />
           {{ t('agora', 'Regenerate') }}
@@ -138,20 +162,18 @@ const emit = defineEmits<{
   import: [options: Option[]]
 }>()
 
-const selectedCount = computed(() => 
-  props.options.filter(opt => opt.selected).length
-)
+const selectedCount = computed(() => props.options.filter((opt) => opt.selected).length)
 
 const toggleOption = (index: number) => {
   props.options[index].selected = !props.options[index].selected
 }
 
 const selectAll = () => {
-  props.options.forEach(opt => opt.selected = true)
+  props.options.forEach((opt) => (opt.selected = true))
 }
 
 const deselectAll = () => {
-  props.options.forEach(opt => opt.selected = false)
+  props.options.forEach((opt) => (opt.selected = false))
 }
 
 const handleClose = () => {
@@ -163,7 +185,7 @@ const handleRegenerate = () => {
 }
 
 const handleImport = () => {
-  const selected = props.options.filter(opt => opt.selected)
+  const selected = props.options.filter((opt) => opt.selected)
   if (selected.length > 0) {
     emit('import', selected)
   }
@@ -180,7 +202,11 @@ const handleImport = () => {
   .modal-header {
     text-align: center;
     padding: 32px 32px 24px;
-    background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-primary-element-rgb), 0.05) 0%,
+      rgba(var(--color-primary-element-rgb), 0.02) 100%
+    );
     border-bottom: 1px solid var(--color-border);
 
     .header-icon {
@@ -195,7 +221,11 @@ const handleImport = () => {
       color: white;
 
       &.success {
-        background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-light) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-success) 0%,
+          var(--color-success-light) 100%
+        );
       }
     }
 

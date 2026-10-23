@@ -192,7 +192,10 @@ onBeforeUnmount(() => {
         :class="['collapsible_container', { 'no-transition': drag.isDragging }]"
         :style="{ height: height + 'px' }"
       >
-        <div ref="slotWrapper" class="collapsible_content">
+        <div
+          ref="slotWrapper"
+          class="collapsible_content"
+        >
           <slot />
         </div>
       </div>

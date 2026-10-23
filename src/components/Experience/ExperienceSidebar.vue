@@ -6,12 +6,20 @@
 <template>
   <div class="experience-sidebar">
     <!-- Group Info -->
-    <div v-if="group" class="sidebar-group-info">
+    <div
+      v-if="group"
+      class="sidebar-group-info"
+    >
       <div class="group-avatar">
-        <component :is="getGroupIcon(group.type)" :size="32" />
+        <component
+          :is="getGroupIcon(group.type)"
+          :size="32"
+        />
       </div>
       <div class="group-details">
-        <h4 class="group-name">{{ group.title }}</h4>
+        <h4 class="group-name">
+          {{ group.title }}
+        </h4>
         <span class="group-type">{{ getGroupTypeLabel(group.type) }}</span>
       </div>
     </div>
@@ -19,56 +27,87 @@
     <!-- Navigation -->
     <nav class="sidebar-nav">
       <div class="nav-section">
-        <h5 class="nav-section-title">{{ t('agora', 'Content') }}</h5>
-        <div 
-          v-for="item in navItems" 
+        <h5 class="nav-section-title">
+          {{ t('agora', 'Content') }}
+        </h5>
+        <div
+          v-for="item in navItems"
           :key="item.key"
           class="nav-item"
           :class="{ active: item.active }"
           @click="item.action()"
         >
-          <component :is="item.icon" :size="18" class="nav-icon" />
+          <component
+            :is="item.icon"
+            :size="18"
+            class="nav-icon"
+          />
           <span class="nav-label">{{ item.label }}</span>
-          <span v-if="item.count !== undefined" class="nav-count">{{ item.count }}</span>
+          <span
+            v-if="item.count !== undefined"
+            class="nav-count"
+          >{{ item.count }}</span>
         </div>
       </div>
 
       <div class="nav-section">
-        <h5 class="nav-section-title">{{ t('agora', 'Tools') }}</h5>
-        <div 
-          v-for="tool in toolItems" 
+        <h5 class="nav-section-title">
+          {{ t('agora', 'Tools') }}
+        </h5>
+        <div
+          v-for="tool in toolItems"
           :key="tool.key"
           class="nav-item tool-item"
           :class="{ active: tool.active }"
           @click="tool.action()"
         >
-          <component :is="tool.icon" :size="18" class="nav-icon" />
+          <component
+            :is="tool.icon"
+            :size="18"
+            class="nav-icon"
+          />
           <span class="nav-label">{{ tool.label }}</span>
         </div>
       </div>
 
       <div class="nav-section">
-        <h5 class="nav-section-title">{{ t('agora', 'Features') }}</h5>
-        <div 
+        <h5 class="nav-section-title">
+          {{ t('agora', 'Features') }}
+        </h5>
+        <div
           class="nav-item toggle-item"
           :class="{ active: showResources }"
           @click="emit('toggleResources')"
         >
-          <component :is="Icons.Document" :size="18" class="nav-icon" />
+          <component
+            :is="Icons.Document"
+            :size="18"
+            class="nav-icon"
+          />
           <span class="nav-label">{{ t('agora', 'Resources') }}</span>
           <span class="toggle-indicator">
-            <component :is="showResources ? Icons.Check : Icons.Close" :size="14" />
+            <component
+              :is="showResources ? Icons.Check : Icons.Close"
+              :size="14"
+            />
           </span>
         </div>
-        <div 
+        <div
           class="nav-item toggle-item"
           :class="{ active: showComments }"
           @click="emit('toggleComments')"
         >
-          <component :is="Icons.Comment" :size="18" class="nav-icon" />
+          <component
+            :is="Icons.Comment"
+            :size="18"
+            class="nav-icon"
+          />
           <span class="nav-label">{{ t('agora', 'Comments') }}</span>
           <span class="toggle-indicator">
-            <component :is="showComments ? Icons.Check : Icons.Close" :size="14" />
+            <component
+              :is="showComments ? Icons.Check : Icons.Close"
+              :size="14"
+            />
           </span>
         </div>
       </div>
@@ -98,11 +137,11 @@ import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
 import { useSessionStore } from '../../stores/session'
-import type { InquiryGroup } from '../../stores/inquiryGroups.types'
-import type { Inquiry } from '../../Types'
+import type { InquiryGroup } from '../../Types/inquiryGroups.types'
+import type { Inquiry } from '../../Types/index.ts'
 
 // Import tool vocabulary
-import { ALL_TOOLS, type ToolValue } from '../Types/experience.types'
+import { ALL_TOOLS, type ToolValue } from '../../Types/experience.types.ts'
 
 // Only include tools that are in ALL_TOOLS
 const TOOL_ICON_MAP: Partial<Record<ToolValue, { icon: any; label: string }>> = {
@@ -152,10 +191,12 @@ function getGroupTypeLabel(type: string) {
 const navItems = computed(() => {
   const inquiryCount = props.inquiries?.length || 0
   const optionCount = props.options?.length || 0
-  
-  const debateCount = props.inquiries?.filter(i => i.status?.inquiryStatus === 'debate').length || 0
-  const votingCount = props.inquiries?.filter(i => i.status?.inquiryStatus === 'voting').length || 0
-  
+
+  const debateCount =
+    props.inquiries?.filter((i) => i.status?.inquiryStatus === 'debate').length || 0
+  const votingCount =
+    props.inquiries?.filter((i) => i.status?.inquiryStatus === 'voting').length || 0
+
   return [
     {
       key: 'dashboard',
@@ -163,7 +204,7 @@ const navItems = computed(() => {
       label: t('agora', 'Overview'),
       active: true,
       count: undefined,
-      action: () => emit('navigate', 'dashboard')
+      action: () => emit('navigate', 'dashboard'),
     },
     {
       key: 'inquiries',
@@ -171,7 +212,7 @@ const navItems = computed(() => {
       label: t('agora', 'Inquiries'),
       active: false,
       count: inquiryCount,
-      action: () => emit('navigate', 'inquiries')
+      action: () => emit('navigate', 'inquiries'),
     },
     {
       key: 'options',
@@ -179,7 +220,7 @@ const navItems = computed(() => {
       label: t('agora', 'Options'),
       active: false,
       count: optionCount,
-      action: () => emit('navigate', 'options')
+      action: () => emit('navigate', 'options'),
     },
     {
       key: 'debates',
@@ -187,7 +228,7 @@ const navItems = computed(() => {
       label: t('agora', 'Debates'),
       active: false,
       count: debateCount,
-      action: () => emit('navigate', 'debates')
+      action: () => emit('navigate', 'debates'),
     },
     {
       key: 'votes',
@@ -195,21 +236,21 @@ const navItems = computed(() => {
       label: t('agora', 'Votes'),
       active: false,
       count: votingCount,
-      action: () => emit('navigate', 'votes')
-    }
+      action: () => emit('navigate', 'votes'),
+    },
   ]
 })
 
 const toolItems = computed(() => {
   const availableTools = props.tools || []
   return availableTools
-    .filter(key => TOOL_ICON_MAP[key as ToolValue])
-    .map(key => ({
+    .filter((key) => TOOL_ICON_MAP[key as ToolValue])
+    .map((key) => ({
       key,
       icon: TOOL_ICON_MAP[key as ToolValue]!.icon,
       label: TOOL_ICON_MAP[key as ToolValue]!.label,
       active: false,
-      action: () => emit('navigate', key)
+      action: () => emit('navigate', key),
     }))
 })
 </script>
@@ -330,7 +371,7 @@ const toolItems = computed(() => {
       .toggle-indicator {
         font-size: 12px;
         opacity: 0.6;
-        
+
         svg {
           transition: all 0.2s ease;
         }

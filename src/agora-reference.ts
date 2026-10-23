@@ -6,7 +6,7 @@
 import { createApp } from 'vue'
 import { pinia } from './stores/index.ts'
 import { registerWidget } from '@nextcloud/vue/components/NcRichText'
-import Reference from './views/Reference.vue'
+import Reference from './views/AgoraReference.vue'
 import './assets/scss/agora-icon.scss'
 
 registerWidget(

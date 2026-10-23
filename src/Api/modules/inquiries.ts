@@ -4,11 +4,11 @@
  */
 
 import type {
-	Inquiry,
-	InquiryConfiguration,
-	InquiryType,
-	VisibilityType,
-	Category,
+  Inquiry,
+  InquiryConfiguration,
+  InquiryType,
+  VisibilityType,
+  Category,
 } from '../../Types/index.js'
 
 import { AxiosResponse } from '@nextcloud/axios'
@@ -18,11 +18,10 @@ import { Comment, User } from '../../Types/index.ts'
 import { InquiryGroup, Option, Support } from '@/Types'
 import type { ModerationWorkflowStatus } from '../../Types/index.ts'
 
-
 export type ApiEmailAdressList = {
-	displayName: string
-	emailAddress: string
-	combined: string
+  displayName: string
+  emailAddress: string
+  combined: string
 }
 
 export type Confirmations = {
@@ -52,16 +51,14 @@ const inquiries = {
   },
 
   getChildInquiryIds(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-  return httpInstance.request({
-    method: 'GET',
-    url: `inquiry/${inquiryId}/childs`,
-    params: { time: +new Date() },
-    cancelToken:
-      cancelTokenHandlerObject[this.getChildInquiryIds.name]
-        .handleRequestCancellation().token,
-  })
-},
-
+    return httpInstance.request({
+      method: 'GET',
+      url: `inquiry/${inquiryId}/childs`,
+      params: { time: +new Date() },
+      cancelToken:
+        cancelTokenHandlerObject[this.getChildInquiryIds.name].handleRequestCancellation().token,
+    })
+  },
 
   getInquiry(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
@@ -72,6 +69,19 @@ const inquiries = {
     })
   },
 
+updateModerationStatus(
+	inquiryId: number,
+	moderationStatus: ModerationWorkflowStatus
+): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+    return httpInstance.request({
+      method: 'PUT',
+      url: `inquiry/updatemoderation/${inquiryId}/${moderationStatus}`,
+      cancelToken:
+        cancelTokenHandlerObject[this.updateModerationStatus.name].handleRequestCancellation().token,
+    })
+  },
+
+
   getFullInquiry(inquiryId: number): Promise<
     AxiosResponse<{
       inquiry: Inquiry
@@ -81,7 +91,7 @@ const inquiries = {
       shares: Share[]
       subscribed: boolean
     }>
-  > {
+   >{
     return httpInstance.request({
       method: 'GET',
       url: `inquiry/${inquiryId}`,
@@ -115,11 +125,9 @@ const inquiries = {
       method: 'PUT',
       url: `inquiry/updatevisibility/${inquiryId}/${inquiryVisibility}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateVisibility.name].handleRequestCancellation()
-          .token,
+        cancelTokenHandlerObject[this.updateVisibility.name].handleRequestCancellation().token,
     })
   },
-
 
   updateInquiryStatus(
     inquiryId: number,
@@ -129,73 +137,57 @@ const inquiries = {
       method: 'PUT',
       url: `inquiry/updatestatus/${inquiryId}/${inquiryStatus}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateInquiryStatus.name].handleRequestCancellation()
-          .token,
+        cancelTokenHandlerObject[this.updateInquiryStatus.name].handleRequestCancellation().token,
     })
   },
 
-  submitInquiry(
-    inquiryId: number,
-    action: string
-  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  submitInquiry(inquiryId: number, action: string): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
       method: 'PUT',
       url: `inquiry/submitinquiry/${inquiryId}`,
       data: { action },
       cancelToken:
-        cancelTokenHandlerObject[this.submitInquiry.name].handleRequestCancellation()
-          .token,
+        cancelTokenHandlerObject[this.submitInquiry.name].handleRequestCancellation().token,
     })
   },
 
   updateInquiryConfig(
-  inquiryId: number,
-  inquiryConfiguration: InquiryConfiguration
-): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+    inquiryId: number,
+    inquiryConfiguration: InquiryConfiguration
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+    // Convert Proxy to plain object before sending
+    const plainConfig = JSON.parse(JSON.stringify(inquiryConfiguration))
 
-  // Convert Proxy to plain object before sending
-  const plainConfig = JSON.parse(JSON.stringify(inquiryConfiguration));
+    return httpInstance.request({
+      method: 'PUT',
+      url: `inquiry/updateconfig/${inquiryId}`,
+      data: { inquiryConfiguration: plainConfig },
+      cancelToken:
+        cancelTokenHandlerObject[this.updateInquiryConfig.name].handleRequestCancellation().token,
+    })
+  },
 
-  return httpInstance.request({
-    method: 'PUT',
-    url: `inquiry/updateconfig/${inquiryId}`,
-    data: { inquiryConfiguration: plainConfig }, 
-    cancelToken:
-      cancelTokenHandlerObject[this.updateInquiryConfig.name].handleRequestCancellation().token,
-  })
-},
-
-updateModerationStatus(
-	inquiryId: number,
-	moderationStatus: ModerationWorkflowStatus
-): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-	return Promise.reject(new Error('InquiriesAPI.updateModerationStatus not implemented'))
-},
-
-addInquiry(dataInquiry: {
-  type: string
-  title: string
-  family: string
-  owner: User | string
-  visibility: VisibilityType
-  ownedGroup?: string
-  configuration?: InquiryConfiguration
-  parentId?: number
-  locationId?: number
-  categoryId?: number
-  description?: string
-}): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-   console.log(" VISIIBILIT YYYYYY ",dataInquiry.visibility)
-  return httpInstance.request({
-    method: 'POST',
-    url: 'inquiry/add',
-    data: dataInquiry,
-    cancelToken:
-      cancelTokenHandlerObject[this.addInquiry.name]
-        .handleRequestCancellation().token,
-  })
-},
-
+  addInquiry(dataInquiry: {
+    type: string
+    title: string
+    family: string
+    owner: User | string
+    visibility: VisibilityType
+    ownedGroup?: string
+    configuration?: InquiryConfiguration
+    parentId?: number
+    locationId?: number
+    categoryId?: number
+    description?: string
+  }): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+    console.log(' VISIIBILIT YYYYYY ', dataInquiry.visibility)
+    return httpInstance.request({
+      method: 'POST',
+      url: 'inquiry/add',
+      data: dataInquiry,
+      cancelToken: cancelTokenHandlerObject[this.addInquiry.name].handleRequestCancellation().token,
+    })
+  },
 
   updateInquiry(
     inquiryId: number,
@@ -332,53 +324,50 @@ addInquiry(dataInquiry: {
     })
   },
 
-getCategories(inquiryId: number): Promise<AxiosResponse<{ categories: Category[] }>> {
-  return httpInstance.request({
-    method: 'GET',
-    url: `inquiry/${inquiryId}/categories`,
-    cancelToken:
-      cancelTokenHandlerObject[this.getCategories.name]
-        .handleRequestCancellation().token,
-  })
-},
+  getCategories(inquiryId: number): Promise<AxiosResponse<{ categories: Category[] }>> {
+    return httpInstance.request({
+      method: 'GET',
+      url: `inquiry/${inquiryId}/categories`,
+      cancelToken:
+        cancelTokenHandlerObject[this.getCategories.name].handleRequestCancellation().token,
+    })
+  },
 
-getLocations(inquiryId: number): Promise<AxiosResponse<{ locations: Location[] }>> {
-  return httpInstance.request({
-    method: 'GET',
-    url: `inquiry/${inquiryId}/locations`,
-    cancelToken:
-      cancelTokenHandlerObject[this.getLocations.name]
-        .handleRequestCancellation().token,
-  })
-},
+  getLocations(inquiryId: number): Promise<AxiosResponse<{ locations: Location[] }>> {
+    return httpInstance.request({
+      method: 'GET',
+      url: `inquiry/${inquiryId}/locations`,
+      cancelToken:
+        cancelTokenHandlerObject[this.getLocations.name].handleRequestCancellation().token,
+    })
+  },
 
-updateMiscField(inquiryId: number, updateData: { key: string, value: string }): Promise<AxiosResponse<{ miscField: string }>> {
+  updateMiscField(
+    inquiryId: number,
+    updateData: { key: string; value: string }
+  ): Promise<AxiosResponse<{ miscField: string }>> {
     if (!updateData.key || updateData.key.trim() === '') {
-        throw new Error('Key cannot be null or empty for misc field update');
+      throw new Error('Key cannot be null or empty for misc field update')
     }
 
     return httpInstance.request({
-        method: 'PUT',
-        data: updateData,
-        url: `inquiry/${inquiryId}/updatemiscfield`,
-        cancelToken: cancelTokenHandlerObject[this.updateMiscField.name].handleRequestCancellation().token,
+      method: 'PUT',
+      data: updateData,
+      url: `inquiry/${inquiryId}/updatemiscfield`,
+      cancelToken:
+        cancelTokenHandlerObject[this.updateMiscField.name].handleRequestCancellation().token,
     })
-},
-
+  },
 
   enhanceText(text: string): Promise<AxiosResponse<{ text: string }>> {
-	  return httpInstance.request({
-		  method: 'POST',
-		  url: 'inquiry/get-text-ai',
-		  data: { text },
-		  cancelToken:
-			  cancelTokenHandlerObject[this.enhanceText.name]
-		  .handleRequestCancellation()
-		  .token,
-	  })
-  }
-
-
+    return httpInstance.request({
+      method: 'POST',
+      url: 'inquiry/get-text-ai',
+      data: { text },
+      cancelToken:
+        cancelTokenHandlerObject[this.enhanceText.name].handleRequestCancellation().token,
+    })
+  },
 }
 
 const cancelTokenHandlerObject = createCancelTokenHandler(inquiries)

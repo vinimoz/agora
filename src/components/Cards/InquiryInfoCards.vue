@@ -23,7 +23,6 @@ const optionsStore = useOptionsStore()
 const sharesStore = useSharesStore()
 const sessionStore = useSessionStore()
 
-
 const showUnpublishedInquiryCard = computed(
   () =>
     inquiryStore.configuration.visibility === 'private' &&
@@ -57,13 +56,34 @@ const showRegisterCard = computed(
 </script>
 
 <template>
-  <TransitionGroup tag="div" class="inquiry-info-cards">
-    <CardLimitedInquiries v-if="showLimitCard" :key="2" />
-    <CardUnpublishedInquiry v-if="showUnpublishedInquiryCard" :key="0" />
-    <CardClosedInquiry v-if="showClosedCard" :key="3" />
-    <CardLocked v-if="inquiryStore.currentUserStatus.isLocked" :key="5" />
-    <CardSendConfirmations v-if="showSendConfirmationsCard" :key="4" />
-    <CardRegister v-if="showRegisterCard" :key="6" />
+  <TransitionGroup
+    tag="div"
+    class="inquiry-info-cards"
+  >
+    <CardLimitedInquiries
+      v-if="showLimitCard"
+      :key="2"
+    />
+    <CardUnpublishedInquiry
+      v-if="showUnpublishedInquiryCard"
+      :key="0"
+    />
+    <CardClosedInquiry
+      v-if="showClosedCard"
+      :key="3"
+    />
+    <CardLocked
+      v-if="inquiryStore.currentUserStatus.isLocked"
+      :key="5"
+    />
+    <CardSendConfirmations
+      v-if="showSendConfirmationsCard"
+      :key="4"
+    />
+    <CardRegister
+      v-if="showRegisterCard"
+      :key="6"
+    />
   </TransitionGroup>
 </template>
 

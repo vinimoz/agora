@@ -23,11 +23,7 @@ export type { DisplayType, ToolKey, ExperienceKey, ExperienceDefinition }
 // ============================================================
 
 export type DisplayMode = DisplayType
-export type DisplayModeWithVariant =
-  | DisplayMode
-  | 'compact'
-  | 'summary'
-  | 'horizontal'
+export type DisplayModeWithVariant = DisplayMode | 'compact' | 'summary' | 'horizontal'
 
 export interface ExperienceConfig {
   experience: ExperienceKey
@@ -46,26 +42,25 @@ export interface ExperienceConfig {
 // ============================================================
 
 export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition> = {
+  home: {
+    key: 'home',
+    label: 'Home',
+    icon: 'Home',
+    description: 'Welcome to your civic space',
+    verb: 'Discover',
+    question: 'What can I do today?',
+    defaultTools: ['search'],
+    defaultDisplay: 'banner',
+    allowedDisplays: ['banner', 'cards', 'list'],
+    allowedTools: ['search', 'filter'],
+    layout: 'grid',
+    showHeader: false, // hero replaces the header
+    showBreadcrumb: false,
+    showStats: false,
+    supportedGroupTypes: [], // available everywhere
+  },
 
-home: {
-  key: 'home',
-  label: 'Home',
-  icon: 'Home',
-  description: 'Welcome to your civic space',
-  verb: 'Discover',
-  question: 'What can I do today?',
-  defaultTools: ['search'],
-  defaultDisplay: 'banner',
-  allowedDisplays: ['banner', 'cards', 'list'],
-  allowedTools: ['search', 'filter'],
-  layout: 'grid',
-  showHeader: false,      // hero replaces the header
-  showBreadcrumb: false,
-  showStats: false,
-  supportedGroupTypes: [], // available everywhere
-},  
-	
-dashboard: {
+  dashboard: {
     key: 'dashboard',
     label: 'Dashboard',
     icon: 'Home',
@@ -80,9 +75,7 @@ dashboard: {
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: [
-      'project', 'consultation', 'decision', 'initiative_group', 'assembly',
-    ],
+    supportedGroupTypes: ['project', 'consultation', 'decision', 'initiative_group', 'assembly'],
   },
 
   social: {
@@ -118,9 +111,7 @@ dashboard: {
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: [
-      'project', 'consultation', 'marketplace', 'initiative_group', 'offer',
-    ],
+    supportedGroupTypes: ['project', 'consultation', 'marketplace', 'initiative_group', 'offer'],
   },
 
   kanban: {
@@ -139,9 +130,7 @@ dashboard: {
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: [
-      'project', 'decision', 'workflow', 'maintenance_board', 'working_group',
-    ],
+    supportedGroupTypes: ['project', 'decision', 'workflow', 'maintenance_board', 'working_group'],
   },
 
   timeline: {
@@ -160,9 +149,7 @@ dashboard: {
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: [
-      'project', 'decision', 'consultation', 'investigation_case',
-    ],
+    supportedGroupTypes: ['project', 'decision', 'consultation', 'investigation_case'],
   },
 
   wiki: {
@@ -180,9 +167,7 @@ dashboard: {
     showHeader: true,
     showBreadcrumb: true,
     showStats: false,
-    supportedGroupTypes: [
-      'wiki', 'structure', 'documentation', 'municipal_reports', 'chapter',
-    ],
+    supportedGroupTypes: ['wiki', 'structure', 'documentation', 'municipal_reports', 'chapter'],
   },
 
   decision_room: {
@@ -201,8 +186,14 @@ dashboard: {
     showBreadcrumb: true,
     showStats: true,
     supportedGroupTypes: [
-      'decision', 'consultation', 'debate', 'citizen_jury', 'commission',
-      'chapter', 'ethics_review', 'investigation_case',
+      'decision',
+      'consultation',
+      'debate',
+      'citizen_jury',
+      'commission',
+      'chapter',
+      'ethics_review',
+      'investigation_case',
     ],
   },
 
@@ -253,9 +244,7 @@ export function useExperience(initialExperience?: ExperienceKey) {
   const inquiryGroupsStore = useInquiryGroupsStore()
 
   const experience = ref<ExperienceKey>(
-    (route.query.experience as ExperienceKey) ||
-      initialExperience ||
-      'dashboard',
+    (route.query.experience as ExperienceKey) || initialExperience || 'dashboard'
   )
 
   const currentGroup = computed(() => {
@@ -267,13 +256,11 @@ export function useExperience(initialExperience?: ExperienceKey) {
   })
 
   const definition = computed<ExperienceDefinition>(
-    () =>
-      EXPERIENCE_DEFINITIONS[experience.value] ||
-      EXPERIENCE_DEFINITIONS.dashboard,
+    () => EXPERIENCE_DEFINITIONS[experience.value] || EXPERIENCE_DEFINITIONS.dashboard
   )
 
   const displayMode = ref<DisplayMode>(
-    (route.query.display as DisplayMode) || definition.value.defaultDisplay,
+    (route.query.display as DisplayMode) || definition.value.defaultDisplay
   )
 
   const tools = ref<ToolKey[]>([...definition.value.defaultTools])
@@ -309,7 +296,7 @@ export function useExperience(initialExperience?: ExperienceKey) {
       return def.supportedGroupTypes.includes(targetGroup.type)
     })
    */
-  return allKeys
+    return allKeys
   }
 
   function getAvailableDisplays(): DisplayMode[] {
@@ -335,9 +322,7 @@ export function useExperience(initialExperience?: ExperienceKey) {
   function buildQuery(extra: Record<string, string>): Record<string, string> {
     return {
       ...Object.fromEntries(
-        Object.entries(route.query).filter(
-          ([, v]) => typeof v === 'string',
-        ) as [string, string][],
+        Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
       ),
       ...extra,
     }
@@ -382,17 +367,13 @@ export function useExperience(initialExperience?: ExperienceKey) {
   watch(
     () => route.query.experience,
     (newExp) => {
-      if (
-        newExp &&
-        typeof newExp === 'string' &&
-        EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]
-      ) {
+      if (newExp && typeof newExp === 'string' && EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]) {
         experience.value = newExp as ExperienceKey
         const def = EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]
         displayMode.value = def.defaultDisplay
         tools.value = [...def.defaultTools]
       }
-    },
+    }
   )
 
   watch(
@@ -401,7 +382,7 @@ export function useExperience(initialExperience?: ExperienceKey) {
       if (newDisplay && typeof newDisplay === 'string') {
         displayMode.value = newDisplay as DisplayMode
       }
-    },
+    }
   )
 
   return {

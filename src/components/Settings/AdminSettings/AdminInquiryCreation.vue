@@ -23,7 +23,10 @@ const appSettingsStore = useAppSettingsStore()
     >
       {{ t('agora', 'Enable the inquiry creation globally') }}
     </NcCheckboxRadioSwitch>
-    <div v-if="!appSettingsStore.allowInquiryCreation" class="settings_details">
+    <div
+      v-if="!appSettingsStore.allowInquiryCreation"
+      class="settings_details"
+    >
       <NcSelect
         v-model="appSettingsStore.inquiryCreationGroups"
         :input-label="t('agora', 'Enable only for the following groups')"

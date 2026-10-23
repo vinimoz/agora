@@ -60,10 +60,7 @@ const supportEngines = computed<Record<string, EngineDefinition>>(() => {
 const typeRights = computed({
   get: () => {
     if (!props.selectedType) return {} as Partial<InquiryTypeRights>
-    return (
-      appSettingsStore.inquiryTypeRights[props.selectedType.inquiry_type] ||
-      getDefaultRights()
-    )
+    return appSettingsStore.inquiryTypeRights[props.selectedType.inquiry_type] || getDefaultRights()
   },
   set: (newRights) => {
     if (props.selectedType) {
@@ -88,7 +85,7 @@ watch(
       emit('updateRights', newType.inquiry_type, getDefaultRights())
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 const updateRights = () => {
@@ -106,7 +103,7 @@ watch(
       typeRights.value.supportConfig = {}
     }
     updateRights()
-  },
+  }
 )
 
 const showEngineSelector = ref(false)
@@ -121,10 +118,7 @@ const openEngineSelector = () => {
   showEngineSelector.value = true
 }
 
-const onEngineSelected = (data: {
-  engine: string
-  config: Record<string, unknown>
-}) => {
+const onEngineSelected = (data: { engine: string; config: Record<string, unknown> }) => {
   typeRights.value.supportFeature = data.engine as SupportFeature
   typeRights.value.supportConfig = data.config ?? {}
   updateRights()
@@ -137,19 +131,20 @@ const onEngineSelected = (data: {
       <h2>
         {{ t('agora', 'Rights for {type}', { type: selectedType?.label }) }}
       </h2>
-      <p v-if="selectedType" class="type-id">
+      <p
+        v-if="selectedType"
+        class="type-id"
+      >
         {{ selectedType.inquiry_type }}
       </p>
     </div>
 
-    <div v-if="selectedType" class="settings-container">
+    <div
+      v-if="selectedType"
+      class="settings-container"
+    >
       <p class="description">
-        {{
-          t(
-            'agora',
-            'Configure default rights and settings for this inquiry type',
-          )
-        }}
+        {{ t('agora', 'Configure default rights and settings for this inquiry type') }}
       </p>
 
       <div class="settings-list">
@@ -168,7 +163,10 @@ const onEngineSelected = (data: {
         </div>
 
         <!-- Engine selector – replaces the old binary/ternary radio pair -->
-        <div v-if="typeRights.supportInquiry" class="setting-item engine-mode-setting">
+        <div
+          v-if="typeRights.supportInquiry"
+          class="setting-item engine-mode-setting"
+        >
           <div class="setting-label">
             {{ t('agora', 'Support mode') }}
           </div>
@@ -189,12 +187,7 @@ const onEngineSelected = (data: {
           </div>
 
           <p class="setting-description">
-            {{
-              t(
-                'agora',
-                'Choose which voting method users can use to support this inquiry.',
-              )
-            }}
+            {{ t('agora', 'Choose which voting method users can use to support this inquiry.') }}
           </p>
         </div>
 
@@ -208,12 +201,7 @@ const onEngineSelected = (data: {
             {{ t('agora', 'Allow comments') }}
           </NcCheckboxRadioSwitch>
           <p class="setting-description">
-            {{
-              t(
-                'agora',
-                'Allow users to comment on this inquiry type',
-              )
-            }}
+            {{ t('agora', 'Allow users to comment on this inquiry type') }}
           </p>
         </div>
 
@@ -227,12 +215,7 @@ const onEngineSelected = (data: {
             {{ t('agora', 'Allow using resources') }}
           </NcCheckboxRadioSwitch>
           <p class="setting-description">
-            {{
-              t(
-                'agora',
-                'Allow users to use resources for this inquiry type',
-              )
-            }}
+            {{ t('agora', 'Allow users to use resources for this inquiry type') }}
           </p>
         </div>
 

@@ -8,7 +8,10 @@
     <!-- ============================================================ -->
     <!-- SINGLE FAMILY TOOL - When a specific family is requested      -->
     <!-- ============================================================ -->
-    <div v-if="specificFamily" class="family-tool-single">
+    <div
+      v-if="specificFamily"
+      class="family-tool-single"
+    >
       <component
         :is="getFamilyToolComponent(specificFamily)"
         :options="filteredOptions"
@@ -34,7 +37,10 @@
     <!-- ============================================================ -->
     <!-- MULTIPLE FAMILIES - When multiple families are requested      -->
     <!-- ============================================================ -->
-    <div v-else-if="families && families.length > 0" class="family-tools-grid">
+    <div
+      v-else-if="families && families.length > 0"
+      class="family-tools-grid"
+    >
       <div
         v-for="family in families"
         :key="family"
@@ -42,8 +48,13 @@
         :class="`family-${family}`"
       >
         <div class="family-header">
-          <component :is="getFamilyIcon(family)" :size="18" />
-          <h4 class="family-title">{{ getFamilyLabel(family) }}</h4>
+          <component
+            :is="getFamilyIcon(family)"
+            :size="18"
+          />
+          <h4 class="family-title">
+            {{ getFamilyLabel(family) }}
+          </h4>
           <span class="family-count">{{ getOptionsForFamily(family).length }}</span>
         </div>
         <div class="family-content">
@@ -69,7 +80,10 @@
     <!-- ============================================================ -->
     <!-- AUTO-GROUPED - When no specific family is requested           -->
     <!-- ============================================================ -->
-    <div v-else-if="options && options.length > 0" class="family-tools-auto">
+    <div
+      v-else-if="options && options.length > 0"
+      class="family-tools-auto"
+    >
       <div
         v-for="(group, familyKey) in optionsByFamily"
         :key="familyKey"
@@ -77,8 +91,13 @@
         :class="`family-${familyKey}`"
       >
         <div class="family-header">
-          <component :is="getFamilyIcon(familyKey)" :size="18" />
-          <h4 class="family-title">{{ getFamilyLabel(familyKey) }}</h4>
+          <component
+            :is="getFamilyIcon(familyKey)"
+            :size="18"
+          />
+          <h4 class="family-title">
+            {{ getFamilyLabel(familyKey) }}
+          </h4>
           <span class="family-count">{{ group.length }}</span>
         </div>
         <div class="family-content">
@@ -104,8 +123,14 @@
     <!-- ============================================================ -->
     <!-- EMPTY STATE - No options available                            -->
     <!-- ============================================================ -->
-    <div v-else class="empty-state">
-      <component :is="Icons.Layers" :size="32" />
+    <div
+      v-else
+      class="empty-state"
+    >
+      <component
+        :is="Icons.Layers"
+        :size="32"
+      />
       <p>{{ t('agora', 'No options available') }}</p>
     </div>
   </div>
@@ -114,14 +139,14 @@
 <script setup lang="ts">
 /**
  * OptionToolDisplay - Renders family-specific tools for Options
- * 
+ *
  * This component is responsible for displaying Options organized by their
  * family (debate, consensus, structure) using the appropriate tool component.
- * 
+ *
  * IMPORTANT: This component ONLY handles Option tools (debate, consensus, structure).
  * Tools that can also apply to Inquiries (kanban, timeline, vote) are handled
  * directly in ExperienceRenderer for 'inquiries' content.
- * 
+ *
  * @see La séparation est maintenant claire.txt - Section 15: Tools des Options
  */
 import { computed } from 'vue'
@@ -178,7 +203,7 @@ const emit = defineEmits<{
   /** Emitted for generic actions */
   action: [actionKey: string]
   /** Emitted when an Item's family changes */
-  itemFamilyChanged: [payload: { itemId: number, familyKey: string, action: string }]
+  itemFamilyChanged: [payload: { itemId: number; familyKey: string; action: string }]
 }>()
 
 const sessionStore = useSessionStore()
@@ -188,12 +213,12 @@ const sessionStore = useSessionStore()
 // ============================================================
 /**
  * Mapping of Option family keys to their tool components.
- * 
+ *
  * According to the architecture document (Section 15):
  * - consensus -> FamilyLayoutConsensusFlow
  * - debate -> FamilyLayoutPaired
  * - structure -> FamilyLayoutTree
- * 
+ *
  * These are EXCLUSIVELY Option tools and should never be used
  * for Inquiries directly.
  */
@@ -237,7 +262,7 @@ const familyLabelMap: Record<string, string> = {
  */
 function getFamilyData(family: string) {
   const familyTab = sessionStore.appSettings?.optionFamilyTab || []
-  return familyTab.find(f => f.key === family) || null
+  return familyTab.find((f) => f.key === family) || null
 }
 
 /**
@@ -275,15 +300,15 @@ function getFamilyLabel(family: string) {
  */
 const optionsByFamily = computed(() => {
   const groups: Record<string, Option[]> = {}
-  
+
   if (!props.options) return groups
-  
-  props.options.forEach(option => {
+
+  props.options.forEach((option) => {
     const family = option.family || 'default'
     if (!groups[family]) groups[family] = []
     groups[family].push(option)
   })
-  
+
   return groups
 })
 
@@ -293,7 +318,7 @@ const optionsByFamily = computed(() => {
  */
 function getOptionsForFamily(family: string): Option[] {
   if (!props.options) return []
-  return props.options.filter(o => (o.family || 'default') === family)
+  return props.options.filter((o) => (o.family || 'default') === family)
 }
 
 /**
@@ -356,7 +381,7 @@ function handleAction(actionKey: string) {
   emit('action', actionKey)
 }
 
-function handleItemFamilyChanged(payload: { itemId: number, familyKey: string, action: string }) {
+function handleItemFamilyChanged(payload: { itemId: number; familyKey: string; action: string }) {
   emit('itemFamilyChanged', payload)
 }
 </script>

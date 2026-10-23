@@ -15,7 +15,6 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { useAppSettingsStore } from '../../../stores/appSettings.ts'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 
-
 const props = defineProps({
   selectedFamily: { type: Object, default: null },
 })
@@ -47,7 +46,7 @@ const newAllowedInquiryType = ref('')
 function emptyType() {
   return {
     group_type: '',
-    family: familyKey.value,  
+    family: familyKey.value,
     icon: null,
     label: '',
     description: '',
@@ -68,9 +67,22 @@ function emptyField() {
 }
 
 const FIELD_TYPES = [
-  'string', 'text', 'textarea', 'rich_text', 'integer', 'boolean',
-  'datetime', 'date', 'enum', 'array', 'json', 'users', 'groups',
-  'files', 'location', 'inquiry',
+  'string',
+  'text',
+  'textarea',
+  'rich_text',
+  'integer',
+  'boolean',
+  'datetime',
+  'date',
+  'enum',
+  'array',
+  'json',
+  'users',
+  'groups',
+  'files',
+  'location',
+  'inquiry',
 ]
 
 // ============================================================
@@ -80,14 +92,14 @@ const inquiryTypeOptions = computed(() =>
   (appSettingsStore.inquiryTypeTab ?? []).map((t) => ({
     id: t.inquiry_type,
     label: `${t.label || t.inquiry_type} (${t.inquiry_type})`,
-  })),
+  }))
 )
 
 const groupTypeOptions = computed(() =>
   (appSettingsStore.inquiryGroupTypeTab ?? []).map((t) => ({
     id: t.group_type,
     label: `${t.label || t.group_type} (${t.group_type})`,
-  })),
+  }))
 )
 
 const availableIcons = computed(() =>
@@ -96,7 +108,7 @@ const availableIcons = computed(() =>
     .map((iconId) => ({
       id: iconId,
       label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    })),
+    }))
 )
 
 const getIconComponent = (iconName) => {
@@ -156,7 +168,7 @@ const filteredTypes = computed(() => {
         t.group_type?.toLowerCase().includes(q) ||
         t.label?.toLowerCase().includes(q) ||
         t.description?.toLowerCase().includes(q) ||
-        t.family?.toLowerCase().includes(q),
+        t.family?.toLowerCase().includes(q)
     )
   }
   return list.map((type) => ({
@@ -168,7 +180,7 @@ const filteredTypes = computed(() => {
     actions: normalizeArray(type.actions),
     ui: normalizeObject(type.ui),
     rules: normalizeObject(type.rules),
-    is_root: toBool(type.is_root),   // ← convert 0/1 to Boolean
+    is_root: toBool(type.is_root), // ← convert 0/1 to Boolean
   }))
 })
 
@@ -182,7 +194,10 @@ const validateType = (type, isEdit = false) => {
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(type.group_type)) {
     showError(
-      t('agora', 'Group type key must be alphanumeric (underscores allowed), starting with a letter'),
+      t(
+        'agora',
+        'Group type key must be alphanumeric (underscores allowed), starting with a letter'
+      )
     )
     return false
   }
@@ -212,12 +227,12 @@ const addType = async () => {
   savingType.value = true
   try {
     await appSettingsStore.addInquiryGroupType({
-  ...newType.value,
-  family: familyKey.value,        
-  icon: extractIconId(newType.value.icon),
-  is_root: newType.value.is_root ? 1 : 0,
-  created: Date.now(),
-})
+      ...newType.value,
+      family: familyKey.value,
+      icon: extractIconId(newType.value.icon),
+      is_root: newType.value.is_root ? 1 : 0,
+      created: Date.now(),
+    })
 
     showSuccess(t('agora', 'Group type added'))
     newType.value = emptyType()
@@ -230,17 +245,17 @@ const addType = async () => {
 
 const startEditing = (type) => {
   editingType.value = {
-  ...JSON.parse(JSON.stringify(type)),
-  icon: findIconById(type.icon),
-  is_root: toBool(type.is_root),      
-  fields: normalizeArray(type.fields),
-  allowed_inquiry_types: normalizeArray(type.allowed_inquiry_types),
-  allowed_response: normalizeArray(type.allowed_response),
-  ui: normalizeObject(type.ui),
-  rules: normalizeObject(type.rules),
-  features: normalizeArray(type.features),
-  actions: normalizeArray(type.actions),
-}
+    ...JSON.parse(JSON.stringify(type)),
+    icon: findIconById(type.icon),
+    is_root: toBool(type.is_root),
+    fields: normalizeArray(type.fields),
+    allowed_inquiry_types: normalizeArray(type.allowed_inquiry_types),
+    allowed_response: normalizeArray(type.allowed_response),
+    ui: normalizeObject(type.ui),
+    rules: normalizeObject(type.rules),
+    features: normalizeArray(type.features),
+    actions: normalizeArray(type.actions),
+  }
   editTab.value = 'basic'
 }
 
@@ -254,11 +269,11 @@ const updateType = async (type) => {
   savingType.value = true
   try {
     await appSettingsStore.updateInquiryGroupType(type.id, {
-  ...type,
-  family: familyKey.value,     
-  icon: extractIconId(type.icon),
-  is_root: type.is_root ? 1 : 0,
-})
+      ...type,
+      family: familyKey.value,
+      icon: extractIconId(type.icon),
+      is_root: type.is_root ? 1 : 0,
+    })
 
     showSuccess(t('agora', 'Group type updated'))
     editingType.value = null
@@ -274,7 +289,7 @@ const deleteType = async (type) => {
     !confirm(
       t('agora', 'Are you sure you want to delete the group type "{label}"?', {
         label: type.label || type.group_type,
-      }),
+      })
     )
   ) {
     return
@@ -324,15 +339,13 @@ const removeField = (target, index) => {
 const addAllowedResponse = (target, value) => {
   const val = (value ?? '').trim()
   if (!val) return
-  const arr =
-    target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
+  const arr = target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
   if (!arr.includes(val)) arr.push(val)
   newAllowedResponse.value = ''
 }
 
 const removeAllowedResponse = (target, index) => {
-  const arr =
-    target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
+  const arr = target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
   arr.splice(index, 1)
 }
 
@@ -340,18 +353,14 @@ const addAllowedInquiryType = (target, value) => {
   const val = (value ?? '').trim()
   if (!val) return
   const arr =
-    target === 'new'
-      ? newType.value.allowed_inquiry_types
-      : editingType.value.allowed_inquiry_types
+    target === 'new' ? newType.value.allowed_inquiry_types : editingType.value.allowed_inquiry_types
   if (!arr.includes(val)) arr.push(val)
   newAllowedInquiryType.value = ''
 }
 
 const removeAllowedInquiryType = (target, index) => {
   const arr =
-    target === 'new'
-      ? newType.value.allowed_inquiry_types
-      : editingType.value.allowed_inquiry_types
+    target === 'new' ? newType.value.allowed_inquiry_types : editingType.value.allowed_inquiry_types
   arr.splice(index, 1)
 }
 
@@ -400,7 +409,7 @@ const removeAction = (target, index) => {
           {{
             t(
               'agora',
-              'Configure inquiry group types (e.g., citizen_jury, investigation_case). Each group type belongs to an inquiry family and defines the UI layout, rules, features and actions shared by all groups of this type.',
+              'Configure inquiry group types (e.g., citizen_jury, investigation_case). Each group type belongs to an inquiry family and defines the UI layout, rules, features and actions shared by all groups of this type.'
             )
           }}
         </p>
@@ -414,7 +423,10 @@ const removeAction = (target, index) => {
         <span class="count-badge">{{ filteredTypes.length }}</span>
       </h3>
 
-      <div v-if="!filteredTypes.length" class="empty-state">
+      <div
+        v-if="!filteredTypes.length"
+        class="empty-state"
+      >
         {{ t('agora', 'No group types match your filters.') }}
       </div>
 
@@ -424,9 +436,15 @@ const removeAction = (target, index) => {
         class="type-card"
         :class="{ expanded: expandedTypeId === type.id }"
       >
-        <div class="type-row" @click="emit('groupTypeSelected', type)">
+        <div
+          class="type-row"
+          @click="emit('groupTypeSelected', type)"
+        >
           <div class="type-icon">
-            <component :is="getIconComponent(type.icon)" :size="20" />
+            <component
+              :is="getIconComponent(type.icon)"
+              :size="20"
+            />
           </div>
 
           <div class="type-info">
@@ -434,46 +452,85 @@ const removeAction = (target, index) => {
               <h4>{{ type.label || type.group_type }}</h4>
               <code class="type-key">{{ type.group_type }}</code>
               <span class="family-badge">{{ type.family }}</span>
-              <span v-if="type.is_root" class="root-badge">{{ t('agora', 'root') }}</span>
+              <span
+                v-if="type.is_root"
+                class="root-badge"
+              >{{ t('agora', 'root') }}</span>
             </div>
-            <p v-if="type.description" class="type-description">{{ type.description }}</p>
+            <p
+              v-if="type.description"
+              class="type-description"
+            >
+              {{ type.description }}
+            </p>
             <div class="type-stats">
               <span class="stat-chip">
                 {{ t('agora', '{count} fields', { count: type.fields.length }) }}
               </span>
-              <span v-if="type.allowed_inquiry_types.length" class="stat-chip">
-                {{ t('agora', '{count} inquiry types', { count: type.allowed_inquiry_types.length }) }}
+              <span
+                v-if="type.allowed_inquiry_types.length"
+                class="stat-chip"
+              >
+                {{
+                  t('agora', '{count} inquiry types', { count: type.allowed_inquiry_types.length })
+                }}
               </span>
-              <span v-if="type.allowed_response.length" class="stat-chip">
+              <span
+                v-if="type.allowed_response.length"
+                class="stat-chip"
+              >
                 {{ t('agora', '{count} responses', { count: type.allowed_response.length }) }}
               </span>
-              <span v-if="type.features.length" class="stat-chip">
+              <span
+                v-if="type.features.length"
+                class="stat-chip"
+              >
                 {{ t('agora', '{count} features', { count: type.features.length }) }}
               </span>
-              <span v-if="type.actions.length" class="stat-chip">
+              <span
+                v-if="type.actions.length"
+                class="stat-chip"
+              >
                 {{ t('agora', '{count} actions', { count: type.actions.length }) }}
               </span>
-              <span v-if="type.ui?.experience" class="stat-chip layout">
+              <span
+                v-if="type.ui?.experience"
+                class="stat-chip layout"
+              >
                 {{ type.ui.experience }}
               </span>
             </div>
           </div>
 
-          <div class="type-actions" @click.stop>
+          <div
+            class="type-actions"
+            @click.stop
+          >
             <NcButton @click="toggleExpand(type.id)">
               {{ expandedTypeId === type.id ? t('agora', 'Hide') : t('agora', 'Details') }}
             </NcButton>
-            <NcButton @click="startEditing(type)">{{ t('agora', 'Edit') }}</NcButton>
-            <NcButton type="error" @click="deleteType(type)">
+            <NcButton @click="startEditing(type)">
+              {{ t('agora', 'Edit') }}
+            </NcButton>
+            <NcButton
+              type="error"
+              @click="deleteType(type)"
+            >
               {{ t('agora', 'Delete') }}
             </NcButton>
           </div>
         </div>
 
-        <div v-if="expandedTypeId === type.id" class="type-details">
+        <div
+          v-if="expandedTypeId === type.id"
+          class="type-details"
+        >
           <div class="detail-section">
             <h5>{{ t('agora', 'Fields') }}</h5>
-            <table v-if="type.fields.length" class="mini-table">
+            <table
+              v-if="type.fields.length"
+              class="mini-table"
+            >
               <thead>
                 <tr>
                   <th>{{ t('agora', 'Key') }}</th>
@@ -483,49 +540,103 @@ const removeAction = (target, index) => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(f, i) in type.fields" :key="i">
-                  <td><code>{{ f.key }}</code></td>
+                <tr
+                  v-for="(f, i) in type.fields"
+                  :key="i"
+                >
+                  <td>
+                    <code>{{ f.key }}</code>
+                  </td>
                   <td>{{ f.label }}</td>
                   <td>{{ f.type }}</td>
                   <td>{{ f.required ? '✓' : '—' }}</td>
                 </tr>
               </tbody>
             </table>
-            <p v-else class="muted">{{ t('agora', 'No custom fields') }}</p>
+            <p
+              v-else
+              class="muted"
+            >
+              {{ t('agora', 'No custom fields') }}
+            </p>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Allowed inquiry types') }}</h5>
             <ul class="pill-list">
-              <li v-for="(r, i) in type.allowed_inquiry_types" :key="i" class="pill">{{ r }}</li>
-              <li v-if="!type.allowed_inquiry_types.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-for="(r, i) in type.allowed_inquiry_types"
+                :key="i"
+                class="pill"
+              >
+                {{ r }}
+              </li>
+              <li
+                v-if="!type.allowed_inquiry_types.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Allowed responses') }}</h5>
             <ul class="pill-list">
-              <li v-for="(r, i) in type.allowed_response" :key="i" class="pill">{{ r }}</li>
-              <li v-if="!type.allowed_response.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-for="(r, i) in type.allowed_response"
+                :key="i"
+                class="pill"
+              >
+                {{ r }}
+              </li>
+              <li
+                v-if="!type.allowed_response.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Features') }}</h5>
             <ul class="pill-list">
-              <li v-for="(f, i) in type.features" :key="i" class="pill">{{ f }}</li>
-              <li v-if="!type.features.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-for="(f, i) in type.features"
+                :key="i"
+                class="pill"
+              >
+                {{ f }}
+              </li>
+              <li
+                v-if="!type.features.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Actions') }}</h5>
             <ul class="action-list">
-              <li v-for="(a, i) in type.actions" :key="i">
+              <li
+                v-for="(a, i) in type.actions"
+                :key="i"
+              >
                 <code>{{ a.key }}</code> — {{ a.label }}
-                <span v-if="a.icon" class="muted"> ({{ a.icon }})</span>
+                <span
+                  v-if="a.icon"
+                  class="muted"
+                > ({{ a.icon }})</span>
               </li>
-              <li v-if="!type.actions.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-if="!type.actions.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
 
@@ -553,22 +664,27 @@ const removeAction = (target, index) => {
           :placeholder="t('agora', 'e.g., citizen_jury')"
           required
         />
-	<NcInputField :model-value="familyLabel" :label="t('agora', 'Family')" disabled readonly />
+        <NcInputField
+          :model-value="familyLabel"
+          :label="t('agora', 'Family')"
+          disabled
+          readonly
+        />
         <NcInputField
           v-model="newType.label"
           :label="t('agora', 'Label')"
           :placeholder="t('agora', 'Citizen Jury')"
           required
         />
-<NcSelect
-  v-model="newType.icon"
-  :input-label="t('agora', 'Icon')"
-  :label-outside="true"
-  :options="availableIcons"
-  track-by="id"
-  :clearable="false"
-  :placeholder="t('agora', 'Select an icon')"
-/>
+        <NcSelect
+          v-model="newType.icon"
+          :input-label="t('agora', 'Icon')"
+          :label-outside="true"
+          :options="availableIcons"
+          track-by="id"
+          :clearable="false"
+          :placeholder="t('agora', 'Select an icon')"
+        />
 
         <NcInputField
           v-model="newType.sort_order"
@@ -576,7 +692,10 @@ const removeAction = (target, index) => {
           type="number"
           :min="0"
         />
-        <NcCheckboxRadioSwitch v-model="newType.is_root" type="switch">
+        <NcCheckboxRadioSwitch
+          v-model="newType.is_root"
+          type="switch"
+        >
           {{ t('agora', 'Is root group') }}
         </NcCheckboxRadioSwitch>
 
@@ -591,28 +710,52 @@ const removeAction = (target, index) => {
         <div class="full-width">
           <label class="field-label">{{ t('agora', 'Custom fields') }}</label>
           <div class="inline-editor field-editor">
-            <NcInputField v-model="newField.key"   :label="t('agora', 'Field key')"   :label-outside="true" :placeholder="t('agora', 'key')" />
-<NcInputField v-model="newField.label" :label="t('agora', 'Field label')" :label-outside="true" :placeholder="t('agora', 'Label')" />
-<NcSelect
-  v-model="newField.type"
-  :input-label="t('agora', 'Field type')"
-  :label-outside="true"
-  :options="FIELD_TYPES.map((ft) => ({ id: ft, label: ft }))"
-  label="label"
-  track-by="id"
-  :clearable="false"
-/>
-		  <NcCheckboxRadioSwitch v-model="newField.required" type="checkbox">
+            <NcInputField
+              v-model="newField.key"
+              :label="t('agora', 'Field key')"
+              :label-outside="true"
+              :placeholder="t('agora', 'key')"
+            />
+            <NcInputField
+              v-model="newField.label"
+              :label="t('agora', 'Field label')"
+              :label-outside="true"
+              :placeholder="t('agora', 'Label')"
+            />
+            <NcSelect
+              v-model="newField.type"
+              :input-label="t('agora', 'Field type')"
+              :label-outside="true"
+              :options="FIELD_TYPES.map((ft) => ({ id: ft, label: ft }))"
+              label="label"
+              track-by="id"
+              :clearable="false"
+            />
+            <NcCheckboxRadioSwitch
+              v-model="newField.required"
+              type="checkbox"
+            >
               {{ t('agora', 'Req.') }}
             </NcCheckboxRadioSwitch>
-            <NcButton type="secondary" @click="addField('new')">
+            <NcButton
+              type="secondary"
+              @click="addField('new')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
           <ul class="field-list">
-            <li v-for="(f, i) in newType.fields" :key="i">
+            <li
+              v-for="(f, i) in newType.fields"
+              :key="i"
+            >
               <code>{{ f.key }}</code> — {{ f.label }} ({{ f.type }})
-              <NcButton type="tertiary" @click="removeField('new', i)">✕</NcButton>
+              <NcButton
+                type="tertiary"
+                @click="removeField('new', i)"
+              >
+                ✕
+              </NcButton>
             </li>
           </ul>
         </div>
@@ -621,18 +764,21 @@ const removeAction = (target, index) => {
         <div class="full-width">
           <label class="field-label">{{ t('agora', 'Allowed inquiry types') }}</label>
           <div class="inline-editor">
-		 <NcSelect
-  v-model="newAllowedInquiryType"
-  :input-label="t('agora', 'Inquiry type')"
-  :label-outside="true"
-  :options="inquiryTypeOptions"
-  label="label"
-  track-by="id"
-  :clearable="true"
-  :placeholder="t('agora', 'Pick an inquiry type')"
-  class="inline-input"
-/>
-            <NcButton type="secondary" @click="addAllowedInquiryType('new', newAllowedInquiryType?.id)">
+            <NcSelect
+              v-model="newAllowedInquiryType"
+              :input-label="t('agora', 'Inquiry type')"
+              :label-outside="true"
+              :options="inquiryTypeOptions"
+              label="label"
+              track-by="id"
+              :clearable="true"
+              :placeholder="t('agora', 'Pick an inquiry type')"
+              class="inline-input"
+            />
+            <NcButton
+              type="secondary"
+              @click="addAllowedInquiryType('new', newAllowedInquiryType?.id)"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -653,17 +799,20 @@ const removeAction = (target, index) => {
           <label class="field-label">{{ t('agora', 'Allowed responses (group types)') }}</label>
           <div class="inline-editor">
             <NcSelect
-  v-model="newAllowedResponse"
-  :input-label="t('agora', 'Group type')"
-  :label-outside="true"
-  :options="groupTypeOptions"
-  label="label"
-  track-by="id"
-  :clearable="true"
-  :placeholder="t('agora', 'Pick a group type')"
-  class="inline-input"
-/>
-		  <NcButton type="secondary" @click="addAllowedResponse('new', newAllowedResponse?.id)">
+              v-model="newAllowedResponse"
+              :input-label="t('agora', 'Group type')"
+              :label-outside="true"
+              :options="groupTypeOptions"
+              label="label"
+              track-by="id"
+              :clearable="true"
+              :placeholder="t('agora', 'Pick a group type')"
+              class="inline-input"
+            />
+            <NcButton
+              type="secondary"
+              @click="addAllowedResponse('new', newAllowedResponse?.id)"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -683,16 +832,19 @@ const removeAction = (target, index) => {
         <div class="full-width">
           <label class="field-label">{{ t('agora', 'Features') }}</label>
           <div class="inline-editor">
-		  <NcInputField
-  v-model="newFeature"
-  :label="t('agora', 'Feature')"
-  :label-outside="true"
-  :placeholder="t('agora', 'e.g., inquiry_selection')"
-  class="inline-input"
-  @keydown.enter.prevent="addFeature('new')"
-/>
+            <NcInputField
+              v-model="newFeature"
+              :label="t('agora', 'Feature')"
+              :label-outside="true"
+              :placeholder="t('agora', 'e.g., inquiry_selection')"
+              class="inline-input"
+              @keydown.enter.prevent="addFeature('new')"
+            />
 
-            <NcButton type="secondary" @click="addFeature('new')">
+            <NcButton
+              type="secondary"
+              @click="addFeature('new')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -712,17 +864,43 @@ const removeAction = (target, index) => {
         <div class="full-width">
           <label class="field-label">{{ t('agora', 'Actions') }}</label>
           <div class="inline-editor action-editor">
-		  <NcInputField v-model="newAction.key"   :label="t('agora', 'Action key')"   :label-outside="true" :placeholder="t('agora', 'key')" />
-<NcInputField v-model="newAction.label" :label="t('agora', 'Action label')" :label-outside="true" :placeholder="t('agora', 'Label')" />
-<NcInputField v-model="newAction.icon"  :label="t('agora', 'Action icon')"  :label-outside="true" :placeholder="t('agora', 'Icon')" />
-            <NcButton type="secondary" @click="addAction('new')">
+            <NcInputField
+              v-model="newAction.key"
+              :label="t('agora', 'Action key')"
+              :label-outside="true"
+              :placeholder="t('agora', 'key')"
+            />
+            <NcInputField
+              v-model="newAction.label"
+              :label="t('agora', 'Action label')"
+              :label-outside="true"
+              :placeholder="t('agora', 'Label')"
+            />
+            <NcInputField
+              v-model="newAction.icon"
+              :label="t('agora', 'Action icon')"
+              :label-outside="true"
+              :placeholder="t('agora', 'Icon')"
+            />
+            <NcButton
+              type="secondary"
+              @click="addAction('new')"
+            >
               {{ t('agora', 'Add action') }}
             </NcButton>
           </div>
           <ul class="action-list">
-            <li v-for="(a, i) in newType.actions" :key="i">
+            <li
+              v-for="(a, i) in newType.actions"
+              :key="i"
+            >
               <code>{{ a.key }}</code> — {{ a.label }}
-              <NcButton type="tertiary" @click="removeAction('new', i)">✕</NcButton>
+              <NcButton
+                type="tertiary"
+                @click="removeAction('new', i)"
+              >
+                ✕
+              </NcButton>
             </li>
           </ul>
         </div>
@@ -769,7 +947,10 @@ const removeAction = (target, index) => {
             :disabled="savingType || !newType.group_type || !newType.label || !newType.family"
             @click="addType"
           >
-            <NcLoadingIcon v-if="savingType" :size="16" />
+            <NcLoadingIcon
+              v-if="savingType"
+              :size="16"
+            />
             <span v-else>{{ t('agora', 'Add group type') }}</span>
           </NcButton>
         </div>
@@ -777,11 +958,20 @@ const removeAction = (target, index) => {
     </section>
 
     <!-- ==================== EDIT MODAL ==================== -->
-    <div v-if="editingType" class="modal-overlay" @click.self="cancelEditing">
+    <div
+      v-if="editingType"
+      class="modal-overlay"
+      @click.self="cancelEditing"
+    >
       <div class="modal-content large-modal">
         <header class="modal-header">
           <h3>{{ t('agora', 'Edit group type') }}: {{ editingType.label }}</h3>
-          <NcButton type="tertiary" @click="cancelEditing">✕</NcButton>
+          <NcButton
+            type="tertiary"
+            @click="cancelEditing"
+          >
+            ✕
+          </NcButton>
         </header>
 
         <nav class="tabs">
@@ -797,25 +987,44 @@ const removeAction = (target, index) => {
         </nav>
 
         <!-- BASIC -->
-        <div v-if="editTab === 'basic'" class="tab-panel form-grid">
-          <NcInputField v-model="editingType.group_type" :label="t('agora', 'Group type key')" required />
-	  <NcInputField :model-value="familyLabel" :label="t('agora', 'Family')" disabled readonly />
-	  <NcInputField v-model="editingType.label" :label="t('agora', 'Label')" required />
+        <div
+          v-if="editTab === 'basic'"
+          class="tab-panel form-grid"
+        >
+          <NcInputField
+            v-model="editingType.group_type"
+            :label="t('agora', 'Group type key')"
+            required
+          />
+          <NcInputField
+            :model-value="familyLabel"
+            :label="t('agora', 'Family')"
+            disabled
+            readonly
+          />
+          <NcInputField
+            v-model="editingType.label"
+            :label="t('agora', 'Label')"
+            required
+          />
           <NcSelect
-  v-model="editingType.icon"
-  :input-label="t('agora', 'Icon')"
-  :label-outside="true"
-  :options="availableIcons"
-  track-by="id"
-  :clearable="false"
-/>
-	  <NcInputField
+            v-model="editingType.icon"
+            :input-label="t('agora', 'Icon')"
+            :label-outside="true"
+            :options="availableIcons"
+            track-by="id"
+            :clearable="false"
+          />
+          <NcInputField
             v-model="editingType.sort_order"
             :label="t('agora', 'Sort order')"
             type="number"
             :min="0"
           />
-          <NcCheckboxRadioSwitch v-model="editingType.is_root" type="switch">
+          <NcCheckboxRadioSwitch
+            v-model="editingType.is_root"
+            type="switch"
+          >
             {{ t('agora', 'Is root group') }}
           </NcCheckboxRadioSwitch>
           <NcInputField
@@ -827,10 +1036,19 @@ const removeAction = (target, index) => {
         </div>
 
         <!-- FIELDS -->
-        <div v-if="editTab === 'fields'" class="tab-panel">
+        <div
+          v-if="editTab === 'fields'"
+          class="tab-panel"
+        >
           <div class="inline-editor field-editor">
-            <NcInputField v-model="newField.key" :placeholder="t('agora', 'key')" />
-            <NcInputField v-model="newField.label" :placeholder="t('agora', 'Label')" />
+            <NcInputField
+              v-model="newField.key"
+              :placeholder="t('agora', 'key')"
+            />
+            <NcInputField
+              v-model="newField.label"
+              :placeholder="t('agora', 'Label')"
+            />
             <NcSelect
               v-model="newField.type"
               :options="FIELD_TYPES.map((ft) => ({ id: ft, label: ft }))"
@@ -838,21 +1056,40 @@ const removeAction = (target, index) => {
               track-by="id"
               :clearable="false"
             />
-            <NcCheckboxRadioSwitch v-model="newField.required" type="checkbox">
+            <NcCheckboxRadioSwitch
+              v-model="newField.required"
+              type="checkbox"
+            >
               {{ t('agora', 'Req.') }}
             </NcCheckboxRadioSwitch>
-            <NcButton type="secondary" @click="addField('edit')">{{ t('agora', 'Add') }}</NcButton>
+            <NcButton
+              type="secondary"
+              @click="addField('edit')"
+            >
+              {{ t('agora', 'Add') }}
+            </NcButton>
           </div>
           <ul class="field-list">
-            <li v-for="(f, i) in editingType.fields" :key="i">
+            <li
+              v-for="(f, i) in editingType.fields"
+              :key="i"
+            >
               <code>{{ f.key }}</code> — {{ f.label }} ({{ f.type }})
-              <NcButton type="tertiary" @click="removeField('edit', i)">✕</NcButton>
+              <NcButton
+                type="tertiary"
+                @click="removeField('edit', i)"
+              >
+                ✕
+              </NcButton>
             </li>
           </ul>
         </div>
 
         <!-- RESPONSES -->
-        <div v-if="editTab === 'responses'" class="tab-panel">
+        <div
+          v-if="editTab === 'responses'"
+          class="tab-panel"
+        >
           <label class="field-label">{{ t('agora', 'Allowed inquiry types') }}</label>
           <div class="inline-editor">
             <NcSelect
@@ -863,7 +1100,10 @@ const removeAction = (target, index) => {
               :clearable="true"
               class="inline-input"
             />
-            <NcButton type="secondary" @click="addAllowedInquiryType('edit', newAllowedInquiryType?.id)">
+            <NcButton
+              type="secondary"
+              @click="addAllowedInquiryType('edit', newAllowedInquiryType?.id)"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -878,7 +1118,10 @@ const removeAction = (target, index) => {
             </span>
           </div>
 
-          <label class="field-label" style="margin-top: 20px;">
+          <label
+            class="field-label"
+            style="margin-top: 20px"
+          >
             {{ t('agora', 'Allowed responses (group types)') }}
           </label>
           <div class="inline-editor">
@@ -890,7 +1133,10 @@ const removeAction = (target, index) => {
               :clearable="true"
               class="inline-input"
             />
-            <NcButton type="secondary" @click="addAllowedResponse('edit', newAllowedResponse?.id)">
+            <NcButton
+              type="secondary"
+              @click="addAllowedResponse('edit', newAllowedResponse?.id)"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -907,9 +1153,14 @@ const removeAction = (target, index) => {
         </div>
 
         <!-- UI -->
-        <div v-if="editTab === 'ui'" class="tab-panel">
+        <div
+          v-if="editTab === 'ui'"
+          class="tab-panel"
+        >
           <p class="help-text">
-            {{ t('agora', 'UI configuration as JSON (experience, layout, display_architecture…).') }}
+            {{
+              t('agora', 'UI configuration as JSON (experience, layout, display_architecture…).')
+            }}
           </p>
           <textarea
             class="json-editor"
@@ -928,8 +1179,13 @@ const removeAction = (target, index) => {
         </div>
 
         <!-- RULES -->
-        <div v-if="editTab === 'rules'" class="tab-panel">
-          <p class="help-text">{{ t('agora', 'Rules configuration as JSON.') }}</p>
+        <div
+          v-if="editTab === 'rules'"
+          class="tab-panel"
+        >
+          <p class="help-text">
+            {{ t('agora', 'Rules configuration as JSON.') }}
+          </p>
           <textarea
             class="json-editor"
             rows="14"
@@ -947,14 +1203,22 @@ const removeAction = (target, index) => {
         </div>
 
         <!-- FEATURES -->
-        <div v-if="editTab === 'features'" class="tab-panel">
+        <div
+          v-if="editTab === 'features'"
+          class="tab-panel"
+        >
           <div class="inline-editor">
             <NcInputField
               v-model="newFeature"
               :placeholder="t('agora', 'Feature identifier')"
               @keydown.enter.prevent="addFeature('edit')"
             />
-            <NcButton type="secondary" @click="addFeature('edit')">{{ t('agora', 'Add') }}</NcButton>
+            <NcButton
+              type="secondary"
+              @click="addFeature('edit')"
+            >
+              {{ t('agora', 'Add') }}
+            </NcButton>
           </div>
           <div class="pill-list">
             <span
@@ -969,29 +1233,59 @@ const removeAction = (target, index) => {
         </div>
 
         <!-- ACTIONS -->
-        <div v-if="editTab === 'actions'" class="tab-panel">
+        <div
+          v-if="editTab === 'actions'"
+          class="tab-panel"
+        >
           <div class="inline-editor action-editor">
-            <NcInputField v-model="newAction.key" :placeholder="t('agora', 'key')" />
-            <NcInputField v-model="newAction.label" :placeholder="t('agora', 'Label')" />
-            <NcInputField v-model="newAction.icon" :placeholder="t('agora', 'Icon')" />
-            <NcButton type="secondary" @click="addAction('edit')">{{ t('agora', 'Add') }}</NcButton>
+            <NcInputField
+              v-model="newAction.key"
+              :placeholder="t('agora', 'key')"
+            />
+            <NcInputField
+              v-model="newAction.label"
+              :placeholder="t('agora', 'Label')"
+            />
+            <NcInputField
+              v-model="newAction.icon"
+              :placeholder="t('agora', 'Icon')"
+            />
+            <NcButton
+              type="secondary"
+              @click="addAction('edit')"
+            >
+              {{ t('agora', 'Add') }}
+            </NcButton>
           </div>
           <ul class="action-list">
-            <li v-for="(a, i) in editingType.actions" :key="i">
+            <li
+              v-for="(a, i) in editingType.actions"
+              :key="i"
+            >
               <code>{{ a.key }}</code> — {{ a.label }}
-              <NcButton type="tertiary" @click="removeAction('edit', i)">✕</NcButton>
+              <NcButton
+                type="tertiary"
+                @click="removeAction('edit', i)"
+              >
+                ✕
+              </NcButton>
             </li>
           </ul>
         </div>
 
         <footer class="modal-actions">
-          <NcButton @click="cancelEditing">{{ t('agora', 'Cancel') }}</NcButton>
+          <NcButton @click="cancelEditing">
+            {{ t('agora', 'Cancel') }}
+          </NcButton>
           <NcButton
             type="primary"
             :disabled="savingType"
             @click="updateType(editingType)"
           >
-            <NcLoadingIcon v-if="savingType" :size="16" />
+            <NcLoadingIcon
+              v-if="savingType"
+              :size="16"
+            />
             <span v-else>{{ t('agora', 'Save changes') }}</span>
           </NcButton>
         </footer>

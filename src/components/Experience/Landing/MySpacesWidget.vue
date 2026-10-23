@@ -1,17 +1,32 @@
 <template>
-  <section v-if="familiesWithTypes.length > 0" class="my-spaces">
+  <section
+    v-if="familiesWithTypes.length > 0"
+    class="my-spaces"
+  >
     <header class="my-spaces__header">
       <div class="my-spaces__header-left">
-        <component :is="Icons.Users" :size="20" class="my-spaces__icon" />
+        <component
+          :is="Icons.Users"
+          :size="20"
+          class="my-spaces__icon"
+        />
         <h2>{{ resolvedTitle }}</h2>
       </div>
     </header>
-    <p v-if="resolvedSubtitle" class="my-spaces__subtitle">{{ resolvedSubtitle }}</p>
+    <p
+      v-if="resolvedSubtitle"
+      class="my-spaces__subtitle"
+    >
+      {{ resolvedSubtitle }}
+    </p>
 
     <!-- ============================================================
          CHIPS — icon + label + description + group count
          ============================================================ -->
-    <div v-if="variant === 'chips'" class="my-spaces__chips">
+    <div
+      v-if="variant === 'chips'"
+      class="my-spaces__chips"
+    >
       <button
         v-for="family in familiesWithTypes"
         :key="family.family_type"
@@ -20,7 +35,10 @@
         @click="emit('selectFamily', family.family_type)"
       >
         <span class="family-chip__icon-badge">
-          <component :is="familyIcon(family)" :size="20" />
+          <component
+            :is="familyIcon(family)"
+            :size="20"
+          />
         </span>
 
         <span class="family-chip__body">
@@ -60,7 +78,10 @@
         @all="() => emit('all', { family: family.family_type })"
       />
     </div>
-    <div v-else class="my-spaces__grid my-spaces__grid--compact">
+    <div
+      v-else
+      class="my-spaces__grid my-spaces__grid--compact"
+    >
       <FamilyGroupTypesWidget
         v-for="family in familiesWithTypes"
         :key="family.family_type"
@@ -100,7 +121,7 @@ const props = withDefaults(
     minColumnWidth: 320,
     title: '',
     subtitle: '',
-  },
+  }
 )
 
 const emit = defineEmits<{
@@ -120,9 +141,7 @@ const familiesWithTypes = computed(() => {
   const allTypes = sessionStore.appSettings?.inquiryGroupTypeTab || []
 
   const familiesWithRootTypes = new Set(
-    allTypes
-      .filter((t: any) => t.is_root === true)
-      .map((t: any) => t.family),
+    allTypes.filter((t: any) => t.is_root === true).map((t: any) => t.family)
   )
 
   return allFamilies.filter((f: any) => {
@@ -193,7 +212,9 @@ function groupCount(familyKey: string): number {
       align-items: center;
       gap: 10px;
 
-      .my-spaces__icon { color: var(--color-primary-element); }
+      .my-spaces__icon {
+        color: var(--color-primary-element);
+      }
 
       h2 {
         margin: 0;
@@ -224,20 +245,20 @@ function groupCount(familyKey: string): number {
     align-items: center;
     gap: 12px;
     padding: 12px 14px;
-    background:    var(--color-main-background);
-    border:        1px solid var(--color-border);
+    background: var(--color-main-background);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
-    color:         var(--color-main-text);
-    text-align:    left;
-    cursor:        pointer;
-    transition:    all 0.15s ease;
-    min-height:    64px;
+    color: var(--color-main-text);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-height: 64px;
 
     .family-chip__icon-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width:  36px;
+      width: 36px;
       height: 36px;
       flex-shrink: 0;
       border-radius: 10px;
@@ -291,8 +312,8 @@ function groupCount(familyKey: string): number {
 
     &:hover {
       border-color: var(--color-primary-element);
-      background:   var(--color-primary-light);
-      transform:    translateY(-1px);
+      background: var(--color-primary-light);
+      transform: translateY(-1px);
 
       .family-chip__count {
         background: var(--color-primary-element-hover);
@@ -322,10 +343,10 @@ function groupCount(familyKey: string): number {
    COMPACT — one container, hairline rows
    ============================================================ */
 .my-spaces__grid--compact {
-  background:    var(--color-main-background);
-  border:        1px solid var(--color-border);
+  background: var(--color-main-background);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  overflow:      hidden;
+  overflow: hidden;
 
   :deep(.fgt--inline + .fgt--inline) {
     border-top: 1px solid var(--color-border);

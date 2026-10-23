@@ -25,7 +25,7 @@ import type {
   WorkerResponse,
 } from './useInquiryWatcher.types'
 
-import type { Watcher } from '../stores/session.types'
+import type { Watcher } from '../Types/session.types'
 
 /**
  * inquiry watcher to keep inquiries collection and the current inquiry

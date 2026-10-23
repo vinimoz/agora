@@ -41,7 +41,7 @@ export interface ImportResult {
 
 export class ImportService {
   private maxFileSize = 10 * 1024 * 1024 // 10MB default
-  
+
   async importDocument(options: ImportOptions): Promise<ImportResult> {
     try {
       if (options.sourceType === 'file' && options.file) {
@@ -53,7 +53,7 @@ export class ImportService {
       return {
         success: false,
         content: '',
-        error: error instanceof Error ? error.message : 'Unknown import error'
+        error: error instanceof Error ? error.message : 'Unknown import error',
       }
     }
   }
@@ -64,9 +64,11 @@ export class ImportService {
       throw new Error(`File size exceeds ${this.maxFileSize / 1024 / 1024}MB limit`)
     }
 
-    showInfo(t('agora', 'Processing file: {filename} …', {
-      filename: file.name
-    }))
+    showInfo(
+      t('agora', 'Processing file: {filename} …', {
+        filename: file.name,
+      })
+    )
 
     try {
       const formData = new FormData()
@@ -75,9 +77,9 @@ export class ImportService {
       const response = await fetch('/apps/agora/import', {
         method: 'POST',
         headers: {
-          'requesttoken': (window as unknown).OC?.requestToken || ''
+          requesttoken: (window as unknown).OC?.requestToken || '',
         },
-        body: formData
+        body: formData,
       })
 
       if (!response.ok) {
@@ -86,25 +88,29 @@ export class ImportService {
       }
 
       const result = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error)
       }
 
-      showSuccess(t('agora', 'File imported successfully: {filename}', {
-        filename: file.name
-      }))
+      showSuccess(
+        t('agora', 'File imported successfully: {filename}', {
+          filename: file.name,
+        })
+      )
 
       return {
         success: true,
         content: result.content,
         title: result.title,
-        metadata: result.metadata
+        metadata: result.metadata,
       }
     } catch (error) {
-      showError(t('agora', 'Failed to import file: {error}', {
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }))
+      showError(
+        t('agora', 'Failed to import file: {error}', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        })
+      )
       throw error
     }
   }

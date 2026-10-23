@@ -1,22 +1,36 @@
 <!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
-  <NcModal size="normal" :name="modalTitle" @close="$emit('close')">
+  <NcModal
+    size="normal"
+    :name="modalTitle"
+    @close="$emit('close')"
+  >
     <div class="add-option-to-family-modal">
       <div class="modal-header">
-        <div class="header-icon" :class="{ 'vote-icon': familyType === 'vote' }">
-          <component :is="headerIcon" :size="32" />
+        <div
+          class="header-icon"
+          :class="{ 'vote-icon': familyType === 'vote' }"
+        >
+          <component
+            :is="headerIcon"
+            :size="32"
+          />
         </div>
         <h3>{{ modalTitle }}</h3>
-        <p class="modal-description">{{ modalDescription }}</p>
+        <p class="modal-description">
+          {{ modalDescription }}
+        </p>
       </div>
 
       <div class="modal-content">
         <div class="search-section">
           <label>
-            {{ targetType === 'inquiry'
+            {{
+              targetType === 'inquiry'
                 ? t('agora', 'Select an inquiry from this group')
-                : t('agora', 'Select an option') }}
+                : t('agora', 'Select an option')
+            }}
           </label>
           <SearchSelect
             v-model="selectedItem"
@@ -26,13 +40,19 @@
             :placeholder="t('agora', 'Search by title or #id …')"
             class="search-select"
           />
-          <p v-if="targetType === 'inquiry' && availableItemIds.length === 0" class="hint">
+          <p
+            v-if="targetType === 'inquiry' && availableItemIds.length === 0"
+            class="hint"
+          >
             {{ t('agora', 'Only inquiries in the same group can be added to this vote.') }}
           </p>
         </div>
 
         <!-- Date range selection for timeline -->
-        <div v-if="familyType === 'timeline' && selectedItem" class="timeline-config-section">
+        <div
+          v-if="familyType === 'timeline' && selectedItem"
+          class="timeline-config-section"
+        >
           <div class="config-header">
             <Clock :size="18" />
             <h4>{{ t('agora', 'Date range') }}</h4>
@@ -40,17 +60,29 @@
           <div class="date-selector">
             <div class="date-field">
               <label>{{ t('agora', 'Start date') }} *</label>
-              <NcDateTimePickerNative v-model="startDate" type="date" :clearable="false" required />
+              <NcDateTimePickerNative
+                v-model="startDate"
+                type="date"
+                :clearable="false"
+                required
+              />
             </div>
             <div class="date-field">
               <label>{{ t('agora', 'End date (optional)') }}</label>
-              <NcDateTimePickerNative v-model="endDate" type="date" :clearable="true" />
+              <NcDateTimePickerNative
+                v-model="endDate"
+                type="date"
+                :clearable="true"
+              />
             </div>
           </div>
         </div>
 
         <!-- Column selection for kanban -->
-        <div v-if="familyType === 'kanban' && selectedItem" class="kanban-config-section">
+        <div
+          v-if="familyType === 'kanban' && selectedItem"
+          class="kanban-config-section"
+        >
           <div class="config-header">
             <LayoutGrid :size="18" />
             <h4>{{ t('agora', 'Select column') }}</h4>
@@ -63,9 +95,15 @@
               :class="{ selected: targetStatus === column.value }"
               @click="targetStatus = column.value"
             >
-              <span class="column-color" :style="{ backgroundColor: column.color }" />
+              <span
+                class="column-color"
+                :style="{ backgroundColor: column.color }"
+              />
               <span class="column-label">{{ column.label }}</span>
-              <span v-if="targetStatus === column.value" class="check-icon">
+              <span
+                v-if="targetStatus === column.value"
+                class="check-icon"
+              >
                 <Check :size="14" />
               </span>
             </button>
@@ -74,7 +112,10 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn-secondary" @click="$emit('close')">
+        <button
+          class="btn-secondary"
+          @click="$emit('close')"
+        >
           {{ t('agora', 'Cancel') }}
         </button>
         <button
@@ -83,7 +124,10 @@
           :class="{ loading }"
           @click="add"
         >
-          <component :is="actionIcon" :size="16" />
+          <component
+            :is="actionIcon"
+            :size="16"
+          />
           {{ loading ? t('agora', 'Adding …') : actionButtonText }}
         </button>
       </div>
@@ -133,7 +177,7 @@ const props = withDefaults(
     targetType: 'option',
     inquiryId: undefined,
     alreadyLinkedItemIds: () => [],
-  },
+  }
 )
 
 const emit = defineEmits<{
@@ -168,13 +212,11 @@ const availableItemIds = computed<number[]>(() => {
   if (props.targetType === 'inquiry') {
     // Priority 1: the group id we were handed by the layout
     const groupId = props.inquiryId
-    const idsFromGroup = groupId
-      ? inquiryGroupsStore.byId[groupId]?.inquiryIds ?? []
-      : []
+    const idsFromGroup = groupId ? (inquiryGroupsStore.byId[groupId]?.inquiryIds ?? []) : []
 
     // Priority 2: whatever group the store currently considers "current"
     const currentGroup = inquiryGroupsStore.currentInquiryGroup
-    const groupIds = idsFromGroup.length ? idsFromGroup : currentGroup?.inquiryIds ?? []
+    const groupIds = idsFromGroup.length ? idsFromGroup : (currentGroup?.inquiryIds ?? [])
 
     // Priority 3: groups the currently-loaded inquiry belongs to
     let fallbackIds: number[] = []
@@ -182,7 +224,7 @@ const availableItemIds = computed<number[]>(() => {
       const currentInquiryGroups =
         (inquiriesStore.byId[inquiryStore.id]?.inquiryGroups as number[] | undefined) ?? []
       fallbackIds = currentInquiryGroups.flatMap(
-        (gid) => inquiryGroupsStore.byId(gid)?.inquiryIds ?? [],
+        (gid) => inquiryGroupsStore.byId(gid)?.inquiryIds ?? []
       )
     }
 
@@ -218,10 +260,14 @@ const statusColumns = [
 const modalTitle = computed(() => {
   const noun = props.targetType === 'inquiry' ? t('agora', 'inquiry') : t('agora', 'option')
   switch (props.familyType) {
-    case 'vote':     return t('agora', 'Add {noun} to vote', { noun })
-    case 'timeline': return t('agora', 'Add {noun} to timeline', { noun })
-    case 'kanban':   return t('agora', 'Add {noun} to board', { noun })
-    default:         return t('agora', 'Add {noun}', { noun })
+    case 'vote':
+      return t('agora', 'Add {noun} to vote', { noun })
+    case 'timeline':
+      return t('agora', 'Add {noun} to timeline', { noun })
+    case 'kanban':
+      return t('agora', 'Add {noun} to board', { noun })
+    default:
+      return t('agora', 'Add {noun}', { noun })
   }
 })
 
@@ -231,29 +277,41 @@ const modalDescription = computed(() => {
   }
   const noun = props.targetType === 'inquiry' ? t('agora', 'inquiry') : t('agora', 'option')
   switch (props.familyType) {
-    case 'vote':     return t('agora', 'Add an existing {noun} to become a voting candidate.', { noun })
-    case 'timeline': return t('agora', 'Add an existing {noun} to the timeline view.', { noun })
-    case 'kanban':   return t('agora', 'Add an existing {noun} to the kanban board.', { noun })
-    default:         return t('agora', 'Add an existing {noun} to this view.', { noun })
+    case 'vote':
+      return t('agora', 'Add an existing {noun} to become a voting candidate.', { noun })
+    case 'timeline':
+      return t('agora', 'Add an existing {noun} to the timeline view.', { noun })
+    case 'kanban':
+      return t('agora', 'Add an existing {noun} to the kanban board.', { noun })
+    default:
+      return t('agora', 'Add an existing {noun} to this view.', { noun })
   }
 })
 
 const headerIcon = computed(() => {
   switch (props.familyType) {
-    case 'vote':     return Vote
-    case 'timeline': return Clock
-    case 'kanban':   return LayoutGrid
-    default:         return Plus
+    case 'vote':
+      return Vote
+    case 'timeline':
+      return Clock
+    case 'kanban':
+      return LayoutGrid
+    default:
+      return Plus
   }
 })
 const actionIcon = headerIcon
 
 const actionButtonText = computed(() => {
   switch (props.familyType) {
-    case 'vote':     return t('agora', 'Add to vote')
-    case 'timeline': return t('agora', 'Add to timeline')
-    case 'kanban':   return t('agora', 'Add to board')
-    default:         return t('agora', 'Add')
+    case 'vote':
+      return t('agora', 'Add to vote')
+    case 'timeline':
+      return t('agora', 'Add to timeline')
+    case 'kanban':
+      return t('agora', 'Add to board')
+    default:
+      return t('agora', 'Add')
   }
 })
 
@@ -263,9 +321,12 @@ const actionButtonText = computed(() => {
 const canAdd = computed(() => {
   if (!selectedItem.value) return false
   switch (props.familyType) {
-    case 'timeline': return startDate.value !== null
-    case 'kanban':   return targetStatus.value !== null
-    default:         return true
+    case 'timeline':
+      return startDate.value !== null
+    case 'kanban':
+      return targetStatus.value !== null
+    default:
+      return true
   }
 })
 
@@ -274,7 +335,7 @@ const canAdd = computed(() => {
 // ---------------------------------------------------------------------------
 function buildForceLayoutsUpdate(
   item: VotableItem,
-  layout: 'vote' | 'timeline' | 'kanban',
+  layout: 'vote' | 'timeline' | 'kanban'
 ): string[] {
   const current = getForceLayouts(item)
   return current.includes(layout) ? current : [...current, layout]
@@ -295,7 +356,7 @@ async function patchOption(item: Option, patch: MiscUpdateMap, status?: string):
   await optionsStore.updateOptionFromModal(
     item.id,
     status || currentStatusOf(item),
-    merged as never,
+    merged as never
   )
 }
 
@@ -303,20 +364,19 @@ async function patchOption(item: Option, patch: MiscUpdateMap, status?: string):
  * Persist a miscFields patch on an Inquiry.
  * `inquiriesStore` has no action for this — call the API and refresh the list.
  */
- async function patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
+async function patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
   const response = await InquiriesAPI.updateInquiry(item.id, {
     miscFields: { ...(item.miscFields ?? {}), ...patch } as any,
   })
   const updated = response.data?.inquiry
   if (updated) {
-    const idx = inquiriesStore.inquiries.findIndex(i => i.id === updated.id)
+    const idx = inquiriesStore.inquiries.findIndex((i) => i.id === updated.id)
     if (idx !== -1) {
       inquiriesStore.inquiries[idx] = updated
       inquiriesStore.inquiries = [...inquiriesStore.inquiries]
     }
   }
- }
-
+}
 
 async function patchItem(item: VotableItem, patch: MiscUpdateMap, status?: string): Promise<void> {
   if (props.targetType === 'inquiry') {
@@ -354,11 +414,7 @@ async function addToKanban(): Promise<void> {
   const item = selectedItem.value
   if (!item || !targetStatus.value) return
   const updatedLayouts = buildForceLayoutsUpdate(item, 'kanban')
-  await patchItem(
-    item,
-    { force_layouts: JSON.stringify(updatedLayouts) },
-    targetStatus.value,
-  )
+  await patchItem(item, { force_layouts: JSON.stringify(updatedLayouts) }, targetStatus.value)
   emit('optionFamilyChanged', { optionId: item.id, familyKey: 'kanban', action: 'added' })
 }
 
@@ -368,9 +424,15 @@ async function add(): Promise<void> {
   loading.value = true
   try {
     switch (props.familyType) {
-      case 'kanban':   await addToKanban(); break
-      case 'timeline': await addToTimeline(); break
-      case 'vote':     await addToVote(); break
+      case 'kanban':
+        await addToKanban()
+        break
+      case 'timeline':
+        await addToTimeline()
+        break
+      case 'vote':
+        await addToVote()
+        break
     }
 
     try {
@@ -384,7 +446,7 @@ async function add(): Promise<void> {
     showSuccess(
       t('agora', '{noun} added successfully!', {
         noun: props.targetType === 'inquiry' ? t('agora', 'Inquiry') : t('agora', 'Option'),
-      }),
+      })
     )
     emit('success')
     emit('close')
@@ -411,298 +473,321 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .add-option-to-family-modal {
-    padding: 0;
-    max-width: 600px;
-    background: var(--color-main-background);
-    border-radius: 24px;
-    overflow: hidden;
+  padding: 0;
+  max-width: 600px;
+  background: var(--color-main-background);
+  border-radius: 24px;
+  overflow: hidden;
 
-    .modal-header {
-        text-align: center;
-        padding: 32px 32px 24px;
-        background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
+  .modal-header {
+    text-align: center;
+    padding: 32px 32px 24px;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-primary-element-rgb), 0.05) 0%,
+      rgba(var(--color-primary-element-rgb), 0.02) 100%
+    );
+    border-bottom: 1px solid var(--color-border);
+
+    .header-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-element) 0%,
+        var(--color-primary-element-light) 100%
+      );
+      border-radius: 32px;
+      margin-bottom: 16px;
+      color: white;
+
+      &.vote-icon {
+        background: linear-gradient(135deg, #3498db 0%, #9b59b6 100%);
+      }
+    }
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .modal-description {
+      margin: 0;
+      font-size: 14px;
+      color: var(--color-text-lighter);
+    }
+  }
+
+  .modal-content {
+    padding: 24px;
+
+    .search-section {
+      margin-bottom: 24px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .search-select {
+        width: 100%;
+      }
+    }
+
+    .timeline-config-section,
+    .kanban-config-section,
+    .vote-config-section {
+      margin-top: 24px;
+
+      .config-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
         border-bottom: 1px solid var(--color-border);
 
-        .header-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
-            border-radius: 32px;
-            margin-bottom: 16px;
-            color: white;
-
-            &.vote-icon {
-                background: linear-gradient(135deg, #3498db 0%, #9b59b6 100%);
-            }
+        svg {
+          color: var(--color-primary-element);
         }
 
-        h3 {
-            margin: 0 0 8px 0;
-            font-size: 24px;
-            font-weight: 700;
+        h4 {
+          margin: 0;
+          font-size: 15px;
+          font-weight: 600;
         }
-
-        .modal-description {
-            margin: 0;
-            font-size: 14px;
-            color: var(--color-text-lighter);
-        }
+      }
     }
 
-    .modal-content {
-        padding: 24px;
+    .date-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
 
-        .search-section {
-            margin-bottom: 24px;
-
-            label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: 600;
-                font-size: 14px;
-            }
-
-            .search-select {
-                width: 100%;
-            }
+      .date-field {
+        label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 500;
+          font-size: 13px;
         }
-
-        .timeline-config-section,
-        .kanban-config-section,
-        .vote-config-section {
-            margin-top: 24px;
-
-            .config-header {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                margin-bottom: 16px;
-                padding-bottom: 12px;
-                border-bottom: 1px solid var(--color-border);
-
-                svg {
-                    color: var(--color-primary-element);
-                }
-
-                h4 {
-                    margin: 0;
-                    font-size: 15px;
-                    font-weight: 600;
-                }
-            }
-        }
-
-        .date-selector {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-
-            .date-field {
-                label {
-                    display: block;
-                    margin-bottom: 8px;
-                    font-weight: 500;
-                    font-size: 13px;
-                }
-            }
-        }
-
-        .column-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-
-            .column-option {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 10px 12px;
-                background: var(--color-background-dark);
-                border: 2px solid transparent;
-                border-radius: 12px;
-                cursor: pointer;
-                transition: all 0.2s;
-
-                .column-color {
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 50%;
-                }
-
-                .column-label {
-                    flex: 1;
-                    font-size: 13px;
-                    font-weight: 500;
-                }
-
-                .check-icon {
-                    color: var(--color-success);
-                }
-
-                &:hover {
-                    background: var(--color-background-hover);
-                }
-
-                &.selected {
-                    border-color: var(--color-primary-element);
-                    background: rgba(var(--color-primary-element-rgb), 0.05);
-                }
-            }
-        }
-
-        .vote-config-section {
-            .engine-info-message {
-                margin-bottom: 20px;
-                padding: 16px;
-                background: var(--color-background-dark);
-                border-radius: 12px;
-
-                .engine-badge-display {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 6px 12px;
-                    background: var(--color-main-background);
-                    border-radius: 20px;
-                    margin-bottom: 12px;
-                    font-weight: 500;
-                    font-size: 13px;
-
-                    .engine-badge-mini {
-                        font-size: 9px;
-                        padding: 2px 8px;
-                        border-radius: 12px;
-
-                        &.single { background: #3498db20; color: #3498db; }
-                        &.multi { background: #9b59b620; color: #9b59b6; }
-                        &.flex { background: #e67e2220; color: #e67e22; }
-                    }
-                }
-
-                .engine-description {
-                    margin: 0;
-                    font-size: 13px;
-                    color: var(--color-text-lighter);
-                    line-height: 1.5;
-                }
-            }
-
-            .engine-config-details {
-                padding: 16px;
-                background: var(--color-background-dark);
-                border-radius: 12px;
-
-                .config-fields {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-
-                    .config-field {
-                        label {
-                            display: block;
-                            margin-bottom: 6px;
-                            font-size: 12px;
-                            font-weight: 600;
-                        }
-
-                        .config-input, .config-select {
-                            width: 100%;
-                            padding: 8px 12px;
-                            border: 1px solid var(--color-border);
-                            border-radius: 8px;
-                            background: var(--color-main-background);
-                            font-size: 13px;
-                            transition: all 0.2s;
-
-                            &:focus {
-                                outline: none;
-                                border-color: var(--color-primary-element);
-                                box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
-                            }
-                        }
-
-                        .checkbox-label {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                            cursor: pointer;
-
-                            input {
-                                width: 16px;
-                                height: 16px;
-                                cursor: pointer;
-                            }
-
-                            span {
-                                font-size: 13px;
-                                font-weight: normal;
-                            }
-                        }
-
-                        .config-description {
-                            margin: 4px 0 0 0;
-                            font-size: 11px;
-                            color: var(--color-text-lighter);
-                        }
-                    }
-                }
-            }
-        }
+      }
     }
 
-    .modal-footer {
+    .column-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+
+      .column-option {
         display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        padding: 20px 24px;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
         background: var(--color-background-dark);
-        border-top: 1px solid var(--color-border);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
 
-        .btn-secondary, .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-
-            &:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
+        .column-color {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
         }
 
-        .btn-secondary {
-            background: var(--color-background-hover);
-            color: var(--color-main-text);
-
-            &:hover:not(:disabled) {
-                background: var(--color-background-dark);
-                transform: translateY(-1px);
-            }
+        .column-label {
+          flex: 1;
+          font-size: 13px;
+          font-weight: 500;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
-            color: white;
-
-            &.loading {
-                opacity: 0.7;
-                cursor: wait;
-            }
-
-            &:hover:not(:disabled):not(.loading) {
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
-            }
+        .check-icon {
+          color: var(--color-success);
         }
+
+        &:hover {
+          background: var(--color-background-hover);
+        }
+
+        &.selected {
+          border-color: var(--color-primary-element);
+          background: rgba(var(--color-primary-element-rgb), 0.05);
+        }
+      }
     }
+
+    .vote-config-section {
+      .engine-info-message {
+        margin-bottom: 20px;
+        padding: 16px;
+        background: var(--color-background-dark);
+        border-radius: 12px;
+
+        .engine-badge-display {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 12px;
+          background: var(--color-main-background);
+          border-radius: 20px;
+          margin-bottom: 12px;
+          font-weight: 500;
+          font-size: 13px;
+
+          .engine-badge-mini {
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 12px;
+
+            &.single {
+              background: #3498db20;
+              color: #3498db;
+            }
+            &.multi {
+              background: #9b59b620;
+              color: #9b59b6;
+            }
+            &.flex {
+              background: #e67e2220;
+              color: #e67e22;
+            }
+          }
+        }
+
+        .engine-description {
+          margin: 0;
+          font-size: 13px;
+          color: var(--color-text-lighter);
+          line-height: 1.5;
+        }
+      }
+
+      .engine-config-details {
+        padding: 16px;
+        background: var(--color-background-dark);
+        border-radius: 12px;
+
+        .config-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+
+          .config-field {
+            label {
+              display: block;
+              margin-bottom: 6px;
+              font-size: 12px;
+              font-weight: 600;
+            }
+
+            .config-input,
+            .config-select {
+              width: 100%;
+              padding: 8px 12px;
+              border: 1px solid var(--color-border);
+              border-radius: 8px;
+              background: var(--color-main-background);
+              font-size: 13px;
+              transition: all 0.2s;
+
+              &:focus {
+                outline: none;
+                border-color: var(--color-primary-element);
+                box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
+              }
+            }
+
+            .checkbox-label {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              cursor: pointer;
+
+              input {
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+              }
+
+              span {
+                font-size: 13px;
+                font-weight: normal;
+              }
+            }
+
+            .config-description {
+              margin: 4px 0 0 0;
+              font-size: 11px;
+              color: var(--color-text-lighter);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    background: var(--color-background-dark);
+    border-top: 1px solid var(--color-border);
+
+    .btn-secondary,
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-secondary {
+      background: var(--color-background-hover);
+      color: var(--color-main-text);
+
+      &:hover:not(:disabled) {
+        background: var(--color-background-dark);
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-primary {
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-element) 0%,
+        var(--color-primary-element-light) 100%
+      );
+      color: white;
+
+      &.loading {
+        opacity: 0.7;
+        cursor: wait;
+      }
+
+      &:hover:not(:disabled):not(.loading) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
+      }
+    }
+  }
 }
 </style>

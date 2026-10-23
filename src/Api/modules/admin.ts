@@ -21,7 +21,7 @@ const adminJobs = {
       cancelToken: cancelTokenHandlerObject[this.runJanitor.name].handleRequestCancellation().token,
     })
   },
-   runJanitor() {
+  runJanitor() {
     return httpInstance.request({
       method: 'GET',
       url: 'administration/janitor/run',

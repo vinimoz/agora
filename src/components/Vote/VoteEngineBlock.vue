@@ -4,77 +4,83 @@
 -->
 
 <template>
-    <!-- Cards Layout -->
-    <div v-if="layout === 'cards' || hideResults" class="cards-layout">
-        <VoteCardsLayout
-                :items="votableItems"
-                :effective-engine-id="effectiveEngineId"
-                :active-engine="currentEngine"
-                :can-vote="canVote"
-                :has-user-voted="hasUserVoted"
-                :rankings="rankings"
-                :scores="scores"
-                :grades="grades"
-                :reactions="reactions"
-                :quadratic-votes="quadraticVotes"
-                :token-weights="tokenWeights"
-                :can-submit-multi-vote="canSubmitMultiVote"
-                :vote-selection-info="voteSelectionInfo"
-                :get-item-vote-count="getItemVoteCount"
-                :get-percentage="(item) => getPercentage(item)"
-                :has-user-voted-for="hasUserVotedFor"
-                :is-selected-for-vote="isSelectedForVote"
-                :get-user-vote-value-for-item="getUserVoteValueForItem"
-                :has-selections-changed="hasSelectionsChanged"
-                :auto-save="autoSave"
-                :hide-results="hideResults"
-                @toggle-selection="toggleSelection"
-                @update:rankings="updateRankings"
-                @update:scores="updateScores"
-                @update:grades="updateGrades"
-                @update:reactions="updateReactions"
-                @update:quadratic-votes="updateQuadraticVotes"
-                @update:token-weights="updateTokenWeights"
-                @vote="(item, value) => submitSingleVote(props.parentId,item, value)"
-                @submit-multi-vote="onSubmitMultiVote"
-                @remove-my-vote="onRemoveMyVote"
-                @open-supports-modal="!hideResults && $emit('openSupportsModal', $event)"
-                />
-    </div>
-    <!-- Results Layout -->
-    <div v-else class="results-layout">
-        <VoteResultsLayout
-                :total-votes="totalVotes"
-                :ranked-items="rankedItems"
-                :effective-engine-id="effectiveEngineId"
-                :active-engine="currentEngine"
-                :can-vote="canVote"
-                :has-user-voted="hasUserVoted"
-                :rankings="rankings"
-                :scores="scores"
-                :grades="grades"
-                :reactions="reactions"
-                :quadratic-votes="quadraticVotes"
-                :token-weights="tokenWeights"
-                :selected-items="selectedItems"
-                :can-submit-multi-vote="canSubmitMultiVote"
-                :vote-selection-info="voteSelectionInfo"
-                :get-item-rank="getItemRank"
-                :get-item-vote-count="getItemVoteCount"
-                :get-percentage="(item) => getPercentage(item)"
-                :is-selected-for-vote="isSelectedForVote"
-                :winner="winner"
-                :winner-percentage="winnerPercentage"
-                :time-remaining="timeRemaining"
-                @update:rankings="rankings = $event"
-                @update:scores="scores = $event"
-                @update:grades="grades = $event"
-                @update:reactions="reactions = $event"
-                @update:quadratic-votes="quadraticVotes = $event"
-                @update:token-weights="tokenWeights = $event"
-                @vote="(item, value) => submitSingleVote(props.parentId,item, value)"
-                />
-    </div>
+  <!-- Cards Layout -->
+  <div
+    v-if="layout === 'cards' || hideResults"
+    class="cards-layout"
+  >
+    <VoteCardsLayout
+      :items="votableItems"
+      :effective-engine-id="effectiveEngineId"
+      :active-engine="currentEngine"
+      :can-vote="canVote"
+      :has-user-voted="hasUserVoted"
+      :rankings="rankings"
+      :scores="scores"
+      :grades="grades"
+      :reactions="reactions"
+      :quadratic-votes="quadraticVotes"
+      :token-weights="tokenWeights"
+      :can-submit-multi-vote="canSubmitMultiVote"
+      :vote-selection-info="voteSelectionInfo"
+      :get-item-vote-count="getItemVoteCount"
+      :get-percentage="(item) => getPercentage(item)"
+      :has-user-voted-for="hasUserVotedFor"
+      :is-selected-for-vote="isSelectedForVote"
+      :get-user-vote-value-for-item="getUserVoteValueForItem"
+      :has-selections-changed="hasSelectionsChanged"
+      :auto-save="autoSave"
+      :hide-results="hideResults"
+      @toggle-selection="toggleSelection"
+      @update:rankings="updateRankings"
+      @update:scores="updateScores"
+      @update:grades="updateGrades"
+      @update:reactions="updateReactions"
+      @update:quadratic-votes="updateQuadraticVotes"
+      @update:token-weights="updateTokenWeights"
+      @vote="(item, value) => submitSingleVote(props.parentId, item, value)"
+      @submit-multi-vote="onSubmitMultiVote"
+      @remove-my-vote="onRemoveMyVote"
+      @open-supports-modal="!hideResults && $emit('openSupportsModal', $event)"
+    />
+  </div>
+  <!-- Results Layout -->
+  <div
+    v-else
+    class="results-layout"
+  >
+    <VoteResultsLayout
+      :total-votes="totalVotes"
+      :ranked-items="rankedItems"
+      :effective-engine-id="effectiveEngineId"
+      :active-engine="currentEngine"
+      :can-vote="canVote"
+      :has-user-voted="hasUserVoted"
+      :rankings="rankings"
+      :scores="scores"
+      :grades="grades"
+      :reactions="reactions"
+      :quadratic-votes="quadraticVotes"
+      :token-weights="tokenWeights"
+      :selected-items="selectedItems"
+      :can-submit-multi-vote="canSubmitMultiVote"
+      :vote-selection-info="voteSelectionInfo"
+      :get-item-rank="getItemRank"
+      :get-item-vote-count="getItemVoteCount"
+      :get-percentage="(item) => getPercentage(item)"
+      :is-selected-for-vote="isSelectedForVote"
+      :winner="winner"
+      :winner-percentage="winnerPercentage"
+      :time-remaining="timeRemaining"
+      @update:rankings="rankings = $event"
+      @update:scores="scores = $event"
+      @update:grades="grades = $event"
+      @update:reactions="reactions = $event"
+      @update:quadratic-votes="quadraticVotes = $event"
+      @update:token-weights="tokenWeights = $event"
+      @vote="(item, value) => submitSingleVote(props.parentId, item, value)"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -98,9 +104,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'openSupportsModal': [itemId: number]
-  'selectItem': [item: Item]
-  'progress': [engineId: number, answered: number, total: number]
+  openSupportsModal: [itemId: number]
+  selectItem: [item: Item]
+  progress: [engineId: number, answered: number, total: number]
 }>()
 
 const {
@@ -134,7 +140,7 @@ const {
   reactions,
   quadraticVotes,
   tokenWeights,
-  } = useVoteContext(props.parentId, props.targetType, props.engineId)
+} = useVoteContext(props.parentId, props.targetType, props.engineId)
 
 const winner = computed(() => getWinner(votableItems.value))
 const winnerPercentage = computed(() => getWinnerPercentage(votableItems.value))
@@ -145,7 +151,7 @@ const answered = computed(() => votableItems.value.filter((o) => isSelectedForVo
 watch(
   [answered, () => votableItems.value.length],
   ([count, total]) => emit('progress', props.engineId, count, total),
-  { immediate: true },
+  { immediate: true }
 )
 
 const AUTO_SAVE_ENGINES = ['binary', 'ternary', 'majority_judgment']
@@ -161,11 +167,12 @@ watch(
     if (hasUserVoted.value && !hasLocalAnswers()) loadUserVotesForEngine(props.engineId)
     hydrated.value = !hasUserVoted.value || hasLocalAnswers()
   },
-  { immediate: true },
+  { immediate: true }
 )
 
-const autoSave = computed(() => !!props.enqueueSave && hydrated.value
-  && AUTO_SAVE_ENGINES.includes(effectiveEngineId.value))
+const autoSave = computed(
+  () => !!props.enqueueSave && hydrated.value && AUTO_SAVE_ENGINES.includes(effectiveEngineId.value)
+)
 let timer: ReturnType<typeof setTimeout> | undefined
 const waiting = ref(false)
 let pending: Promise<boolean> = Promise.resolve(true)

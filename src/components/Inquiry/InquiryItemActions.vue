@@ -22,7 +22,6 @@ import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue'
 import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue'
 import ArchiveRestoreInquiryDialog from '../Modals/ArchiveRestoreInquiryDialog.vue'
 
-
 import {
   canArchive,
   canRestore,
@@ -31,7 +30,7 @@ import {
   createInquiryContext,
 } from '../../utils/permissions.ts'
 
-const sessionStore= useSessionStore()
+const sessionStore = useSessionStore()
 
 const { inquiry } = defineProps<{ inquiry: Inquiry }>()
 
@@ -56,15 +55,16 @@ const emit = defineEmits<{
 const onInquiryDeleted = () => {
   showSuccess(t('agora', 'Inquiry successfully deleted'))
   emit('deleted') // Emit to parent
-  router.push({
-    name: 'list',
-    params: { type: 'relevant' },
-    query: { viewMode: 'view' }
-  }).finally(() => {
-    isNavigating.value = false
-  })
+  router
+    .push({
+      name: 'list',
+      params: { type: 'relevant' },
+      query: { viewMode: 'view' },
+    })
+    .finally(() => {
+      isNavigating.value = false
+    })
 }
-
 
 async function toggleArchive() {
   try {
@@ -76,7 +76,10 @@ async function toggleArchive() {
 </script>
 
 <template>
-  <NcActions force-menu v-bind="$attrs">
+  <NcActions
+    force-menu
+    v-bind="$attrs"
+  >
     <template v-if="subMenu">
       <NcActionButton
         :aria-label="t('agora', 'Back')"
@@ -84,7 +87,10 @@ async function toggleArchive() {
         @click="subMenu = null"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Back" :size="16" />
+          <component
+            :is="InquiryGeneralIcons.Back"
+            :size="16"
+          />
         </template>
       </NcActionButton>
     </template>
@@ -98,7 +104,10 @@ async function toggleArchive() {
         @click="toggleArchive()"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Archive" :size="24" />
+          <component
+            :is="InquiryGeneralIcons.Archive"
+            :size="24"
+          />
         </template>
       </NcActionButton>
 
@@ -110,7 +119,10 @@ async function toggleArchive() {
         @click="showArchiveRestoreDialog = true"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Restore" :size="24" />
+          <component
+            :is="InquiryGeneralIcons.Restore"
+            :size="24"
+          />
         </template>
       </NcActionButton>
 
@@ -123,7 +135,10 @@ async function toggleArchive() {
         @click="showDeleteDialog = true"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Delete" :size="24" />
+          <component
+            :is="InquiryGeneralIcons.Delete"
+            :size="24"
+          />
         </template>
       </NcActionButton>
 
@@ -136,7 +151,10 @@ async function toggleArchive() {
         @click="showTransferDialog = true"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Transfer" :size="24" />
+          <component
+            :is="InquiryGeneralIcons.Transfer"
+            :size="24"
+          />
         </template>
       </NcActionButton>
     </template>

@@ -70,7 +70,7 @@ const availableIcons = computed(() =>
     .map((iconId) => ({
       id: iconId,
       label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    })),
+    }))
 )
 
 const getIconComponent = (iconName: unknown) => {
@@ -119,7 +119,7 @@ const allTypes = computed<unknown[]>(() => appSettingsStore.inquiryTypeTab ?? []
 const familyTypes = computed(() =>
   familyKey.value
     ? allTypes.value.filter((type: unknown) => type.family === familyKey.value)
-    : allTypes.value,
+    : allTypes.value
 )
 
 const filteredTypes = computed(() => {
@@ -130,7 +130,7 @@ const filteredTypes = computed(() => {
       (type: unknown) =>
         type.inquiry_type?.toLowerCase().includes(q) ||
         type.label?.toLowerCase().includes(q) ||
-        type.description?.toLowerCase().includes(q),
+        type.description?.toLowerCase().includes(q)
     )
   }
   return list.map((type: unknown) => ({
@@ -155,7 +155,7 @@ const groupTypesInFamily = computed<unknown[]>(() => {
  */
 const getUsageCount = (inquiryType: string): number =>
   groupTypesInFamily.value.filter((gt: unknown) =>
-    normalizeArray(gt.allowed_inquiry_types).includes(inquiryType),
+    normalizeArray(gt.allowed_inquiry_types).includes(inquiryType)
   ).length
 
 // ============================================================
@@ -168,7 +168,10 @@ const validateType = (type: unknown, isEdit = false) => {
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(type.inquiry_type)) {
     showError(
-      t('agora', 'Inquiry type key must be alphanumeric (underscores allowed), starting with a letter'),
+      t(
+        'agora',
+        'Inquiry type key must be alphanumeric (underscores allowed), starting with a letter'
+      )
     )
     return false
   }
@@ -178,7 +181,7 @@ const validateType = (type: unknown, isEdit = false) => {
   }
   if (!isEdit) {
     const exists = allTypes.value.some(
-      (existing: unknown) => existing.inquiry_type === type.inquiry_type,
+      (existing: unknown) => existing.inquiry_type === type.inquiry_type
     )
     if (exists) {
       showError(t('agora', 'An inquiry type with this key already exists'))
@@ -259,7 +262,7 @@ const deleteType = async (type: unknown) => {
     !confirm(
       t('agora', 'Are you sure you want to delete the inquiry type "{label}"?', {
         label: type.label || type.inquiry_type,
-      }),
+      })
     )
   ) {
     return
@@ -284,12 +287,14 @@ type ArrayKey = 'fields' | 'allowed_response' | 'allowed_transformation' | 'allo
 const addArrayItem = (target: 'new' | 'edit', key: ArrayKey, value: string) => {
   const val = value?.trim()
   if (!val) return
-  const arr = target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
+  const arr =
+    target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
   if (!arr.includes(val)) arr.push(val)
 }
 
 const removeArrayItem = (target: 'new' | 'edit', key: ArrayKey, index: number) => {
-  const arr = target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
+  const arr =
+    target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
   arr.splice(index, 1)
 }
 
@@ -327,7 +332,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
     <!-- ==================== HEADER ==================== -->
     <header class="manager-header">
       <div class="header-text">
-        <NcButton class="back-btn" @click="emit('backToFamilies')">
+        <NcButton
+          class="back-btn"
+          @click="emit('backToFamilies')"
+        >
           ← {{ t('agora', 'Back to families') }}
         </NcButton>
         <h2>
@@ -338,7 +346,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             t(
               'agora',
               'Configure inquiry types available in the "{family}" family (fields, allowed responses, transformations and option types).',
-              { family: familyLabel },
+              { family: familyLabel }
             )
           }}
         </p>
@@ -373,7 +381,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
         <span class="count-badge">{{ filteredTypes.length }}</span>
       </h3>
 
-      <div v-if="!filteredTypes.length" class="empty-state">
+      <div
+        v-if="!filteredTypes.length"
+        class="empty-state"
+      >
         {{ t('agora', 'No inquiry types match your filters.') }}
       </div>
 
@@ -383,9 +394,15 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
         class="type-card"
         :class="{ expanded: expandedTypeId === type.id }"
       >
-        <div class="type-row" @click="emit('typeSelected', type)">
+        <div
+          class="type-row"
+          @click="emit('typeSelected', type)"
+        >
           <div class="type-icon">
-            <component :is="getIconComponent(type.icon)" :size="20" />
+            <component
+              :is="getIconComponent(type.icon)"
+              :size="20"
+            />
           </div>
 
           <div class="type-info">
@@ -405,66 +422,123 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
                 {{ t('agora', '{n} groups', { n: getUsageCount(type.inquiry_type) }) }}
               </span>
             </div>
-            <p v-if="type.description" class="type-description">{{ type.description }}</p>
+            <p
+              v-if="type.description"
+              class="type-description"
+            >
+              {{ type.description }}
+            </p>
             <div class="type-stats">
               <span class="stat-chip">
                 {{ t('agora', '{count} fields', { count: type.fields.length }) }}
               </span>
-              <span v-if="type.allowed_response.length" class="stat-chip">
+              <span
+                v-if="type.allowed_response.length"
+                class="stat-chip"
+              >
                 {{ t('agora', '{count} responses', { count: type.allowed_response.length }) }}
               </span>
-              <span v-if="type.allowed_transformation.length" class="stat-chip">
+              <span
+                v-if="type.allowed_transformation.length"
+                class="stat-chip"
+              >
                 {{
                   t('agora', '{count} transformations', {
                     count: type.allowed_transformation.length,
                   })
                 }}
               </span>
-              <span v-if="type.allowed_option_type.length" class="stat-chip">
-                {{
-                  t('agora', '{count} option types', { count: type.allowed_option_type.length })
-                }}
+              <span
+                v-if="type.allowed_option_type.length"
+                class="stat-chip"
+              >
+                {{ t('agora', '{count} option types', { count: type.allowed_option_type.length }) }}
               </span>
             </div>
           </div>
 
-          <div class="type-actions" @click.stop>
+          <div
+            class="type-actions"
+            @click.stop
+          >
             <NcButton @click="toggleExpand(type.id)">
               {{ expandedTypeId === type.id ? t('agora', 'Hide') : t('agora', 'Details') }}
             </NcButton>
-            <NcButton type="primary" @click="emit('typeSelected', type)">
+            <NcButton
+              type="primary"
+              @click="emit('typeSelected', type)"
+            >
               {{ t('agora', 'Configure') }}
             </NcButton>
-            <NcButton @click="startEditing(type)">{{ t('agora', 'Edit') }}</NcButton>
-            <NcButton type="error" @click="deleteType(type)">
+            <NcButton @click="startEditing(type)">
+              {{ t('agora', 'Edit') }}
+            </NcButton>
+            <NcButton
+              type="error"
+              @click="deleteType(type)"
+            >
               {{ t('agora', 'Delete') }}
             </NcButton>
           </div>
         </div>
 
         <!-- ============ EXPANDED DETAILS ============ -->
-        <div v-if="expandedTypeId === type.id" class="type-details">
+        <div
+          v-if="expandedTypeId === type.id"
+          class="type-details"
+        >
           <div class="detail-section">
             <h5>{{ t('agora', 'Fields') }}</h5>
             <ul class="pill-list">
-              <li v-for="(f, i) in type.fields" :key="i" class="pill">{{ f }}</li>
-              <li v-if="!type.fields.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-for="(f, i) in type.fields"
+                :key="i"
+                class="pill"
+              >
+                {{ f }}
+              </li>
+              <li
+                v-if="!type.fields.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Allowed responses') }}</h5>
             <ul class="pill-list">
-              <li v-for="(r, i) in type.allowed_response" :key="i" class="pill">{{ r }}</li>
-              <li v-if="!type.allowed_response.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-for="(r, i) in type.allowed_response"
+                :key="i"
+                class="pill"
+              >
+                {{ r }}
+              </li>
+              <li
+                v-if="!type.allowed_response.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Allowed transformations') }}</h5>
             <ul class="pill-list">
-              <li v-for="(r, i) in type.allowed_transformation" :key="i" class="pill">{{ r }}</li>
-              <li v-if="!type.allowed_transformation.length" class="muted">
+              <li
+                v-for="(r, i) in type.allowed_transformation"
+                :key="i"
+                class="pill"
+              >
+                {{ r }}
+              </li>
+              <li
+                v-if="!type.allowed_transformation.length"
+                class="muted"
+              >
                 {{ t('agora', 'None') }}
               </li>
             </ul>
@@ -473,8 +547,17 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
           <div class="detail-section">
             <h5>{{ t('agora', 'Allowed option types') }}</h5>
             <ul class="pill-list">
-              <li v-for="(r, i) in type.allowed_option_type" :key="i" class="pill">{{ r }}</li>
-              <li v-if="!type.allowed_option_type.length" class="muted">
+              <li
+                v-for="(r, i) in type.allowed_option_type"
+                :key="i"
+                class="pill"
+              >
+                {{ r }}
+              </li>
+              <li
+                v-if="!type.allowed_option_type.length"
+                class="muted"
+              >
                 {{ t('agora', 'None') }}
               </li>
             </ul>
@@ -485,7 +568,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             <ul class="pill-list">
               <li
                 v-for="gt in groupTypesInFamily.filter((g) =>
-                  normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type),
+                  normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
                 )"
                 :key="gt.id"
                 class="pill group-pill"
@@ -495,7 +578,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               <li
                 v-if="
                   !groupTypesInFamily.some((g) =>
-                    normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type),
+                    normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
                   )
                 "
                 class="muted"
@@ -560,7 +643,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., deadline')"
               @keydown.enter.prevent="addField('new')"
             />
-            <NcButton type="secondary" @click="addField('new')">
+            <NcButton
+              type="secondary"
+              @click="addField('new')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -573,7 +659,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ f }} ✕
             </span>
-            <span v-if="!newType.fields.length" class="muted">
+            <span
+              v-if="!newType.fields.length"
+              class="muted"
+            >
               {{ t('agora', 'No fields added yet') }}
             </span>
           </div>
@@ -590,7 +679,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., comment')"
               @keydown.enter.prevent="addAllowedResponse('new')"
             />
-            <NcButton type="secondary" @click="addAllowedResponse('new')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedResponse('new')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -603,7 +695,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ r }} ✕
             </span>
-            <span v-if="!newType.allowed_response.length" class="muted">
+            <span
+              v-if="!newType.allowed_response.length"
+              class="muted"
+            >
               {{ t('agora', 'None') }}
             </span>
           </div>
@@ -620,7 +715,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., official_proposal')"
               @keydown.enter.prevent="addAllowedTransformation('new')"
             />
-            <NcButton type="secondary" @click="addAllowedTransformation('new')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedTransformation('new')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -633,7 +731,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ r }} ✕
             </span>
-            <span v-if="!newType.allowed_transformation.length" class="muted">
+            <span
+              v-if="!newType.allowed_transformation.length"
+              class="muted"
+            >
               {{ t('agora', 'None') }}
             </span>
           </div>
@@ -650,7 +751,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., argument_for')"
               @keydown.enter.prevent="addAllowedOptionType('new')"
             />
-            <NcButton type="secondary" @click="addAllowedOptionType('new')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedOptionType('new')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -663,7 +767,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ r }} ✕
             </span>
-            <span v-if="!newType.allowed_option_type.length" class="muted">
+            <span
+              v-if="!newType.allowed_option_type.length"
+              class="muted"
+            >
               {{ t('agora', 'None') }}
             </span>
           </div>
@@ -675,7 +782,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             :disabled="savingType || !newType.inquiry_type || !newType.label || !familyKey"
             @click="addType"
           >
-            <NcLoadingIcon v-if="savingType" :size="16" />
+            <NcLoadingIcon
+              v-if="savingType"
+              :size="16"
+            />
             <span v-else>{{ t('agora', 'Add inquiry type') }}</span>
           </NcButton>
         </div>
@@ -683,11 +793,20 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
     </section>
 
     <!-- ==================== EDIT MODAL ==================== -->
-    <div v-if="editingType" class="modal-overlay" @click.self="cancelEditing">
+    <div
+      v-if="editingType"
+      class="modal-overlay"
+      @click.self="cancelEditing"
+    >
       <div class="modal-content large-modal">
         <header class="modal-header">
           <h3>{{ t('agora', 'Edit inquiry type') }}: {{ editingType.label }}</h3>
-          <NcButton type="tertiary" @click="cancelEditing">✕</NcButton>
+          <NcButton
+            type="tertiary"
+            @click="cancelEditing"
+          >
+            ✕
+          </NcButton>
         </header>
 
         <nav class="tabs">
@@ -703,7 +822,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
         </nav>
 
         <!-- BASIC -->
-        <div v-if="editTab === 'basic'" class="tab-panel form-grid">
+        <div
+          v-if="editTab === 'basic'"
+          class="tab-panel form-grid"
+        >
           <NcInputField
             v-model="editingType.inquiry_type"
             :label="t('agora', 'Type key')"
@@ -715,7 +837,11 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             disabled
             readonly
           />
-          <NcInputField v-model="editingType.label" :label="t('agora', 'Display label')" required />
+          <NcInputField
+            v-model="editingType.label"
+            :label="t('agora', 'Display label')"
+            required
+          />
           <NcSelect
             v-model="editingType.icon"
             :input-label="t('agora', 'Icon')"
@@ -734,7 +860,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
         </div>
 
         <!-- FIELDS -->
-        <div v-if="editTab === 'fields'" class="tab-panel">
+        <div
+          v-if="editTab === 'fields'"
+          class="tab-panel"
+        >
           <div class="inline-editor">
             <NcInputField
               v-model="newField"
@@ -743,7 +872,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., deadline')"
               @keydown.enter.prevent="addField('edit')"
             />
-            <NcButton type="secondary" @click="addField('edit')">
+            <NcButton
+              type="secondary"
+              @click="addField('edit')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -756,14 +888,20 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ f }} ✕
             </span>
-            <span v-if="!editingType.fields.length" class="muted">
+            <span
+              v-if="!editingType.fields.length"
+              class="muted"
+            >
               {{ t('agora', 'No fields added yet') }}
             </span>
           </div>
         </div>
 
         <!-- RESPONSES -->
-        <div v-if="editTab === 'responses'" class="tab-panel">
+        <div
+          v-if="editTab === 'responses'"
+          class="tab-panel"
+        >
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedResponse"
@@ -772,7 +910,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., comment')"
               @keydown.enter.prevent="addAllowedResponse('edit')"
             />
-            <NcButton type="secondary" @click="addAllowedResponse('edit')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedResponse('edit')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -785,14 +926,20 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ r }} ✕
             </span>
-            <span v-if="!editingType.allowed_response.length" class="muted">
+            <span
+              v-if="!editingType.allowed_response.length"
+              class="muted"
+            >
               {{ t('agora', 'None') }}
             </span>
           </div>
         </div>
 
         <!-- TRANSFORMATIONS -->
-        <div v-if="editTab === 'transformations'" class="tab-panel">
+        <div
+          v-if="editTab === 'transformations'"
+          class="tab-panel"
+        >
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedTransformation"
@@ -801,7 +948,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., official_proposal')"
               @keydown.enter.prevent="addAllowedTransformation('edit')"
             />
-            <NcButton type="secondary" @click="addAllowedTransformation('edit')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedTransformation('edit')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -814,14 +964,20 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ r }} ✕
             </span>
-            <span v-if="!editingType.allowed_transformation.length" class="muted">
+            <span
+              v-if="!editingType.allowed_transformation.length"
+              class="muted"
+            >
               {{ t('agora', 'None') }}
             </span>
           </div>
         </div>
 
         <!-- OPTION TYPES -->
-        <div v-if="editTab === 'option-types'" class="tab-panel">
+        <div
+          v-if="editTab === 'option-types'"
+          class="tab-panel"
+        >
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedOptionType"
@@ -830,7 +986,10 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               :placeholder="t('agora', 'e.g., argument_for')"
               @keydown.enter.prevent="addAllowedOptionType('edit')"
             />
-            <NcButton type="secondary" @click="addAllowedOptionType('edit')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedOptionType('edit')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -843,16 +1002,28 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             >
               {{ r }} ✕
             </span>
-            <span v-if="!editingType.allowed_option_type.length" class="muted">
+            <span
+              v-if="!editingType.allowed_option_type.length"
+              class="muted"
+            >
               {{ t('agora', 'None') }}
             </span>
           </div>
         </div>
 
         <footer class="modal-actions">
-          <NcButton @click="cancelEditing">{{ t('agora', 'Cancel') }}</NcButton>
-          <NcButton type="primary" :disabled="savingType" @click="updateType(editingType)">
-            <NcLoadingIcon v-if="savingType" :size="16" />
+          <NcButton @click="cancelEditing">
+            {{ t('agora', 'Cancel') }}
+          </NcButton>
+          <NcButton
+            type="primary"
+            :disabled="savingType"
+            @click="updateType(editingType)"
+          >
+            <NcLoadingIcon
+              v-if="savingType"
+              :size="16"
+            />
             <span v-else>{{ t('agora', 'Save changes') }}</span>
           </NcButton>
         </footer>

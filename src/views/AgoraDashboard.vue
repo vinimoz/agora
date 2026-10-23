@@ -15,10 +15,7 @@ import { AgoraAppIcon } from '../components/AppIcons/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
 import { useSessionStore } from '../stores/session.ts'
-import { 
-  getInquiryTypeData,
-  type InquiryType
-} from '../helpers/modules/InquiryHelper.ts'
+import { getInquiryTypeData, type InquiryType } from '../helpers/modules/InquiryHelper.ts'
 
 const sessionStore = useSessionStore()
 
@@ -34,14 +31,13 @@ const inquiriesStore = useInquiriesStore()
 /**
  * Load the store
  */
- function loadSessionStore(): void {
+function loadSessionStore(): void {
   try {
-    sessionStore.load(null, false, false) 
+    sessionStore.load(null, false, false)
   } catch {
     showError(t('agora', 'Error setting dashboard list'))
   }
 }
-
 
 /**
  * Load the inquiries
@@ -57,24 +53,22 @@ function loadInquiries(): void {
 
 // Function to get icon component for an inquiry based on its type
 function getInquiryIconComponent(inquiry) {
-
   if (inquiry.type) {
-    const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value);
+    const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value)
 
     // Try to determine what we're dealing with
     if (typeData?.icon) {
-      return typeData.icon;
+      return typeData.icon
     }
   }
 
-  return InquiryGeneralIcons.Flash;
+  return InquiryGeneralIcons.Flash
 }
 
 onMounted(() => {
   loadSessionStore()
   loadInquiries()
 })
-
 </script>
 
 <template>
@@ -94,9 +88,9 @@ onMounted(() => {
           <div class="inquiry-item__item">
             <div class="type-icon">
               <!-- Use the icon component directly -->
-              <component 
-                :is="getInquiryIconComponent(item)" 
-                class="nav-icon" 
+              <component
+                :is="getInquiryIconComponent(item)"
+                class="nav-icon"
               />
             </div>
 
@@ -140,7 +134,7 @@ onMounted(() => {
   justify-content: center;
   width: 44px;
   min-width: 44px;
-  
+
   .nav-icon {
     width: 20px;
     height: 20px;

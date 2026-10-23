@@ -91,12 +91,32 @@ function restoreItem(): void {
 
 <template>
   <div class="">
-    <NcButton :name="computedTitle" :variant="'tertiary'" :aria-label="computedTitle">
+    <NcButton
+      :name="computedTitle"
+      :variant="'tertiary'"
+      :aria-label="computedTitle"
+    >
       <template #icon>
-        <RestoreIcon v-if="restore" :size="iconSize" @click="restoreItem()" />
-        <UndoIcon v-else-if="deleteTimeout" :size="iconSize" @click="cancelDelete()" />
-        <LockIcon v-else-if="lock" :size="iconSize" @click="deleteItem()" />
-        <DeleteIcon v-else :size="iconSize" @click="deleteItem()" />
+        <RestoreIcon
+          v-if="restore"
+          :size="iconSize"
+          @click="restoreItem()"
+        />
+        <UndoIcon
+          v-else-if="deleteTimeout"
+          :size="iconSize"
+          @click="cancelDelete()"
+        />
+        <LockIcon
+          v-else-if="lock"
+          :size="iconSize"
+          @click="deleteItem()"
+        />
+        <DeleteIcon
+          v-else
+          :size="iconSize"
+          @click="deleteItem()"
+        />
       </template>
     </NcButton>
   </div>

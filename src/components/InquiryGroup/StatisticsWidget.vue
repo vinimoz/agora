@@ -1,14 +1,19 @@
-  SPDX-FileCopyrightText: 2026 Nextcloud contributors
-  SPDX-License-Identifier: AGPL-3.0-or-later
--->
+SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGPL-3.0-or-later -->
 
 <template>
   <div class="statistics-widget">
     <!-- Header -->
     <div class="stat-header">
-      <component :is="Icons.BarChart" :size="20" class="stat-icon" />
+      <component
+        :is="Icons.BarChart"
+        :size="20"
+        class="stat-icon"
+      />
       <h3>{{ t('agora', 'Statistics') }}</h3>
-      <span v-if="lastUpdated" class="stat-updated">
+      <span
+        v-if="lastUpdated"
+        class="stat-updated"
+      >
         {{ t('agora', 'Updated') }} {{ formatTime(lastUpdated) }}
       </span>
     </div>
@@ -17,70 +22,113 @@
     <div class="stats-grid">
       <!-- Total Inquiries -->
       <div class="stat-card">
-        <div class="stat-value">{{ totalInquiries }}</div>
+        <div class="stat-value">
+          {{ totalInquiries }}
+        </div>
         <div class="stat-label">
-          <component :is="Icons.ClipboardList" :size="14" />
+          <component
+            :is="Icons.ClipboardList"
+            :size="14"
+          />
           {{ t('agora', 'Total Inquiries') }}
         </div>
-        <div v-if="trends.total" class="stat-trend" :class="trends.total.direction">
+        <div
+          v-if="trends.total"
+          class="stat-trend"
+          :class="trends.total.direction"
+        >
           {{ trends.total.value }}%
         </div>
       </div>
 
       <!-- Active -->
       <div class="stat-card highlight">
-        <div class="stat-value active-value">{{ activeCount }}</div>
+        <div class="stat-value active-value">
+          {{ activeCount }}
+        </div>
         <div class="stat-label">
-          <component :is="Icons.CheckCircle" :size="14" />
+          <component
+            :is="Icons.CheckCircle"
+            :size="14"
+          />
           {{ t('agora', 'Active') }}
         </div>
         <div class="stat-progress">
-          <div class="progress-bar" :style="{ width: `${(activeCount / totalInquiries) * 100}%` }"></div>
+          <div
+            class="progress-bar"
+            :style="{ width: `${(activeCount / totalInquiries) * 100}%` }"
+          />
         </div>
       </div>
 
       <!-- Comments -->
       <div class="stat-card">
-        <div class="stat-value">{{ totalComments }}</div>
+        <div class="stat-value">
+          {{ totalComments }}
+        </div>
         <div class="stat-label">
-          <component :is="Icons.MessageSquare" :size="14" />
+          <component
+            :is="Icons.MessageSquare"
+            :size="14"
+          />
           {{ t('agora', 'Comments') }}
         </div>
       </div>
 
       <!-- Participants -->
       <div class="stat-card">
-        <div class="stat-value">{{ totalParticipants }}</div>
+        <div class="stat-value">
+          {{ totalParticipants }}
+        </div>
         <div class="stat-label">
-          <component :is="Icons.Users" :size="14" />
+          <component
+            :is="Icons.Users"
+            :size="14"
+          />
           {{ t('agora', 'Participants') }}
         </div>
       </div>
 
       <!-- Supports -->
       <div class="stat-card">
-        <div class="stat-value">{{ totalSupports }}</div>
+        <div class="stat-value">
+          {{ totalSupports }}
+        </div>
         <div class="stat-label">
-          <component :is="Icons.ThumbUp" :size="14" />
+          <component
+            :is="Icons.ThumbUp"
+            :size="14"
+          />
           {{ t('agora', 'Supports') }}
         </div>
       </div>
 
       <!-- Engagement Rate -->
       <div class="stat-card">
-        <div class="stat-value">{{ engagementRate }}%</div>
+        <div class="stat-value">
+          {{ engagementRate }}%
+        </div>
         <div class="stat-label">
-          <component :is="Icons.TrendingUp" :size="14" />
+          <component
+            :is="Icons.TrendingUp"
+            :size="14"
+          />
           {{ t('agora', 'Engagement') }}
         </div>
         <div class="stat-progress">
-          <div class="progress-bar engagement" :style="{ width: `${engagementRate}%` }"></div>
+          <div
+            class="progress-bar engagement"
+            :style="{ width: `${engagementRate}%` }"
+          />
         </div>
       </div>
     </div>
 
     <!-- Distribution Chart -->
-    <div v-if="typeDistribution.length > 0" class="distribution-section">
+    <div
+      v-if="typeDistribution.length > 0"
+      class="distribution-section"
+    >
       <h4>{{ t('agora', 'By Type') }}</h4>
       <div class="distribution-bars">
         <div
@@ -89,15 +137,18 @@
           class="distribution-item"
         >
           <span class="dist-label">
-            <component :is="getTypeIcon(item.type)" :size="12" />
+            <component
+              :is="getTypeIcon(item.type)"
+              :size="12"
+            />
             {{ item.label }}
           </span>
           <div class="dist-bar-container">
-            <div 
-              class="dist-bar" 
+            <div
+              class="dist-bar"
               :style="{ width: `${item.percentage}%` }"
               :class="`dist-${item.type?.toLowerCase() || 'default'}`"
-            ></div>
+            />
           </div>
           <span class="dist-value">{{ item.count }}</span>
         </div>
@@ -105,7 +156,10 @@
     </div>
 
     <!-- Status Distribution -->
-    <div v-if="statusDistribution.length > 0" class="distribution-section">
+    <div
+      v-if="statusDistribution.length > 0"
+      class="distribution-section"
+    >
       <h4>{{ t('agora', 'By Status') }}</h4>
       <div class="status-pills">
         <span
@@ -140,13 +194,12 @@ const sessionStore = useSessionStore()
 // Computed stats
 const totalInquiries = computed(() => props.inquiries.length)
 
-
 const trends = computed(() => ({}))
 
-const activeCount = computed(() => 
-  props.inquiries.filter(i => 
-    i.status?.inquiryStatus === 'active' && !i.status?.isArchived
-  ).length
+const activeCount = computed(
+  () =>
+    props.inquiries.filter((i) => i.status?.inquiryStatus === 'active' && !i.status?.isArchived)
+      .length
 )
 
 const totalComments = computed(() =>
@@ -163,22 +216,21 @@ const totalSupports = computed(() =>
 
 const engagementRate = computed(() => {
   if (totalInquiries.value === 0) return 0
-  const engaged = props.inquiries.filter(i => 
-    (i.status?.countComments || 0) > 0 || (i.status?.countSupports || 0) > 0
+  const engaged = props.inquiries.filter(
+    (i) => (i.status?.countComments || 0) > 0 || (i.status?.countSupports || 0) > 0
   ).length
   return Math.round((engaged / totalInquiries.value) * 100)
 })
 
-
 const typeDistribution = computed(() => {
   const types = sessionStore.appSettings?.inquiryTypeTab || []
   const counts: Record<string, number> = {}
-  
-  props.inquiries.forEach(inquiry => {
+
+  props.inquiries.forEach((inquiry) => {
     const type = inquiry.type || 'default'
     counts[type] = (counts[type] || 0) + 1
   })
-  
+
   return Object.entries(counts)
     .map(([type, count]) => {
       const data = getInquiryTypeData(type, types)
@@ -186,7 +238,7 @@ const typeDistribution = computed(() => {
         type,
         label: data?.label || type,
         count,
-        percentage: Math.round((count / totalInquiries.value) * 100)
+        percentage: Math.round((count / totalInquiries.value) * 100),
       }
     })
     .sort((a, b) => b.count - a.count)
@@ -198,25 +250,25 @@ const statusDistribution = computed(() => {
     active: t('agora', 'Active'),
     closed: t('agora', 'Closed'),
     draft: t('agora', 'Draft'),
-    waiting_approval: t('agora', 'Pending')
+    waiting_approval: t('agora', 'Pending'),
   }
-  
-  props.inquiries.forEach(inquiry => {
+
+  props.inquiries.forEach((inquiry) => {
     const status = inquiry.status?.inquiryStatus || 'draft'
     counts[status] = (counts[status] || 0) + 1
   })
-  
+
   return Object.entries(counts)
     .map(([status, count]) => ({
       status,
       label: labels[status] || status,
-      count
+      count,
     }))
     .sort((a, b) => b.count - a.count)
 })
 
 const lastUpdated = computed(() => {
-  const timestamps = props.inquiries.map(i => i.status?.lastInteraction || i.status?.created || 0)
+  const timestamps = props.inquiries.map((i) => i.status?.lastInteraction || i.status?.created || 0)
   return timestamps.length > 0 ? Math.max(...timestamps) : null
 })
 
@@ -410,12 +462,24 @@ function formatTime(timestamp: number): string {
         border-radius: 3px;
         transition: width 0.6s ease;
 
-        &.dist-proposal { background: #10b981; }
-        &.dist-survey { background: #3b82f6; }
-        &.dist-poll { background: #8b5cf6; }
-        &.dist-discussion { background: #06b6d4; }
-        &.dist-question { background: #f59e0b; }
-        &.dist-default { background: var(--color-text-lighter); }
+        &.dist-proposal {
+          background: #10b981;
+        }
+        &.dist-survey {
+          background: #3b82f6;
+        }
+        &.dist-poll {
+          background: #8b5cf6;
+        }
+        &.dist-discussion {
+          background: #06b6d4;
+        }
+        &.dist-question {
+          background: #f59e0b;
+        }
+        &.dist-default {
+          background: var(--color-text-lighter);
+        }
       }
     }
 
@@ -484,7 +548,7 @@ function formatTime(timestamp: number): string {
 
   .distribution-item {
     flex-wrap: wrap;
-    
+
     .dist-label {
       min-width: 70px;
     }

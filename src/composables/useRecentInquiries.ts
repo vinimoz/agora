@@ -21,7 +21,7 @@ export interface UseRecentInquiriesOptions {
  * other surface that needs the same ranking.
  */
 export function useRecentInquiries(
-  options: UseRecentInquiriesOptions = {},
+  options: UseRecentInquiriesOptions = {}
 ): ComputedRef<Inquiry[]> {
   const { limit = 5 } = options
   const viewable = useViewableInquiries()

@@ -47,8 +47,14 @@ const interval = computed(() => Interval.fromDateTimes(dateTime, to.value))
 </script>
 
 <template>
-  <div :title="interval.toISO()" class="datebox">
-    <div class="month from" :class="{ span: isSameMonth }">
+  <div
+    :title="interval.toISO()"
+    class="datebox"
+  >
+    <div
+      class="month from"
+      :class="{ span: isSameMonth }"
+    >
       {{
         dateTime.toLocaleString(
           DateTime.now().year === dateTime.year
@@ -58,7 +64,10 @@ const interval = computed(() => Interval.fromDateTimes(dateTime, to.value))
       }}
     </div>
 
-    <div v-if="!isSameMonth" class="month to">
+    <div
+      v-if="!isSameMonth"
+      class="month to"
+    >
       {{
         to.toLocaleString(
           DateTime.now().year === dateTime.year
@@ -68,17 +77,30 @@ const interval = computed(() => Interval.fromDateTimes(dateTime, to.value))
       }}
     </div>
 
-    <div class="day from" :class="{ span: isSameDay }">
+    <div
+      class="day from"
+      :class="{ span: isSameDay }"
+    >
       {{ dateTime.toLocaleString({ weekday: 'short', day: 'numeric' }) }}
     </div>
 
-    <span v-if="!isSameDay" class="day divider">–</span>
+    <span
+      v-if="!isSameDay"
+      class="day divider"
+    >–</span>
 
-    <div v-if="!isSameDay" class="day to">
+    <div
+      v-if="!isSameDay"
+      class="day to"
+    >
       {{ to.toLocaleString({ weekday: 'short', day: 'numeric' }) }}
     </div>
 
-    <div v-if="!allDay" class="time from" :class="{ span: isSameDay }">
+    <div
+      v-if="!allDay"
+      class="time from"
+      :class="{ span: isSameDay }"
+    >
       {{
         isSameDay && !isSameTime
           ? interval.toLocaleString(DateTime.TIME_SIMPLE)
@@ -86,11 +108,17 @@ const interval = computed(() => Interval.fromDateTimes(dateTime, to.value))
       }}
     </div>
 
-    <span v-if="!allDay && !isSameDay" class="time divider">
+    <span
+      v-if="!allDay && !isSameDay"
+      class="time divider"
+    >
       {{ isSameDay ? '-' : '&nbsp;' }}
     </span>
 
-    <div v-if="!allDay && !isSameDay" class="time to">
+    <div
+      v-if="!allDay && !isSameDay"
+      class="time to"
+    >
       {{ to.toLocaleString(DateTime.TIME_SIMPLE) }}
     </div>
   </div>

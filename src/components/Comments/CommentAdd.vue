@@ -39,22 +39,22 @@ const currentInquiry = computed(() => {
   if (inquiryStore.id) {
     return inquiryStore
   }
-  
+
   // Otherwise, try to find the inquiry by ID in the store or use minimal data
   if (props.inquiryId) {
     return {
       id: props.inquiryId,
       configuration: {
-        forceConfidentialComments: false
+        forceConfidentialComments: false,
       },
       // Default owner is the current user if not available
-      owner: inquiryStore.inquiry?.owner || { 
-        id: sessionStore.currentUser.id, 
-        displayName: sessionStore.currentUser.displayName 
-      }
+      owner: inquiryStore.inquiry?.owner || {
+        id: sessionStore.currentUser.id,
+        displayName: sessionStore.currentUser.displayName,
+      },
     }
   }
-  
+
   return null
 })
 
@@ -68,7 +68,7 @@ if (props.inquiryId && (!inquiryStore.inquiry?.id || inquiryStore.inquiry.id !==
 // Confidential text based on inquiry owner
 const confidentialText = computed(() => {
   if (!currentInquiry.value) return t('agora', 'Only visible to me')
-  
+
   const owner = currentInquiry.value.owner
   if (!owner || owner.id === sessionStore.currentUser.id) {
     return t('agora', 'Only visible to me')
@@ -77,7 +77,7 @@ const confidentialText = computed(() => {
   if (!inquiryStore.permissions.edit) {
     return t('agora', 'Visible only to the organizer')
   }
-  
+
   return t('agora', 'Only visible to {displayName}', {
     displayName: owner.displayName || t('agora', 'The owner'),
   })
@@ -93,7 +93,6 @@ const isConfidentialForced = computed(() => {
  * Write a comment
  */
 async function writeComment() {
-  
   if (!comment.value || !currentInquiry.value || isSubmitting.value) {
     return
   }
@@ -102,22 +101,23 @@ async function writeComment() {
 
   try {
     const inquiryId = currentInquiry.value.id
-    
-    await commentsStore.add({
-      message: comment.value,
-      confidential: confidential.value || isConfidentialForced.value,
-      optionId: props.optionId,
-    }, inquiryId)
-    
+
+    await commentsStore.add(
+      {
+        message: comment.value,
+        confidential: confidential.value || isConfidentialForced.value,
+        optionId: props.optionId,
+      },
+      inquiryId
+    )
+
     comment.value = ''
     confidential.value = false
-    
+
     // Reload comments to show the new one
-    if (props.optionId){
-        commentsStore.load(inquiryId, props.optionId)
-    }
-    else commentsStore.load(inquiryId)
-    
+    if (props.optionId) {
+      commentsStore.load(inquiryId, props.optionId)
+    } else commentsStore.load(inquiryId)
   } catch (error) {
     console.error('Error saving comment:', error)
     showError(t('agora', 'Error while saving comment'))
@@ -143,9 +143,9 @@ defineExpose({ focus })
 
 <template>
   <div class="comment-add">
-    <UserItem 
-      :user="sessionStore.currentUser" 
-      hide-names 
+    <UserItem
+      :user="sessionStore.currentUser"
+      hide-names
     />
     <div class="comment-add__input">
       <div class="comment-add__editor">
@@ -154,10 +154,10 @@ defineExpose({ focus })
           v-model="comment"
           :aria-label="inputLabel"
           :placeholder="placeholder ?? t('agora', 'Write a comment …')"
-                  :autolink="true"
-                  :use-markdown="true"
-                  :emoji-autocomplete="true"
-                  :link-autocomplete="true"
+          :autolink="true"
+          :use-markdown="true"
+          :emoji-autocomplete="true"
+          :link-autocomplete="true"
           :maxlength="150"
           :disabled="!currentInquiry || isSubmitting"
           @submit="writeComment"
@@ -173,7 +173,7 @@ defineExpose({ focus })
           {{ t('agora', 'Send') }}
         </NcButton>
       </div>
-      
+
       <div class="comment-add__options">
         <NcCheckboxRadioSwitch
           v-if="!isConfidentialForced"
@@ -183,11 +183,11 @@ defineExpose({ focus })
         >
           {{ confidentialText }}
         </NcCheckboxRadioSwitch>
-        
-        <div 
-          v-else 
+
+        <div
+          v-else
           class="confidential-forced"
-          :class="{ 'disabled': !currentInquiry }"
+          :class="{ disabled: !currentInquiry }"
         >
           <span class="confidential-icon">🔒</span>
           {{ confidentialText }}
@@ -223,7 +223,7 @@ defineExpose({ focus })
   }
 
   .rich-contenteditable {
-  width: 100%;
+    width: 100%;
   }
 
   .comment-add__submit {
@@ -275,14 +275,12 @@ defineExpose({ focus })
       flex-direction: column;
       gap: 8px;
       align-items: stretch;
+    }
 
-      }
-
-      .comment-add__submit {
-        align-self: flex-end;
-        width: 100%;
-      }
+    .comment-add__submit {
+      align-self: flex-end;
+      width: 100%;
     }
   }
-
+}
 </style>

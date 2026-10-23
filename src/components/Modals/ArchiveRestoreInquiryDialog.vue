@@ -11,7 +11,7 @@ import { showError } from '@nextcloud/dialogs'
 
 const model = defineModel<boolean>({ required: true })
 const { inquiry } = defineProps<{ inquiry: Inquiry }>()
-const emit = defineEmits(['toggle']) 
+const emit = defineEmits(['toggle'])
 
 const inquiriesStore = useInquiriesStore()
 const sessionStore = useSessionStore()
@@ -20,9 +20,9 @@ const adminAccess = computed(() => !inquiry.permissions.view && sessionStore.cur
 
 function dialogOK() {
   try {
-    inquiriesStore.toggleArchive({ 
+    inquiriesStore.toggleArchive({
       inquiryId: inquiry.id,
-      archive: !isArchived.value // Pass whether to archive or restore
+      archive: !isArchived.value, // Pass whether to archive or restore
     })
     emit('toggle')
   } catch {
@@ -35,38 +35,39 @@ const isArchived = computed(() => inquiry.status?.isArchived ?? false)
 const dialogText = computed(() => {
   if (isArchived.value) {
     return t('agora', 'Are you sure you want to restore this inquiry?')
-  } 
-    if (adminAccess.value) {
-      return t('agora', 'Are you sure you want to archive the inquiry? {username} will be notified.', {
+  }
+  if (adminAccess.value) {
+    return t(
+      'agora',
+      'Are you sure you want to archive the inquiry? {username} will be notified.',
+      {
         username: inquiry.owner.displayName,
-      })
-    } 
-      return t('agora', 'Are you sure you want to archive this inquiry?')
-    
-  
+      }
+    )
+  }
+  return t('agora', 'Are you sure you want to archive this inquiry?')
 })
 
 const dialogProps = {
-  name: isArchived.value 
-    ? t('agora', 'Restore inquiry')
-    : t('agora', 'Archive inquiry'),
+  name: isArchived.value ? t('agora', 'Restore inquiry') : t('agora', 'Archive inquiry'),
   noClose: true,
   closeOnClickOutside: true,
   buttons: [
     { label: t('agora', 'Cancel') },
     {
-      label: isArchived.value 
-        ? t('agora', 'Restore') 
-        : t('agora', 'Archive'),
+      label: isArchived.value ? t('agora', 'Restore') : t('agora', 'Archive'),
       variant: isArchived.value ? 'success' : 'primary',
       callback: () => dialogOK(),
     },
-  ]
+  ],
 }
 </script>
 
 <template>
-  <NcDialog v-model:open="model" v-bind="dialogProps">
+  <NcDialog
+    v-model:open="model"
+    v-bind="dialogProps"
+  >
     <span>
       {{ dialogText }}
     </span>

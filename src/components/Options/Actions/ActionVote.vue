@@ -4,7 +4,10 @@
 -->
 
 <template>
-  <div v-if="show" class="action-vote-container">
+  <div
+    v-if="show"
+    class="action-vote-container"
+  >
     <!-- For actions that need a modal -->
     <ExportResultsModal
       v-if="showExportResult"
@@ -18,16 +21,18 @@
     <div v-else>
       <!-- Show loading or confirmation -->
       <NcLoading v-if="loading" />
-      <div v-else-if="error" class="error-message">
+      <div
+        v-else-if="error"
+        class="error-message"
+      >
         {{ error }}
       </div>
     </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'  
+import { ref, onMounted, watch } from 'vue'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import ExportResultsModal from './ExportResultsModal.vue'
@@ -46,44 +51,43 @@ const emit = defineEmits<{
 }>()
 
 const engineStore = useSupportEngineStore()
-const showExportResult = ref(false) 
+const showExportResult = ref(false)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
 // Execute action immediately when component mounts
 const executeAction = async () => {
- if (!props.show || !props.actionKey) return
+  if (!props.show || !props.actionKey) return
 
   loading.value = true
   error.value = null
 
-try {
-  switch (props.actionKey) {
-    case 'start_vote':
-      await startVote()
-      break
-    case 'close_vote':
-      await closeVote()
-      break
-    case 'next_phase':
-      await nextPhase()
-      break
-    case 'view_results':
-      await viewResults()  
-      break
-    case 'export_results':
-      showExportResult.value = true
-      return  // Don't close yet, wait for modal
-    default:
-      console.warn(`Unknown action: ${props.actionKey}`)
-  }
-  
-  // Close immediately after execution for non-modal actions
-  if (props.actionKey !== 'export_results') {
-    emit('close')
-  }
+  try {
+    switch (props.actionKey) {
+      case 'start_vote':
+        await startVote()
+        break
+      case 'close_vote':
+        await closeVote()
+        break
+      case 'next_phase':
+        await nextPhase()
+        break
+      case 'view_results':
+        await viewResults()
+        break
+      case 'export_results':
+        showExportResult.value = true
+        return // Don't close yet, wait for modal
+      default:
+        console.warn(`Unknown action: ${props.actionKey}`)
+    }
 
-    } catch (err) {
+    // Close immediately after execution for non-modal actions
+    if (props.actionKey !== 'export_results') {
+      emit('close')
+    }
+  } catch (err) {
     error.value = err instanceof Error ? err.message : 'Action failed'
     console.error(`Failed to execute ${props.actionKey}:`, err)
   } finally {
@@ -94,10 +98,10 @@ try {
 const startVote = async () => {
   try {
     const engine = engineStore.getCurrentEngine()
-    
+
     if (!engine) {
       showError(t('agora', 'Please create a vote system before starting a vote'))
-      return 
+      return
     }
 
     if (engine.target_ids.length === 0) {
@@ -107,9 +111,9 @@ const startVote = async () => {
 
     await engineStore.updateEngine(engine.id, { status: 'active' })
     showSuccess(t('agora', 'Vote started successfully'))
-    emit('actionCompleted', { 
-      refreshOptions: true, 
-      message: 'Vote started successfully'
+    emit('actionCompleted', {
+      refreshOptions: true,
+      message: 'Vote started successfully',
     })
   } catch (error) {
     // Only unexpected errors (e.g. network failure) will reach this point
@@ -118,35 +122,32 @@ const startVote = async () => {
   }
 }
 
-
 const closeVote = async () => {
   try {
     const engine = engineStore.getCurrentEngine()
-   
-   
+
     if (!engine) {
       showError(t('agora', 'Please create a vote system before starting a vote'))
-      return   
+      return
     }
 
     if (engine.target_ids.length === 0) {
       showError(t('agora', 'Please add options before starting a vote'))
       return
     }
-   
-       if (engine.status === 'draft') {
+
+    if (engine.status === 'draft') {
       showError(t('agora', 'Could not close a vote not started'))
       return
     }
 
-
     await engineStore.updateEngine(engine.id, { status: 'closed' })
-    
+
     showSuccess(t('agora', 'Vote closed successfully'))
-    
-    emit('actionCompleted', { 
-      refreshOptions: true, 
-      message: 'Vote closed successfully'
+
+    emit('actionCompleted', {
+      refreshOptions: true,
+      message: 'Vote closed successfully',
     })
   } catch (error) {
     console.error('Failed to close vote:', error)
@@ -160,31 +161,30 @@ const nextPhase = async () => {
 
     if (!engine) {
       showError(t('agora', 'Please create a vote system before starting a vote'))
-      return   
+      return
     }
 
     if (engine.target_ids.length === 0) {
       showError(t('agora', 'Please add options before starting a vote'))
       return
     }
-   
-    
+
     const phases = ['draft', 'active', 'closed']
     const currentIdx = phases.indexOf(engine.status)
     const nextPhaseName = phases[currentIdx + 1]
-    
+
     if (!nextPhaseName) {
       showError(t('agora', 'Already in final phase'))
       return
     }
-    
+
     await engineStore.updateEngine(engine.id, { status: nextPhaseName })
-    
+
     showSuccess(t('agora', 'Phase changed to {phase}', { phase: nextPhaseName }))
-    
-    emit('actionCompleted', { 
-      refreshOptions: true, 
-      message: `Phase changed to ${nextPhaseName}`
+
+    emit('actionCompleted', {
+      refreshOptions: true,
+      message: `Phase changed to ${nextPhaseName}`,
     })
   } catch (error) {
     console.error('Failed to change phase:', error)
@@ -194,17 +194,17 @@ const nextPhase = async () => {
 
 const viewResults = async () => {
   // Emit signal to switch to results view
-  emit('actionCompleted', { 
+  emit('actionCompleted', {
     switchToResultsLayout: true,
-    message: 'Switched to results view'
+    message: 'Switched to results view',
   })
   emit('close')
 }
 
 const handleExported = () => {
-  emit('actionCompleted', { 
-    refreshOptions: false, 
-    message: 'Results exported successfully'
+  emit('actionCompleted', {
+    refreshOptions: false,
+    message: 'Results exported successfully',
   })
   handleClose()
 }
@@ -213,16 +213,18 @@ const handleClose = () => {
   emit('close')
 }
 
-watch(() => props.show, (newValue) => {
-  if (newValue) {
-    executeAction()
+watch(
+  () => props.show,
+  (newValue) => {
+    if (newValue) {
+      executeAction()
+    }
   }
-})
-
+)
 
 // Execute immediately when component mounts
 onMounted(() => {
- if (props.show) {
+  if (props.show) {
     executeAction()
   }
 })

@@ -13,35 +13,33 @@ import type { AxiosError } from '@nextcloud/axios'
 import type { Activity, ActivityStore } from '../Types/activity.types.ts'
 
 export const useActivityStore = defineStore('activity', {
-	state: (): ActivityStore => ({
-		activities: [],
-	}),
+  state: (): ActivityStore => ({
+    activities: [],
+  }),
 
-	actions: {
-		async load(): Promise<void> {
-			const sessionStore = useSessionStore()
-			try {
-				const response = await ActivityAPI.getActivities(
-					sessionStore.currentInquiryId,
-				)
-				this.activities = response.data.ocs.data
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				this.$reset()
-			}
-		},
-	},
+  actions: {
+    async load(): Promise<void> {
+      const sessionStore = useSessionStore()
+      try {
+        const response = await ActivityAPI.getActivities(sessionStore.currentInquiryId)
+        this.activities = response.data.ocs.data
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        this.$reset()
+      }
+    },
+  },
 
-	getters: {
-		getActivitiesForInquiry(state): Activity[] {
-			const sessionStore = useSessionStore()
-			return state.activities.filter(
-				(activity: Activity) =>
-					activity.object_type === 'inquiry'
-					&& activity.object_id === Number(sessionStore.currentInquiryId),
-			)
-		},
-	},
+  getters: {
+    getActivitiesForInquiry(state): Activity[] {
+      const sessionStore = useSessionStore()
+      return state.activities.filter(
+        (activity: Activity) =>
+          activity.object_type === 'inquiry' &&
+          activity.object_id === Number(sessionStore.currentInquiryId)
+      )
+    },
+  },
 })

@@ -5,7 +5,10 @@
 
 <template>
   <!-- Main editor container that fills its parent -->
-  <div ref="editorContainer" class="editor-container">
+  <div
+    ref="editorContainer"
+    class="editor-container"
+  >
     <!-- Toolbar with essential formatting options -->
     <div v-if="!props.readonly">
       <input
@@ -14,9 +17,12 @@
         accept="image/*"
         style="display: none"
         @change="handleImageUpload"
-      />
+      >
 
-      <div v-if="editor" class="editor-toolbar">
+      <div
+        v-if="editor"
+        class="editor-toolbar"
+      >
         <!-- Basic text formatting -->
         <NcButton
           type="button"
@@ -47,16 +53,22 @@
         </NcButton>
 
         <!-- Heading selector -->
-        <select 
+        <select
           v-model="selectedHeading"
           :title="t('agora', 'Text heading')"
           :aria-label="t('agora', 'Text heading')"
           class="heading-select"
           @change="setHeading"
         >
-          <option value="paragraph">{{ t('agora', 'Normal text') }}</option>
-          <option value="h1">{{ t('agora', 'Heading 1') }}</option>
-          <option value="h2">{{ t('agora', 'Heading 2') }}</option>
+          <option value="paragraph">
+            {{ t('agora', 'Normal text') }}
+          </option>
+          <option value="h1">
+            {{ t('agora', 'Heading 1') }}
+          </option>
+          <option value="h2">
+            {{ t('agora', 'Heading 2') }}
+          </option>
         </select>
 
         <!-- Lists -->
@@ -163,13 +175,16 @@
           accept=".docx"
           style="display: none"
           @change="handleWordImport"
-        />
+        >
       </div>
     </div>
 
     <!-- Editor Content -->
     <div class="editor-content-wrapper">
-      <EditorContent :editor="editor" class="editor-content" />
+      <EditorContent
+        :editor="editor"
+        class="editor-content"
+      />
     </div>
   </div>
 </template>
@@ -200,12 +215,12 @@ const props = defineProps({
   },
   optionId: {
     type: [String, Number],
-    required: true
+    required: true,
   },
   modelValue: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -232,20 +247,22 @@ const handleImageUpload = async (event) => {
 
   try {
     const response = await attachmentsStore.upload(props.optionId, file)
-    
+
     // Use preview URL with original image dimensions
     const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true)
 
     if (editor.value) {
       // Insert the image with original size and centered by default
-      editor.value.chain()
+      editor.value
+        .chain()
         .focus()
-        .insertContent(`<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`)
+        .insertContent(
+          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`
+        )
         .run()
 
       showSuccess(t('agora', 'Image inserted'))
     }
-
   } catch (error) {
     console.error('Image upload failed:', error)
     showError(t('agora', 'Image upload failed'))
@@ -261,14 +278,14 @@ const CustomImage = Image.extend({
       ...this.parent?.(),
       align: {
         default: 'center',
-        parseHTML: element => element.getAttribute('data-align') || 'center',
-        renderHTML: attributes => ({
-            'data-align': attributes.align,
-            class: `editor-image image-align-${attributes.align}`
-          })
-      }
+        parseHTML: (element) => element.getAttribute('data-align') || 'center',
+        renderHTML: (attributes) => ({
+          'data-align': attributes.align,
+          class: `editor-image image-align-${attributes.align}`,
+        }),
+      },
     }
-  }
+  },
 })
 
 const editor = useEditor({
@@ -311,7 +328,7 @@ const editor = useEditor({
 
     handlePaste: (view, event) => {
       const items = Array.from(event.clipboardData?.items || [])
-      const imageItem = items.find(item => item.type.startsWith('image'))
+      const imageItem = items.find((item) => item.type.startsWith('image'))
 
       if (imageItem) {
         const file = imageItem.getAsFile()
@@ -324,7 +341,7 @@ const editor = useEditor({
     },
     handleDrop: (view, event) => {
       const files = Array.from(event.dataTransfer?.files || [])
-      const imageFile = files.find(file => file.type.startsWith('image'))
+      const imageFile = files.find((file) => file.type.startsWith('image'))
 
       if (imageFile) {
         handlePastedImage(imageFile)
@@ -356,15 +373,17 @@ const handlePastedImage = async (file) => {
     }
 
     if (editor.value) {
-      editor.value.chain()
+      editor.value
+        .chain()
         .focus()
-        .insertContent(`<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`)
+        .insertContent(
+          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`
+        )
         .run()
 
       attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
       showSuccess(t('agora', 'Image inserted'))
     }
-
   } catch (error) {
     console.error('Pasted image upload failed:', error)
     showError(t('agora', 'Failed to insert image'))
@@ -388,20 +407,24 @@ watch(
 const selectedHeading = ref('paragraph')
 
 // Watch for heading changes with safety checks
-watch(() => {
-  if (!editor.value) return null
-  return editor.value.getAttributes('heading')
-}, (attrs) => {
-  if (attrs && attrs.level) {
-    selectedHeading.value = `h${attrs.level}`
-  } else {
-    selectedHeading.value = 'paragraph'
-  }
-}, { immediate: true })
+watch(
+  () => {
+    if (!editor.value) return null
+    return editor.value.getAttributes('heading')
+  },
+  (attrs) => {
+    if (attrs && attrs.level) {
+      selectedHeading.value = `h${attrs.level}`
+    } else {
+      selectedHeading.value = 'paragraph'
+    }
+  },
+  { immediate: true }
+)
 
 const setHeading = () => {
   if (!editor.value) return
-  
+
   if (selectedHeading.value === 'paragraph') {
     editor.value.chain().focus().setParagraph().run()
   } else {
@@ -560,7 +583,7 @@ onUnmounted(() => {
   padding: 2px;
 }
 
-:deep(img[src*="agora"]) {
+:deep(img[src*='agora']) {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;

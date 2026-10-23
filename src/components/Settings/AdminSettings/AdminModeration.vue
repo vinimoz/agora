@@ -23,15 +23,17 @@ const appSettingsStore = useAppSettingsStore()
       {{ t('agora', 'Enable the moderation feature') }}
     </NcCheckboxRadioSwitch>
 
-    <div v-if="!appSettingsStore.allowModeration" class="settings_details">
-    <NcCheckboxRadioSwitch
-      v-model="appSettingsStore.officialBypassModeration"
-      type="switch"
-      @update:model-value="appSettingsStore.write()"
+    <div
+      v-if="!appSettingsStore.allowModeration"
+      class="settings_details"
     >
-      {{ t('agora', 'Official user(s) bypass moderation') }}
-    </NcCheckboxRadioSwitch>
-
+      <NcCheckboxRadioSwitch
+        v-model="appSettingsStore.officialBypassModeration"
+        type="switch"
+        @update:model-value="appSettingsStore.write()"
+      >
+        {{ t('agora', 'Official user(s) bypass moderation') }}
+      </NcCheckboxRadioSwitch>
     </div>
   </div>
 </template>

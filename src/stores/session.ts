@@ -61,7 +61,6 @@ export type Session = {
   isLoaded: boolean
 }
 
-
 let lastLoadedUserId: string | null = null
 
 export const useSessionStore = defineStore('session', {
@@ -121,54 +120,53 @@ export const useSessionStore = defineStore('session', {
       return 0
     },
 
-
     currentInquiryId(state): number {
       if (state.route.name === 'inquiry' || state.route.name === 'page') {
         return Number(state.route.params.id)
       }
       return 0
     },
-      windowTitle(state): string {
-    // Don't import at top level, import dynamically
-    let title = `${t('agora', 'Agora')} – Nextcloud`
-    
-    try {
-      if (state.route.name === 'list') {
-        const inquiriesStore = useInquiriesStore()
-        if (inquiriesStore.categories && this.route.params.type) {
-          title = `${t('agora', 'Agora')} – ${inquiriesStore.categories[this.route.params.type as FilterType]?.titleExt || 'List'}`
-        }
-      } else if (state.route.name === 'group') {
-        const inquiryGroupsStore = useInquiryGroupsStore()
-        if (inquiryGroupsStore.currentInquiryGroup) {
-          title = `${t('agora', 'Agora')} – ${inquiryGroupsStore.currentInquiryGroup.titleExt || inquiryGroupsStore.currentInquiryGroup.name || ''}`
-        }
-      } else if (state.route.name === 'publicInquiry' || state.route.name === 'inquiry') {
-        try {
-          const inquiryStore = useInquiryStore()
-          if (inquiryStore.title) {
-            title = `${t('agora', 'Agora')} – ${inquiryStore.title}`
-          } else {
-            title = `${t('agora', 'Agora')} – ${t('agora', 'Enter title')}`
+    windowTitle(state): string {
+      // Don't import at top level, import dynamically
+      let title = `${t('agora', 'Agora')} – Nextcloud`
+
+      try {
+        if (state.route.name === 'list') {
+          const inquiriesStore = useInquiriesStore()
+          if (inquiriesStore.categories && this.route.params.type) {
+            title = `${t('agora', 'Agora')} – ${inquiriesStore.categories[this.route.params.type as FilterType]?.titleExt || 'List'}`
           }
-        } catch (error) {
-          title = `${t('agora', 'Agora')} – Inquiry`
-          console.warn('Error computing window title:', error)
+        } else if (state.route.name === 'group') {
+          const inquiryGroupsStore = useInquiryGroupsStore()
+          if (inquiryGroupsStore.currentInquiryGroup) {
+            title = `${t('agora', 'Agora')} – ${inquiryGroupsStore.currentInquiryGroup.titleExt || inquiryGroupsStore.currentInquiryGroup.name || ''}`
+          }
+        } else if (state.route.name === 'publicInquiry' || state.route.name === 'inquiry') {
+          try {
+            const inquiryStore = useInquiryStore()
+            if (inquiryStore.title) {
+              title = `${t('agora', 'Agora')} – ${inquiryStore.title}`
+            } else {
+              title = `${t('agora', 'Agora')} – ${t('agora', 'Enter title')}`
+            }
+          } catch (error) {
+            title = `${t('agora', 'Agora')} – Inquiry`
+            console.warn('Error computing window title:', error)
+          }
         }
+      } catch (error) {
+        console.warn('Error computing window title:', error)
       }
-    } catch (error) {
-      console.warn('Error computing window title:', error)
-    }
-    
-    return title
+
+      return title
+    },
   },
-},
 
   actions: {
     generateWatcherId() {
       this.watcher.id = Math.random().toString(36).substring(2)
     },
-/*
+    /*
     async load(
       to: null | RouteLocationNormalized,
       cheapLoading: boolean = false,
@@ -233,119 +231,119 @@ export const useSessionStore = defineStore('session', {
       Logger.debug('Session loaded')
     },
     */
-   async load(
-  to: null | RouteLocationNormalized,
-  cheapLoading: boolean = false,
-  forceReload: boolean = false
-) {
-  Logger.debug('Loading session')
+    async load(
+      to: null | RouteLocationNormalized,
+      cheapLoading: boolean = false,
+      forceReload: boolean = false
+    ) {
+      Logger.debug('Loading session')
 
-  try {
-    if (!forceReload && this.isLoaded && this.currentUser.id === lastLoadedUserId) {
-      Logger.debug('Session already loaded for same user, skipping, route set to:', to)
-      if (to !== null) await this.setRouter(to)
-      return
-    }
-
-    this.generateWatcherId()
-
-    if (to !== null) {
-      Logger.debug('Set requested route', { to })
-      await this.setRouter(to)
-      Logger.debug('Route set', { route: this.route })
-    }
-
-    if (cheapLoading) {
-      Logger.debug('Same route, skipping session load')
-      return
-    }
-
-    let response
-    try {
-      if (this.route.name === 'publicInquiry' && this.publicToken) {
-        response = await PublicAPI.getSession(this.publicToken)
-      } else {
-        response = await SessionAPI.getSession()
-      }
-    } catch (apiError) {
-      Logger.error('API error in session load', { error: apiError })
-      throw apiError
-    }
-
-    if (response && response.data) {
-      this.$patch(response.data)
-
-      // Update appSettingsStore safely
       try {
-        const appSettingsStore = useAppSettingsStore()
-        if (appSettingsStore) {
-          appSettingsStore.$patch({
-            inquiryStatusTab: this.appSettings?.inquiryStatusTab || [],
-            inquiryTypeTab: this.appSettings?.inquiryTypeTab || [],
-            inquiryOptionTypeTab: this.appSettings?.inquiryOptionTypeTab || [],
-            inquiryGroupTypeTab: this.appSettings?.inquiryGroupTypeTab || [],
-            inquiryFamilyTab: this.appSettings?.inquiryFamilyTab || [],
-            optionFamilyTab: this.appSettings?.optionFamilyTab || [],
-            categoryTab: this.appSettings?.categoryTab || [],
-            locationTab: this.appSettings?.locationTab || [],
-          })
+        if (!forceReload && this.isLoaded && this.currentUser.id === lastLoadedUserId) {
+          Logger.debug('Session already loaded for same user, skipping, route set to:', to)
+          if (to !== null) await this.setRouter(to)
+          return
         }
-      } catch (storeError) {
-        console.warn('Could not update appSettingsStore:', storeError)
+
+        this.generateWatcherId()
+
+        if (to !== null) {
+          Logger.debug('Set requested route', { to })
+          await this.setRouter(to)
+          Logger.debug('Route set', { route: this.route })
+        }
+
+        if (cheapLoading) {
+          Logger.debug('Same route, skipping session load')
+          return
+        }
+
+        let response
+        try {
+          if (this.route.name === 'publicInquiry' && this.publicToken) {
+            response = await PublicAPI.getSession(this.publicToken)
+          } else {
+            response = await SessionAPI.getSession()
+          }
+        } catch (apiError) {
+          Logger.error('API error in session load', { error: apiError })
+          throw apiError
+        }
+
+        if (response && response.data) {
+          this.$patch(response.data)
+
+          // Update appSettingsStore safely
+          try {
+            const appSettingsStore = useAppSettingsStore()
+            if (appSettingsStore) {
+              appSettingsStore.$patch({
+                inquiryStatusTab: this.appSettings?.inquiryStatusTab || [],
+                inquiryTypeTab: this.appSettings?.inquiryTypeTab || [],
+                inquiryOptionTypeTab: this.appSettings?.inquiryOptionTypeTab || [],
+                inquiryGroupTypeTab: this.appSettings?.inquiryGroupTypeTab || [],
+                inquiryFamilyTab: this.appSettings?.inquiryFamilyTab || [],
+                optionFamilyTab: this.appSettings?.optionFamilyTab || [],
+                categoryTab: this.appSettings?.categoryTab || [],
+                locationTab: this.appSettings?.locationTab || [],
+              })
+            }
+          } catch (storeError) {
+            console.warn('Could not update appSettingsStore:', storeError)
+          }
+
+          this.isLoaded = true
+          lastLoadedUserId = this.currentUser?.id || null
+        }
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+
+        Logger.error('Error loading session', { error })
+
+        // Set default values instead of resetting completely
+        this.$patch({
+          isLoaded: true, // Mark as loaded to prevent infinite loops
+          currentUser: {
+            id: '',
+            displayName: 'Guest',
+            localeCodeIntl: 'en',
+            languageCodeIntl: 'en',
+          },
+          userStatus: {
+            isLoggedin: false,
+            isAdmin: false,
+          },
+          appSettings: {
+            inquiryStatusTab: [],
+            inquiryTypeTab: [],
+            inquiryOptionTypeTab: [],
+            inquiryGroupTypeTab: [],
+            inquiryFamilyTab: [],
+            optionFamilyTab: [],
+            categoryTab: [],
+            locationTab: [],
+          },
+        })
+
+        // Don't throw the error - handle it gracefully
+        Logger.warn('Session loaded with default values due to error')
       }
+      Logger.debug('Session loaded')
+    },
 
-      this.isLoaded = true
-      lastLoadedUserId = this.currentUser?.id || null
-    }
-  } catch (error) {
-    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-      return
-    }
+    async setRouter(payload: RouteLocationNormalized) {
+      this.route.currentRoute = payload.fullPath || ''
+      this.route.name = payload.name || ''
+      this.route.path = payload.path || ''
 
-    Logger.error('Error loading session', { error })
-
-    // Set default values instead of resetting completely
-    this.$patch({
-      isLoaded: true, // Mark as loaded to prevent infinite loops
-      currentUser: {
-        id: '',
-        displayName: 'Guest',
-        localeCodeIntl: 'en',
-        languageCodeIntl: 'en',
-      },
-      userStatus: {
-        isLoggedin: false,
-        isAdmin: false,
-      },
-      appSettings: {
-        inquiryStatusTab: [],
-        inquiryTypeTab: [],
-        inquiryOptionTypeTab: [],
-        inquiryGroupTypeTab: [],
-        inquiryFamilyTab: [],
-        optionFamilyTab: [],
-        categoryTab: [],
-        locationTab: [],
-      },
-    })
-
-    // Don't throw the error - handle it gracefully
-    Logger.warn('Session loaded with default values due to error')
-  }
-  Logger.debug('Session loaded')
-},
-
-async setRouter(payload: RouteLocationNormalized) {
-  this.route.currentRoute = payload.fullPath || ''
-  this.route.name = payload.name || ''
-  this.route.path = payload.path || ''
-  
-  // Safely extract params with defaults
-  this.route.params.id = payload.params?.id ? Number(payload.params.id) : 0
-  this.route.params.token = payload.params?.token ? String(payload.params.token) : ''
-  this.route.params.type = (payload.params?.type as FilterType) || 'relevant'
-  this.route.params.slug = payload.params?.slug ? String(payload.params.slug) : ''
-},
+      // Safely extract params with defaults
+      this.route.params.id = payload.params?.id ? Number(payload.params.id) : 0
+      this.route.params.token = payload.params?.token ? String(payload.params.token) : ''
+      this.route.params.type = (payload.params?.type as FilterType) || 'relevant'
+      this.route.params.slug = payload.params?.slug ? String(payload.params.slug) : ''
+    },
 
     // Share store
     async loadShare(): Promise<void> {

@@ -35,7 +35,10 @@ onUnmounted(() => {
 <template>
   <div class="comments">
     <Activities v-if="!showEmptyContent" />
-    <NcEmptyContent v-else v-bind="emptyContentProps">
+    <NcEmptyContent
+      v-else
+      v-bind="emptyContentProps"
+    >
       <template #icon>
         <ActivityIcon />
       </template>

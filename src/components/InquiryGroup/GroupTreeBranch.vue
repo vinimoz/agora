@@ -4,53 +4,89 @@
 -->
 
 <template>
-  <div class="group-tree-branch" :style="{ paddingLeft: `${depth * 20}px` }">
+  <div
+    class="group-tree-branch"
+    :style="{ paddingLeft: `${depth * 20}px` }"
+  >
     <!-- Node -->
-    <div 
+    <div
       class="group-tree-node"
       :class="{
         'has-children': node.children.length > 0,
-        'expanded': expanded,
-        'selected': node.id === selectedId,
-        [`depth-${depth}`]: true
+        expanded: expanded,
+        selected: node.id === selectedId,
+        [`depth-${depth}`]: true,
       }"
       @click="handleClick"
     >
       <!-- Toggle Button -->
-      <button 
+      <button
         v-if="node.children.length > 0"
         class="toggle-btn"
         @click.stop="emit('toggle', node.id)"
       >
-        <component :is="expanded ? Icons.ChevronDown : Icons.ChevronRight" :size="16" />
+        <component
+          :is="expanded ? Icons.ChevronDown : Icons.ChevronRight"
+          :size="16"
+        />
       </button>
-      <span v-else class="toggle-placeholder"></span>
+      <span
+        v-else
+        class="toggle-placeholder"
+      />
 
       <!-- Icon -->
-      <div class="node-icon" :class="getTypeClass(node.type)">
-        <component :is="getGroupTypeIcon(node.type)" :size="16" />
+      <div
+        class="node-icon"
+        :class="getTypeClass(node.type)"
+      >
+        <component
+          :is="getGroupTypeIcon(node.type)"
+          :size="16"
+        />
       </div>
 
       <!-- Content -->
       <div class="node-content">
         <div class="node-title">
           {{ node.title }}
-          <span v-if="node.inquiryIds?.length" class="inquiry-badge">
-            <component :is="Icons.ClipboardList" :size="12" />
+          <span
+            v-if="node.inquiryIds?.length"
+            class="inquiry-badge"
+          >
+            <component
+              :is="Icons.ClipboardList"
+              :size="12"
+            />
             {{ node.inquiryIds.length }}
           </span>
-          <span v-if="node.childs?.length" class="child-badge">
-            <component :is="Icons.Folder" :size="12" />
+          <span
+            v-if="node.childs?.length"
+            class="child-badge"
+          >
+            <component
+              :is="Icons.Folder"
+              :size="12"
+            />
             {{ node.childs.length }}
           </span>
-          <span v-if="node.status.groupStatus === 'archived'" class="status-badge archived">
+          <span
+            v-if="node.status.groupStatus === 'archived'"
+            class="status-badge archived"
+          >
             {{ t('agora', 'Archived') }}
           </span>
-          <span v-if="node.status.groupStatus === 'draft'" class="status-badge draft">
+          <span
+            v-if="node.status.groupStatus === 'draft'"
+            class="status-badge draft"
+          >
             {{ t('agora', 'Draft') }}
           </span>
         </div>
-        <div v-if="node.description" class="node-description">
+        <div
+          v-if="node.description"
+          class="node-description"
+        >
           {{ truncateText(node.description, 80) }}
         </div>
         <div class="node-meta">
@@ -62,7 +98,10 @@
     </div>
 
     <!-- Children -->
-    <div v-if="expanded && node.children.length > 0" class="tree-children">
+    <div
+      v-if="expanded && node.children.length > 0"
+      class="tree-children"
+    >
       <GroupTreeBranch
         v-for="child in node.children"
         :key="child.id"
@@ -171,7 +210,7 @@ function handleClick() {
 
     &.depth-0 {
       font-weight: 600;
-      
+
       .node-title {
         font-size: 16px;
       }
@@ -226,16 +265,46 @@ function handleClick() {
       flex-shrink: 0;
       margin-top: 1px;
 
-      &.type-program { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-      &.type-assembly { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-      &.type-canton { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-      &.type-district { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-      &.type-commune { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
-      &.type-working_group { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
-      &.type-commission { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
-      &.type-citizen_jury { background: rgba(34, 197, 94, 0.1); color: #16a34a; }
-      &.type-bundle { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
-      &.type-default { background: var(--color-background-dark); color: var(--color-text-lighter); }
+      &.type-program {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+      &.type-assembly {
+        background: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+      }
+      &.type-canton {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+      &.type-district {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+      &.type-commune {
+        background: rgba(236, 72, 153, 0.1);
+        color: #ec4899;
+      }
+      &.type-working_group {
+        background: rgba(6, 182, 212, 0.1);
+        color: #06b6d4;
+      }
+      &.type-commission {
+        background: rgba(168, 85, 247, 0.1);
+        color: #a855f7;
+      }
+      &.type-citizen_jury {
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a;
+      }
+      &.type-bundle {
+        background: rgba(107, 114, 128, 0.1);
+        color: #6b7280;
+      }
+      &.type-default {
+        background: var(--color-background-dark);
+        color: var(--color-text-lighter);
+      }
     }
 
     .node-content {

@@ -37,7 +37,10 @@ async function addShare(user: User) {
 </script>
 
 <template>
-  <ConfigBox v-bind="configBoxProps.sharesList" :info="info">
+  <ConfigBox
+    v-bind="configBoxProps.sharesList"
+    :info="info"
+  >
     <template #icon>
       <ShareIcon />
     </template>
@@ -50,9 +53,20 @@ async function addShare(user: User) {
       @user-selected="(user: User) => addShare(user)"
     />
 
-    <div v-if="sharesStore.shares" class="shares-list shared">
-      <TransitionGroup tag="div" name="list" :css="false">
-        <ShareItem v-for="share in sharesStore.active" :key="share.id" :share="share" />
+    <div
+      v-if="sharesStore.shares"
+      class="shares-list shared"
+    >
+      <TransitionGroup
+        tag="div"
+        name="list"
+        :css="false"
+      >
+        <ShareItem
+          v-for="share in sharesStore.active"
+          :key="share.id"
+          :share="share"
+        />
       </TransitionGroup>
     </div>
   </ConfigBox>

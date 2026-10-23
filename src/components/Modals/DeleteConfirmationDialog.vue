@@ -9,19 +9,33 @@
   >
     <div class="delete-confirmation-content">
       <p>{{ message }}</p>
-      <p v-if="isImported" class="imported-warning">
-        {{ t('agora', 'This option was imported from another view. Removing it from this view will keep it available elsewhere.') }}
+      <p
+        v-if="isImported"
+        class="imported-warning"
+      >
+        {{
+          t(
+            'agora',
+            'This option was imported from another view. Removing it from this view will keep it available elsewhere.'
+          )
+        }}
       </p>
     </div>
-    
+
     <template #actions>
       <NcButton @click="handleCancel">
         {{ t('agora', 'Cancel') }}
       </NcButton>
-      <NcButton v-if="isImported" @click="handleRemoveFromView">
+      <NcButton
+        v-if="isImported"
+        @click="handleRemoveFromView"
+      >
         {{ t('agora', 'Remove from this view') }}
       </NcButton>
-      <NcButton type="error" @click="handleConfirm">
+      <NcButton
+        type="error"
+        @click="handleConfirm"
+      >
         {{ isImported ? t('agora', 'Delete permanently') : t('agora', 'Delete') }}
       </NcButton>
     </template>
@@ -44,7 +58,7 @@ const props = withDefaults(defineProps<Props>(), {
   visible: false,
   optionTitle: '',
   isImported: false,
-  viewType: 'view'
+  viewType: 'view',
 })
 
 const emit = defineEmits<{
@@ -54,10 +68,8 @@ const emit = defineEmits<{
   'update:visible': [value: boolean]
 }>()
 
-const dialogTitle = computed(() => 
-  props.isImported 
-    ? t('agora', 'Imported Option Action')
-    : t('agora', 'Delete Option')
+const dialogTitle = computed(() =>
+  props.isImported ? t('agora', 'Imported Option Action') : t('agora', 'Delete Option')
 )
 
 const message = computed(() => {
@@ -93,7 +105,7 @@ const handleClose = (value: boolean) => {
 <style scoped lang="scss">
 .delete-confirmation-content {
   padding: 8px 0;
-  
+
   .imported-warning {
     margin-top: 12px;
     padding: 8px;

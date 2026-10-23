@@ -27,7 +27,7 @@ import { useInquiriesStore } from '../stores/inquiries'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups'
 import { useSupportResultStore } from '../stores/supportResult'
 import { SupportsAPI } from '../Api/index.ts'
-import type { SupportResultData, Support } from './index.ts'
+import type { SupportResultData, Support } from '../Types/index'
 import type { SupportEngine, SupportValue } from '../Types/index'
 import type { TargetType, VotableItem } from '../Types/voteContext.types'
 
@@ -144,7 +144,11 @@ function unwrapVoteValue(raw: SupportValue): SupportValue | null {
 
   const obj = parsed as Record<string, unknown>
   const hasAggregateField =
-    'scores' in obj || 'reactions' in obj || 'ranking' in obj || 'grades' in obj || 'selected' in obj
+    'scores' in obj ||
+    'reactions' in obj ||
+    'ranking' in obj ||
+    'grades' in obj ||
+    'selected' in obj
   if (hasAggregateField) {
     // Structured engine payload, not a simple wrapper.
     return parsed as SupportValue
@@ -169,9 +173,14 @@ function lookupFromAggregate(raw: SupportValue, itemId: number): SupportValue | 
 
   // Defensive: some backends wrap even aggregates as { value: { scores: ... } }
   const payload =
-    'value' in val && !('scores' in val) && !('reactions' in val) && !('ranking' in val)
-      && !('grades' in val) && !('selected' in val) && val.value
-      && typeof val.value === 'object'
+    'value' in val &&
+    !('scores' in val) &&
+    !('reactions' in val) &&
+    !('ranking' in val) &&
+    !('grades' in val) &&
+    !('selected' in val) &&
+    val.value &&
+    typeof val.value === 'object'
       ? (val.value as Record<string, unknown>)
       : val
 
@@ -196,8 +205,14 @@ function lookupFromAggregate(raw: SupportValue, itemId: number): SupportValue | 
   }
 
   // Fallback: simple wrapper
-  if ('value' in val && !payload.scores && !payload.reactions && !payload.ranking
-      && !payload.grades && !payload.selected) {
+  if (
+    'value' in val &&
+    !payload.scores &&
+    !payload.reactions &&
+    !payload.ranking &&
+    !payload.grades &&
+    !payload.selected
+  ) {
     return (val.value as SupportValue) ?? null
   }
   return null
@@ -303,8 +318,7 @@ export function useVoteContext(
       if (fromStore.length > 0) return fromStore
     } else {
       const fromStore: VotableItem[] = (inquiriesStore.inquiries || []).filter(
-        (inq) =>
-          (inq.inquiryGroups || []).includes(pid) && engine.target_ids!.includes(inq.id)
+        (inq) => (inq.inquiryGroups || []).includes(pid) && engine.target_ids!.includes(inq.id)
       )
       if (fromStore.length > 0) return fromStore
     }
@@ -528,10 +542,7 @@ export function useVoteContext(
     }
     return (
       votes.find(
-        (v) =>
-          engineIdOf(v) === engineIdValue
-          && v.optionId === 0
-          && v.inquiryId === parentId.value
+        (v) => engineIdOf(v) === engineIdValue && v.optionId === 0 && v.inquiryId === parentId.value
       ) ?? null
     )
   })
@@ -650,9 +661,14 @@ export function useVoteContext(
 
     const savedObj = saved as Record<string, unknown>
     const payload =
-      'value' in savedObj && !('scores' in savedObj) && !('reactions' in savedObj)
-        && !('ranking' in savedObj) && !('grades' in savedObj) && !('selected' in savedObj)
-        && savedObj.value && typeof savedObj.value === 'object'
+      'value' in savedObj &&
+      !('scores' in savedObj) &&
+      !('reactions' in savedObj) &&
+      !('ranking' in savedObj) &&
+      !('grades' in savedObj) &&
+      !('selected' in savedObj) &&
+      savedObj.value &&
+      typeof savedObj.value === 'object'
         ? (savedObj.value as Record<string, unknown>)
         : savedObj
 
@@ -701,10 +717,7 @@ export function useVoteContext(
           (payload.scores as Record<string, unknown>) || {}
         )
       case 'token_weighted':
-        return !objectsEqual(
-          tokenWeights.value,
-          (payload.scores as Record<string, unknown>) || {}
-        )
+        return !objectsEqual(tokenWeights.value, (payload.scores as Record<string, unknown>) || {})
       default:
         return true
     }
@@ -801,8 +814,7 @@ export function useVoteContext(
     const userId = sessionStore.currentUser?.id
     if (!userId || !canVote.value) return false
 
-    const inquiryIdForVote =
-      targetType === 'option' ? (_parentId || parentId.value) : item.id
+    const inquiryIdForVote = targetType === 'option' ? _parentId || parentId.value : item.id
     if (!inquiryIdForVote) return false
 
     try {
@@ -1300,9 +1312,7 @@ export function useVoteContext(
     if (!userId) return
 
     const contextSupports = supportsForContext.value
-    const exact = contextSupports.filter(
-      (s) => s.userId === userId && engineIdOf(s) === engineId
-    )
+    const exact = contextSupports.filter((s) => s.userId === userId && engineIdOf(s) === engineId)
     const userVotes = exact.length
       ? exact
       : contextSupports.filter((s) => s.userId === userId && engineIdOf(s) === null)
@@ -1319,7 +1329,10 @@ export function useVoteContext(
         const unwrapped = unwrapVoteValue(vote.value)
         if (unwrapped === null || unwrapped === undefined) continue
 
-        if (typeof unwrapped === 'number' && ['score', 'star', 'binary', 'ternary'].includes(engine)) {
+        if (
+          typeof unwrapped === 'number' &&
+          ['score', 'star', 'binary', 'ternary'].includes(engine)
+        ) {
           scores.value = { ...scores.value, [optionId]: unwrapped }
         } else if (typeof unwrapped === 'string' && engine === 'majority_judgment') {
           grades.value = { ...grades.value, [optionId]: unwrapped }
@@ -1335,8 +1348,14 @@ export function useVoteContext(
 
       // Defensive: some backends wrap as { value: { scores: ... } }
       const payload =
-        'value' in val && !('scores' in val) && !('reactions' in val) && !('ranking' in val)
-          && !('grades' in val) && !('selected' in val) && val.value && typeof val.value === 'object'
+        'value' in val &&
+        !('scores' in val) &&
+        !('reactions' in val) &&
+        !('ranking' in val) &&
+        !('grades' in val) &&
+        !('selected' in val) &&
+        val.value &&
+        typeof val.value === 'object'
           ? (val.value as Record<string, unknown>)
           : val
 
@@ -1405,12 +1424,7 @@ export function useVoteContext(
       // `support.inquiryId` is authoritative:
       //   Case 3 → parentId
       //   Case 4 → 0
-      await supportsStore.removeSupport(
-        support.inquiryId,
-        userId,
-        support.optionId,
-        engine.id
-      )
+      await supportsStore.removeSupport(support.inquiryId, userId, support.optionId, engine.id)
     }
 
     if (reload) {
@@ -1451,8 +1465,7 @@ export function useVoteContext(
     }
 
     if (engineResults.length > 0) {
-      const match =
-        engineResults.find((r) => r.target_type === targetType) ?? engineResults[0]
+      const match = engineResults.find((r) => r.target_type === targetType) ?? engineResults[0]
       engineResult.value = match?.result ?? null
       return
     }

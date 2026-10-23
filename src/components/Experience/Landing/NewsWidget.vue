@@ -2,10 +2,17 @@
   <section class="news-widget">
     <header class="section-header">
       <div class="header-left">
-        <component :is="Icons.Megaphone" :size="20" class="header-icon" />
+        <component
+          :is="Icons.Megaphone"
+          :size="20"
+          class="header-icon"
+        />
         <h2>{{ t('agora', 'City news') }}</h2>
       </div>
-      <a class="header-link" @click="emit('viewAll')">{{ t('agora', 'View all') }}</a>
+      <a
+        class="header-link"
+        @click="emit('viewAll')"
+      >{{ t('agora', 'View all') }}</a>
     </header>
 
     <ul class="news-list">
@@ -15,28 +22,45 @@
         class="news-item"
         @click="emit('click', item)"
       >
-        <div class="news-thumb" :style="{ backgroundImage: `url(${item.image})` }" />
+        <div
+          class="news-thumb"
+          :style="{ backgroundImage: `url(${item.image})` }"
+        />
         <div class="news-body">
-          <h3 class="news-title">{{ item.title }}</h3>
-          <p class="news-summary">{{ item.summary }}</p>
+          <h3 class="news-title">
+            {{ item.title }}
+          </h3>
+          <p class="news-summary">
+            {{ item.summary }}
+          </p>
           <div class="news-meta">
             <span class="news-date">{{ item.date }}</span>
-            <span class="news-tag" :style="{ color: item.tagColor, background: item.tagBg }">
+            <span
+              class="news-tag"
+              :style="{ color: item.tagColor, background: item.tagBg }"
+            >
               {{ item.tag }}
             </span>
           </div>
         </div>
       </li>
 
-      <li v-if="items.length === 0" class="news-empty">
-        <component :is="Icons.Megaphone" :size="32" />
+      <li
+        v-if="items.length === 0"
+        class="news-empty"
+      >
+        <component
+          :is="Icons.Megaphone"
+          :size="32"
+        />
         <p>{{ t('agora', 'No news yet') }}</p>
       </li>
     </ul>
 
-    <a class="news-all-link" @click="emit('viewAll')">
-      {{ t('agora', 'See all news') }} →
-    </a>
+    <a
+      class="news-all-link"
+      @click="emit('viewAll')"
+    > {{ t('agora', 'See all news') }} → </a>
   </section>
 </template>
 
@@ -79,7 +103,9 @@ const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
       align-items: center;
       gap: 8px;
 
-      .header-icon { color: #dc2626; }
+      .header-icon {
+        color: #dc2626;
+      }
 
       h2 {
         margin: 0;
@@ -93,7 +119,9 @@ const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
       color: var(--color-primary-element);
       cursor: pointer;
 
-      &:hover { text-decoration: underline; }
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -113,9 +141,14 @@ const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
     padding-bottom: 12px;
     border-bottom: 1px solid var(--color-border-light);
 
-    &:last-child { border-bottom: none; padding-bottom: 0; }
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
 
-    &:hover .news-title { color: var(--color-primary-element); }
+    &:hover .news-title {
+      color: var(--color-primary-element);
+    }
 
     .news-thumb {
       width: 70px;
@@ -127,7 +160,10 @@ const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
       flex-shrink: 0;
     }
 
-    .news-body { flex: 1; min-width: 0; }
+    .news-body {
+      flex: 1;
+      min-width: 0;
+    }
 
     .news-title {
       margin: 0 0 3px 0;
@@ -185,7 +221,9 @@ const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
     cursor: pointer;
     text-align: right;
 
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 </style>

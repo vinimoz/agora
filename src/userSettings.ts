@@ -8,6 +8,5 @@ import { pinia } from './stores/index.ts'
 
 import UserSettingsPage from './views/UserSettingsPage.vue'
 
-
 const Agora = createApp(UserSettingsPage).use(pinia)
 Agora.mount('#content_agora')

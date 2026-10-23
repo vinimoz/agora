@@ -69,24 +69,42 @@ function emptyField() {
 }
 
 const FIELD_TYPES = [
-  'string', 'text', 'textarea', 'rich_text', 'integer', 'boolean',
-  'datetime', 'date', 'enum', 'array', 'json', 'users', 'groups',
-  'files', 'location', 'inquiry',
+  'string',
+  'text',
+  'textarea',
+  'rich_text',
+  'integer',
+  'boolean',
+  'datetime',
+  'date',
+  'enum',
+  'array',
+  'json',
+  'users',
+  'groups',
+  'files',
+  'location',
+  'inquiry',
 ]
 
 const SUPPORT_FEATURES = [
-  'none', 'binary', 'ternary', 'score', 'reaction',
-  'majority_judgment', 'approval', 'ranking', 'borda', 'condorcet',
-  'quadratic', 'token_weighted',
+  'none',
+  'binary',
+  'ternary',
+  'score',
+  'reaction',
+  'majority_judgment',
+  'approval',
+  'ranking',
+  'borda',
+  'condorcet',
+  'quadratic',
+  'token_weighted',
 ]
 
-const fieldTypeOptions = computed(() =>
-  FIELD_TYPES.map((ft) => ({ id: ft, label: ft })),
-)
+const fieldTypeOptions = computed(() => FIELD_TYPES.map((ft) => ({ id: ft, label: ft })))
 
-const supportFeatureOptions = computed(() =>
-  SUPPORT_FEATURES.map((s) => ({ id: s, label: s })),
-)
+const supportFeatureOptions = computed(() => SUPPORT_FEATURES.map((s) => ({ id: s, label: s })))
 
 // ============================================================
 // COMPUTED
@@ -97,7 +115,7 @@ const availableIcons = computed(() =>
     .map((iconId) => ({
       id: iconId,
       label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    })),
+    }))
 )
 
 const getIconComponent = (iconName) => {
@@ -149,7 +167,7 @@ const filteredTypes = computed(() => {
         type.option_type?.toLowerCase().includes(q) ||
         type.label?.toLowerCase().includes(q) ||
         type.description?.toLowerCase().includes(q) ||
-        type.family?.toLowerCase().includes(q),
+        type.family?.toLowerCase().includes(q)
     )
   }
 
@@ -171,7 +189,10 @@ const validateType = (type, isEdit = false) => {
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(type.option_type)) {
     showError(
-      t('agora', 'Option type key must be alphanumeric (underscores allowed), starting with a letter'),
+      t(
+        'agora',
+        'Option type key must be alphanumeric (underscores allowed), starting with a letter'
+      )
     )
     return false
   }
@@ -254,7 +275,7 @@ const deleteType = async (type) => {
     !confirm(
       t('agora', 'Are you sure you want to delete the option type "{label}"?', {
         label: type.label || type.option_type,
-      }),
+      })
     )
   ) {
     return
@@ -351,7 +372,7 @@ defineExpose({ editingType, newType })
             t(
               'agora',
               'Configure option types available in the "{family}" family (fields, allowed responses, support engines and statuses).',
-              { family: familyLabel },
+              { family: familyLabel }
             )
           }}
         </p>
@@ -375,7 +396,10 @@ defineExpose({ editingType, newType })
         <span class="count-badge">{{ filteredTypes.length }}</span>
       </h3>
 
-      <div v-if="!filteredTypes.length" class="empty-state">
+      <div
+        v-if="!filteredTypes.length"
+        class="empty-state"
+      >
         {{ t('agora', 'No option types match your filters.') }}
       </div>
 
@@ -385,9 +409,15 @@ defineExpose({ editingType, newType })
         class="type-card"
         :class="{ expanded: expandedTypeId === type.id }"
       >
-        <div class="type-row" @click="emit('typeSelected', type)">
+        <div
+          class="type-row"
+          @click="emit('typeSelected', type)"
+        >
           <div class="type-icon">
-            <component :is="getIconComponent(type.icon)" :size="20" />
+            <component
+              :is="getIconComponent(type.icon)"
+              :size="20"
+            />
           </div>
 
           <div class="type-info">
@@ -396,15 +426,26 @@ defineExpose({ editingType, newType })
               <code class="type-key">{{ type.option_type }}</code>
               <span class="family-badge">{{ type.family }}</span>
             </div>
-            <p v-if="type.description" class="type-description">{{ type.description }}</p>
+            <p
+              v-if="type.description"
+              class="type-description"
+            >
+              {{ type.description }}
+            </p>
             <div class="type-stats">
               <span class="stat-chip">
                 {{ t('agora', '{count} fields', { count: type.fields.length }) }}
               </span>
-              <span v-if="type.allowed_response?.length" class="stat-chip">
+              <span
+                v-if="type.allowed_response?.length"
+                class="stat-chip"
+              >
                 {{ t('agora', '{count} responses', { count: type.allowed_response.length }) }}
               </span>
-              <span v-if="type.statuses?.length" class="stat-chip">
+              <span
+                v-if="type.statuses?.length"
+                class="stat-chip"
+              >
                 {{ t('agora', '{count} statuses', { count: type.statuses.length }) }}
               </span>
               <span
@@ -413,27 +454,44 @@ defineExpose({ editingType, newType })
               >
                 {{ type.support_feature }}
               </span>
-              <span v-if="type.use_title" class="stat-chip title-flag">
+              <span
+                v-if="type.use_title"
+                class="stat-chip title-flag"
+              >
                 {{ t('agora', 'uses title') }}
               </span>
             </div>
           </div>
 
-          <div class="type-actions" @click.stop>
+          <div
+            class="type-actions"
+            @click.stop
+          >
             <NcButton @click="toggleExpand(type.id)">
               {{ expandedTypeId === type.id ? t('agora', 'Hide') : t('agora', 'Details') }}
             </NcButton>
-            <NcButton @click="startEditing(type)">{{ t('agora', 'Edit') }}</NcButton>
-            <NcButton type="error" @click="deleteType(type)">
+            <NcButton @click="startEditing(type)">
+              {{ t('agora', 'Edit') }}
+            </NcButton>
+            <NcButton
+              type="error"
+              @click="deleteType(type)"
+            >
               {{ t('agora', 'Delete') }}
             </NcButton>
           </div>
         </div>
 
-        <div v-if="expandedTypeId === type.id" class="type-details">
+        <div
+          v-if="expandedTypeId === type.id"
+          class="type-details"
+        >
           <div class="detail-section">
             <h5>{{ t('agora', 'Fields') }}</h5>
-            <table v-if="type.fields.length" class="mini-table">
+            <table
+              v-if="type.fields.length"
+              class="mini-table"
+            >
               <thead>
                 <tr>
                   <th>{{ t('agora', 'Key') }}</th>
@@ -443,32 +501,62 @@ defineExpose({ editingType, newType })
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(f, i) in type.fields" :key="i">
-                  <td><code>{{ f.key }}</code></td>
+                <tr
+                  v-for="(f, i) in type.fields"
+                  :key="i"
+                >
+                  <td>
+                    <code>{{ f.key }}</code>
+                  </td>
                   <td>{{ f.label }}</td>
                   <td>{{ f.type }}</td>
                   <td>{{ f.required ? '✓' : '—' }}</td>
                 </tr>
               </tbody>
             </table>
-            <p v-else class="muted">{{ t('agora', 'No custom fields') }}</p>
+            <p
+              v-else
+              class="muted"
+            >
+              {{ t('agora', 'No custom fields') }}
+            </p>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Allowed responses') }}</h5>
             <ul class="pill-list">
-              <li v-for="(r, i) in type.allowed_response" :key="i" class="pill">{{ r }}</li>
-              <li v-if="!type.allowed_response?.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-for="(r, i) in type.allowed_response"
+                :key="i"
+                class="pill"
+              >
+                {{ r }}
+              </li>
+              <li
+                v-if="!type.allowed_response?.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
 
           <div class="detail-section">
             <h5>{{ t('agora', 'Statuses') }}</h5>
             <ul class="pill-list">
-              <li v-for="(s, i) in type.statuses" :key="i" class="pill">
+              <li
+                v-for="(s, i) in type.statuses"
+                :key="i"
+                class="pill"
+              >
                 {{ s.label || s.status_key }}
               </li>
-              <li v-if="!type.statuses?.length" class="muted">{{ t('agora', 'None') }}</li>
+              <li
+                v-if="!type.statuses?.length"
+                class="muted"
+              >
+                {{ t('agora', 'None') }}
+              </li>
             </ul>
           </div>
         </div>
@@ -519,10 +607,16 @@ defineExpose({ editingType, newType })
           :clearable="false"
           :placeholder="t('agora', 'Support feature')"
         />
-        <NcCheckboxRadioSwitch v-model="newType.allow_comment" type="switch">
+        <NcCheckboxRadioSwitch
+          v-model="newType.allow_comment"
+          type="switch"
+        >
           {{ t('agora', 'Allow comments') }}
         </NcCheckboxRadioSwitch>
-        <NcCheckboxRadioSwitch v-model="newType.use_title" type="switch">
+        <NcCheckboxRadioSwitch
+          v-model="newType.use_title"
+          type="switch"
+        >
           {{ t('agora', 'Use title') }}
         </NcCheckboxRadioSwitch>
 
@@ -558,15 +652,31 @@ defineExpose({ editingType, newType })
               track-by="id"
               :clearable="false"
             />
-            <NcCheckboxRadioSwitch v-model="newField.required" type="checkbox">
+            <NcCheckboxRadioSwitch
+              v-model="newField.required"
+              type="checkbox"
+            >
               {{ t('agora', 'Required') }}
             </NcCheckboxRadioSwitch>
-            <NcButton type="secondary" @click="addField('new')">{{ t('agora', 'Add') }}</NcButton>
+            <NcButton
+              type="secondary"
+              @click="addField('new')"
+            >
+              {{ t('agora', 'Add') }}
+            </NcButton>
           </div>
           <ul class="field-list">
-            <li v-for="(f, i) in newType.fields" :key="i">
+            <li
+              v-for="(f, i) in newType.fields"
+              :key="i"
+            >
               <code>{{ f.key }}</code> — {{ f.label }} ({{ f.type }})
-              <NcButton type="tertiary" @click="removeField('new', i)">✕</NcButton>
+              <NcButton
+                type="tertiary"
+                @click="removeField('new', i)"
+              >
+                ✕
+              </NcButton>
             </li>
           </ul>
         </div>
@@ -582,7 +692,10 @@ defineExpose({ editingType, newType })
               :placeholder="t('agora', 'e.g., message')"
               @keydown.enter.prevent="addAllowedResponse('new')"
             />
-            <NcButton type="secondary" @click="addAllowedResponse('new')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedResponse('new')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -614,7 +727,12 @@ defineExpose({ editingType, newType })
               :label-outside="true"
               :placeholder="t('agora', 'Label')"
             />
-            <NcButton type="secondary" @click="addStatus('new')">{{ t('agora', 'Add') }}</NcButton>
+            <NcButton
+              type="secondary"
+              @click="addStatus('new')"
+            >
+              {{ t('agora', 'Add') }}
+            </NcButton>
           </div>
           <div class="pill-list">
             <span
@@ -634,7 +752,10 @@ defineExpose({ editingType, newType })
             :disabled="savingType || !newType.option_type || !newType.label || !familyKey"
             @click="addType"
           >
-            <NcLoadingIcon v-if="savingType" :size="16" />
+            <NcLoadingIcon
+              v-if="savingType"
+              :size="16"
+            />
             <span v-else>{{ t('agora', 'Add option type') }}</span>
           </NcButton>
         </div>
@@ -642,11 +763,20 @@ defineExpose({ editingType, newType })
     </section>
 
     <!-- ==================== EDIT MODAL ==================== -->
-    <div v-if="editingType" class="modal-overlay" @click.self="cancelEditing">
+    <div
+      v-if="editingType"
+      class="modal-overlay"
+      @click.self="cancelEditing"
+    >
       <div class="modal-content large-modal">
         <header class="modal-header">
           <h3>{{ t('agora', 'Edit option type') }}: {{ editingType.label }}</h3>
-          <NcButton type="tertiary" @click="cancelEditing">✕</NcButton>
+          <NcButton
+            type="tertiary"
+            @click="cancelEditing"
+          >
+            ✕
+          </NcButton>
         </header>
 
         <nav class="tabs">
@@ -662,15 +792,26 @@ defineExpose({ editingType, newType })
         </nav>
 
         <!-- BASIC -->
-        <div v-if="editTab === 'basic'" class="tab-panel form-grid">
-          <NcInputField v-model="editingType.option_type" :label="t('agora', 'Type key')" required />
+        <div
+          v-if="editTab === 'basic'"
+          class="tab-panel form-grid"
+        >
+          <NcInputField
+            v-model="editingType.option_type"
+            :label="t('agora', 'Type key')"
+            required
+          />
           <NcInputField
             :model-value="familyLabel"
             :label="t('agora', 'Family')"
             disabled
             readonly
           />
-          <NcInputField v-model="editingType.label" :label="t('agora', 'Label')" required />
+          <NcInputField
+            v-model="editingType.label"
+            :label="t('agora', 'Label')"
+            required
+          />
           <NcSelect
             v-model="editingType.icon"
             :input-label="t('agora', 'Icon')"
@@ -689,10 +830,16 @@ defineExpose({ editingType, newType })
             track-by="id"
             :clearable="false"
           />
-          <NcCheckboxRadioSwitch v-model="editingType.allow_comment" type="switch">
+          <NcCheckboxRadioSwitch
+            v-model="editingType.allow_comment"
+            type="switch"
+          >
             {{ t('agora', 'Allow comments') }}
           </NcCheckboxRadioSwitch>
-          <NcCheckboxRadioSwitch v-model="editingType.use_title" type="switch">
+          <NcCheckboxRadioSwitch
+            v-model="editingType.use_title"
+            type="switch"
+          >
             {{ t('agora', 'Use title') }}
           </NcCheckboxRadioSwitch>
           <NcInputField
@@ -704,7 +851,10 @@ defineExpose({ editingType, newType })
         </div>
 
         <!-- FIELDS -->
-        <div v-if="editTab === 'fields'" class="tab-panel">
+        <div
+          v-if="editTab === 'fields'"
+          class="tab-panel"
+        >
           <div class="inline-editor field-editor">
             <NcInputField
               v-model="newField.key"
@@ -727,21 +877,40 @@ defineExpose({ editingType, newType })
               track-by="id"
               :clearable="false"
             />
-            <NcCheckboxRadioSwitch v-model="newField.required" type="checkbox">
+            <NcCheckboxRadioSwitch
+              v-model="newField.required"
+              type="checkbox"
+            >
               {{ t('agora', 'Required') }}
             </NcCheckboxRadioSwitch>
-            <NcButton type="secondary" @click="addField('edit')">{{ t('agora', 'Add') }}</NcButton>
+            <NcButton
+              type="secondary"
+              @click="addField('edit')"
+            >
+              {{ t('agora', 'Add') }}
+            </NcButton>
           </div>
           <ul class="field-list">
-            <li v-for="(f, i) in editingType.fields" :key="i">
+            <li
+              v-for="(f, i) in editingType.fields"
+              :key="i"
+            >
               <code>{{ f.key }}</code> — {{ f.label }} ({{ f.type }})
-              <NcButton type="tertiary" @click="removeField('edit', i)">✕</NcButton>
+              <NcButton
+                type="tertiary"
+                @click="removeField('edit', i)"
+              >
+                ✕
+              </NcButton>
             </li>
           </ul>
         </div>
 
         <!-- RESPONSES -->
-        <div v-if="editTab === 'responses'" class="tab-panel">
+        <div
+          v-if="editTab === 'responses'"
+          class="tab-panel"
+        >
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedResponse"
@@ -750,7 +919,10 @@ defineExpose({ editingType, newType })
               :placeholder="t('agora', 'Allowed response type')"
               @keydown.enter.prevent="addAllowedResponse('edit')"
             />
-            <NcButton type="secondary" @click="addAllowedResponse('edit')">
+            <NcButton
+              type="secondary"
+              @click="addAllowedResponse('edit')"
+            >
               {{ t('agora', 'Add') }}
             </NcButton>
           </div>
@@ -767,7 +939,10 @@ defineExpose({ editingType, newType })
         </div>
 
         <!-- STATUSES -->
-        <div v-if="editTab === 'statuses'" class="tab-panel">
+        <div
+          v-if="editTab === 'statuses'"
+          class="tab-panel"
+        >
           <div class="inline-editor">
             <NcInputField
               v-model="newStatus.status_key"
@@ -781,7 +956,12 @@ defineExpose({ editingType, newType })
               :label-outside="true"
               :placeholder="t('agora', 'Label')"
             />
-            <NcButton type="secondary" @click="addStatus('edit')">{{ t('agora', 'Add') }}</NcButton>
+            <NcButton
+              type="secondary"
+              @click="addStatus('edit')"
+            >
+              {{ t('agora', 'Add') }}
+            </NcButton>
           </div>
           <div class="pill-list">
             <span
@@ -796,24 +976,33 @@ defineExpose({ editingType, newType })
         </div>
 
         <footer class="modal-actions">
-          <NcButton @click="cancelEditing">{{ t('agora', 'Cancel') }}</NcButton>
-          <NcButton type="primary" :disabled="savingType" @click="updateType(editingType)">
-            <NcLoadingIcon v-if="savingType" :size="16" />
+          <NcButton @click="cancelEditing">
+            {{ t('agora', 'Cancel') }}
+          </NcButton>
+          <NcButton
+            type="primary"
+            :disabled="savingType"
+            @click="updateType(editingType)"
+          >
+            <NcLoadingIcon
+              v-if="savingType"
+              :size="16"
+            />
             <span v-else>{{ t('agora', 'Save changes') }}</span>
           </NcButton>
         </footer>
       </div>
     </div>
   </div>
-  
+
   <EngineSelectorModal
-  v-if="showEngineSelector"
-  mode="deliberative"
-  :available-engines="supportEngines"
-  :existing-engine="existingSupportEngine"
-  @close="showEngineSelector = false"
-  @save="onSupportEngineSaved"
-/>
+    v-if="showEngineSelector"
+    mode="deliberative"
+    :available-engines="supportEngines"
+    :existing-engine="existingSupportEngine"
+    @close="showEngineSelector = false"
+    @save="onSupportEngineSaved"
+  />
 </template>
 
 <style scoped>

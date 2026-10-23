@@ -3,18 +3,27 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <nav class="landing-breadcrumb" :aria-label="t('agora', 'Breadcrumb')">
+  <nav
+    class="landing-breadcrumb"
+    :aria-label="t('agora', 'Breadcrumb')"
+  >
     <button
       type="button"
       class="crumb crumb--home"
       @click="goHome"
     >
-      <component :is="Icons.Home" :size="14" />
+      <component
+        :is="Icons.Home"
+        :size="14"
+      />
       <span>{{ t('agora', 'Home') }}</span>
     </button>
 
     <template v-if="label">
-      <span class="crumb-separator" aria-hidden="true">›</span>
+      <span
+        class="crumb-separator"
+        aria-hidden="true"
+      >›</span>
       <span class="crumb crumb--current">{{ label }}</span>
     </template>
   </nav>
@@ -62,7 +71,9 @@ function goHome() {
 
     &--home {
       cursor: pointer;
-      transition: color 0.15s ease, background 0.15s ease;
+      transition:
+        color 0.15s ease,
+        background 0.15s ease;
 
       &:hover {
         color: var(--color-primary-element);

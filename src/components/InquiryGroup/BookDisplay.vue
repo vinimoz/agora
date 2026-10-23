@@ -1,24 +1,50 @@
 <!-- BookDisplay.vue - Wrapper for Book mode -->
 <template>
   <div class="book-display">
-    <div v-if="inquiry" class="book-container">
+    <div
+      v-if="inquiry"
+      class="book-container"
+    >
       <!-- Navigation breadcrumb -->
       <div class="book-navigation">
-        <button class="nav-btn" @click="goBack">
-          <component :is="Icons.ArrowLeft" :size="20" />
+        <button
+          class="nav-btn"
+          @click="goBack"
+        >
+          <component
+            :is="Icons.ArrowLeft"
+            :size="20"
+          />
           <span>{{ t('agora', 'Back') }}</span>
         </button>
         <div class="book-location">
           <span v-if="parentGroup">{{ parentGroup.name }}</span>
-          <span v-if="parentGroup" class="separator">/</span>
+          <span
+            v-if="parentGroup"
+            class="separator"
+          >/</span>
           <span class="current">{{ inquiry.title }}</span>
         </div>
         <div class="book-actions">
-          <button class="action-btn" @click="toggleFullscreen" :title="t('agora', 'Fullscreen')">
-            <component :is="Icons.Fullscreen" :size="20" />
+          <button
+            class="action-btn"
+            :title="t('agora', 'Fullscreen')"
+            @click="toggleFullscreen"
+          >
+            <component
+              :is="Icons.Fullscreen"
+              :size="20"
+            />
           </button>
-          <button class="action-btn" @click="toggleTOC" :title="t('agora', 'Table of Contents')">
-            <component :is="Icons.Menu" :size="20" />
+          <button
+            class="action-btn"
+            :title="t('agora', 'Table of Contents')"
+            @click="toggleTOC"
+          >
+            <component
+              :is="Icons.Menu"
+              :size="20"
+            />
           </button>
         </div>
       </div>
@@ -44,11 +70,20 @@
       </div>
 
       <!-- Table of Contents sidebar -->
-      <div v-if="showTOC" class="book-toc">
+      <div
+        v-if="showTOC"
+        class="book-toc"
+      >
         <div class="toc-header">
           <h4>{{ t('agora', 'Contents') }}</h4>
-          <button class="close-btn" @click="showTOC = false">
-            <component :is="Icons.Close" :size="16" />
+          <button
+            class="close-btn"
+            @click="showTOC = false"
+          >
+            <component
+              :is="Icons.Close"
+              :size="16"
+            />
           </button>
         </div>
         <div class="toc-items">
@@ -59,16 +94,30 @@
             :class="{ active: item.id === inquiry.id }"
             @click="navigateTo(item.id)"
           >
-            <span class="toc-indent" :style="{ paddingLeft: (item.level * 16) + 'px' }" />
-            <component :is="getTocIcon(item)" :size="14" class="toc-icon" />
+            <span
+              class="toc-indent"
+              :style="{ paddingLeft: item.level * 16 + 'px' }"
+            />
+            <component
+              :is="getTocIcon(item)"
+              :size="14"
+              class="toc-icon"
+            />
             <span class="toc-title">{{ item.title }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-else class="empty-state">
-      <component :is="Icons.BookOpen" :size="48" class="empty-icon" />
+    <div
+      v-else
+      class="empty-state"
+    >
+      <component
+        :is="Icons.BookOpen"
+        :size="48"
+        class="empty-icon"
+      />
       <h3>{{ t('agora', 'No inquiry selected') }}</h3>
       <p>{{ t('agora', 'Select an inquiry from the table of contents to read it like a book') }}</p>
     </div>
@@ -105,26 +154,26 @@ const tableOfContents = computed(() => {
 
   // Add groups
   if (props.groups) {
-    props.groups.forEach(group => {
+    props.groups.forEach((group) => {
       items.push({
         id: `group-${group.id}`,
         title: group.name,
         level: 0,
         type: 'group',
-        icon: Icons.Folder
+        icon: Icons.Folder,
       })
 
       // Add inquiries under the group
       if (props.inquiries) {
         props.inquiries
-          .filter(inq => inq.inquiryGroups?.includes(group.id))
-          .forEach(inq => {
+          .filter((inq) => inq.inquiryGroups?.includes(group.id))
+          .forEach((inq) => {
             items.push({
               id: inq.id,
               title: inq.title,
               level: 1,
               type: 'inquiry',
-              icon: getInquiryIcon(inq)
+              icon: getInquiryIcon(inq),
             })
           })
       }
@@ -133,13 +182,13 @@ const tableOfContents = computed(() => {
 
   // Add any inquiries not in groups
   if (props.inquiries && !props.groups) {
-    props.inquiries.forEach(inq => {
+    props.inquiries.forEach((inq) => {
       items.push({
         id: inq.id,
         title: inq.title,
         level: 0,
         type: 'inquiry',
-        icon: getInquiryIcon(inq)
+        icon: getInquiryIcon(inq),
       })
     })
   }
@@ -149,15 +198,15 @@ const tableOfContents = computed(() => {
 
 function getInquiryIcon(inquiry: Inquiry): any {
   const iconMap: Record<string, any> = {
-    'survey': Icons.ClipboardList,
-    'poll': Icons.CheckCircle,
-    'question': Icons.Question,
-    'discussion': Icons.MessageSquare,
-    'news': Icons.Newspaper,
-    'announcement': Icons.Megaphone,
-    'meeting': Icons.Users,
-    'document': Icons.Document,
-    'proposal': Icons.Scale,
+    survey: Icons.ClipboardList,
+    poll: Icons.CheckCircle,
+    question: Icons.Question,
+    discussion: Icons.MessageSquare,
+    news: Icons.Newspaper,
+    announcement: Icons.Megaphone,
+    meeting: Icons.Users,
+    document: Icons.Document,
+    proposal: Icons.Scale,
   }
   return iconMap[inquiry.type?.toLowerCase()] || Icons.File
 }

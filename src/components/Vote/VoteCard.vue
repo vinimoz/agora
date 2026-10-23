@@ -3,22 +3,31 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div 
-    class="vote-card" 
-    :class="{ 
+  <div
+    class="vote-card"
+    :class="{
       'user-voted': hasUserVotedFor(item.id),
       'has-support': hasSupportFeature,
-      'has-comments': allowComment
+      'has-comments': allowComment,
     }"
     @click="handleCardClick"
   >
     <!-- Header with icon, type label, and creation date -->
-    <div v-if="inquiryStore.permissions.edit" class="card-header">
+    <div
+      v-if="inquiryStore.permissions.edit"
+      class="card-header"
+    >
       <div class="header-left">
-        <div class="type-icon" :style="{ color: itemTypeColor }">
-          <component :is="itemIcon" :size="20" />
+        <div
+          class="type-icon"
+          :style="{ color: itemTypeColor }"
+        >
+          <component
+            :is="itemIcon"
+            :size="20"
+          />
         </div>
-        
+
         <div class="header-meta">
           <span class="item-type-label">{{ itemTypeLabel }}</span>
           <span class="timestamp">{{ formatDate(raw?.status?.created ?? 0) }}</span>
@@ -28,27 +37,58 @@
 
     <!-- Item content -->
     <div class="item-info">
-      <h3 class="item-title">{{ item.title }}</h3>
-      <p v-if="item.text && !compact" class="item-text">{{ item.text }}</p>
-      
+      <h3 class="item-title">
+        {{ item.title }}
+      </h3>
+      <p
+        v-if="item.text && !compact"
+        class="item-text"
+      >
+        {{ item.text }}
+      </p>
+
       <!-- Support and comments stats (when not voting mode) -->
-      <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div v-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
-          <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
+      <div
+        v-if="!canVote || hasUserVoted"
+        class="stats-container"
+      >
+        <div
+          v-if="!hideResults"
+          class="support-stats"
+          @click.stop="openSupportsModal"
+        >
+          <component
+            :is="InquiryOptionIcons.Support"
+            :size="14"
+            class="stat-icon"
+          />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
         </div>
-        
-        <div v-if="allowComment && raw.status.countComments" class="comments-stats">
-          <component :is="InquiryOptionIcons.Comment" :size="14" class="stat-icon" />
+
+        <div
+          v-if="allowComment && raw.status.countComments"
+          class="comments-stats"
+        >
+          <component
+            :is="InquiryOptionIcons.Comment"
+            :size="14"
+            class="stat-icon"
+          />
           <span>{{ raw.status.countComments }}</span>
         </div>
       </div>
 
       <!-- Progress bar for voting mode -->
-      <div v-if="(!canVote || hasUserVoted) && !hideResults" class="progress-bar-container">
+      <div
+        v-if="(!canVote || hasUserVoted) && !hideResults"
+        class="progress-bar-container"
+      >
         <div class="progress-bar">
-          <div class="progress-fill" :style="{ width: percentage + '%' }" />
+          <div
+            class="progress-fill"
+            :style="{ width: percentage + '%' }"
+          />
         </div>
       </div>
     </div>
@@ -84,7 +124,10 @@
       @change-grade="handleGradeChange"
     />
 
-    <div v-if="canComment" class="item-comment">
+    <div
+      v-if="canComment"
+      class="item-comment"
+    >
       <NcButton
         variant="tertiary"
         :aria-expanded="showComment ? 'true' : 'false'"
@@ -93,7 +136,10 @@
       >
         {{ showComment ? t('agora', 'Hide comment') : t('agora', 'Add comment') }}
       </NcButton>
-      <div v-show="showComment" :id="commentZoneId">
+      <div
+        v-show="showComment"
+        :id="commentZoneId"
+      >
         <CommentAdd
           v-if="commentMounted"
           ref="commentAdd"
@@ -105,7 +151,10 @@
     </div>
 
     <!-- Footer with owner info -->
-    <div v-if="!compact && inquiryStore.permissions.edit" class="card-footer">
+    <div
+      v-if="!compact && inquiryStore.permissions.edit"
+      class="card-footer"
+    >
       <div class="owner-info">
         <NcAvatar
           v-if="raw.owner?.id"
@@ -118,7 +167,10 @@
     </div>
 
     <!-- Voted badge -->
-    <div v-if="hasUserVotedFor(item.id) && !canVote" class="voted-badge">
+    <div
+      v-if="hasUserVotedFor(item.id) && !canVote"
+      class="voted-badge"
+    >
       <CheckCircle :size="16" />
       <span>{{ t('agora', 'Voted') }}</span>
     </div>
@@ -171,21 +223,21 @@ const props = defineProps<{
   hideResults?: boolean
 }>()
 
-console.log(" PRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ITEM ", props.item)
+console.log(' PRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ITEM ', props.item)
 
 const raw = computed(() => (props.item as any).raw ?? props.item)
 
 const emit = defineEmits<{
   vote: [item: Item, value: SupportValue]
-  'approvalToggle': [itemId: number]
-  'changeRank': [itemId: number, rank: number | null]
-  'changeGrade': [itemId: number, grade: string | null]
+  approvalToggle: [itemId: number]
+  changeRank: [itemId: number, rank: number | null]
+  changeGrade: [itemId: number, grade: string | null]
   'update:score': [itemId: number, score: number | null]
   'update:star': [itemId: number, star: number | null]
   'update:reaction': [itemId: number, reaction: string[] | null]
   'update:quadratic': [itemId: number, votes: number | null]
   'update:token_weight': [itemId: number, weight: number | null]
-  'openSupportsModal': [itemId: number]
+  openSupportsModal: [itemId: number]
 }>()
 
 const sessionStore = useSessionStore()
@@ -207,9 +259,15 @@ const itemTypeLabel = computed(() => {
 
 const isMultiEngine = computed(() => {
   const multiTypes = [
-    'reaction', 'approval', 'approval_delib',
-    'ranking', 'condorcet', 'borda',
-    'quadratic', 'token_weighted', 'phased_voting'
+    'reaction',
+    'approval',
+    'approval_delib',
+    'ranking',
+    'condorcet',
+    'borda',
+    'quadratic',
+    'token_weighted',
+    'phased_voting',
   ]
   return multiTypes.includes(props.effectiveEngineId)
 })
@@ -269,20 +327,25 @@ const itemTypeColor = computed(() => {
   return getItemTypeColor(props.item.type, allItemTypes.value)
 })
 
-const allowComment = computed(() => 
-  allowsComments(props.item.type, allItemTypes.value)
-)
+const allowComment = computed(() => allowsComments(props.item.type, allItemTypes.value))
 
 // PublicController::addComment drops itemId, so no per-item comment on a public link.
-const canComment = computed(() => !!raw.permissions?.comment
-  && inquiryStore.permissions.comment
-  && sessionStore.route.name !== 'publicInquiry')
+const canComment = computed(
+  () =>
+    !!raw.value.permissions?.comment &&
+    inquiryStore.permissions.comment &&
+    sessionStore.route.name !== 'publicInquiry'
+)
 const showComment = ref(false)
 const commentMounted = ref(false)
 const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null)
 const commentZoneId = computed(() => `item-comment-${props.item.id}`)
-const commentGrades = computed(() => (props.engineConfig.comment_grades as string[] | undefined) ?? [])
-const openedByGrade = computed(() => !!props.currentGrade && commentGrades.value.includes(props.currentGrade))
+const commentGrades = computed(
+  () => (props.engineConfig.comment_grades as string[] | undefined) ?? []
+)
+const openedByGrade = computed(
+  () => !!props.currentGrade && commentGrades.value.includes(props.currentGrade)
+)
 
 async function toggleComment() {
   showComment.value = !showComment.value
@@ -293,7 +356,7 @@ async function toggleComment() {
   }
 }
 
-const hasSupportFeature = computed(() => 
+const hasSupportFeature = computed(() =>
   hasSupportFeatureHelper(props.item.type, allItemTypes.value)
 )
 
@@ -304,7 +367,7 @@ const formatDate = (timestamp: number) => {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   }).format(date)
 }
 
@@ -314,16 +377,21 @@ const userVoteForItem = computed(() => {
   return { value, itemId: props.item.id } as SupportData
 })
 
-console.log(" IUSE VOTER VALUE FOR TIEM", userVoteForItem.value)
+console.log(' IUSE VOTER VALUE FOR TIEM', userVoteForItem.value)
 
 function openSupportsModal() {
   emit('openSupportsModal', props.item.id)
 }
 
-
-function handleVote(value: SupportValue) { emit('vote', props.item, value) }
-function handleApprovalToggle() { emit('approvalToggle', props.item.id) }
-function handleRankChange(rank: number | null) { emit('changeRank', props.item.id, rank) }
+function handleVote(value: SupportValue) {
+  emit('vote', props.item, value)
+}
+function handleApprovalToggle() {
+  emit('approvalToggle', props.item.id)
+}
+function handleRankChange(rank: number | null) {
+  emit('changeRank', props.item.id, rank)
+}
 function handleGradeChange(grade: string | null) {
   emit('changeGrade', props.item.id, grade)
   if (grade && canComment.value && commentGrades.value.includes(grade)) {
@@ -331,13 +399,21 @@ function handleGradeChange(grade: string | null) {
     showComment.value = true
   }
 }
-function handleUpdateScore(itemId: number, score: number | null) { emit('update:score', itemId, score) }
-function handleUpdateStar(itemId: number, star: number | null) { emit('update:star', itemId, star) }
-function handleUpdateReaction(itemId: number, reaction: string[] | null) { emit('update:reaction', itemId, reaction) }
-function handleUpdateQuadratic(itemId: number, votes: number | null) { emit('update:quadratic', itemId, votes) }
-function handleUpdateTokenWeight(itemId: number, weight: number | null) { emit('update:token_weight', itemId, weight) }
-
-
+function handleUpdateScore(itemId: number, score: number | null) {
+  emit('update:score', itemId, score)
+}
+function handleUpdateStar(itemId: number, star: number | null) {
+  emit('update:star', itemId, star)
+}
+function handleUpdateReaction(itemId: number, reaction: string[] | null) {
+  emit('update:reaction', itemId, reaction)
+}
+function handleUpdateQuadratic(itemId: number, votes: number | null) {
+  emit('update:quadratic', itemId, votes)
+}
+function handleUpdateTokenWeight(itemId: number, weight: number | null) {
+  emit('update:token_weight', itemId, weight)
+}
 
 function handleCardClick(event: MouseEvent) {
   const target = event.target as HTMLElement
@@ -346,10 +422,10 @@ function handleCardClick(event: MouseEvent) {
     target.closest('.voted-badge') ||
     target.closest('.support-stats') ||
     target.closest('.item-comment')
-  ) return
+  )
+    return
   emit('openSupportsModal', props.item.id)
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -516,7 +592,11 @@ function handleCardClick(event: MouseEvent) {
 
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, var(--color-primary-element-light), var(--color-primary-element));
+          background: linear-gradient(
+            90deg,
+            var(--color-primary-element-light),
+            var(--color-primary-element)
+          );
           border-radius: 3px;
           transition: width 0.3s ease;
           position: relative;
@@ -528,10 +608,12 @@ function handleCardClick(event: MouseEvent) {
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, 
-              rgba(255, 255, 255, 0.2) 0%, 
+            background: linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0.2) 0%,
               rgba(255, 255, 255, 0) 50%,
-              rgba(255, 255, 255, 0.2) 100%);
+              rgba(255, 255, 255, 0.2) 100%
+            );
             animation: shimmer 2s infinite;
           }
         }
@@ -620,11 +702,11 @@ function handleCardClick(event: MouseEvent) {
       .stats-container {
         .support-stats {
           padding: 3px 6px;
-          
+
           .vote-count {
             font-size: 12px;
           }
-          
+
           .percentage {
             font-size: 11px;
           }

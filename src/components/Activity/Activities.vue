@@ -11,7 +11,11 @@ const activityStore = useActivityStore()
 </script>
 
 <template>
-  <TransitionGroup name="list" class="activities" tag="ul">
+  <TransitionGroup
+    name="list"
+    class="activities"
+    tag="ul"
+  >
     <ActivityItem
       v-for="item in activityStore.getActivitiesForInquiry"
       :key="item.activity_id"

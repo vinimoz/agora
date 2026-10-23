@@ -134,8 +134,6 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
     return undefined
   })
 
-
-
   /**
    * Get inquiries in the current inquiry group
    */
@@ -369,7 +367,7 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
       }
       const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
 
-      console.log(" RESPONSSEEEEEEEEEEEEEEEEEEE", groups)
+      console.log(' RESPONSSEEEEEEEEEEEEEEEEEEE', groups)
       inquiryGroups.value = groups.map((group) => ({
         ...group,
         inquiryGroupType: typeTabs.find(
@@ -536,27 +534,26 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   }
 
   /**
- * Check if current user has a specific permission for a group
- */
-function hasPermission(groupId: number, permission: keyof InquiryGroupPermissions): boolean {
-  const group = byId(groupId)
-  return group?.permissions?.[permission] ?? false
-}
+   * Check if current user has a specific permission for a group
+   */
+  function hasPermission(groupId: number, permission: keyof InquiryGroupPermissions): boolean {
+    const group = byId(groupId)
+    return group?.permissions?.[permission] ?? false
+  }
 
-/**
- * Get groups where the current user has a specific permission
- */
-function getGroupsWithPermission(permission: keyof InquiryGroupPermissions): InquiryGroup[] {
-  return inquiryGroups.value.filter(g => g.permissions?.[permission] === true)
-}
+  /**
+   * Get groups where the current user has a specific permission
+   */
+  function getGroupsWithPermission(permission: keyof InquiryGroupPermissions): InquiryGroup[] {
+    return inquiryGroups.value.filter((g) => g.permissions?.[permission] === true)
+  }
 
-/**
- * Check if current user can edit a specific group
- */
-function canEditGroup(groupId: number): boolean {
-  return hasPermission(groupId, 'edit')
-}
-
+  /**
+   * Check if current user can edit a specific group
+   */
+  function canEditGroup(groupId: number): boolean {
+    return hasPermission(groupId, 'edit')
+  }
 
   // ===== RETURN =====
   return {

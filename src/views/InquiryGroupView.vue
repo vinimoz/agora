@@ -30,7 +30,7 @@ import ExperienceSwitcher from '../components/Experience/ExperienceSwitcher.vue'
 import { useGroupExperience } from '../composables/useGroupExperience'
 import type { ExperienceKey, DisplayMode } from '../composables/useExperience'
 import type { Inquiry } from '../Types/index.ts'
-import type { Option } from '../types'
+import type { Option } from '../Types/option.types.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
 
 // ============================================================
@@ -52,26 +52,26 @@ const selectedInquiryGroupTypeForCreation = ref('')
 // EXPERIENCE STATE
 // ============================================================
 const currentGroup = computed(() => inquiryGroupStore.groupData || null)
-const { 
-    experience,
-    displayMode,
-    displayArchitecture,
-    layoutConfig,
-    hasCustomArchitecture,
-    availableExperiences,
-    switchExperience,
-    switchDisplay
+const {
+  experience,
+  displayMode,
+  displayArchitecture,
+  layoutConfig,
+  hasCustomArchitecture,
+  availableExperiences,
+  switchExperience,
+  switchDisplay,
 } = useGroupExperience(currentGroup)
 
 // ============================================================
 // EXISTING COMPUTED
 // ============================================================
 const availableGroups = computed(() => {
-    const groups = sessionStore.currentUser.groups || {}
-    if (typeof groups === 'object' && !Array.isArray(groups)) {
-        return Object.keys(groups)
-    }
-    return groups
+  const groups = sessionStore.currentUser.groups || {}
+  if (typeof groups === 'object' && !Array.isArray(groups)) {
+    return Object.keys(groups)
+  }
+  return groups
 })
 
 // ============================================================
@@ -81,60 +81,57 @@ const availableGroups = computed(() => {
 const groupInquiries = computed(() => {
   if (!inquiryGroupStore.inquiryIds) return []
   return inquiryGroupStore.inquiryIds
-    .map(id => inquiriesStore.inquiries.find(i => i.id === id))
+    .map((id) => inquiriesStore.inquiries.find((i) => i.id === id))
     .filter(Boolean)
 })
 
-
 const groupOptions = computed(() => {
-    const options: Option[] = []
-    groupInquiries.value.forEach(inquiry => {
-        if (inquiry.options) {
-            options.push(...inquiry.options)
-        }
-    })
-    return options
+  const options: Option[] = []
+  groupInquiries.value.forEach((inquiry) => {
+    if (inquiry.options) {
+      options.push(...inquiry.options)
+    }
+  })
+  return options
 })
 
 // ============================================================
 // EXISTING FUNCTIONS
 // ============================================================
 async function loadInquiry(id: string) {
-    try {
-        await inquiryGroupStore.load(id)
-        const result = inquiryGroupsStore.inquiryGroups.filter(i => 
-            i.parentId === Number(id)
-        )
-        inquiryGroupStore.childs = result
-        await nextTick()
-        forceRenderKey.value += 1
-    } catch  {
-        showError(t('agora', 'Failed to load inquiry group'))
-    } finally {
-        isAppLoaded.value = true
-    }
+  try {
+    await inquiryGroupStore.load(id)
+    const result = inquiryGroupsStore.inquiryGroups.filter((i) => i.parentId === Number(id))
+    inquiryGroupStore.childs = result
+    await nextTick()
+    forceRenderKey.value += 1
+  } catch {
+    showError(t('agora', 'Failed to load inquiry group'))
+  } finally {
+    isAppLoaded.value = true
+  }
 }
 
 watch(
-    () => route.params.id,
-    async (newId) => {
-        isAppLoaded.value = false
-        await loadInquiry(newId as string)
-    },
-    { immediate: true }
+  () => route.params.id,
+  async (newId) => {
+    isAppLoaded.value = false
+    await loadInquiry(newId as string)
+  },
+  { immediate: true }
 )
 
 onBeforeRouteUpdate(async (to, from, next) => {
-    if (to.params.id) {
-        inquiryGroupStore.reset()
-    }
-    next()
-    emit('transitions-off', 500)
+  if (to.params.id) {
+    inquiryGroupStore.reset()
+  }
+  next()
+  emit('transitions-off', 500)
 })
 
 onUnmounted(() => {
-    inquiryGroupStore.reset()
-    unsubscribe('load-inquiry', () => {})
+  inquiryGroupStore.reset()
+  unsubscribe('load-inquiry', () => {})
 })
 
 const collapsibleProps = computed<CollapsibleProps>(() => ({
@@ -146,77 +143,84 @@ const collapsibleProps = computed<CollapsibleProps>(() => ({
 // isShortDescription computed
 // ============================================================
 const isShortDescription = computed(() => {
-    const desc = inquiryGroupStore.description || ''
-    return desc.length < 200
+  const desc = inquiryGroupStore.description || ''
+  return desc.length < 200
 })
 
 // ============================================================
 // EXISTING FUNCTIONS
 // ============================================================
 const handleCloseDialog = () => {
-    createGroupDlgToggle.value = false
-    selectedInquiryGroupTypeForCreation.value = ''
+  createGroupDlgToggle.value = false
+  selectedInquiryGroupTypeForCreation.value = ''
 }
 
 const inquiryAdded = (inquiry) => {
-    showSuccess(t('agora', 'Inquiry group {title} added', { title: inquiry.title }))
-    createGroupDlgToggle.value = false
-    selectedInquiryGroupTypeForCreation.value = ''
-    router.push({
-        name: 'group',
-        params: { id: inquiry.id },
-    })
+  showSuccess(t('agora', 'Inquiry group {title} added', { title: inquiry.title }))
+  createGroupDlgToggle.value = false
+  selectedInquiryGroupTypeForCreation.value = ''
+  router.push({
+    name: 'group',
+    params: { id: inquiry.id },
+  })
 }
 
 // ============================================================
 // EXPERIENCE HANDLERS
 // ============================================================
 function handleExperienceChange(key: ExperienceKey) {
-    switchExperience(key)
+  switchExperience(key)
 }
 
 function handleDisplayChange(mode: DisplayMode) {
-    switchDisplay(mode)
+  switchDisplay(mode)
 }
 
 function handleViewInquiry(inquiry: Inquiry) {
-    router.push({
-        name: 'inquiry',
-        params: { id: inquiry.id }
-    })
+  router.push({
+    name: 'inquiry',
+    params: { id: inquiry.id },
+  })
 }
 
 function handleViewOption(option: Option) {
-    router.push({
-        name: 'option',
-        params: { id: option.id }
-    })
+  router.push({
+    name: 'option',
+    params: { id: option.id },
+  })
 }
 
 function handleCreateInquiry() {
-    // Open create dialog
-    createGroupDlgToggle.value = true
-    selectedInquiryGroupTypeForCreation.value = 'inquiry'
+  // Open create dialog
+  createGroupDlgToggle.value = true
+  selectedInquiryGroupTypeForCreation.value = 'inquiry'
 }
 </script>
 
 <template>
-  <NcAppContent v-if="isAppLoaded" :key="forceRenderKey" class="inquiry-list">
+  <NcAppContent
+    v-if="isAppLoaded"
+    :key="forceRenderKey"
+    class="inquiry-list"
+  >
     <!-- Collapsible description -->
-    <Collapsible 
-      v-if="inquiryGroupStore.description" 
-      class="sticky-left" 
-      v-bind="collapsibleProps" 
+    <Collapsible
+      v-if="inquiryGroupStore.description"
+      class="sticky-left"
+      v-bind="collapsibleProps"
     />
-    
+
     <!-- Header with Experience Switcher -->
     <div class="inquiry-group-header">
       <InquiryHeaderButtons />
-      
+
       <!-- ============================================================ -->
       <!-- Experience Switcher - Only when group has custom architecture -->
       <!-- ============================================================ -->
-      <div v-if="hasCustomArchitecture" class="experience-controls">
+      <div
+        v-if="hasCustomArchitecture"
+        class="experience-controls"
+      >
         <ExperienceSwitcher
           :current-experience="experience"
           :available-experiences="availableExperiences"
@@ -224,14 +228,17 @@ function handleCreateInquiry() {
         />
       </div>
     </div>
-    
+
     <!-- Main Content -->
     <div class="area__main">
       <div class="view-content">
         <!-- ============================================================ -->
         <!-- Experience Renderer - For groups with display_architecture -->
         <!-- ============================================================ -->
-        <div v-if="hasCustomArchitecture" class="experience-container">
+        <div
+          v-if="hasCustomArchitecture"
+          class="experience-container"
+        >
           <ExperienceRenderer
             :group="inquiryGroupStore.groupData"
             :inquiries="groupInquiries"
@@ -250,16 +257,16 @@ function handleCreateInquiry() {
             @create-inquiry="handleCreateInquiry"
           />
         </div>
-        
+
         <!-- ============================================================ -->
         <!-- Fallback - Original view -->
         <!-- ============================================================ -->
-        <InquiryGroupEditViewForm v-else /> 
+        <InquiryGroupEditViewForm v-else />
       </div>
 
       <InquiryInfoCards class="sticky-left" />
     </div>
-    
+
     <!-- Create Dialog -->
     <InquiryGroupCreateDlg
       v-if="createGroupDlgToggle"
@@ -277,138 +284,138 @@ function handleCreateInquiry() {
 // EXISTING STYLES (kept as is)
 // ============================================================
 .type-display {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
-    .type-icon {
-        flex-shrink: 0;
-    }
+  .type-icon {
+    flex-shrink: 0;
+  }
 
-    .type-label {
-        font-weight: bold;
-        text-transform: capitalize;
-    }
+  .type-label {
+    font-weight: bold;
+    text-transform: capitalize;
+  }
 }
 
 .header-left-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 8px;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 8px;
+  width: 100%;
 }
 
 .dates-container {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 
-    @media (max-width: 1000px) {
-        gap: 8px;
+  @media (max-width: 1000px) {
+    gap: 8px;
 
-        .metadata-item {
-            font-size: 0.8em;
-        }
+    .metadata-item {
+      font-size: 0.8em;
     }
+  }
 }
 
 .header-right-content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .dates-container {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    justify-content: flex-end;
-    flex-shrink: 0;
-    margin-right: 16px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-right: 16px;
 }
 
 .metadata-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9em;
-    color: var(--color-text-lighter);
-    white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9em;
+  color: var(--color-text-lighter);
+  white-space: nowrap;
 }
 
 .date-label {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 .inquiry-list__list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: scroll;
-    padding-bottom: 14px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  padding-bottom: 14px;
 }
 
 .observer_section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 14px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 0;
 }
 
 .clickable_load_more {
-    cursor: pointer;
-    font-weight: bold;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 #expiring.closing {
-    color: var(--color-warning);
-    font-weight: bold;
+  color: var(--color-warning);
+  font-weight: bold;
 }
 
 #expiring.open {
-    color: var(--color-text-lighter);
+  color: var(--color-text-lighter);
 }
 
 // ============================================================
 // NEW STYLES - Experience Integration
 // ============================================================
 .inquiry-group-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 0;
-    flex-wrap: wrap;
-    gap: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  flex-wrap: wrap;
+  gap: 12px;
 
-    .experience-controls {
-        flex-shrink: 0;
-    }
+  .experience-controls {
+    flex-shrink: 0;
+  }
 }
 
 .experience-container {
-    padding: 16px 0;
-    width: 100%;
-    min-height: 400px;
+  padding: 16px 0;
+  width: 100%;
+  min-height: 400px;
 }
 
 // ============================================================
 // RESPONSIVE
 // ============================================================
 @media (max-width: 768px) {
-    .inquiry-group-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+  .inquiry-group-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
 
-        .experience-controls {
-            align-self: flex-start;
-        }
+    .experience-controls {
+      align-self: flex-start;
     }
+  }
 }
 </style>

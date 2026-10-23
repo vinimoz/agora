@@ -16,7 +16,10 @@
       @update:model-value="onChange"
     >
       <template #icon>
-        <component :is="getIcon(exp.icon)" :size="20" />
+        <component
+          :is="getIcon(exp.icon)"
+          :size="20"
+        />
       </template>
       {{ exp.label }}
     </NcCheckboxRadioSwitch>
@@ -27,10 +30,7 @@
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import {
-  EXPERIENCE_DEFINITIONS,
-  type ExperienceKey,
-} from '../../composables/useExperience'
+import { EXPERIENCE_DEFINITIONS, type ExperienceKey } from '../../composables/useExperience'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 
 const props = defineProps<{
@@ -49,7 +49,7 @@ const availableExperiencesList = computed(() =>
   props.availableExperiences
     .filter((key) => !HIDDEN.has(key))
     .map((key) => EXPERIENCE_DEFINITIONS[key])
-    .filter(Boolean),
+    .filter(Boolean)
 )
 
 // Local writable proxy – NcCheckboxRadioSwitch needs a v-model

@@ -8,23 +8,41 @@
     :class="{ archived: isArchived }"
     @click="emit('open')"
   >
-    <div v-if="coverUrl" class="vignette-cover">
-      <img :src="coverUrl" :alt="group.title" />
-      <div class="vignette-cover-overlay"></div>
-      <div v-if="isArchived" class="archived-overlay">
-        <component :is="NavigationIcons.Archive" :size="12" />
+    <div
+      v-if="coverUrl"
+      class="vignette-cover"
+    >
+      <img
+        :src="coverUrl"
+        :alt="group.title"
+      >
+      <div class="vignette-cover-overlay" />
+      <div
+        v-if="isArchived"
+        class="archived-overlay"
+      >
+        <component
+          :is="NavigationIcons.Archive"
+          :size="12"
+        />
         <span>{{ t('agora', 'Archived') }}</span>
       </div>
     </div>
 
     <div class="vignette-content">
-      <div class="vignette-icon" :class="{ archived: isArchived }">
+      <div
+        class="vignette-icon"
+        :class="{ archived: isArchived }"
+      >
         <component :is="typeIcon" />
       </div>
 
       <h4>{{ group.title }}</h4>
 
-      <p v-if="group.description" class="vignette-description">
+      <p
+        v-if="group.description"
+        class="vignette-description"
+      >
         {{ truncatedDescription }}
       </p>
 
@@ -33,7 +51,10 @@
           <span class="stat-icon">📝</span>
           <span class="stat-value">{{ group.inquiryIds?.length || 0 }}</span>
         </div>
-        <div v-if="childCount > 0" class="stat-item">
+        <div
+          v-if="childCount > 0"
+          class="stat-item"
+        >
           <span class="stat-icon">👥</span>
           <span class="stat-value">{{ childCount }}</span>
         </div>
@@ -41,10 +62,17 @@
 
       <div class="vignette-footer">
         <slot name="footer">
-          <NcButton class="view-group-button" @click.stop="emit('open')">
+          <NcButton
+            class="view-group-button"
+            @click.stop="emit('open')"
+          >
             {{ t('agora', 'View group') }}
             <template #icon>
-              <svg width="16" height="16" viewBox="0 0 24 24">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+              >
                 <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
               </svg>
             </template>
@@ -92,7 +120,7 @@ const props = withDefaults(
     childCount: 0,
     isArchived: false,
     descriptionLimit: 100,
-  },
+  }
 )
 
 const emit = defineEmits<{ open: [] }>()

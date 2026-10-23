@@ -32,11 +32,19 @@
       >
         <!-- Icon based on support feature type -->
         <div
-class="counter-icon" :style="iconContainerStyles"
-            :class="{ 'inactive': !hasUserParticipated && (supportFeature === 'ternary' || supportFeature === 'reaction') }"
-            >
+          class="counter-icon"
+          :style="iconContainerStyles"
+          :class="{
+            inactive:
+              !hasUserParticipated &&
+              (supportFeature === 'ternary' || supportFeature === 'reaction'),
+          }"
+        >
           <template v-if="supportFeature === 'ternary' || supportFeature === 'binary'">
-            <TernarySupportIcon :support-value="Number(currentUserSupportValue)" :size="iconSize" />
+            <TernarySupportIcon
+              :support-value="Number(currentUserSupportValue)"
+              :size="iconSize"
+            />
           </template>
 
           <ThumbIcon
@@ -45,11 +53,25 @@ class="counter-icon" :style="iconContainerStyles"
             :size="iconSize"
           />
 
-          <div v-else-if="supportFeature === 'reaction'" class="reaction-icon">
-            <span class="reaction-emoji" :class="{ 'inactive': !hasUserParticipated }">{{ getUserReaction || '👍' }}</span>
+          <div
+            v-else-if="supportFeature === 'reaction'"
+            class="reaction-icon"
+          >
+            <span
+              class="reaction-emoji"
+              :class="{ inactive: !hasUserParticipated }"
+            >{{
+              getUserReaction || '👍'
+            }}</span>
           </div>
-          <div v-else-if="supportFeature === 'star'" class="star-rating-icon">
-            <span v-if="hasUserParticipated" class="rating-value">{{
+          <div
+            v-else-if="supportFeature === 'star'"
+            class="star-rating-icon"
+          >
+            <span
+              v-if="hasUserParticipated"
+              class="rating-value"
+            >{{
               currentUserSupportValue
             }}</span>
             <div class="stars-container">
@@ -62,16 +84,28 @@ class="counter-icon" :style="iconContainerStyles"
             </div>
           </div>
 
-          <div v-else-if="supportFeature === 'score'" class="score-icon">
+          <div
+            v-else-if="supportFeature === 'score'"
+            class="score-icon"
+          >
             <Hash :size="iconSize" />
-            <span v-if="hasUserParticipated" class="score-value">{{
+            <span
+              v-if="hasUserParticipated"
+              class="score-value"
+            >{{
               currentUserSupportValue
             }}</span>
           </div>
 
-          <div v-else-if="supportFeature === 'majority_judgment'" class="grade-icon">
+          <div
+            v-else-if="supportFeature === 'majority_judgment'"
+            class="grade-icon"
+          >
             <Gauge :size="iconSize" />
-            <span v-if="hasUserParticipated" class="grade-value">
+            <span
+              v-if="hasUserParticipated"
+              class="grade-value"
+            >
               {{ getGradeLabel(currentUserSupportValue as number) }}
             </span>
           </div>
@@ -82,9 +116,17 @@ class="counter-icon" :style="iconContainerStyles"
             :class="{ ranked: hasUserParticipated }"
           />
 
-          <TrendingUp v-else-if="supportFeature === 'trending'" :size="iconSize" />
+          <TrendingUp
+            v-else-if="supportFeature === 'trending'"
+            :size="iconSize"
+          />
 
-          <ThumbIcon v-else :supported="false" :size="iconSize" class="disabled-icon" />
+          <ThumbIcon
+            v-else
+            :supported="false"
+            :size="iconSize"
+            class="disabled-icon"
+          />
         </div>
 
         <!-- Counter Content -->
@@ -96,7 +138,10 @@ class="counter-icon" :style="iconContainerStyles"
             :raw="true"
           />
           <div class="counter-label-wrapper">
-            <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
+            <span
+              class="counter-label"
+              :style="{ fontSize: `${iconSize * 0.5}px` }"
+            >
               {{ getSupportLabel() }}
             </span>
             <span
@@ -116,24 +161,42 @@ class="counter-icon" :style="iconContainerStyles"
     <div class="support-tooltip-content">
       <!-- Tooltip Header -->
       <div class="tooltip-header">
-        <h4 :style="{ fontSize: `${iconSize * 0.65}px` }">{{ resolvedTooltipTitle }}</h4>
-        <span v-if="currentUserSupportInfo" class="user-support-badge" :class="userSupportClass">
+        <h4 :style="{ fontSize: `${iconSize * 0.65}px` }">
+          {{ resolvedTooltipTitle }}
+        </h4>
+        <span
+          v-if="currentUserSupportInfo"
+          class="user-support-badge"
+          :class="userSupportClass"
+        >
           {{ currentUserSupportInfo }}
         </span>
       </div>
 
-      <div v-if="!hasDetailedResults" class="no-results-message">
+      <div
+        v-if="!hasDetailedResults"
+        class="no-results-message"
+      >
         <p>{{ t('agora', 'No detailed results available yet.') }}</p>
-        <p v-if="totalParticipants > 0" class="total-participants">
+        <p
+          v-if="totalParticipants > 0"
+          class="total-participants"
+        >
           {{ t('agora', 'Total participants: {count}', { count: totalParticipants }) }}
         </p>
       </div>
 
       <!-- Binary Results -->
-      <div v-if="supportFeature === 'binary' && binaryResult" class="binary-breakdown">
+      <div
+        v-if="supportFeature === 'binary' && binaryResult"
+        class="binary-breakdown"
+      >
         <div class="breakdown-item positive">
           <div class="breakdown-header">
-            <ThumbIcon :supported="true" :size="iconSize * 0.8" />
+            <ThumbIcon
+              :supported="true"
+              :size="iconSize * 0.8"
+            />
             <span class="breakdown-label">{{ t('agora', 'Yes') }}</span>
           </div>
           <div class="breakdown-stats">
@@ -150,7 +213,10 @@ class="counter-icon" :style="iconContainerStyles"
 
         <div class="breakdown-item negative">
           <div class="breakdown-header">
-            <ThumbIcon :supported="false" :size="iconSize * 0.8" />
+            <ThumbIcon
+              :supported="false"
+              :size="iconSize * 0.8"
+            />
             <span class="breakdown-label">{{ t('agora', 'No') }}</span>
           </div>
           <div class="breakdown-stats">
@@ -167,10 +233,16 @@ class="counter-icon" :style="iconContainerStyles"
       </div>
 
       <!-- Ternary Results -->
-      <div v-if="supportFeature === 'ternary' && ternaryResult" class="ternary-breakdown">
+      <div
+        v-if="supportFeature === 'ternary' && ternaryResult"
+        class="ternary-breakdown"
+      >
         <div class="breakdown-item positive">
           <div class="breakdown-header">
-            <TernarySupportIcon :support-value="1" :size="iconSize * 0.8" />
+            <TernarySupportIcon
+              :support-value="1"
+              :size="iconSize * 0.8"
+            />
             <span class="breakdown-label">{{ t('agora', 'In favor') }}</span>
           </div>
           <div class="breakdown-stats">
@@ -187,7 +259,10 @@ class="counter-icon" :style="iconContainerStyles"
 
         <div class="breakdown-item neutral">
           <div class="breakdown-header">
-            <TernarySupportIcon :support-value="0" :size="iconSize * 0.8" />
+            <TernarySupportIcon
+              :support-value="0"
+              :size="iconSize * 0.8"
+            />
             <span class="breakdown-label">{{ t('agora', 'Neutral') }}</span>
           </div>
           <div class="breakdown-stats">
@@ -204,7 +279,10 @@ class="counter-icon" :style="iconContainerStyles"
 
         <div class="breakdown-item negative">
           <div class="breakdown-header">
-            <ThumbIcon :supported="false" :size="iconSize * 0.8" />
+            <ThumbIcon
+              :supported="false"
+              :size="iconSize * 0.8"
+            />
             <span class="breakdown-label">{{ t('agora', 'Against') }}</span>
           </div>
           <div class="breakdown-stats">
@@ -221,7 +299,10 @@ class="counter-icon" :style="iconContainerStyles"
       </div>
 
       <!-- Score Results -->
-      <div v-if="supportFeature === 'score' && scoreResult" class="score-breakdown">
+      <div
+        v-if="supportFeature === 'score' && scoreResult"
+        class="score-breakdown"
+      >
         <div class="score-summary">
           <div class="score-stat">
             <span class="stat-label">{{ t('agora', 'Average') }}</span>
@@ -237,7 +318,10 @@ class="counter-icon" :style="iconContainerStyles"
       </div>
 
       <!-- Star Results -->
-      <div v-if="supportFeature === 'star' && starResult" class="score-breakdown">
+      <div
+        v-if="supportFeature === 'star' && starResult"
+        class="score-breakdown"
+      >
         <div class="score-summary">
           <div class="score-stat">
             <span class="stat-label">{{ t('agora', 'Average') }}</span>
@@ -253,7 +337,10 @@ class="counter-icon" :style="iconContainerStyles"
       </div>
 
       <!-- Reaction Results -->
-      <div v-if="supportFeature === 'reaction' && reactionResult" class="reaction-breakdown">
+      <div
+        v-if="supportFeature === 'reaction' && reactionResult"
+        class="reaction-breakdown"
+      >
         <div class="reaction-grid">
           <div
             v-for="(count, reaction) in reactionResult.counts"
@@ -274,15 +361,22 @@ class="counter-icon" :style="iconContainerStyles"
       >
         <div class="breakdown-item positive">
           <div class="breakdown-header">
-            <ThumbIcon :supported="true" :size="iconSize * 0.8" />
+            <ThumbIcon
+              :supported="true"
+              :size="iconSize * 0.8"
+            />
             <span class="breakdown-label">{{ t('agora', 'Approved') }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ approvalDelibResult.totals.approved }}</span>
-            <span v-if="approvalDelibResult.totals.total > 0" class="percentage"
-              >({{ Math.round(approvalDelibResult.percentages.approved) }}%)</span
-            >
-            <span v-else class="percentage">(0%)</span>
+            <span
+              v-if="approvalDelibResult.totals.total > 0"
+              class="percentage"
+            >({{ Math.round(approvalDelibResult.percentages.approved) }}%)</span>
+            <span
+              v-else
+              class="percentage"
+            >(0%)</span>
           </div>
           <div class="breakdown-bar">
             <div
@@ -319,7 +413,9 @@ class="counter-icon" :style="iconContainerStyles"
         <div class="median-info">
           <span class="median-label">{{ t('agora', 'Median grade') }}:</span>
           <span class="median-value">
-            {{ translateGrade(majorityResult.median_label) || getGradeLabel(majorityResult.median) }}
+            {{
+              translateGrade(majorityResult.median_label) || getGradeLabel(majorityResult.median)
+            }}
           </span>
         </div>
       </div>
@@ -330,9 +426,15 @@ class="counter-icon" :style="iconContainerStyles"
           <span class="summary-label">{{ t('agora', 'Total participants') }}</span>
           <span class="summary-value">{{ totalParticipants }}</span>
         </div>
-        <div v-if="quorumValue" class="summary-item">
+        <div
+          v-if="quorumValue"
+          class="summary-item"
+        >
           <span class="summary-label">{{ t('agora', 'Quorum') }}</span>
-          <span class="summary-value" :class="{ reached: totalParticipants >= quorumValue }">
+          <span
+            class="summary-value"
+            :class="{ reached: totalParticipants >= quorumValue }"
+          >
             {{ totalParticipants }}/{{ quorumValue }}
           </span>
         </div>
@@ -353,7 +455,10 @@ class="counter-icon" :style="iconContainerStyles"
     :style="containerStyles"
     @click="handleSupportClick"
   >
-    <div class="counter-icon" :style="iconContainerStyles">
+    <div
+      class="counter-icon"
+      :style="iconContainerStyles"
+    >
       <TernarySupportIcon
         v-if="supportFeature === 'ternary'"
         :support-value="Number(currentUserSupportValue)"
@@ -366,11 +471,17 @@ class="counter-icon" :style="iconContainerStyles"
         :size="iconSize"
       />
 
-      <div v-else-if="supportFeature === 'reaction'" class="reaction-icon">
+      <div
+        v-else-if="supportFeature === 'reaction'"
+        class="reaction-icon"
+      >
         <span class="reaction-emoji">{{ getUserReaction || '👍' }}</span>
       </div>
 
-      <div v-else-if="supportFeature === 'star'" class="star-rating-icon">
+      <div
+        v-else-if="supportFeature === 'star'"
+        class="star-rating-icon"
+      >
         <div class="stars-container">
           <Star
             v-for="n in 5"
@@ -379,17 +490,32 @@ class="counter-icon" :style="iconContainerStyles"
             :class="{ filled: hasUserParticipated && (currentUserSupportValue as number) >= n }"
           />
         </div>
-        <span v-if="hasUserParticipated" class="rating-value">{{ currentUserSupportValue }}</span>
+        <span
+          v-if="hasUserParticipated"
+          class="rating-value"
+        >{{ currentUserSupportValue }}</span>
       </div>
 
-      <div v-else-if="supportFeature === 'score'" class="score-icon">
+      <div
+        v-else-if="supportFeature === 'score'"
+        class="score-icon"
+      >
         <Hash :size="iconSize" />
-        <span v-if="hasUserParticipated" class="score-value">{{ currentUserSupportValue }}</span>
+        <span
+          v-if="hasUserParticipated"
+          class="score-value"
+        >{{ currentUserSupportValue }}</span>
       </div>
 
-      <div v-else-if="supportFeature === 'majority_judgment'" class="grade-icon">
+      <div
+        v-else-if="supportFeature === 'majority_judgment'"
+        class="grade-icon"
+      >
         <Gauge :size="iconSize" />
-        <span v-if="hasUserParticipated" class="grade-value">
+        <span
+          v-if="hasUserParticipated"
+          class="grade-value"
+        >
           {{ getGradeLabel(currentUserSupportValue as number) }}
         </span>
       </div>
@@ -400,9 +526,17 @@ class="counter-icon" :style="iconContainerStyles"
         :class="{ ranked: hasUserParticipated }"
       />
 
-      <TrendingUp v-else-if="supportFeature === 'trending'" :size="iconSize" />
+      <TrendingUp
+        v-else-if="supportFeature === 'trending'"
+        :size="iconSize"
+      />
 
-      <ThumbIcon v-else :supported="false" :size="iconSize" class="disabled-icon" />
+      <ThumbIcon
+        v-else
+        :supported="false"
+        :size="iconSize"
+        class="disabled-icon"
+      />
     </div>
     <div class="counter-content">
       <NcCounterBubble
@@ -412,7 +546,10 @@ class="counter-icon" :style="iconContainerStyles"
         :raw="true"
       />
       <div class="counter-label-wrapper">
-        <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
+        <span
+          class="counter-label"
+          :style="{ fontSize: `${iconSize * 0.5}px` }"
+        >
           {{ getSupportLabel() }}
         </span>
         <span
@@ -444,7 +581,7 @@ import type { Inquiry, Option } from '../../../Types/index.ts'
 import { canSupportOption, canSupport as canSupportInquiry } from '../../../utils/permissions.ts'
 import type {
   SupportFeature,
-   SupportResultData,
+  SupportResultData,
   BinaryResult,
   TernaryResult,
   StarResult,
@@ -463,7 +600,7 @@ const emit = defineEmits<{
 interface Props {
   item: Inquiry | Option
   itemType: 'inquiry' | 'option'
-  context?:  Record<string, unknown> | null
+  context?: Record<string, unknown> | null
   showQuorum?: boolean
   viewOnly?: boolean
   showDetailsOnHover?: boolean
@@ -534,17 +671,18 @@ const normalizedSupportResult = computed((): SupportResultData => {
   if (Array.isArray(raw)) {
     // If array is empty, return null
     if (raw.length === 0) return null
-    
+
     const first = raw[0]
     // If the first element has a result property, use that
     const actual = first?.result ?? first
     // If actual is undefined or null, return null
     if (!actual) return null
-    
+
     // If actual is an empty array or empty object, return null
     if (Array.isArray(actual) && actual.length === 0) return null
-    if (typeof actual === 'object' && actual !== null && Object.keys(actual).length === 0) return null
-    
+    if (typeof actual === 'object' && actual !== null && Object.keys(actual).length === 0)
+      return null
+
     // Process string/object as before
     return processResultData(actual)
   }
@@ -573,7 +711,7 @@ const processResultData = (data: unknown): SupportResultData => {
   if (!data) return null
   if (Array.isArray(data) && data.length === 0) return null
   if (typeof data === 'object' && data !== null && Object.keys(data).length === 0) return null
-  
+
   // If it's still not an object, return null
   if (!data || typeof data !== 'object') {
     return null
@@ -900,8 +1038,6 @@ const currentUserSupportInfo = computed(() => {
   }
 
   return `👍 ${t('agora', 'Supported')}`
-
-
 })
 
 const userSupportClass = computed(() => {
@@ -1076,45 +1212,44 @@ const handleSupportClick = async () => {
         const normaliseReaction = (r: string) => r.replace(/[\uFE0F]/g, '').trim()
         const reactions = (supportTemplate.value?.allowed_reactions ?? []).map(normaliseReaction)
         const currentReaction = normaliseReaction(getUserReaction.value ?? '')
-       let nextReaction: string | null = null
+        let nextReaction: string | null = null
 
         if (hadSupportedBefore) {
-              const currentIndex = reactions.indexOf(currentReaction as string)
+          const currentIndex = reactions.indexOf(currentReaction as string)
           if (currentIndex !== -1 && currentIndex < reactions.length - 1) {
-              nextReaction = reactions[currentIndex + 1]
-              } else {
-              nextReaction = null
-              }
-              }
-              else {  
-	     	nextReaction = reactions.length > 0 ? reactions[0] : null
-              }
+            nextReaction = reactions[currentIndex + 1]
+          } else {
+            nextReaction = null
+          }
+        } else {
+          nextReaction = reactions.length > 0 ? reactions[0] : null
+        }
 
-              await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
-              break
-              }
+        await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
+        break
+      }
 
-              default:
-              return
-              }
+      default:
+        return
+    }
 
-              // Update local store and emit
-              if (itemType === 'option' && item.id) {
-              optionsStore.updateOptionSupportDetails(item.id, {
-              countSupports: item.status?.countSupports ?? 0,
-              hasSupported: item.currentUserStatus?.hasSupported ?? false,
-              supportValue: item.currentUserStatus?.supportValue ?? null,
-              })
-              }
-              emit('supportToggled', item.id, item.currentUserStatus?.hasSupported ?? false)
-              showSupportSuccessMessage(hadSupportedBefore ?? false)
-              } catch (error) {
-              console.error('Failed to toggle support:', error)
-              showError(t('agora', 'Failed to update support status'))
-              }
-              }
+    // Update local store and emit
+    if (itemType === 'option' && item.id) {
+      optionsStore.updateOptionSupportDetails(item.id, {
+        countSupports: item.status?.countSupports ?? 0,
+        hasSupported: item.currentUserStatus?.hasSupported ?? false,
+        supportValue: item.currentUserStatus?.supportValue ?? null,
+      })
+    }
+    emit('supportToggled', item.id, item.currentUserStatus?.hasSupported ?? false)
+    showSupportSuccessMessage(hadSupportedBefore ?? false)
+  } catch (error) {
+    console.error('Failed to toggle support:', error)
+    showError(t('agora', 'Failed to update support status'))
+  }
+}
 
-              const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
+const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   const hasSupportedAfter = props.item.currentUserStatus?.hasSupported
   const supportValueAfter = props.item.currentUserStatus?.supportValue
   const feature = supportFeature.value
@@ -1162,12 +1297,11 @@ const handleSupportClick = async () => {
     case 'score':
       if (supportValueAfter === null) {
         showSuccess(t('agora', 'Score removed'), { timeout: 2000 })
-      }
-    else {
+      } else {
         showSuccess(t('agora', 'Score: {score}/10', { score: supportValueAfter }), {
           timeout: 2000,
         })
-      } 
+      }
       break
 
     case 'reaction':
@@ -1180,13 +1314,12 @@ const handleSupportClick = async () => {
       }
       break
 
-    case 'majority_judgment': 
+    case 'majority_judgment':
       if (supportValueAfter === null) {
         showSuccess(t('agora', 'Grade removed'), { timeout: 2000 })
-    } else { 
+      } else {
         const gradeLabel = getGradeLabel(supportValueAfter as string) // adapt to string
         showSuccess(t('agora', 'Grade: {grade}', { grade: gradeLabel }), { timeout: 2000 })
-
       }
       break
 
@@ -1202,552 +1335,552 @@ const handleSupportClick = async () => {
 
 <style lang="scss" scoped>
 .counter-item.supports {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  min-height: 32px;
+  height: auto;
+  width: auto;
+  max-width: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-main-background);
+  border-radius: 16px;
+  padding: 4px 12px;
+  gap: 12px;
+  box-sizing: border-box;
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--color-primary-element);
+      background: var(--color-background-hover);
+    }
+  }
+
+  &.has-support {
+    border-color: var(--color-success);
+    background: rgba(var(--color-success-rgb), 0.05);
+  }
+
+  &.disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  // Base icon container
+  .counter-icon {
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
     display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    transition: all 0.2s ease;
-    position: relative;
-    user-select: none;
-    white-space: nowrap;
-    min-height: 32px;
-    height: auto;
-    width: auto;
-    max-width: none;
-    border: 1px solid var(--color-border);
-    background: var(--color-main-background);
-    border-radius: 16px;
-    padding: 4px 12px;
-    gap: 12px;
-    box-sizing: border-box;
+    justify-content: flex-start;
+    flex-shrink: 0;
 
-    &.clickable {
-        cursor: pointer;
-
-        &:hover {
-            border-color: var(--color-primary-element);
-            background: var(--color-background-hover);
-        }
+    svg {
+      background: transparent;
+      width: 16px !important;
+      height: 16px !important;
     }
 
-    &.has-support {
-        border-color: var(--color-success);
-        background: rgba(var(--color-success-rgb), 0.05);
-    }
+    .star-rating-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
 
-    &.disabled {
-        cursor: default;
-        opacity: 0.6;
-    }
-
-    // Base icon container
-        .counter-icon {
-        background: transparent !important;
-        background-image: none !important;
-        box-shadow: none !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: flex-start;
-        flex-shrink: 0;
+      .stars-container {
+        display: flex;
+        gap: 2px;
 
         svg {
-            background: transparent;
-            width: 16px !important;
-            height: 16px !important;
+          width: 12px !important;
+          height: 12px !important;
         }
+      }
 
-        .star-rating-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+      .filled {
+        color: #fbbf24;
+        fill: #fbbf24;
+      }
 
-            .stars-container {
-                display: flex;
-                gap: 2px;
-
-                svg {
-                    width: 12px !important;
-                    height: 12px !important;
-                }
-            }
-
-            .filled {
-                color: #fbbf24;
-                fill: #fbbf24;
-            }
-
-            .rating-value {
-                font-size: 12px;
-                font-weight: 600;
-                margin-left: 0;
-            }
-        }
-
-        .grade-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-
-            svg {
-                width: 14px !important;
-                height: 14px !important;
-            }
-
-            .grade-value {
-                font-size: 11px;
-                font-weight: 600;
-                white-space: nowrap;
-            }
-        }
-
-        .score-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+      .rating-value {
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 0;
+      }
     }
 
-    // Counter content - unified definition
-        .counter-content {
+    .grade-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      svg {
+        width: 14px !important;
+        height: 14px !important;
+      }
+
+      .grade-value {
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+    }
+
+    .score-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  // Counter content - unified definition
+  .counter-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: auto;
+    flex-shrink: 0;
+
+    .counter-label-wrapper {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 4px;
+
+      .counter-label {
+        color: var(--color-text-lighter);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 500;
+        white-space: nowrap;
+        font-size: 9px;
+        line-height: 1.3;
+      }
+
+      .quorum-compact {
+        color: var(--color-text-lighter);
+
+        .quorum-separator {
+          margin: 0 2px;
+        }
+
+        .quorum-target {
+          color: var(--color-primary-element);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // Star rating specific
+  &.has-star-rating {
+    width: max-content;
+    min-width: 150px;
+    max-width: none;
+    justify-content: space-between;
+
+    .counter-icon {
+      background: transparent !important;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .star-rating-icon {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .stars-container {
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 4px;
-        min-width: auto;
+        gap: 2px;
+
+        svg {
+          width: 12px !important;
+          height: 12px !important;
+        }
+      }
+
+      .rating-value {
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 4px;
+        display: inline-block;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  // Majority judgment specific
+  &.has-majority-judgment {
+    width: max-content;
+    min-width: 150px;
+    max-width: none;
+    justify-content: space-between;
+
+    .counter-icon {
+      background: transparent !important;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .grade-icon {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      svg {
+        width: 14px !important;
+        height: 14px !important;
         flex-shrink: 0;
+      }
 
-        .counter-label-wrapper {
-            display: flex;
-            align-items: baseline;
-            justify-content: flex-end;
-            gap: 4px;
-
-            .counter-label {
-                color: var(--color-text-lighter);
-                text-transform: uppercase;
-                letter-spacing: 0.3px;
-                font-weight: 500;
-                white-space: nowrap;
-                font-size: 9px;
-                line-height: 1.3;
-            }
-
-            .quorum-compact {
-                color: var(--color-text-lighter);
-
-                .quorum-separator {
-                    margin: 0 2px;
-                }
-
-                .quorum-target {
-                    color: var(--color-primary-element);
-                    font-weight: 600;
-                }
-            }
-        }
+      .grade-value {
+        font-size: 11px;
+        font-weight: 600;
+        max-width: none !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: nowrap;
+        display: inline-block;
+        line-height: 1.3;
+      }
     }
+  }
 
-    // Star rating specific
-        &.has-star-rating {
-        width: max-content;
-        min-width: 150px;
-        max-width: none;
-        justify-content: space-between;
-
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .star-rating-icon {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-
-            .stars-container {
-                display: flex;
-                gap: 2px;
-
-                svg {
-                    width: 12px !important;
-                    height: 12px !important;
-                }
-            }
-
-            .rating-value {
-                font-size: 12px;
-                font-weight: 600;
-                margin-left: 4px;
-                display: inline-block;
-                white-space: nowrap;
-            }
-        }
+  // Reaction, Score, Approval types
+  &.has-reaction,
+  &.has-score,
+  &.has-approval-delib {
+    .counter-icon {
+      background: transparent !important;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      margin-right: 8px;
+      flex-shrink: 0;
     }
+  }
+  .counter-icon.inactive {
+    opacity: 0.5;
+    filter: grayscale(1);
+  }
 
-    // Majority judgment specific
-        &.has-majority-judgment {
-        width: max-content;
-        min-width: 150px;
-        max-width: none;
-        justify-content: space-between;
-
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .grade-icon {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-
-            svg {
-                width: 14px !important;
-                height: 14px !important;
-                flex-shrink: 0;
-            }
-
-            .grade-value {
-                font-size: 11px;
-                font-weight: 600;
-                max-width: none !important;
-                overflow: visible !important;
-                text-overflow: clip !important;
-                white-space: nowrap;
-                display: inline-block;
-                line-height: 1.3;
-            }
-        }
-    }
-
-    // Reaction, Score, Approval types
-        &.has-reaction,
-    &.has-score,
-    &.has-approval-delib {
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            margin-right: 8px;
-            flex-shrink: 0;
-        }
-    }
-    .counter-icon.inactive {
-        opacity: 0.5;
-        filter: grayscale(1);
-    }
-
-    .reaction-emoji.inactive {
-        opacity: 0.4;
-        filter: grayscale(1);
-    }    
+  .reaction-emoji.inactive {
+    opacity: 0.4;
+    filter: grayscale(1);
+  }
 }
 </style>
 
 <style lang="scss">
 // Global styles for popover content (must not be scoped)
 .support-details-popover {
-    .support-tooltip-content {
-        background: var(--color-main-background);
-        border: 1px solid var(--color-border);
+  .support-tooltip-content {
+    background: var(--color-main-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 280px;
+    max-width: 400px;
+    width: auto;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+    .tooltip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-border);
+
+      h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .user-support-badge {
+        padding: 4px 8px;
         border-radius: 12px;
-        padding: 16px;
-        min-width: 280px;
-        max-width: 400px;
-        width: auto;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        font-size: 11px;
+        font-weight: 500;
 
-        .tooltip-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--color-border);
+        &.positive {
+          background: #10b98120;
+          color: #10b981;
+        }
+        &.neutral {
+          background: #6b728020;
+          color: #6b7280;
+        }
+        &.negative {
+          background: #ef444420;
+          color: #ef4444;
+        }
+      }
+    }
 
-            h4 {
-                margin: 0;
-                font-weight: 600;
-                font-size: 14px;
-            }
+    .no-results-message {
+      text-align: center;
+      padding: 16px;
+      color: var(--color-text-lighter);
 
-            .user-support-badge {
-                padding: 4px 8px;
-                border-radius: 12px;
-                font-size: 11px;
-                font-weight: 500;
+      p {
+        margin: 8px 0;
+        font-size: 12px;
+      }
 
-                &.positive {
-                    background: #10b98120;
-                    color: #10b981;
-                }
-                &.neutral {
-                    background: #6b728020;
-                    color: #6b7280;
-                }
-                &.negative {
-                    background: #ef444420;
-                    color: #ef4444;
-                }
-            }
+      .total-participants {
+        font-weight: 600;
+        color: var(--color-main-text);
+      }
+    }
+
+    .binary-breakdown,
+    .ternary-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .breakdown-item {
+        padding: 8px;
+        border-radius: 8px;
+        background: var(--color-background-dark);
+
+        &.positive {
+          border-left: 3px solid #10b981;
+        }
+        &.neutral {
+          border-left: 3px solid #6b7280;
+        }
+        &.negative {
+          border-left: 3px solid #ef4444;
         }
 
-        .no-results-message {
-            text-align: center;
-            padding: 16px;
+        .breakdown-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 6px;
+
+          .breakdown-label {
+            font-weight: 600;
+            font-size: 12px;
+          }
+        }
+
+        .breakdown-stats {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 6px;
+
+          .count {
+            font-weight: 700;
+            font-size: 14px;
+          }
+          .percentage {
             color: var(--color-text-lighter);
-
-            p {
-                margin: 8px 0;
-                font-size: 12px;
-            }
-
-            .total-participants {
-                font-weight: 600;
-                color: var(--color-main-text);
-            }
+            font-size: 11px;
+          }
         }
 
-        .binary-breakdown,
-        .ternary-breakdown {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 16px;
+        .breakdown-bar {
+          height: 4px;
+          background: var(--color-border);
+          border-radius: 2px;
+          overflow: hidden;
 
-            .breakdown-item {
-                padding: 8px;
-                border-radius: 8px;
-                background: var(--color-background-dark);
+          .bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
 
-                &.positive {
-                    border-left: 3px solid #10b981;
-                }
-                &.neutral {
-                    border-left: 3px solid #6b7280;
-                }
-                &.negative {
-                    border-left: 3px solid #ef4444;
-                }
-
-                .breakdown-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    margin-bottom: 6px;
-
-                    .breakdown-label {
-                        font-weight: 600;
-                        font-size: 12px;
-                    }
-                }
-
-                .breakdown-stats {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 6px;
-
-                    .count {
-                        font-weight: 700;
-                        font-size: 14px;
-                    }
-                    .percentage {
-                        color: var(--color-text-lighter);
-                        font-size: 11px;
-                    }
-                }
-
-                .breakdown-bar {
-                    height: 4px;
-                    background: var(--color-border);
-                    border-radius: 2px;
-                    overflow: hidden;
-
-                    .bar-fill {
-                        height: 100%;
-                        transition: width 0.3s ease;
-
-                        &.positive-bar {
-                            background: #10b981;
-                        }
-                        &.neutral-bar {
-                            background: #6b7280;
-                        }
-                        &.negative-bar {
-                            background: #ef4444;
-                        }
-                    }
-                }
+            &.positive-bar {
+              background: #10b981;
             }
+            &.neutral-bar {
+              background: #6b7280;
+            }
+            &.negative-bar {
+              background: #ef4444;
+            }
+          }
         }
-
-        .score-breakdown {
-            margin-bottom: 16px;
-
-            .score-summary {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-
-                .score-stat {
-                    text-align: center;
-                    padding: 8px;
-                    background: var(--color-background-dark);
-                    border-radius: 8px;
-
-                    .stat-label {
-                        display: block;
-                        font-size: 10px;
-                        color: var(--color-text-lighter);
-                        margin-bottom: 4px;
-                    }
-
-                    .stat-value {
-                        font-size: 16px;
-                        font-weight: 700;
-                        color: var(--color-primary-element);
-                    }
-                }
-            }
-        }
-
-        .reaction-breakdown {
-            margin-bottom: 16px;
-
-            .reaction-grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                justify-content: center;
-
-                .reaction-stat {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    padding: 8px 12px;
-                    background: var(--color-background-dark);
-                    border-radius: 8px;
-                    min-width: 50px;
-                    transition: all 0.2s ease;
-
-                    &.selected {
-                        background: rgba(var(--color-primary-element-rgb), 0.1);
-                        border: 1px solid var(--color-primary-element);
-                    }
-
-                    .reaction-emoji {
-                        font-size: 20px;
-                        margin-bottom: 4px;
-                    }
-
-                    .reaction-count {
-                        font-weight: 600;
-                        font-size: 13px;
-                    }
-                }
-            }
-        }
-
-        .majority-breakdown {
-            margin-bottom: 16px;
-
-            .grade-distribution {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-
-                .grade-bar {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-
-                    .grade-label {
-                        min-width: 85px;
-                        font-size: 11px;
-                        color: var(--color-text-lighter);
-                    }
-
-                    .grade-bar-container {
-                        flex: 1;
-                        height: 6px;
-                        background: var(--color-border);
-                        border-radius: 3px;
-                        overflow: hidden;
-
-                        .grade-bar-fill {
-                            height: 100%;
-                            background: var(--color-primary-element);
-                            transition: width 0.3s ease;
-                        }
-                    }
-
-                    .grade-count {
-                        min-width: 35px;
-                        text-align: right;
-                        font-weight: 600;
-                        font-size: 12px;
-                    }
-                }
-            }
-
-            .median-info {
-                margin-top: 12px;
-                padding-top: 8px;
-                border-top: 1px solid var(--color-border);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-
-                .median-label {
-                    font-size: 11px;
-                    color: var(--color-text-lighter);
-                }
-
-                .median-value {
-                    font-weight: 700;
-                    font-size: 13px;
-                    color: var(--color-primary-element);
-                }
-            }
-        }
-
-        .tooltip-footer {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 12px;
-            margin-top: 4px;
-            border-top: 1px solid var(--color-border);
-
-            .summary-item {
-                .summary-label {
-                    font-size: 10px;
-                    color: var(--color-text-lighter);
-                    display: block;
-                    margin-bottom: 2px;
-                }
-
-                .summary-value {
-                    font-weight: 700;
-                    font-size: 13px;
-
-                    &.reached {
-                        color: var(--color-success);
-                    }
-                }
-            }
-        }
+      }
     }
 
-    .counter-icon,
-    .breakdown-header svg,
-    .reaction-stat svg {
-        background: transparent !important;
+    .score-breakdown {
+      margin-bottom: 16px;
+
+      .score-summary {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+
+        .score-stat {
+          text-align: center;
+          padding: 8px;
+          background: var(--color-background-dark);
+          border-radius: 8px;
+
+          .stat-label {
+            display: block;
+            font-size: 10px;
+            color: var(--color-text-lighter);
+            margin-bottom: 4px;
+          }
+
+          .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-primary-element);
+          }
+        }
+      }
     }
+
+    .reaction-breakdown {
+      margin-bottom: 16px;
+
+      .reaction-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+
+        .reaction-stat {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 8px 12px;
+          background: var(--color-background-dark);
+          border-radius: 8px;
+          min-width: 50px;
+          transition: all 0.2s ease;
+
+          &.selected {
+            background: rgba(var(--color-primary-element-rgb), 0.1);
+            border: 1px solid var(--color-primary-element);
+          }
+
+          .reaction-emoji {
+            font-size: 20px;
+            margin-bottom: 4px;
+          }
+
+          .reaction-count {
+            font-weight: 600;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+
+    .majority-breakdown {
+      margin-bottom: 16px;
+
+      .grade-distribution {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .grade-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .grade-label {
+            min-width: 85px;
+            font-size: 11px;
+            color: var(--color-text-lighter);
+          }
+
+          .grade-bar-container {
+            flex: 1;
+            height: 6px;
+            background: var(--color-border);
+            border-radius: 3px;
+            overflow: hidden;
+
+            .grade-bar-fill {
+              height: 100%;
+              background: var(--color-primary-element);
+              transition: width 0.3s ease;
+            }
+          }
+
+          .grade-count {
+            min-width: 35px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 12px;
+          }
+        }
+      }
+
+      .median-info {
+        margin-top: 12px;
+        padding-top: 8px;
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .median-label {
+          font-size: 11px;
+          color: var(--color-text-lighter);
+        }
+
+        .median-value {
+          font-weight: 700;
+          font-size: 13px;
+          color: var(--color-primary-element);
+        }
+      }
+    }
+
+    .tooltip-footer {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 12px;
+      margin-top: 4px;
+      border-top: 1px solid var(--color-border);
+
+      .summary-item {
+        .summary-label {
+          font-size: 10px;
+          color: var(--color-text-lighter);
+          display: block;
+          margin-bottom: 2px;
+        }
+
+        .summary-value {
+          font-weight: 700;
+          font-size: 13px;
+
+          &.reached {
+            color: var(--color-success);
+          }
+        }
+      }
+    }
+  }
+
+  .counter-icon,
+  .breakdown-header svg,
+  .reaction-stat svg {
+    background: transparent !important;
+  }
 }
 </style>
