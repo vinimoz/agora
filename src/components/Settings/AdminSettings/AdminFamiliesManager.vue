@@ -106,9 +106,33 @@ const updateFamily = async (family) => {
   editingFamily.value = null
 }         
 
-const deleteFamily = async (familyId) => {
+const deleteFamily = async (family) => {
+  // Guard: block deletion while still in use
+  if (family.typesCount > 0 || family.groupTypesCount > 0) {
+    const parts = []
+    if (family.typesCount > 0) {
+      parts.push(
+        t('agora', '{count} inquiry type(s)', { count: family.typesCount }),
+      )
+    }
+    if (family.groupTypesCount > 0) {
+      parts.push(
+        t('agora', '{count} inquiry group(s)', { count: family.groupTypesCount }),
+      )
+    }
+    showError(
+      t(
+        'agora',
+        'Cannot delete this family because it is still in use: {details}. Please remove or reassign them first.',
+        { details: parts.join(', ') },
+      ),
+      { timeout: 6000 },
+    )
+    return
+  }
+
   if (confirm(t('agora', 'Are you sure you want to delete this family?'))) {
-    await appSettingsStore.deleteFamily(familyId)
+    await appSettingsStore.deleteFamily(family.id)
   }
 }
 
@@ -157,7 +181,7 @@ const selectFamily = (family) => {
           <NcButton @click.stop="startEditing(family)">
             {{ t('agora', 'Edit') }}
           </NcButton>
-          <NcButton @click.stop="deleteFamily(family.id)">
+          <NcButton @click.stop="deleteFamily(family)">
             {{ t('agora', 'Delete') }}
           </NcButton>
         </div>
