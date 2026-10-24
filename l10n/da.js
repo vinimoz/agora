@@ -1093,6 +1093,7 @@ OC.L10N.register(
     "Comment on {option}" : "Kommentar til {option}",
     "Under which conditions? Why?" : "Under hvilke betingelser? Hvorfor?",
     "Voted" : "Stemt",
+    "_%n voter_::_%n voters_" : ["%n vælger","%n vælgere"],
     "Submit selections" : "Indsend valg",
     "Submit ranking" : "Indsend rangordning",
     "Submit scores" : "Indsend point",

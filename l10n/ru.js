@@ -1093,6 +1093,7 @@ OC.L10N.register(
     "Comment on {option}" : "Комментарий к варианту «{option}»",
     "Under which conditions? Why?" : "При каких условиях? Почему?",
     "Voted" : "Проголосовали",
+    "_%n voter_::_%n voters_" : ["%n проголосовавший","%n проголосовавших","%n проголосовавших","%n проголосовавшего"],
     "Submit selections" : "Отправить выбор",
     "Submit ranking" : "Отправить рейтинг",
     "Submit scores" : "Отправить баллы",

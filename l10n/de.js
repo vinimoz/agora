@@ -1093,6 +1093,7 @@ OC.L10N.register(
     "Comment on {option}" : "Kommentar zu {option}",
     "Under which conditions? Why?" : "Unter welchen Bedingungen? Warum?",
     "Voted" : "Abgestimmt",
+    "_%n voter_::_%n voters_" : ["%n Abstimmender","%n Abstimmende"],
     "Submit selections" : "Auswahl einreichen",
     "Submit ranking" : "Rangliste einreichen",
     "Submit scores" : "Ergebnisse einreichen",

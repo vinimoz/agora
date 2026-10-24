@@ -1093,6 +1093,7 @@ OC.L10N.register(
     "Comment on {option}" : "{option} için yorum",
     "Under which conditions? Why?" : "Hangi koşullarda? Neden?",
     "Voted" : "Oylandı",
+    "_%n voter_::_%n voters_" : ["%n oy veren","%n oy veren"],
     "Submit selections" : "Seçimleri gönder",
     "Submit ranking" : "Sıralamayı gönder",
     "Submit scores" : "Puanları gönder",
