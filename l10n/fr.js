@@ -1210,6 +1210,8 @@ OC.L10N.register(
     "Enable the automatic inquiry expiration" : "Activer l'expiration automatique des consultations",
     "Days after which inquiries should expire after being opened" : "Jours après lesquels les consultations doivent expirer après avoir été ouvertes",
     "Inquiry family type is mandatory" : "Le type de famille de consultations est obligatoire",
+    "{count} inquiry type(s)" : "{count} type(s) de consultation",
+    "{count} inquiry group(s)" : "{count} groupe(s) de consultation",
     "Are you sure you want to delete this family?" : "Êtes-vous sûr de vouloir supprimer cette famille ?",
     "Inquiry families management" : "Gestion des familles de consultations",
     "Manage inquiry families to organize different types of inquiries. Each family can contain multiple inquiry types." : "Gérer les familles de consultations pour organiser différents types de consultations. Chaque famille peut contenir plusieurs types de consultations.",
