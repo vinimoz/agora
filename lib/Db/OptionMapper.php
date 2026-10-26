@@ -16,6 +16,7 @@ use OCP\IDBConnection;
 use OCP\Search\ISearchQuery;
 use Psr\Log\LoggerInterface;
 use OCA\Agora\Helper\SqlHelper;
+use OCA\Agora\Db\InquiryMapper;
 
 /**
  * @template-extends QBMapper<Option>

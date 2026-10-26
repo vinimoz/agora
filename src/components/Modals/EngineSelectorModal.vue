@@ -144,7 +144,8 @@
                           :model-value="commentGrades.includes(grade)"
                           @update:model-value="toggleCommentGrade(grade, $event)"
                           >
-                          {{ t('agora', 'Open comment on this grade') }}
+                          {{ t('agora', 'Require a justification for this grade') }}
+			    <span class="field-hint">{{ t('agora', '(not implemented yet)') }}</span>
                   </NcCheckboxRadioSwitch>
                   <NcButton
                           v-if="(tempConfig.grades || defaultGrades).length > 2"
