@@ -37,6 +37,15 @@ const userItemProps = computed(() => ({
   icon: true,
 }))
 
+const participationLabel = computed(() => {
+  switch (share.participationLevel) {
+    case 1: return t('agora', 'Vote')
+    case 2: return t('agora', 'Comment')
+    case 3: return t('agora', 'Vote + Comment')
+    default: return t('agora', 'Read only')
+  }
+})
+
 onMounted(() => {
   label.value.inputValue = share.label
 })
@@ -58,6 +67,7 @@ onMounted(() => {
             :name="t('agora', 'Has been supported')"
           />
         </div>
+        
         <div v-else-if="share.groupId || ['public', 'group'].includes(share.type)">
           <div class="support-status empty" />
         </div>
@@ -66,33 +76,41 @@ onMounted(() => {
             :supported="false"
             class="support-status unsupported"
             :name="t('agora', 'Has not supported')"
-          />
-        </div>
+	    />
+	</div>
+	<span
+			v-if="share.type !== 'public' && !share.groupId"
+			class="participation-badge"
+			:title="participationLabel"
+			>
+			{{ participationLabel }}
+	</span>
+
       </template>
 
       <ShareMenu
-        :share="share"
-        @show-qr-code="emit('showQrCode')"
-      />
+		      :share="share"
+		      @show-qr-code="emit('showQrCode')"
+		      />
     </UserItem>
-  </div>
+	</div>
 </template>
 
 <style lang="scss">
 .deleted .user-item .description {
-  color: var(--color-error-text);
+	color: var(--color-error-text);
 }
 
-.support-status {
-  margin-inline-start: 8px;
-  width: 32px;
+  .support-status {
+	  margin-inline-start: 8px;
+	  width: 32px;
 
-  &.supported {
-    color: var(--color-inquiries-foreground-yes);
-  }
+	  &.supported {
+		  color: var(--color-inquiries-foreground-yes);
+	  }
 
-  &.unsupported {
-    color: var(--color-inquiries-foreground-no);
+	  &.unsupported {
+		  color: var(--color-inquiries-foreground-no);
+	  }
   }
-}
 </style>

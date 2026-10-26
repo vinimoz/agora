@@ -16,9 +16,19 @@ export type ShareType =
   | 'circle'
   | 'contactGroup'
 
+
+export const PARTICIPATION = {
+  NONE: 0,
+  VOTE: 1,
+  COMMENT: 2,
+  BOTH: 3,
+} as const
+
 export type PublicInquiryEmailConditions = 'mandatory' | 'optional' | 'disabled'
 
 export type SharePurpose = 'inquiry' | 'inquiryGroup'
+
+export type ShareParticipationLevel = 0 | 1 | 2 | 3
 
 export type Share = {
   displayName: string
@@ -34,8 +44,11 @@ export type Share = {
   publicInquiryEmail: PublicInquiryEmailConditions
   user: User
   reminderSent: boolean
+  participationLevel: ShareParticipationLevel
+  canVote: boolean
+  canComment: boolean
+  canParticipate: boolean
   label: string
-  allowParticipation: boolean
   URL: string
   supported: boolean
   deleted: boolean

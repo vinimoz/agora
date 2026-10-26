@@ -5,9 +5,6 @@
 import type { ExperienceKey, ExperienceArchitecture } from '../Types/experience.types'
 
 export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitecture> = {
-  // ============================================================
-  // HOME – Hero + main column + right rail (news / services / agenda)
-  // ============================================================
   home: {
     experience: 'home',
     defaultDisplay: 'banner',
@@ -16,32 +13,27 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     features: ['hero', 'news', 'services', 'explore', 'agenda', 'promo'],
     sections: [
       { key: 'hero', label: '', order: 1, zones: ['hero'] },
-      { key: 'news', label: 'City news', order: 2, zones: ['news'] },
+      { key: 'news', label: 'News', order: 2, zones: ['news'] },
       { key: 'current', label: 'Right now', order: 3, zones: ['current_moment'] },
       { key: 'spaces', label: 'My spaces', order: 4, zones: ['my_spaces'] },
-      { key: 'services', label: 'Your online services', order: 5, zones: ['services_tiles'] },
-      { key: 'explore', label: 'Explore / Participate', order: 6, zones: ['explore'] },
+      { key: 'services', label: 'Services', order: 5, zones: ['services_tiles'] },
+      { key: 'explore', label: 'Explore', order: 6, zones: ['explore'] },
       { key: 'agenda', label: 'Agenda', order: 7, zones: ['agenda'] },
       { key: 'promo', label: '', order: 8, zones: ['promo'] },
     ],
     displayArchitecture: {
-      // ---- HERO banner (main column, spans 2) ----
       hero: {
         content: 'hero',
         scope: { source: 'all' },
         display: { type: 'banner' },
         position: { row: 1, column: 1, columnSpan: 2 },
       },
-
-      // ---- Right rail: NEWS ----
       news: {
         content: 'news',
-        scope: { source: 'municipal', pagination: { limit: 5, offset: 0 } },
+        scope: { source: 'official', pagination: { limit: 5, offset: 0 } },
         display: { type: 'news_list' },
         position: { row: 1, column: 3, rowSpan: 1 },
       },
-
-      // ---- Right now ----
       current_moment: {
         content: 'inquiries',
         scope: {
@@ -56,20 +48,14 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         position: { row: 2, column: 1, columnSpan: 2 },
         interaction: { action: 'open', target: 'page' },
       },
-
-      // ---- My spaces ----
       my_spaces: {
         content: 'group_types',
-        scope: {
-          source: 'all',
-          sort: { field: 'title', direction: 'asc' },
-        },
+        scope: { source: 'all', sort: { field: 'title', direction: 'asc' } },
         display: {
           type: 'my_spaces',
           options: {
             families: [],
             variant: 'chips',
-            showCover: true,
             showStats: true,
             showDescription: false,
           },
@@ -77,42 +63,29 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         position: { row: 3, column: 1, columnSpan: 2 },
         interaction: { action: 'navigate', target: 'page' },
       },
-
-      // ---- Right rail: SERVICES ----
       services_tiles: {
         content: 'group_types',
-        scope: { source: 'all', family: 'service' },
+        scope: { source: 'all', groupFamily: 'service' },
         display: { type: 'tiles', options: { limit: 4 } },
         position: { row: 2, column: 3 },
       },
-      // ---- Explore / Participate (main column) ----
       explore: {
         content: 'explore',
         scope: { source: 'all' },
         display: { type: 'category_grid' },
         position: { row: 4, column: 1, columnSpan: 2 },
       },
-
-      // ---- Right rail: AGENDA (compact timeline) ----
       agenda: {
         content: 'inquiries',
         scope: {
           source: 'all',
-          filter: {
-            type: ['meeting', 'gathering', 'conference', 'assembly'],
-          },
+          filter: { type: ['meeting', 'gathering', 'conference', 'assembly'] },
           sort: { field: 'created', direction: 'asc' },
         },
-        display: {
-          type: 'timeline',
-          options: { compact: true, hideControls: true, limit: 4 },
-        },
+        display: { type: 'timeline', options: { compact: true, hideControls: true, limit: 4 } },
         position: { row: 3, column: 3, rowSpan: 3 },
-
         interaction: { action: 'open', target: 'dialog' },
       },
-
-      // ---- Promo card (main column, bottom) ----
       promo: {
         content: 'promo',
         scope: { source: 'featured' },
@@ -122,15 +95,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // DASHBOARD — Monitoring view. Numbers → flow → items.
-  // 3 cols × 2 rows
-  // ┌────────┬────────┬────────┐
-  // │  stats │ activity (2r)   │ recent │
-  // ├────────┤        ├────────┤
-  // │ trending│       │ featured│
-  // └────────┴────────┴────────┘
-  // ============================================================
   dashboard: {
     experience: 'dashboard',
     defaultDisplay: 'widget',
@@ -187,10 +151,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
       },
       featured_inquiries: {
         content: 'inquiries',
-        scope: {
-          source: 'featured',
-          pagination: { limit: 4, offset: 0 },
-        },
+        scope: { source: 'featured', pagination: { limit: 4, offset: 0 } },
         display: { type: 'cards', options: { compact: true, showSupport: true } },
         position: { row: 2, column: 3 },
         interaction: { action: 'open', target: 'panel' },
@@ -198,17 +159,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // SOCIAL — Conversation stream + context rail.
-  // 3 cols × 3 rows
-  // ┌─────────────┬─────────────┬──────────┐
-  // │              │             │ trending │
-  // │   feed       │             ├──────────┤
-  // │  (col-span 2,│             │ featured │
-  // │   row-span 3)│             ├──────────┤
-  // │              │             │ activity │
-  // └─────────────┴─────────────┴──────────┘
-  // ============================================================
   social: {
     experience: 'social',
     defaultDisplay: 'feed',
@@ -229,10 +179,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           sort: { field: 'status.lastInteraction', direction: 'desc' },
           pagination: { limit: 20, offset: 0 },
         },
-        filter: {
-          status: ['published', 'active'],
-          //  inquiry_type: ['discussion', 'poll', 'question', 'debate'],
-        },
+        filter: { status: ['published', 'active'] },
         display: { type: 'feed', pagination: 'infinite', options: { interactive: true } },
         position: { row: 1, column: 1, columnSpan: 2, rowSpan: 3 },
         interaction: { action: 'open', target: 'panel' },
@@ -251,10 +198,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
       },
       featured: {
         content: 'inquiries',
-        scope: {
-          source: 'featured',
-          pagination: { limit: 4, offset: 0 },
-        },
+        scope: { source: 'featured', pagination: { limit: 4, offset: 0 } },
         display: { type: 'cards', options: { compact: true, cardsPerRow: 1 } },
         position: { row: 2, column: 3 },
         interaction: { action: 'open', target: 'panel' },
@@ -270,17 +214,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // MARKETPLACE — Search → filter → browse → feature.
-  // 3 cols × 3 rows
-  // ┌───────────────────────────────────────┐
-  // │            search_bar (span 3)        │
-  // ├──────────┬────────────────────────────┤
-  // │          │     results_grid (span 2)  │
-  // │  filters ├────────────────────────────┤
-  // │ (2 rows) │     featured (span 2)      │
-  // └──────────┴────────────────────────────┘
-  // ============================================================
   marketplace: {
     experience: 'marketplace',
     defaultDisplay: 'cards',
@@ -295,16 +228,9 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     ],
     displayArchitecture: {
       search_bar: {
-        content: 'inquiries',
-        scope: {
-          source: 'children',
-          sort: { field: 'status.lastInteraction', direction: 'desc' },
-        },
-        filter: {
-          status: ['published', 'active'],
-          //  inquiry_type: ['proposal', 'offer', 'service', 'project', 'classified_ad', 'job_offer'],
-        },
-        display: { type: 'tool', tool: 'search' },
+        content: 'search',
+        scope: { source: 'all' },
+        display: { type: 'search_bar' },
         position: { row: 1, column: 1, columnSpan: 3 },
       },
       filters: {
@@ -322,20 +248,14 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           sort: { field: 'status.countSupports', direction: 'desc' },
           pagination: { limit: 12, offset: 0 },
         },
-        filter: {
-          status: ['published', 'featured'],
-          //  inquiry_type: ['proposal', 'offer', 'service', 'project'],
-        },
+        filter: { status: ['published', 'featured'] },
         display: { type: 'cards', options: { cardsPerRow: 3, showStats: true, showSupport: true } },
         position: { row: 2, column: 2, columnSpan: 2 },
         interaction: { action: 'open', target: 'page' },
       },
       featured: {
         content: 'inquiries',
-        scope: {
-          source: 'featured',
-          pagination: { limit: 4, offset: 0 },
-        },
+        scope: { source: 'featured', pagination: { limit: 4, offset: 0 } },
         display: { type: 'cards', options: { horizontal: true, cardsPerRow: 2, compact: true } },
         position: { row: 3, column: 2, columnSpan: 2 },
         interaction: { action: 'open', target: 'page' },
@@ -343,15 +263,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // KANBAN — Wide board + status rail.
-  // 3 cols × 2 rows
-  // ┌───────────────────┬────────┐
-  // │                   │  stats │
-  // │   board (span 2,  ├────────┤
-  // │   span 2 rows)    │activity│
-  // └───────────────────┴────────┘
-  // ============================================================
   kanban: {
     experience: 'kanban',
     defaultDisplay: 'tool',
@@ -367,10 +278,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     displayArchitecture: {
       board: {
         content: 'inquiries',
-        scope: {
-          source: 'children',
-          sort: { field: 'status.lastInteraction', direction: 'desc' },
-        },
+        scope: { source: 'children', sort: { field: 'status.lastInteraction', direction: 'desc' } },
         filter: { status: ['active', 'in_progress', 'review'] },
         display: { type: 'tool', tool: 'kanban', options: { interactive: true } },
         position: { row: 1, column: 1, columnSpan: 2, rowSpan: 2 },
@@ -387,7 +295,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
       activity: {
         content: 'activity',
         scope: { source: 'children' },
-        // filter: { type: ['status_change', 'milestone', 'workflow_transition'] },
         display: { type: 'feed', options: { compact: true, dense: true } },
         position: { row: 2, column: 3 },
         interaction: { action: 'open', target: 'panel' },
@@ -395,15 +302,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // TIMELINE — Chronological spine + stats & activity rail.
-  // 3 cols × 2 rows
-  // ┌───────────────────┬────────┐
-  // │   timeline_view   │  stats │
-  // │   (span 2,        ├────────┤
-  // │   span 2 rows)    │activity│
-  // └───────────────────┴────────┘
-  // ============================================================
   timeline: {
     experience: 'timeline',
     defaultDisplay: 'timeline',
@@ -418,10 +316,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     displayArchitecture: {
       timeline_view: {
         content: 'inquiries',
-        scope: {
-          source: 'children',
-          sort: { field: 'status.created', direction: 'asc' },
-        },
+        scope: { source: 'children', sort: { field: 'status.created', direction: 'asc' } },
         filter: { status: ['published', 'active', 'completed', 'archived'] },
         display: { type: 'timeline', options: { interactive: true } },
         position: { row: 1, column: 1, columnSpan: 2, rowSpan: 2 },
@@ -438,7 +333,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
       activity: {
         content: 'activity',
         scope: { source: 'children' },
-        // filter: { type: ['milestone', 'event', 'status_change'] },
         display: { type: 'feed', options: { compact: true, dense: true } },
         position: { row: 2, column: 3 },
         interaction: { action: 'open', target: 'panel' },
@@ -446,15 +340,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // WIKI — Tree sidebar + book + structure tool.
-  // 3 cols × 2 rows
-  // ┌──────────┬────────────────────────────┐
-  // │          │         content (span 2)   │
-  // │   tree   ├────────────────────────────┤
-  // │ (2 rows) │         structure (span 2) │
-  // └──────────┴────────────────────────────┘
-  // ============================================================
   wiki: {
     experience: 'wiki',
     defaultDisplay: 'book',
@@ -469,10 +354,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     displayArchitecture: {
       navigation: {
         content: 'inquiry_groups',
-        scope: {
-          source: 'children',
-          sort: { field: 'order', direction: 'asc' },
-        },
+        scope: { source: 'children', sort: { field: 'order', direction: 'asc' } },
         filter: { status: ['published', 'active'] },
         display: { type: 'tree', options: { dense: true } },
         position: { row: 1, column: 1, rowSpan: 2 },
@@ -488,8 +370,8 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
       },
       structure: {
         content: 'options',
-        scope: { source: 'selected_inquiry' },
-        filter: { family: 'structure', status: ['published', 'active'] },
+        scope: { source: 'selected_inquiry', optionFamily: 'structure' },
+        filter: { status: ['published', 'active'] },
         display: { type: 'tool', tool: 'structure' },
         position: { row: 2, column: 2, columnSpan: 2 },
         interaction: { action: 'open', target: 'panel' },
@@ -497,17 +379,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // DECISION_ROOM — Reading → debate + evidence → discussion.
-  // 2 cols × 3 rows
-  // ┌───────────────────────────────────────┐
-  // │       inquiry_detail (span 2)         │
-  // ├───────────────────┬───────────────────┤
-  // │      debate       │     resources     │
-  // ├───────────────────┴───────────────────┤
-  // │       discussion (span 2)             │
-  // └───────────────────────────────────────┘
-  // ============================================================
   decision_room: {
     experience: 'decision_room',
     defaultDisplay: 'book',
@@ -533,9 +404,10 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         content: 'options',
         scope: {
           source: 'selected_inquiry',
+          optionFamily: 'debate',
           sort: { field: 'supportCount', direction: 'desc' },
         },
-        filter: { family: 'debate', status: ['active', 'proposed', 'under_discussion'] },
+        filter: { status: ['active', 'proposed', 'under_discussion'] },
         display: { type: 'tool', tool: 'debate' },
         position: { row: 2, column: 1 },
         interaction: { action: 'open', target: 'panel' },
@@ -563,9 +435,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // NAVIGATION — Simple navigation. Groups ARE the point.
-  // ============================================================
   navigation: {
     experience: 'navigation',
     defaultDisplay: 'navigation',
@@ -584,9 +453,6 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     },
   },
 
-  // ============================================================
-  // CLASSIC – Plain list view (required by ExperienceKey)
-  // ============================================================
   classic: {
     experience: 'classic',
     defaultDisplay: 'list',

@@ -1,6 +1,6 @@
 <!--
-  - SPDX-FileCopyrightText: 2025 Nextcloud contributors
-  - SPDX-License-Identifier: AGPL-3.0-or-later
+	- SPDX-FileCopyrightText: 2025 Nextcloud contributors
+	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <script setup lang="ts">
@@ -9,20 +9,31 @@ import { t } from '@nextcloud/l10n'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { useSharesStore } from '../../stores/shares.ts'
 import { useInquiryGroupStore } from '../../stores/inquiryGroup.ts'
 import UserSearch from '../User/UserSearch.vue'
 import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from '../../Types/index.ts'
-import type { VisibilityType, PublicationStatus } from '../../stores/inquiryGroup.ts'
+import type { VisibilityType, PublicationStatus } from '../../Types/inquiry.types.ts'
 import ShareList from '../Shares/SharesList.vue'
 import SharesListUnsent from '../Shares/SharesListUnsent.vue'
 import SharesListLocked from '../Shares/SharesListLocked.vue'
+import { useParticipationStore } from '../../stores/participation.ts'
+import type {
+  ParticipationPolicyType,
+  ParticipationTargetType,
+  LotteryMode,
+  LotteryMethod,
+} from '../../Types/participation.types.ts'
+
 
 // ============================================================
 // STORE SETUP
 // ============================================================
 const inquiryGroupStore = useInquiryGroupStore()
 const sharesStore = useSharesStore()
+
+
 
 // ============================================================
 // COMPUTED - Direct store access
@@ -31,6 +42,14 @@ const sharesStore = useSharesStore()
 const canEdit = computed(() => inquiryGroupStore.permissions.edit)
 const isLoading = ref(false)
 const isSaving = computed(() => inquiryGroupStore.updating)
+
+// Participation 
+const participationStore = useParticipationStore()
+
+const participationTargetType = computed((): ParticipationTargetType => 'inquiry_group')
+const participationTargetId = computed(() => inquiryGroupStore.id)
+
+
 
 // Visibility options - Using string array like SideBarTabAccess.vue
 const visibilityOptions = ['everyone', 'groups', 'users', 'private']
@@ -63,6 +82,132 @@ const selectedGroupStatus = computed({
     }
   },
 })
+
+// ============================================================
+// PARTICIPATION
+// ============================================================
+
+interface ParticipationConfig {
+  selection_size: number
+  source_groups: string[]
+  method: LotteryMethod
+  user_ids: string[]
+  group_ids: string[]
+  mode: LotteryMode
+}
+
+const localParticipationType = ref<ParticipationPolicyType>('none')
+const localParticipationConfig = ref<ParticipationConfig>({
+  selection_size: 10,
+  source_groups: [],
+  method: 'random',
+  mode: 'groups',
+  user_ids: [],
+  group_ids: [],
+})
+
+const extractIds = (items: Array<any>): string[] =>
+  !items || !Array.isArray(items) ? [] : items
+    .map((it) =>
+      typeof it === 'string' ? it
+	: (it.id || it.userId || it.groupId || it.uid || it.value || null))
+    .filter(Boolean) as string[]
+
+const toBackendConfig = (c: ParticipationConfig): Record<string, unknown> => ({
+  mode: c.mode,
+  count: c.selection_size,
+  method: c.method,
+  source_groups: c.source_groups,
+  user_ids: c.user_ids,
+  group_ids: c.group_ids,
+})
+
+const fromBackendConfig = (raw: Record<string, unknown> | undefined): ParticipationConfig => {
+  const r = raw ?? {}
+  return {
+    selection_size: Number(r.count ?? r.selection_size ?? 10),
+    source_groups: (r.source_groups as string[]) ?? [],
+    method: ((r.method as string) ?? 'random') as LotteryMethod,
+    mode: ((r.mode as string) ?? 'groups') as LotteryMode,
+    user_ids: (r.user_ids as string[]) ?? [],
+    group_ids: (r.group_ids as string[]) ?? [],
+  }
+}
+
+const participationType = computed({
+  get: () => localParticipationType.value,
+  set: async (value: ParticipationPolicyType) => {
+    if (!canEdit.value) return
+    localParticipationType.value = value
+    await saveParticipationPolicy(value, localParticipationConfig.value)
+  },
+})
+
+const participationConfig = computed({
+  get: () => localParticipationConfig.value,
+  set: async (config: ParticipationConfig) => {
+    if (!canEdit.value) return
+    localParticipationConfig.value = config
+    await saveParticipationPolicy(localParticipationType.value, config)
+  },
+})
+
+async function saveParticipationPolicy(
+  type: ParticipationPolicyType,
+  config: ParticipationConfig,
+) {
+  if (!participationTargetId.value) return
+  try {
+    await participationStore.setParticipation(
+      participationTargetType.value,
+      participationTargetId.value,
+      type,
+      toBackendConfig(config),
+    )
+    showSuccess(t('agora', 'Participation updated'))
+  } catch (error: any) {
+    showError(t('agora', 'Failed to update participation: {error}', { error: error.message }))
+  }
+}
+
+async function resetParticipation() {
+  if (!canEdit.value || !participationTargetId.value) return
+  try {
+    await participationStore.deleteParticipation(
+      participationTargetType.value,
+      participationTargetId.value,
+    )
+    localParticipationType.value = 'none'
+    localParticipationConfig.value = {
+      selection_size: 10,
+      source_groups: [],
+      method: 'random',
+      mode: 'groups',
+      user_ids: [],
+      group_ids: [],
+    }
+    showSuccess(t('agora', 'Participation disabled'))
+  } catch (error: any) {
+    showError(t('agora', 'Failed to reset participation: {error}', { error: error.message }))
+  }
+}
+
+function handleParticipationConfigChange(field: keyof ParticipationConfig, value: any) {
+  if (!canEdit.value) return
+  const normalized = Array.isArray(value) ? extractIds(value) : value
+  participationConfig.value = { ...localParticipationConfig.value, [field]: normalized }
+}
+
+const participationOptions: ParticipationPolicyType[] =
+  ['none', 'everyone', 'users', 'groups', 'lottery']
+
+const participationOptionLabels: Record<ParticipationPolicyType, string> = {
+  none: t('agora', 'No participation'),
+  everyone: t('agora', 'Everyone'),
+  users: t('agora', 'Specific Users'),
+  groups: t('agora', 'Specific Groups'),
+  lottery: t('agora', '🎲 Lottery'),
+}
 
 // ============================================================
 // COMPUTED - Direct store access with reactive updates
@@ -170,24 +315,24 @@ const infoText = computed((): string => {
       break
     case 'users':
       if (inquiryGroupStore.configuration.visibilityUsers?.length) {
-        parts.push(
-          t('agora', 'Visible to {count} participants', {
-            count: inquiryGroupStore.configuration.visibilityUsers.length,
-          })
-        )
+	parts.push(
+	  t('agora', 'Visible to {count} participants', {
+	    count: inquiryGroupStore.configuration.visibilityUsers.length,
+	  })
+	)
       } else {
-        parts.push(t('agora', 'Visible to participants only'))
+	parts.push(t('agora', 'Visible to participants only'))
       }
       break
     case 'groups':
       if (inquiryGroupStore.configuration.visibilityGroups?.length) {
-        parts.push(
-          t('agora', 'Visible to {count} groups', {
-            count: inquiryGroupStore.configuration.visibilityGroups.length,
-          })
-        )
+	parts.push(
+	  t('agora', 'Visible to {count} groups', {
+	    count: inquiryGroupStore.configuration.visibilityGroups.length,
+	  })
+	)
       } else {
-        parts.push(t('agora', 'Visible only to the owner'))
+	parts.push(t('agora', 'Visible only to the owner'))
       }
       break
     case 'private':
@@ -220,19 +365,6 @@ async function archiveGroup() {
   }
 }
 
-async function resetParticipation() {
-  if (!canEdit.value) return
-  try {
-    await inquiryGroupStore.updateParticipation({
-      type: 'everyone',
-      groups: [],
-      users: [],
-    })
-    showSuccess(t('agora', 'Participation reset to everyone'))
-  } catch (error) {
-    showError(t('agora', 'Failed to reset participation'))
-  }
-}
 
 // ============================================================
 // LIFECYCLE
@@ -246,408 +378,519 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="sidebar-group-access">
-    <!-- Header -->
-    <div class="access-header">
-      <h2>{{ t('agora', 'Access & Voting') }}</h2>
-      <p class="subtitle">
-        {{ t('agora', 'Manage who can view the group and vote on inquiries') }}
-      </p>
-    </div>
+	<div class="sidebar-group-access">
+		<!-- Header -->
+		<div class="access-header">
+			<h2>{{ t('agora', 'Access & Voting') }}</h2>
+			<p class="subtitle">
+			{{ t('agora', 'Manage who can view the group and vote on inquiries') }}
+			</p>
+		</div>
 
-    <!-- ============================================================
-            GROUP STATUS
-            ============================================================ -->
-    <div class="access-section">
-      <div class="section-header">
-        <h3>{{ t('agora', 'Group Status') }}</h3>
-        <div class="section-badge">
-          <span
-            class="badge"
-            :class="inquiryGroupStore.status.groupStatus"
-          >
-            {{ groupStatusLabels[inquiryGroupStore.status?.groupStatus] }}
-          </span>
-        </div>
-      </div>
-      <p class="section-desc">
-        {{ t('agora', 'Control the workflow status of this group') }}
-      </p>
+		<!-- ============================================================
+			GROUP STATUS
+			============================================================ -->
+			<div class="access-section">
+				<div class="section-header">
+					<h3>{{ t('agora', 'Group Status') }}</h3>
+					<div class="section-badge">
+						<span
+								class="badge"
+								:class="inquiryGroupStore.status.groupStatus"
+								>
+								{{ groupStatusLabels[inquiryGroupStore.status?.groupStatus] }}
+						</span>
+					</div>
+				</div>
+				<p class="section-desc">
+				{{ t('agora', 'Control the workflow status of this group') }}
+				</p>
 
-      <NcSelect
-        :model-value="selectedGroupStatus"
-        :options="groupStatusOptions"
-        :label-outside="true"
-        :option-label="(opt: string) => groupStatusLabels[opt] || opt"
-        :label="t('agora', 'Status')"
-        :disabled="!canEdit || isSaving"
-        input-label="Select group status"
-        @update:model-value="selectedGroupStatus = $event"
-      />
+				<NcSelect
+						:model-value="selectedGroupStatus"
+						:options="groupStatusOptions"
+						:label-outside="true"
+						:option-label="(opt: string) => groupStatusLabels[opt] || opt"
+						:label="t('agora', 'Status')"
+						:disabled="!canEdit || isSaving"
+						input-label="Select group status"
+						@update:model-value="selectedGroupStatus = $event"
+						/>
 
-      <!-- Quick actions -->
-      <div class="status-actions">
-        <NcButton
-          v-if="inquiryGroupStore.isDraft"
-          type="primary"
-          :disabled="!canEdit || isSaving"
-          @click="publishGroup"
-        >
-          {{ t('agora', 'Activate') }}
-        </NcButton>
-        <NcButton
-          v-if="inquiryGroupStore.isActive"
-          type="warning"
-          :disabled="!canEdit || isSaving"
-          @click="archiveGroup"
-        >
-          {{ t('agora', 'Archive') }}
-        </NcButton>
-      </div>
-    </div>
+						<!-- Quick actions -->
+						<div class="status-actions">
+							<NcButton
+									v-if="inquiryGroupStore.isDraft"
+									type="primary"
+									:disabled="!canEdit || isSaving"
+									@click="publishGroup"
+									>
+									{{ t('agora', 'Activate') }}
+							</NcButton>
+							<NcButton
+									v-if="inquiryGroupStore.isActive"
+									type="warning"
+									:disabled="!canEdit || isSaving"
+									@click="archiveGroup"
+									>
+									{{ t('agora', 'Archive') }}
+							</NcButton>
+						</div>
+			</div>
 
-    <!-- ============================================================
-    VISIBILITY
-    ============================================================ -->
-    <div class="access-section">
-      <div class="section-header">
-        <h3>{{ t('agora', 'Visibility') }}</h3>
-        <div class="section-badge">
-          <span class="badge">{{
-            visibilityOptionLabels[inquiryGroupStore.configuration.visibility]
-          }}</span>
-        </div>
-      </div>
-      <p class="section-desc">
-        {{ t('agora', 'Who can view this inquiry group and its inquiries') }}
-      </p>
+			<!-- ============================================================
+				VISIBILITY
+				============================================================ -->
+				<div class="access-section">
+					<div class="section-header">
+						<h3>{{ t('agora', 'Visibility') }}</h3>
+						<div class="section-badge">
+							<span class="badge">{{
+								visibilityOptionLabels[inquiryGroupStore.configuration.visibility]
+								}}</span>
+						</div>
+					</div>
+					<p class="section-desc">
+					{{ t('agora', 'Who can view this inquiry group and its inquiries') }}
+					</p>
 
-      <NcSelect
-        :model-value="selectedVisibility"
-        :options="visibilityOptions"
-        :label-outside="true"
-        :option-label="(opt: string) => visibilityOptionLabels[opt] || opt"
-        :label="t('agora', 'Visibility')"
-        :disabled="!canEdit || isSaving"
-        input-label="Select visibility"
-        @update:model-value="selectedVisibility = $event"
-      />
+					<NcSelect
+							:model-value="selectedVisibility"
+							:options="visibilityOptions"
+							:label-outside="true"
+							:option-label="(opt: string) => visibilityOptionLabels[opt] || opt"
+							:label="t('agora', 'Visibility')"
+							:disabled="!canEdit || isSaving"
+							input-label="Select visibility"
+							@update:model-value="selectedVisibility = $event"
+							/>
 
-      <!-- Groups visibility -->
-      <div
-        v-if="inquiryGroupStore.configuration?.visibility === 'groups'"
-        class="config-panel"
-      >
-        <div class="config-group">
-          <label>{{ t('agora', 'Visible to specific groups') }}</label>
-          <UserSearch
-            :model-value="visibilityGroups"
-            :search-types="[SEARCH_TYPE_GROUPS]"
-            multiple
-            :disabled="!canEdit || isSaving"
-            :placeholder="t('agora', 'Type to search for groups')"
-            :aria-label="t('agora', 'Select groups that can view this group')"
-            @update:model-value="visibilityGroups = $event"
-          />
-          <span
-            v-if="inquiryGroupStore.configuration?.visibilityGroups?.length === 0"
-            class="hint"
-          >
-            {{ t('agora', 'No groups selected. Only the owner can view.') }}
-          </span>
-          <span
-            v-else
-            class="hint"
-          >
-            {{
-              t('agora', '{count} groups selected', {
-                count: inquiryGroupStore.configuration?.visibilityGroups?.length || 0,
-              })
-            }}
-          </span>
-        </div>
-      </div>
+							<!-- Groups visibility -->
+							<div
+									v-if="inquiryGroupStore.configuration?.visibility === 'groups'"
+									class="config-panel"
+									>
+									<div class="config-group">
+										<label>{{ t('agora', 'Visible to specific groups') }}</label>
+										<UserSearch
+												:model-value="visibilityGroups"
+												:search-types="[SEARCH_TYPE_GROUPS]"
+												multiple
+												:disabled="!canEdit || isSaving"
+												:placeholder="t('agora', 'Type to search for groups')"
+												:aria-label="t('agora', 'Select groups that can view this group')"
+												@update:model-value="visibilityGroups = $event"
+												/>
+										<span
+												v-if="inquiryGroupStore.configuration?.visibilityGroups?.length === 0"
+												class="hint"
+												>
+												{{ t('agora', 'No groups selected. Only the owner can view.') }}
+										</span>
+											<span
+													v-else
+													class="hint"
+													>
+													{{
+													t('agora', '{count} groups selected', {
+													count: inquiryGroupStore.configuration?.visibilityGroups?.length || 0,
+													})
+													}}
+											</span>
+									</div>
+							</div>
 
-      <!-- Users visibility -->
-      <div
-        v-if="inquiryGroupStore.configuration?.visibility === 'users'"
-        class="config-panel"
-      >
-        <div class="config-group">
-          <label>{{ t('agora', 'Visible to specific users') }}</label>
-          <UserSearch
-            :model-value="visibilityUsers"
-            :search-types="[SEARCH_TYPE_USERS]"
-            multiple
-            :disabled="!canEdit || isSaving"
-            :placeholder="t('agora', 'Type to search for users')"
-            :aria-label="t('agora', 'Select users that can view this group')"
-            @update:model-value="visibilityUsers = $event"
-          />
-          <span
-            v-if="inquiryGroupStore.configuration?.visibilityUsers?.length === 0"
-            class="hint"
-          >
-            {{ t('agora', 'No users selected. Only the owner can view.') }}
-          </span>
-          <span
-            v-else
-            class="hint"
-          >
-            {{
-              t('agora', '{count} users selected', {
-                count: inquiryGroupStore.configuration?.visibilityUsers?.length || 0,
-              })
-            }}
-          </span>
-        </div>
-      </div>
-    </div>
+							<!-- Users visibility -->
+							<div
+									v-if="inquiryGroupStore.configuration?.visibility === 'users'"
+									class="config-panel"
+									>
+									<div class="config-group">
+										<label>{{ t('agora', 'Visible to specific users') }}</label>
+										<UserSearch
+												:model-value="visibilityUsers"
+												:search-types="[SEARCH_TYPE_USERS]"
+												multiple
+												:disabled="!canEdit || isSaving"
+												:placeholder="t('agora', 'Type to search for users')"
+												:aria-label="t('agora', 'Select users that can view this group')"
+												@update:model-value="visibilityUsers = $event"
+												/>
+										<span
+												v-if="inquiryGroupStore.configuration?.visibilityUsers?.length === 0"
+												class="hint"
+												>
+												{{ t('agora', 'No users selected. Only the owner can view.') }}
+										</span>
+											<span
+													v-else
+													class="hint"
+													>
+													{{
+													t('agora', '{count} users selected', {
+													count: inquiryGroupStore.configuration?.visibilityUsers?.length || 0,
+													})
+													}}
+											</span>
+									</div>
+							</div>
+				</div>
 
-    <!-- ============================================================
-            ACCESS - 
-            ============================================================ -->
-    <div class="access-section shares-section">
-      <div class="section-header">
-        <h3>{{ t('agora', 'Access') }}</h3>
-        <div class="section-badge">
-          <span class="badge">{{ sharesStore.active.length }} {{ t('agora', 'shares') }}</span>
-        </div>
-      </div>
-      <p class="section-desc">
-        {{ t('agora', 'Manage individual and public shares for this group') }}
-      </p>
+				<!-- ============================================================
+					PARTICIPATION
+					============================================================ -->
+					<div class="access-section">
+						<div class="section-header">
+							<h3>{{ t('agora', 'Participation') }}</h3>
+							<div class="section-badge">
+								<span class="badge">
+									{{ participationOptionLabels[participationType] }}
+								</span>
+							</div>
+						</div>
+						<p class="section-desc">
+						{{ t('agora', 'Who can participate (vote, comment, contribute) in inquiries of this group') }}
+						</p>
 
-      <SharesListUnsent class="shares unsent" />
-      <ShareList class="shares effective" />
-      <SharesListLocked class="shares" />
-    </div>
+						<NcSelect
+								:model-value="participationType"
+								:options="participationOptions"
+								:label-outside="true"
+								:option-label="(opt: string) => participationOptionLabels[opt as ParticipationPolicyType] || opt"
+								:label="t('agora', 'Participation Policy')"
+								:disabled="!canEdit || isSaving"
+								:loading="participationStore.loading.participation"
+								input-label="Select participation policy"
+								@update:model-value="(val: ParticipationPolicyType) => (participationType = val)"
+								/>
 
-    <!-- Info text -->
-    <div class="info-text">
-      <span class="icon">ℹ️</span>
-      <span>{{ infoText }}</span>
-    </div>
-  </div>
+								<!-- Users -->
+								<div v-if="participationType === 'users'" class="config-panel">
+									<div class="config-group">
+										<label>{{ t('agora', 'Select Users') }}</label>
+										<UserSearch
+												:model-value="participationConfig.user_ids || []"
+												:search-types="[SEARCH_TYPE_USERS]"
+												multiple
+												:disabled="!canEdit || isSaving"
+												:placeholder="t('agora', 'Type to search for users')"
+												:aria-label="t('agora', 'Select users who can participate')"
+												@update:model-value="(val) => handleParticipationConfigChange('user_ids', val)"
+												/>
+												<span class="hint">
+													{{ t('agora', '{count} users selected', { count: participationConfig.user_ids?.length || 0 }) }}
+												</span>
+									</div>
+								</div>
+
+								<!-- Groups -->
+								<div v-if="participationType === 'groups'" class="config-panel">
+									<div class="config-group">
+										<label>{{ t('agora', 'Select Groups') }}</label>
+										<UserSearch
+												:model-value="participationConfig.group_ids || []"
+												:search-types="[SEARCH_TYPE_GROUPS]"
+												multiple
+												:disabled="!canEdit || isSaving"
+												:placeholder="t('agora', 'Type to search for groups')"
+												:aria-label="t('agora', 'Select groups that can participate')"
+												@update:model-value="(val) => handleParticipationConfigChange('group_ids', val)"
+												/>
+												<span class="hint">
+													{{ t('agora', '{count} groups selected', { count: participationConfig.group_ids?.length || 0 }) }}
+												</span>
+									</div>
+								</div>
+
+								<!-- Lottery config (basic — full run/validate UI lives on the inquiry sidebar) -->
+								<div v-if="participationType === 'lottery'" class="config-panel">
+									<div class="config-group">
+										<label>{{ t('agora', 'Selection Size') }}</label>
+										<NcTextField
+												:model-value="String(participationConfig.selection_size)"
+												type="number"
+												min="1"
+												max="100"
+												:disabled="!canEdit || isSaving"
+												:label="t('agora', 'Number of participants to select')"
+												@update:model-value="(v: string) => handleParticipationConfigChange('selection_size', Number(v))"
+												/>
+									</div>
+									<div class="config-group">
+										<label>{{ t('agora', 'Selection Method') }}</label>
+										<NcSelect
+												:model-value="participationConfig.method"
+												:options="['random', 'weighted', 'stratified']"
+												:label-outside="true"
+												:disabled="!canEdit || isSaving"
+												input-label="Select selection method"
+												@update:model-value="(val: string) => handleParticipationConfigChange('method', val)"
+												/>
+									</div>
+									<span class="hint">
+										{{ t('agora', 'Run and validate this lottery from the participation settings of each inquiry.') }}
+									</span>
+								</div>
+
+								<!-- Reset -->
+								<div class="reset-group">
+									<button
+											class="reset-button"
+											:disabled="!canEdit || isSaving || participationType === 'none'"
+											@click="resetParticipation"
+											>
+											{{ t('agora', 'Disable participation') }}
+									</button>
+										<span class="hint">
+											{{ t('agora', 'Remove all participation restrictions') }}
+										</span>
+								</div>
+					</div>
+
+					<!-- ============================================================
+						ACCESS - 
+						============================================================ -->
+						<div class="access-section shares-section">
+							<div class="section-header">
+								<h3>{{ t('agora', 'Access') }}</h3>
+								<div class="section-badge">
+									<span class="badge">{{ sharesStore.active.length }} {{ t('agora', 'shares') }}</span>
+								</div>
+							</div>
+							<p class="section-desc">
+							{{ t('agora', 'Manage individual and public shares for this group') }}
+							</p>
+
+							<SharesListUnsent class="shares unsent" />
+							<ShareList class="shares effective" />
+							<SharesListLocked class="shares" />
+						</div>
+
+						<!-- Info text -->
+						<div class="info-text">
+							<span class="icon">ℹ️</span>
+							<span>{{ infoText }}</span>
+						</div>
+	</div>
 </template>
 
 <style lang="scss" scoped>
 .sidebar-group-access {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 16px;
 
-  .access-header {
-    margin-bottom: 4px;
+	.access-header {
+		margin-bottom: 4px;
 
-    h2 {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0;
-      color: var(--color-text);
-      letter-spacing: -0.3px;
-    }
+		h2 {
+			font-size: 20px;
+			font-weight: 700;
+			margin: 0;
+			color: var(--color-text);
+			letter-spacing: -0.3px;
+		}
 
-    .subtitle {
-      font-size: 14px;
-      color: var(--color-text-maxcontrast);
-      margin: 4px 0 0;
-    }
-  }
+		.subtitle {
+			font-size: 14px;
+			color: var(--color-text-maxcontrast);
+			margin: 4px 0 0;
+		}
+	}
 
-  .access-section {
-    background: var(--color-background-hover);
-    border-radius: 12px;
-    padding: 18px 20px;
-    border: 1px solid var(--color-border);
+	.access-section {
+		background: var(--color-background-hover);
+		border-radius: 12px;
+		padding: 18px 20px;
+		border: 1px solid var(--color-border);
 
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
+		.section-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 6px;
 
-      h3 {
-        font-size: 15px;
-        font-weight: 600;
-        margin: 0;
-        color: var(--color-text);
-      }
+			h3 {
+				font-size: 15px;
+				font-weight: 600;
+				margin: 0;
+				color: var(--color-text);
+			}
 
-      .badge {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        background: var(--color-primary-element);
-        color: var(--color-primary-text);
-        padding: 2px 12px;
-        border-radius: 12px;
-        letter-spacing: 0.3px;
+			.badge {
+				font-size: 11px;
+				font-weight: 600;
+				text-transform: uppercase;
+				background: var(--color-primary-element);
+				color: var(--color-primary-text);
+				padding: 2px 12px;
+				border-radius: 12px;
+				letter-spacing: 0.3px;
 
-        &.draft {
-          background: var(--color-warning);
-          color: var(--color-text);
-        }
-        &.pending {
-          background: var(--color-warning);
-          color: var(--color-text);
-        }
-        &.published {
-          background: var(--color-success);
-          color: var(--color-primary-text);
-        }
-        &.archived {
-          background: var(--color-text-maxcontrast);
-          color: var(--color-primary-text);
-        }
-        &.deleted {
-          background: var(--color-error);
-          color: var(--color-primary-text);
-        }
-      }
-    }
+				&.draft {
+					background: var(--color-warning);
+					color: var(--color-text);
+				}
+				&.pending {
+					background: var(--color-warning);
+					color: var(--color-text);
+				}
+				&.published {
+					background: var(--color-success);
+					color: var(--color-primary-text);
+				}
+				&.archived {
+					background: var(--color-text-maxcontrast);
+					color: var(--color-primary-text);
+				}
+				&.deleted {
+					background: var(--color-error);
+					color: var(--color-primary-text);
+				}
+			}
+		}
 
-    .section-desc {
-      font-size: 13px;
-      color: var(--color-text-maxcontrast);
-      margin: 0 0 14px;
-    }
+		.section-desc {
+			font-size: 13px;
+			color: var(--color-text-maxcontrast);
+			margin: 0 0 14px;
+		}
 
-    .status-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-  }
+		.status-actions {
+			display: flex;
+			gap: 8px;
+			margin-top: 12px;
+		}
+	}
 
-  .config-panel {
-    margin-top: 12px;
-    padding: 16px;
-    background: var(--color-background);
-    border-radius: 8px;
-    border: 1px solid var(--color-border);
+	.config-panel {
+		margin-top: 12px;
+		padding: 16px;
+		background: var(--color-background);
+		border-radius: 8px;
+		border: 1px solid var(--color-border);
 
-    .config-group {
-      margin-bottom: 0;
+		.config-group {
+			margin-bottom: 0;
 
-      label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 6px;
-        color: var(--color-text);
-      }
+			label {
+				display: block;
+				font-size: 13px;
+				font-weight: 600;
+				margin-bottom: 6px;
+				color: var(--color-text);
+			}
 
-      .hint {
-        display: block;
-        font-size: 12px;
-        color: var(--color-text-maxcontrast);
-        margin-top: 6px;
-        opacity: 0.8;
-      }
-    }
-  }
+			.hint {
+				display: block;
+				font-size: 12px;
+				color: var(--color-text-maxcontrast);
+				margin-top: 6px;
+				opacity: 0.8;
+			}
+		}
+	}
 
-  .reset-group {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--color-border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+	.reset-group {
+		margin-top: 14px;
+		padding-top: 14px;
+		border-top: 1px solid var(--color-border);
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
 
-    .reset-button {
-      background: #856404;
-      color: #ffffff;
-      border: none;
-      padding: 6px 18px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
+		.reset-button {
+			background: #856404;
+			color: #ffffff;
+			border: none;
+			padding: 6px 18px;
+			border-radius: 8px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
 
-      &:hover:not(:disabled) {
-        background: #634a03;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(133, 100, 4, 0.2);
-      }
+			&:hover:not(:disabled) {
+				background: #634a03;
+				transform: translateY(-1px);
+				box-shadow: 0 4px 8px rgba(133, 100, 4, 0.2);
+			}
 
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
+			&:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+		}
 
-    .hint {
-      font-size: 12px;
-      color: var(--color-text-maxcontrast);
-      opacity: 0.8;
-    }
-  }
+		.hint {
+			font-size: 12px;
+			color: var(--color-text-maxcontrast);
+			opacity: 0.8;
+		}
+	}
 
-  .shares-section {
-    .shares-list-wrapper {
-      margin-top: 8px;
-    }
-  }
+	.shares-section {
+		.shares-list-wrapper {
+			margin-top: 8px;
+		}
+	}
 
-  .info-text {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 14px 16px;
-    background: var(--color-background-dark);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--color-text-maxcontrast);
-    border: 1px solid var(--color-border);
-    line-height: 1.5;
+	.info-text {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 14px 16px;
+		background: var(--color-background-dark);
+		border-radius: 8px;
+		font-size: 13px;
+		color: var(--color-text-maxcontrast);
+		border: 1px solid var(--color-border);
+		line-height: 1.5;
 
-    .icon {
-      font-size: 18px;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-  }
+		.icon {
+			font-size: 18px;
+			flex-shrink: 0;
+			margin-top: 1px;
+		}
+	}
 
-  // Dark mode fixes
-  :deep(.vs__search) {
-    color: var(--color-text) !important;
-  }
+	// Dark mode fixes
+		:deep(.vs__search) {
+		color: var(--color-text) !important;
+	}
 
-  :deep(.vs__dropdown-option) {
-    color: var(--color-text) !important;
-    background: var(--color-background) !important;
+	:deep(.vs__dropdown-option) {
+		color: var(--color-text) !important;
+		background: var(--color-background) !important;
 
-    &:hover {
-      background: var(--color-background-hover) !important;
-    }
-  }
+		&:hover {
+			background: var(--color-background-hover) !important;
+		}
+	}
 
-  :deep(.vs__dropdown-option--highlight) {
-    background: var(--color-primary-element) !important;
-    color: var(--color-primary-text) !important;
-  }
+	:deep(.vs__dropdown-option--highlight) {
+		background: var(--color-primary-element) !important;
+		color: var(--color-primary-text) !important;
+	}
 
-  :deep(.vs__selected) {
-    color: var(--color-text) !important;
-    background: var(--color-background-dark) !important;
-  }
+	:deep(.vs__selected) {
+		color: var(--color-text) !important;
+		background: var(--color-background-dark) !important;
+	}
 
-  :deep(.vs__dropdown-toggle) {
-    background: var(--color-background-dark) !important;
-    border-color: var(--color-border) !important;
-  }
+	:deep(.vs__dropdown-toggle) {
+		background: var(--color-background-dark) !important;
+		border-color: var(--color-border) !important;
+	}
 
-  :deep(.vs__clear) {
-    fill: var(--color-text-maxcontrast) !important;
-  }
+	:deep(.vs__clear) {
+		fill: var(--color-text-maxcontrast) !important;
+	}
 
-  :deep(.vs__open-indicator) {
-    fill: var(--color-text-maxcontrast) !important;
-  }
+	:deep(.vs__open-indicator) {
+		fill: var(--color-text-maxcontrast) !important;
+	}
 }
 </style>

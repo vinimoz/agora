@@ -100,8 +100,8 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     protected ?int $expire = null;
     protected ?array $metadata = null;
     protected ?int $coverId = null;
-    protected bool $protected = false;
-    protected bool $allowEdit = false;
+    protected ?bool $protected = false;
+    protected ?bool $allowEdit = false;
     protected ?string $supportResult = null;
     protected ?string $supportEngine = null;
 
@@ -193,22 +193,22 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
 
     public function getProtected(): bool
     {
-        return $this->protected;
+        return $this->protected ?? false;
     }
 
     public function setProtected(bool $protected): void
     {
-        $this->protected = $protected;
+        $this->protected = $protected ?? false;
     }
 
     public function getAllowEdit(): bool
     {
-        return $this->allowEdit;
+        return $this->allowEdit ?? false;
     }
 
     public function setAllowEdit(bool $allow): void
     {
-        $this->allowEdit = $allow;
+        $this->allowEdit = $allowi ?? false;
     }
 
     // ── Support ───────────────────────────────────────────────────────
@@ -381,39 +381,186 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         ];
     }
 
-    public function getPermissionsArray(): array
-    {
-        $isOwner = $this->getOwner() === $this->userSession->getCurrentUserId();
-        $isAdmin = $this->userSession->isAdmin();
-        // $isGroupEditor = $this->userSession->isGroupEditor();
-        $canEdit = $this->getAllowEdit() || $isOwner || $isAdmin;
-        $isProtected = $this->getProtected();
-        $isLoggedIn = $this->userSession->getIsLoggedIn();
+/**
+ * True when the current user has an explicit "participation" relation
+ * on this inquiry-group, or matches the group's Participation policy
+ * (everyone / users / groups / lottery selections).
+ */
+private function isCurrentUserParticipant(): bool
+{
+    $logger = \OC::$server->get(\Psr\Log\LoggerInterface::class);
 
-
-return [
-    self::PERMISSION_VIEW              => true,
-    self::PERMISSION_EDIT              => $canEdit && !$isProtected,
-    self::PERMISSION_DELETE            => ($isOwner || $isAdmin) && !$isProtected,
-    self::PERMISSION_ADD_INQUIRIES     => $isLoggedIn && !$isProtected,   // ← changed
-    self::PERMISSION_REORDER_INQUIRIES => ($isOwner || $isAdmin) && !$isProtected,
-    self::PERMISSION_CHANGE_OWNER      => ($isOwner || $isAdmin) && !$isProtected,
-    self::PERMISSION_ARCHIVE           => ($isOwner || $isAdmin) && !$isProtected,
-    self::PERMISSION_CLONE             => true,
-];
+    try {
+        $userId = $this->userSession->getCurrentUserId();
+    } catch (\Throwable $e) {
+        $logger->warning('Agora isCurrentUserParticipant: getCurrentUserId failed', ['exception' => $e]);
+        return false;
     }
 
-    public function getCurrentUserStatus(): array
-    {
-        return [
-            'isOwner' => $this->getOwner() === $this->userSession->getCurrentUserId(),
-            'isLoggedIn' => $this->userSession->getIsLoggedIn(),
-            'userId' => $this->userSession->getCurrentUserId(),
-            'userRole' => $this->getUserRole(),
-            'canEdit' => $this->getAllowEdit() || $this->userSession->isAdmin(),
-            'isProtected' => $this->getProtected(),
-        ];
+    $groupId = $this->getId();
+    if ($groupId === null || $userId === '' || $userId === 'CONSOLE') {
+        // $logger->info('Agora isCurrentUserParticipant: bail', ['groupId' => $groupId, 'userId' => $userId]);
+        return false;
     }
+
+    // 1) Explicit user relation
+    try {
+        /** @var UserRelationMapper $userRelationMapper */
+        $userRelationMapper = Container::queryClass(UserRelationMapper::class);
+        if ($userRelationMapper->hasUserForTarget(
+            UserRelation::TARGET_INQUIRY_GROUP,
+            $groupId,
+            UserRelation::RELATION_PARTICIPATION,
+            $userId
+        )) {
+            return true;
+        }
+    } catch (\Throwable $e) {
+        $logger->warning('Agora isCurrentUserParticipant: UserRelationMapper failed', ['exception' => $e]);
+        // do NOT return false here — still try the policy below
+    }
+
+    // 2) Participation policy
+    try {
+        /** @var ParticipationMapper $participationMapper */
+        $participationMapper = Container::queryClass(ParticipationMapper::class);
+        $participation = $participationMapper->findByTargetWithRelations(
+            Participation::TARGET_INQUIRY_GROUP,
+            $groupId
+        );
+
+        if ($participation === null) {
+            $logger->info('Agora isCurrentUserParticipant: no Participation row', ['groupId' => $groupId]);
+            return false;
+        }
+
+//        $logger->info('Agora isCurrentUserParticipant: policy', [
+//            'groupId'    => $groupId,
+//            'policyType' => $participation->getPolicyType(),
+//            'config'     => $participation->getPolicyConfig(),
+//            'userId'     => $userId,
+//        ]);
+
+        if ($participation->isEveryone()) {
+            return true;
+        }
+
+        $config   = $participation->getPolicyConfig() ?? [];
+        $userIds  = $config['user_ids']  ?? [];
+        $groupIds = $config['group_ids'] ?? [];
+
+        if (in_array($userId, $userIds, true)) {
+            return true;
+        }
+
+        if (!empty($groupIds)) {
+            $userGroups = $this->userSession->getCurrentUser()->getGroups();
+            if (!empty(array_intersect($groupIds, $userGroups))) {
+                return true;
+            }
+        }
+
+        if ($participation->isLottery()) {
+            $selections = $config['lottery']['selections'] ?? [];
+            $userGroups = $this->userSession->getCurrentUser()->getGroups();
+            foreach ($selections as $sel) {
+                $type = $sel['selected_type'] ?? $sel['type'] ?? null;
+                $id   = $sel['selected_id']   ?? $sel['id']   ?? null;
+                if ($type === 'user'  && $id === $userId) {
+                    return true;
+                }
+                if ($type === 'group' && in_array($id, $userGroups, true)) {
+                    return true;
+                }
+            }
+        }
+    } catch (\Throwable $e) {
+        $logger->error('Agora isCurrentUserParticipant: policy check failed', [
+            'groupId'   => $groupId,
+            'exception' => $e,
+        ]);
+        return false;
+    }
+
+    return false;
+}
+
+public function getCurrentUserStatus(): array
+{
+    $isOwner     = $this->getOwner() === $this->userSession->getCurrentUserId();
+    $isLoggedIn  = $this->userSession->getIsLoggedIn();
+    $isAdmin     = $this->userSession->isAdmin();
+    $isGroupEditor = $isLoggedIn && (bool) $this->userSession->getCurrentUser()->getIsGroupEditor();
+    $isParticipant = $isLoggedIn && $this->isCurrentUserParticipant();
+
+    return [
+        'isOwner'       => $isOwner,
+        'isLoggedIn'    => $isLoggedIn,
+        'userId'        => $this->userSession->getCurrentUserId(),
+        'userRole'      => $this->getUserRole(),
+        'canEdit'       => $this->getAllowEdit() || $isAdmin,
+        'isProtected'   => $this->getProtected(),
+        'isGroupEditor' => $isGroupEditor,
+        'isParticipant' => $isParticipant,
+    ];
+}
+
+public function getPermissionsArray(): array
+{
+    $currentUserId = $this->userSession->getCurrentUserId();
+    $isLoggedIn    = $this->userSession->getIsLoggedIn();
+    $isAdmin       = $this->userSession->isAdmin();
+    $isOwner       = $this->getOwner() === $currentUserId;
+    $isProtected   = $this->getProtected();
+
+    $canEdit       = $this->getAllowEdit() || $isOwner || $isAdmin;
+
+    $isGroupEditor = false;
+    $isParticipant = false;
+    if ($isLoggedIn) {
+        try {
+            $isGroupEditor = (bool) $this->userSession->getCurrentUser()->getIsGroupEditor();
+        } catch (\Throwable $e) {
+            $isGroupEditor = false;
+        }
+        $isParticipant = $this->isCurrentUserParticipant();
+    }
+
+    $canAddInquiries = $isLoggedIn
+        && ($isOwner || $isAdmin || $isGroupEditor || $isParticipant)
+        && !$isProtected;
+
+    // ─── DIAGNOSTIC ──────────────────────────────────────────────
+    \OC::$server->get(\Psr\Log\LoggerInterface::class)->warning(
+        'Agora PERMISSION_ADD_INQUIRIES check',
+        [
+            'groupId'        => $this->getId(),
+            'groupOwner'     => $this->getOwner(),
+            'groupProtected' => $isProtected,
+            'allowEdit'      => $this->getAllowEdit(),
+            'currentUserId'  => $currentUserId,
+            'isLoggedIn'     => $isLoggedIn,
+            'isAdmin'        => $isAdmin,
+            'isOwner'        => $isOwner,
+            'isGroupEditor'  => $isGroupEditor,
+            'isParticipant'  => $isParticipant,
+            'canAddInquiries'=> $canAddInquiries,
+            'userClass'      => $isLoggedIn ? get_class($this->userSession->getCurrentUser()) : null,
+        ]
+    );
+    // ─────────────────────────────────────────────────────────────
+
+    return [
+        self::PERMISSION_VIEW              => true,
+        self::PERMISSION_EDIT              => $canEdit && !$isProtected,
+        self::PERMISSION_DELETE            => ($isOwner || $isAdmin) && !$isProtected,
+        self::PERMISSION_ADD_INQUIRIES     => $canAddInquiries,
+        self::PERMISSION_REORDER_INQUIRIES => ($isOwner || $isAdmin) && !$isProtected,
+        self::PERMISSION_CHANGE_OWNER      => ($isOwner || $isAdmin) && !$isProtected,
+        self::PERMISSION_ARCHIVE           => ($isOwner || $isAdmin) && !$isProtected,
+        self::PERMISSION_CLONE             => true,
+    ];
+}
 
     // ── JSON ──────────────────────────────────────────────────────────
 

@@ -389,18 +389,6 @@ private function getUserGroupIds(string $userId): array
         $this->loadParentInquiry($option);
     }
 
-    protected function hydrateOptions(array $options): void
-    {
-        if (empty($options)) {
-            return;
-        }
-
-        foreach ($options as $option) {
-            $this->loadDynamicFields($option);
-            $this->loadParentInquiry($option);
-        }
-    }
-
     protected function loadParentInquiry(Option $option): void
     {
         if ($option->getTargetId() > 0) {

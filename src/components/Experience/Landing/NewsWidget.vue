@@ -7,7 +7,7 @@
           :size="20"
           class="header-icon"
         />
-        <h2>{{ t('agora', 'City news') }}</h2>
+	<h2>{{ title || t('agora','Your news') }}</h2>
       </div>
       <a
         class="header-link"
@@ -79,8 +79,17 @@ export interface NewsItem {
   tagBg: string
 }
 
-withDefaults(defineProps<{ items?: NewsItem[] }>(), { items: () => [] })
+const props = withDefaults(
+  defineProps<{
+    items?: NewsItem[]
+    title?: string
+  }>(),
+  { items: () => [], title: '' }
+)
+
 const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
+
+
 </script>
 
 <style lang="scss" scoped>

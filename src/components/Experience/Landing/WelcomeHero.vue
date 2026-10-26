@@ -30,7 +30,7 @@
           <span class="stat-label">{{ t('agora', 'Shared with you') }}</span>
         </div>
         <div class="stat">
-          <span class="stat-value">{{ stats.participated }}</span>
+          <span class="stat-value">{{ stats.withParticipants }}</span>
           <span class="stat-label">{{ t('agora', 'You participated in') }}</span>
         </div>
         <div class="stat">
@@ -93,7 +93,7 @@ const props = defineProps<{
   backgroundUrl?: string
   actions?: any[]
   weather?: { temp: number; location: string } | null
-  stats?: { shared: number; participated: number; owned: number; groupInquiries: number }
+  stats?: { shared: number; withParticipants: number; owned: number; groupInquiries: number }
 }>()
 
 const emit = defineEmits<{ action: [key: string] }>()

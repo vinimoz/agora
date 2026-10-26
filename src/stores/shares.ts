@@ -17,8 +17,9 @@ import type {
   Shares,
   ShareType,
   SharePurpose,
+  ParticipationLevel,
   PublicInquiryEmailConditions,
-} from '../Types/index.ts'
+} from '../Types/share.types.ts'
 
 export type { Share, Shares, ShareType, SharePurpose, PublicInquiryEmailConditions }
 
@@ -145,105 +146,117 @@ export const useSharesStore = defineStore('shares', {
       }
     },
 
-    async setPublicInquiryEmail(payload: {
-      share: Share
-      value: PublicInquiryEmailConditions
+    async setParticipationLevel(payload: {
+	    share: Share
+	    level: ParticipationLevel
     }): Promise<void> {
-      try {
-        const response = await SharesAPI.setEmailAddressConstraint(
-          payload.share.token,
-          payload.value
-        )
-        this.update(response.data)
-      } catch (error) {
-        this.handleError(error, 'Error changing email register setting', payload)
-      }
+	    try {
+		    const response = await SharesAPI.setParticipationLevel(payload.share.token, payload.level)
+		    this.update(response.data)
+	    } catch (error) {
+		    this.handleError(error, 'Error setting participation level', payload)
+	    }
+    },
+
+    async setPublicInquiryEmail(payload: {
+	    share: Share
+	    value: PublicInquiryEmailConditions
+    }): Promise<void> {
+	    try {
+		    const response = await SharesAPI.setEmailAddressConstraint(
+			    payload.share.token,
+			    payload.value
+		    )
+		    this.update(response.data)
+	    } catch (error) {
+		    this.handleError(error, 'Error changing email register setting', payload)
+	    }
     },
 
     async writeLabel(payload: { token: string; label: string }): Promise<void> {
-      try {
-        const response = await SharesAPI.writeLabel(payload.token, payload.label)
-        this.update(response.data)
-      } catch (error) {
-        this.handleError(error, 'Error writing label', payload)
-      }
+	    try {
+		    const response = await SharesAPI.writeLabel(payload.token, payload.label)
+		    this.update(response.data)
+	    } catch (error) {
+		    this.handleError(error, 'Error writing label', payload)
+	    }
     },
 
     async inviteAll(payload: { inquiryId: number }) {
-      try {
-        const response = await SharesAPI.inviteAll(payload.inquiryId)
-        this.load()
-        return response
-      } catch (error) {
-        this.handleError(error, 'Error inviting all users', payload)
-      }
+	    try {
+		    const response = await SharesAPI.inviteAll(payload.inquiryId)
+		    this.load()
+		    return response
+	    } catch (error) {
+		    this.handleError(error, 'Error inviting all users', payload)
+	    }
     },
     async sendInvitation(payload: { share: Share }): Promise<{
-      share: Share
-      sentResult: null | SentResults
+	    share: Share
+	    sentResult: null | SentResults
     } | void> {
-      try {
-        const response = await SharesAPI.sendInvitation(payload.share.token)
-        this.load()
-        return response.data
-      } catch (error) {
-        this.handleError(error, 'Error sending share invitation', payload)
-      }
+	    try {
+		    const response = await SharesAPI.sendInvitation(payload.share.token)
+		    this.load()
+		    return response.data
+	    } catch (error) {
+		    this.handleError(error, 'Error sending share invitation', payload)
+	    }
     },
 
     async resolveGroup(payload: { share: Share }): Promise<void> {
-      try {
-        await SharesAPI.resolveShare(payload.share.token)
-        this.load()
-      } catch (error) {
-        this.handleError(error, 'Error resolving group share', payload)
-      }
+	    try {
+		    await SharesAPI.resolveShare(payload.share.token)
+		    this.load()
+	    } catch (error) {
+		    this.handleError(error, 'Error resolving group share', payload)
+	    }
     },
 
     async lock(payload: { share: Share }): Promise<void> {
-      try {
-        const response = await SharesAPI.lockShare(payload.share.token)
-        this.update(response.data)
-      } catch (error) {
-        this.handleError(error, 'Error locking share', payload)
-      }
+	    try {
+		    const response = await SharesAPI.lockShare(payload.share.token)
+		    this.update(response.data)
+	    } catch (error) {
+		    this.handleError(error, 'Error locking share', payload)
+	    }
     },
 
     async unlock(payload: { share: Share }): Promise<void> {
-      try {
-        const response = await SharesAPI.unlockShare(payload.share.token)
-        this.update(response.data)
-      } catch (error) {
-        this.handleError(error, 'Error unlocking share', payload)
-      }
+	    try {
+		    const response = await SharesAPI.unlockShare(payload.share.token)
+		    this.update(response.data)
+	    } catch (error) {
+		    this.handleError(error, 'Error unlocking share', payload)
+	    }
     },
 
     async delete(payload: { share: Share }): Promise<void> {
-      try {
-        const response = await SharesAPI.deleteShare(payload.share.token)
-        this.update(response.data)
-      } catch (error) {
-        this.handleError(error, 'Error deleting share', payload)
-      }
+	    try {
+		    const response = await SharesAPI.deleteShare(payload.share.token)
+		    this.update(response.data)
+	    } catch (error) {
+		    this.handleError(error, 'Error deleting share', payload)
+	    }
     },
     async restore(payload: { share: Share }): Promise<void> {
-      try {
-        const response = await SharesAPI.restoreShare(payload.share.token)
-        this.update(response.data)
-      } catch (error) {
-        this.handleError(error, 'Error restoring share', payload)
-      }
+	    try {
+		    const response = await SharesAPI.restoreShare(payload.share.token)
+		    this.update(response.data)
+	    } catch (error) {
+		    this.handleError(error, 'Error restoring share', payload)
+	    }
     },
     handleError(error: unknown, message: string, payload?: unknown): void {
-      if ((error as AxiosError)?.code === 'ERR_CANCELED') return
+	    if ((error as AxiosError)?.code === 'ERR_CANCELED') return
 
-      Logger.error(message, {
-        error,
-        payload,
-      })
+		    Logger.error(message, {
+			    error,
+			    payload,
+		    })
 
-      this.load()
-      throw error
+		    this.load()
+		    throw error
     },
   },
 })

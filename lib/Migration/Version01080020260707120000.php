@@ -66,6 +66,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
     private const S_TRENDING_SCORES   = 'agora_trending_scores';
     private const S_COMMENTS          = 'agora_comments';
     private const S_INQ_STATUS        = 'agora_inq_status';
+    private const S_SHARE            = 'agora_share';
 
     public function __construct(
         private ?IDBConnection $dbConnection = null
@@ -104,6 +105,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
         $this->createLotteryRunTable();
         $this->createLotterySelectionTable();
         $this->createTrendingScoresTable();
+	$this->modifyShareTable();
 
         $this->log('Schema changes queued');
         return $this->schema;
@@ -348,70 +350,86 @@ class Version01080020260707120000 extends SimpleMigrationStep
         $this->log('  + table ' . self::S_TRENDING_SCORES);
     }
 
-    // ====================================================================
-    // DATA CONVERSION — access → visibility / publication_status
-    // Runs ONLY on tables that received the new columns:
-    //   - agora_inquiries
-    //   - agora_inq_group
-    // agora_options does NOT get visibility/publication_status, so no
-    // conversion is possible there — its `access` column is simply dropped.
-    // ====================================================================
-
-    private function convertAccessColumn(): void
+    private function modifyShareTable(): void
     {
-        $this->log('Converting access → visibility / publication_status');
-
-        $mappings = [
-            'open'     => ['visibility' => 'everyone', 'publication_status' => 'published'],
-            'public'   => ['visibility' => 'everyone', 'publication_status' => 'published'],
-            'private'  => ['visibility' => 'private',  'publication_status' => 'draft'],
-            'moderate' => ['visibility' => 'private',  'publication_status' => 'pending'],
-            'hidden'   => ['visibility' => 'private',  'publication_status' => 'draft'],
-            'groups'   => ['visibility' => 'groups',   'publication_status' => 'published'],
-        ];
-
-        // inquiries
-        if ($this->columnExists(self::S_INQUIRIES, 'access')) {
-            $this->convertTableAccess(self::S_INQUIRIES, $mappings);
-        } else {
-            $this->log('  ' . self::S_INQUIRIES . '.access not present — skipping');
-        }
-
-        // inquiry groups
-        if ($this->columnExists(self::S_INQUIRIES_GROUP, 'access')) {
-            $this->convertTableAccess(self::S_INQUIRIES_GROUP, $mappings);
-        } else {
-            $this->log('  ' . self::S_INQUIRIES_GROUP . '.access not present — skipping');
-        }
-
-        // agora_options: no target columns → nothing to convert; will just be dropped
-        $this->log('  ' . self::S_OPTIONS . ': no target columns — data will be discarded on drop');
+	    if (!$this->schema->hasTable(self::S_SHARE)) {
+		    return;
+	    }
+	    $t = $this->schema->getTable(self::S_SHARE);
+		    $t->addColumn('participation_level', Types::INTEGER, [
+			    'notnull'  => true,
+			    'default'  => 0,   // BOTH — vote + comment (safe default for existing shares)
+			    'unsigned' => false,
+			    'length'   => 4,
+		    ]);
+		    $this->log('  + share.allowParticipation');
     }
+
+
+	    // ====================================================================
+	    // DATA CONVERSION — access → visibility / publication_status
+	    // Runs ONLY on tables that received the new columns:
+	    //   - agora_inquiries
+	    //   - agora_inq_group
+	    // agora_options does NOT get visibility/publication_status, so no
+	    // conversion is possible there — its `access` column is simply dropped.
+	    // ====================================================================
+
+	    private function convertAccessColumn(): void
+	    {
+		    $this->log('Converting access → visibility / publication_status');
+
+		    $mappings = [
+			    'open'     => ['visibility' => 'everyone', 'publication_status' => 'published'],
+			    'public'   => ['visibility' => 'everyone', 'publication_status' => 'published'],
+			    'private'  => ['visibility' => 'private',  'publication_status' => 'draft'],
+			    'moderate' => ['visibility' => 'private',  'publication_status' => 'pending'],
+			    'hidden'   => ['visibility' => 'private',  'publication_status' => 'draft'],
+			    'groups'   => ['visibility' => 'groups',   'publication_status' => 'published'],
+		    ];
+
+		    // inquiries
+		    if ($this->columnExists(self::S_INQUIRIES, 'access')) {
+			    $this->convertTableAccess(self::S_INQUIRIES, $mappings);
+		    } else {
+			    $this->log('  ' . self::S_INQUIRIES . '.access not present — skipping');
+		    }
+
+		    // inquiry groups
+		    if ($this->columnExists(self::S_INQUIRIES_GROUP, 'access')) {
+			    $this->convertTableAccess(self::S_INQUIRIES_GROUP, $mappings);
+		    } else {
+			    $this->log('  ' . self::S_INQUIRIES_GROUP . '.access not present — skipping');
+		    }
+
+		    // agora_options: no target columns → nothing to convert; will just be dropped
+		    $this->log('  ' . self::S_OPTIONS . ': no target columns — data will be discarded on drop');
+	    }
 
     private function convertTableAccess(string $unprefixedTable, array $mappings): void
     {
-        // IQueryBuilder resolves dbtableprefix automatically.
-        $totalUpdated = 0;
+	    // IQueryBuilder resolves dbtableprefix automatically.
+	    $totalUpdated = 0;
 
-        foreach ($mappings as $access => $values) {
-            $qb = $this->connection->getQueryBuilder();
-            $qb->update($unprefixedTable)
-                ->set('visibility',         $qb->createNamedParameter($values['visibility']))
-                ->set('publication_status', $qb->createNamedParameter($values['publication_status']))
-                ->where($qb->expr()->eq('access', $qb->createNamedParameter($access)));
-            $totalUpdated += $qb->executeStatement();
-        }
+	    foreach ($mappings as $access => $values) {
+		    $qb = $this->connection->getQueryBuilder();
+		    $qb->update($unprefixedTable)
+	 ->set('visibility',         $qb->createNamedParameter($values['visibility']))
+	 ->set('publication_status', $qb->createNamedParameter($values['publication_status']))
+	 ->where($qb->expr()->eq('access', $qb->createNamedParameter($access)));
+		    $totalUpdated += $qb->executeStatement();
+	    }
 
-        // NULL / '' → safest default
-        $qb = $this->connection->getQueryBuilder();
-        $qb->update($unprefixedTable)
-            ->set('visibility',         $qb->createNamedParameter('private'))
-            ->set('publication_status', $qb->createNamedParameter('draft'))
-            ->where($qb->expr()->isNull('access'))
-            ->orWhere($qb->expr()->eq('access', $qb->createNamedParameter('')));
-        $totalUpdated += $qb->executeStatement();
+	    // NULL / '' → safest default
+	    $qb = $this->connection->getQueryBuilder();
+	    $qb->update($unprefixedTable)
+	->set('visibility',         $qb->createNamedParameter('private'))
+	->set('publication_status', $qb->createNamedParameter('draft'))
+	->where($qb->expr()->isNull('access'))
+	->orWhere($qb->expr()->eq('access', $qb->createNamedParameter('')));
+	    $totalUpdated += $qb->executeStatement();
 
-        $this->log("  • {$unprefixedTable}: {$totalUpdated} rows converted");
+	    $this->log("  • {$unprefixedTable}: {$totalUpdated} rows converted");
     }
 
     // ====================================================================
@@ -420,105 +438,105 @@ class Version01080020260707120000 extends SimpleMigrationStep
 
     private function dropObsoleteColumns(): void
     {
-        $this->log('Dropping obsolete columns');
+	    $this->log('Dropping obsolete columns');
 
-        // inquiries: drop access only (owned_group stays)
-        $this->dropColumnIfExists(self::S_INQUIRIES, 'access');
+	    // inquiries: drop access only (owned_group stays)
+	    $this->dropColumnIfExists(self::S_INQUIRIES, 'access');
 
-        // inquiry groups: drop access + owned_group
-        $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'access');
-        $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'owned_group');
+	    // inquiry groups: drop access + owned_group
+	    $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'access');
+	    $this->dropColumnIfExists(self::S_INQUIRIES_GROUP, 'owned_group');
 
-        // options: drop access + owned_group
-        $this->dropColumnIfExists(self::S_OPTIONS, 'access');
-        $this->dropColumnIfExists(self::S_OPTIONS, 'owned_group');
+	    // options: drop access + owned_group
+	    $this->dropColumnIfExists(self::S_OPTIONS, 'access');
+	    $this->dropColumnIfExists(self::S_OPTIONS, 'owned_group');
 
-        $this->log('  ✓ obsolete columns processed');
+	    $this->log('  ✓ obsolete columns processed');
     }
 
-private function dropColumnIfExists(string $unprefixedTable, string $columnName): void
-{
-    if ($this->isSQLite) {
-        $this->log("    ⚠️ SQLite: cannot drop {$columnName} from {$unprefixedTable}; skipped");
-        return;
+    private function dropColumnIfExists(string $unprefixedTable, string $columnName): void
+    {
+	    if ($this->isSQLite) {
+		    $this->log("    ⚠️ SQLite: cannot drop {$columnName} from {$unprefixedTable}; skipped");
+		    return;
+	    }
+
+	    $realTable = $this->prefixed($unprefixedTable);
+
+	    // Existence check via raw SQL — bypasses Doctrine's in-memory schema cache.
+	    if (!$this->rawColumnExists($realTable, $columnName)) {
+		    $this->log("    - {$unprefixedTable}.{$columnName} already absent");
+		    return;
+	    }
+
+	    // 1. Drop any index that references the column (raw SQL, no cache).
+	    foreach ($this->rawIndexesOnColumn($realTable, $columnName) as $idxName) {
+		    $idxQuoted = $this->quoteIdentifier($idxName);
+		    if ($this->isMySQL) {
+			    $this->connection->executeStatement(
+				    "DROP INDEX {$idxQuoted} ON " . $this->quoteIdentifier($realTable)
+			    );
+		    } else {
+			    $this->connection->executeStatement("DROP INDEX {$idxQuoted}");
+		    }
+		    $this->log("    • dropped dependent index {$idxName}");
+	    }
+
+	    // 2. Drop any FK that references the column (raw SQL, no cache).
+	    foreach ($this->rawForeignKeysOnColumn($realTable, $columnName) as $fkName) {
+		    $fkQuoted = $this->quoteIdentifier($fkName);
+		    if ($this->isMySQL) {
+			    $this->connection->executeStatement(
+				    "ALTER TABLE " . $this->quoteIdentifier($realTable) .
+				    " DROP FOREIGN KEY {$fkQuoted}"
+			    );
+		    } else {
+			    $this->connection->executeStatement(
+				    "ALTER TABLE " . $this->quoteIdentifier($realTable) .
+				    " DROP CONSTRAINT {$fkQuoted}"
+			    );
+		    }
+		    $this->log("    • dropped dependent FK {$fkName}");
+	    }
+
+	    // 3. Drop the column.
+	    $this->connection->executeStatement(
+		    "ALTER TABLE " . $this->quoteIdentifier($realTable) .
+		    " DROP COLUMN " . $this->quoteIdentifier($columnName)
+	    );
+	    $this->log("    ✓ dropped {$unprefixedTable}.{$columnName}");
     }
-
-    $realTable = $this->prefixed($unprefixedTable);
-
-    // Existence check via raw SQL — bypasses Doctrine's in-memory schema cache.
-    if (!$this->rawColumnExists($realTable, $columnName)) {
-        $this->log("    - {$unprefixedTable}.{$columnName} already absent");
-        return;
-    }
-
-    // 1. Drop any index that references the column (raw SQL, no cache).
-    foreach ($this->rawIndexesOnColumn($realTable, $columnName) as $idxName) {
-        $idxQuoted = $this->quoteIdentifier($idxName);
-        if ($this->isMySQL) {
-            $this->connection->executeStatement(
-                "DROP INDEX {$idxQuoted} ON " . $this->quoteIdentifier($realTable)
-            );
-        } else {
-            $this->connection->executeStatement("DROP INDEX {$idxQuoted}");
-        }
-        $this->log("    • dropped dependent index {$idxName}");
-    }
-
-    // 2. Drop any FK that references the column (raw SQL, no cache).
-    foreach ($this->rawForeignKeysOnColumn($realTable, $columnName) as $fkName) {
-        $fkQuoted = $this->quoteIdentifier($fkName);
-        if ($this->isMySQL) {
-            $this->connection->executeStatement(
-                "ALTER TABLE " . $this->quoteIdentifier($realTable) .
-                " DROP FOREIGN KEY {$fkQuoted}"
-            );
-        } else {
-            $this->connection->executeStatement(
-                "ALTER TABLE " . $this->quoteIdentifier($realTable) .
-                " DROP CONSTRAINT {$fkQuoted}"
-            );
-        }
-        $this->log("    • dropped dependent FK {$fkName}");
-    }
-
-    // 3. Drop the column.
-    $this->connection->executeStatement(
-        "ALTER TABLE " . $this->quoteIdentifier($realTable) .
-        " DROP COLUMN " . $this->quoteIdentifier($columnName)
-    );
-    $this->log("    ✓ dropped {$unprefixedTable}.{$columnName}");
-}
 
     private function verifyAccessColumnDropped(): void
     {
-        $stillPresent = [];
-        foreach ([self::S_INQUIRIES, self::S_INQUIRIES_GROUP, self::S_OPTIONS] as $t) {
-            if ($this->columnExists($t, 'access')) {
-                $stillPresent[] = $t;
-            }
-        }
-        if (!empty($stillPresent)) {
-            throw new \RuntimeException(
-                'access column still present in: ' . implode(', ', $stillPresent)
-            );
-        }
-        $this->log('  ✓ access removed everywhere');
+	    $stillPresent = [];
+	    foreach ([self::S_INQUIRIES, self::S_INQUIRIES_GROUP, self::S_OPTIONS] as $t) {
+		    if ($this->columnExists($t, 'access')) {
+			    $stillPresent[] = $t;
+		    }
+	    }
+	    if (!empty($stillPresent)) {
+		    throw new \RuntimeException(
+			    'access column still present in: ' . implode(', ', $stillPresent)
+		    );
+	    }
+	    $this->log('  ✓ access removed everywhere');
     }
 
     private function verifyOwnedGroupDropped(): void
     {
-        $stillPresent = [];
-        foreach ([self::S_INQUIRIES_GROUP, self::S_OPTIONS] as $t) {
-            if ($this->columnExists($t, 'owned_group')) {
-                $stillPresent[] = $t;
-            }
-        }
-        if (!empty($stillPresent)) {
-            throw new \RuntimeException(
-                'owned_group column still present in: ' . implode(', ', $stillPresent)
-            );
-        }
-        $this->log('  ✓ owned_group removed from groups and options');
+	    $stillPresent = [];
+	    foreach ([self::S_INQUIRIES_GROUP, self::S_OPTIONS] as $t) {
+		    if ($this->columnExists($t, 'owned_group')) {
+			    $stillPresent[] = $t;
+		    }
+	    }
+	    if (!empty($stillPresent)) {
+		    throw new \RuntimeException(
+			    'owned_group column still present in: ' . implode(', ', $stillPresent)
+		    );
+	    }
+	    $this->log('  ✓ owned_group removed from groups and options');
     }
 
     // ====================================================================
@@ -533,49 +551,49 @@ private function dropColumnIfExists(string $unprefixedTable, string $columnName)
 
     private function addIndices(): void
     {
-        $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_visibility_idx', ['visibility']);
-        $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_pubstatus_idx',  ['publication_status']);
-        $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_visibility_idx',   ['visibility']);
+	    $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_visibility_idx', ['visibility']);
+	    $this->addIndexIfNotExists(self::S_INQUIRIES,       'inquiry_pubstatus_idx',  ['publication_status']);
+	    $this->addIndexIfNotExists(self::S_INQUIRIES_GROUP, 'group_visibility_idx',   ['visibility']);
 
-        $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_idx',     ['parent_id']);
-        $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_ts_idx',  ['parent_id', 'timestamp']);
+	    $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_idx',     ['parent_id']);
+	    $this->addIndexIfNotExists(self::S_COMMENTS,        'comment_parent_ts_idx',  ['parent_id', 'timestamp']);
 
-        $this->addIndexIfNotExists(self::S_INQ_STATUS,      'status_family_idx',      ['family_type']);
+	    $this->addIndexIfNotExists(self::S_INQ_STATUS,      'status_family_idx',      ['family_type']);
 
-        // New tables
-        $this->addIndexIfNotExists(self::S_PARTICIPATION,      'participation_created_idx',   ['created_at']);
-        $this->addIndexIfNotExists(self::S_PARTICIPATION,      'participation_policy_idx',    ['policy_type']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_status_idx',              ['status']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_created_idx',             ['created_at']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_completed_idx',           ['completed_at']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_rank_idx',          ['rank']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_expires_idx',       ['expires_at']);
-        $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_role_idx',          ['role']);
+	    // New tables
+	    $this->addIndexIfNotExists(self::S_PARTICIPATION,      'participation_created_idx',   ['created_at']);
+	    $this->addIndexIfNotExists(self::S_PARTICIPATION,      'participation_policy_idx',    ['policy_type']);
+	    $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_status_idx',              ['status']);
+	    $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_created_idx',             ['created_at']);
+	    $this->addIndexIfNotExists(self::S_LOTTERY_RUN,        'run_completed_idx',           ['completed_at']);
+	    $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_rank_idx',          ['rank']);
+	    $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_expires_idx',       ['expires_at']);
+	    $this->addIndexIfNotExists(self::S_LOTTERY_SELECTION,  'selection_role_idx',          ['role']);
     }
 
     private function addIndexIfNotExists(string $unprefixedTable, string $indexName, array $columns): void
     {
-        try {
-            if (!$this->connection->tableExists($unprefixedTable)) {
-                return;
-            }
-            $realTable = $this->prefixed($unprefixedTable);
+	    try {
+		    if (!$this->connection->tableExists($unprefixedTable)) {
+			    return;
+		    }
+		    $realTable = $this->prefixed($unprefixedTable);
 
-            $schema = $this->connection->createSchema();
-            if ($schema->hasTable($realTable) && $schema->getTable($realTable)->hasIndex($indexName)) {
-                return;
-            }
+		    $schema = $this->connection->createSchema();
+		    if ($schema->hasTable($realTable) && $schema->getTable($realTable)->hasIndex($indexName)) {
+			    return;
+		    }
 
-            $colList = implode(', ', array_map([$this, 'quoteIdentifier'], $columns));
-            $this->connection->executeStatement(
-                "CREATE INDEX " . $this->quoteIdentifier($indexName) .
-                " ON " . $this->quoteIdentifier($realTable) .
-                " (" . $colList . ")"
-            );
-            $this->log("  + index {$indexName} on {$unprefixedTable}");
-        } catch (\Throwable $e) {
-            $this->log("  ⚠️ index {$indexName}: " . $e->getMessage());
-        }
+		    $colList = implode(', ', array_map([$this, 'quoteIdentifier'], $columns));
+		    $this->connection->executeStatement(
+			    "CREATE INDEX " . $this->quoteIdentifier($indexName) .
+			    " ON " . $this->quoteIdentifier($realTable) .
+			    " (" . $colList . ")"
+		    );
+		    $this->log("  + index {$indexName} on {$unprefixedTable}");
+	    } catch (\Throwable $e) {
+		    $this->log("  ⚠️ index {$indexName}: " . $e->getMessage());
+	    }
     }
 
     // ====================================================================
@@ -584,52 +602,52 @@ private function dropColumnIfExists(string $unprefixedTable, string $columnName)
 
     private function addForeignKeys(): void
     {
-        if ($this->isSQLite) {
-            $this->log('  SQLite: FKs skipped');
-            return;
-        }
+	    if ($this->isSQLite) {
+		    $this->log('  SQLite: FKs skipped');
+		    return;
+	    }
 
-        $this->addFkIfNotExists(self::S_LOTTERY_RUN,       'participation_id', self::S_PARTICIPATION, 'fk_run_participation',       'CASCADE');
-        $this->addFkIfNotExists(self::S_LOTTERY_SELECTION, 'participation_id', self::S_PARTICIPATION, 'fk_selection_participation', 'CASCADE');
-        $this->addFkIfNotExists(self::S_LOTTERY_SELECTION, 'run_id',           self::S_LOTTERY_RUN,   'fk_selection_run',           'CASCADE');
-        $this->addFkIfNotExists(self::S_COMMENTS,          'parent_id',        self::S_COMMENTS,      'fk_comment_parent',          'SET NULL');
+	    $this->addFkIfNotExists(self::S_LOTTERY_RUN,       'participation_id', self::S_PARTICIPATION, 'fk_run_participation',       'CASCADE');
+	    $this->addFkIfNotExists(self::S_LOTTERY_SELECTION, 'participation_id', self::S_PARTICIPATION, 'fk_selection_participation', 'CASCADE');
+	    $this->addFkIfNotExists(self::S_LOTTERY_SELECTION, 'run_id',           self::S_LOTTERY_RUN,   'fk_selection_run',           'CASCADE');
+	    $this->addFkIfNotExists(self::S_COMMENTS,          'parent_id',        self::S_COMMENTS,      'fk_comment_parent',          'SET NULL');
     }
 
     private function addFkIfNotExists(
-        string $childTable, string $column,
-        string $parentTable, string $fkName, string $onDelete
+	    string $childTable, string $column,
+	    string $parentTable, string $fkName, string $onDelete
     ): void {
-        try {
-            if (!$this->connection->tableExists($childTable)) {
-                return;
-            }
-            if (!$this->connection->tableExists($parentTable)) {
-                return;
-            }
+	    try {
+		    if (!$this->connection->tableExists($childTable)) {
+			    return;
+		    }
+		    if (!$this->connection->tableExists($parentTable)) {
+			    return;
+		    }
 
-            $realChild  = $this->prefixed($childTable);
-            $realParent = $this->prefixed($parentTable);
+		    $realChild  = $this->prefixed($childTable);
+		    $realParent = $this->prefixed($parentTable);
 
-            $schema = $this->connection->createSchema();
-            if ($schema->hasTable($realChild)) {
-                foreach ($schema->getTable($realChild)->getForeignKeys() as $fk) {
-                    if ($fk->getName() === $fkName) {
-                        return;
-                    }
-                }
-            }
+		    $schema = $this->connection->createSchema();
+		    if ($schema->hasTable($realChild)) {
+			    foreach ($schema->getTable($realChild)->getForeignKeys() as $fk) {
+				    if ($fk->getName() === $fkName) {
+					    return;
+				    }
+			    }
+		    }
 
-            $this->connection->executeStatement(
-                "ALTER TABLE " . $this->quoteIdentifier($realChild) .
-                " ADD CONSTRAINT " . $this->quoteIdentifier($fkName) .
-                " FOREIGN KEY (" . $this->quoteIdentifier($column) . ")" .
-                " REFERENCES " . $this->quoteIdentifier($realParent) . " (" . $this->quoteIdentifier('id') . ")" .
-                " ON DELETE {$onDelete}"
-            );
-            $this->log("  + FK {$fkName}");
-        } catch (\Throwable $e) {
-            $this->log("  ⚠️ FK {$fkName}: " . $e->getMessage());
-        }
+		    $this->connection->executeStatement(
+			    "ALTER TABLE " . $this->quoteIdentifier($realChild) .
+			    " ADD CONSTRAINT " . $this->quoteIdentifier($fkName) .
+			    " FOREIGN KEY (" . $this->quoteIdentifier($column) . ")" .
+			    " REFERENCES " . $this->quoteIdentifier($realParent) . " (" . $this->quoteIdentifier('id') . ")" .
+			    " ON DELETE {$onDelete}"
+		    );
+		    $this->log("  + FK {$fkName}");
+	    } catch (\Throwable $e) {
+		    $this->log("  ⚠️ FK {$fkName}: " . $e->getMessage());
+	    }
     }
 
     // ====================================================================
@@ -637,147 +655,147 @@ private function dropColumnIfExists(string $unprefixedTable, string $columnName)
     // ====================================================================
 
     /**
- * Column existence via information_schema — never uses Doctrine's cache.
- */
-private function rawColumnExists(string $realTable, string $column): bool
-{
-    try {
-        if ($this->isMySQL) {
-            $sql = "SELECT 1 FROM information_schema.columns
-                    WHERE table_schema = DATABASE()
-                      AND table_name   = ?
-                      AND column_name  = ?";
-            return (bool)$this->connection->executeQuery($sql, [$realTable, $column])->fetchOne();
-	}
-	if ($this->isPostgreSQL) {
-    $sql = "SELECT 1
-            FROM information_schema.columns
-            WHERE table_schema = current_schema()
-              AND table_name = ?
-              AND column_name = ?";
+     * Column existence via information_schema — never uses Doctrine's cache.
+     */
+    private function rawColumnExists(string $realTable, string $column): bool
+    {
+	    try {
+		    if ($this->isMySQL) {
+			    $sql = "SELECT 1 FROM information_schema.columns
+				    WHERE table_schema = DATABASE()
+				    AND table_name   = ?
+				    AND column_name  = ?";
+			    return (bool)$this->connection->executeQuery($sql, [$realTable, $column])->fetchOne();
+		    }
+		    if ($this->isPostgreSQL) {
+			    $sql = "SELECT 1
+				    FROM information_schema.columns
+				    WHERE table_schema = current_schema()
+				    AND table_name = ?
+				    AND column_name = ?";
 
-    return (bool)$this->connection
-        ->executeQuery($sql, [$realTable, $column])
-        ->fetchOne();
-}
-        // SQLite fallback (shouldn't be reached because we skip SQLite earlier)
-        $sql = "SELECT 1 FROM pragma_table_info(?) WHERE name = ?";
-        return (bool)$this->connection->executeQuery($sql, [$realTable, $column])->fetchOne();
-    } catch (\Throwable $e) {
-        return false;
-    }
-}
-
-/**
- * Names of indexes on $realTable that reference $column.
- * @return string[]
- */
-private function rawIndexesOnColumn(string $realTable, string $column): array
-{
-    $names = [];
-    try {
-        if ($this->isMySQL) {
-            $sql = "SELECT DISTINCT index_name
-                    FROM information_schema.statistics
-                    WHERE table_schema = DATABASE()
-                      AND table_name   = ?
-                      AND column_name  = ?
-                      AND index_name  <> 'PRIMARY'";
-            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
-            while ($row = $res->fetch()) {
-                $names[] = $row['index_name'];
-            }
-        } elseif ($this->isPostgreSQL) {
-            $sql = "SELECT i.relname AS index_name
-                    FROM pg_index ix
-                    JOIN pg_class i ON i.oid = ix.indexrelid
-                    JOIN pg_class t ON t.oid = ix.indrelid
-                    JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
-                    WHERE t.relname = ? AND a.attname = ?";
-            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
-            while ($row = $res->fetch()) {
-                $names[] = $row['index_name'];
-            }
-        }
-    } catch (\Throwable $e) {
-        // ignore
-    }
-    return $names;
-}
-
-/**
- * Names of foreign keys on $realTable that reference $column.
- * @return string[]
- */
-private function rawForeignKeysOnColumn(string $realTable, string $column): array
-{
-    $names = [];
-    try {
-        if ($this->isMySQL) {
-            $sql = "SELECT constraint_name
-                    FROM information_schema.key_column_usage
-                    WHERE table_schema    = DATABASE()
-                      AND table_name      = ?
-                      AND column_name     = ?
-                      AND referenced_table_name IS NOT NULL";
-            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
-            while ($row = $res->fetch()) {
-                $names[] = $row['constraint_name'];
-            }
-        } elseif ($this->isPostgreSQL) {
-            $sql = "SELECT con.conname AS constraint_name
-                    FROM pg_constraint con
-                    JOIN pg_class rel ON rel.oid = con.conrelid
-                    JOIN pg_attribute a ON a.attrelid = rel.oid AND a.attnum = ANY(con.conkey)
-                    WHERE con.contype = 'f'
-                      AND rel.relname = ?
-                      AND a.attname   = ?";
-            $res = $this->connection->executeQuery($sql, [$realTable, $column]);
-            while ($row = $res->fetch()) {
-                $names[] = $row['constraint_name'];
-            }
-        }
-    } catch (\Throwable $e) {
-        // ignore
-    }
-    return $names;
-}
-
-private function prefixed(string $unprefixed): string
-{
-    foreach ($this->connection->createSchema()->getTables() as $table) {
-        $name = $table->getName();
-
-        if ($name === $unprefixed || str_ends_with($name, '_' . $unprefixed)) {
-            return $name;
-        }
+			    return (bool)$this->connection
+			 ->executeQuery($sql, [$realTable, $column])
+			 ->fetchOne();
+		    }
+		    // SQLite fallback (shouldn't be reached because we skip SQLite earlier)
+		    $sql = "SELECT 1 FROM pragma_table_info(?) WHERE name = ?";
+		    return (bool)$this->connection->executeQuery($sql, [$realTable, $column])->fetchOne();
+	    } catch (\Throwable $e) {
+		    return false;
+	    }
     }
 
-    return $unprefixed;
-}
-
-private function columnExists(string $unprefixedTable, string $column): bool
-{
-    try {
-        $real = $this->prefixed($unprefixedTable);
-        return $this->rawColumnExists($real, $column);
-    } catch (\Throwable $e) {
-        return false;
+    /**
+     * Names of indexes on $realTable that reference $column.
+     * @return string[]
+     */
+    private function rawIndexesOnColumn(string $realTable, string $column): array
+    {
+	    $names = [];
+	    try {
+		    if ($this->isMySQL) {
+			    $sql = "SELECT DISTINCT index_name
+				    FROM information_schema.statistics
+				    WHERE table_schema = DATABASE()
+				    AND table_name   = ?
+				    AND column_name  = ?
+				    AND index_name  <> 'PRIMARY'";
+			    $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+			    while ($row = $res->fetch()) {
+				    $names[] = $row['index_name'];
+			    }
+		    } elseif ($this->isPostgreSQL) {
+			    $sql = "SELECT i.relname AS index_name
+				    FROM pg_index ix
+				    JOIN pg_class i ON i.oid = ix.indexrelid
+				    JOIN pg_class t ON t.oid = ix.indrelid
+				    JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
+				    WHERE t.relname = ? AND a.attname = ?";
+			    $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+			    while ($row = $res->fetch()) {
+				    $names[] = $row['index_name'];
+			    }
+		    }
+	    } catch (\Throwable $e) {
+		    // ignore
+	    }
+	    return $names;
     }
-}
+
+    /**
+     * Names of foreign keys on $realTable that reference $column.
+     * @return string[]
+     */
+    private function rawForeignKeysOnColumn(string $realTable, string $column): array
+    {
+	    $names = [];
+	    try {
+		    if ($this->isMySQL) {
+			    $sql = "SELECT constraint_name
+				    FROM information_schema.key_column_usage
+				    WHERE table_schema    = DATABASE()
+				    AND table_name      = ?
+				    AND column_name     = ?
+				    AND referenced_table_name IS NOT NULL";
+			    $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+			    while ($row = $res->fetch()) {
+				    $names[] = $row['constraint_name'];
+			    }
+		    } elseif ($this->isPostgreSQL) {
+			    $sql = "SELECT con.conname AS constraint_name
+				    FROM pg_constraint con
+				    JOIN pg_class rel ON rel.oid = con.conrelid
+				    JOIN pg_attribute a ON a.attrelid = rel.oid AND a.attnum = ANY(con.conkey)
+				    WHERE con.contype = 'f'
+				    AND rel.relname = ?
+				    AND a.attname   = ?";
+			    $res = $this->connection->executeQuery($sql, [$realTable, $column]);
+			    while ($row = $res->fetch()) {
+				    $names[] = $row['constraint_name'];
+			    }
+		    }
+	    } catch (\Throwable $e) {
+		    // ignore
+	    }
+	    return $names;
+    }
+
+    private function prefixed(string $unprefixed): string
+    {
+	    foreach ($this->connection->createSchema()->getTables() as $table) {
+		    $name = $table->getName();
+
+		    if ($name === $unprefixed || str_ends_with($name, '_' . $unprefixed)) {
+			    return $name;
+		    }
+	    }
+
+	    return $unprefixed;
+    }
+
+    private function columnExists(string $unprefixedTable, string $column): bool
+    {
+	    try {
+		    $real = $this->prefixed($unprefixedTable);
+		    return $this->rawColumnExists($real, $column);
+	    } catch (\Throwable $e) {
+		    return false;
+	    }
+    }
 
     private function quoteIdentifier(string $identifier): string
     {
-        if ($this->isMySQL) {
-            return '`' . str_replace('`', '``', $identifier) . '`';
-        }
-        return '"' . str_replace('"', '""', $identifier) . '"';
+	    if ($this->isMySQL) {
+		    return '`' . str_replace('`', '``', $identifier) . '`';
+	    }
+	    return '"' . str_replace('"', '""', $identifier) . '"';
     }
 
     private function log(string $msg): void
     {
-        if ($this->output !== null) {
-            $this->output->info('Agora 1.8.0 - ' . $msg);
-        }
+	    if ($this->output !== null) {
+		    $this->output->info('Agora 1.8.0 - ' . $msg);
+	    }
     }
 }

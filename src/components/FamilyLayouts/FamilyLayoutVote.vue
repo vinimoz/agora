@@ -483,6 +483,7 @@ import { useInquiryGroupsStore } from '../../stores/inquiryGroups'
 import { useSupportResultStore } from '../../stores/supportResult'
 
 import VoteEmptyState from '../Vote/VoteEmptyState.vue'
+import VoteEngineBlock from '../Vote/VoteEngineBlock.vue'
 import VoteCardsLayout from '../Vote/VoteCardsLayout.vue'
 import VoteResultsLayout from '../Vote/VoteResultsLayout.vue'
 import EngineSelectorModal from '../Modals/EngineSelectorModal.vue'

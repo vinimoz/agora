@@ -7,7 +7,7 @@ import type { User } from './user.types'
 import type { InquiryType, InquiryFamily } from './inquiry.types'
 import type { InquiryOptionType, OptionFamily } from './option.types'
 import type { InquiryGroupType } from './inquiryGroups.types'
-
+import type { OrganizationType, RelevanceTier } from './experience.types'
 import type { InquiryTypeRights, ModeratorRights, OfficialRights } from '../utils/permissions'
 
 // ============================================================================
@@ -24,9 +24,63 @@ export type Group = {
   type: string
 }
 
+
+export interface OrganizationConfig {
+  /** Which organization template this deployment (or tenant) uses. */
+  type: OrganizationType
+  tenantId?: number
+  displayName?: string
+}
+
 // ============================================================================
 // HOME / NAVIGATION
 // ============================================================================
+export interface PromoConfig {
+  title: string
+  text: string
+  cta: string
+  imageUrl: string | number
+}
+
+export interface RelevanceTierLabel {
+  key: RelevanceTier
+  label: string
+}
+
+export interface RelevanceWeights {
+  owner: number
+  participant: number
+  space: number
+  locality: number
+  region: number
+  activePhase: number
+  new: number
+}
+
+export interface RelevanceConfig {
+  tiers: RelevanceTierLabel[]
+  weights: RelevanceWeights
+}
+
+export interface HeroRoute {
+  name: string
+  params?: Record<string, string | number>
+  query?: Record<string, string | number | null | undefined>
+}
+
+export interface HeroAction {
+  key: string
+  label: string
+  icon: string
+  color?: string
+  hint?: string
+  /**
+   * Where the action navigates. When omitted, the renderer falls back to
+   * the legacy hardcoded switch in ExperienceRenderer (deprecated; kept
+   * so pre-existing DB rows keep working).
+   */
+  route?: HeroRoute
+}
 
 export interface HeroActionConfig {
   key: string
@@ -36,35 +90,23 @@ export interface HeroActionConfig {
   hint?: string
 }
 
+export interface HomeHeroConfig {
+  cityName: string
+  tagline: string
+  title: string
+  subtitle: string
+  backgroundUrl: string
+  showWeather?: boolean
+  weather?: { temp: number; location: string }
+  actions: HeroAction[]   // was: any[]
+}
+
 export interface HomeConfig {
   sections: string[]
-  hero: {
-    cityName?: string
-    tagline?: string
-    title?: string
-    subtitle?: string
-    backgroundUrl?: string
-    showWeather?: boolean
-    weather?: { temp: number; location: string }
-    actions: Array<{
-      key: string
-      label: string
-      icon: string
-      color: string
-      hint: string
-    }>
-  }
-  promo?: {
-    title?: string
-    text?: string
-    cta?: string
-    imageUrl?: string
-  }
-  services: Array<{ key: string; label: string; icon: string }>
-  relevance: {
-    tiers: Record<string, unknown>[]
-    weights: Record<string, number>
-  }
+  hero: HomeHeroConfig
+  promo: PromoConfig
+  relevance: RelevanceConfig
+  sectionLabels?: Record<string, string>
 }
 
 export interface NavigationConfig {
@@ -144,6 +186,7 @@ export type AppSettings = {
   showMailAddressesGroups: string[]
   unrestrictedOwnerGroups: string[]
   home?: HomeConfig
+  organization?: OrganizationConfig
   navigation?: NavigationConfig
   categoryTab: Category[]
   locationTab: Location[]

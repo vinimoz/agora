@@ -8,9 +8,9 @@
           class="header-icon"
         />
         <div>
-          <h2>{{ t('agora', 'Right now') }}</h2>
+          <h2>{{ title  || t('agora', 'Right now') }}</h2>
           <p class="section-subtitle">
-            {{ t('agora', 'Topics that need your attention') }}
+            {{ t('agora', subtitle || 'Topics that need your attention') }}
           </p>
         </div>
       </div>
@@ -82,8 +82,14 @@
 import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
 import type { Inquiry } from '../../../Types'
-
-const props = defineProps<{ inquiries: Inquiry[] }>()
+const props = withDefaults(
+  defineProps<{
+    inquiries: Inquiry[]
+    title?: string
+    subtitle?: string
+  }>(),
+  { title: '', subtitle: '' }
+)
 const emit = defineEmits<{ click: [inquiry: Inquiry]; viewAll: [] }>()
 
 const TYPE_META: Record<string, { color: string; label: string; action: string }> = {

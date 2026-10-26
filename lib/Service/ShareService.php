@@ -211,21 +211,42 @@ class ShareService
     }
 
     /**
+     * Change participation level
+     */
+    public function setParticipationLevel(string $token, int $value): Share
+    {
+	    try {
+		    $this->share = $this->shareMapper->findByToken($token);
+		    $this->inquiryMapper->get($this->share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+		    $this->share->setParticipationLevel($value);
+		    $this->share = $this->shareMapper->update($this->share);
+	    } catch (ShareNotFoundException|DoesNotExistException $e) {
+		    throw new NotFoundException('Token ' . $token . ' does not exist');
+	    } catch (\InvalidArgumentException $e) {
+		    throw new \OCA\Agora\Exceptions\InvalidArgumentException($e->getMessage());
+	    }
+	    $this->eventDispatcher->dispatchTyped(new ShareChangedRegistrationConstraintEvent($this->share));
+
+	    return $this->share;
+    }
+
+
+    /**
      * Change share type
      */
     public function setPublicInquiryEmail(string $token, string $value): Share
     {
-        try {
-            $this->share = $this->shareMapper->findByToken($token);
-            $this->inquiryMapper->get($this->share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-            $this->share->setPublicInquiryEmail($value);
-            $this->share = $this->shareMapper->update($this->share);
-        } catch (ShareNotFoundException $e) {
-            throw new NotFoundException('Token ' . $token . ' does not exist');
-        }
-        $this->eventDispatcher->dispatchTyped(new ShareChangedRegistrationConstraintEvent($this->share));
+	    try {
+		    $this->share = $this->shareMapper->findByToken($token);
+		    $this->inquiryMapper->get($this->share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+		    $this->share->setPublicInquiryEmail($value);
+		    $this->share = $this->shareMapper->update($this->share);
+	    } catch (ShareNotFoundException $e) {
+		    throw new NotFoundException('Token ' . $token . ' does not exist');
+	    }
+	    $this->eventDispatcher->dispatchTyped(new ShareChangedRegistrationConstraintEvent($this->share));
 
-        return $this->share;
+	    return $this->share;
     }
 
     /**
@@ -235,18 +256,18 @@ class ShareService
      */
     public function setEmailAddress(Share $share, string $emailAddress, bool $emptyIsValid = false): Share
     {
-        if ($share->getType() === Share::TYPE_EXTERNAL) {
-            MailService::validateEmailAddress($emailAddress, $emptyIsValid);
-            $share->setEmailAddress($emailAddress);
-            // TODO: Send confirmation
-            $share = $this->shareMapper->update($share);
-        } else {
-            throw new InvalidShareTypeException('Email address can only be set in external shares.');
-        }
+	    if ($share->getType() === Share::TYPE_EXTERNAL) {
+		    MailService::validateEmailAddress($emailAddress, $emptyIsValid);
+		    $share->setEmailAddress($emailAddress);
+		    // TODO: Send confirmation
+		    $share = $this->shareMapper->update($share);
+	    } else {
+		    throw new InvalidShareTypeException('Email address can only be set in external shares.');
+	    }
 
-        $this->eventDispatcher->dispatchTyped(new ShareChangedEmailEvent($share));
+	    $this->eventDispatcher->dispatchTyped(new ShareChangedEmailEvent($share));
 
-        return $share;
+	    return $share;
     }
 
     /**
@@ -256,20 +277,20 @@ class ShareService
      */
     public function setDisplayName(string $displayName, string $token): Share
     {
-        $this->share = $this->shareMapper->findByToken($token);
+	    $this->share = $this->shareMapper->findByToken($token);
 
-        if ($this->share->getType() === Share::TYPE_EXTERNAL) {
-            $displayName = $this->systemService->validatePublicUsername($displayName, share: $this->share);
-            $this->share->setDisplayName($displayName);
-            $dispatchEvent = new ShareChangedDisplayNameEvent($this->share);
-        } else {
-            throw new InvalidShareTypeException('Displayname can only be set for external shares.');
-        }
+	    if ($this->share->getType() === Share::TYPE_EXTERNAL) {
+		    $displayName = $this->systemService->validatePublicUsername($displayName, share: $this->share);
+		    $this->share->setDisplayName($displayName);
+		    $dispatchEvent = new ShareChangedDisplayNameEvent($this->share);
+	    } else {
+		    throw new InvalidShareTypeException('Displayname can only be set for external shares.');
+	    }
 
-        $this->share = $this->shareMapper->update($this->share);
-        $this->eventDispatcher->dispatchTyped($dispatchEvent);
+	    $this->share = $this->shareMapper->update($this->share);
+	    $this->eventDispatcher->dispatchTyped($dispatchEvent);
 
-        return $this->share;
+	    return $this->share;
     }
 
     /**
@@ -279,25 +300,25 @@ class ShareService
      */
     public function setLabel(string $label, string $token): Share
     {
-        $this->share = $this->shareMapper->findByToken($token);
+	    $this->share = $this->shareMapper->findByToken($token);
 
-        if ($this->share->getType() === Share::TYPE_PUBLIC) {
-            $this->inquiryMapper->get($this->share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-            $this->share->setLabel($label);
+	    if ($this->share->getType() === Share::TYPE_PUBLIC) {
+		    $this->inquiryMapper->get($this->share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+		    $this->share->setLabel($label);
 
-            // overwrite any possible displayName
-            // TODO: Remove afte rmigratiuon to label
-            $this->share->setDisplayName('');
+		    // overwrite any possible displayName
+		    // TODO: Remove afte rmigratiuon to label
+		    $this->share->setDisplayName('');
 
-            $dispatchEvent = new ShareChangedLabelEvent($this->share);
-        } else {
-            throw new InvalidShareTypeException('Label can only be set for public shares.');
-        }
+		    $dispatchEvent = new ShareChangedLabelEvent($this->share);
+	    } else {
+		    throw new InvalidShareTypeException('Label can only be set for public shares.');
+	    }
 
-        $this->share = $this->shareMapper->update($this->share);
-        $this->eventDispatcher->dispatchTyped($dispatchEvent);
+	    $this->share = $this->shareMapper->update($this->share);
+	    $this->eventDispatcher->dispatchTyped($dispatchEvent);
 
-        return $this->share;
+	    return $this->share;
     }
 
     /**
@@ -305,12 +326,12 @@ class ShareService
      */
     public function deleteEmailAddress(Share $share): Share
     {
-        if ($share->getType() === Share::TYPE_EXTERNAL) {
-            $share->setEmailAddress('');
-            return $this->shareMapper->update($share);
-        } else {
-            throw new InvalidShareTypeException('Email address can only be set in external shares.');
-        }
+	    if ($share->getType() === Share::TYPE_EXTERNAL) {
+		    $share->setEmailAddress('');
+		    return $this->shareMapper->update($share);
+	    } else {
+		    throw new InvalidShareTypeException('Email address can only be set in external shares.');
+	    }
     }
 
     /**
@@ -322,38 +343,38 @@ class ShareService
      * @param string|null $language
      */
     private function convertPersonalPublicShareToExternalShare(
-        ?string $userId = null,
-        ?string $displayName = null,
-        ?string $emailAddress = null,
-        ?string $timeZone = null,
-        ?string $language = null,
+	    ?string $userId = null,
+	    ?string $displayName = null,
+	    ?string $emailAddress = null,
+	    ?string $timeZone = null,
+	    ?string $language = null,
     ): void {
 
-        // paranoia double check
-        if (!in_array($this->share->getType(), Share::CONVERATABLE_PUBLIC_SHARES, true)) {
-            return;
-        }
+	    // paranoia double check
+	    if (!in_array($this->share->getType(), Share::CONVERATABLE_PUBLIC_SHARES, true)) {
+		    return;
+	    }
 
-        $initialUserId = $this->share->getUserId();
-        $this->share->setUserId($userId ?? $this->generatePublicUserId());
-        $this->share->setDisplayName($displayName ?? $this->share->getDisplayName());
-        $this->share->setTimeZoneName($timeZone ?? $this->share->getTimeZoneName());
-        $this->share->setLanguage($language ?? $this->share->getLanguage());
+	    $initialUserId = $this->share->getUserId();
+	    $this->share->setUserId($userId ?? $this->generatePublicUserId());
+	    $this->share->setDisplayName($displayName ?? $this->share->getDisplayName());
+	    $this->share->setTimeZoneName($timeZone ?? $this->share->getTimeZoneName());
+	    $this->share->setLanguage($language ?? $this->share->getLanguage());
 
-        if ($emailAddress !== null && $emailAddress !== '' && $emailAddress !== $this->share->getEmailAddress()) {
-            // reset invitation sent, if email address is changed
-            $this->share->setInvitationSent(0);
-        }
-        $this->share->setEmailAddress($emailAddress ?? $this->share->getEmailAddress());
+	    if ($emailAddress !== null && $emailAddress !== '' && $emailAddress !== $this->share->getEmailAddress()) {
+		    // reset invitation sent, if email address is changed
+		    $this->share->setInvitationSent(0);
+	    }
+	    $this->share->setEmailAddress($emailAddress ?? $this->share->getEmailAddress());
 
 
-        // convert to type external
-        $this->share->setType(Share::TYPE_EXTERNAL);
+	    // convert to type external
+	    $this->share->setType(Share::TYPE_EXTERNAL);
 
-        // remove personal information from user id
-        $this->share->setUserId($this->generatePublicUserId());
-        $this->share = $this->shareMapper->update($this->share);
-        $this->convertDependingObjects($initialUserId, $this->share->getUserId(), $this->share->getInquiryId());
+	    // remove personal information from user id
+	    $this->share->setUserId($this->generatePublicUserId());
+	    $this->share = $this->shareMapper->update($this->share);
+	    $this->convertDependingObjects($initialUserId, $this->share->getUserId(), $this->share->getInquiryId());
     }
 
     /**
@@ -366,9 +387,9 @@ class ShareService
      */
     private function convertDependingObjects(string $userId, string $replacementId, int $inquiryId): void
     {
-        $this->supportMapper->renameUserId($userId, $replacementId, $inquiryId);
-        $this->optionMapper->renameUserId($userId, $replacementId, $inquiryId);
-        $this->commentMapper->renameUserId($userId, $replacementId, $inquiryId);
+	    $this->supportMapper->renameUserId($userId, $replacementId, $inquiryId);
+	    $this->optionMapper->renameUserId($userId, $replacementId, $inquiryId);
+	    $this->commentMapper->renameUserId($userId, $replacementId, $inquiryId);
     }
 
     /**
@@ -381,49 +402,49 @@ class ShareService
      * @return Share
      */
     public function register(
-        string $publicShareToken,
-        string $displayName,
-        string $emailAddress = '',
-        string $timeZone = '',
+	    string $publicShareToken,
+	    string $displayName,
+	    string $emailAddress = '',
+	    string $timeZone = '',
     ): Share {
-        $this->share = $this->get($publicShareToken);
-        $displayName = $this->systemService->validatePublicUsername($displayName, share: $this->share);
+	    $this->share = $this->get($publicShareToken);
+	    $displayName = $this->systemService->validatePublicUsername($displayName, share: $this->share);
 
-        if ($this->share->getPublicInquiryEmail() !== Share::EMAIL_DISABLED) {
-            MailService::validateEmailAddress($emailAddress, $this->share->getPublicInquiryEmail() !== Share::EMAIL_MANDATORY);
-        }
+	    if ($this->share->getPublicInquiryEmail() !== Share::EMAIL_DISABLED) {
+		    MailService::validateEmailAddress($emailAddress, $this->share->getPublicInquiryEmail() !== Share::EMAIL_MANDATORY);
+	    }
 
-        $language = $this->systemService->getGenericLanguage();
-        $userId = $this->generatePublicUserId();
+	    $language = $this->systemService->getGenericLanguage();
+	    $userId = $this->generatePublicUserId();
 
-        if ($this->share->getType() === Share::TYPE_PUBLIC) {
-            // Create new external share for user, who entered the inquiry via public link,
-            // prevent invtation sending, when no email address is given
-            $this->createNewShare(
-                $this->share->getInquiryId(),
-                $this->userMapper->getUserObject(Share::TYPE_EXTERNAL, $userId, $displayName, $emailAddress, $language, $language, $timeZone),
-                !$emailAddress,
-                $timeZone
-            );
-            $this->eventDispatcher->dispatchTyped(new ShareRegistrationEvent($this->share));
-        } elseif (in_array($this->share->getType(), Share::CONVERATABLE_PUBLIC_SHARES, true)) {
-            // Convert email and contact shares to external share, if user registers
-            // this should be avoided by the actual use cases, but keep code in case of later changes
-            $this->convertPersonalPublicShareToExternalShare($userId, $displayName, $emailAddress, $timeZone, $language);
-        } else {
-            throw new ForbiddenException('Share does not allow registering for inquiry');
-        }
+	    if ($this->share->getType() === Share::TYPE_PUBLIC) {
+		    // Create new external share for user, who entered the inquiry via public link,
+		    // prevent invtation sending, when no email address is given
+		    $this->createNewShare(
+			    $this->share->getInquiryId(),
+			    $this->userMapper->getUserObject(Share::TYPE_EXTERNAL, $userId, $displayName, $emailAddress, $language, $language, $timeZone),
+			    !$emailAddress,
+			    $timeZone
+		    );
+		    $this->eventDispatcher->dispatchTyped(new ShareRegistrationEvent($this->share));
+	    } elseif (in_array($this->share->getType(), Share::CONVERATABLE_PUBLIC_SHARES, true)) {
+		    // Convert email and contact shares to external share, if user registers
+		    // this should be avoided by the actual use cases, but keep code in case of later changes
+		    $this->convertPersonalPublicShareToExternalShare($userId, $displayName, $emailAddress, $timeZone, $language);
+	    } else {
+		    throw new ForbiddenException('Share does not allow registering for inquiry');
+	    }
 
-        // send invitation mail, if invitationSent has no timestamp
-        try {
-            if (!$this->share->getInvitationSent()) {
-                $this->mailService->sendInvitation($this->share);
-            }
-        } catch (\Exception $e) {
-            $this->logger->error('Error sending Mail', ['emailAddress' => $this->share->getEmailAddress()]);
-        }
+	    // send invitation mail, if invitationSent has no timestamp
+	    try {
+		    if (!$this->share->getInvitationSent()) {
+			    $this->mailService->sendInvitation($this->share);
+		    }
+	    } catch (\Exception $e) {
+		    $this->logger->error('Error sending Mail', ['emailAddress' => $this->share->getEmailAddress()]);
+	    }
 
-        return $this->share;
+	    return $this->share;
     }
 
     /**
@@ -433,8 +454,8 @@ class ShareService
      */
     public function deleteByToken(string $token, bool $restore = false): Share
     {
-        $share = $this->shareMapper->findByToken($token, true);
-        return $this->delete($share, $restore);
+	    $share = $this->shareMapper->findByToken($token, true);
+	    return $this->delete($share, $restore);
     }
 
     /**
@@ -444,20 +465,20 @@ class ShareService
      */
     public function delete(Share $share, bool $restore = false): Share
     {
-        if (!$share->getInquiryId() && $share->getGroupId()) {
-            $this->inquiryGroupMapper->find($share->getGroupId())->request(InquiryGroup::PERMISSION_INQUIRY_GROUP_EDIT);
-        } else {
-            $this->inquiryMapper->get($share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-        }
+	    if (!$share->getInquiryId() && $share->getGroupId()) {
+		    $this->inquiryGroupMapper->find($share->getGroupId())->request(InquiryGroup::PERMISSION_INQUIRY_GROUP_EDIT);
+	    } else {
+		    $this->inquiryMapper->get($share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+	    }
 
-        $share->setDeleted($restore ? 0 : time());
-        $this->shareMapper->update($share);
+	    $share->setDeleted($restore ? 0 : time());
+	    $this->shareMapper->update($share);
 
-        // skip event when deleting a inquiry group share
-        if ($share->getInquiryId()) {
-            $this->eventDispatcher->dispatchTyped(new ShareDeletedEvent($share));
-        }
-        return $share;
+	    // skip event when deleting a inquiry group share
+	    if ($share->getInquiryId()) {
+		    $this->eventDispatcher->dispatchTyped(new ShareDeletedEvent($share));
+	    }
+	    return $share;
     }
 
     /**
@@ -467,8 +488,8 @@ class ShareService
      */
     public function lockByToken(string $token, bool $unlock = false): Share
     {
-        $share = $this->shareMapper->findByToken($token, getDeleted: true);
-        return $this->lock($share, unlock: $unlock);
+	    $share = $this->shareMapper->findByToken($token, getDeleted: true);
+	    return $this->lock($share, unlock: $unlock);
     }
 
     /**
@@ -478,35 +499,35 @@ class ShareService
      */
     private function lock(Share $share, bool $unlock = false): Share
     {
-        $this->inquiryMapper->get($share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+	    $this->inquiryMapper->get($share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
 
-        $share->setLocked($unlock ? 0 : time());
-        $this->shareMapper->update($share);
-        $this->eventDispatcher->dispatchTyped(new ShareLockedEvent($share));
+	    $share->setLocked($unlock ? 0 : time());
+	    $this->shareMapper->update($share);
+	    $this->eventDispatcher->dispatchTyped(new ShareLockedEvent($share));
 
-        return $share;
+	    return $share;
     }
 
     public function sendAllInvitations(int $inquiryId): ?SentResult
     {
-        $sentResult = new SentResult();
+	    $sentResult = new SentResult();
 
-        // first resolve group shares
-        $shares = $this->listNotInvited($inquiryId);
-        foreach ($shares as $share) {
-            if (in_array($share->getType(), Share::RESOLVABLE_SHARES)) {
-                $this->resolveGroup($share);
-            }
-        }
+	    // first resolve group shares
+	    $shares = $this->listNotInvited($inquiryId);
+	    foreach ($shares as $share) {
+		    if (in_array($share->getType(), Share::RESOLVABLE_SHARES)) {
+			    $this->resolveGroup($share);
+		    }
+	    }
 
-        // finally send invitation for all not already invited sharees
-        $shares = $this->listNotInvited($inquiryId);
-        foreach ($shares as $share) {
-            if (!in_array($share->getType(), Share::RESOLVABLE_SHARES)) {
-                $this->sendInvitation($share, $sentResult);
-            }
-        }
-        return $sentResult;
+	    // finally send invitation for all not already invited sharees
+	    $shares = $this->listNotInvited($inquiryId);
+	    foreach ($shares as $share) {
+		    if (!in_array($share->getType(), Share::RESOLVABLE_SHARES)) {
+			    $this->sendInvitation($share, $sentResult);
+		    }
+	    }
+	    return $sentResult;
     }
 
     /**
@@ -515,8 +536,8 @@ class ShareService
      */
     public function resolveGroupByToken(string $token): array
     {
-        $share = $this->get($token);
-        return $this->resolveGroup($share);
+	    $share = $this->get($token);
+	    return $this->resolveGroup($share);
     }
 
     /**
@@ -525,26 +546,26 @@ class ShareService
      */
     private function resolveGroup(Share $share): array
     {
-        $shares = [];
-        if (!in_array($share->getType(), Share::RESOLVABLE_SHARES)) {
-            throw new InvalidShareTypeException('Cannot resolve members from share type ' . $share->getType());
-        }
+	    $shares = [];
+	    if (!in_array($share->getType(), Share::RESOLVABLE_SHARES)) {
+		    throw new InvalidShareTypeException('Cannot resolve members from share type ' . $share->getType());
+	    }
 
-        foreach ($this->userMapper->getUserObject($share->getType(), $share->getUserId())->getMembers() as $member) {
-            try {
-                $newShare = $this->add($share->getInquiryId(), $member->getType(), $member->getId());
-                $shares[] = $newShare;
-            } catch (ForbiddenException $e) {
-                // skip, if user is not allowed to add share, usually because of forbidden share type
-                // skip share creation silenly
-                continue;
-            } catch (ShareAlreadyExistsException $e) {
-                continue;
-            }
-        }
+	    foreach ($this->userMapper->getUserObject($share->getType(), $share->getUserId())->getMembers() as $member) {
+		    try {
+			    $newShare = $this->add($share->getInquiryId(), $member->getType(), $member->getId());
+			    $shares[] = $newShare;
+		    } catch (ForbiddenException $e) {
+			    // skip, if user is not allowed to add share, usually because of forbidden share type
+			    // skip share creation silenly
+			    continue;
+		    } catch (ShareAlreadyExistsException $e) {
+			    continue;
+		    }
+	    }
 
-        $this->delete($share);
-        return $shares;
+	    $this->delete($share);
+	    return $shares;
     }
 
     /**
@@ -555,37 +576,37 @@ class ShareService
      */
     public function sendInvitation(Share $share, ?SentResult &$sentResult = null): ?SentResult
     {
-        if (in_array($share->getType(), [Share::TYPE_USER, Share::TYPE_ADMIN], true)) {
-            $this->notificationService->sendInvitation($share->getInquiryId(), $share->getUserId());
-        } elseif ($share->getType() === Share::TYPE_GROUP) {
-            foreach ($this->userMapper->getUserFromShare($share)->getMembers() as $member) {
-                $this->notificationService->sendInvitation($share->getInquiryId(), $member->getId());
-            }
-        }
+	    if (in_array($share->getType(), [Share::TYPE_USER, Share::TYPE_ADMIN], true)) {
+		    $this->notificationService->sendInvitation($share->getInquiryId(), $share->getUserId());
+	    } elseif ($share->getType() === Share::TYPE_GROUP) {
+		    foreach ($this->userMapper->getUserFromShare($share)->getMembers() as $member) {
+			    $this->notificationService->sendInvitation($share->getInquiryId(), $member->getId());
+		    }
+	    }
 
-        return $this->mailService->sendInvitation($share, $sentResult);
+	    return $this->mailService->sendInvitation($share, $sentResult);
     }
 
     private function generatePublicUserId(string $prefix = 'ex_'): string
     {
-        $publicUserId = '';
+	    $publicUserId = '';
 
-        while ($publicUserId === '') {
-            $publicUserId = $prefix . $this->secureRandom->generate(
-                8,
-                ISecureRandom::CHAR_DIGITS
-                    . ISecureRandom::CHAR_LOWER
-                    . ISecureRandom::CHAR_UPPER
-            );
+	    while ($publicUserId === '') {
+		    $publicUserId = $prefix . $this->secureRandom->generate(
+			    8,
+			    ISecureRandom::CHAR_DIGITS
+			    . ISecureRandom::CHAR_LOWER
+			    . ISecureRandom::CHAR_UPPER
+		    );
 
-            try {
-                // make sure, the user id is unique
-                $publicUserId = $this->systemService->validatePublicUsername($publicUserId, share: $this->share);
-            } catch (InvalidUsernameException $e) {
-                $publicUserId = '';
-            }
-        }
-        return $publicUserId;
+		    try {
+			    // make sure, the user id is unique
+			    $publicUserId = $this->systemService->validatePublicUsername($publicUserId, share: $this->share);
+		    } catch (InvalidUsernameException $e) {
+			    $publicUserId = '';
+		    }
+	    }
+	    return $publicUserId;
     }
 
     /**
@@ -596,68 +617,68 @@ class ShareService
      * @return Share
      */
     public function add(
-        int $inquiryOrInquiryGroupId,
-        string $type,
-        string $userId = '',
-        string $displayName = '',
-        string $emailAddress = '',
-        string $purpose = 'inquiry',
+	    int $inquiryOrInquiryGroupId,
+	    string $type,
+	    string $userId = '',
+	    string $displayName = '',
+	    string $emailAddress = '',
+	    string $purpose = 'inquiry',
     ): Share {
-        if ($purpose === 'inquiry') {
-            $inquiry = $this->inquiryMapper->get($inquiryOrInquiryGroupId, withRoles: true);
-            $inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-            $inquiry->request(Inquiry::PERMISSION_SHARE_ADD);
+	    if ($purpose === 'inquiry') {
+		    $inquiry = $this->inquiryMapper->get($inquiryOrInquiryGroupId, withRoles: true);
+		    $inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+		    $inquiry->request(Inquiry::PERMISSION_SHARE_ADD);
 
-            if ($type === UserBase::TYPE_PUBLIC) {
-                $this->appSettings->getPublicSharesAllowed();
-                $inquiry->request(Inquiry::PERMISSION_SHARE_ADD_EXTERNAL);
-            }
+		    if ($type === UserBase::TYPE_PUBLIC) {
+			    $this->appSettings->getPublicSharesAllowed();
+			    $inquiry->request(Inquiry::PERMISSION_SHARE_ADD_EXTERNAL);
+		    }
 
-            // validate user type for external types and check, if user is allowed to create this type of share
-            if (
-                match ($type) {
-                Ghost::TYPE => true,
-                Contact::TYPE => true,
-                ContactGroup::TYPE => true,
-                Email::TYPE => true,
-                UserBase::TYPE_EXTERNAL => true,
-                default => false,
-                }
-            ) {
-                $inquiry->request(Inquiry::PERMISSION_SHARE_ADD_EXTERNAL);
-            }
-            $shareUser = $this->userMapper->getUserObject($type, $userId, $displayName, $emailAddress);
-            $preventInvitation = false;
-        } else {
-            $shareUser = $this->userMapper->getUserFromUserBase($userId);
-            $preventInvitation = true;
-        }
+		    // validate user type for external types and check, if user is allowed to create this type of share
+		    if (
+			    match ($type) {
+				    Ghost::TYPE => true,
+				    Contact::TYPE => true,
+				    ContactGroup::TYPE => true,
+				    Email::TYPE => true,
+				    UserBase::TYPE_EXTERNAL => true,
+				    default => false,
+			    }
+			    ) {
+				    $inquiry->request(Inquiry::PERMISSION_SHARE_ADD_EXTERNAL);
+			    }
+			    $shareUser = $this->userMapper->getUserObject($type, $userId, $displayName, $emailAddress);
+			    $preventInvitation = false;
+	    } else {
+		    $shareUser = $this->userMapper->getUserFromUserBase($userId);
+		    $preventInvitation = true;
+	    }
 
-        $share = $this->createNewShare(
-            inquiryOrInquiryGroupId: $inquiryOrInquiryGroupId,
-            userGroup: $shareUser,
-            preventInvitation: $preventInvitation,
-            timeZone: '',
-            purpose: $purpose
-        );
+	    $share = $this->createNewShare(
+		    inquiryOrInquiryGroupId: $inquiryOrInquiryGroupId,
+		    userGroup: $shareUser,
+		    preventInvitation: $preventInvitation,
+		    timeZone: '',
+		    purpose: $purpose
+	    );
 
-        // TODO: extend event for inquiryGroups
-        if ($share->getInquiryId()) {
-            $this->eventDispatcher->dispatchTyped(new ShareCreateEvent($share));
-        }
-        return $share;
+	    // TODO: extend event for inquiryGroups
+	    if ($share->getInquiryId()) {
+		    $this->eventDispatcher->dispatchTyped(new ShareCreateEvent($share));
+	    }
+	    return $share;
     }
 
     private function sortByCategory(): void
     {
-        $sortedShares = [];
-        foreach (Share::TYPE_SORT_ARRAY as $shareType) {
-            $filteredShares = array_filter($this->shares, function ($share) use ($shareType) {
-                return $share->getType() === $shareType;
-            });
-            $sortedShares = array_merge($sortedShares, $filteredShares);
-        }
-        $this->shares = $sortedShares;
+	    $sortedShares = [];
+	    foreach (Share::TYPE_SORT_ARRAY as $shareType) {
+		    $filteredShares = array_filter($this->shares, function ($share) use ($shareType) {
+			    return $share->getType() === $shareType;
+		    });
+		    $sortedShares = array_merge($sortedShares, $filteredShares);
+	    }
+	    $this->shares = $sortedShares;
     }
 
     /**
@@ -667,44 +688,44 @@ class ShareService
     private function validateShareType(): void
     {
 
-        $valid = match ($this->share->getType()) {
-            Share::TYPE_PUBLIC, Share::TYPE_EMAIL, Share::TYPE_EXTERNAL => true,
-            Share::TYPE_USER => $this->share->getUserId() === $this->userSession->getCurrentUserId(),
-            Share::TYPE_ADMIN => $this->share->getUserId() === $this->userSession->getCurrentUserId(),
-            // Note: $this->share->getUserId() is actually the group name in case of Share::TYPE_GROUP
-            Share::TYPE_GROUP => $this->userSession->getCurrentUser()->getIsInGroup($this->share->getUserId()),
-            default => throw new ForbiddenException("Invalid share type {$this->share->getType()}"),
-        };
-        if (!$valid) {
-            throw new ForbiddenException("User is not allowed to use this share for inquiry access ({$this->share->getType()})");
-        }
+	    $valid = match ($this->share->getType()) {
+	    Share::TYPE_PUBLIC, Share::TYPE_EMAIL, Share::TYPE_EXTERNAL => true,
+		    Share::TYPE_USER => $this->share->getUserId() === $this->userSession->getCurrentUserId(),
+		    Share::TYPE_ADMIN => $this->share->getUserId() === $this->userSession->getCurrentUserId(),
+		    // Note: $this->share->getUserId() is actually the group name in case of Share::TYPE_GROUP
+		    Share::TYPE_GROUP => $this->userSession->getCurrentUser()->getIsInGroup($this->share->getUserId()),
+		    default => throw new ForbiddenException("Invalid share type {$this->share->getType()}"),
+    };
+	    if (!$valid) {
+		    throw new ForbiddenException("User is not allowed to use this share for inquiry access ({$this->share->getType()})");
+	    }
     }
 
     private function generateToken(): string
     {
-        $token = null;
-        $loopCounter = 0;
-        while ($token === null) {
-            $loopCounter++;
-            $token = $this->secureRandom->generate(
-                8,
-                ISecureRandom::CHAR_DIGITS
-                . ISecureRandom::CHAR_LOWER
-                . ISecureRandom::CHAR_UPPER
-            );
-            try {
-                $this->shareMapper->findByToken($token, true);
-                // reset token, if it already exists
-                $token = null;
-            } catch (ShareNotFoundException) {
-                $loopCounter = 0;
-            }
-            if ($loopCounter > 10) {
-                // In case of uninspected situations, avoid an endless loop
-                throw new \Exception('Unexpected loop count while trying to create a token for a new share');
-            }
-        }
-        return $token;
+	    $token = null;
+	    $loopCounter = 0;
+	    while ($token === null) {
+		    $loopCounter++;
+		    $token = $this->secureRandom->generate(
+			    8,
+			    ISecureRandom::CHAR_DIGITS
+			    . ISecureRandom::CHAR_LOWER
+			    . ISecureRandom::CHAR_UPPER
+		    );
+		    try {
+			    $this->shareMapper->findByToken($token, true);
+			    // reset token, if it already exists
+			    $token = null;
+		    } catch (ShareNotFoundException) {
+			    $loopCounter = 0;
+		    }
+		    if ($loopCounter > 10) {
+			    // In case of uninspected situations, avoid an endless loop
+			    throw new \Exception('Unexpected loop count while trying to create a token for a new share');
+		    }
+	    }
+	    return $token;
     }
     /**
      * create a new share
@@ -718,77 +739,78 @@ class ShareService
      * @param string $purpose Purpose of the share, either 'inquiry' or 'inquiryGroup'
      */
     private function createNewShare(
-        int $inquiryOrInquiryGroupId,
-        UserBase $userGroup,
-        bool $preventInvitation = false,
-        string $timeZone = '',
-        string $purpose = 'inquiry',
+	    int $inquiryOrInquiryGroupId,
+	    UserBase $userGroup,
+	    bool $preventInvitation = false,
+	    string $timeZone = '',
+	    string $purpose = 'inquiry',
     ): Share {
-        $preventInvitation = $userGroup->getType() === UserBase::TYPE_PUBLIC ?: $preventInvitation;
+	    $preventInvitation = $userGroup->getType() === UserBase::TYPE_PUBLIC ?: $preventInvitation;
 
-        // Generate a unique id
-        $token = $this->generateToken();
+	    // Generate a unique id
+	    $token = $this->generateToken();
 
-        $this->share = new Share();
+	    $this->share = new Share();
 
-        if ($purpose === 'inquiry') {
-            $this->share->setInquiryId($inquiryOrInquiryGroupId);
-            $this->share->setGroupId(null);
-        } else {
-            $this->share->setInquiryId(null);
-            $this->share->setGroupId($inquiryOrInquiryGroupId);
-        }
+	    if ($purpose === 'inquiry') {
+		    $this->share->setInquiryId($inquiryOrInquiryGroupId);
+		    $this->share->setGroupId(null);
+	    } else {
+		    $this->share->setInquiryId(null);
+		    $this->share->setGroupId($inquiryOrInquiryGroupId);
+	    }
 
-        $this->share->setToken($token);
-        $this->share->setType($userGroup->getShareType());
-        $this->share->setDisplayName($userGroup->getDisplayName());
-        $this->share->setInvitationSent($preventInvitation ? time() : 0);
-        $this->share->setEmailAddress($userGroup->getEmailAddress());
-        $this->share->setUserId($userGroup->getShareUserId());
+	    $this->share->setToken($token);
+	    $this->share->setType($userGroup->getShareType());
+	    $this->share->setDisplayName($userGroup->getDisplayName());
+	    $this->share->setInvitationSent($preventInvitation ? time() : 0);
+	    $this->share->setEmailAddress($userGroup->getEmailAddress());
+	    $this->share->setUserId($userGroup->getShareUserId());
+	    $this->share->setParticipationLevel( $purpose === 'inquiry' ? Share::PARTICIPATION_BOTH : Share::PARTICIPATION_NONE );
 
-        // skip for inquiry groups
-        if ($purpose === 'inquiry') {
-            // normal continuation
-            // public share to create, set token as userId
-            if ($userGroup->getType() === UserBase::TYPE_PUBLIC) {
-                $this->share->setUserId($token);
-            }
+	    // skip for inquiry groups
+	    if ($purpose === 'inquiry') {
+		    // normal continuation
+		    // public share to create, set token as userId
+		    if ($userGroup->getType() === UserBase::TYPE_PUBLIC) {
+			    $this->share->setUserId($token);
+		    }
 
-            // user is created from public share. Store locale information for
-            // usage in server side actions, i.e. scheduled emails
-            if ($userGroup->getType() === UserBase::TYPE_EXTERNAL) {
-                $this->share->setLanguage($userGroup->getLanguageCode());
-                $this->share->setTimeZoneName($timeZone);
-            }
-        }
+		    // user is created from public share. Store locale information for
+		    // usage in server side actions, i.e. scheduled emails
+		    if ($userGroup->getType() === UserBase::TYPE_EXTERNAL) {
+			    $this->share->setLanguage($userGroup->getLanguageCode());
+			    $this->share->setTimeZoneName($timeZone);
+		    }
+	    }
 
-        try {
-            $this->share = $this->shareMapper->insert($this->share);
-            // return new created share
-            return $this->share;
-        } catch (Exception $e) {
-            // TODO: Change exception catch to actual exception
-            // Currently OC\DB\Exceptions\DbalException is thrown instead of
-            // UniqueConstraintViolationException
-            // since the exception is from private namespace, we check the type string
-            if (get_class($e) === 'OC\DB\Exceptions\DbalException' && $e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
-                $share = $this->shareMapper->findByInquiryAndUser($inquiryOrInquiryGroupId, $this->share->getUserId(), true);
-                if ($share->getDeleted()) {
-                    // Deleted share exist, restore deleted share and generate new token
-                    $share->setDeleted(0);
-                    $share->setLocked(0);
-                    $share->setInvitationSent(0);
-                    $share->setToken($this->generateToken());
-                    if ($share->getType() === UserBase::TYPE_ADMIN) {
-                        $share->setType(UserBase::TYPE_USER);
-                    }
-                    $share = $this->shareMapper->update($share);
-                }
-                // return existing undeleted share
-                throw new ShareAlreadyExistsException(existingShare: $share);
-            }
-            // other error
-            throw $e;
-        }
+	    try {
+		    $this->share = $this->shareMapper->insert($this->share);
+		    // return new created share
+		    return $this->share;
+	    } catch (Exception $e) {
+		    // TODO: Change exception catch to actual exception
+		    // Currently OC\DB\Exceptions\DbalException is thrown instead of
+		    // UniqueConstraintViolationException
+		    // since the exception is from private namespace, we check the type string
+		    if (get_class($e) === 'OC\DB\Exceptions\DbalException' && $e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+			    $share = $this->shareMapper->findByInquiryAndUser($inquiryOrInquiryGroupId, $this->share->getUserId(), true);
+			    if ($share->getDeleted()) {
+				    // Deleted share exist, restore deleted share and generate new token
+				    $share->setDeleted(0);
+				    $share->setLocked(0);
+				    $share->setInvitationSent(0);
+				    $share->setToken($this->generateToken());
+				    if ($share->getType() === UserBase::TYPE_ADMIN) {
+					    $share->setType(UserBase::TYPE_USER);
+				    }
+				    $share = $this->shareMapper->update($share);
+			    }
+			    // return existing undeleted share
+			    throw new ShareAlreadyExistsException(existingShare: $share);
+		    }
+		    // other error
+		    throw $e;
+	    }
     }
 }

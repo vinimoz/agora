@@ -24,7 +24,7 @@ use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version01080120261001120000 extends SimpleMigrationStep
+class Version01080020260707120001 extends SimpleMigrationStep
 {
     /**
      * @var array<string, string[]> unprefixed table => columns to drop

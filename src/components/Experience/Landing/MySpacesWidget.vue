@@ -35,16 +35,13 @@
         @click="emit('selectFamily', family.family_type)"
       >
         <span class="family-chip__icon-badge">
-          <component
-            :is="familyIcon(family)"
-            :size="20"
-          />
+          <component :is="familyIcon(family)" :size="20" />
         </span>
 
         <span class="family-chip__body">
           <span class="family-chip__label">{{ familyLabel(family) }}</span>
           <span
-            v-if="familyDescription(family)"
+            v-if="showDescription && familyDescription(family)"
             class="family-chip__description"
           >
             {{ familyDescription(family) }}
@@ -52,7 +49,7 @@
         </span>
 
         <span
-          v-if="groupCount(family.family_type) > 0"
+          v-if="showStats && groupCount(family.family_type) > 0"
           class="family-chip__count"
           :title="t('agora', '{n} groups', { n: groupCount(family.family_type) })"
         >
@@ -61,7 +58,9 @@
       </button>
     </div>
 
-    <!-- STACKED and COMPACT unchanged -->
+    <!-- ============================================================
+         STACKED — grid of family cards
+         ============================================================ -->
     <div
       v-else-if="variant === 'stacked'"
       class="my-spaces__grid my-spaces__grid--stacked"
@@ -71,13 +70,16 @@
         v-for="family in familiesWithTypes"
         :key="family.family_type"
         :family="family.family_type"
-        layout="card"
         :limit="limitPerFamily"
         :show-cta="showCtaPerFamily"
         @select="(key) => emit('select', { family: family.family_type, key })"
         @all="() => emit('all', { family: family.family_type })"
       />
     </div>
+
+    <!-- ============================================================
+         COMPACT — one container, hairline rows
+         ============================================================ -->
     <div
       v-else
       class="my-spaces__grid my-spaces__grid--compact"
@@ -86,7 +88,6 @@
         v-for="family in familiesWithTypes"
         :key="family.family_type"
         :family="family.family_type"
-        layout="inline"
         :limit="limitPerFamily"
         @select="(key) => emit('select', { family: family.family_type, key })"
         @all="() => emit('all', { family: family.family_type })"
@@ -112,6 +113,8 @@ const props = withDefaults(
     minColumnWidth?: number
     title?: string
     subtitle?: string
+    showDescription?: boolean
+    showStats?: boolean
   }>(),
   {
     variant: 'stacked',
@@ -121,6 +124,8 @@ const props = withDefaults(
     minColumnWidth: 320,
     title: '',
     subtitle: '',
+    showDescription: true,
+    showStats: true,
   }
 )
 

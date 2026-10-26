@@ -138,10 +138,8 @@ import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
 import { useSessionStore } from '../../stores/session'
 import type { InquiryGroup } from '../../Types/inquiryGroups.types'
-import type { Inquiry } from '../../Types/index.ts'
-
-// Import tool vocabulary
-import { ALL_TOOLS, type ToolValue } from '../../Types/experience.types.ts'
+import type { ToolValue } from '../../Types/experience.types'
+import type { Inquiry, Option  } from '../../Types/index.ts'
 
 // Only include tools that are in ALL_TOOLS
 const TOOL_ICON_MAP: Partial<Record<ToolValue, { icon: any; label: string }>> = {
@@ -164,7 +162,7 @@ const TOOL_ICON_MAP: Partial<Record<ToolValue, { icon: any; label: string }>> = 
 const props = defineProps<{
   group: InquiryGroup | null
   inquiries?: Inquiry[]
-  options?: any[]
+  options?: Option[]
   tools?: string[]
   showResources?: boolean
   showComments?: boolean

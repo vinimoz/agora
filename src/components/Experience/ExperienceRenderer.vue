@@ -1,20 +1,14 @@
 <!--
-  SPDX-FileCopyrightText: 2026 Nextcloud contributors
-  SPDX-License-Identifier: AGPL-3.0-or-later
+	SPDX-FileCopyrightText: 2026 Nextcloud contributors
+	SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-  <div
-    class="experience-renderer"
-    :class="`experience-${experience}`"
-  >
+  <div class="experience-renderer" :class="`experience-${experience}`">
     <!-- ============================================================ -->
     <!-- LOADING STATE                                                -->
     <!-- ============================================================ -->
-    <div
-      v-if="isLoading"
-      class="loading-state"
-    >
+    <div v-if="isLoading" class="loading-state">
       <div class="spinner" />
       <p>{{ t('agora', 'Loading experience…') }}</p>
     </div>
@@ -22,20 +16,11 @@
     <!-- ============================================================ -->
     <!-- ERROR STATE                                                  -->
     <!-- ============================================================ -->
-    <div
-      v-else-if="hasError"
-      class="error-state"
-    >
-      <component
-        :is="Icons.AlertCircle"
-        :size="48"
-      />
+    <div v-else-if="hasError" class="error-state">
+      <component :is="Icons.AlertCircle" :size="48" />
       <h3>{{ t('agora', 'Error loading experience') }}</h3>
       <p>{{ errorMessage }}</p>
-      <NcButton
-        type="primary"
-        @click="emit('retry')"
-      >
+      <NcButton type="primary" @click="emit('retry')">
         {{ t('agora', 'Retry') }}
       </NcButton>
     </div>
@@ -56,22 +41,16 @@
           `zone-${zoneKey}`,
           `content-${zone.content || 'inquiries'}`,
           `display-${zone.display?.type || 'cards'}`,
-          { 'is-empty': !hasZoneData(zone) || !isZoneRenderable(zone) },
+          { 'is-empty': !hasZoneData(zone, String(zoneKey)) || !isZoneRenderable(zone) },
         ]"
         :style="getZoneStyle(zone)"
       >
         <!-- Zone header -->
-        <div
-          v-if="showZoneHeader(zone)"
-          class="zone-header"
-        >
-          <component
-            :is="getZoneHeaderIcon(zone, String(zoneKey))"
-            :size="16"
-          />
+        <div v-if="showZoneHeader(zone)" class="zone-header">
+          <component :is="getZoneHeaderIcon(zone, String(zoneKey))" :size="16" />
           <span class="zone-title">{{ getZoneLabel(zone, String(zoneKey)) }}</span>
           <span
-            v-if="hasZoneData(zone) && isZoneRenderable(zone)"
+            v-if="hasZoneData(zone, String(zoneKey)) && isZoneRenderable(zone)"
             class="zone-count"
           >
             {{ getZoneCount(zone) }}
@@ -81,10 +60,10 @@
         <!-- Zone body -->
         <div class="zone-content">
           <!-- Render component when data exists AND zone is renderable -->
-          <template v-if="hasZoneData(zone) && isZoneRenderable(zone)">
+          <template v-if="hasZoneData(zone, String(zoneKey)) && isZoneRenderable(zone)">
             <component
               :is="getZoneComponent(zone)"
-              v-bind="getZoneProps(zone)"
+              v-bind="getZoneProps(zone, String(zoneKey))"
               :columns="getColumns(zone)"
               @view-inquiry="(p) => handleZoneEvent('viewInquiry', p, String(zoneKey))"
               @view-option="(p) => handleZoneEvent('viewOption', p, String(zoneKey))"
@@ -105,15 +84,8 @@
           </template>
 
           <!-- Structured empty state -->
-          <div
-            v-else
-            class="zone-empty-state"
-          >
-            <component
-              :is="getEmptyIcon(zone)"
-              :size="40"
-              class="empty-icon"
-            />
+          <div v-else class="zone-empty-state">
+            <component :is="getEmptyIcon(zone)" :size="40" class="empty-icon" />
             <p class="empty-title">
               {{ getEmptyTitle(zone) }}
             </p>
@@ -128,16 +100,9 @@
     <!-- ============================================================ -->
     <!-- STANDARD LAYOUT - Fallback when no architecture defined      -->
     <!-- ============================================================ -->
-    <div
-      v-else
-      class="standard-layout"
-      :class="`layout-${layoutConfig.type}`"
-    >
+    <div v-else class="standard-layout" :class="`layout-${layoutConfig.type}`">
       <!-- Sidebar -->
-      <div
-        v-if="layoutConfig.type === 'sidebar'"
-        class="layout-sidebar"
-      >
+      <div v-if="layoutConfig.type === 'sidebar'" class="layout-sidebar">
         <ExperienceSidebar
           :group="group"
           :inquiries="inquiries"
@@ -154,24 +119,15 @@
       <!-- Main Content -->
       <div class="layout-main">
         <!-- Header -->
-        <div
-          v-if="showHeader"
-          class="layout-header"
-        >
+        <div v-if="shouldShowHeader" class="layout-header">
           <h1 class="layout-title">
             {{ groupTitle }}
           </h1>
-          <p
-            v-if="groupDescription"
-            class="layout-description"
-          >
+          <p v-if="groupDescription" class="layout-description">
             {{ groupDescription }}
           </p>
 
-          <div
-            v-if="showStats"
-            class="layout-stats"
-          >
+          <div v-if="shouldShowStats" class="layout-stats">
             <div class="stat-item">
               <span class="stat-value">{{ inquiries ? inquiries.length : 0 }}</span>
               <span class="stat-label">{{ t('agora', 'Inquiries') }}</span>
@@ -196,10 +152,7 @@
               class="inquiries-grid"
               :class="displayModeClass"
             >
-              <template
-                v-for="inquiry in displayedInquiries"
-                :key="inquiry.id"
-              >
+              <template v-for="inquiry in displayedInquiries" :key="inquiry.id">
                 <component
                   :is="getDisplayComponent(displayMode)"
                   v-if="inquiry"
@@ -227,26 +180,13 @@
             </div>
 
             <!-- Empty State -->
-            <div
-              v-else
-              class="empty-state"
-            >
-              <component
-                :is="Icons.FolderMultiple"
-                :size="48"
-              />
+            <div v-else class="empty-state">
+              <component :is="Icons.FolderMultiple" :size="48" />
               <h3>{{ t('agora', 'No inquiries') }}</h3>
               <p>{{ t('agora', 'This group has no inquiries yet') }}</p>
-              <NcButton
-                v-if="canCreateInquiry"
-                type="primary"
-                @click="emit('createInquiry')"
-              >
+              <NcButton v-if="canCreateInquiry" type="primary" @click="emit('createInquiry')">
                 <template #icon>
-                  <component
-                    :is="Icons.Plus"
-                    :size="18"
-                  />
+                  <component :is="Icons.Plus" :size="18" />
                 </template>
                 {{ t('agora', 'Create Inquiry') }}
               </NcButton>
@@ -255,10 +195,7 @@
         </div>
 
         <!-- Comments -->
-        <div
-          v-if="showComments"
-          class="layout-comments"
-        >
+        <div v-if="shouldShowComments" class="layout-comments">
           <div class="comments-header">
             <h3>{{ t('agora', 'Comments') }}</h3>
             <span class="comments-count">{{ totalComments }}</span>
@@ -272,10 +209,7 @@
         </div>
 
         <!-- Resources -->
-        <div
-          v-if="showResources"
-          class="layout-resources"
-        >
+        <div v-if="shouldShowResources" class="layout-resources">
           <div>
             <SideBarTabResources
               v-if="selectedInquiry || (inquiries && inquiries[0])"
@@ -292,11 +226,11 @@
 // ============================================================
 // IMPORTS
 // ============================================================
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 // Experience Components
 import ExperienceSidebar from './ExperienceSidebar.vue'
@@ -351,7 +285,6 @@ import ActivityFeed from '../InquiryGroup/ActivityFeed.vue'
 // ============================================================
 import type { InquiryGroup, InquiryGroupUIConfig } from '../../Types/inquiryGroups.types'
 import type {
-  DisplayZone,
   GridPosition,
   InteractionAction,
   InteractionTarget,
@@ -379,14 +312,6 @@ import FamilyGroupTypesWidget from './Landing/FamilyGroupTypesWidget.vue'
 // ============================================================
 // IMPORT VOCABULARY
 // ============================================================
-import {
-  DISPLAY_TYPE_VALUES,
-  VALID_DISPLAYS_BY_CONTENT,
-  VALID_TOOLS_BY_CONTENT,
-  type DisplayTypeValue,
-  type ToolValue,
-} from '../../Types/experience.types'
-
 import { useHomeConfig } from '../../composables/useHomeConfig'
 import { useRelevance } from '../../composables/useRelevance'
 import {
@@ -395,7 +320,7 @@ import {
   getForceLayouts,
 } from '../../helpers/modules/InquiryOptionHelper'
 
-import type { Inquiry, Option, Item } from '../../Types/index.ts'
+import type { Inquiry, Option  } from '../../Types/index.ts'
 import { toItems } from '../../helpers/modules/itemHelpers'
 import { useUserContext } from '../../composables/useUserContext'
 
@@ -405,7 +330,7 @@ import { useUserContext } from '../../composables/useUserContext'
 const props = defineProps<{
   group?: InquiryGroup | null
   inquiries?: Inquiry[]
-  options?: any[]
+  options?: Option[]
   experience?: string
   displayArchitecture?: Record<string, any> | null
   layoutConfig?: { type: string; columns?: number; rows?: number; responsive?: boolean }
@@ -497,10 +422,10 @@ const gridStyle = computed(() => {
   const cols = layoutConfig.value.columns || 3
   const rows = layoutConfig.value.rows || 2
   return {
-    gridTemplateColumns: `repeat(${cols}, 1fr)`,
-    gridTemplateRows: `repeat(${rows}, auto)`,
+    '--grid-cols': String(cols),
+    '--grid-rows': String(rows),
     gap: '20px',
-  }
+  } as Record<string, string>
 })
 
 // ============================================================
@@ -539,28 +464,89 @@ const displayedInquiries = computed(() => {
 })
 
 // ============================================================
-// COMPUTED - Available Displays
+// COMPUTED - Show-* flags, prop-first with experience-definition fallback
 // ============================================================
-const availableDisplays = computed(() => {
-  const def = EXPERIENCE_DEFINITIONS[experience.value as ExperienceKey]
-  return def?.allowedDisplays || ['cards', 'list']
-})
+const activeDefinition = computed(
+  () =>
+    EXPERIENCE_DEFINITIONS[experience.value as ExperienceKey] ?? EXPERIENCE_DEFINITIONS.dashboard
+)
+
+const shouldShowHeader = computed(() => props.showHeader ?? activeDefinition.value.showHeader)
+const shouldShowStats = computed(() => props.showStats ?? activeDefinition.value.showStats)
+const shouldShowResources = computed(() => props.showResources ?? internalShowResources.value)
+const shouldShowComments = computed(() => props.showComments ?? internalShowComments.value)
+
+const displayModeClass = computed(
+  () => `display-${props.uiConfig?.defaultDisplay ?? activeDefinition.value.defaultDisplay}`
+)
+
+function handleSidebarNavigate(target: string) {
+  emit('sidebarNavigate', target)
+}
 
 // ============================================================
 // COMPUTED - Filtered Architecture - Show all zones
 // ============================================================
+// const filteredArchitecture = computed(() => {
+//  return effectiveArchitecture.value
+// })
+// ===========================================================
+// For most experiences this is a pass-through of `effectiveArchitecture`.
+// ============================================================
 const filteredArchitecture = computed(() => {
-  return effectiveArchitecture.value
+  const arch = effectiveArchitecture.value
+
+  // Only `home` supports section-level ordering / visibility.
+  if (experience.value !== 'home') return arch
+
+  // If the group authored its own home architecture, render it verbatim.
+  // Section filtering is a global-home concern — the group's zones are
+  // the group's concern.
+  const groupUi = props.uiConfig
+  const isCustomHome =
+    props.experience === groupUi?.defaultExperience &&
+    !!props.displayArchitecture &&
+    Object.keys(props.displayArchitecture).length > 0
+  if (isCustomHome) return arch
+
+  const sectionKeys = homeConfig.value.sections ?? []
+  if (sectionKeys.length === 0) return arch
+
+  const archSections = getExperienceArchitecture('home').sections ?? []
+  const sectionById = new Map(archSections.map((s) => [s.key, s]))
+
+  const ordered: Record<string, (typeof arch)[string]> = {}
+  for (const sectionKey of sectionKeys) {
+    const section = sectionById.get(sectionKey)
+    if (!section) continue
+    for (const zoneKey of section.zones ?? []) {
+      const zone = arch[zoneKey]
+      if (zone) ordered[zoneKey] = zone
+    }
+  }
+
+  // If section filtering removed everything (misconfigured tenant config),
+  // fall back to the full architecture rather than a blank page.
+  return Object.keys(ordered).length > 0 ? ordered : arch
 })
 
 // ============================================================
 // COMPUTED - Zone Data Cache (to avoid recomputation)
 // ============================================================
+// const zoneDataCache = computed(() => {
+//   const arch = filteredArchitecture.value
+//   const cache: Record<string, any[]> = {}
+//   for (const key in arch) {
+//     cache[key] = getZoneData(arch[key])
+//   }
+//  return cache
+// })
+
 const zoneDataCache = computed(() => {
   const arch = filteredArchitecture.value
   const cache: Record<string, any[]> = {}
   for (const key in arch) {
-    cache[key] = getZoneData(arch[key])
+    cache[key] = computeZoneData(arch[key])
   }
   return cache
 })
@@ -568,24 +554,48 @@ const zoneDataCache = computed(() => {
 // ============================================================
 // EFFECTIVE ARCHITECTURE (camelCase)
 // ============================================================
+/*const effectiveArchitecture = computed(() => {
+  let arch: Record<string, any> = {}
+  try {
+    const exp = props.experience || 'dashboard'
+    const groupDefault = props.uiConfig?.defaultExperience || 'dashboard'
+
+    const hasCustomArch =
+      props.displayArchitecture && Object.keys(props.displayArchitecture).length > 0
+
+    // Group customization only applies when we're on the group's configured
+    // default experience. Switching to any other experience (via escape
+    // hatch) always uses the global architecture for that experience.
+    if (exp === groupDefault && hasCustomArch) {
+      arch = props.displayArchitecture
+    } else {
+      arch = getExperienceArchitecture(exp as ExperienceKey)?.displayArchitecture || {}
+    }
+  } catch (e) {
+    console.warn('[ExperienceRenderer] Error computing architecture:', e)
+    arch = {}
+  }
+  return Object.fromEntries(Object.entries(arch).filter(([_, v]) => v != null))
+})*/
+
 const effectiveArchitecture = computed(() => {
   let arch: Record<string, any> = {}
   try {
     const exp = props.experience || 'dashboard'
     const groupDefault = props.uiConfig?.defaultExperience || 'dashboard'
-    if (exp !== groupDefault) {
-      const globalArch = getExperienceArchitecture(exp as ExperienceKey)
-      arch = globalArch?.displayArchitecture || {}
-    } else if (props.displayArchitecture && Object.keys(props.displayArchitecture).length > 0) {
+    const hasCustomArch =
+      props.displayArchitecture && Object.keys(props.displayArchitecture).length > 0
+
+    if (exp === groupDefault && hasCustomArch) {
       arch = props.displayArchitecture
     } else {
-      arch = getExperienceArchitecture('dashboard')?.displayArchitecture || {}
+      arch = getExperienceArchitecture(exp as ExperienceKey)?.displayArchitecture || {}
     }
   } catch (e) {
-    console.warn('Error computing architecture:', e)
+    console.warn('[ExperienceRenderer] Error computing architecture:', e)
     arch = {}
   }
-  return Object.fromEntries(Object.entries(arch).filter(([_, value]) => value != null))
+  return Object.fromEntries(Object.entries(arch).filter(([_, v]) => v != null))
 })
 
 // ============================================================
@@ -595,7 +605,7 @@ const heroStats = computed(() => {
   const uid = context.value.userId
   const list = props.inquiries || []
   if (!uid) {
-    return { shared: 0, participated: 0, owned: 0, groupInquiries: 0 }
+    return { shared: 0, withParticipants: 0, owned: 0, groupInquiries: 0 }
   }
 
   // Only count inquiries the user can actually see and that aren't archived
@@ -603,13 +613,13 @@ const heroStats = computed(() => {
 
   const owned = visible.filter((i) => i.currentUserStatus?.isOwner).length
 
-  const participated = visible.filter((i) => (i.status?.countParticipants ?? 0) > 0).length
+  const withParticipants = visible.filter((i) => (i.status?.countParticipants ?? 0) > 0).length
 
   const groupInquiries = visible.filter((i) => i.configuration?.visibility === 'groups').length
 
   const shared = visible.filter((i) => i.currentUserStatus?.isShared).length
 
-  return { shared, participated, owned, groupInquiries }
+  return { shared, withParticipants, owned, groupInquiries }
 })
 
 function resolveHeroImage(src: string | number | undefined | null): string {
@@ -654,7 +664,7 @@ function getColumns(zone: any): number {
 // ============================================================
 // ZONE DATA HELPERS
 // ============================================================
-function getZoneData(zone: any): any[] {
+/* function getZoneData(zone: any): any[] {
   if (!zone) return []
   const content = zone.content || 'inquiries'
   const scope = zone.scope || { source: 'all' }
@@ -675,23 +685,50 @@ function getZoneData(zone: any): any[] {
   // Everything else: shared filter / sort / pagination.
   // zone.filter + zone.scope.sort + zone.scope.pagination.
   return processZoneData(raw, zone)
+} */
+
+function getZoneData(zone: any, zoneKey?: string): any[] {
+  if (!zone) return []
+  if (zoneKey) {
+    const cached = zoneDataCache.value[zoneKey]
+    if (cached) return cached
+  }
+  return computeZoneData(zone)
+}
+
+function computeZoneData(zone: any): any[] {
+  if (!zone) return []
+  const content = zone.content || 'inquiries'
+  const scope = zone.scope || { source: 'all' }
+  const source = scope.source || 'all'
+  const raw = fetchRawData(content, source, scope)
+
+  if (scope.sort?.field === 'trending') {
+    /* … */
+  }
+  if (content === 'options') return processOptionZoneData(raw, zone)
+  return processZoneData(raw, zone)
 }
 
 /**
  * Options zone resolver.
  *
  * An option belongs to the zone if EITHER:
- *   1. its own `family` matches `zone.filter.family`, OR
+ *   1. its own `family` matches `zone.scope.optionFamily`, OR
  *   2. its `miscFields.force_layouts` contains the layout the current tool
  *      renders with (debate → 'paired', structure → 'tree',
  *      workflow → 'kanban', process → 'timeline', …).
  *
  * Remaining `zone.filter` keys (status, …) are handed to the shared
  * filter engine, and sort/pagination come from `zone.scope` as usual.
+ *
+ * `zone.scope.optionFamily` is populated by the normalizer, which
+ * migrates legacy `filter.family` into it. Downstream code should never
+ * read `filter.family` directly.
  */
 function processOptionZoneData(options: Option[], zone: any): Option[] {
   const filterIn = { ...(zone.filter ?? {}) }
-  const family = filterIn.family as string | undefined
+  const family = zone.scope?.optionFamily as string | undefined
   const tool = zone?.display?.tool as string | undefined
   const layout = tool ? getLayoutForFamily(family ?? '') : null
 
@@ -701,8 +738,9 @@ function processOptionZoneData(options: Option[], zone: any): Option[] {
     return familyMatch || forcedIntoLayout
   })
 
-  // `family` is already applied above; strip it so the shared engine
-  // doesn't try to re-apply it (it would, since applyFilters knows it).
+  // `family` is applied above; strip any residual filter-family so the
+  // shared engine doesn't try to re-interpret it as a status/type key.
+  // (Normalizer should have removed it already; belt and braces.)
   delete filterIn.family
 
   const restZone = {
@@ -749,8 +787,8 @@ function fetchRawData(content: string, source: string, scope: any = {}) {
       } else {
         list = props.inquiries || []
       }
-      if (scope.family || scope.families) {
-        const fams = scope.families || [scope.family]
+      const fams = scope.inquiryFamilies ?? (scope.inquiryFamily ? [scope.inquiryFamily] : null)
+      if (fams && fams.length > 0) {
         list = list.filter((i) => fams.includes(i.type))
       }
       return list
@@ -855,13 +893,13 @@ function getSelectedGroup(): InquiryGroup | null {
 /**
  * Whether the zone has data to display.
  */
-function hasZoneData(zone: any): boolean {
+function hasZoneData(zone: any, zoneKey?: string): boolean {
   if (!zone) return false
   const content = zone.content || 'inquiries'
   if (['hero', 'search', 'news', 'events', 'group_types', 'explore', 'promo'].includes(content)) {
     return true
   }
-  const data = getZoneData(zone)
+  const data = getZoneData(zone, zoneKey)
   switch (content) {
     case 'inquiry_groups':
     case 'inquiries':
@@ -916,10 +954,16 @@ function isZoneRenderable(zone: any): boolean {
 // ============================================================
 const sectionLabelByZone = computed<Record<string, string>>(() => {
   const arch = getExperienceArchitecture(experience.value as ExperienceKey)
+  const overrides = homeConfig.value.sectionLabels ?? {}
   const map: Record<string, string> = {}
+
   for (const sec of arch?.sections ?? []) {
+    // HomeConfig.sectionLabels keys by section key, not zone key.
+    const custom = overrides[sec.key]
+    const label = custom ?? sec.label
+    if (!label) continue
     for (const z of sec.zones ?? []) {
-      if (sec.label) map[z] = sec.label
+      map[z] = label
     }
   }
   return map
@@ -1096,6 +1140,16 @@ function getZoneComponent(zone: any) {
   const type = display.type || 'cards'
   const tool = display.tool
 
+  // Resolve the tool component lazily — only the `tool` display type
+  // actually consumes it. Resolving it for every zone (as the map used
+  // to) fired spurious "No component for tool=undefined" warnings for
+  // any non-tool zone.
+  if (type === 'tool') {
+    const toolComp = getToolComponent(tool, content)
+    if (toolComp) return toolComp
+  }
+
+
   // COMPONENT MAP - using only valid DisplayType values
   const componentMap: Record<string, Record<string, any>> = {
     hero: { banner: WelcomeHero },
@@ -1122,7 +1176,7 @@ function getZoneComponent(zone: any) {
 
     // ---- Inquiries (plural) ----
     inquiries: {
-      list: InquiryListItem,
+      list: InquiryGrid,
       cards: InquiryGrid,
       feed: InquiryFeed,
       tree: InquiryTree,
@@ -1131,12 +1185,10 @@ function getZoneComponent(zone: any) {
       book: BookDisplay,
       current_moment: CurrentMomentWidget,
       navigation: InquiryListNavigation,
-      tool: getToolComponent(tool, content),
     },
 
     // ---- Options ----
     options: {
-      tool: getToolComponent(tool, content),
     },
 
     // ---- Messages ----
@@ -1212,7 +1264,16 @@ function getToolComponent(tool: string, content: string) {
   const comp = toolMap[tool]
   if (comp) return comp
 
-  return content === 'options' ? OptionToolDisplay : InquiryCard
+  if (content === 'options') return OptionToolDisplay
+
+  if (import.meta.env.DEV) {
+    console.warn(
+      `[ExperienceRenderer] No component for tool="${tool}" on content="${content}". ` +
+        `Zone will fall back to InquiryCard. Check displayArchitecture — this is ` +
+        `almost certainly a misconfiguration.`
+    )
+  }
+  return InquiryCard
 }
 
 // ============================================================
@@ -1238,7 +1299,7 @@ function getDisplayComponent(mode: string) {
 // ============================================================
 // ZONE PROPS RESOLVER - Fixed inquiry_groups case
 // ============================================================
-function getZoneProps(zone: any) {
+function getZoneProps(zone: any, zoneKey?: string) {
   if (!zone) return {}
 
   const content = zone.content || 'inquiries'
@@ -1299,7 +1360,7 @@ function getZoneProps(zone: any) {
       return {
         ...baseProps,
         groups: resolvedGroups,
-        families: zone.scope?.families ?? [],
+        families: zone.scope?.groupFamilies ?? [],
         activeId: props.group?.id ?? null,
         showCreateButton: true,
         mode: type === 'list' ? 'list' : 'cards',
@@ -1323,7 +1384,7 @@ function getZoneProps(zone: any) {
     case 'options': {
       const optionsData = Array.isArray(data) ? (data as Option[]) : []
       const inquiry = selectedInquiry
-      const familyKey = zone.scope?.family ?? null
+      const familyKey = zone.scope?.optionFamily ?? null
       const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
 
       return {
@@ -1335,7 +1396,7 @@ function getZoneProps(zone: any) {
         family: familyKey,
         familyKey,
         tool,
-        families: zone.scope?.families ?? [],
+        families: zone.scope?.optionFamilies ?? [],
         inquiry,
         inquiryId: inquiry?.id,
         options: optionsData,
@@ -1361,13 +1422,15 @@ function getZoneProps(zone: any) {
           limitPerFamily: (opts.limit as number) ?? 0,
           showCtaPerFamily: opts.showCtaPerFamily === true,
           minColumnWidth: (opts.minColumnWidth as number) ?? 320,
+          showDescription: opts.showDescription !== false,
+          showStats: opts.showStats !== false,
         }
       }
 
       // single-family widget
-      const family = (zone.scope?.family ?? opts.family) as string | undefined
+      const family = (zone.scope?.groupFamily ?? opts.family) as string | undefined
       if (!family) {
-        console.warn('[ExperienceRenderer] group_types zone missing scope.family')
+        console.warn('[ExperienceRenderer] group_types zone missing scope.groupFamily')
         return {}
       }
       return {
@@ -1391,15 +1454,17 @@ function getZoneProps(zone: any) {
         inquiries: inquiriesData,
         parentId: props.group?.id ?? 0,
         targetType: 'inquiry' as const,
+	title: zoneKey ? sectionLabelByZone.value[zoneKey] : undefined,
+        subtitle: undefined, 
         optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
-        family: zone.scope?.family ?? null,
-        familyKey: zone.scope?.family ?? null,
+        family: zone.scope?.inquiryFamily ?? null,
+        familyKey: zone.scope?.inquiryFamily ?? null,
         tool,
-        families: zone.scope?.families ?? [],
+        families: zone.scope?.inquiryFamilies ?? [],
         group: props.group,
         columns: display.options?.cardsPerRow || display.cardsPerRow || 3,
         selectedInquiry,
-        inquiry: inquiriesData.length === 1 ? inquiriesData[0] : null,
+        inquiry: inquiriesData.length === 1 ? inquiriesData[0] : undefined,
         initialInquiry: inquiriesData[0] ?? null,
         // Timeline / compact-display hints — ignored by other consumers
         compact: displayOptions.compact || false,
@@ -1463,13 +1528,13 @@ function getZoneProps(zone: any) {
       return {}
 
     case 'news':
-      return { items: [] }
+      return { items: [], title: sectionLabelByZone.value[zoneKey] }
 
     case 'events':
       return { events: [] }
 
     case 'explore':
-      return { inquiries: props.inquiries || [] }
+      return { inquiries: props.inquiries || [], title: sectionLabelByZone.value[zoneKey] }
 
     default:
       return {
@@ -1484,13 +1549,21 @@ function getZoneProps(zone: any) {
 // ============================================================
 // ZONE HELPERS
 // ============================================================
-function getZoneCount(zone: any): number | null {
+function getZoneCount(zone: any, zoneKey?: string): number | null {
   if (!zone) return null
-  const data = getZoneData(zone)
-  return data.length
+  return getZoneData(zone, zoneKey).length
 }
 
 function handleHeroAction(key: string) {
+  const configured = homeConfig.value.hero?.actions?.find((a) => a.key === key)
+  if (configured?.route) {
+    const { name, params, query } = configured.route
+    return router.push({ name, params, query })
+  }
+  return legacyHeroAction(key)
+}
+
+function legacyHeroAction(key: string) {
   switch (key) {
     case 'participate':
       return router.push({
@@ -1550,16 +1623,15 @@ function getZoneStyle(zone: any) {
   if (!zone) return {}
   const styles: Record<string, string> = {}
 
-  // Only assign grid coordinates when we ARE a grid layout
   if (layoutConfig.value.type === 'grid') {
     const pos = getZoneGridPosition(zone)
     if (pos) {
-      styles.gridRow = `${pos.row} / span ${pos.rowSpan || 1}`
-      styles.gridColumn = `${pos.column} / span ${pos.columnSpan || 1}`
+      // Custom properties so media queries can neutralise them.
+      styles['--zone-row'] = `${pos.row} / span ${pos.rowSpan || 1}`
+      styles['--zone-col'] = `${pos.column} / span ${pos.columnSpan || 1}`
     }
   }
 
-  // zone.style (not zone.display)
   const s = zone.style || {}
   if (s.width) styles.width = s.width
   if (s.height) styles.height = s.height
@@ -1635,8 +1707,6 @@ function onNavigate(target: any) {
       return handleHeroAction(target.key)
     case 'search':
       return router.push({ name: 'explore', query: { q: target.query } })
-    case 'news':
-      return onViewInquiry(target.item)
     case 'news-all':
       return router.push({
         name: 'explore',
@@ -1649,8 +1719,9 @@ function onNavigate(target: any) {
         params: { type: 'relevant' },
         query: { family: 'service', group_type: target.key },
       })
+    case 'news':
     case 'event':
-      return onViewInquiry(target.item)
+      return handleInquiryClick(target.item, '')
     case 'events-all':
       return router.push({
         name: 'explore',
@@ -1709,28 +1780,44 @@ function handleInquiryClick(inquiry: Inquiry, zoneKey: string) {
   }
 
   // ---- PHASE 2: already selected -> execute action ----
-  executeInquiryAction(inquiry, interaction)
+  executeInquiryAction(inquiry, interaction, zoneKey)
 }
 
 function executeInquiryAction(
   inquiry: Inquiry,
-  interaction?: { action?: InteractionAction; target?: InteractionTarget }
+  interaction?: { action?: InteractionAction; target?: InteractionTarget },
+  zoneKey?: string
 ) {
   const action = interaction?.action ?? 'open'
   const target = interaction?.target ?? 'page'
 
   switch (action) {
-    case 'open':
-      if (target === 'same_view') return
-      emit('viewInquiry', inquiry)
-      return router.push({ name: 'inquiry', params: { id: String(inquiry.id) } })
+    case 'open': {
+      switch (target) {
+        case 'same_view':
+          // Phase 1 already refreshed the view; nothing left to do.
+          return
+        case 'panel':
+        case 'dialog':
+        case 'modal':
+          emit('openPanel', {
+            inquiry,
+            zone: zoneKey ?? '',
+            target,
+          })
+          return
+        case 'page':
+        default:
+          emit('viewInquiry', inquiry)
+          return router.push({ name: 'inquiry', params: { id: String(inquiry.id) } })
+      }
+    }
 
     case 'navigate':
       onNavigate({ type: 'inquiry', inquiry })
       return
 
     case 'select':
-      // Explicit select action - confirm selection, refresh dependents
       emit('selectInquiry', inquiry)
       return
 
@@ -1747,21 +1834,19 @@ function executeInquiryAction(
  * `selected` — those zones feed other dependent zones, so we keep a
  * two-phase pattern (select → refresh dependents → navigate on 2nd click).
  */
-function handleViewGroup(group: InquiryGroup, zoneKey?: string) {
+function handleViewGroup(group: InquiryGroup, zoneKey: string) {
   if (!group) {
     console.warn('[ExperienceRenderer] viewGroup called with null/undefined')
     return
   }
 
-  const key = zoneKey ?? findZoneForGroup(group)
-  const zone = key ? filteredArchitecture.value[key] : null
+  const zone = filteredArchitecture.value[zoneKey]
   const source = zone?.scope?.source
   const interaction = zone?.interaction as
     { action?: InteractionAction; target?: InteractionTarget } | undefined
 
   const needsSelectionRefresh = source === 'selected_group' || source === 'selected'
 
-  // ---- Two-phase only for zones that feed dependents ----
   if (needsSelectionRefresh && selectedGroupId.value !== group.id) {
     selectedGroupId.value = group.id
     selectedInquiryId.value = null
@@ -1770,21 +1855,18 @@ function handleViewGroup(group: InquiryGroup, zoneKey?: string) {
     return
   }
 
-  // ---- Single-click (or confirmed 2nd click) → record + act ----
   selectedGroupId.value = group.id
   selectedInquiryId.value = null
   selectedOptionId.value = null
   emit('selectGroup', group)
 
   const action = interaction?.action ?? 'navigate'
-
   switch (action) {
     case 'navigate':
     case 'open':
       emit('viewGroup', group)
       return
     case 'select':
-      // Explicit select-only action: confirmed by the emit above
       return
     default:
       emit('viewGroup', group)
@@ -1811,6 +1893,7 @@ function handleOptionClick(option: any, zoneKey: string) {
   const action = interaction?.action ?? 'open'
   switch (action) {
     case 'open':
+      // Options have no routed page in this version — panel is the only target.
       emit('viewOption', option)
       return
     case 'select':
@@ -1848,21 +1931,22 @@ function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
       if (eventName === 'select') {
         onNavigate({
           type: 'group-type',
-          family: (payload as any)?.family ?? zone.scope?.family,
+          family: (payload as any)?.family ?? zone.scope?.groupFamily,
           key: (payload as any)?.key ?? payload,
         })
-      } else if (eventName === 'selectFamily') {
-        // chips variant: payload is the family key string
-        onNavigate({ type: 'family', family: payload })
       } else if (eventName === 'all') {
         onNavigate({
           type: 'group-types-all',
-          family: (payload as any)?.family ?? zone.scope?.family,
+          family: (payload as any)?.family ?? zone.scope?.groupFamily,
+        })
+      } else if (eventName === 'selectFamily') {
+        onNavigate({
+          type: 'family',
+          family: payload as string, // MySpacesWidget emits the family key directly
         })
       }
       return
     }
-
     // ---- Inquiries ----
     case 'inquiries':
     case 'inquiry': {
@@ -1911,8 +1995,8 @@ function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
       } else if (eventName === 'create') {
         return onNavigate({
           type: 'create',
-          inquiryType: payload?.inquiryType ?? zone.scope?.inquiryType,
-          family: payload?.family ?? zone.scope?.family,
+          inquiryType: payload?.inquiryType,
+          family: payload?.family,
         })
       } else if (eventName === 'viewAll') {
         onNavigate({ type: 'explore-all' })
@@ -1928,50 +2012,13 @@ function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
   }
 }
 
-function findZoneForInquiry(inquiry: Inquiry): string | null {
-  for (const [key, zone] of Object.entries(filteredArchitecture.value)) {
-    if (zone.content === 'inquiries' || zone.content === 'inquiry') {
-      const data = getZoneData(zone)
-      if (data.some((item: any) => item.id === inquiry.id)) {
-        return key
-      }
-    }
-  }
-  return null
-}
-
-function findZoneForOption(option: any): string | null {
-  for (const [key, zone] of Object.entries(filteredArchitecture.value)) {
-    if (zone.content === 'options') {
-      const data = getZoneData(zone)
-      if (data.some((item: any) => item.id === option.id)) {
-        return key
-      }
-    }
-  }
-  return null
-}
-
-function findZoneForGroup(group: InquiryGroup): string | null {
-  for (const [key, zone] of Object.entries(filteredArchitecture.value)) {
-    if (zone.content === 'inquiry_groups') {
-      const data = getZoneData(zone)
-      if (data.some((item: any) => item.id === group.id)) {
-        return key
-      }
-    }
-  }
-  return null
-}
 
 function toggleResources() {
   internalShowResources.value = !internalShowResources.value
-  emit('update:showResources', internalShowResources.value)
 }
 
 function toggleComments() {
   internalShowComments.value = !internalShowComments.value
-  emit('update:showComments', internalShowComments.value)
 }
 
 // ============================================================
@@ -2080,8 +2127,11 @@ watch(
 /* ============================================================ */
 .architecture-grid {
   display: grid;
+  grid-template-columns: repeat(var(--grid-cols, 3), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--grid-rows, 2), auto);
   gap: 20px;
   min-height: 400px;
+
   &.architecture-layout-full,
   &.architecture-layout-flex {
     display: flex;
@@ -2100,7 +2150,10 @@ watch(
     grid-template-columns: 1fr 1fr;
     gap: 24px;
   }
+
   .architecture-zone {
+    grid-row: var(--zone-row, auto);
+    grid-column: var(--zone-col, auto);
     background: var(--color-main-background);
     border: 1px solid var(--color-border);
     border-radius: 12px;
@@ -2363,29 +2416,23 @@ watch(
 /* ============================================================ */
 /* RESPONSIVE - Adapt grid to available space                   */
 /* ============================================================ */
+
 @media (max-width: 1400px) {
   .architecture-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: none; /* let the rows auto-flow */
-  }
-}
-
-@media (max-width: 768px) {
-  .architecture-grid {
-    grid-template-columns: 1fr;
     grid-template-rows: none;
+    grid-auto-rows: auto;
+  }
+  .architecture-grid > .architecture-zone {
+    grid-row: auto;
+    grid-column: auto;
   }
 }
 
 @media (max-width: 1024px) {
-  .architecture-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
   .standard-layout {
     &.layout-sidebar {
       flex-direction: column;
-
       .layout-sidebar {
         flex: none;
         max-width: 100%;
@@ -2395,7 +2442,6 @@ watch(
         padding-right: 0;
       }
     }
-
     &.layout-split {
       .layout-main {
         grid-template-columns: 1fr;
@@ -2404,15 +2450,15 @@ watch(
   }
 }
 
-@media (max-width: 1024px) {
-  .architecture-grid.architecture-layout-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
 @media (max-width: 768px) {
   .architecture-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+  }
+  .architecture-grid > .architecture-zone {
+    grid-row: auto;
+    grid-column: auto;
   }
 
   .layout-content .inquiries-grid {

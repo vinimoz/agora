@@ -2,7 +2,10 @@
  * SPDX-FileCopyrightText: 2020 René Gieling <github@dartcafe.de>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-/* src/css/global.css */
+
+/* ============================================================
+   STICKY HELPERS
+   ============================================================ */
 
 .sticky-left {
   position: sticky;
@@ -15,7 +18,7 @@
   position: sticky;
   top: 0;
   z-index: 4;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   margin-bottom: var(--shadow-height);
 
   &::after {
@@ -24,21 +27,20 @@
     bottom: 0;
     left: -1px;
     right: 0;
-    height: 0px;
+    height: 0;
     background: linear-gradient(
       to bottom,
       rgba(var(--color-box-shadow-rgb), 0.3),
       rgba(var(--color-box-shadow-rgb), 0)
     );
-    transition:
-      all var(--animation-slow) linear,
-      border 1ms;
+    transition: all var(--animation-slow) linear, border 1ms;
   }
 
   &.sticky-bottom-shadow {
     border-top: 0;
     padding-bottom: var(--shadow-height);
     margin-bottom: 0;
+
     &::after {
       height: var(--shadow-height);
     }
@@ -46,77 +48,86 @@
 }
 
 .nc-counter-bubble {
-  border-radius: 12px !important;
-  min-width: auto !important;
-  padding: 0 6px !important;
-  background: transparent !important;
+  border-radius: 12px;
+  min-width: auto;
+  padding: 0 6px;
+  background: transparent;
 }
 
 /* ============================================================
-   GLOBAL NCSELECT STYLES - IMPROVED
+   NCSELECT
+   Sizing is driven by the local custom properties below.
+   Media queries only need to override the variables.
    ============================================================ */
 
 .v-select {
+  --ncselect-radius: 8px;
+  --ncselect-min-height: 36px;
+  --ncselect-padding-y: 3px;
+  --ncselect-padding-x: 8px;
+  --ncselect-font-size: 14px;
+  --ncselect-option-padding: 8px 12px;
+  --ncselect-menu-radius: 8px;
+  --ncselect-menu-max-height: 240px;
+
   .vs__dropdown-toggle {
-    background: var(--color-main-background) !important;
-    border: 2px solid var(--color-border) !important;
-    border-radius: 12px !important;
-    padding: 4px 10px !important;
-    min-height: 44px !important;
-    transition: all 0.2s ease !important;
+    background: var(--color-main-background);
+    border: 2px solid var(--color-border);
+    border-radius: var(--ncselect-radius);
+    padding: var(--ncselect-padding-y) var(--ncselect-padding-x);
+    min-height: var(--ncselect-min-height);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
     &:hover {
-      border-color: var(--color-primary-element) !important;
+      border-color: var(--color-primary-element);
     }
 
     &:focus-within {
-      border-color: var(--color-primary-element) !important;
-      box-shadow: 0 0 0 3px rgba(var(--color-primary-element-rgb), 0.15) !important;
+      border-color: var(--color-primary-element);
+      box-shadow: 0 0 0 3px rgba(var(--color-primary-element-rgb), 0.15);
     }
   }
 
   .vs__selected {
-    color: var(--color-main-text) !important;
-    font-weight: 500 !important;
-    font-size: 14px !important;
-    line-height: 1.4 !important;
-    margin: 2px 4px !important;
-    padding: 2px 10px !important;
-    background: var(--color-background-dark) !important;
-    border-radius: 8px !important;
+    color: var(--color-main-text);
+    font-weight: 500;
+    font-size: var(--ncselect-font-size);
+    line-height: 1.4;
+    margin: 1px 2px;
+    padding: 1px 8px;
+    background: var(--color-background-dark);
+    border-radius: 6px;
   }
 
   .vs__search,
   .vs__search:focus {
-    color: var(--color-main-text) !important;
-    font-size: 14px !important;
-    padding: 2px 4px !important;
-    margin: 0 !important;
-    min-height: 30px !important;
+    color: var(--color-main-text);
+    font-size: var(--ncselect-font-size);
+    padding: 0 4px;
+    margin: 0;
+    min-height: 24px;
   }
 
   .vs__dropdown-menu {
-    background: var(--color-main-background) !important;
-    border: 2px solid var(--color-border) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
-    padding: 8px 0 !important;
-    max-height: 320px !important;
-    overflow-y: auto !important;
-    z-index: 9999 !important;
-    margin-top: 6px !important;
-    // IMPORTANT: Position absolute for proper overflow
-    position: absolute !important;
-    width: 100% !important;
-    min-width: 200px !important;
+    position: absolute;
+    width: 100%;
+    min-width: 180px;
+    max-height: var(--ncselect-menu-max-height);
+    overflow-y: auto;
+    z-index: 100;
+    margin-top: 4px;
+    padding: 4px 0;
+    background: var(--color-main-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--ncselect-menu-radius);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 
     &::-webkit-scrollbar {
       width: 6px;
     }
 
     &::-webkit-scrollbar-track {
-      background: var(--color-background-dark);
-      border-radius: 0 12px 12px 0;
+      background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -130,213 +141,102 @@
   }
 
   .vs__dropdown-option {
-    color: var(--color-main-text) !important;
-    padding: 10px 16px !important;
-    font-size: 14px !important;
-    line-height: 1.4 !important;
-    transition: all 0.15s ease !important;
-    cursor: pointer !important;
+    color: var(--color-main-text);
+    padding: var(--ncselect-option-padding);
+    font-size: var(--ncselect-font-size);
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
 
     &--highlight {
-      background: var(--color-primary-light) !important;
-      color: var(--color-primary-element) !important;
+      background: var(--color-primary-light);
+      color: var(--color-primary-element);
     }
 
     &:hover:not(.vs__dropdown-option--highlight) {
-      background: var(--color-background-hover) !important;
+      background: var(--color-background-hover);
     }
   }
 
   .vs__actions {
-    padding: 0 4px !important;
+    padding: 0 2px;
 
     .vs__clear {
-      fill: var(--color-text-maxcontrast) !important;
-      padding: 4px !important;
+      fill: var(--color-text-maxcontrast);
+      padding: 2px;
 
       &:hover {
-        fill: var(--color-error) !important;
+        fill: var(--color-error);
       }
     }
 
     .vs__open-indicator {
-      fill: var(--color-text-maxcontrast) !important;
+      fill: var(--color-text-maxcontrast);
 
       &:hover {
-        fill: var(--color-primary-element) !important;
+        fill: var(--color-primary-element);
       }
     }
   }
 
   &.vs--disabled {
     .vs__dropdown-toggle {
-      background: var(--color-background-dark) !important;
-      border-color: var(--color-border) !important;
-      opacity: 0.7 !important;
-      cursor: not-allowed !important;
+      background: var(--color-background-dark);
+      border-color: var(--color-border);
+      opacity: 0.7;
+      cursor: not-allowed;
     }
 
     .vs__selected {
-      background: var(--color-background-hover) !important;
+      background: var(--color-background-hover);
     }
   }
 
   .vs__spinner {
-    border-color: var(--color-primary-element) !important;
-    border-top-color: transparent !important;
+    border-color: var(--color-primary-element);
+    border-top-color: transparent;
   }
 }
 
 /* ============================================================
-   RESPONSIVE NCSELECT - PREVENT OVERFLOW
+   RESPONSIVE — shrink only the sizing variables
    ============================================================ */
 
 @media (max-width: 768px) {
   .v-select {
-    .vs__dropdown-toggle {
-      min-height: 38px !important;
-      padding: 2px 8px !important;
-      border-radius: 10px !important;
-    }
-
-    .vs__selected {
-      font-size: 13px !important;
-      padding: 2px 8px !important;
-    }
-
-    .vs__search,
-    .vs__search:focus {
-      font-size: 13px !important;
-      min-height: 28px !important;
-    }
-
-    .vs__dropdown-option {
-      padding: 8px 14px !important;
-      font-size: 13px !important;
-    }
+    --ncselect-min-height: 32px;
+    --ncselect-padding-y: 2px;
+    --ncselect-padding-x: 6px;
+    --ncselect-font-size: 13px;
+    --ncselect-option-padding: 7px 10px;
+    --ncselect-menu-max-height: 200px;
   }
 }
 
 @media (max-width: 480px) {
   .v-select {
-    .vs__dropdown-toggle {
-      min-height: 36px !important;
-      padding: 0 6px !important;
-      border-radius: 8px !important;
-    }
-
-    .vs__selected {
-      font-size: 12px !important;
-      padding: 2px 6px !important;
-      margin: 1px 2px !important;
-    }
-
-    .vs__search,
-    .vs__search:focus {
-      font-size: 12px !important;
-      min-height: 26px !important;
-    }
-
-    .vs__dropdown-option {
-      padding: 6px 12px !important;
-      font-size: 12px !important;
-    }
+    --ncselect-min-height: 30px;
+    --ncselect-padding-y: 1px;
+    --ncselect-padding-x: 5px;
+    --ncselect-font-size: 12px;
+    --ncselect-option-padding: 6px 8px;
+    --ncselect-radius: 6px;
   }
 }
 
 /* ============================================================
+   OVERFLOW — let dropdowns escape their containers
    ============================================================ */
 
-/* Allow dropdowns to overflow their containers */
 .metadata-section,
 .participation-section,
 .config-panel,
-.sidebar-participation {
-  overflow: visible !important;
-  position: relative !important;
-  z-index: 1 !important;
-
-  .v-select {
-    position: relative !important;
-    z-index: 20 !important;
-  }
-}
-
-/* Ensure metadata items don't clip dropdowns */
+.sidebar-participation,
 .metadata-item,
+.metadata-grid,
 .participation-section .config-group {
-  overflow: visible !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
-
-/* Specific fix for the metadata grid */
-.metadata-grid {
-  overflow: visible !important;
-  position: relative !important;
-}
-
-/* ============================================================
-   DARK THEME SUPPORT
-   ============================================================ */
-
-.theme-dark {
-  .v-select {
-    .vs__dropdown-toggle {
-      background: var(--color-main-background) !important;
-      border-color: var(--color-border) !important;
-    }
-
-    .vs__selected {
-      background: var(--color-background-dark) !important;
-      color: var(--color-main-text) !important;
-    }
-
-    .vs__dropdown-menu {
-      background: var(--color-main-background) !important;
-      border-color: var(--color-border) !important;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .vs__dropdown-option {
-      color: var(--color-main-text) !important;
-
-      &--highlight {
-        background: var(--color-primary-light) !important;
-        color: var(--color-primary-element) !important;
-      }
-
-      &:hover:not(.vs__dropdown-option--highlight) {
-        background: var(--color-background-hover) !important;
-      }
-    }
-
-    .vs__actions {
-      .vs__clear {
-        fill: var(--color-text-maxcontrast) !important;
-
-        &:hover {
-          fill: var(--color-error) !important;
-        }
-      }
-
-      .vs__open-indicator {
-        fill: var(--color-text-maxcontrast) !important;
-
-        &:hover {
-          fill: var(--color-primary-element) !important;
-        }
-      }
-    }
-
-    &.vs--disabled {
-      .vs__dropdown-toggle {
-        background: var(--color-background-dark) !important;
-        border-color: var(--color-border) !important;
-        opacity: 0.6 !important;
-      }
-    }
-  }
+  overflow: visible;
+  position: relative;
 }
 
 /* ============================================================
@@ -345,14 +245,14 @@
 
 .v-select {
   .vs__dropdown-toggle:focus-visible {
-    outline: 3px solid var(--color-primary-element) !important;
-    outline-offset: 2px !important;
-    border-color: transparent !important;
+    outline: 3px solid var(--color-primary-element);
+    outline-offset: 2px;
+    border-color: transparent;
   }
 
   .vs__dropdown-option:focus-visible {
-    outline: 2px solid var(--color-primary-element) !important;
-    outline-offset: -2px !important;
-    border-radius: 4px !important;
+    outline: 2px solid var(--color-primary-element);
+    outline-offset: -2px;
+    border-radius: 4px;
   }
 }

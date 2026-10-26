@@ -13,6 +13,16 @@ export interface HomeSection {
   enabled?: boolean
   zones: string[] // keys in displayArchitecture
 }
+// ---------- Vocabulary: ORGANIZATION ----------
+export const ORGANIZATION_TYPES = [
+  'municipality',
+  'university',
+  'association',
+  'cooperative',
+  'company',
+] as const
+export type OrganizationType = (typeof ORGANIZATION_TYPES)[number]
+
 
 // ---------- Vocabulary: EXPERIENCE ----------
 export const EXPERIENCE_VALUES = [
@@ -69,7 +79,7 @@ export const SOURCE_VALUES = [
   'selected_group',
   'selected_inquiry',
   'all',
-  'municipal',
+  'official',
   'featured',
 ] as const
 export type SourceValue = (typeof SOURCE_VALUES)[number]
@@ -83,7 +93,7 @@ export const VALID_SOURCES_BY_CONTENT: Record<ContentValue, SourceValue[]> = {
   statistics: ['group', 'selected_group', 'selected_inquiry'],
   activity: ['group', 'children', 'all'],
   hero: ['all'],
-  news: ['municipal', 'all', 'featured'],
+  news: ['official', 'all', 'featured'],
   group_types: ['all', 'featured'],
   events: ['all', 'featured'],
   explore: ['all'],
@@ -118,6 +128,10 @@ export type DisplayType = (typeof DISPLAY_TYPE_VALUES)[number]
 
 /** @deprecated alias kept for backwards compatibility – use `DisplayType`. */
 export type DisplayTypeValue = DisplayType
+
+// ---------- Vocabulary: RELEVANCE ----------
+export const RELEVANCE_TIERS = ['for_you', 'local', 'region', 'public'] as const
+export type RelevanceTier = (typeof RELEVANCE_TIERS)[number]
 
 export const VALID_DISPLAYS_BY_CONTENT: Record<ContentValue, DisplayType[]> = {
   inquiry_groups: ['list', 'cards', 'tree', 'navigation', 'my_spaces'],
@@ -227,7 +241,7 @@ export interface ScopeFilter {
   group_type?: string | string[]
   type?: string | string[]
   status?: string | string[]
-  family?: string | string[]
+
   date?: { from?: number; to?: number }
   from?: number
   to?: number
@@ -244,8 +258,18 @@ export interface ScopeFilter {
 
 export interface Scope {
   source: SourceValue
-  family?: string
-  families?: string[]
+    /** Family filter for `content: 'inquiries'` — matches `inquiry.type`. */
+  inquiryFamily?: string
+  inquiryFamilies?: string[]
+
+  /** Family filter for `content: 'group_types'` — matches `group.family`. */
+  groupFamily?: string
+  groupFamilies?: string[]
+
+  /** Family filter for `content: 'options'` — matches `option.family`. */
+  optionFamily?: string
+  optionFamilies?: string[]
+
   filter?: ScopeFilter
   sort?: { field: string; direction: 'asc' | 'desc' }
   pagination?: { limit: number; offset: number }

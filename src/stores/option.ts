@@ -21,8 +21,8 @@ import {
   UserType,
   InquiryOptionType,
   SupportResult,
-  Comment, // ← added: needed by updateAllCommentCounts
-  Inquiry, // ← added: needed by parentInquiry return type
+  Comment, 
+  Inquiry,
 } from '../Types/index.ts'
 import { getFamilyColor } from '../helpers/modules/InquiryOptionHelper.ts'
 
@@ -96,9 +96,6 @@ export const useOptionStore = defineStore('option', {
       archive: false,
       support: false,
       comment: false,
-      addShares: false,
-      addSharesExternal: false,
-      changeForeignSupports: false,
       changeOwner: false,
       reorderOptions: false,
       seeResults: false,

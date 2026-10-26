@@ -64,8 +64,18 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     }
 
     // ============================================================
-    // FAMILY FILTER (for options)
-    // ============================================================
+// FAMILY FILTER (generic capability)
+// ============================================================
+// Matches `item.family` or `item.optionFamily`. This is a generic
+// fallback for custom zones that need to filter by an entity's own
+// family field directly.
+//
+// Shipped experience architectures use the more explicit
+// `scope.inquiryFamily` / `scope.groupFamily` / `scope.optionFamily`
+// fields instead, which are applied by the caller before reaching
+// this function. No current zone relies on `filter.family`, but the
+// branch is kept so custom zones can use it without a code change
+// here.
     if (filter.family) {
       const families = Array.isArray(filter.family) ? filter.family : [filter.family]
       const itemFamily = item.family || item.optionFamily

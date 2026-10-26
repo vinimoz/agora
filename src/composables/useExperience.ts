@@ -9,6 +9,7 @@ import { useInquiryGroupsStore } from '../stores/inquiryGroups'
 import type { InquiryGroup } from '../Types/inquiryGroups.types'
 
 import {
+  ALL_TOOLS,
   type DisplayType,
   type ToolKey,
   type ExperienceKey,
@@ -68,8 +69,8 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     verb: 'Understand',
     question: 'What is happening here and where can I go?',
     defaultTools: ['quorum', 'analytics'],
-    defaultDisplay: 'cards',
-    allowedDisplays: ['cards', 'list', 'feed'],
+    defaultDisplay: 'widget',
+    allowedDisplays: ['widget', 'cards', 'list', 'feed'],
     allowedTools: ['quorum', 'analytics', 'resources'],
     layout: 'grid',
     showHeader: true,
@@ -141,9 +142,8 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     verb: 'Understand',
     question: 'How has this evolved?',
     defaultTools: ['timeline', 'wiki'],
-    defaultDisplay: 'tool',
-    defaultTool: 'timeline',
-    allowedDisplays: ['tool', 'list'],
+    defaultDisplay: 'timeline',
+    allowedDisplays: ['timeline', 'list'],
     allowedTools: ['timeline', 'wiki', 'analytics', 'resources'],
     layout: 'full',
     showHeader: true,
@@ -205,7 +205,7 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     verb: 'Browse',
     question: 'Where can I go?',
     defaultTools: [],
-    defaultDisplay: 'list',
+    defaultDisplay: 'navigation',
     allowedDisplays: ['list', 'navigation'],
     allowedTools: [],
     layout: 'full',
@@ -233,6 +233,31 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     supportedGroupTypes: [],
   },
 }
+
+// ------------------------------------------------------------
+// Dev-only invariant check
+// ------------------------------------------------------------
+if (import.meta.env.DEV) {
+  for (const key of Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]) {
+    const def = EXPERIENCE_DEFINITIONS[key]
+
+    if (!def.allowedDisplays.includes(def.defaultDisplay)) {
+      console.warn(
+        `[useExperience] ${key}.defaultDisplay '${def.defaultDisplay}' ` +
+          `is not in allowedDisplays [${def.allowedDisplays.join(', ')}]. ` +
+          `switchDisplay('${def.defaultDisplay}') will silently no-op.`
+      )
+    }
+
+    if (def.defaultTool && !def.allowedTools.includes(def.defaultTool)) {
+      console.warn(
+        `[useExperience] ${key}.defaultTool '${def.defaultTool}' ` +
+          `is not in allowedTools [${def.allowedTools.join(', ')}].`
+      )
+    }
+  }
+}
+
 
 // ============================================================
 // COMPOSABLE
@@ -283,21 +308,15 @@ export function useExperience(initialExperience?: ExperienceKey) {
     }
   })
 
-  function getAvailableExperiences(): ExperienceKey[] {
-    const targetGroup = currentGroup.value
-    const allKeys = Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
-    /*if (!targetGroup) return allKeys
+function getAvailableExperiences(): ExperienceKey[] {
+  const allKeys = Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
 
-    return allKeys.filter((key) => {
-      const def = EXPERIENCE_DEFINITIONS[key]
-      if (!def.supportedGroupTypes || def.supportedGroupTypes.length === 0) {
-        return true
-      }
-      return def.supportedGroupTypes.includes(targetGroup.type)
-    })
-   */
-    return allKeys
-  }
+  // Top-level (no group): every experience is fair game, including `home`.
+  if (!currentGroup.value) return allKeys
+
+  // Group context: `home` is the landing page only — never offer it here.
+  return allKeys.filter((key) => key !== 'home')
+}
 
   function getAvailableDisplays(): DisplayMode[] {
     return definition.value.allowedDisplays
@@ -328,33 +347,43 @@ export function useExperience(initialExperience?: ExperienceKey) {
     }
   }
 
-  function switchExperience(key: ExperienceKey) {
-    if (!EXPERIENCE_DEFINITIONS[key]) return
+function switchExperience(key: ExperienceKey) {
+  if (!EXPERIENCE_DEFINITIONS[key]) return
 
-    experience.value = key
-    const def = EXPERIENCE_DEFINITIONS[key]
-    displayMode.value = def.defaultDisplay
-    tools.value = [...def.defaultTools]
+  experience.value = key
+  const def = EXPERIENCE_DEFINITIONS[key]
+  displayMode.value = def.defaultDisplay
+  tools.value = [...def.defaultTools]
 
-    const query = buildQuery({
-      experience: key,
-      display: def.defaultDisplay,
-    })
-    if (def.defaultTool) query.tool = def.defaultTool
-    router.push({ query })
+  const query = buildQuery({
+    experience: key,
+    display: def.defaultDisplay,
+  })
+  if (def.defaultTool) query.tool = def.defaultTool
+  else delete query.tool // do not inherit a stale `tool` from the previous URL
+  router.push({ query })
+}
+
+function switchDisplay(mode: DisplayMode) {
+  if (!definition.value.allowedDisplays.includes(mode)) return
+  displayMode.value = mode
+  router.push({ query: buildQuery({ display: mode }) })
+}
+
+function toggleTool(tool: ToolKey) {
+  const index = tools.value.indexOf(tool)
+  if (index > -1) tools.value.splice(index, 1)
+  else tools.value.push(tool)
+
+  // Mirror the state change into the URL, matching switchDisplay's contract.
+  const query = buildQuery({})
+  if (tools.value.length > 0) {
+    query.tool = tools.value.join(',')
+  } else {
+    delete query.tool
   }
-
-  function switchDisplay(mode: DisplayMode) {
-    if (!definition.value.allowedDisplays.includes(mode)) return
-    displayMode.value = mode
-    router.push({ query: buildQuery({ display: mode }) })
-  }
-
-  function toggleTool(tool: ToolKey) {
-    const index = tools.value.indexOf(tool)
-    if (index > -1) tools.value.splice(index, 1)
-    else tools.value.push(tool)
-  }
+  router.push({ query })
+}
 
   function toggleResources() {
     showResources.value = !showResources.value
@@ -364,18 +393,38 @@ export function useExperience(initialExperience?: ExperienceKey) {
     showComments.value = !showComments.value
   }
 
-  watch(
-    () => route.query.experience,
-    (newExp) => {
-      if (newExp && typeof newExp === 'string' && EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]) {
-        experience.value = newExp as ExperienceKey
-        const def = EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]
-        displayMode.value = def.defaultDisplay
+watch(
+  () => route.query.experience,
+  (newExp) => {
+    if (newExp && typeof newExp === 'string' && EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]) {
+      experience.value = newExp as ExperienceKey
+      const def = EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]
+      displayMode.value = def.defaultDisplay
+      // Tools are owned by the `tool` watcher below. Only prefill defaults
+      // when the URL is silent about them.
+      if (route.query.tool === undefined) {
         tools.value = [...def.defaultTools]
       }
     }
-  )
+  }
+)
 
+watch(
+  () => route.query.tool,
+  (newTool) => {
+    if (newTool === undefined) {
+      // No `tool` in URL → fall back to the current experience's defaults.
+      tools.value = [...definition.value.defaultTools]
+      return
+    }
+    if (typeof newTool !== 'string') return
+    const parsed = newTool
+      .split(',')
+      .filter((s): s is ToolKey => (ALL_TOOLS as readonly string[]).includes(s))
+    tools.value = parsed
+  },
+  { immediate: true }
+)
   watch(
     () => route.query.display,
     (newDisplay) => {

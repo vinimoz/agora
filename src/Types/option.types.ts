@@ -56,9 +56,6 @@ export type OptionPermissions = {
   archive: boolean
   support: boolean
   comment: boolean
-  addShares: boolean
-  addSharesExternal: boolean
-  changeForeignSupports: boolean
   changeOwner: boolean
   reorderOptions: boolean
   seeResults: boolean

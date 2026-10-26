@@ -8,7 +8,7 @@
           class="header-icon"
         />
         <div>
-          <h2>{{ t('agora', 'Explore / Participate') }}</h2>
+          <h2>{{ title || t('agora', 'Explore / Participate') }}</h2>
           <p class="section-subtitle">
             {{ t('agora', 'Discover, propose, debate…') }}
           </p>
@@ -61,11 +61,11 @@
       </div>
 
       <aside class="cta-card">
-        <h3>{{ t('agora', 'An idea for your city?') }}</h3>
+        <h3>{{ t('agora', 'An idea ...') }}</h3>
         <p>{{ t('agora', 'Propose, debate, vote!') }}</p>
         <button
           class="cta-button"
-          @click="emit('create')"
+          @click="emit('create', { inquiryType: defaultCreateType })"
         >
           {{ t('agora', 'Create a proposal') }}
         </button>
@@ -81,11 +81,10 @@ import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
 import { getInquiryTypeData } from '../../../helpers/modules/InquiryHelper.ts'
 import { useSessionStore } from '../../../stores/session.ts'
 import type { Inquiry } from '../../../Types'
-
 const props = defineProps<{
   inquiries?: Inquiry[]
-  // optional: which inquiry type the "Create a proposal" CTA should preselect
   createType?: string
+  title?: string
 }>()
 
 const emit = defineEmits<{
@@ -94,6 +93,8 @@ const emit = defineEmits<{
   viewAll: []
 }>()
 
+
+
 // Pick the type to preselect: explicit prop → top category → first root type
 const defaultCreateType = computed(() => {
   if (props.createType) return props.createType
@@ -101,10 +102,6 @@ const defaultCreateType = computed(() => {
   const types = sessionStore.appSettings?.inquiryTypeTab || []
   return types.find((t) => t.is_root)?.inquiry_type
 })
-
-function onCreate() {
-  emit('create', { inquiryType: defaultCreateType.value })
-}
 
 const sessionStore = useSessionStore()
 

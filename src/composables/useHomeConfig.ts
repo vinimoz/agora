@@ -1,48 +1,71 @@
 import { computed } from 'vue'
 import { useSessionStore } from '../stores/session'
-import { HOME_DEFAULTS } from './homeDefaults'
+import { getHomeTemplate } from './homeDefaults'
+import { ORGANIZATION_TYPES, type OrganizationType } from '../Types/experience.types'
 import type { HomeConfig } from '../Types/appSettings.types.ts'
 
 export function useHomeConfig() {
   const session = useSessionStore()
 
+  /**
+   * Active organization type, sourced from session.appSettings.organization.type.
+   * Falls back to 'municipality' when the server doesn't provide one (i.e.
+   * before the DB-backed home config lands) or when the value is invalid.
+   */
+  const organizationType = computed<OrganizationType>(() => {
+    const candidate = session.appSettings?.organization?.type
+    if (candidate && (ORGANIZATION_TYPES as readonly string[]).includes(candidate)) {
+      return candidate as OrganizationType
+    }
+    return 'municipality'
+  })
+
+  /** The selected template — useful for admin previews ("what would a university see?") */
+  const template = computed<HomeConfig>(() => getHomeTemplate(organizationType.value))
+
+  /**
+   * Final merged config, resolution order:
+   *
+   *   1. session.appSettings.home       (tenant-specific override from the DB)
+   *   2. HOME_TEMPLATES[organizationType] (org-type defaults)
+   *
+   * There is no third level: the org-type template is the last resort. If
+   * organizationType itself is unknown, getHomeTemplate() already degrades
+   * to the municipality template.
+   */
   const config = computed<HomeConfig>(() => {
     const override = session.appSettings?.home
-    if (!override) return HOME_DEFAULTS
+    const tpl = template.value
+    if (!override) return tpl
 
     return {
-      sections: override.sections ?? HOME_DEFAULTS.sections,
+      sections: override.sections ?? tpl.sections,
 
       // ── Deep merge: hero ─────────────────────────────────────────────
       hero: {
-        ...HOME_DEFAULTS.hero,
+        ...tpl.hero,
         ...override.hero,
-        actions: override.hero?.actions ?? HOME_DEFAULTS.hero.actions,
+        actions: override.hero?.actions ?? tpl.hero.actions,
       },
 
       // ── Deep merge: promo ────────────────────────────────────────────
-      // Every field is optional in the override; any missing key falls
-      // back to HOME_DEFAULTS.promo. This previously did not exist, so a
-      // server-provided promo was always ignored.
       promo: {
-        ...HOME_DEFAULTS.promo,
+        ...tpl.promo,
         ...override.promo,
       },
 
-      services: override.services ?? HOME_DEFAULTS.services,
-
       relevance: {
-        ...HOME_DEFAULTS.relevance,
+        ...tpl.relevance,
         ...override.relevance,
-        // Preserve nested defaults if the override supplies only one half
-        tiers: override.relevance?.tiers ?? HOME_DEFAULTS.relevance.tiers,
+        tiers: override.relevance?.tiers ?? tpl.relevance.tiers,
         weights: {
-          ...HOME_DEFAULTS.relevance.weights,
+          ...tpl.relevance.weights,
           ...override.relevance?.weights,
         },
       },
+       sectionLabels: { ...tpl.sectionLabels, ...override.sectionLabels },
     }
   })
 
-  return { config }
+  return { config, template, organizationType }
 }

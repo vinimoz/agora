@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 import { defineStore } from 'pinia'
 import { ParticipationAPI } from '../Api'
 import { Logger } from '../helpers/modules/logger'
@@ -13,29 +12,56 @@ import {
   createInquiryContext,
 } from '../utils/permissions'
 import type { AxiosError } from '@nextcloud/axios'
-import type { ParticipationPolicy } from '../Api/modules/participation'
+import type {
+  ParticipationPolicy,
+  ParticipationPolicyType,
+  ParticipationTargetType,
+  LotteryMode,
+  LotteryMethod,
+} from '../Types/participation.types.ts'
 
 export interface ParticipationStore {
   participation: ParticipationPolicy | null
-  loading: {
-    participation: boolean
-    lottery: boolean
-  }
+  loading: { participation: boolean; lottery: boolean }
 }
 
 export const useParticipationStore = defineStore('participation', {
   state: (): ParticipationStore => ({
     participation: null,
-    loading: {
-      participation: false,
-      lottery: false,
-    },
+    loading: { participation: false, lottery: false },
   }),
 
   getters: {
-    participationType: (state) => state.participation?.policyType || 'everyone',
+    // ── “no policy” semantics ────────────────────────────────
+    isNone: (state) =>
+      state.participation === null || state.participation.policyType === 'none',
+
+    hasPolicy: (state) =>
+      state.participation !== null && state.participation.policyType !== 'none',
+
+    participationType: (state): ParticipationPolicyType =>
+      state.participation?.policyType ?? 'none',
+
     isLottery: (state) => state.participation?.policyType === 'lottery',
-    lotteryConfig: (state) => state.participation?.policyConfig || {},
+
+    lotteryConfig: (state) => state.participation?.policyConfig ?? {},
+
+    // Mirror Participation::getLotteryConfig() defaults
+    lotteryMode: (state): LotteryMode =>
+      (state.participation?.policyConfig?.mode as LotteryMode) ?? 'users',
+
+    lotteryCount: (state): number =>
+      Number(state.participation?.policyConfig?.count ?? 1),
+
+    lotterySeed: (state): string | number | null =>
+      (state.participation?.policyConfig?.seed as string | number | null) ?? null,
+
+    lotteryMethod: (state): LotteryMethod => {
+      const m = state.participation?.policyConfig?.method
+      return m === 'random' || m === 'weighted' || m === 'stratified'
+        ? m
+        : 'random'
+    },
 
     canCurrentUserParticipate(): boolean {
       const inquiryStore = useInquiryStore()
@@ -53,7 +79,10 @@ export const useParticipationStore = defineStore('participation', {
   },
 
   actions: {
-    async loadParticipation(targetType: string, targetId: number): Promise<void> {
+    async loadParticipation(
+      targetType: ParticipationTargetType,
+      targetId: number,
+    ): Promise<void> {
       this.loading.participation = true
       try {
         const response = await ParticipationAPI.getParticipation(targetType, targetId)
@@ -68,33 +97,31 @@ export const useParticipationStore = defineStore('participation', {
     },
 
     async setParticipation(
-      targetType: string,
+      targetType: ParticipationTargetType,
       targetId: number,
-      policyType: string,
-      // Fixed: was `Record<string, any>`
-      policyConfig: Record<string, unknown> = {}
+      policyType: ParticipationPolicyType,
+      policyConfig: Record<string, unknown> = {},
     ): Promise<void> {
+      // Single source of truth for “no policy”
+      if (policyType === 'none') {
+        return this.deleteParticipation(targetType, targetId)
+      }
       try {
         const response = await ParticipationAPI.setParticipation(
-          targetType,
-          targetId,
-          policyType,
-          policyConfig
+          targetType, targetId, policyType, policyConfig,
         )
         this.participation = response.data.participation
         Logger.info('Participation policy updated', { targetType, targetId, policyType })
       } catch (error) {
-        Logger.error('Error setting participation', {
-          error,
-          targetType,
-          targetId,
-          policyType,
-        })
+        Logger.error('Error setting participation', { error, targetType, targetId, policyType })
         throw error
       }
     },
 
-    async deleteParticipation(targetType: string, targetId: number): Promise<void> {
+    async deleteParticipation(
+      targetType: ParticipationTargetType,
+      targetId: number,
+    ): Promise<void> {
       try {
         await ParticipationAPI.deleteParticipation(targetType, targetId)
         this.participation = null
@@ -105,7 +132,7 @@ export const useParticipationStore = defineStore('participation', {
       }
     },
 
-    async getLotteryStatus(targetType: string, targetId: number) {
+    async getLotteryStatus(targetType: ParticipationTargetType, targetId: number) {
       this.loading.lottery = true
       try {
         const response = await ParticipationAPI.getLotteryStatus(targetType, targetId)
@@ -118,7 +145,7 @@ export const useParticipationStore = defineStore('participation', {
       }
     },
 
-    async resetLottery(targetType: string, targetId: number): Promise<void> {
+    async resetLottery(targetType: ParticipationTargetType, targetId: number): Promise<void> {
       try {
         const response = await ParticipationAPI.resetLottery(targetType, targetId)
         this.participation = response.data.participation
@@ -129,28 +156,22 @@ export const useParticipationStore = defineStore('participation', {
       }
     },
 
-    /**
-     * Fetch the eligible pool for a lottery.
-     *
-     * Fixed: previously swallowed ALL errors and returned `[]`, hiding
-     * real failures. Now only cancellation is silent (returning `[]`);
-     * other errors are re-thrown — consistent with every other action
-     * in this store.
-     */
-    async getEligiblePool(targetType: string, targetId: number) {
+    async getEligiblePool(targetType: ParticipationTargetType, targetId: number) {
       try {
         const response = await ParticipationAPI.getEligiblePool(targetType, targetId)
         return response.data
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return []
-        }
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') return []
         Logger.error('Error getting eligible pool', { error, targetType, targetId })
         throw error
       }
     },
 
-    async runLottery(targetType: string, targetId: number, seed?: string) {
+    async runLottery(
+      targetType: ParticipationTargetType,
+      targetId: number,
+      seed?: string | number,
+    ) {
       this.loading.lottery = true
       try {
         const response = await ParticipationAPI.runLottery(targetType, targetId, seed)
@@ -164,11 +185,10 @@ export const useParticipationStore = defineStore('participation', {
       }
     },
 
-    async validateLottery(targetType: string, targetId: number) {
+    async validateLottery(targetType: ParticipationTargetType, targetId: number) {
       this.loading.lottery = true
       try {
         const response = await ParticipationAPI.validateLottery(targetType, targetId)
-        Logger.info('Lottery validated', { targetType, targetId })
         return response.data
       } catch (error) {
         Logger.error('Error validating lottery', { error, targetType, targetId })
@@ -178,11 +198,14 @@ export const useParticipationStore = defineStore('participation', {
       }
     },
 
-    async cancelLottery(targetType: string, targetId: number, reason: string) {
+    async cancelLottery(
+      targetType: ParticipationTargetType,
+      targetId: number,
+      reason: string,
+    ) {
       this.loading.lottery = true
       try {
         const response = await ParticipationAPI.cancelLottery(targetType, targetId, reason)
-        Logger.info('Lottery cancelled', { targetType, targetId, reason })
         return response.data
       } catch (error) {
         Logger.error('Error cancelling lottery', { error, targetType, targetId })

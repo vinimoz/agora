@@ -101,11 +101,11 @@ class UserSession
 
         return $this->currentUser;
     }
+public function isAdmin(): bool
+{
+    return $this->getCurrentUser()->isAdmin();
+}
 
-    public function isAdmin()
-    {
-        return $this->currentUser->isAdmin();
-    }
 
     public function getCurrentUserId(): string
     {

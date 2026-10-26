@@ -4,17 +4,7 @@
  */
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-
-export interface ParticipationPolicy {
-  id?: number
-  targetType: string
-  targetId: number
-  policyType: 'everyone' | 'users' | 'groups' | 'lottery'
-  policyConfig: Record<string, any>
-  createdAt?: number
-  updatedAt?: number
-  createdBy?: string
-}
+import { ParticipationPolicy } from '../../Types/participation.types.ts'
 
 const participation = {
   // ============================================================

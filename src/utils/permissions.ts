@@ -7,8 +7,9 @@ import { useParticipationStore } from '../stores/participation.ts'
 import { useInquiryStore } from '../stores/inquiry.ts'
 import { useInquiryGroupStore } from '../stores/inquiryGroup.ts'
 import { isInquiryFinalStatus } from '../helpers/modules/InquiryHelper'
-import type { Inquiry, InquiryGroup, Option } from '../Types/index.ts'
-import type { ParticipationPolicy } from '../Api/modules/participation'
+import type { Inquiry, InquiryGroup, Option, VisibilityType } from '../Types/index.ts'
+import type { ParticipationPolicy } from '../Types/participation.types.ts'
+import { PARTICIPATION } from '../Types/share.types.ts'
 
 /* ============================================================
  * VISIBILITY / STATUS
@@ -18,9 +19,6 @@ import type { ParticipationPolicy } from '../Api/modules/participation'
  *   - configuration.visibilityGroups (string[]  — Nextcloud groups)
  *   - configuration.visibilityUsers  (string[]  — user IDs)
  * ============================================================ */
-
-export type VisibilityType =
-  'private' | 'groups' | 'users' | 'participants' | 'everyone' | 'invitation'
 
 export enum PublicationStatusLevel {
   Draft = 'draft',
@@ -250,10 +248,16 @@ export function createInquiryGroupContext(group: InquiryGroup): PermissionContex
 function isParticipantOfInquiry(): boolean {
   const participationStore = useParticipationStore()
   const policy = participationStore.participation
-  if (!policy) return false
-
   const sessionStore = useSessionStore()
   const user = sessionStore.currentUser
+
+  // A share that grants participation makes the user a participant
+  const shareRights = getShareParticipationRights()
+  if (shareRights !== null && shareRights.canParticipate) {
+    return true
+  }
+
+  if (!policy) return false
   if (!user?.id) return false
 
   switch (policy.policyType) {
@@ -355,7 +359,6 @@ export function canViewToggle(ctx: PermissionContext): boolean {
 /* ============================================================
  * SUPPORT / COMMENT
  * ============================================================ */
-
 export function canSupport(ctx: PermissionContext): boolean {
   const appSettings = useAppSettingsStore()
 
@@ -364,6 +367,12 @@ export function canSupport(ctx: PermissionContext): boolean {
   if (ctx.contentType === ContentType.Inquiry) {
     if (ctx.isFinalStatus) return false
     if (!hasAcceptedModeration(ctx)) return false
+  }
+
+  // Share context overrides the default access path
+  const shareRights = getShareParticipationRights()
+  if (shareRights !== null) {
+    return shareRights.canVote
   }
 
   if (!hasGroupAccess(ctx)) return false
@@ -375,6 +384,7 @@ export function canSupport(ctx: PermissionContext): boolean {
   return true
 }
 
+
 export function canComment(ctx: PermissionContext): boolean {
   const appSettings = useAppSettingsStore()
 
@@ -385,6 +395,12 @@ export function canComment(ctx: PermissionContext): boolean {
     if (!hasAcceptedModeration(ctx)) return false
   }
 
+  // Share context overrides the default access path
+  const shareRights = getShareParticipationRights()
+  if (shareRights !== null) {
+    return shareRights.canComment
+  }
+
   if (!hasGroupAccess(ctx)) return false
 
   if (ctx.userType === UserType.Guest) {
@@ -393,6 +409,7 @@ export function canComment(ctx: PermissionContext): boolean {
 
   return true
 }
+
 
 /* ============================================================
  * EDIT / DELETE / ARCHIVE / RESTORE / TRANSFER / MODERATE
@@ -716,7 +733,6 @@ export function canManageGroupPermissions(ctx: PermissionContext): boolean {
 }
 
 /* ============================================================
- * OPTIONS — délèguent au contexte hérité du parent
  * ============================================================ */
 
 export function canEditOption(ctx: PermissionContext): boolean {
@@ -769,10 +785,60 @@ export function canPerformOptionAction(ctx: PermissionContext, action: string): 
  * PARTICIPATION
  * ============================================================ */
 
+/**
+ * Participation rights granted by the current share context.
+ *
+ * Returns `null` when the user is **not** accessing content via a share
+ * (regular authenticated access, owner, admin, moderator, …).
+ *
+ * Returns `{ canVote, canComment, canParticipate }` otherwise. Those flags
+ * are derived from `share.participationLevel` when the backend does not
+ * provide the boolean shortcuts directly.
+ */
+function getShareParticipationRights(): {
+  canVote: boolean
+  canComment: boolean
+  canParticipate: boolean
+} | null {
+  const sessionStore = useSessionStore()
+  const share = sessionStore.share
+
+  // A deleted share revokes every participation right
+  if (share?.deleted) {
+    return { canVote: false, canComment: false, canParticipate: false }
+  }
+
+  // No share type → plain access path, do not gate
+  if (!share || !share.type) return null
+
+  // Only gate when a share is actually in play:
+  //  - a share token is in the route (public / email link), OR
+  //  - the share explicitly targets an inquiry or a NC group
+  //    (covers group NC shares where the app populates `sessionStore.share`)
+  const isShareContext =
+    Boolean(sessionStore.token) || share.inquiryId != null || share.groupId != null
+  if (!isShareContext) return null
+
+  const level = share.participationLevel ?? PARTICIPATION.NONE
+
+  return {
+    canVote: share.canVote ?? (level === PARTICIPATION.VOTE || level === PARTICIPATION.BOTH),
+    canComment:
+      share.canComment ?? (level === PARTICIPATION.COMMENT || level === PARTICIPATION.BOTH),
+    canParticipate: share.canParticipate ?? level !== PARTICIPATION.NONE,
+  }
+}
+
 export function canParticipate(
   _ctx: PermissionContext,
   policy?: ParticipationPolicy | null
 ): boolean {
+  // Share gating: a share that disallows participation blocks it outright
+  const shareRights = getShareParticipationRights()
+  if (shareRights !== null && !shareRights.canParticipate) {
+    return false
+  }
+
   if (!policy) return true
 
   const sessionStore = useSessionStore()
@@ -783,6 +849,9 @@ export function canParticipate(
   }
 
   switch (policy.policyType) {
+    case 'none':
+      return false
+
     case 'everyone':
       return true
 
@@ -824,6 +893,16 @@ export function getParticipationStatus(
   reason?: string
   status?: 'allowed' | 'denied' | 'pending' | 'selected'
 } {
+  // Share gating first — gives the user a specific, actionable message
+  const shareRights = getShareParticipationRights()
+  if (shareRights !== null && !shareRights.canParticipate) {
+    return {
+      canParticipate: false,
+      reason: 'Your share does not allow participation',
+      status: 'denied',
+    }
+  }
+
   if (!policy) return { canParticipate: true, status: 'allowed' }
 
   const sessionStore = useSessionStore()
@@ -1168,5 +1247,6 @@ export default {
   getCurrentUserGroups,
   getCurrentModeratorRights,
   getCurrentOfficialRights,
+  getShareParticipationRights,
   canInquiryTypePerformAction,
 }
