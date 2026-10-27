@@ -186,7 +186,8 @@ const inquiryCategories: InquiryCategoryList = {
       !inquiry.status.isArchived &&
       inquiry.permissions.view &&
       inquiry.currentUserStatus.isOwner &&
-      inquiry.configuration.access === 'private',
+      ( inquiry.status.inquiryStatus === 'private'  ||
+      ( inquiry.status.inquiryStatus === 'draft' &&  inquiry.configuration.access === 'groups' ))
   },
 
   participated: {
@@ -209,6 +210,7 @@ shared: {
   filterCondition: (inquiry: Inquiry) =>
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
+    inquiry.status.inquiryStatus !== 'draft' &&
     inquiry.currentUserStatus.isShared,
 },
 
@@ -226,6 +228,7 @@ group: {
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
     inquiry.configuration.access === 'groups' &&
+    inquiry.status.inquiryStatus !== 'draft' &&
     (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
 },
   open: {
