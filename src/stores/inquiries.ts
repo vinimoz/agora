@@ -210,7 +210,6 @@ shared: {
   filterCondition: (inquiry: Inquiry) =>
     !inquiry.status.isArchived &&
     inquiry.permissions.view &&
-    inquiry.status.inquiryStatus !== 'draft' &&
     inquiry.currentUserStatus.isShared,
 },
 

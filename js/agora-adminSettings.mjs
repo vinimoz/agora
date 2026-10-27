@@ -12,11 +12,11 @@
 })();
 const zy = "agora", Ry = "1.7.15";
 import { G as Xe, aa as Fe, ab as Le, d as _e, q as a, o as s, c as o, h as t, t as l, v as e, L as M, M as G, K as de, E as v, i as w, _ as ue, s as je, g as i, e as m, F as A, b as ae, B as Ce, ac as ea, l as H, C as P, w as ze, f as Ie, D as aa, m as ta, a5 as Ke, ad as Pe, a6 as Me, I as la, J as ie, ae as he, af as We, n as sa, x as we, y as Ve, z as oa, A as na } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-C7xNrlz1.chunk.mjs";
-import { I as Re, d as ia, N as $e } from "./index-E-AAGXOz.chunk.mjs";
-import { L as ce, j as oe, k as Be, l as ra, m as Je, I as Ee, s as Y, a as ke, n as xe, E as He, S as Ge } from "./NcDashboardWidget-CvpYMKur-DzVNrJtA.chunk.mjs";
-import { F as ua } from "./FlexSettings-CYH-4ZAe.chunk.mjs";
+import { I as Re, d as ia, N as $e } from "./index-C6kWMEo7.chunk.mjs";
+import { L as ce, j as oe, k as Be, l as ra, m as Je, I as Ee, s as Y, a as ke, n as xe, E as He, S as Ge } from "./NcDashboardWidget-CvpYMKur-ChfM9Iia.chunk.mjs";
+import { F as ua } from "./FlexSettings-3yauen9K.chunk.mjs";
 import { _ as Ze, a as ee, b as D, N as le } from "./NcRichText-D_ssz6sB-DGZSadcG.chunk.mjs";
-import { c as da, N as De, a as ca, E as pa, _ as ma, b as ya } from "./markdown-CikWE3ir.chunk.mjs";
+import { c as da, N as De, a as ca, E as pa, _ as ma, b as ya } from "./markdown-sYxp1gr8.chunk.mjs";
 const ga = da("pencil", [["path", { d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z", key: "1a8usu" }], ["path", { d: "m15 5 4 4", key: "1mk7zo" }]]), Oe = Xe("templateWizard", { state: () => ({ isOpen: false, currentStep: "use-case", steps: ["use-case", "template-selection", "language", "preview", "summary", "importing", "results"], templates: [], loadingTemplates: false, selectedUseCase: null, selectedTemplate: null, selectedLanguage: null, customTemplate: null, editableData: null, importing: false, importResult: null, importError: null, isDatabaseEmpty: null }), getters: { currentStepIndex: (f) => f.steps.indexOf(f.currentStep), canGoNext: (f) => {
   switch (f.currentStep) {
     case "use-case":
