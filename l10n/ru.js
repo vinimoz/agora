@@ -816,7 +816,6 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "Выберите конкретный вариант метода Кондорсе",
     "Configure grades" : "Настроить оценки",
     "Grade {n}" : "Оценка {n}",
-    "Open comment on this grade" : "Открыть комментарий к этой оценке",
     "Remove grade" : "Удалить оценку",
     "Add grade" : "Добавить оценку",
     "Select reactions" : "Выберите реакции",

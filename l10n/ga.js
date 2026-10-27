@@ -816,7 +816,6 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "Roghnaigh malairt shonrach ar an modh Condorcet",
     "Configure grades" : "Cumraigh gráid",
     "Grade {n}" : "Grád {n}",
-    "Open comment on this grade" : "Oscail trácht ar an ngrád seo",
     "Remove grade" : "Bain grád",
     "Add grade" : "Cuir grád leis",
     "Select reactions" : "Roghnaigh imoibrithe",

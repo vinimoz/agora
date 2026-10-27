@@ -989,6 +989,7 @@ OC.L10N.register(
     "Administration settings" : "Axustes de administración",
     "Template:" : "Modelo:",
     "Language:" : "Idioma:",
+    "No templates available" : "Non hai modelos dispoñíbeis",
     "Types" : "Tipos",
     "Change globally location and category (for all accounts)" : "Cambiar a localización e a categoría global (para todas as contas)",
     "Inquiry settings" : "Axustes da consulta",

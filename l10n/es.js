@@ -543,6 +543,8 @@ OC.L10N.register(
     "Show details" : "Mostrar detalles",
     "Show email addresses of internal accounts" : "Mostrar las direcciones de correo electrónico para las cuentas internas",
     "Show only to members of the following groups" : "Mostrar sólo para los miembros de los siguientes grupos",
+    "Up" : "Arriba",
+    "Down" : "Abajo",
     "Select icon" : "Seleccionar ícono",
     "{n} groups" : "{n}grupos",
     "Configure" : "Configurar",

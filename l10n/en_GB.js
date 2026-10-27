@@ -816,7 +816,6 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "Select specific condorcet method variant",
     "Configure grades" : "Configure grades",
     "Grade {n}" : "Grade {n}",
-    "Open comment on this grade" : "Open comment on this grade",
     "Remove grade" : "Remove grade",
     "Add grade" : "Add grade",
     "Select reactions" : "Select reactions",

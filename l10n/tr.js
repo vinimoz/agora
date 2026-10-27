@@ -816,7 +816,6 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "Belirli bir Kondorset yöntemi çeşidini seçin",
     "Configure grades" : "Derece yapılandırması",
     "Grade {n}" : "{n}. derece",
-    "Open comment on this grade" : "Bu derecede yorum alanı görüntülensin",
     "Remove grade" : "Dereceyi kaldır",
     "Add grade" : "Derece ekle",
     "Select reactions" : "Tepkileri seçin",

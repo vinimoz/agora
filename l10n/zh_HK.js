@@ -816,7 +816,6 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "選擇特定的孔多塞法變體",
     "Configure grades" : "設定評級",
     "Grade {n}" : "評級 {n}",
-    "Open comment on this grade" : "開啟此評分的留言",
     "Remove grade" : "移除評級",
     "Add grade" : "新增評級",
     "Select reactions" : "選擇反應",

@@ -816,7 +816,6 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "Vælg en bestemt variant af Condorcet-metoden",
     "Configure grades" : "Konfigurer karakterer",
     "Grade {n}" : "Karakter {n}",
-    "Open comment on this grade" : "Åbn kommentar til denne karakter",
     "Remove grade" : "Fjern karakter",
     "Add grade" : "Tilføj karakter",
     "Select reactions" : "Vælg reaktioner",
