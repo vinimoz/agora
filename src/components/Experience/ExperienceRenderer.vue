@@ -812,11 +812,11 @@ function fetchRawData(content: string, source: string, scope: any = {}) {
       return props.inquiries || []
     case 'activity':
       return props.inquiries || []
-
+    case 'news':
+      return props.inquiries || []
     // Landing widgets are self-contained: no external data source
     case 'hero':
     case 'search':
-    case 'news':
     case 'group_types':
     case 'events':
     case 'explore':
@@ -1527,11 +1527,11 @@ function getZoneProps(zone: any, zoneKey?: string) {
     case 'search':
       return {}
 
-    case 'news':
-      return { items: [], title: sectionLabelByZone.value[zoneKey] }
+case 'news':
+  return { items: getZoneData(zone), title: sectionLabelByZone.value[zoneKey] }
 
-    case 'events':
-      return { events: [] }
+   case 'events':
+  	return { items: getZoneData(zone), title: sectionLabelByZone.value[zoneKey] }
 
     case 'explore':
       return { inquiries: props.inquiries || [], title: sectionLabelByZone.value[zoneKey] }

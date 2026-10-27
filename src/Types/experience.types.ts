@@ -341,7 +341,7 @@ export interface DisplayZone {
   }
 
   /** Legacy: top-level filter – prefer scope.filter */
-  filter?: Record<string, unknown>
+  // filter?: Record<string, unknown>
 }
 
 // ---------- Experience Architecture ----------

@@ -96,7 +96,7 @@ const routes: RouteRecordRaw[] = [
     path: '/groups/archived',
     components: {
       default: GroupArchive,
-      navigation: NavigationGroup,
+      navigation: NavigationLanding,
     },
     props: {
       default: true,

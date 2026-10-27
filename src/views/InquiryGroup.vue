@@ -476,6 +476,7 @@
                   @view-inquiry="handleViewInquiry"
                   @view-option="handleViewOption"
                   @view-group="selectGroup"
+		  @openPanel="handleOpenPanel"
                   @experience-change="handleExperienceChange"
                   @display-change="handleDisplayChange"
                   @create-inquiry="handleCreateInquiry"
@@ -533,6 +534,7 @@
       />
     </div>
   </NcAppContent>
+    <InquiryInteractionShell ref="shellRef" />
 </template>
 
 <script setup lang="ts">
@@ -569,6 +571,8 @@ const sessionStore = useSessionStore()
 const inquiriesStore = useInquiriesStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
 const inquiryGroupStore = useInquiryGroupStore()
+const shellRef = ref()
+
 
 // ============================================================
 // Local state
@@ -645,6 +649,10 @@ function canUserDeleteGroup(group: InquiryGroup | null): boolean {
   if (!group) return false
   const ctx = contextFor(group)
   return ctx ? canDelete(ctx) : false
+}
+
+function handleOpenPanel(payload: { inquiry: any; target: string }) {
+  shellRef.value.open(payload)
 }
 
 const canCreateInFamily = computed(

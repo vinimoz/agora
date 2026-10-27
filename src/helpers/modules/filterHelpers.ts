@@ -199,21 +199,16 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
       'to',
     ]
 
-    Object.keys(filter).forEach((key) => {
-      if (reservedKeys.includes(key)) return
+    for (const key of Object.keys(filter)) {
+      if (reservedKeys.includes(key)) continue
       const filterValue = filter[key]
-      const itemValue = item.miscFields?.[key] || item[key]
+      const itemValue = item.miscFields?.[key] ?? item[key]
       if (Array.isArray(filterValue)) {
-        if (!filterValue.includes(itemValue)) {
-          return false
-        }
+        if (!filterValue.includes(itemValue)) return false
       } else if (filterValue !== undefined && filterValue !== null) {
-        if (itemValue !== filterValue) {
-          return false
-        }
+        if (itemValue !== filterValue) return false
       }
-    })
-
+    }
     return true
   })
 }
@@ -327,6 +322,7 @@ export function processZoneData<T extends Record<string, any>>(
   zone: {
     scope?: {
       source?: string
+      filter?: ScopeFilter
       sort?: { field: string; direction: 'asc' | 'desc' }
       pagination?: { limit: number; offset: number }
     }
@@ -334,7 +330,7 @@ export function processZoneData<T extends Record<string, any>>(
   }
 ): T[] {
   return processScopeData(data, {
-    filter: zone.filter,
+    filter: zone.scope?.filter,
     sort: zone.scope?.sort,
     pagination: zone.scope?.pagination,
   })

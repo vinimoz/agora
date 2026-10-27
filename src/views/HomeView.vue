@@ -9,6 +9,7 @@
       @select-group="onSelectGroup"
       @view-inquiry="onViewInquiry"
       @view-group="onViewGroup"
+      @openPanel="handleOpenPanel"
       @navigate-to="onNavigate"
     />
     <InquiryCreateDlg
@@ -21,14 +22,16 @@
       @added="onInquiryAdded"
     />
   </NcAppContent>
+  <InquiryInteractionShell ref="shellRef" />
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import ExperienceRenderer from '../components/Experience/ExperienceRenderer.vue'
 import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
+import InquiryInteractionShell from '../components/Inquiry/InquiryInteractionShell.vue'
 
 import { useInquiriesStore } from '../stores/inquiries'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups'
@@ -43,6 +46,7 @@ const route = useRoute()
 const inquiriesStore = useInquiriesStore()
 const groupsStore = useInquiryGroupsStore()
 const sessionStore = useSessionStore()
+const shellRef = ref()
 
 // The landing is always rendered with the `home` experience. The route can
 // still override it via `?experience=` for debugging or future variants, but
@@ -56,6 +60,10 @@ const experience = computed<ExperienceKey>(() => {
 })
 
 const showCreateDialog = computed(() => route.query.viewMode === 'create')
+
+function handleOpenPanel(payload: { inquiry: any; target: string }) {
+  shellRef.value.open(payload)
+}
 
 const createDialogType = computed(() => {
   const key =

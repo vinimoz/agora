@@ -6,88 +6,76 @@
 <template>
   <div class="family-layout-vote">
     <!-- Loading -->
-    <div
-      v-if="loadingEngines"
-      class="loading-state"
-    >
+    <div v-if="loadingEngines" class="loading-state">
       <NcLoadingIcon :size="40" />
       <p>{{ t('agora', 'Loading vote interface …') }}</p>
     </div>
 
-    <!-- No engines at all -->
-    <VoteEmptyState
-      v-else-if="!availableEngines.length"
-      :no-engine="true"
-      :can-manage-vote="canManageVote"
-      :is-readonly="isReadonly"
-      @configure="showCreateEngineModal = true"
-      @add-item="$emit('addItem')"
-    />
-
     <!-- Stacked mode: N disjoint active engines, one shared ballot strip -->
-<div v-if="isStacked" class="vote-interface stacked">
-  <!-- Optional: engine strip header for the whole page -->
-  <div class="stacked-header">
-    <h2>{{ t('agora', 'Vote on all methods') }}</h2>
-    <span class="stacked-count">
-      {{ n('agora', '{count} method', '{count} methods', stackedEngines.length, { count: stackedEngines.length }) }}
-    </span>
-  </div>
+    <div v-if="isStacked" class="vote-interface stacked">
+      <!-- Optional: engine strip header for the whole page -->
+      <div class="stacked-header">
+        <h2>{{ t('agora', 'Vote on all methods') }}</h2>
+        <span class="stacked-count">
+          {{
+            n('agora', '{count} method', '{count} methods', stackedEngines.length, {
+              count: stackedEngines.length,
+            })
+          }}
+        </span>
+      </div>
 
-  <section
-    v-for="engine in stackedEngines"
-    :key="engine.id"
-    class="vote-engine-section"
-  >
-    <div class="engine-strip">
-      <h3>{{ engine.title || t('agora', 'Untitled engine') }}</h3>
-      <span class="engine-badge engine-badge--type">
-        {{ ENGINE_DEFINITIONS[engine.engine]?.label ?? engine.engine }}
-      </span>
+      <section v-for="engine in stackedEngines" :key="engine.id" class="vote-engine-section">
+        <div class="engine-strip">
+          <h3>{{ engine.title || t('agora', 'Untitled engine') }}</h3>
+          <span class="engine-badge engine-badge--type">
+            {{ ENGINE_DEFINITIONS[engine.engine]?.label ?? engine.engine }}
+          </span>
+        </div>
+
+        <VoteEngineBlock
+          ref="blocks"
+          :parent-id="effectiveParentId ?? 0"
+          :target-type="props.targetType"
+          :engine-id="engine.id"
+          layout="cards"
+          :time-remaining="timeRemaining"
+          :enqueue-save="enqueueSave"
+          :hide-results="hidesResults(engine)"
+          @open-supports-modal="openSupportsModal"
+          @select-item="$emit('selectItem', $event)"
+          @progress="onProgress"
+        />
+      </section>
+
+      <!-- Shared progress + submit bar -->
+      <div class="vote-progress-bar">
+        <span>
+          {{
+            n(
+              'agora',
+              '{answered} answer out of {total}',
+              '{answered} answers out of {total}',
+              progressTotals[1],
+              { answered: progressTotals[0], total: progressTotals[1] }
+            )
+          }}
+        </span>
+        <progress :value="progressTotals[0]" :max="progressTotals[1] || 1" />
+        <span v-if="savesRunning">{{ t('agora', 'Saving …') }}</span>
+        <span v-else-if="failedSaves.size">
+          {{ t('agora', 'Not saved') }}
+          <NcButton variant="tertiary" @click="retrySaves">{{ t('agora', 'Retry') }}</NcButton>
+        </span>
+        <span v-else-if="allSaved">{{ t('agora', 'All your answers are saved') }}</span>
+      </div>
     </div>
-
-    <VoteEngineBlock
-      ref="blocks"
-      :parent-id="effectiveParentId ?? 0"
-      :target-type="props.targetType"
-      :engine-id="engine.id"
-      layout="cards"
-      :time-remaining="timeRemaining"
-      :enqueue-save="enqueueSave"
-      :hide-results="hidesResults(engine)"
-      @open-supports-modal="openSupportsModal"
-      @select-item="$emit('selectItem', $event)"
-      @progress="onProgress"
-    />
-  </section>
-
-  <!-- Shared progress + submit bar -->
-  <div class="vote-progress-bar">
-    <span>
-      {{
-        n('agora', '{answered} answer out of {total}', '{answered} answers out of {total}',
-          progressTotals[1], { answered: progressTotals[0], total: progressTotals[1] })
-      }}
-    </span>
-    <progress :value="progressTotals[0]" :max="progressTotals[1] || 1" />
-    <span v-if="savesRunning">{{ t('agora', 'Saving …') }}</span>
-    <span v-else-if="failedSaves.size">
-      {{ t('agora', 'Not saved') }}
-      <NcButton variant="tertiary" @click="retrySaves">{{ t('agora', 'Retry') }}</NcButton>
-    </span>
-    <span v-else-if="allSaved">{{ t('agora', 'All your answers are saved') }}</span>
-  </div>
-</div>
 
     <!-- Main interface -->
     <template v-else>
       <!-- Tab bar + primary action -->
       <div class="vote-header-row">
-        <nav
-          class="vote-tabs"
-          role="tablist"
-          :aria-label="t('agora', 'Vote sections')"
-        >
+        <nav class="vote-tabs" role="tablist" :aria-label="t('agora', 'Vote sections')">
           <button
             v-for="tab in visibleTabs"
             :id="`vote-tab-${tab.key}`"
@@ -105,18 +93,11 @@
           >
             <span class="vote-tab__dot" />
             <span class="vote-tab__label">{{ tab.label }}</span>
-            <span
-              v-if="tab.count > 0"
-              class="vote-tab__count"
-            >{{ tab.count }}</span>
+            <span v-if="tab.count > 0" class="vote-tab__count">{{ tab.count }}</span>
           </button>
         </nav>
 
-        <NcButton
-          v-if="canManageVote"
-          variant="primary"
-          @click="showCreateEngineModal = true"
-        >
+        <NcButton v-if="canManageVote" variant="primary" @click="showCreateEngineModal = true">
           <template #icon>
             <PlusIcon :size="20" />
           </template>
@@ -144,10 +125,7 @@
 
           <template v-else>
             <!-- Engine picker (only when more than one of this status) -->
-            <div
-              v-if="enginesForTab.length > 1"
-              class="engine-picker"
-            >
+            <div v-if="enginesForTab.length > 1" class="engine-picker">
               <NcSelect
                 v-model="enginePickerValue"
                 :options="enginePickerOptions"
@@ -161,10 +139,7 @@
             </div>
 
             <!-- Engine info strip -->
-            <div
-              v-if="currentEngine"
-              class="engine-strip"
-            >
+            <div v-if="currentEngine" class="engine-strip">
               <div class="engine-strip__main">
                 <div class="engine-strip__title-row">
                   <h2 class="engine-strip__title">
@@ -177,18 +152,12 @@
                   </span>
 
                   <!-- purpose -->
-                  <span
-                    v-if="currentEngine.purpose"
-                    class="engine-badge engine-badge--purpose"
-                  >
+                  <span v-if="currentEngine.purpose" class="engine-badge engine-badge--purpose">
                     {{ currentEngine.purpose }}
                   </span>
 
                   <!-- lifecycle status -->
-                  <span
-                    class="engine-badge"
-                    :class="`engine-badge--${currentEngine.status}`"
-                  >
+                  <span class="engine-badge" :class="`engine-badge--${currentEngine.status}`">
                     {{ capitalize(currentEngine.status) }}
                   </span>
 
@@ -207,10 +176,7 @@
                   </span>
                 </div>
 
-                <p
-                  v-if="currentEngine.description"
-                  class="engine-strip__description"
-                >
+                <p v-if="currentEngine.description" class="engine-strip__description">
                   {{ currentEngine.description }}
                 </p>
 
@@ -235,7 +201,7 @@
                   <li
                     v-if="
                       currentEngine.config?.min !== undefined &&
-                        currentEngine.config?.max !== undefined
+                      currentEngine.config?.max !== undefined
                     "
                   >
                     <strong>{{ t('agora', 'Range') }}:</strong>
@@ -256,22 +222,13 @@
                 v-if="canManageVote && currentEngine && currentEngine.status === 'draft'"
                 class="engine-strip__actions"
               >
-                <NcButton
-                  variant="tertiary"
-                  @click="handleEditEngine(currentEngine)"
-                >
+                <NcButton variant="tertiary" @click="handleEditEngine(currentEngine)">
                   {{ t('agora', 'Edit') }}
                 </NcButton>
-                <NcButton
-                  variant="tertiary"
-                  @click="handleDeleteEngine(currentEngine)"
-                >
+                <NcButton variant="tertiary" @click="handleDeleteEngine(currentEngine)">
                   {{ t('agora', 'Delete') }}
                 </NcButton>
-                <NcButton
-                  variant="tertiary"
-                  @click="onAddToVote(currentEngine)"
-                >
+                <NcButton variant="tertiary" @click="onAddToVote(currentEngine)">
                   {{ t('agora', 'Add items') }}
                 </NcButton>
               </div>
@@ -281,7 +238,7 @@
             <VoteEmptyState
               v-if="
                 currentEngine &&
-                  (!currentEngine.target_ids || currentEngine.target_ids.length === 0)
+                (!currentEngine.target_ids || currentEngine.target_ids.length === 0)
               "
               :no-items-linked="true"
               :can-manage-vote="canManageVote"
@@ -316,7 +273,7 @@
               :vote-selection-info="voteSelectionInfo"
               :get-item-vote-count="getItemVoteCount"
               :get-percentage="(item) => getPercentage(item)"
-	      :get-item-majority-judgment="getMajorityJudgment"
+              :get-item-majority-judgment="getMajorityJudgment"
               :has-user-voted-for="hasUserVotedFor"
               :is-selected-for-vote="isSelectedForVote"
               :get-user-vote-value-for-item="getUserVoteValueForItem"
@@ -340,10 +297,7 @@
         <!-- Results panel -->
         <template v-else>
           <!-- Engine picker on top of the Results panel so users can switch -->
-          <div
-            v-if="activeEngines.length > 1"
-            class="engine-picker"
-          >
+	  <div v-if="activeEngines.length > 1" class="engine-picker">
             <NcSelect
               :model-value="resultsEngine?.id ?? null"
               :options="
@@ -446,16 +400,10 @@
       @cancel="cancelDelete"
     >
       <template #actions>
-        <NcButton
-          type="primary"
-          @click="confirmDelete"
-        >
+        <NcButton type="primary" @click="confirmDelete">
           {{ t('agora', 'Delete') }}
         </NcButton>
-        <NcButton
-          type="tertiary"
-          @click="cancelDelete"
-        >
+        <NcButton type="tertiary" @click="cancelDelete">
           {{ t('agora', 'Cancel') }}
         </NcButton>
       </template>
@@ -535,7 +483,8 @@ const targetEngineId = ref<number | null>(null)
 const activeTab = ref<TabKey>('active')
 
 const capitalize = (s: string): string => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '')
-
+console.log(' PROPS ITEMS ', props.items)
+console.log(' VOTE ITEMS ', voteItems.value)
 // ---------------------------------------------------------------
 // Effective parent id — mirrors the engine-scoping rule:
 //   targetType = 'option'  → parent is the inquiry id
@@ -600,6 +549,11 @@ const {
 } = useVoteContext(effectiveParentId, props.targetType, undefined, () =>
   (props.items || []).map((it: any) => it.raw ?? it).filter(Boolean)
 )
+
+const draftEngines = computed(() => availableEngines.value.filter((e) => e.status === 'draft'))
+const activeEngines = computed(() => availableEngines.value.filter((e) => e.status === 'active'))
+const closedEngines = computed(() => availableEngines.value.filter((e) => e.status === 'closed'))
+
 // 🔍 DEBUG — one line, runs once at mount
 console.log('🔍 FLV-INIT', {
   parentId: props.parentId,
@@ -609,11 +563,9 @@ console.log('🔍 FLV-INIT', {
   currentEngineId: currentEngine.value?.id,
   currentEngineType: currentEngine.value?.engine,
   votableItemsCount: votableItems.value.length,
+  draftEngineE: draftEngines.value.length,
+  activeEngineE: activeEngines.value.length,
 })
-
-const draftEngines = computed(() => availableEngines.value.filter((e) => e.status === 'draft'))
-const activeEngines = computed(() => availableEngines.value.filter((e) => e.status === 'active'))
-const closedEngines = computed(() => availableEngines.value.filter((e) => e.status === 'closed'))
 
 // Stacked mode: two or more engines whose target_ids are disjoint.
 // Guard: phased_voting is excluded (its phases interact), and every item
@@ -629,12 +581,12 @@ const stackedEngines = computed<SupportEngine[]>(() => {
   const covered = new Set<number>()
   for (const e of active) {
     for (const id of e.target_ids) {
-      if (covered.has(id)) return []   // overlap → not stackable
+      if (covered.has(id)) return [] // overlap → not stackable
       covered.add(id)
     }
   }
   const shown = availableEngines.value.flatMap((e) => e.target_ids ?? [])
-  if (shown.some((id) => !covered.has(id))) return []  // not all items covered
+  if (shown.some((id) => !covered.has(id))) return [] // not all items covered
   return [...active].sort((a, b) => a.id - b.id)
 })
 
@@ -651,8 +603,8 @@ const progressTotals = computed<[number, number]>(() =>
       count + (progress.value[e.id]?.[0] ?? 0),
       total + (progress.value[e.id]?.[1] ?? 0),
     ],
-    [0, 0] as [number, number],
-  ),
+    [0, 0] as [number, number]
+  )
 )
 
 // ── Serialised save queue ───────────────────────────────────────
@@ -690,7 +642,7 @@ const allSaved = computed(
     progressTotals.value[0] === progressTotals.value[1] &&
     !savesRunning.value &&
     !failedSaves.value.size &&
-    (blocks.value ?? []).every((b) => b.settled),
+    (blocks.value ?? []).every((b) => b.settled)
 )
 
 onBeforeRouteLeave(async () => {
@@ -842,16 +794,20 @@ watch(
 )
 
 // If the current tab disappears (engine deleted / no longer hidden), fall back.
-watch(visibleTabs, (tabs) => {
-  if (!tabs.some((tab) => tab.key === activeTab.value)) {
-    const preferred =
-      tabs.find((tab) => tab.key === 'active') ??
-      tabs.find((tab) => tab.key === 'draft') ??
-      tabs.find((tab) => tab.key === 'closed') ??
-      tabs[0]
-    if (preferred) activeTab.value = preferred.key
-  }
-})
+watch(
+  visibleTabs,
+  (tabs) => {
+    if (!tabs.some((tab) => tab.key === activeTab.value)) {
+      const preferred =
+        tabs.find((tab) => tab.key === 'active') ??
+        tabs.find((tab) => tab.key === 'draft') ??
+        tabs.find((tab) => tab.key === 'closed') ??
+        tabs[0]
+      if (preferred) activeTab.value = preferred.key
+    }
+  },
+  { immediate: true },   // ← add this
+)
 
 // If results become hidden while on the results tab, bounce back.
 watch(resultsHidden, (hidden) => {

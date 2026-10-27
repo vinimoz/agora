@@ -24,7 +24,7 @@
       >
         <div
           class="news-thumb"
-          :style="{ backgroundImage: `url(${item.image})` }"
+          :style="{ backgroundImage: `url(${item.coverId})` }"
         />
         <div class="news-body">
           <h3 class="news-title">
