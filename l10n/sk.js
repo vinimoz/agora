@@ -816,6 +816,8 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "Vyberte konkrétny variant Condorcetovej metódy",
     "Configure grades" : "Nastaviť hodnotenia",
     "Grade {n}" : "Hodnotenie {n}",
+    "Require a justification for this grade" : "Vyžadovať odôvodnenie pre túto známku",
+    "(not implemented yet)" : "(zatiaľ nie je implementované)",
     "Remove grade" : "Odstrániť hodnotenie",
     "Add grade" : "Pridať hodnotenie",
     "Select reactions" : "Vyberte reakcie",

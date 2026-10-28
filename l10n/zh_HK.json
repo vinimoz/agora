@@ -814,6 +814,8 @@
     "Select specific condorcet method variant" : "選擇特定的孔多塞法變體",
     "Configure grades" : "設定評級",
     "Grade {n}" : "評級 {n}",
+    "Require a justification for this grade" : "此評分必須附上理由",
+    "(not implemented yet)" : "（尚未實施）",
     "Remove grade" : "移除評級",
     "Add grade" : "新增評級",
     "Select reactions" : "選擇反應",

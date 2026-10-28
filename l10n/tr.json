@@ -814,6 +814,8 @@
     "Select specific condorcet method variant" : "Belirli bir Kondorset yöntemi çeşidini seçin",
     "Configure grades" : "Derece yapılandırması",
     "Grade {n}" : "{n}. derece",
+    "Require a justification for this grade" : "Bu not için bir gerekçe istensin",
+    "(not implemented yet)" : "(henüz çalışmıyor)",
     "Remove grade" : "Dereceyi kaldır",
     "Add grade" : "Derece ekle",
     "Select reactions" : "Tepkileri seçin",
