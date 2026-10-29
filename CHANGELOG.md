@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# [1.7.16] - 2026-10-28
+- Bug #81: Php memory error during upgrade
+
 # [1.7.15] - 2026-10-22
 - Bug #80: list the user's own comments under a vote card
 - Bug #79: sign the code of the appstore package

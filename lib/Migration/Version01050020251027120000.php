@@ -28,7 +28,6 @@ class Version01050020251027120000 extends SimpleMigrationStep
 
     public function __construct(
         private TableManager $tableManager,
-        private IndexManager $indexManager,
         private IDBConnection $connection,
     ) {
     }
@@ -325,43 +324,35 @@ class Version01050020251027120000 extends SimpleMigrationStep
      * Post-migration steps for data transformation and cleanup
      * This runs AFTER the schema has been applied to the database
      */
-    public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
-    {
-        $this->output = $output;
-        $this->logInfo('Finalizing migration');
+public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
+{
+    $this->output = $output;
+    $this->logInfo('Finalizing migration');
 
-        // NOW it's safe to use connection->tableExists() because the schema has been applied!
-        if ($this->connection->tableExists('agora_inquiries')) {
-            $this->tableManager->setConnection($this->connection);
-            
-            $messages = $this->tableManager->removeOrphaned();
-            $this->logInfo($messages, 'postMigration:  ');
+    if ($this->connection->tableExists('agora_inquiries')) {
+        $this->tableManager->setConnection($this->connection);
 
-            $messages = $this->tableManager->transferModStatusToInqStatus();
-            $this->logInfo($messages, 'postMigration:  ');
-
-            $messages = $this->tableManager->migratePublicToOpen();
-            $this->logInfo($messages, 'postMigration:  ');
-
-            $messages = $this->tableManager->fixNullishShares();
-            $this->logInfo($messages, 'postMigration:  ');
-
-            $messages = $this->tableManager->fixNullishPollGroupRelations();
-            $this->logInfo($messages, 'postMigration:  ');
-        } else {
-            $this->logInfo('Inquiries table does not exist - skipping data cleanup');
-        }
-
-        // Index operations
-        $this->indexManager->createSchema();
-        $messages = $this->indexManager->createForeignKeyConstraints();
+        $messages = $this->tableManager->removeOrphaned();
         $this->logInfo($messages, 'postMigration:  ');
 
-        $messages = $this->indexManager->createUniqueIndices();
+        $messages = $this->tableManager->transferModStatusToInqStatus();
         $this->logInfo($messages, 'postMigration:  ');
 
-        $this->logInfo('Migration completed successfully');
+        $messages = $this->tableManager->migratePublicToOpen();
+        $this->logInfo($messages, 'postMigration:  ');
+
+        $messages = $this->tableManager->fixNullishShares();
+        $this->logInfo($messages, 'postMigration:  ');
+
+        $messages = $this->tableManager->fixNullishPollGroupRelations();
+        $this->logInfo($messages, 'postMigration:  ');
+    } else {
+        $this->logInfo('Inquiries table does not exist - skipping data cleanup');
     }
+
+    // Indices and FKs are handled by Version01071420260105120000::changeSchema().
+    $this->logInfo('Migration completed successfully');
+}
 
     /**
      * Logs the given message to the output.

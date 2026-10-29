@@ -28,7 +28,6 @@ class Version01060020251115120000 extends SimpleMigrationStep
 
     public function __construct(
         private TableManager $tableManager,
-        private IndexManager $indexManager,
         private IDBConnection $connection,
     ) {
     }
@@ -68,31 +67,23 @@ class Version01060020251115120000 extends SimpleMigrationStep
     /**
      * Post-migration steps for data transformation and cleanup
      */
-    public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
-    {
-        $this->output = $output;
-        $this->logInfo('Finalizing migration');
+public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
+{
+    $this->output = $output;
+    $this->logInfo('Finalizing migration');
 
-        // Data cleanup
-        $messages = $this->tableManager->removeOrphaned();
-        $this->logInfo($messages, 'postMigration:  ');
+    $messages = $this->tableManager->removeOrphaned();
+    $this->logInfo($messages, 'postMigration:  ');
 
-        $messages = $this->tableManager->migrateShareLabels();
-        $this->logInfo($messages, 'postMigration:  ');
+    $messages = $this->tableManager->migrateShareLabels();
+    $this->logInfo($messages, 'postMigration:  ');
 
-        $messages = $this->tableManager->updateHashes();
-        $this->logInfo($messages, 'postMigration:  ');
+    $messages = $this->tableManager->updateHashes();
+    $this->logInfo($messages, 'postMigration:  ');
 
-        // Index operations
-        $this->indexManager->createSchema();
-        $messages = $this->indexManager->createForeignKeyConstraints();
-        $this->logInfo($messages, 'postMigration:  ');
-
-        $messages = $this->indexManager->createUniqueIndices();
-        $this->logInfo($messages, 'postMigration:  ');
-
-        $this->logInfo('Migration completed successfully');
-    }
+    // Indices and FKs are handled by Version01071420260105120000::changeSchema().
+    $this->logInfo('Migration completed successfully');
+}
 
     private function createInquiryGroupTypeTable(): void
     {

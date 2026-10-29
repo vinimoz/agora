@@ -73,9 +73,8 @@ abstract class IndexDefinitions
 
         Option::TABLE => [
             OptionMisc::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
-            // FIX: Comment, Support, Quorum reference Option
-            Comment::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
-            Support::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
+           //  Comment::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
+            // Support::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
             Quorum::TABLE => ['constraintColumn' => 'option_id', 'onDelete' => 'CASCADE'],
         ],
     ];
@@ -85,6 +84,57 @@ abstract class IndexDefinitions
      * table => ['name' => 'indexName', 'unique' => false, 'columns' => ['column1', 'column2']]
      */
     public const COMMON_INDICES = [
+	// ── Re-added (were in OPTIONAL_INDICES pre-1.7.10, dropped as obsolete) ──
+'inq_del_status_crtd' => [
+    'table'   => Inquiry::TABLE,
+    'name'    => 'inq_del_status_crtd',
+    'unique'  => false,
+    'columns' => ['deleted', 'inquiry_status', 'created'],
+],
+'comment_inq_del_ts' => [
+    'table'   => Comment::TABLE,
+    'name'    => 'comment_inq_del_ts',
+    'unique'  => false,
+    'columns' => ['inquiry_id', 'deleted', 'timestamp'],
+],
+'supports_hash_idx' => [
+    'table'   => Support::TABLE,
+    'name'    => 'supports_hash_idx',
+    'unique'  => false,
+    'columns' => ['support_hash'],
+],
+'supports_user_crtd_idx' => [
+    'table'   => Support::TABLE,
+    'name'    => 'supports_user_crtd_idx',
+    'unique'  => false,
+    'columns' => ['user_id', 'created'],
+],
+'opt_owner_del' => [
+    'table'   => Option::TABLE,
+    'name'    => 'opt_owner_del',
+    'unique'  => false,
+    'columns' => ['owner', 'deleted'],
+],
+
+// ── New ──
+'inq_parent_del' => [
+    'table'   => Inquiry::TABLE,
+    'name'    => 'inq_parent_del',
+    'unique'  => false,
+    'columns' => ['parent_id', 'deleted'],
+],
+'opt_parent_sort' => [
+    'table'   => Option::TABLE,
+    'name'    => 'opt_parent_sort',
+    'unique'  => false,
+    'columns' => ['parent_id', 'sort_order'],
+],
+'inq_group_parent_del' => [
+    'table'   => InquiryGroup::TABLE,
+    'name'    => 'inq_group_parent_del',
+    'unique'  => false,
+    'columns' => ['parent_id', 'deleted'],
+],
         // INQUIRY - Optimized for common queries
         'inq_owner_deleted' => [
             'table' => Inquiry::TABLE,

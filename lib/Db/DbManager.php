@@ -131,16 +131,16 @@ abstract class DbManager
      */
     protected function needsSchema(): void
     {
+
         if ($this->schema === null) {
-            // Auto-create schema if not set
-            $this->createSchema();
+		// Auto-create schema if not set
+	           $this->createSchema(); 
             return;
         }
-        
-        if ($this->schema instanceof ISchemaWrapper || $this->schema instanceof Schema) {
-            return;
-        }
-        
+
+	 if ($this->schema instanceof ISchemaWrapper || $this->schema instanceof Schema) {
+        	return;
+    	}
         throw new SchemaMissmatchException('Schema is not set or not an instance of ISchemaWrapper or Schema (caller: ' . self::formatCaller() . ')');
     }
 

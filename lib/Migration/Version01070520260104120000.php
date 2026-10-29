@@ -1029,28 +1029,32 @@ class Version01070520260104120000 extends SimpleMigrationStep
         }
     }
 
-    private function getTableNameWithPrefix(string $table): string
-    {
-        try {
-            $schema = $this->connection->createSchema();
-            
-            foreach ($schema->getTables() as $t) {
-                if (str_ends_with($t->getName(), $table)) {
-                    return $t->getName();
-                }
-            }
-            
-            foreach ($schema->getTables() as $t) {
-                if ($t->getShortestName($schema->getName()) === $table) {
-                    return $t->getName();
-                }
-            }
-            
-            return $table;
-        } catch (\Exception $e) {
-            return $table;
-        }
+/** @var array<string,string> */
+private array $resolvedTableNames = [];
+
+private function getTableNameWithPrefix(string $table): string
+{
+    if (isset($this->resolvedTableNames[$table])) {
+        return $this->resolvedTableNames[$table];
     }
+
+    $prefix = $this->connection->getPrefix();   // e.g. "oc_"
+    $candidate = $prefix . $table;
+
+    // $this->schema was set once in changeSchema(). Never rebuild it here.
+    if ($this->schema !== null && $this->schema->hasTable($candidate)) {
+        return $this->resolvedTableNames[$table] = $candidate;
+    }
+
+    // Fallback for the unprefixed case (some Nextcloud versions resolve
+    // prefix internally and return unprefixed names)
+    if ($this->schema !== null && $this->schema->hasTable($table)) {
+        return $this->resolvedTableNames[$table] = $table;
+    }
+
+    // Last resort — keep the old behaviour but cache the result
+    return $this->resolvedTableNames[$table] = $table;
+}
 
     private function quoteIdentifier(string $identifier): string
     {
