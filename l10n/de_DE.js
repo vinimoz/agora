@@ -816,7 +816,7 @@ OC.L10N.register(
     "Select specific condorcet method variant" : "Eine spezifische Condorcet-Methodenvariante auswählen",
     "Configure grades" : "Noten konfigurieren",
     "Grade {n}" : "Note {n}",
-    "Require a justification for this grade" : "Eine Begründung für diese Bewertung ist erforderlich",
+    "Require a justification for this grade" : "Für diese Bewertung ist eine Begründung erforderlich",
     "(not implemented yet)" : "(Noch nicht implementiert)",
     "Remove grade" : "Note entfernen",
     "Add grade" : "Note hinzufügen",
