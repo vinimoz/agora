@@ -814,6 +814,8 @@
     "Select specific condorcet method variant" : "Roghnaigh malairt shonrach ar an modh Condorcet",
     "Configure grades" : "Cumraigh gráid",
     "Grade {n}" : "Grád {n}",
+    "Require a justification for this grade" : "Éiligh údar maith leis an ngrád seo",
+    "(not implemented yet)" : "(níl sé curtha i bhfeidhm go fóill)",
     "Remove grade" : "Bain grád",
     "Add grade" : "Cuir grád leis",
     "Select reactions" : "Roghnaigh imoibrithe",
