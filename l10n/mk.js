@@ -66,6 +66,7 @@ OC.L10N.register(
     "{count} participants" : "{count} учесници",
     "Created on {date}" : "Креиран на {date}",
     "Back" : "Назад",
+    "Sort by expiration date" : "Сортирај по рок на траење",
     "Descending" : "Опаѓачки",
     "Ascending" : "Растечки",
     "List" : "Листа",
