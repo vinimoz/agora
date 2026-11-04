@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Contact group" : "Grop de contactes",
     "Group" : "Grop",
+    "Legal Notice" : "Avís legal",
     "\"{title}\" has recent activity:" : "« {title} » a ja una activitat :",
     "Contact" : "Contacte",
     "External Email" : "Email extèrn",
@@ -111,6 +112,7 @@ OC.L10N.register(
     "Reset" : "Reïnicializar",
     "Approve" : "Aprovar",
     "Email" : "Adreiça electronica",
+    "Legal notice" : "Avís legal",
     "Categories" : "Categorias",
     "Locations" : "Emplaçaments",
     "Select an icon" : "Seleccionar una icòna",
