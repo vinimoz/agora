@@ -1,7 +1,5 @@
-<!--
-  - SPDX-FileCopyrightText: 2018 Nextcloud contributors
-  - SPDX-License-Identifier: AGPL-3.0-or-later
--->
+<!-- SPDX-FileCopyrightText: 2018 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
   <NcSelect
     v-model="selected"
@@ -55,8 +53,7 @@ const props = defineProps<{
   availableOptions?: Option[]
   /**
    * Restrict results to these ids. Works for both `options` and `inquiries`.
-   * Use this when the caller already computed the allowed set (e.g. the
-   * inquiries that belong to the current group).
+   * Pass an empty array to mean "nothing is available".
    */
   availableItemIds?: number[]
 }>()
@@ -129,8 +126,9 @@ const filteredResults = computed(() => {
     searchResults = searchResults.filter((item) => allowed.has(item.id))
   }
 
-  // Generic id restriction — works for options AND inquiries
-  if (props.availableItemIds && props.availableItemIds.length > 0) {
+  // Generic id restriction — works for options AND inquiries.
+  // IMPORTANT: an empty array means "nothing available", so use `!== undefined`.
+  if (props.availableItemIds !== undefined) {
     const allowed = new Set(props.availableItemIds)
     searchResults = searchResults.filter((item) => allowed.has(item.id))
   }

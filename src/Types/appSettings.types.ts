@@ -39,7 +39,7 @@ export interface PromoConfig {
   title: string
   text: string
   cta: string
-  imageUrl: string | number
+  imageUrl?: string | number
 }
 
 export interface RelevanceTierLabel {
@@ -95,7 +95,7 @@ export interface HomeHeroConfig {
   tagline: string
   title: string
   subtitle: string
-  backgroundUrl: string
+  backgroundUrl?: string
   showWeather?: boolean
   weather?: { temp: number; location: string }
   actions: HeroAction[]   // was: any[]

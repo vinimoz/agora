@@ -151,7 +151,6 @@ export interface InquiryGroup {
   metadata: string | null
   coverId: number | null
   protected: boolean
-  allowEdit: boolean
   inquiryIds: number[]
   childs: number[]
   slug: string

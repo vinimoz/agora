@@ -55,7 +55,6 @@ class Version01060020251115120000 extends SimpleMigrationStep
         $this->createInquiryGroupTypeTable();
         $this->createQuorumTable();
         $this->addModerationStatusToInquiries();
-        $this->addAllowEditToGroups();
         $this->addProtectedToGroups();
 
         if (!($this->schema instanceof ISchemaWrapper)) {
@@ -163,25 +162,6 @@ class Version01060020251115120000 extends SimpleMigrationStep
                 'length' => 32
             ]);
             $this->logInfo("Added moderation_status to {$tableName}");
-        }
-    }
-
-    private function addAllowEditToGroups(): void
-    {
-        $tableName = 'agora_inq_group';
-        if (!$this->schema->hasTable($tableName)) {
-            return;
-        }
-
-        $table = $this->schema->getTable($tableName);
-        if (!$table->hasColumn('allow_edit')) {
-            $table->addColumn('allow_edit', Types::BIGINT, [
-		    'notnull' => true,
-		    'unsigned' => true,
-                'default' => 1,
-                'length' => 20
-            ]);
-            $this->logInfo("Added allow_edit to {$tableName}");
         }
     }
 

@@ -78,6 +78,57 @@ export function createDefault<T>(): T {
   return {} as T
 }
 
+// ============================================================================
+
+export type KanbanStatusField =
+  | 'publicationStatus'
+  | 'moderationStatus'
+  | 'inquiryStatus'
+  | 'optionStatus'
+  | 'workflowStatus'
+
+export type KanbanMode = 'organization' | 'status'
+
+export type KanbanColumn = {
+  value: string
+  label: string
+  color?: string
+}
+
+export type KanbanPermissions = {
+  /** Can the user see the board at all */
+  view: boolean
+  /** Can the user drag cards */
+  move: boolean
+  /** Can the user change the underlying status (vs. visual only) */
+  changeStatus: boolean
+}
+
+export type KanbanFilters = {
+  types?: string[]
+  families?: string[]
+}
+
+export type KanbanDefinition = {
+  /** Which status field drives the columns (belongs to the board, not the family) */
+  statusField: KanbanStatusField
+  /** Explicit column override; when omitted, derived from the status field */
+  columns?: KanbanColumn[]
+  /** organization = visual only, status = drag updates the status */
+  mode: KanbanMode
+  permissions?: Partial<KanbanPermissions>
+  filters?: KanbanFilters
+}
+
+/** A status entry as stored on a family (InquiryFamily / OptionFamily) */
+export type FamilyStatus = {
+  value: string
+  label: string
+  color?: string
+}
+
+export type MiscUpdateMap = Record<string, unknown>
+
 export enum Event {
   TransitionsOff = 'agora:transitions:off',
   TransitionsOn = 'agora:transitions:on',

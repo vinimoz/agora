@@ -30,11 +30,8 @@ export const EXPERIENCE_VALUES = [
   'social',
   'marketplace',
   'home',
-  'kanban',
-  'timeline',
   'wiki',
   'decision_room',
-  'navigation',
   'classic',
 ] as const
 export type ExperienceKey = (typeof EXPERIENCE_VALUES)[number]

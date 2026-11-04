@@ -7,12 +7,8 @@
           :size="20"
           class="header-icon"
         />
-	<h2>{{ title || t('agora','Your news') }}</h2>
+        <h2>{{ title || t('agora','Your news') }}</h2>
       </div>
-      <a
-        class="header-link"
-        @click="emit('viewAll')"
-      >{{ t('agora', 'View all') }}</a>
     </header>
 
     <ul class="news-list">
@@ -24,23 +20,17 @@
       >
         <div
           class="news-thumb"
-          :style="{ backgroundImage: `url(${item.coverId})` }"
+          :style="{ backgroundImage: `url(${resolveCoverUrl(item.coverId)})` }"
         />
         <div class="news-body">
           <h3 class="news-title">
             {{ item.title }}
           </h3>
           <p class="news-summary">
-            {{ item.summary }}
+            {{ item.description }}
           </p>
           <div class="news-meta">
-            <span class="news-date">{{ item.date }}</span>
-            <span
-              class="news-tag"
-              :style="{ color: item.tagColor, background: item.tagBg }"
-            >
-              {{ item.tag }}
-            </span>
+            <span class="news-date">{{ item.created }}</span>
           </div>
         </div>
       </li>
@@ -69,17 +59,17 @@ import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
 
 export interface NewsItem {
-  id: number | string
+  id: number
   title: string
-  summary: string
-  image: string
-  date: string
-  tag: string
-  tagColor: string
-  tagBg: string
+  description: string
+  created: string | number
+  coverId?: number | string
+  tag?: string
+  tagColor?: string
+  tagBg?: string
 }
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     items?: NewsItem[]
     title?: string
@@ -87,11 +77,21 @@ const props = withDefaults(
   { items: () => [], title: '' }
 )
 
-const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
+const emit = defineEmits<{
+  click: [item: NewsItem]
+  viewAll: []
+}>()
 
-
+function resolveCoverUrl(src?: number | string): string {
+  if (!src) return ''
+  const s = String(src)
+  if (/^https?:\/\//i.test(s) || s.startsWith('/')) return s
+  if (/^\d+$/.test(s)) {
+    return `${window.location.origin}/index.php/core/preview?fileId=${s}&x=1200&y=400&a=1`
+  }
+  return s
+}
 </script>
-
 <style lang="scss" scoped>
 .news-widget {
   background: var(--color-main-background);
@@ -236,3 +236,4 @@ const emit = defineEmits<{ click: [item: NewsItem]; viewAll: [] }>()
   }
 }
 </style>
+

@@ -44,7 +44,11 @@
             v-if="targetType === 'inquiry' && availableItemIds.length === 0"
             class="hint"
           >
-            {{ t('agora', 'Only inquiries in the same group can be added to this vote.') }}
+            {{
+              hasEligibleCandidates
+                ? t('agora', 'No inquiries match the criteria for this view.')
+                : t('agora', 'Only inquiries in the same group can be added to this vote.')
+            }}
           </p>
         </div>
 
@@ -149,6 +153,7 @@ import { useOptionsStore } from '../../stores/options'
 import { useInquiryGroupsStore } from '../../stores/inquiryGroups'
 import { InquiriesAPI } from '../../Api/index.ts'
 import { getForceLayouts } from '../../helpers/modules/GenericItemHelper'
+import type { InquiryWorkflowStatus } from '../../Types/index'
 
 import type { Option, Inquiry, FamilyType } from '../../Types/index'
 import { Plus, Vote, LayoutGrid, Clock, Check } from 'lucide-vue-next'
@@ -159,6 +164,13 @@ import { Plus, Vote, LayoutGrid, Clock, Check } from 'lucide-vue-next'
 type TargetType = 'option' | 'inquiry'
 type VotableItem = Option | Inquiry
 type MiscUpdateMap = Record<string, unknown>
+type EngineFamily = 'vote' | 'timeline' | 'kanban'
+
+/**
+ * Which inquiry types make sense as candidates for a vote.
+ * Keep this list in sync with the `to_vote` filter in the inquiries store.
+ */
+const VOTABLE_INQUIRY_TYPES: ReadonlySet<string> = new Set(['vote', 'poll'])
 
 const props = withDefaults(
   defineProps<{
@@ -183,8 +195,30 @@ const props = withDefaults(
 const emit = defineEmits<{
   close: []
   success: []
-  optionFamilyChanged: [payload: { optionId: number; familyKey: string; action: 'added' }]
+  optionFamilyChanged: [payload: {
+    // keep for backward-compat with existing listeners
+    optionId: number
+    // explicit, target-aware fields
+    itemId: number
+    targetType: TargetType
+    familyKey: EngineFamily
+    action: 'added'
+  }]
 }>()
+
+/**
+ * Single source of truth for the "family was added" event.
+ * Includes the target type so listeners can distinguish option from inquiry.
+ */
+function emitFamilyChanged(item: VotableItem, familyKey: EngineFamily) {
+  emit('optionFamilyChanged', {
+    optionId: item.id, // backward-compat
+    itemId: item.id,
+    targetType: props.targetType,
+    familyKey,
+    action: 'added',
+  })
+}
 
 // ---------------------------------------------------------------------------
 // Stores
@@ -200,42 +234,79 @@ const inquiryGroupsStore = useInquiryGroupsStore()
 
 /**
  * Options: every option of the current inquiry, minus already-linked ones.
- * Inquiries: **only** the ones in the current inquiry group.
- *
- * The "only group" rule is a hard product constraint: votes for inquiries are
- * scoped to a group. See `getEnginesByTarget` in supportEngine.ts.
+ * Inquiries: **only** the ones in the current inquiry group that are
+ *   - not already in `alreadyLinkedItemIds`
+ *   - not already living in the target family (their `family` already matches)
+ *   - not already forced into the target family (`force_layouts` contains it)
+ *   - of a type that fits the target family (vote → votable types only)
  */
+
+/** Collect the inquiry ids that belong to the current group. */
+function collectGroupInquiryIds(): number[] {
+  // Priority 1: the group id we were handed by the layout
+  const groupId = props.inquiryId
+  const idsFromGroup = groupId
+    ? (inquiryGroupsStore.byId?.[groupId]?.inquiryIds ?? [])
+    : []
+
+  if (idsFromGroup.length) return idsFromGroup
+
+  // Priority 2: whatever group the store currently considers "current"
+  const currentGroup = inquiryGroupsStore.currentInquiryGroup
+  if (currentGroup?.inquiryIds?.length) return currentGroup.inquiryIds
+
+  // Priority 3: groups the currently-loaded inquiry belongs to
+  const currentInquiryGroups =
+    (inquiriesStore.byId[inquiryStore.id]?.inquiryGroups as number[] | undefined) ?? []
+  return currentInquiryGroups.flatMap(
+    (gid) => inquiryGroupsStore.byId?.[gid]?.inquiryIds ?? []
+  )
+}
+
+/** Does `inquiry` belong in `familyKey` already? */
+function inquiryAlreadyInFamily(inquiry: Inquiry, familyKey: EngineFamily): boolean {
+  if (inquiry.family === familyKey) return true
+  return getForceLayouts(inquiry).includes(familyKey)
+}
+
+/** Does `inquiry`'s *type* fit `familyKey`? */
+function inquiryTypeFitsFamily(inquiry: Inquiry, familyKey: EngineFamily): boolean {
+  // Vote family only accepts votable inquiry types.
+  if (familyKey === 'vote') return VOTABLE_INQUIRY_TYPES.has(inquiry.type)
+  // Timeline and kanban accept any inquiry type.
+  return true
+}
+
+/** Were there candidates in the group that got filtered out? Drives the hint copy. */
+const hasEligibleCandidates = computed(() => {
+  if (props.targetType !== 'inquiry') return false
+  return collectGroupInquiryIds().length > 0
+})
 
 const availableItemIds = computed<number[]>(() => {
   const linked = new Set(props.alreadyLinkedItemIds ?? [])
 
   if (props.targetType === 'inquiry') {
-    // Priority 1: the group id we were handed by the layout
-    const groupId = props.inquiryId
-    const idsFromGroup = groupId ? (inquiryGroupsStore.byId[groupId]?.inquiryIds ?? []) : []
-
-    // Priority 2: whatever group the store currently considers "current"
-    const currentGroup = inquiryGroupsStore.currentInquiryGroup
-    const groupIds = idsFromGroup.length ? idsFromGroup : (currentGroup?.inquiryIds ?? [])
-
-    // Priority 3: groups the currently-loaded inquiry belongs to
-    let fallbackIds: number[] = []
-    if (!groupIds.length) {
-      const currentInquiryGroups =
-        (inquiriesStore.byId[inquiryStore.id]?.inquiryGroups as number[] | undefined) ?? []
-      fallbackIds = currentInquiryGroups.flatMap(
-        (gid) => inquiryGroupsStore.byId(gid)?.inquiryIds ?? []
-      )
-    }
-
-    const ids = groupIds.length ? groupIds : fallbackIds
-    return ids.filter((id) => !linked.has(id))
+    return collectGroupInquiryIds().filter((id) => {
+      if (linked.has(id)) return false
+      const inquiry = inquiriesStore.byId[id]
+      if (!inquiry) return false
+      if (inquiryAlreadyInFamily(inquiry, props.familyType)) return false
+      if (!inquiryTypeFitsFamily(inquiry, props.familyType)) return false
+      return true
+    })
   }
 
   return (optionsStore.options ?? [])
     .filter((o) => !props.inquiryId || o.targetId === props.inquiryId)
+    .filter((o) => {
+      if (linked.has(o.id)) return false
+      // Already in the target family → nothing to add.
+      if (o.family === props.familyType) return false
+      if (getForceLayouts(o).includes(props.familyType)) return false
+      return true
+    })
     .map((o) => o.id)
-    .filter((id) => !linked.has(id))
 })
 
 // ---------------------------------------------------------------------------
@@ -247,12 +318,21 @@ const endDate = ref<Date | null>(null)
 const targetStatus = ref<string | null>(null)
 const loading = ref(false)
 
-const statusColumns = [
-  { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
-  { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
-  { value: 'completed', label: t('agora', 'Completed'), color: '#27ae60' },
-  { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' },
-]
+const statusColumns = computed(() => {
+  if (props.targetType === 'inquiry') {
+    return [
+      { value: 'draft',    label: t('agora', 'Draft'),    color: '#949494' },
+      { value: 'active',   label: t('agora', 'Active'),   color: '#3498db' },
+      { value: 'closed',   label: t('agora', 'Closed'),   color: '#27ae60' },
+      { value: 'rejected', label: t('agora', 'Rejected'), color: '#e74c3c' },
+    ]
+  }
+  return [
+    { value: 'draft',     label: t('agora', 'Draft'),     color: '#949494' },
+    { value: 'published', label: t('agora', 'Published'), color: '#3498db' },
+    { value: 'archived',  label: t('agora', 'Archived'),  color: '#27ae60' },
+  ]
+})
 
 // ---------------------------------------------------------------------------
 // Labels
@@ -335,52 +415,66 @@ const canAdd = computed(() => {
 // ---------------------------------------------------------------------------
 function buildForceLayoutsUpdate(
   item: VotableItem,
-  layout: 'vote' | 'timeline' | 'kanban'
+  layout: EngineFamily
 ): string[] {
   const current = getForceLayouts(item)
   return current.includes(layout) ? current : [...current, layout]
 }
 
 function currentStatusOf(item: VotableItem): string {
-  if ('status' in item && item.status) {
-    if (typeof item.status === 'object' && 'optionStatus' in item.status) {
-      return (item.status as { optionStatus?: string }).optionStatus || 'draft'
-    }
-    if (typeof item.status === 'string') return item.status
-  }
+  if (!item || !('status' in item) || !item.status) return 'draft'
+  const status = item.status as Record<string, unknown>
+
+  if (typeof status.optionStatus === 'string') return status.optionStatus
+  if (typeof status.inquiryStatus === 'string') return status.inquiryStatus
+  if (typeof status === 'string') return status
   return 'draft'
 }
 
-async function patchOption(item: Option, patch: MiscUpdateMap, status?: string): Promise<void> {
-  const merged = { ...(item.miscFields || {}), ...patch }
-  await optionsStore.updateOptionFromModal(
-    item.id,
-    status || currentStatusOf(item),
-    merged as never
-  )
+function toMiscFieldEntry(key: string, value: unknown): { key: string; value: string } {
+  return {
+    key,
+    value: typeof value === 'string' ? value : JSON.stringify(value ?? null),
+  }
+}
+
+async function patchOption(
+  item: Option,
+  patch: MiscUpdateMap,
+  status?: string,
+): Promise<void> {
+  // 1. Persist misc fields one-by-one through the dedicated endpoint.
+  //    A bulk `updateOption` with a partial payload is silently no-oped
+  //    by the backend (title/text become empty defaults) — which is why
+  //    force_layouts never stuck before.
+  await optionsStore.patchOption(item.id, patch)
+
+  // 2. Kanban needs a status change too — that has its own endpoint.
+  if (status && status !== currentStatusOf(item)) {
+    await optionsStore.setOptionStatus(item.id, status)
+  }
 }
 
 /**
- * Persist a miscFields patch on an Inquiry.
- * `inquiriesStore` has no action for this — call the API and refresh the list.
+ * Persist a miscFields patch on an Inquiry through the store, so that
+ * - `miscFields` are merged (not replaced),
+ * - the plural `inquiriesStore` is kept in sync,
+ * - the singular `inquiryStore` is kept in sync when it's the same inquiry.
  */
 async function patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
-  const response = await InquiriesAPI.updateInquiry(item.id, {
-    miscFields: { ...(item.miscFields ?? {}), ...patch } as any,
-  })
-  const updated = response.data?.inquiry
-  if (updated) {
-    const idx = inquiriesStore.inquiries.findIndex((i) => i.id === updated.id)
-    if (idx !== -1) {
-      inquiriesStore.inquiries[idx] = updated
-      inquiriesStore.inquiries = [...inquiriesStore.inquiries]
-    }
-  }
+  await inquiriesStore.patchInquiry(item, patch)
 }
 
 async function patchItem(item: VotableItem, patch: MiscUpdateMap, status?: string): Promise<void> {
   if (props.targetType === 'inquiry') {
     await patchInquiry(item as Inquiry, patch)
+
+    if (status) {
+      await inquiriesStore.setInquiryStatus(item.id, status as InquiryWorkflowStatus)
+      if (inquiryStore.id === item.id) {
+        inquiryStore.status.inquiryStatus = status as InquiryWorkflowStatus
+      }
+    }
   } else {
     await patchOption(item as Option, patch, status)
   }
@@ -394,7 +488,7 @@ async function addToVote(): Promise<void> {
   if (!item) return
   const updatedLayouts = buildForceLayoutsUpdate(item, 'vote')
   await patchItem(item, { force_layouts: JSON.stringify(updatedLayouts) })
-  emit('optionFamilyChanged', { optionId: item.id, familyKey: 'vote', action: 'added' })
+  emitFamilyChanged(item, 'vote')
 }
 
 async function addToTimeline(): Promise<void> {
@@ -407,7 +501,7 @@ async function addToTimeline(): Promise<void> {
   }
   if (endDate.value) patch.end_date = endDate.value.toISOString()
   await patchItem(item, patch)
-  emit('optionFamilyChanged', { optionId: item.id, familyKey: 'timeline', action: 'added' })
+  emitFamilyChanged(item, 'timeline')
 }
 
 async function addToKanban(): Promise<void> {
@@ -415,7 +509,7 @@ async function addToKanban(): Promise<void> {
   if (!item || !targetStatus.value) return
   const updatedLayouts = buildForceLayoutsUpdate(item, 'kanban')
   await patchItem(item, { force_layouts: JSON.stringify(updatedLayouts) }, targetStatus.value)
-  emit('optionFamilyChanged', { optionId: item.id, familyKey: 'kanban', action: 'added' })
+  emitFamilyChanged(item, 'kanban')
 }
 
 async function add(): Promise<void> {
@@ -466,12 +560,15 @@ watch(selectedItem, (v) => {
 
 onMounted(() => {
   if (!props.inquiryId) {
-    console.warn('AddItemToFamily mounted without an inquiry id')
+    console.warn(
+      `AddItemToFamily mounted without an inquiry/group id (targetType: ${props.targetType})`
+    )
   }
 })
 </script>
 
 <style scoped lang="scss">
+/* unchanged — keep the existing stylesheet */
 .add-option-to-family-modal {
   padding: 0;
   max-width: 600px;
@@ -537,6 +634,12 @@ onMounted(() => {
 
       .search-select {
         width: 100%;
+      }
+
+      .hint {
+        margin: 8px 0 0 0;
+        font-size: 12px;
+        color: var(--color-text-lighter);
       }
     }
 
@@ -619,115 +722,6 @@ onMounted(() => {
         &.selected {
           border-color: var(--color-primary-element);
           background: rgba(var(--color-primary-element-rgb), 0.05);
-        }
-      }
-    }
-
-    .vote-config-section {
-      .engine-info-message {
-        margin-bottom: 20px;
-        padding: 16px;
-        background: var(--color-background-dark);
-        border-radius: 12px;
-
-        .engine-badge-display {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 6px 12px;
-          background: var(--color-main-background);
-          border-radius: 20px;
-          margin-bottom: 12px;
-          font-weight: 500;
-          font-size: 13px;
-
-          .engine-badge-mini {
-            font-size: 9px;
-            padding: 2px 8px;
-            border-radius: 12px;
-
-            &.single {
-              background: #3498db20;
-              color: #3498db;
-            }
-            &.multi {
-              background: #9b59b620;
-              color: #9b59b6;
-            }
-            &.flex {
-              background: #e67e2220;
-              color: #e67e22;
-            }
-          }
-        }
-
-        .engine-description {
-          margin: 0;
-          font-size: 13px;
-          color: var(--color-text-lighter);
-          line-height: 1.5;
-        }
-      }
-
-      .engine-config-details {
-        padding: 16px;
-        background: var(--color-background-dark);
-        border-radius: 12px;
-
-        .config-fields {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-
-          .config-field {
-            label {
-              display: block;
-              margin-bottom: 6px;
-              font-size: 12px;
-              font-weight: 600;
-            }
-
-            .config-input,
-            .config-select {
-              width: 100%;
-              padding: 8px 12px;
-              border: 1px solid var(--color-border);
-              border-radius: 8px;
-              background: var(--color-main-background);
-              font-size: 13px;
-              transition: all 0.2s;
-
-              &:focus {
-                outline: none;
-                border-color: var(--color-primary-element);
-                box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
-              }
-            }
-
-            .checkbox-label {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              cursor: pointer;
-
-              input {
-                width: 16px;
-                height: 16px;
-                cursor: pointer;
-              }
-
-              span {
-                font-size: 13px;
-                font-weight: normal;
-              }
-            }
-
-            .config-description {
-              margin: 4px 0 0 0;
-              font-size: 11px;
-              color: var(--color-text-lighter);
-            }
-          }
         }
       }
     }

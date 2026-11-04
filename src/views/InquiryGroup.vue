@@ -85,6 +85,7 @@
                 v-if="totalInquiries > 0 && hasSlug"
                 class="inquiry-count"
               >
+
                 ({{ totalInquiries }})
               </span>
               <span
@@ -163,15 +164,7 @@
                 </span>
               </div>
             </div>
-            <div class="header-right">
-              <ExperienceSwitcher
-                v-if="currentInquiryGroup"
-                :current-experience="experience"
-                :available-experiences="availableExperiences"
-                @change="handleExperienceChange"
-              />
             </div>
-          </div>
         </div>
 
         <!-- Loading -->
@@ -455,90 +448,150 @@
               </NcButton>
             </div>
 
-            <!-- Experience renderer OR legacy inquiries list (state C only) -->
-            <template v-if="currentInquiryGroup">
-              <div
-                v-if="hasCustomArchitecture && experience !== 'classic'"
-                class="experience-container"
-              >
-                <ExperienceRenderer
-                  :group="currentInquiryGroup"
-                  :inquiries="groupInquiries"
-                  :experience="experience"
-                  :display-mode="displayMode"
-                  :display-architecture="displayArchitecture"
-                  :layout-config="layoutConfig"
-                  :ui-config="currentInquiryGroup?.configuration?.ui"
-                  :show-header="false"
-                  :show-stats="true"
-                  :show-resources="true"
-                  :show-comments="true"
-                  @view-inquiry="handleViewInquiry"
-                  @view-option="handleViewOption"
-                  @view-group="selectGroup"
-		  @openPanel="handleOpenPanel"
-                  @experience-change="handleExperienceChange"
-                  @display-change="handleDisplayChange"
-                  @create-inquiry="handleCreateInquiry"
-                />
-              </div>
+	    <!--
+  View toolbar — only in state C (inside a real group).
+  Experience selector + display-mode selector sit *below* the
+  children vignettes, never above them.
+-->
+<div
+  v-if="hasSlug && currentInquiryGroup"
+  class="view-toolbar"
+>
+  <div class="view-toolbar__left">
+    <ExperienceSwitcher
+      v-if="availableExperiences.length > 1"
+      :current-experience="experience"
+      :available-experiences="availableExperiences"
+      @change="handleExperienceChange"
+    />
+    <span
+      v-else-if="availableExperiences.length === 1"
+      class="experience-static"
+    >
+      <component
+		      :is="(InquiryGeneralIcons as Record<string, unknown>)[definition?.icon ?? 'Home'] ?? InquiryGeneralIcons.Home"
+		      :size="14"
+		      />
+      {{ definition?.label }}
+    </span>
+	    <div class="view-toolbar__tabs">
+		    <!-- Overview Tab (The default experience) -->
+	<button 
+		 :class="{ active: !activeTool }" 
+		 @click="selectTool('')"
+		 >
+		 {{ t('agora', 'Overview') }}
+	</button>
 
-              <div
-                v-else
-                class="inquiry-group-content"
-              >
-                <InquiryGroupViewMain
-                  :group="currentInquiryGroup"
-                  :inquiry-ids="currentInquiryGroup.inquiryIds"
-                  @view-inquiry="handleViewInquiry"
-                />
-              </div>
-            </template>
-          </template>
-        </div>
+		<!-- Inquiries Tools -->
+		<button 
+		 v-for="tool in availableInquiryTools" 
+		 :key="tool"
+		 :class="{ active: activeTool === tool }" 
+		 @click="selectTool(tool)"
+		 >
+		 {{ t('agora', tool) }}
+		</button>
+	    </div>
+  </div>
+
+
+  <div class="view-toolbar__right">
+	  <DisplayModeSwitcher
+			  v-if="availableDisplayModes.length > 1"
+			  :current-mode="displayMode"
+			  :available-modes="availableDisplayModes"
+			  @change="handleDisplayChange"
+			  />
+  </div>
+</div>
+
+<!-- Experience renderer OR legacy inquiries list (state C only) -->
+<template v-if="currentInquiryGroup">
+	<div
+			v-if="hasCustomArchitecture && experience !== 'classic'"
+			class="experience-container"
+			>
+
+			<ExperienceRenderer
+					:group="currentInquiryGroup"
+					:inquiries="groupInquiries"
+					:experience="experience"
+					:display-mode="displayMode"
+					:active-tool="activeTool" 
+					:display-architecture="displayArchitecture"
+					:layout-config="layoutConfig"
+					:ui-config="currentInquiryGroup?.configuration?.ui"
+					:show-header="false"
+					:show-stats="true"
+					:show-resources="true"
+					:show-comments="true"
+					@view-inquiry="handleViewInquiry"
+					@view-option="handleViewOption"
+					@view-group="selectGroup"
+					@openPanel="handleOpenPanel"
+					@experience-change="handleExperienceChange"
+					@display-change="handleDisplayChange"
+					@create-inquiry="handleCreateInquiry"
+					/>
+	</div>
+
+		<div
+				v-else
+				class="inquiry-group-content"
+				>
+				<InquiryGroupViewMain
+						:group="currentInquiryGroup"
+						:inquiry-ids="currentInquiryGroup.inquiryIds"
+						@view-inquiry="handleViewInquiry"
+						/>
+		</div>
+</template>
+	  </template>
+	    </div>
       </template>
 
       <!-- Dialogs -->
       <NcDialog
-        v-if="createGroupDlgToggle"
-        :name="t('agora', 'Create new inquiry group')"
-        :enable-slide-up="false"
-        @close="handleCloseGroupDialog"
-      >
-        <InquiryCreateDlg
-          v-if="showCreateDialog"
-          :inquiry-type="createDialogType"
-          :family="createDialogFamily"
-          :parent-inquiry-id="currentInquiryGroup?.id ?? null"
-          :available-groups="availableGroups"
-          @close="closeCreateDialog"
-          @added="onInquiryAdded"
-        />
+		      v-if="createGroupDlgToggle"
+		      :name="t('agora', 'Create new inquiry group')"
+		      :enable-slide-up="false"
+		      @close="handleCloseGroupDialog"
+		      >
+		      <InquiryCreateDlg
+				      v-if="showCreateDialog"
+				      :inquiry-type="createDialogType"
+				      :family="createDialogFamily"
+				      :parent-inquiry-id="currentInquiryGroup?.id ?? null"
+				      :available-groups="availableGroups"
+				      @close="closeCreateDialog"
+				      @added="onInquiryAdded"
+				      />
 
-        <InquiryGroupCreateDlg
-          :inquiry-group-type="selectedInquiryGroupTypeForCreation"
-          :parent-group-id="selectedParentId"
-          :available-groups="availableGroups"
-          :family="createDialogFamily"
-          @added="inquiryGroupAdded"
-          @close="handleCloseGroupDialog"
-        />
+		      <InquiryGroupCreateDlg
+				      :inquiry-group-type="selectedInquiryGroupTypeForCreation"
+				      :parent-group-id="selectedParentId"
+				      :available-groups="availableGroups"
+				      :family="createDialogFamily"
+				      @added="inquiryGroupAdded"
+				      @close="handleCloseGroupDialog"
+				      />
       </NcDialog>
 
       <NcDialog
-        v-if="deleteDialogGroup"
-        v-model:open="showDeleteDialog"
-        :name="deleteDialogTitle"
-        :message="deleteDialogMessage"
-        :buttons="deleteDialogButtons"
-      />
-    </div>
+		      v-if="deleteDialogGroup"
+		      v-model:open="showDeleteDialog"
+		      :name="deleteDialogTitle"
+		      :message="deleteDialogMessage"
+		      :buttons="deleteDialogButtons"
+		      />
+	</div>
   </NcAppContent>
-    <InquiryInteractionShell ref="shellRef" />
+  <InquiryInteractionShell ref="shellRef" />
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue'
+	import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { t } from '@nextcloud/l10n'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -559,8 +612,11 @@ import InquiryGroupViewMain from '../components/InquiryGroup/InquiryGroupViewMai
 import ExperienceRenderer from '../components/Experience/ExperienceRenderer.vue'
 import ExperienceSwitcher from '../components/Experience/ExperienceSwitcher.vue'
 import { useGroupExperience } from '../composables/useGroupExperience'
+import DisplayModeSwitcher from '../components/Experience/DisplayModeSwitcher.vue'
 import type { ExperienceKey, DisplayMode } from '../composables/useExperience'
+import type { DisplayType } from '../Types/experience.types'
 import type { Inquiry, Option } from '../Types/index.ts'
+import InquiryInteractionShell from '../components/Inquiry/InquiryInteractionShell.vue'
 
 // ============================================================
 // Stores
@@ -622,6 +678,7 @@ const {
   hasCustomArchitecture,
   availableExperiences,
   switchExperience,
+  definition,
   switchDisplay,
 } = useGroupExperience(computed(() => currentInquiryGroup.value))
 
@@ -651,18 +708,33 @@ function canUserDeleteGroup(group: InquiryGroup | null): boolean {
   return ctx ? canDelete(ctx) : false
 }
 
-function handleOpenPanel(payload: { inquiry: any; target: string }) {
-  shellRef.value.open(payload)
+function handleOpenPanel(payload: { inquiry: Inquiry; zone: string; target: string }) {
+  shellRef.value?.open(payload)
 }
+
 
 const canCreateInFamily = computed(
   () => sessionStore.currentUser.isAdmin === true || sessionStore.currentUser.isGroupEditor === true
 )
 
+const activeTool = ref<string>('') 
+
+function selectTool(tool: string) {
+  activeTool.value = tool
+}
+
+// We only want Tools that operate on a LIST of inquiries (not options)
+const availableInquiryTools = computed(() => {
+  const allowed = definition.value?.allowedTools || []
+  // Filter out option-level tools
+  return allowed.filter(t => ['vote', 'kanban', 'timeline'].includes(t))
+})
+
 // ============================================================
 // Family breadcrumb
 // ============================================================
 const showFamilyCrumb = computed(() => hasSlug.value && !!activeFamily.value)
+
 
 const familyIconComponent = computed(() => {
   const fam = activeFamily.value
@@ -683,6 +755,14 @@ function goToFamilyRoot() {
   })
 }
 
+const availableDisplayModes = computed<DisplayType[]>(() => {
+  const allowed = definition.value?.allowedDisplays ?? []
+  // Only offer modes that make sense for the current experience
+  return allowed.filter(
+    (m) => m !== 'tool' && m !== 'widget' && m !== 'banner' && m !== 'search_bar'
+  )
+})
+
 // ============================================================
 // Derived data
 // ============================================================
@@ -696,7 +776,7 @@ const familyRootTypeKeys = computed<string[]>(() => {
   return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
     .filter(
       (gt: InquiryGroupType & { family?: string; family_type?: string }) =>
-        gt.is_root === true && (gt.family === fam || gt.family_type === fam)
+	gt.is_root === true && (gt.family === fam || gt.family_type === fam)
     )
     .map((gt) => gt.type || gt.group_type || '')
     .filter(Boolean)
@@ -746,11 +826,11 @@ const displayedGroups = computed<InquiryGroup[]>(() => {
 
     return inquiryGroupsStore.inquiryGroups
       .filter((g) => {
-        const isRoot = g.parentId === null || g.parentId === 0 || g.parentId === undefined
-        if (!isRoot) return false
-        if (g.status?.groupStatus === 'archived') return false
-        if (familyKeys.size > 0 && !familyKeys.has(g.type)) return false
-        return g.type === inquiryGroupsStore.currentGroupType
+	const isRoot = g.parentId === null || g.parentId === 0 || g.parentId === undefined
+	if (!isRoot) return false
+	if (g.status?.groupStatus === 'archived') return false
+	if (familyKeys.size > 0 && !familyKeys.has(g.type)) return false
+	return g.type === inquiryGroupsStore.currentGroupType
       })
       .sort((a, b) => a.title.localeCompare(b.title))
   }
@@ -833,7 +913,7 @@ const currentIconComponent = computed(() => {
     const fam = activeFamily.value
     const family = (sessionStore.appSettings?.inquiryFamilyTab || []).find(
       (f: { family_type?: string; type?: string; icon?: string }) =>
-        (f.family_type || f.type) === fam
+	(f.family_type || f.type) === fam
     )
     const icon = family?.icon
     return icon ? (InquiryGeneralIcons as Record<string, unknown>)[icon] || 'Folder' : 'Folder'
@@ -942,7 +1022,11 @@ function selectGroup(group: InquiryGroup) {
 }
 
 function modifyGroup(group: InquiryGroup) {
-  router.push({ name: 'group', params: { id: String(group.id) } })
+  router.push({
+    name: 'group',
+    params: { id: String(group.id) },
+    query: { ...route.query },  
+  })
 }
 
 const createDialogFamily = ref<string | null>(null)
@@ -972,12 +1056,12 @@ async function performDeleteGroup(group: InquiryGroup) {
 
     if (currentInquiryGroup.value?.id === group.id) {
       const parent = group.parentId
-        ? inquiryGroupsStore.inquiryGroups.find((g) => g.id === group.parentId)
-        : null
+	? inquiryGroupsStore.inquiryGroups.find((g) => g.id === group.parentId)
+	: null
       if (parent?.slug) {
-        router.push({ name: 'group-list', params: { slug: parent.slug } })
+	router.push({ name: 'group-list', params: { slug: parent.slug } })
       } else {
-        router.push({ name: 'home' })
+	router.push({ name: 'home' })
       }
     }
   } catch (error) {
@@ -990,9 +1074,12 @@ async function archiveGroup(group: InquiryGroup) {
   try {
     await inquiryGroupStore.archive(group.id)
     showSuccess(t('agora', 'Group archived successfully'))
-    router.push({ name: 'home' })
-  } catch (error) {
-    console.error('Error archiving group:', error)
+    router.push({
+      name: 'group-archived',
+      query: { family: activeFamily.value ?? undefined, from: group.slug },
+    })
+  } catch (error)  
+  {
     showError(t('agora', 'Failed to archive group'))
   }
 }
@@ -1120,9 +1207,9 @@ onMounted(async () => {
       const slug = route.params.slug as string
       const group = inquiryGroupsStore.bySlug(slug)
       if (group) {
-        await inquiryGroupStore.load(group.id)
+	await inquiryGroupStore.load(group.id)
       } else {
-        groupNotFound.value = true
+	groupNotFound.value = true
       }
     }
   } catch (error) {
@@ -1142,9 +1229,9 @@ watch(
     if (hasSlug.value) {
       const group = inquiryGroupsStore.bySlug(route.params.slug as string)
       if (group) {
-        await inquiryGroupStore.load(group.id)
+	await inquiryGroupStore.load(group.id)
       } else {
-        groupNotFound.value = true
+	groupNotFound.value = true
       }
     }
     isLoading.value = false
@@ -1157,741 +1244,790 @@ watch(
 // DESIGN TOKENS (local, composable with Nextcloud vars)
 // ============================================================
 .inquiry-group-page {
-  --ig-radius-sm: 8px;
-  --ig-radius: 12px;
-  --ig-radius-lg: 16px;
+	--ig-radius-sm: 8px;
+	--ig-radius: 12px;
+	--ig-radius-lg: 16px;
 
-  --ig-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --ig-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --ig-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
-  --ig-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
+	--ig-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+	--ig-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+	--ig-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+	--ig-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
 
-  --ig-accent: var(--color-primary-element, #4a6f8f);
-  --ig-accent-soft: rgba(74, 111, 143, 0.08);
+	--ig-accent: var(--color-primary-element, #4a6f8f);
+	--ig-accent-soft: rgba(74, 111, 143, 0.08);
 
-  --ig-ease: cubic-bezier(0.4, 0, 0.2, 1);
+	--ig-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
-  width: 100%;
-  min-height: 100vh;
-  background: transparent;
+	width: 100%;
+	min-height: 100vh;
+	background: transparent;
 }
 
-// ============================================================
-// BREADCRUMB
-// ============================================================
-.breadcrumb-bar {
-  background: linear-gradient(135deg, #1f2a37 0%, #2c3e50 55%, #34495e 100%);
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-  .breadcrumb-family {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border-left: 2px solid var(--color-primary-element, #2196f3);
+  // ============================================================
+  // BREADCRUMB
+	  // ============================================================
+  .breadcrumb-bar {
+	  background: linear-gradient(135deg, #1f2a37 0%, #2c3e50 55%, #34495e 100%);
+	  padding: 12px 0;
+	  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+	  .breadcrumb-family {
+		  background: rgba(255, 255, 255, 0.15) !important;
+		  border-left: 2px solid var(--color-primary-element, #2196f3);
+	  }
+
+	  .breadcrumb-container {
+		  max-width: 1600px;
+		  margin: 0 auto;
+		  padding: 0 24px;
+		  display: flex;
+		  align-items: center;
+		  gap: 6px;
+		  flex-wrap: wrap;
+
+		  .breadcrumb-home,
+		  .breadcrumb-item {
+			  color: rgba(255, 255, 255, 0.92);
+			  font-weight: 500;
+			  font-size: 13px;
+			  padding: 6px 10px;
+			  background: transparent;
+			  border-radius: var(--ig-radius-sm);
+			  transition:
+				  background 0.18s var(--ig-ease),
+			  color 0.18s var(--ig-ease);
+		  min-width: auto;
+
+		  &:hover {
+			  background: rgba(255, 255, 255, 0.08);
+			  color: white;
+		  }
+		  }
+
+		  .breadcrumb-label {
+			  margin-left: 6px;
+		  }
+
+		  .breadcrumb-separator {
+			  color: rgba(255, 255, 255, 0.35);
+			  font-weight: 300;
+			  font-size: 13px;
+			  padding: 0 2px;
+		  }
+
+		  .breadcrumb-current {
+			  display: inline-flex;
+			  align-items: center;
+			  gap: 8px;
+			  padding: 6px 12px;
+			  background: rgba(255, 255, 255, 0.12);
+			  border-radius: var(--ig-radius-sm);
+			  color: white;
+			  font-weight: 600;
+			  font-size: 13px;
+			  border-left: 2px solid var(--color-primary-element, #2196f3);
+		  }
+
+		  .breadcrumb-count {
+			  font-weight: 500;
+			  font-size: 11px;
+			  opacity: 0.85;
+			  background: rgba(255, 255, 255, 0.18);
+			  padding: 1px 8px;
+			  border-radius: 999px;
+		  }
+
+		  .breadcrumb-icon {
+			  width: 16px;
+			  height: 16px;
+			  display: inline-flex;
+		  }
+	  }
   }
 
-  .breadcrumb-container {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-
-    .breadcrumb-home,
-    .breadcrumb-item {
-      color: rgba(255, 255, 255, 0.92);
-      font-weight: 500;
-      font-size: 13px;
-      padding: 6px 10px;
-      background: transparent;
-      border-radius: var(--ig-radius-sm);
-      transition:
-        background 0.18s var(--ig-ease),
-        color 0.18s var(--ig-ease);
-      min-width: auto;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: white;
-      }
-    }
-
-    .breadcrumb-label {
-      margin-left: 6px;
-    }
-
-    .breadcrumb-separator {
-      color: rgba(255, 255, 255, 0.35);
-      font-weight: 300;
-      font-size: 13px;
-      padding: 0 2px;
-    }
-
-    .breadcrumb-current {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: var(--ig-radius-sm);
-      color: white;
-      font-weight: 600;
-      font-size: 13px;
-      border-left: 2px solid var(--color-primary-element, #2196f3);
-    }
-
-    .breadcrumb-count {
-      font-weight: 500;
-      font-size: 11px;
-      opacity: 0.85;
-      background: rgba(255, 255, 255, 0.18);
-      padding: 1px 8px;
-      border-radius: 999px;
-    }
-
-    .breadcrumb-icon {
-      width: 16px;
-      height: 16px;
-      display: inline-flex;
-    }
-  }
-}
-
-// ============================================================
-// HEADER
-// ============================================================
-.section-title-block {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.back-to-types {
-  font-size: 12.5px;
-  font-weight: 600;
-}
-
-.group-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 28px 24px;
-  background: var(--color-main-background, #fff);
-  border-bottom: 1px solid var(--color-border, #e5e7eb);
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-
-  .group-icon-badge {
-    width: 60px;
-    height: 60px;
-    border-radius: var(--ig-radius-lg);
-    background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 16px rgba(74, 111, 143, 0.28);
-    flex-shrink: 0;
-
-    .group-icon {
-      width: 28px;
-      height: 28px;
-      color: white;
-    }
+  // ============================================================
+  // HEADER
+	  // ============================================================
+  .section-title-block {
+	  display: flex;
+	  align-items: center;
+	  gap: 12px;
+	  flex-wrap: wrap;
   }
 
-  .group-title-section {
-    flex: 1;
-    min-width: 0;
-
-    .group-title {
-      font-size: 26px;
-      font-weight: 700;
-      margin: 0;
-      color: var(--color-main-text, #111827);
-      letter-spacing: -0.015em;
-      line-height: 1.2;
-    }
-
-    .group-subtitle {
-      margin-top: 6px;
-
-      p {
-        color: var(--color-text-maxcontrast, #6b7280);
-        font-size: 14.5px;
-        line-height: 1.5;
-        margin: 0 0 10px 0;
-        max-width: 800px;
-      }
-
-      .inquiry-count-badge,
-      .groups-count-badge {
-        display: inline-flex;
-        align-items: center;
-        background: var(--ig-accent-soft);
-        color: var(--ig-accent);
-        padding: 4px 11px;
-        border-radius: 999px;
-        font-weight: 600;
-        font-size: 12px;
-        letter-spacing: 0.01em;
-      }
-    }
+  .back-to-types {
+	  font-size: 12.5px;
+	  font-weight: 600;
   }
 
-  .header-right {
-    flex-shrink: 0;
-  }
-}
-
-// ============================================================
-// CONTENT
-// ============================================================
-.content-area {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 24px 48px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  gap: 16px;
-  flex-wrap: wrap;
-
-  h3 {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    color: var(--color-main-text, #111827);
-    margin: 0;
-  }
-
-  .create-button {
-    background: var(--ig-accent);
-    color: white;
-    font-weight: 600;
-    font-size: 13px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: var(--ig-radius-sm);
-    box-shadow: var(--ig-shadow-sm);
-    transition:
-      transform 0.15s var(--ig-ease),
-      box-shadow 0.15s var(--ig-ease),
-      background 0.15s var(--ig-ease);
-
-    &:hover {
-      background: #3d5d78;
-      transform: translateY(-1px);
-      box-shadow: var(--ig-shadow-md);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
-}
-
-.inquiry-group-content {
-  margin-top: 24px;
-}
-
-.experience-container {
-  margin-top: 24px;
-}
-
-// ============================================================
-// GROUPS GRID + VIGNETTES — modernized
-// ============================================================
-.groups-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  align-items: stretch;
-  margin-bottom: 32px;
-}
-
-.group-vignette-wrapper {
-  position: relative;
-  display: flex;
-}
-
-.vignette-container {
-  position: relative;
-  width: 100%;
-  padding-bottom: 56px;
-  display: flex;
-
-  &:hover {
-    .owner-menu-under {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-  }
-}
-
-.group-vignette {
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  min-height: 280px;
-  background: var(--color-main-background, #fff);
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: var(--ig-radius-lg);
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: var(--ig-shadow-xs);
-  transition:
-    transform 0.22s var(--ig-ease),
-    box-shadow 0.22s var(--ig-ease),
-    border-color 0.22s var(--ig-ease);
-
-  &:hover {
-    transform: translateY(-3px);
-    border-color: var(--color-primary-element, #2196f3);
-    box-shadow: var(--ig-shadow-lg);
-
-    .vignette-cover img {
-      transform: scale(1.04);
-    }
-
-    .view-group-button {
-      color: var(--ig-accent);
-      background: var(--ig-accent-soft);
-
-      .chevron {
-        transform: translateX(2px);
-      }
-    }
-  }
-
-  // ---------- Cover ----------
-  .vignette-cover {
-    height: 130px;
-    overflow: hidden;
-    position: relative;
-    background: linear-gradient(135deg, #eef2f7 0%, #dbe3ec 100%);
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s var(--ig-ease);
-    }
-
-    .vignette-cover-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent 55%, rgba(15, 23, 42, 0.35));
-    }
-  }
-
-  // ---------- Content ----------
-  .vignette-content {
-    flex: 1;
-    padding: 18px 20px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-    .vignette-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      box-shadow: 0 4px 10px rgba(74, 111, 143, 0.22);
-
-      :deep(svg),
-      :deep(img) {
-        width: 18px;
-        height: 18px;
-      }
-    }
-
-    h4 {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: -0.005em;
-      margin: 0;
-      color: var(--color-main-text, #111827);
-      line-height: 1.35;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .vignette-description {
-      color: var(--color-text-maxcontrast, #6b7280);
-      font-size: 13px;
-      line-height: 1.5;
-      margin: 0;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      min-height: 39px; // 2 lines × 19.5px ≈ consistent height
-    }
-
-    // ---------- Stats chips ----------
-    .vignette-stats {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: auto;
-
-      .stat-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 3px 9px;
-        background: var(--color-background-dark, #f3f4f6);
-        border-radius: 999px;
-        font-size: 11.5px;
-        font-weight: 500;
-        color: var(--color-text-maxcontrast, #6b7280);
-        line-height: 1.4;
-
-        .stat-icon {
-          font-size: 12px;
-          line-height: 1;
-          opacity: 0.9;
-        }
-
-        .stat-value {
-          font-weight: 600;
-          color: var(--color-main-text, #111827);
-        }
-      }
-    }
-
-    // ---------- CTA ----------
-    .vignette-footer {
-      margin-top: 6px;
-
-      .view-group-button {
-        width: 100%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 8px 12px;
-        background: transparent;
-        color: var(--color-text-maxcontrast, #4b5563);
-        border: none;
-        border-radius: var(--ig-radius-sm);
-        font-weight: 600;
-        font-size: 12.5px;
-        letter-spacing: 0.01em;
-        cursor: pointer;
-        transition:
-          background 0.18s var(--ig-ease),
-          color 0.18s var(--ig-ease);
-
-        .chevron {
-          transition: transform 0.18s var(--ig-ease);
-        }
-      }
-    }
-  }
-}
-
-// ============================================================
-// OWNER MENU — floating pill card
-// ============================================================
-.owner-menu-under {
-  position: absolute;
-  top: calc(100% - 52px); // sits just under the card
-  left: 0;
-  right: 0;
-  z-index: 50;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-6px);
-  transition:
-    opacity 0.2s var(--ig-ease),
-    transform 0.2s var(--ig-ease),
-    visibility 0.2s var(--ig-ease);
-
-  .owner-menu-content {
-    display: flex;
-    gap: 4px;
-    padding: 6px;
-    background: var(--color-main-background, #fff);
-    border: 1px solid var(--color-border, #e5e7eb);
-    border-radius: var(--ig-radius);
-    box-shadow: var(--ig-shadow-md);
-
-    .menu-item {
-      flex: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 7px 8px;
-      font-size: 11.5px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      border-radius: var(--ig-radius-sm);
-      background: transparent;
-      color: var(--color-text-maxcontrast, #4b5563);
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      transition:
-        background 0.15s var(--ig-ease),
-        color 0.15s var(--ig-ease);
-
-      :deep(svg) {
-        width: 13px;
-        height: 13px;
-        fill: currentColor;
-        flex-shrink: 0;
-      }
-
-      &:hover {
-        background: var(--color-background-hover, #f3f4f6);
-      }
-
-      &.modify:hover {
-        color: #2563eb;
-        background: rgba(37, 99, 235, 0.08);
-      }
-
-      &.delete:hover {
-        color: #dc2626;
-        background: rgba(220, 38, 38, 0.08);
-      }
-
-      &.archive:hover {
-        color: #059669;
-        background: rgba(5, 150, 105, 0.08);
-      }
-    }
-  }
-}
-
-// ============================================================
-// FAMILY BROWSER — type vignettes
-// ============================================================
-.types-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-}
-
-.type-vignette {
-  display: flex;
-  flex-direction: column;
-  background: var(--color-main-background, #fff);
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: var(--ig-radius-lg);
-  padding: 22px;
-  gap: 14px;
-  box-shadow: var(--ig-shadow-xs);
-  transition:
-    transform 0.2s var(--ig-ease),
-    box-shadow 0.2s var(--ig-ease),
-    border-color 0.2s var(--ig-ease);
-
-  &:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-primary-element, #2196f3);
-    box-shadow: var(--ig-shadow-md);
-  }
-
-  &__icon {
-    width: 52px;
-    height: 52px;
-    border-radius: var(--ig-radius);
-    background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    box-shadow: 0 4px 12px rgba(74, 111, 143, 0.22);
-
-    :deep(svg),
-    :deep(img) {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  &__body {
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__title {
-    margin: 0 0 6px;
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: -0.005em;
-    color: var(--color-main-text, #111827);
-  }
-
-  &__desc {
-    margin: 0 0 10px;
-    font-size: 13px;
-    color: var(--color-text-maxcontrast, #6b7280);
-    line-height: 1.5;
-  }
-
-  &__count {
-    display: inline-flex;
-    align-items: center;
-    background: var(--ig-accent-soft);
-    color: var(--ig-accent);
-    font-size: 11.5px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 999px;
-  }
-
-  &__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-}
-
-// ============================================================
-// LOADING
-// ============================================================
-.loading-state {
-  text-align: center;
-  padding: 60px 20px;
-
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--color-border, #e5e7eb);
-    border-top-color: var(--color-primary-element, #2196f3);
-    border-radius: 50%;
-    margin: 0 auto 18px;
-    animation: spin 0.9s linear infinite;
-  }
-
-  p {
-    color: var(--color-text-maxcontrast, #6b7280);
-    font-size: 14px;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-// ============================================================
-// NOT FOUND / EMPTY
-// ============================================================
-.not-found-state,
-.empty-state {
-  text-align: center;
-  padding: 72px 20px;
-  max-width: 1600px;
-  margin: 0 auto;
-
-  .not-found-icon,
-  .empty-icon {
-    font-size: 56px;
-    margin-bottom: 20px;
-    opacity: 0.45;
-  }
-
-  h2,
-  h3 {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--color-main-text, #111827);
-    margin: 0 0 12px;
-  }
-
-  p {
-    color: var(--color-text-maxcontrast, #6b7280);
-    font-size: 15px;
-    line-height: 1.55;
-    margin: 0 auto 26px;
-    max-width: 500px;
-  }
-}
-
-// ============================================================
-// RESPONSIVE
-// ============================================================
-@media (max-width: 768px) {
   .group-header {
-    padding: 22px 18px;
+	  display: flex;
+	  align-items: center;
+	  gap: 20px;
+	  padding: 28px 24px;
+	  background: var(--color-main-background, #fff);
+	  border-bottom: 1px solid var(--color-border, #e5e7eb);
+	  margin-bottom: 32px;
+	  flex-wrap: wrap;
 
-    .group-icon-badge {
-      width: 52px;
-      height: 52px;
-    }
+	  .group-icon-badge {
+		  width: 60px;
+		  height: 60px;
+		  border-radius: var(--ig-radius-lg);
+		  background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  box-shadow: 0 6px 16px rgba(74, 111, 143, 0.28);
+		  flex-shrink: 0;
 
-    .group-title {
-      font-size: 21px;
-    }
+		  .group-icon {
+			  width: 28px;
+			  height: 28px;
+			  color: white;
+		  }
+	  }
+
+	  .group-title-section {
+		  flex: 1;
+		  min-width: 0;
+
+		  .group-title {
+			  font-size: 26px;
+			  font-weight: 700;
+			  margin: 0;
+			  color: var(--color-main-text, #111827);
+			  letter-spacing: -0.015em;
+			  line-height: 1.2;
+		  }
+
+		  .group-subtitle {
+			  margin-top: 6px;
+
+			  p {
+				  color: var(--color-text-maxcontrast, #6b7280);
+				  font-size: 14.5px;
+				  line-height: 1.5;
+				  margin: 0 0 10px 0;
+				  max-width: 800px;
+			  }
+
+			  .inquiry-count-badge,
+			  .groups-count-badge {
+				  display: inline-flex;
+				  align-items: center;
+				  background: var(--ig-accent-soft);
+				  color: var(--ig-accent);
+				  padding: 4px 11px;
+				  border-radius: 999px;
+				  font-weight: 600;
+				  font-size: 12px;
+				  letter-spacing: 0.01em;
+			  }
+		  }
+	  }
+
+	  .header-right {
+		  flex-shrink: 0;
+	  }
   }
 
-  .breadcrumb-bar .breadcrumb-container {
-    padding: 0 16px;
-    gap: 4px;
-
-    .breadcrumb-home,
-    .breadcrumb-item {
-      font-size: 12px;
-      padding: 5px 8px;
-    }
-  }
-
+  // ============================================================
+  // CONTENT
+	  // ============================================================
   .content-area {
-    padding: 0 16px 32px;
+	  max-width: 1600px;
+	  margin: 0 auto;
+	  padding: 0 24px 48px;
   }
 
   .section-header {
-    flex-direction: column;
-    align-items: flex-start;
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  margin-bottom: 20px;
+	  gap: 16px;
+	  flex-wrap: wrap;
+
+	  h3 {
+		  font-size: 18px;
+		  font-weight: 600;
+		  letter-spacing: -0.005em;
+		  color: var(--color-main-text, #111827);
+		  margin: 0;
+	  }
+
+	  .create-button {
+		  background: var(--ig-accent);
+		  color: white;
+		  font-weight: 600;
+		  font-size: 13px;
+		  padding: 8px 16px;
+		  border: none;
+		  border-radius: var(--ig-radius-sm);
+		  box-shadow: var(--ig-shadow-sm);
+		  transition:
+			  transform 0.15s var(--ig-ease),
+		  box-shadow 0.15s var(--ig-ease),
+		  background 0.15s var(--ig-ease);
+
+		  &:hover {
+			  background: #3d5d78;
+			  transform: translateY(-1px);
+			  box-shadow: var(--ig-shadow-md);
+		  }
+
+		  &:active {
+			  transform: translateY(0);
+		  }
+	  }
   }
 
-  .groups-grid,
-  .types-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .inquiry-group-content {
+	  margin-top: 24px;
   }
 
-  // Disable the hover-only reveal on touch; show owner menu inline under card
+  .experience-container {
+	  margin-top: 24px;
+  }
+
+  // ============================================================
+  // GROUPS GRID + VIGNETTES — modernized
+	  // ============================================================
+  .groups-grid {
+	  display: grid;
+	  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	  gap: 20px;
+	  align-items: stretch;
+	  margin-bottom: 32px;
+  }
+
+  .group-vignette-wrapper {
+	  position: relative;
+	  display: flex;
+  }
+
   .vignette-container {
-    padding-bottom: 8px;
+	  position: relative;
+	  width: 100%;
+	  padding-bottom: 56px;
+	  display: flex;
+
+	  &:hover {
+		  .owner-menu-under {
+			  opacity: 1;
+			  visibility: visible;
+			  transform: translateY(0);
+			  pointer-events: auto;
+		  }
+	  }
   }
 
+  .group-vignette {
+	  position: relative;
+	  width: 100%;
+	  display: flex;
+	  flex-direction: column;
+	  min-height: 280px;
+	  background: var(--color-main-background, #fff);
+	  border: 1px solid var(--color-border, #e5e7eb);
+	  border-radius: var(--ig-radius-lg);
+	  overflow: hidden;
+	  cursor: pointer;
+	  box-shadow: var(--ig-shadow-xs);
+	  transition:
+		  transform 0.22s var(--ig-ease),
+	  box-shadow 0.22s var(--ig-ease),
+	  border-color 0.22s var(--ig-ease);
+
+	  &:hover {
+		  transform: translateY(-3px);
+		  border-color: var(--color-primary-element, #2196f3);
+		  box-shadow: var(--ig-shadow-lg);
+
+		  .vignette-cover img {
+			  transform: scale(1.04);
+		  }
+
+		  .view-group-button {
+			  color: var(--ig-accent);
+			  background: var(--ig-accent-soft);
+
+			  .chevron {
+				  transform: translateX(2px);
+			  }
+		  }
+	  }
+
+	  // ---------- Cover ----------
+	  .vignette-cover {
+		  height: 130px;
+		  overflow: hidden;
+		  position: relative;
+		  background: linear-gradient(135deg, #eef2f7 0%, #dbe3ec 100%);
+
+		  img {
+			  width: 100%;
+			  height: 100%;
+			  object-fit: cover;
+			  transition: transform 0.5s var(--ig-ease);
+		  }
+
+		  .vignette-cover-overlay {
+			  position: absolute;
+			  inset: 0;
+			  background: linear-gradient(to bottom, transparent 55%, rgba(15, 23, 42, 0.35));
+		  }
+	  }
+
+	  // ---------- Content ----------
+	  .vignette-content {
+		  flex: 1;
+		  padding: 18px 20px 16px;
+		  display: flex;
+		  flex-direction: column;
+		  gap: 10px;
+
+		  .vignette-icon {
+			  width: 38px;
+			  height: 38px;
+			  border-radius: 10px;
+			  background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			  color: white;
+			  box-shadow: 0 4px 10px rgba(74, 111, 143, 0.22);
+
+			  :deep(svg),
+			  :deep(img) {
+				  width: 18px;
+				  height: 18px;
+			  }
+		  }
+
+		  h4 {
+			  font-size: 16px;
+			  font-weight: 600;
+			  letter-spacing: -0.005em;
+			  margin: 0;
+			  color: var(--color-main-text, #111827);
+			  line-height: 1.35;
+			  display: -webkit-box;
+			  -webkit-line-clamp: 2;
+			  -webkit-box-orient: vertical;
+			  overflow: hidden;
+		  }
+
+		  .vignette-description {
+			  color: var(--color-text-maxcontrast, #6b7280);
+			  font-size: 13px;
+			  line-height: 1.5;
+			  margin: 0;
+			  display: -webkit-box;
+			  -webkit-line-clamp: 2;
+			  -webkit-box-orient: vertical;
+			  overflow: hidden;
+			  min-height: 39px; // 2 lines × 19.5px ≈ consistent height
+		  }
+
+		  // ---------- Stats chips ----------
+		  .vignette-stats {
+			  display: flex;
+			  gap: 6px;
+			  flex-wrap: wrap;
+			  margin-top: auto;
+
+			  .stat-item {
+				  display: inline-flex;
+				  align-items: center;
+				  gap: 5px;
+				  padding: 3px 9px;
+				  background: var(--color-background-dark, #f3f4f6);
+				  border-radius: 999px;
+				  font-size: 11.5px;
+				  font-weight: 500;
+				  color: var(--color-text-maxcontrast, #6b7280);
+				  line-height: 1.4;
+
+				  .stat-icon {
+					  font-size: 12px;
+					  line-height: 1;
+					  opacity: 0.9;
+				  }
+
+				  .stat-value {
+					  font-weight: 600;
+					  color: var(--color-main-text, #111827);
+				  }
+			  }
+		  }
+
+		  // ---------- CTA ----------
+		  .vignette-footer {
+			  margin-top: 6px;
+
+			  .view-group-button {
+				  width: 100%;
+				  display: inline-flex;
+				  align-items: center;
+				  justify-content: center;
+				  gap: 6px;
+				  padding: 8px 12px;
+				  background: transparent;
+				  color: var(--color-text-maxcontrast, #4b5563);
+				  border: none;
+				  border-radius: var(--ig-radius-sm);
+				  font-weight: 600;
+				  font-size: 12.5px;
+				  letter-spacing: 0.01em;
+				  cursor: pointer;
+				  transition:
+					  background 0.18s var(--ig-ease),
+				  color 0.18s var(--ig-ease);
+
+				  .chevron {
+					  transition: transform 0.18s var(--ig-ease);
+				  }
+			  }
+		  }
+	  }
+  }
+
+  // ============================================================
+  // OWNER MENU — floating pill card
+	  // ============================================================
   .owner-menu-under {
-    position: static;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    margin-top: 8px;
+	  position: absolute;
+	  top: calc(100% - 52px); // sits just under the card
+		  left: 0;
+	  right: 0;
+	  z-index: 50;
+	  opacity: 0;
+	  visibility: hidden;
+	  transform: translateY(-6px);
+	  transition:
+		  opacity 0.2s var(--ig-ease),
+	  transform 0.2s var(--ig-ease),
+	  visibility 0.2s var(--ig-ease);
 
-    .owner-menu-content {
-      flex-wrap: wrap;
+	  .owner-menu-content {
+		  display: flex;
+		  gap: 4px;
+		  padding: 6px;
+		  background: var(--color-main-background, #fff);
+		  border: 1px solid var(--color-border, #e5e7eb);
+		  border-radius: var(--ig-radius);
+		  box-shadow: var(--ig-shadow-md);
 
-      .menu-item {
-        flex: 1 0 auto;
-      }
-    }
+		  .menu-item {
+			  flex: 1;
+			  display: inline-flex;
+			  align-items: center;
+			  justify-content: center;
+			  gap: 6px;
+			  padding: 7px 8px;
+			  font-size: 11.5px;
+			  font-weight: 600;
+			  letter-spacing: 0.01em;
+			  border-radius: var(--ig-radius-sm);
+			  background: transparent;
+			  color: var(--color-text-maxcontrast, #4b5563);
+			  border: none;
+			  cursor: pointer;
+			  white-space: nowrap;
+			  transition:
+				  background 0.15s var(--ig-ease),
+			  color 0.15s var(--ig-ease);
+
+			  :deep(svg) {
+				  width: 13px;
+				  height: 13px;
+				  fill: currentColor;
+				  flex-shrink: 0;
+			  }
+
+			  &:hover {
+				  background: var(--color-background-hover, #f3f4f6);
+			  }
+
+			  &.modify:hover {
+				  color: #2563eb;
+				  background: rgba(37, 99, 235, 0.08);
+			  }
+
+			  &.delete:hover {
+				  color: #dc2626;
+				  background: rgba(220, 38, 38, 0.08);
+			  }
+
+			  &.archive:hover {
+				  color: #059669;
+				  background: rgba(5, 150, 105, 0.08);
+			  }
+		  }
+	  }
   }
-}
+
+  // ============================================================
+  // FAMILY BROWSER — type vignettes
+	  // ============================================================
+  .types-grid {
+	  display: grid;
+	  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	  gap: 20px;
+  }
+
+  .type-vignette {
+	  display: flex;
+	  flex-direction: column;
+	  background: var(--color-main-background, #fff);
+	  border: 1px solid var(--color-border, #e5e7eb);
+	  border-radius: var(--ig-radius-lg);
+	  padding: 22px;
+	  gap: 14px;
+	  box-shadow: var(--ig-shadow-xs);
+	  transition:
+		  transform 0.2s var(--ig-ease),
+	  box-shadow 0.2s var(--ig-ease),
+	  border-color 0.2s var(--ig-ease);
+
+	  &:hover {
+		  transform: translateY(-2px);
+		  border-color: var(--color-primary-element, #2196f3);
+		  box-shadow: var(--ig-shadow-md);
+	  }
+
+	  &__icon {
+		  width: 52px;
+		  height: 52px;
+		  border-radius: var(--ig-radius);
+		  background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  color: white;
+		  box-shadow: 0 4px 12px rgba(74, 111, 143, 0.22);
+
+		  :deep(svg),
+		  :deep(img) {
+			  width: 24px;
+			  height: 24px;
+		  }
+	  }
+
+	  &__body {
+		  flex: 1;
+		  min-width: 0;
+	  }
+
+	  &__title {
+		  margin: 0 0 6px;
+		  font-size: 17px;
+		  font-weight: 700;
+		  letter-spacing: -0.005em;
+		  color: var(--color-main-text, #111827);
+	  }
+
+	  &__desc {
+		  margin: 0 0 10px;
+		  font-size: 13px;
+		  color: var(--color-text-maxcontrast, #6b7280);
+		  line-height: 1.5;
+	  }
+
+	  &__count {
+		  display: inline-flex;
+		  align-items: center;
+		  background: var(--ig-accent-soft);
+		  color: var(--ig-accent);
+		  font-size: 11.5px;
+		  font-weight: 600;
+		  padding: 3px 10px;
+		  border-radius: 999px;
+	  }
+
+	  &__actions {
+		  display: flex;
+		  justify-content: flex-end;
+		  gap: 8px;
+	  }
+  }
+
+  // ============================================================
+  // LOADING
+	  // ============================================================
+  .loading-state {
+	  text-align: center;
+	  padding: 60px 20px;
+
+	  .spinner {
+		  width: 40px;
+		  height: 40px;
+		  border: 3px solid var(--color-border, #e5e7eb);
+		  border-top-color: var(--color-primary-element, #2196f3);
+		  border-radius: 50%;
+		  margin: 0 auto 18px;
+		  animation: spin 0.9s linear infinite;
+	  }
+
+	  p {
+		  color: var(--color-text-maxcontrast, #6b7280);
+		  font-size: 14px;
+	  }
+  }
+
+  @keyframes spin {
+	  to {
+		  transform: rotate(360deg);
+	  }
+  }
+
+  // ============================================================
+  // NOT FOUND / EMPTY
+	  // ============================================================
+  .not-found-state,
+  .empty-state {
+	  text-align: center;
+	  padding: 72px 20px;
+	  max-width: 1600px;
+	  margin: 0 auto;
+
+	  .not-found-icon,
+	  .empty-icon {
+		  font-size: 56px;
+		  margin-bottom: 20px;
+		  opacity: 0.45;
+	  }
+
+	  h2,
+	  h3 {
+		  font-size: 22px;
+		  font-weight: 600;
+		  color: var(--color-main-text, #111827);
+		  margin: 0 0 12px;
+	  }
+
+	  p {
+		  color: var(--color-text-maxcontrast, #6b7280);
+		  font-size: 15px;
+		  line-height: 1.55;
+		  margin: 0 auto 26px;
+		  max-width: 500px;
+	  }
+  }
+
+  // ============================================================
+  // VIEW TOOLBAR — experience + display switches under vignettes
+	  // ============================================================
+  .view-toolbar {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  gap: 16px;
+	  margin: 0 0 16px;
+	  padding: 8px 12px;
+	  background: var(--color-main-background);
+	  border: 1px solid var(--color-border);
+	  border-radius: var(--ig-radius);
+
+	  &__left,
+	  &__right {
+		  display: flex;
+		  align-items: center;
+		  gap: 8px;
+	  }
+  }
+
+  .experience-static {
+	  display: inline-flex;
+	  align-items: center;
+	  gap: 6px;
+	  padding: 5px 10px;
+	  font-size: 12.5px;
+	  font-weight: 500;
+	  color: var(--color-text-maxcontrast);
+	  background: var(--color-background-dark);
+	  border-radius: 7px;
+
+	  :deep(svg) {
+		  opacity: 0.7;
+	  }
+  }
+
+  // ============================================================
+  // RESPONSIVE
+	  // ============================================================
+  @media (max-width: 768px) {
+	  .view-toolbar {
+		  flex-wrap: wrap;
+		  padding: 8px;
+
+		  &__left,
+		  &__right {
+			  width: 100%;
+			  justify-content: flex-start;
+		  }
+	  }
+
+	  .group-header {
+		  padding: 22px 18px;
+
+		  .group-icon-badge {
+			  width: 52px;
+			  height: 52px;
+		  }
+
+		  .group-title {
+			  font-size: 21px;
+		  }
+	  }
+
+	  .breadcrumb-bar .breadcrumb-container {
+		  padding: 0 16px;
+		  gap: 4px;
+
+		  .breadcrumb-home,
+		  .breadcrumb-item {
+			  font-size: 12px;
+			  padding: 5px 8px;
+		  }
+	  }
+
+	  .content-area {
+		  padding: 0 16px 32px;
+	  }
+
+	  .section-header {
+		  flex-direction: column;
+		  align-items: flex-start;
+	  }
+
+	  .groups-grid,
+	  .types-grid {
+		  grid-template-columns: 1fr;
+		  gap: 16px;
+	  }
+
+	  // Disable the hover-only reveal on touch; show owner menu inline under card
+		  .vignette-container {
+		  padding-bottom: 8px;
+	  }
+
+	  .owner-menu-under {
+		  position: static;
+		  opacity: 1;
+		  visibility: visible;
+		  transform: none;
+		  margin-top: 8px;
+
+		  .owner-menu-content {
+			  flex-wrap: wrap;
+
+			  .menu-item {
+				  flex: 1 0 auto;
+			  }
+		  }
+	  }
+  }
 </style>

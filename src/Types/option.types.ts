@@ -175,7 +175,6 @@ export interface FamilyFeatures {
   [key: string]: unknown
 }
 
-// Types/option.types.ts — replace the whole OptionFamily interface
 export interface OptionFamily {
   // Backend-only fields (present on server objects, absent on client-built ones)
   id?: number
@@ -191,6 +190,7 @@ export interface OptionFamily {
   features?: FamilyFeatures | string[]
   rules?: string[]
   actions?: string[] | Array<{ key: string; label: string; icon?: string }>
+  statuses?: FamilyStatus[] | string[]
 
   // Client-side aliases (already there)
   key?: string

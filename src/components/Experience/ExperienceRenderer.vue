@@ -41,7 +41,7 @@
           `zone-${zoneKey}`,
           `content-${zone.content || 'inquiries'}`,
           `display-${zone.display?.type || 'cards'}`,
-          { 'is-empty': !hasZoneData(zone, String(zoneKey)) || !isZoneRenderable(zone) },
+          { 'is-empty': !shouldRenderZone(zone, String(zoneKey)) || !isZoneRenderable(zone) },
         ]"
         :style="getZoneStyle(zone)"
       >
@@ -60,7 +60,7 @@
         <!-- Zone body -->
         <div class="zone-content">
           <!-- Render component when data exists AND zone is renderable -->
-          <template v-if="hasZoneData(zone, String(zoneKey)) && isZoneRenderable(zone)">
+          <template v-if="shouldRenderZone(zone, String(zoneKey)) && isZoneRenderable(zone)">
             <component
               :is="getZoneComponent(zone)"
               v-bind="getZoneProps(zone, String(zoneKey))"
@@ -343,6 +343,8 @@ const props = defineProps<{
   showResources?: boolean
   showComments?: boolean
   tools?: string[]
+  activeTool?: string
+  displayMode?: DisplayMode
   selectedInquiry?: Inquiry | null
   selectedGroup?: InquiryGroup | null
 }>()
@@ -545,11 +547,10 @@ const filteredArchitecture = computed(() => {
 const zoneDataCache = computed(() => {
   const arch = filteredArchitecture.value
   const cache: Record<string, any[]> = {}
-  for (const key in arch) {
-    cache[key] = computeZoneData(arch[key])
-  }
+  for (const key in arch) cache[key] = getZoneData(arch[key])
   return cache
 })
+
 
 // ============================================================
 // EFFECTIVE ARCHITECTURE (camelCase)
@@ -558,7 +559,7 @@ const zoneDataCache = computed(() => {
   let arch: Record<string, any> = {}
   try {
     const exp = props.experience || 'dashboard'
-    const groupDefault = props.uiConfig?.defaultExperience || 'dashboard'
+    const groupDefault = props.uiConfig?.defaultExperience || props.uiConfig?.experience || 'dashboard'
 
     const hasCustomArch =
       props.displayArchitecture && Object.keys(props.displayArchitecture).length > 0
@@ -658,13 +659,13 @@ function getZoneGridPosition(zone: any): GridPosition | null {
 
 function getColumns(zone: any): number {
   const display = zone.display || { type: 'cards' }
-  return display.options?.cardsPerRow || 3
+  return display.options?.cardsPerRow || display.cardsPerRow || 3
 }
 
 // ============================================================
 // ZONE DATA HELPERS
 // ============================================================
-/* function getZoneData(zone: any): any[] {
+function getZoneData(zone: any): any[] {
   if (!zone) return []
   const content = zone.content || 'inquiries'
   const scope = zone.scope || { source: 'all' }
@@ -685,30 +686,8 @@ function getColumns(zone: any): number {
   // Everything else: shared filter / sort / pagination.
   // zone.filter + zone.scope.sort + zone.scope.pagination.
   return processZoneData(raw, zone)
-} */
+} 
 
-function getZoneData(zone: any, zoneKey?: string): any[] {
-  if (!zone) return []
-  if (zoneKey) {
-    const cached = zoneDataCache.value[zoneKey]
-    if (cached) return cached
-  }
-  return computeZoneData(zone)
-}
-
-function computeZoneData(zone: any): any[] {
-  if (!zone) return []
-  const content = zone.content || 'inquiries'
-  const scope = zone.scope || { source: 'all' }
-  const source = scope.source || 'all'
-  const raw = fetchRawData(content, source, scope)
-
-  if (scope.sort?.field === 'trending') {
-    /* … */
-  }
-  if (content === 'options') return processOptionZoneData(raw, zone)
-  return processZoneData(raw, zone)
-}
 
 /**
  * Options zone resolver.
@@ -754,10 +733,14 @@ function processOptionZoneData(options: Option[], zone: any): Option[] {
 //// FETCH RAW DATA
 
 function fetchRawData(content: string, source: string, scope: any = {}) {
+console.log(" CONTENT FETCH RAW DATa ", content)
+console.log(" SOURCE FETCH RAW DATA ", source)
+console.log(" SCOPE FETCH RAW DATA ", scope)
   switch (content) {
     case 'inquiry_groups': {
       const store = useInquiryGroupsStore()
       let groups: InquiryGroup[] = []
+
 
       if (source === 'children' && props.group) {
         groups = store.byParentId(props.group.id) || []
@@ -774,7 +757,7 @@ function fetchRawData(content: string, source: string, scope: any = {}) {
       }
       return groups
     }
-
+   
     case 'inquiries': {
       let list: Inquiry[] = []
       if (source === 'selected_inquiry') {
@@ -903,11 +886,13 @@ function hasZoneData(zone: any, zoneKey?: string): boolean {
   switch (content) {
     case 'inquiry_groups':
     case 'inquiries':
-    case 'options':
     case 'resources':
     case 'messages':
     case 'comments':
     case 'statistics':
+    case 'options':
+     if (zone.display?.type === 'tool') return getSelectedInquiry() !== null
+  return data.length > 0
     case 'activity':
       return data.length > 0
     case 'inquiry':
@@ -915,6 +900,26 @@ function hasZoneData(zone: any, zoneKey?: string): boolean {
     default:
       return data.length > 0
   }
+}
+
+/**
+ * Whether the zone's component should be mounted.
+ *
+ * Differs from `hasZoneData` only for tool zones: a tool (vote, kanban,
+ * timeline, …) is still useful with zero items — it renders its own
+ * controls / empty scaffolding — so we mount it regardless of length.
+ * `isZoneRenderable` still gates tools that require a missing selected
+ * inquiry/group, so the empty state remains when no context is available.
+ */
+function shouldRenderZone(zone: any, zoneKey?: string): boolean {
+  if (!zone) return false
+  
+  const hide = zone.display?.options?.hideWhenEmpty
+
+  if (hide && !hasZoneData(zone, zoneKey)) return false
+
+  if (zone.display?.type === 'tool') return true
+  return hasZoneData(zone, zoneKey)
 }
 
 /**
@@ -1134,11 +1139,21 @@ function getEmptyHint(zone: any): string {
 // ============================================================
 function getZoneComponent(zone: any) {
   if (!zone) return null
-
+  
   const content = zone.content || 'inquiries'
   const display = zone.display || { type: 'cards' }
-  const type = display.type || 'cards'
   const tool = display.tool
+
+
+   // 1. If a specific tool is active (Vote, Kanban) AND we are looking at inquiries
+  if (props.activeTool && content === 'inquiries') {
+    return getToolComponent(props.activeTool, content)
+  }
+  // 2. If we are looking at inquiries and a global displayMode is active, use it
+  let type = zone.display?.type || 'cards'
+  if (props.displayMode && content === 'inquiries') {
+    type = props.displayMode
+  }
 
   // Resolve the tool component lazily — only the `tool` display type
   // actually consumes it. Resolving it for every zone (as the map used
@@ -1172,6 +1187,13 @@ function getZoneComponent(zone: any) {
       grid: FamilyGroupTypesWidget,
       list: FamilyGroupTypesWidget,
       my_spaces: MySpacesWidget,
+    },
+
+     inquiry: {
+    cards: InquiryCard,
+    list:  InquiryListItem,
+    feed:  InquiryFeed,
+    tool:  InquiryCard,
     },
 
     // ---- Inquiries (plural) ----
@@ -1235,6 +1257,7 @@ function getZoneComponent(zone: any) {
     // Content-specific fallback rather than a global InquiryCard fallback
     const fallbacks: Record<string, any> = {
       inquiry_groups: InquiryGroupCatalog,
+      inquiry: InquiryCard,
       inquiries: InquiryCard,
       options: OptionToolDisplay,
       resources: SideBarTabResources,
@@ -1446,7 +1469,7 @@ function getZoneProps(zone: any, zoneKey?: string) {
     }
 
     case 'inquiries': {
-      const inquiriesData = data.length > 0 ? data : props.inquiries || []
+      const inquiriesData = data || []
       const itemList = toItems(inquiriesData as Inquiry[])
       return {
         ...baseProps,
@@ -1951,14 +1974,16 @@ function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
     case 'inquiries':
     case 'inquiry': {
       if (['click', 'view', 'viewInquiry'].includes(eventName)) {
-        if (directOpen) {
-          onNavigate({ type: 'inquiry', inquiry: payload })
-        } else {
-          handleInquiryClick(payload, zoneKey)
-        }
-      } else if (eventName === 'viewAll') {
-        onNavigate({ type: 'inquiries-all', zone: zoneKey })
-      }
+  if (directOpen) {
+    executeInquiryAction(
+      payload,
+      interaction as { action?: InteractionAction; target?: InteractionTarget },
+      zoneKey
+    )
+  } else {
+    handleInquiryClick(payload, zoneKey)
+  }
+}
       return
     }
 

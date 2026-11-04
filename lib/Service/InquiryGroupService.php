@@ -153,8 +153,10 @@ class InquiryGroupService
 	): InquiryGroup {
 		try {
 			$inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
+			
+			$this->logger->error('UPDATE GROUP SERVICE', ['proctected' => $protected]);
 
-			if (!$inquiryGroup->getAllowEdit() && !$this->userSession->isAdmin()) {
+			if (!$this->userSession->isAdmin()) {
 				throw new ForbiddenException('You do not have permission to edit this inquiry group');
 			}
 
@@ -236,7 +238,7 @@ class InquiryGroupService
 		try {
 			$inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
 
-			if (!$inquiryGroup->getAllowEdit() && !$this->userSession->isAdmin()) {
+			if (!$this->userSession->isAdmin()) {
 				throw new ForbiddenException('You do not have permission to delete this inquiry group');
 			}
 
@@ -259,7 +261,7 @@ class InquiryGroupService
 			throw new NotFoundException('Inquiry group not found');
 		}
 
-		if (!$inquiryGroup->getAllowEdit() && !$this->userSession->isAdmin()) {
+		if (!$this->userSession->isAdmin()) {
 			throw new ForbiddenException('You do not have permission to delete this inquiry group');
 		}
 
@@ -286,10 +288,6 @@ class InquiryGroupService
 			$inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
 		} catch (DoesNotExistException $e) {
 			throw new NotFoundException('Inquiry group not found');
-		}
-
-		if (!$inquiryGroup->getAllowEdit() && !$this->userSession->isAdmin()) {
-			throw new ForbiddenException('You do not have permission to reorder inquiries in this group');
 		}
 
 		$this->inquiryGroupMapper->updateInquiryOrder($inquiryGroupId, $inquiryIds);
@@ -418,7 +416,6 @@ class InquiryGroupService
         throw new NotFoundException('Inquiry group not found');
     }
 
-    // enrich first so allowEdit / permissions are computed from the loaded row
     $this->enrichInquiryGroup($inquiryGroup, false, false);
 
     // a user attaching their own inquiry only needs "add inquiries",
@@ -461,10 +458,6 @@ class InquiryGroupService
 
 		$this->enrichInquiryGroup($inquiryGroup, false, false);
 
-		if (!$inquiryGroup->getAllowEdit() && !$this->userSession->isAdmin()) {
-			throw new ForbiddenException('You do not have permission to remove inquiries from this group');
-		}
-
 		if (!$inquiryGroup->hasInquiry($inquiryId)) {
 			throw new NotFoundException('Inquiry not found in group');
 		}
@@ -503,14 +496,12 @@ class InquiryGroupService
 	}
 
 	private function setBasicPermissions(InquiryGroup $inquiryGroup): void
-	{
-		$currentUser = $this->userSession->getCurrentUser();
-		$isOwner = $currentUser && $inquiryGroup->getOwner() === $this->userSession->getCurrentUserId();
-		$isAdmin = $this->userSession->isAdmin();
-
-		$allowEdit = $isOwner || $isAdmin;
-		$inquiryGroup->setAllowEdit($allowEdit);
+{
+    $currentUser = $this->userSession->getCurrentUser();
+    $isOwner = $currentUser && $inquiryGroup->getOwner() === $this->userSession->getCurrentUserId();
+    $isAdmin = $this->userSession->isAdmin();
 	}
+
 
 	/**
 	 * @return InquiryGroup[]

@@ -349,6 +349,7 @@ updateModerationStatus(
     if (!updateData.key || updateData.key.trim() === '') {
       throw new Error('Key cannot be null or empty for misc field update')
     }
+    console.log(" WE UPDAT THE MIS FIEILD ", updateData)
 
     return httpInstance.request({
       method: 'PUT',

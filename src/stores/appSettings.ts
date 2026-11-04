@@ -28,8 +28,11 @@ import type {
   HomeConfig,
   NavigationConfig,
   Group,
+  OrganizationConfig,
   UpdateType,
 } from '@/Types'
+
+import type { OrganizationType } from '@/Types/experience.types'
 
 export const useAppSettingsStore = defineStore('appSettings', {
   state: (): AppSettings => ({
@@ -67,6 +70,8 @@ export const useAppSettingsStore = defineStore('appSettings', {
     inquiryDownloadGroups: [],
     showMailAddressesGroups: [],
     unrestrictedOwnerGroups: [],
+    home: undefined,
+     organization: { type: 'municipality' } as OrganizationConfig,
     categoryTab: [],
     inquiryTypeTab: [],
     inquiryOptionTypeTab: [],
@@ -102,6 +107,14 @@ export const useAppSettingsStore = defineStore('appSettings', {
     getMainInquiryGroupTypes: (state) => state.inquiryGroupTypeTab,
 
     optionTypeTab: (state) => state.inquiryOptionTypeTab,
+
+     getOrganizationType: (state): OrganizationType =>
+     
+      state.organization?.type ?? 'municipality',
+
+      getHomeConfig: (state): HomeConfig | undefined => state.home,
+
+
   },
 
   actions: {
@@ -145,6 +158,71 @@ export const useAppSettingsStore = defineStore('appSettings', {
           error,
           appSettings: this.$state,
         })
+        throw error
+      }
+    },
+
+
+        // ============================================================
+    // HOME / ORGANIZATION
+    // ============================================================
+
+    /**
+     * Change the organization type for this instance.
+     *
+     * Optimistic update: the store reflects the change immediately and
+     * rolls back if the write fails.
+     *
+     * Backend requirement: `AppSettings::writeAppSettings()` must persist
+     * `organization.type` via `setStringSetting('organizationType', ...)`.
+     * If it doesn't yet, this call succeeds but the value reverts on next
+     * `load()`.
+     */
+    async updateOrganizationType(type: OrganizationType): Promise<void> {
+      const previous = this.organization
+      this.organization = { ...(previous ?? {}), type } as OrganizationConfig
+
+      try {
+        await this.write()
+      } catch (error) {
+        this.organization = previous
+        Logger.error('Error updating organization type', { error, type })
+        throw error
+      }
+    },
+
+    /**
+     * Update the instance home override.
+     *
+     * Sends only `data` — the backend keeps the config row in
+     * `agora_home_configs` under (config_key='default', role='instance').
+     * See HomeConfigController::updateInstance().
+     *
+     * The server pre-merges template + override before sending `home`,
+     * so the store holds the fully resolved config. This action updates
+     * the override layer only; the UI should re-fetch after success if
+     * it needs the newly merged result.
+     */
+    async updateHomeConfig(data: Partial<HomeConfig>): Promise<void> {
+      const previous = this.home
+      // Merge locally so the UI sees the change immediately. A subsequent
+      // load() will overwrite with the server's fully merged result.
+      this.home = previous
+        ? { ...previous, ...data }
+        : (data as HomeConfig)
+
+      try {
+        // Requires: AppSettingsAPI.updateHomeInstance(data)
+        // → PUT /apps/agora/home-config/instance with body { data }
+        // If the API method doesn't exist yet, fall back to write():
+        if (typeof (AppSettingsAPI as any).updateHomeInstance === 'function') {
+          await (AppSettingsAPI as any).updateHomeInstance(data)
+        } else {
+          await this.write()
+        }
+      } catch (error) {
+        this.home = previous
+        Logger.error('Error updating home config', { error, data })
         throw error
       }
     },

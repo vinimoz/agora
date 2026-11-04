@@ -12,9 +12,7 @@ namespace OCA\Agora\Controller;
 use OCA\Agora\AppConstants;
 use OCA\Agora\Attributes\ShareTokenRequired;
 use OCA\Agora\Model\SentResult;
-use OCA\Agora\Model\Sequence;
 use OCA\Agora\Model\Settings\AppSettings;
-use OCA\Agora\Model\SimpleOption;
 use OCA\Agora\Service\CommentService;
 use OCA\Agora\Service\MailService;
 use OCA\Agora\Service\OptionService;
@@ -26,6 +24,8 @@ use OCA\Agora\Service\SubscriptionService;
 use OCA\Agora\Service\SystemService;
 use OCA\Agora\Service\SupportService;
 use OCA\Agora\Service\WatchService;
+use OCA\Agora\Service\SupportEngineService;
+use OCA\Agora\Service\SupportResultService;
 use OCA\Agora\UserSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -63,7 +63,9 @@ class PublicController extends BaseController
         private AttachmentService $attachmentService,
         private SubscriptionService $subscriptionService,
         private SystemService $systemService,
-        private SupportService $supportService,
+	private SupportService $supportService,
+	    private SupportEngineService $engineService,
+    private SupportResultService $resultService,
         private WatchService $watchService,
     ) {
         parent::__construct($appName, $request);
@@ -124,7 +126,8 @@ class PublicController extends BaseController
     {
         return $this->response(
             fn () => [
-                'token' => $this->request->getParam('token'),
+		    'token' => $this->userSession->getShare()->getToken(),
+
                 'currentUser' => $this->userSession->getCurrentUser(),
                 'appPermissions' => $this->appSettings->getPermissionsArray(),
                 'appSettings' => $this->appSettings->getAppSettings(),
@@ -187,25 +190,19 @@ class PublicController extends BaseController
         );
     }
 
-    /**
-     * Delete current user's supports
-     */
     #[PublicPage]
-    #[ShareTokenRequired]
-    #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
-    #[FrontpageRoute(verb: 'DELETE', url: '/s/{token}/user')]
-    public function deleteUser(): JSONResponse
-    {
-        $inquiryId = $this->userSession->getShare()->getInquiryId();
-        $this->supportService->deleteUserFromInquiry($inquiryId);
-        return $this->response(
-            fn () => [
-                'inquiry' => $this->inquiryService->get($inquiryId),
-                'options' => $this->optionService->listByTargetId($inquiryId),
-                'supports' => $this->supportService->list($inquiryId)
-            ]
-        );
-    }
+#[ShareTokenRequired]
+#[FrontpageRoute(verb: 'DELETE', url: '/s/{token}/user')]
+public function deleteUser(): JSONResponse
+{
+    $inquiryId = $this->userSession->getShare()->getInquiryId();
+    $this->supportService->deleteUserFromInquiry($inquiryId);
+    return $this->response(fn () => [
+        'inquiry'  => $this->inquiryService->get($inquiryId),
+        'options'  => $this->optionService->listByTargetId($inquiryId),
+        'supports' => $this->supportService->list($inquiryId, false),
+    ]);
+}
 
     /**
      * Delete current user's orphaned supports
@@ -221,7 +218,7 @@ class PublicController extends BaseController
         return $this->response(
             fn () => [
                 'inquiry' => $this->inquiryService->get($inquiryId),
-                'options' => $this->optionService->list($inquiryId),
+                'options' => $this->optionService->listByTargetId($inquiryId),
                 'supports' => $this->supportService->list($inquiryId)
             ]
         );
@@ -247,32 +244,24 @@ class PublicController extends BaseController
      * Add options
   *
      * @param array $option     Options text for text inquiry
-     * @param array $sequence   Sequence of the option
-     * @param bool  $supportYes Support yes
      */
     #[PublicPage]
-    #[ShareTokenRequired]
-    #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
-    #[FrontpageRoute(verb: 'POST', url: '/s/{token}/option')]
-    public function addOption(
-        array $option,
-        ?array $sequence = null,
-    ): JSONResponse {
-        $inquiryId = $this->userSession->getShare()->getInquiryId();
-        return $this->response(
-            fn () => array_merge(
-                $this->optionService->addWithSequenceAndAutoSupport(
-                    $inquiryId,
-                    SimpleOption::fromArray($option),
-                    $supportYes,
-                    Sequence::fromArray($sequence),
-                ),
-                ['options' => $this->optionService->listByTargetId($inquiryId)],
-                ['supports' => $this->supportService->list($inquiryId)],
+#[ShareTokenRequired]
+#[FrontpageRoute(verb: 'POST', url: '/s/{token}/option')]
+public function addOption(array $option): JSONResponse
+{
+    $inquiryId = $this->userSession->getShare()->getInquiryId();
+    return $this->response(
+        fn () => [
+            'option'   => $this->optionService->create(
+                array_merge($option, ['targetId' => $inquiryId])
             ),
-            Http::STATUS_CREATED
-        );
-    }
+            'options'  => $this->optionService->listByTargetId($inquiryId),
+            'supports' => $this->supportService->list($inquiryId, false),
+        ],
+        Http::STATUS_CREATED
+    );
+}
 
     /**
      * Delete option
@@ -305,7 +294,7 @@ class PublicController extends BaseController
     {
         return $this->response(
             fn () => [
-                'option' => $this->optionService->delete($optionId, true)
+                'option' => $this->optionService->delete($optionId,true)
             ]
         );
     }
@@ -316,24 +305,29 @@ class PublicController extends BaseController
      * @param int    $optionId inquiry id
      * @param string $setTo    Answer string
      */
-    #[PublicPage]
-    #[ShareTokenRequired]
-    #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
-    #[FrontpageRoute(verb: 'PUT', url: '/s/{token}/support')]
-    public function setSupport(int $optionId, string $setTo): JSONResponse
-    {
-        $option = $this->optionService->get($optionId);
-        $support = $this->supportService->set($optionId, $setTo);
-        return $this->response(
-            fn () => [
-                'support' => $support,
-                'inquiry' => $this->inquiryService->get($option->getInquiryId()),
-                'options' => $this->optionService->listByTargetId($option->getInquiryId()),
-                'supports' => $this->supportService->list($option->getInquiryId())
-            ]
-        );
-    }
+#[PublicPage]
+#[ShareTokenRequired]
+#[FrontpageRoute(verb: 'PUT', url: '/s/{token}/support')]
+public function setSupport(
+    int $optionId = 0,
+    mixed $value = null,
+    int $weight = 1,
+    ?int $engineId = null,
+): JSONResponse {
+    $inquiryId = $this->userSession->getShare()->getInquiryId();
+    $userId    = $this->userSession->getCurrentUserId();
 
+    return $this->response(
+        fn () => [
+            'support'   => $this->supportService->addSupport(
+                $inquiryId, $userId, $value, $optionId, $weight, $engineId
+            ),
+            'inquiry'   => $this->inquiryService->get($inquiryId),
+            'supports'  => $this->supportService->list($inquiryId, false),
+            'options'   => $this->optionService->listByTargetId($inquiryId),
+        ]
+    );
+}
     /**
      * Get Comments
      */
@@ -375,16 +369,13 @@ class PublicController extends BaseController
     #[PublicPage]
     #[ShareTokenRequired]
     #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
-    #[FrontpageRoute(verb: 'DELETE', url: '/s/{token}/support/{commentId}')]
-    public function deleteSupport(int $supportId): JSONResponse
-    {
-        return $this->response(
-            fn () => [
-                'comment' => $this->supportService->delete($supportId)
-            ]
-        );
-    }
-
+#[FrontpageRoute(verb: 'DELETE', url: '/s/{token}/support/{supportId}')]
+public function deleteSupport(int $supportId): JSONResponse
+{
+    return $this->response(
+        fn () => ['support' => $this->supportService->delete($supportId)]
+    );
+}
     /**
        /**
      * Delete Comment
@@ -546,6 +537,28 @@ class PublicController extends BaseController
             ]
         );
     }
+
+    #[PublicPage]
+#[ShareTokenRequired]
+#[FrontpageRoute(verb: 'GET', url: '/s/{token}/engines')]
+public function getEngines(): JSONResponse
+{
+    $inquiryId = $this->userSession->getShare()->getInquiryId();
+    return $this->response(fn () => [
+        'engines' => $this->engineService->getEnginesByInquiry($inquiryId),
+        'active'  => $this->engineService->getActiveEngine('inquiry', $inquiryId),
+    ]);
+}
+
+#[PublicPage]
+#[ShareTokenRequired]
+#[FrontpageRoute(verb: 'GET', url: '/s/{token}/engines/{engineId}/results')]
+public function getEngineResults(int $engineId): JSONResponse
+{
+    return $this->response(fn () => [
+        'results' => $this->resultService->getResultsByEngine($engineId),
+    ]);
+}
 
     /**
      * Set EmailAddress

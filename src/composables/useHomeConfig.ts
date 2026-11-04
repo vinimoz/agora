@@ -17,7 +17,7 @@ export function useHomeConfig() {
     if (candidate && (ORGANIZATION_TYPES as readonly string[]).includes(candidate)) {
       return candidate as OrganizationType
     }
-    return 'municipality'
+    return 'university'
   })
 
   /** The selected template — useful for admin previews ("what would a university see?") */

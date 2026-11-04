@@ -195,45 +195,45 @@ class InquiryGroupController extends BaseController
 	    }
 
 
-            return $this->response(
-                fn () => [
-                    'inquiryGroup' => $this->inquiryGroupService->updateGroup(
-                        $inquiryGroupId,
-                        $data['title'] ?? null,
-                        $data['titleExt'] ?? null,
-                        $data['description'] ?? null,
-                        $data['type'] ?? null,
-                        $data['parentId'] ?? null,
-                        $data['protected'] ?? null,
-                        $data['ownedGroup'] ?? null,
-                        $data['groupStatus'] ?? null,
-                        $data['publicationStatus'] ?? null,
-			$data['expire'] ?? null,
-			$data['miscFields'] ?? null,
-			$data['configuration']['visibility'] ?? null,
-                    	$visibilityGroups,
-                    	$visibilityUsers 
-                    ),
-                ]
-            );
-        } catch (\InvalidArgumentException $e) {
-            return new JSONResponse(
-                ['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],
-                Http::STATUS_BAD_REQUEST
-            );
-        } catch (\Exception $e) {
-            $this->logger->critical(
-                'Server error updating inquiry group',
-                [
-                    'exception' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]
-            );
-            return new JSONResponse(
-                ['error' => 'SERVER_ERROR', 'message' => 'An unexpected error occurred'],
-                Http::STATUS_INTERNAL_SERVER_ERROR
-            );
-        }
+	    $this->logger->error('UPDATE GROUP', ['data' => $data]);
+	    return $this->response(
+		    fn () => [
+			    'inquiryGroup' => $this->inquiryGroupService->updateGroup(
+				    inquiryGroupId: $inquiryGroupId,
+				    title: $data['title'] ?? null,
+				    titleExt: $data['titleExt'] ?? null,
+				    description: $data['description'] ?? null,
+				    type: $data['type'] ?? null,
+				    parentId: $data['parentId'] ?? null,
+				    protected: $data['protected'] ?? null,
+				    ownedGroup: $data['ownedGroup'] ?? null,
+				    groupStatus: $data['groupStatus'] ?? null,
+				    expire: $data['expire'] ?? null,
+				    miscFields: $data['miscFields'] ?? null,
+				    visibility: $data['configuration']['visibility'] ?? null,
+				    visibilityGroups: $visibilityGroups,
+				    visibilityUsers: $visibilityUsers,
+			    ),
+		    ]
+	    );
+	} catch (\InvalidArgumentException $e) {
+		return new JSONResponse(
+			['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],
+			Http::STATUS_BAD_REQUEST
+		);
+	} catch (\Exception $e) {
+		$this->logger->critical(
+			'Server error updating inquiry group',
+			[
+				'exception' => $e->getMessage(),
+				'trace' => $e->getTraceAsString()
+			]
+		);
+		return new JSONResponse(
+			['error' => 'SERVER_ERROR', 'message' => 'An unexpected error occurred'],
+			Http::STATUS_INTERNAL_SERVER_ERROR
+		);
+	}
     }
 
     /**
@@ -247,11 +247,11 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'DELETE', url: '/inquirygroup/delete/{inquiryGroupId}')]
     public function deleteGroup(int $inquiryGroupId): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'success' => $this->inquiryGroupService->deleteGroup($inquiryGroupId),
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'success' => $this->inquiryGroupService->deleteGroup($inquiryGroupId),
+		    ]
+	    );
     }
 
     /**
@@ -266,12 +266,12 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'POST', url: '/inquirygroup/new/inquiry/{inquiryId}')]
     public function add(int $inquiryId, string $inquiryGroupName = ''): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'inquiryGroup' => $this->inquiryGroupService->addInquiryToInquiryGroup($inquiryId, inquiryGroupName: $inquiryGroupName),
-                'inquiry' => $this->inquiryService->get($inquiryId),
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'inquiryGroup' => $this->inquiryGroupService->addInquiryToInquiryGroup($inquiryId, inquiryGroupName: $inquiryGroupName),
+			    'inquiry' => $this->inquiryService->get($inquiryId),
+		    ]
+	    );
     }
 
     /**
@@ -286,12 +286,12 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'PUT', url: '/inquirygroup/{inquiryGroupId}/inquiry/{inquiryId}')]
     public function addInquiry(int $inquiryId, int $inquiryGroupId): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'inquiryGroup' => $this->inquiryGroupService->addInquiryToInquiryGroup($inquiryId, $inquiryGroupId),
-                'inquiry' => $this->inquiryService->get($inquiryId),
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'inquiryGroup' => $this->inquiryGroupService->addInquiryToInquiryGroup($inquiryId, $inquiryGroupId),
+			    'inquiry' => $this->inquiryService->get($inquiryId),
+		    ]
+	    );
     }
 
     /**
@@ -307,16 +307,16 @@ class InquiryGroupController extends BaseController
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquirygroup/{inquiryGroupId}/update')]
     public function update(
-        int $inquiryGroupId,
-        string $name,
-        string $titleExt,
-        ?string $description,
+	    int $inquiryGroupId,
+	    string $name,
+	    string $titleExt,
+	    ?string $description,
     ): JSONResponse {
-        return $this->response(
-            fn () => [
-                'inquiryGroup' => $this->inquiryGroupService->updateInquiryGroup($inquiryGroupId, $name, $titleExt, $description),
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'inquiryGroup' => $this->inquiryGroupService->updateInquiryGroup($inquiryGroupId, $name, $titleExt, $description),
+		    ]
+	    );
     }
 
     /**
@@ -331,12 +331,12 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'DELETE', url: '/inquirygroup/{inquiryGroupId}/inquiry/{inquiryId}')]
     public function removeInquiry(int $inquiryId, int $inquiryGroupId): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'inquiryGroup' => $this->inquiryGroupService->removeInquiryFromInquiryGroup($inquiryId, $inquiryGroupId),
-                'inquiry' => $this->inquiryService->get($inquiryId),
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'inquiryGroup' => $this->inquiryGroupService->removeInquiryFromInquiryGroup($inquiryId, $inquiryGroupId),
+			    'inquiry' => $this->inquiryService->get($inquiryId),
+		    ]
+	    );
     }
 
     /**
@@ -351,25 +351,25 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'PUT', url: '/inquirygroup/{inquiryGroupId}/reorder')]
     public function reorderInquiries(int $inquiryGroupId): JSONResponse
     {
-        try {
-            $rawData = $this->request->getParams('data');
-            $data = $rawData;
+	    try {
+		    $rawData = $this->request->getParams('data');
+		    $data = $rawData;
 
-            if (!isset($data['inquiryIds']) || !is_array($data['inquiryIds'])) {
-                throw new \InvalidArgumentException('inquiryIds array is required');
-            }
+		    if (!isset($data['inquiryIds']) || !is_array($data['inquiryIds'])) {
+			    throw new \InvalidArgumentException('inquiryIds array is required');
+		    }
 
-            return $this->response(
-                fn () => [
-                    'inquiryGroup' => $this->inquiryGroupService->reorderInquiries($inquiryGroupId, $data['inquiryIds']),
-                ]
-            );
-        } catch (\InvalidArgumentException $e) {
-            return new JSONResponse(
-                ['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],
-                Http::STATUS_BAD_REQUEST
-            );
-        }
+		    return $this->response(
+			    fn () => [
+				    'inquiryGroup' => $this->inquiryGroupService->reorderInquiries($inquiryGroupId, $data['inquiryIds']),
+			    ]
+		    );
+	    } catch (\InvalidArgumentException $e) {
+		    return new JSONResponse(
+			    ['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],
+			    Http::STATUS_BAD_REQUEST
+		    );
+	    }
     }
 
     /**
@@ -384,25 +384,25 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'PUT', url: '/inquirygroup/{inquiryGroupId}/change-owner')]
     public function changeOwner(int $inquiryGroupId): JSONResponse
     {
-        try {
-            $rawData = $this->request->getParams('data');
-            $data = $rawData;
+	    try {
+		    $rawData = $this->request->getParams('data');
+		    $data = $rawData;
 
-            if (empty($data['newOwnerId'])) {
-                throw new \InvalidArgumentException('newOwnerId is required');
-            }
+		    if (empty($data['newOwnerId'])) {
+			    throw new \InvalidArgumentException('newOwnerId is required');
+		    }
 
-            return $this->response(
-                fn () => [
-                    'inquiryGroup' => $this->inquiryGroupService->changeOwner($inquiryGroupId, $data['newOwnerId']),
-                ]
-            );
-        } catch (\InvalidArgumentException $e) {
-            return new JSONResponse(
-                ['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],
-                Http::STATUS_BAD_REQUEST
-            );
-        }
+		    return $this->response(
+			    fn () => [
+				    'inquiryGroup' => $this->inquiryGroupService->changeOwner($inquiryGroupId, $data['newOwnerId']),
+			    ]
+		    );
+	    } catch (\InvalidArgumentException $e) {
+		    return new JSONResponse(
+			    ['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],
+			    Http::STATUS_BAD_REQUEST
+		    );
+	    }
     }
 
     /**
@@ -416,10 +416,10 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'POST', url: '/inquirygroup/{inquiryGroupId}/clone')]
     public function cloneGroup(int $inquiryGroupId): JSONResponse
     {
-        return $this->response(
-            fn () => [
-                'inquiryGroup' => $this->inquiryGroupService->cloneGroup($inquiryGroupId),
-            ]
-        );
+	    return $this->response(
+		    fn () => [
+			    'inquiryGroup' => $this->inquiryGroupService->cloneGroup($inquiryGroupId),
+		    ]
+	    );
     }
 }

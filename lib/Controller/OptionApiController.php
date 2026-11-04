@@ -9,8 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Controller;
 
-use OCA\Agora\Model\Sequence;
-use OCA\Agora\Model\SimpleOption;
 use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\SupportService;
 use OCP\AppFramework\Http;
@@ -51,10 +49,9 @@ class OptionApiController extends BaseApiV2Controller
 
     /**
      * Add a new option
-  *
+     *
      * @param int   $inquiryId  inquiry id
      * @param array $option     Options text for text inquiry
-     * @param array $sequence   Sequence of the option
      * @param bool  $supportYes Support yes
      */
     #[CORS]
@@ -64,24 +61,16 @@ class OptionApiController extends BaseApiV2Controller
     public function add(
         int $inquiryId,
         array $option,
-        bool $supportYes = false,
-        ?array $sequence = null,
     ): DataResponse {
         return $this->response(
             fn () => array_merge(
-                $this->optionService->addWithSequenceAndAutoSupport(
-                    $inquiryId,
-                    SimpleOption::fromArray($option),
-                    $supportYes,
-                    Sequence::fromArray($sequence),
-                ),
+                $this->optionService->add($inquiryId, $option),
                 ['options' => $this->optionService->list($inquiryId)],
                 ['supports' => $this->supportService->list($inquiryId)],
             ),
             Http::STATUS_CREATED
         );
     }
-
 
     /**
      * Add mulitple new options

@@ -227,6 +227,7 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -240,11 +241,18 @@ import {
   getTimelineEndDate,
   getItemTypeIconComponent,
 } from '../../helpers/modules/InquiryOptionHelper'
-import type { Option, Inquiry, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
+import type {
+  Option,
+  Inquiry,
+  InquiryOptionType,
+  OptionFamily,
+  InquiryFamily,
+} from '../../Types/index.ts'
 import AddItemToFamily from '../Modals/AddItemToFamily.vue'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import { useSessionStore } from '../../stores/session'
 
 // FullCalendar imports
 import FullCalendar from '@fullcalendar/vue3'
@@ -257,7 +265,6 @@ import scrollGridPlugin from '@fullcalendar/scrollgrid'
 import type { EventClickArg, DropArg } from '@fullcalendar/core/index.js'
 import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
 
-// Premium imports
 import resourcePlugin from '@fullcalendar/resource'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
@@ -266,23 +273,48 @@ import { getItemsForFamily } from '../../helpers/modules/itemHelpers'
 
 export type TargetType = 'option' | 'inquiry'
 
-// Props
 const props = defineProps<{
   items: Item[]
   parentId: number
   targetType: 'option' | 'inquiry'
   optionTypes: InquiryOptionType[]
   familyOptionTypes?: InquiryOptionType[]
-  family?: OptionFamily | null
+  family?: OptionFamily | InquiryFamily | null
   familyKey?: string
   isReadonly?: boolean
   appSettings?: Record<string, unknown>
   showDraggablePool?: boolean
 }>()
 
+const emit = defineEmits<{
+  openDetail: [item: Item]
+  'update:items': []
+  eventDrop: [eventData: unknown]
+  dateSelect: [dateInfo: unknown]
+  eventReceive: [eventInfo: unknown]
+  deleteItem: [itemId: number]
+  removeFromTimeline: [itemId: number, updatedForceLayouts: string[]]
+  itemFamilyChanged: [payload: { itemId: number; familyKey: string; action: string }]
+}>()
+
+const sessionStore = useSessionStore()
+
 const getItemTitle = (item: Item | null) => item?.title ?? ''
 
-const getStatusColor = (status: string) => {
+// ---------------------------------------------------------------------------
+// Status colour (uses family statuses when available, then fallback map)
+// ---------------------------------------------------------------------------
+
+const getStatusColor = (status: string): string => {
+  const familyStatuses = (props.family as any)?.statuses
+  if (Array.isArray(familyStatuses)) {
+    const found = familyStatuses.find((s: any) => {
+      const value = typeof s === 'string' ? s.split(':')[0] : s.value
+      return value === status
+    })
+    if (found && typeof found !== 'string' && found.color) return found.color
+  }
+
   const colors: Record<string, string> = {
     draft: '#949494',
     active: '#3498db',
@@ -290,22 +322,109 @@ const getStatusColor = (status: string) => {
     cancelled: '#e74c3c',
     pending: '#f39c12',
     approved: '#2ecc71',
+    // inquiry business statuses
+    under_process: '#f39c12',
+    discussion_open: '#3498db',
+    collecting_support: '#9b59b6',
+    quorum_reached: '#27ae60',
+    concluded: '#27ae60',
+    rejected: '#e74c3c',
+    archived: '#7f8c8d',
+    resolved: '#27ae60',
+    unresolved: '#e74c3c',
   }
   return colors[status] || '#949494'
 }
 
-// ---- timelineItems: no store reads, just props ----
-const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
-const timelineItems = computed(() => {
+// ---------------------------------------------------------------------------
+// Item filtering
+// ---------------------------------------------------------------------------
+
+const familyKey = computed(
+  () => props.familyKey ?? (props.family as any)?.family_type ?? ''
+)
+
+const timelineItems = computed<Item[]>(() => {
   const key = familyKey.value
-  return key ? getItemsForFamily(props.items, key) : props.items
+  let list = key ? getItemsForFamily(props.items, key) : props.items
+  // If family filtering removed everything, fall back to the raw list so
+  // inquiries whose family doesn't match the layout still render.
+  if (!list.length && props.items.length) list = props.items
+  return list
 })
 
-// ---- events computed — swap `item.raw` handling ----
+// ---------------------------------------------------------------------------
+// Date resolution — handles both Option and Inquiry raw objects
+// ---------------------------------------------------------------------------
+
+const toDate = (v: unknown): Date | null => {
+  if (v == null || v === '') return null
+  if (v instanceof Date) return isNaN(v.getTime()) ? null : v
+  if (typeof v === 'number') {
+    // Heuristic: seconds vs ms
+    const ms = v < 1e12 ? v * 1000 : v
+    const d = new Date(ms)
+    return isNaN(d.getTime()) ? null : d
+  }
+  if (typeof v === 'string') {
+    const d = new Date(v)
+    return isNaN(d.getTime()) ? null : d
+  }
+  return null
+}
+
+const getItemStartDate = (item: Item): Date | null => {
+  if (props.targetType === 'option') {
+    return toDate(getTimelineStartDate(item.raw as any))
+  }
+  const raw = item.raw as any
+  const misc = raw?.miscFields || {}
+  return (
+    toDate(misc.support_start) ||
+    toDate(misc.start_date) ||
+    toDate(misc.event_date) ||
+    toDate(misc.due_date) ||
+    toDate(misc.meeting_date) ||
+    toDate(misc.date) ||
+    toDate(raw?.status?.created)
+  )
+}
+
+const getItemEndDate = (item: Item): Date | null => {
+  if (props.targetType === 'option') {
+    return toDate(getTimelineEndDate(item.raw as any))
+  }
+  const raw = item.raw as any
+  const misc = raw?.miscFields || {}
+  return (
+    toDate(misc.support_end) ||
+    toDate(misc.end_date) ||
+    toDate(misc.due_date)
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Type lookup — switches between option types and inquiry types
+// ---------------------------------------------------------------------------
+
+const allTypes = computed<InquiryOptionType[]>(() => {
+  if (props.targetType === 'option') return props.optionTypes
+  // Inquiries: use the session app settings if available, else fall back to
+  // the option types array (which callers may already have populated).
+  const tab = (sessionStore.appSettings as any)?.inquiryTypeTab
+  return Array.isArray(tab) && tab.length ? tab : props.optionTypes
+})
+
+const getItemTypeIcon = (type: string) => getItemTypeIconComponent(type, allTypes.value)
+
+// ---------------------------------------------------------------------------
+// Events
+// ---------------------------------------------------------------------------
+
 const events = computed(() =>
   timelineItems.value
     .map((item) => {
-      const start = getTimelineStartDate(item.raw)
+      const start = getItemStartDate(item)
       if (!start) return null
 
       if (dateFilter.value) {
@@ -314,8 +433,9 @@ const events = computed(() =>
         if (!startDateObj.hasSame(filterDate, 'day')) return null
       }
 
-      const end = getTimelineEndDate(item.raw)
+      const end = getItemEndDate(item)
       const endDateObj = end ? DateTime.fromJSDate(end).plus({ days: 1 }).toJSDate() : undefined
+      const color = getStatusColor(item.statusKey)
 
       return {
         id: item.id.toString(),
@@ -325,12 +445,25 @@ const events = computed(() =>
         end: endDateObj,
         allDay: true,
         extendedProps: { item },
-        backgroundColor: getStatusColor(item.statusKey),
-        borderColor: getStatusColor(item.statusKey),
+        backgroundColor: color,
+        borderColor: color,
         textColor: '#ffffff',
       }
     })
     .filter(Boolean)
+)
+// processItems now uses the new helper
+const processItems = computed(() =>
+  timelineItems.value.filter((item: Item) => getItemStartDate(item) !== null)
+)
+
+// resources now uses the same helper
+const resources = computed(() =>
+  processItems.value.map((item: Item) => ({
+    id: item.id.toString(),
+    title: item.title,
+    eventColor: getStatusColor(item.statusKey),
+  }))
 )
 
 // ---- emit openDetail with Item ----
@@ -352,17 +485,6 @@ const handleEventClick = (info: EventClickArg) => {
   }
 }
 
-// Emit
-const emit = defineEmits<{
-  openDetail: [item: Item]
-  'update:items': []
-  eventDrop: [eventData: unknown]
-  dateSelect: [dateInfo: unknown]
-  eventReceive: [eventInfo: unknown]
-  deleteItem: [itemId: number]
-  removeFromTimeline: [itemId: number, updatedForceLayouts: string[]]
-  itemFamilyChanged: [payload: { itemId: number; familyKey: string; action: string }]
-}>()
 
 // State refs
 const calendarRef = ref<unknown>(null)
@@ -404,7 +526,6 @@ const popoverStyle = computed(() => ({
   zIndex: 9999,
 }))
 
-const getItemTypeIcon = (type: string) => getItemTypeIconComponent(type, props.optionTypes)
 
 const updateCurrentPeriodText = () => {
   if (!calendarRef.value) return
@@ -416,17 +537,6 @@ const updateCurrentPeriodText = () => {
   })
 }
 
-const processItems = computed(() =>
-  timelineItems.value.filter((item: Item) => getTimelineStartDate(item.raw) !== null)
-)
-
-const resources = computed(() =>
-  processItems.value.map((item: Item) => ({
-    id: item.id.toString(),
-    title: item.title,
-    eventColor: getStatusColor(item.statusKey),
-  }))
-)
 
 // Event Handlers
 const handleExternalDrop = async (dropInfo: DropArg) => {

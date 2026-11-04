@@ -20,7 +20,6 @@ export function isInquiry(item: Item | Option | Inquiry): item is Inquiry {
   return !('targetId' in item)
 }
 
-type AnyItem = Item | Option | Inquiry
 
 // ---------------------------------------------------------------------------
 // Adapters
@@ -36,6 +35,7 @@ export function optionToItem(opt: Option): Item {
     type: opt.type,
     family: opt.family ?? '',
     owner: opt.owner,
+    coverId: null,
     statusKey: opt.status?.optionStatus ?? 'draft',
     raw: opt,
   }
@@ -51,6 +51,7 @@ export function inquiryToItem(inq: Inquiry): Item {
     type: inq.type,
     family: inq.family ?? '',
     owner: inq.owner,
+    coverId: inq.coverId,
     statusKey: inq.status?.inquiryStatus ?? 'draft',
     raw: inq,
   }
@@ -97,19 +98,19 @@ export function getLayoutKeyForFamily(familyKey: string | undefined): string {
 // Unwrap helpers — work on both Item wrappers and raw Option/Inquiry
 // ---------------------------------------------------------------------------
 
-function unwrap(item: AnyItem): Option | Inquiry {
+function unwrap(item: Item): Option | Inquiry {
   if ('raw' in item && item.raw) {
     return item.raw as Option | Inquiry
   }
   return item as Option | Inquiry
 }
 
-function getMiscFields(item: AnyItem): Record<string, unknown> {
+function getMiscFields(item: Item): Record<string, unknown> {
   const raw = unwrap(item)
   return (raw.miscFields as Record<string, unknown>) ?? {}
 }
 
-function getFamily(item: AnyItem): string {
+function getFamily(item: Item): string {
   return unwrap(item).family ?? ''
 }
 
@@ -122,18 +123,27 @@ export function parseForceLayouts(
 ): string[] {
   if (!miscFields) return []
 
-  const forceLayouts = miscFields.force_layouts
+  let forceLayouts: unknown = miscFields.force_layouts
   if (!forceLayouts) return []
 
+  if (
+    forceLayouts &&
+    typeof forceLayouts === 'object' &&
+    !Array.isArray(forceLayouts) &&
+    'value' in (forceLayouts as Record<string, unknown>)
+  ) {
+    forceLayouts = (forceLayouts as { value: unknown }).value
+  }
+
   if (typeof forceLayouts === 'string') {
+    if (!forceLayouts.trim()) return []
     try {
       const parsed = JSON.parse(forceLayouts)
-      if (Array.isArray(parsed)) {
-        return parsed.filter((v): v is string => typeof v === 'string')
-      }
+      if (Array.isArray(parsed)) return parsed.filter((v): v is string => typeof v === 'string')
     } catch {
       return [forceLayouts]
     }
+    return []
   }
 
   if (Array.isArray(forceLayouts)) {
@@ -143,7 +153,7 @@ export function parseForceLayouts(
   return []
 }
 
-export function hasForceLayout(item: AnyItem, layout: string): boolean {
+export function hasForceLayout(item: Item, layout: string): boolean {
   return parseForceLayouts(getMiscFields(item)).includes(layout)
 }
 
@@ -202,11 +212,11 @@ export function getItemsForFamily(items: Item[], familyKey: string | undefined):
 // Generic helpers (work on raw Option/Inquiry; use item.raw for Item wrappers)
 // ---------------------------------------------------------------------------
 
-export function getItemsByForceLayout<T extends AnyItem>(items: T[], layout: string): T[] {
+export function getItemsByForceLayout<T extends Item>(items: T[], layout: string): T[] {
   return items.filter((item) => hasForceLayout(item, layout))
 }
 
-export function getItemsByFamily<T extends AnyItem>(items: T[], familyKey: string): T[] {
+export function getItemsByFamily<T extends Item>(items: T[], familyKey: string): T[] {
   return items.filter((item) => getFamily(item) === familyKey)
 }
 

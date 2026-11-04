@@ -363,7 +363,6 @@ class Version01070120260104120000 extends SimpleMigrationStep
 	    // Check InquiryGroup table
 	    if ($this->schema->hasTable(InquiryGroup::TABLE)) {
 		    $table = $this->schema->getTable(InquiryGroup::TABLE);
-		    $this->addColumnIfMissing($table, 'allow_edit', Types::BIGINT, ['notnull' => true, 'default' => 1, 'unsigned' => true, 'length' => 20]);
 		    $this->addColumnIfMissing($table, 'protected', Types::BOOLEAN, ['notnull' => false, 'default' => false]);
 		    $this->addColumnIfMissing($table, 'cover_id', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true]);
 		    $this->addColumnIfMissing($table, 'title_ext', Types::STRING, ['notnull' => false, 'default' => null, 'length' => 128]);

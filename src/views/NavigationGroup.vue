@@ -46,9 +46,22 @@ function isEmptySlug(s: unknown): boolean {
 }
 
 const currentGroup = computed<InquiryGroup | null>(() => {
-  const slug = props.slug ?? (route.params.slug as string)
-  if (isEmptySlug(slug)) return null
-  return inquiryGroupsStore.bySlug(slug) || null
+  const slug = props.slug ?? (route.params.slug as string | undefined)
+  if (!isEmptySlug(slug)) {
+    return inquiryGroupsStore.bySlug(slug) || null
+  }
+
+  const id = route.params.id as string | undefined
+  if (id) {
+    return inquiryGroupsStore.inquiryGroups.find((g) => g.id === Number(id)) || null
+  }
+
+  const fromSlug = route.query.from as string | undefined
+  if (!isEmptySlug(fromSlug)) {
+    return inquiryGroupsStore.bySlug(fromSlug) || null
+  }
+
+  return null
 })
 
 const activeFamily = computed<string | null>(() => (route.query.family as string) || null)
@@ -373,7 +386,10 @@ onMounted(() => {
           <NcAppNavigationItem
             v-if="hasArchivedSubgroups"
             :name="t('agora', 'Space archives')"
-            :to="{ name: 'group-archived' }"
+            :to="{ name: 'group-archived',
+    		   query: { family: activeFamily ?? undefined, from: currentGroup?.slug },
+
+	    }"
             class="navigation-item"
           >
             <template #icon>
@@ -427,25 +443,13 @@ onMounted(() => {
             </template>
           </NcAppNavigationItem>
 
-          <NcAppNavigationItem
-            :name="t('agora', 'Space settings')"
-            class="navigation-item"
-            @click="openSettings"
-          >
-            <template #icon>
-              <component
-                :is="NavigationIcons.Settings"
-                class="navigation-icon"
-              />
-            </template>
-          </NcAppNavigationItem>
         </NcAppNavigationList>
 
         <NcAppNavigationSpacer />
 
         <NcAppNavigationList>
           <NcAppNavigationItem
-            :name="t('agora', 'All spaces')"
+            :name="t('agora', 'Home')"
             :to="{ name: 'home' }"
             class="navigation-item"
           >
@@ -533,7 +537,7 @@ onMounted(() => {
 
           <NcAppNavigationItem
             :name="t('agora', 'Archived groups')"
-            :to="{ name: 'group-archived' }"
+            :to="{ name: 'group-archived', query: { family: activeFamily } }"
             class="navigation-item"
           >
             <template #icon>

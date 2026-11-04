@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Controller;
 
-use OCA\Agora\Service\CalendarService;
 use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\SupportService;
 use OCA\Agora\Service\SupportResultService;
@@ -31,7 +30,6 @@ class OptionController extends BaseController
         string $appName,
         IRequest $request,
         private OptionService $optionService,
-        private CalendarService $calendarService,
         private SupportService $supportService,
         private SupportResultService $supportResult,
         private CommentService $commentService,
@@ -386,6 +384,40 @@ class OptionController extends BaseController
         );
     }
 
+     #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'PUT', url: '/option/{optionId}/updatemiscfield')]
+    public function updateMiscField(int $optionId): JSONResponse
+    {
+        $data = $this->request->getParams();
+
+        if (!isset($data['key']) || empty(trim((string) $data['key']))) {
+            $this->logger->error('Missing or empty key in misc field update', ['data' => $data]);
+            return new JSONResponse([
+                'error' => 'Key cannot be null or empty for misc field update',
+            ], Http::STATUS_BAD_REQUEST);
+        }
+
+        try {
+            $result = $this->optionMiscService->setValue($optionId, $data['key'], $data['value'] ?? null);
+
+            return new JSONResponse([
+                'success' => true,
+                'misc' => $result,
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error('Error updating misc field: ' . $e->getMessage(), [
+                'inquiryId' => $inquiryId,
+                'key' => $data['key'],
+                'value' => $data['value'] ?? null,
+            ]);
+
+            return new JSONResponse([
+                'error' => $e->getMessage(),
+            ], Http::STATUS_BAD_REQUEST);
+        }
+    }
+
+
     /**
      * Takeover option
      *
@@ -531,22 +563,6 @@ class OptionController extends BaseController
         return $this->response(
             function () use ($optionId) {
                 return ['participants' => $this->optionService->getParticipantsEmailAddresses($optionId)];
-            }
-        );
-    }
-
-    /**
-     * Find calendar events for option
-     *
-     * @param int $optionId Option id
-     */
-    #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'GET', url: '/option/{optionId}/events')]
-    public function findCalendarEvents(int $optionId): JSONResponse
-    {
-        return $this->response(
-            function () use ($optionId) {
-                return ['events' => $this->calendarService->getEvents($optionId)];
             }
         );
     }

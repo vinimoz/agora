@@ -935,9 +935,6 @@ export const useOptionStore = defineStore('option', {
       debouncedLoad()
     },
 
-    // Fixed: `Array.isArray(this.miscFields)` is always false (miscFields is
-    // a Record) → this action was a silent no-op. Field config now comes
-    // from `typeInfo.fields`, and number validation checks `value.value`.
     async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {
       const fieldConfig = this.typeInfo?.fields?.find((f) => f.key === key)
       if (fieldConfig) {

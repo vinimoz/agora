@@ -91,12 +91,22 @@ export function getItemId(item: GenericItem | null | undefined): number | null {
 export function getForceLayouts(item: GenericItemWithMiscFields | null | undefined): string[] {
   if (!item?.miscFields?.force_layouts) return []
 
-  const forceLayouts = item.miscFields.force_layouts
+  let forceLayouts: unknown = item.miscFields.force_layouts
+
+  if (
+    forceLayouts &&
+    typeof forceLayouts === 'object' &&
+    !Array.isArray(forceLayouts) &&
+    'value' in (forceLayouts as Record<string, unknown>)
+  ) {
+    forceLayouts = (forceLayouts as { value: unknown }).value
+  }
 
   if (typeof forceLayouts === 'string') {
+    if (!forceLayouts.trim()) return []
     try {
       const parsed = JSON.parse(forceLayouts)
-      if (Array.isArray(parsed)) return parsed
+      if (Array.isArray(parsed)) return parsed.filter((v): v is string => typeof v === 'string')
       if (typeof parsed === 'string') return [parsed]
       return []
     } catch {
@@ -105,7 +115,7 @@ export function getForceLayouts(item: GenericItemWithMiscFields | null | undefin
   }
 
   if (Array.isArray(forceLayouts)) {
-    return forceLayouts
+    return forceLayouts.filter((v): v is string => typeof v === 'string')
   }
 
   return []

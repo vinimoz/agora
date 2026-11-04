@@ -101,7 +101,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     protected ?array $metadata = null;
     protected ?int $coverId = null;
     protected ?bool $protected = false;
-    protected ?bool $allowEdit = false;
     protected ?string $supportResult = null;
     protected ?string $supportEngine = null;
 
@@ -130,7 +129,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->addType('metadata', 'json');
         $this->addType('coverId', 'integer');
         $this->addType('protected', 'boolean');
-        $this->addType('allowEdit', 'boolean');
         $this->addType('supportResult', 'string');
         $this->addType('supportEngine', 'string');
         $this->addType('inquiryIds', 'string');
@@ -189,7 +187,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->visibilityUsers = $visibilityUsers ?? [];
     }
 
-    // ── Protected / allowEdit ─────────────────────────────────────────
 
     public function getProtected(): bool
     {
@@ -199,16 +196,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     public function setProtected(bool $protected): void
     {
         $this->protected = $protected ?? false;
-    }
-
-    public function getAllowEdit(): bool
-    {
-        return $this->allowEdit ?? false;
-    }
-
-    public function setAllowEdit(bool $allow): void
-    {
-        $this->allowEdit = $allowi ?? false;
     }
 
     // ── Support ───────────────────────────────────────────────────────
@@ -398,7 +385,7 @@ private function isCurrentUserParticipant(): bool
     }
 
     $groupId = $this->getId();
-    if ($groupId === null || $userId === '' || $userId === 'CONSOLE') {
+    if ($groupId === null || $userId === '' ) {
         // $logger->info('Agora isCurrentUserParticipant: bail', ['groupId' => $groupId, 'userId' => $userId]);
         return false;
     }
@@ -490,15 +477,30 @@ public function getCurrentUserStatus(): array
     $isOwner     = $this->getOwner() === $this->userSession->getCurrentUserId();
     $isLoggedIn  = $this->userSession->getIsLoggedIn();
     $isAdmin     = $this->userSession->isAdmin();
-    $isGroupEditor = $isLoggedIn && (bool) $this->userSession->getCurrentUser()->getIsGroupEditor();
-    $isParticipant = $isLoggedIn && $this->isCurrentUserParticipant();
+
+    $isGroupEditor = false;
+    $isParticipant = false;
+    if ($isLoggedIn) {
+        try {
+            $isGroupEditor = (bool) $this->userSession->getCurrentUser()->getIsGroupEditor();
+        } catch (\Throwable $e) {
+            $isGroupEditor = false;
+        }
+        try {
+            $isParticipant = $this->isCurrentUserParticipant();
+        } catch (\Throwable $e) {
+            $isParticipant = false;
+        }
+    }
+
+    $isPrivileged = $isLoggedIn && ($isOwner || $isAdmin || $isGroupEditor);
 
     return [
         'isOwner'       => $isOwner,
         'isLoggedIn'    => $isLoggedIn,
         'userId'        => $this->userSession->getCurrentUserId(),
         'userRole'      => $this->getUserRole(),
-        'canEdit'       => $this->getAllowEdit() || $isAdmin,
+        'canEdit'       => $isPrivileged,
         'isProtected'   => $this->getProtected(),
         'isGroupEditor' => $isGroupEditor,
         'isParticipant' => $isParticipant,
@@ -513,52 +515,46 @@ public function getPermissionsArray(): array
     $isOwner       = $this->getOwner() === $currentUserId;
     $isProtected   = $this->getProtected();
 
-    $canEdit       = $this->getAllowEdit() || $isOwner || $isAdmin;
-
     $isGroupEditor = false;
     $isParticipant = false;
     if ($isLoggedIn) {
         try {
-            $isGroupEditor = (bool) $this->userSession->getCurrentUser()->getIsGroupEditor();
+            $isGroupEditor = (bool) $this->userSession
+                ->getCurrentUser()
+                ->getIsGroupEditor();
         } catch (\Throwable $e) {
             $isGroupEditor = false;
         }
-        $isParticipant = $this->isCurrentUserParticipant();
+        try {
+            $isParticipant = $this->isCurrentUserParticipant();
+        } catch (\Throwable $e) {
+            $isParticipant = false;
+        }
     }
 
-    $canAddInquiries = $isLoggedIn
-        && ($isOwner || $isAdmin || $isGroupEditor || $isParticipant)
-        && !$isProtected;
+    // Privileged roles: owner, admin, group editor.
+    // They bypass the "protected" lock — same way Inquiry::getAllowEditInquiry()
+    // lets the owner / delegated admin through unconditionally.
+    $isPrivileged = $isLoggedIn && ($isOwner || $isAdmin || $isGroupEditor);
 
-    // ─── DIAGNOSTIC ──────────────────────────────────────────────
-    \OC::$server->get(\Psr\Log\LoggerInterface::class)->warning(
-        'Agora PERMISSION_ADD_INQUIRIES check',
-        [
-            'groupId'        => $this->getId(),
-            'groupOwner'     => $this->getOwner(),
-            'groupProtected' => $isProtected,
-            'allowEdit'      => $this->getAllowEdit(),
-            'currentUserId'  => $currentUserId,
-            'isLoggedIn'     => $isLoggedIn,
-            'isAdmin'        => $isAdmin,
-            'isOwner'        => $isOwner,
-            'isGroupEditor'  => $isGroupEditor,
-            'isParticipant'  => $isParticipant,
-            'canAddInquiries'=> $canAddInquiries,
-            'userClass'      => $isLoggedIn ? get_class($this->userSession->getCurrentUser()) : null,
-        ]
-    );
-    // ─────────────────────────────────────────────────────────────
+    // Modify the group (edit / delete / reorder / change owner / archive):
+    // owner, admin, group editor.
+    $canModifyGroup = $isPrivileged;
+
+    // Add inquiries: privileged roles always; participants only if the
+    // group is not protected.
+    $canAddInquiries = $isPrivileged
+        || ($isLoggedIn && $isParticipant && !$isProtected);
 
     return [
         self::PERMISSION_VIEW              => true,
-        self::PERMISSION_EDIT              => $canEdit && !$isProtected,
-        self::PERMISSION_DELETE            => ($isOwner || $isAdmin) && !$isProtected,
+        self::PERMISSION_EDIT              => $canModifyGroup,
+        self::PERMISSION_DELETE            => $canModifyGroup,
         self::PERMISSION_ADD_INQUIRIES     => $canAddInquiries,
-        self::PERMISSION_REORDER_INQUIRIES => ($isOwner || $isAdmin) && !$isProtected,
-        self::PERMISSION_CHANGE_OWNER      => ($isOwner || $isAdmin) && !$isProtected,
-        self::PERMISSION_ARCHIVE           => ($isOwner || $isAdmin) && !$isProtected,
-        self::PERMISSION_CLONE             => true,
+        self::PERMISSION_REORDER_INQUIRIES => $canModifyGroup,
+        self::PERMISSION_CHANGE_OWNER      => $canModifyGroup,
+        self::PERMISSION_ARCHIVE           => $canModifyGroup,
+        self::PERMISSION_CLONE             => $isLoggedIn,
     ];
 }
 
@@ -583,12 +579,10 @@ public function getPermissionsArray(): array
             'metadata' => $this->getMetadata(),
             'coverId' => $this->getCoverId(),
             'protected' => $this->getProtected(),
-            'allowEdit' => $this->getAllowEdit(),
             'inquiryIds' => $this->getInquiryIds(),
             'childs' => $this->getChilds(),
             'slug' => $this->getSlug(),
             'miscFields' => $this->getMiscArray(),
-
             'configuration' => $this->getConfigurationArray(),
             'status' => $this->getStatusArray(),
             'permissions' => $this->getPermissionsArray(),

@@ -20,7 +20,7 @@ import { getExperienceArchitecture } from './experienceArchitecture'
 const NON_GROUP_EXPERIENCES: ExperienceKey[] = ['home']
 
 // Experiences that should always be reachable, regardless of group type
-const ALWAYS_AVAILABLE: ExperienceKey[] = ['classic', 'navigation', 'kanban', 'timeline']
+const ALWAYS_AVAILABLE: ExperienceKey[] = ['classic', 'kanban', 'timeline']
 
 export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   const route = useRoute()
@@ -37,12 +37,12 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   // their feature list instead of being passed through as-is.
   // ----------------------------------------------------------
   const uiConfig = computed<InquiryGroupUIConfig | null>(() => {
-    const own = group.value?.configuration?.ui
+    const own = normalizeUi(group.value?.configuration?.ui)
     if (own && !Array.isArray(own)) {
       return own as InquiryGroupUIConfig
     }
 
-    const templateUi = group.value?.inquiryGroupType?.ui
+    const templateUi = normalizeUi(group.value?.inquiryGroupType?.ui)
 
     if (Array.isArray(templateUi)) {
       // legacy shape: array of feature keys
@@ -130,7 +130,8 @@ const defaultExperience = computed<ExperienceKey>(() =>
 	  rows?: number
 	  responsive: boolean
   }>(() => {
-	  // 1. Group-specific override always wins
+	  
+	   // 1. Group-specific override always wins
 	  const ui = uiConfig.value
 	  if (ui?.layout) {
 		  return {
@@ -146,6 +147,7 @@ const defaultExperience = computed<ExperienceKey>(() =>
      //    only carries a coarse `layout` fallback for the rare case where
      //    an experience has no architecture — it is no longer consulted
      //    when one exists.
+     // if (archLayout) return { ...archLayout, responsive: archLayout.responsive !== false }
      const archLayout = getExperienceArchitecture(experience.value)?.layout
      if (archLayout) {
          return {
@@ -173,10 +175,39 @@ const defaultExperience = computed<ExperienceKey>(() =>
 
   const features = computed<string[]>(() => uiConfig.value?.features ?? [])
 
+  function normalizeUi(raw: any): InquiryGroupUIConfig | null {
+	  if (!raw) return null
+		  if (Array.isArray(raw)) return { features: raw } as InquiryGroupUIConfig
+
+	  const out: any = { ...raw }
+
+	  // display_architecture → displayArchitecture
+	  if (raw.display_architecture && !raw.displayArchitecture) {
+		  out.displayArchitecture = raw.display_architecture
+	  }
+
+	  // Normalize each zone
+	  for (const key of Object.keys(out.displayArchitecture ?? {})) {
+		  const zone = out.displayArchitecture[key]
+		  if (zone.interaction?.on_click) {
+			  zone.interaction = {
+				  action: zone.interaction.on_click.action,
+				  target: zone.interaction.on_click.target,
+			  }
+		  }
+		  // columnSpan → columnSpan (already camelCase in your data?)
+		  if (zone.position?.columnSpan === undefined && zone.position?.column_span) {
+			  zone.position.columnSpan = zone.position.column_span
+		  }
+	  }
+
+	  return out as InquiryGroupUIConfig
+  }
+
   // ----------------------------------------------------------
   // TOOLS
   // ----------------------------------------------------------
-  const allowedTools = computed<ToolKey[]>(() => {
+  /* const allowedTools = computed<ToolKey[]>(() => {
 	  const architecture = uiConfig.value?.displayArchitecture
 	  if (!architecture) return []
 
@@ -188,7 +219,26 @@ const defaultExperience = computed<ExperienceKey>(() =>
 		  }
 		  return [...seen]
   })
+*/
 
+const allowedTools = computed<ToolKey[]>(() => {
+  const architecture = uiConfig.value?.displayArchitecture
+
+  // 1. Try to extract from custom architecture
+  if (architecture) {
+    const seen = new Set<ToolKey>()
+    for (const zone of Object.values(architecture)) {
+      if (zone.display?.type === 'tool' && zone.display.tool) {
+        seen.add(zone.display.tool)
+      }
+    }
+    if (seen.size > 0) return [...seen]
+  }
+
+  // 2. Fallback to the Experience Definition's allowed tools
+  const def = EXPERIENCE_DEFINITIONS[experience.value]
+  return def?.allowedTools ?? []
+})
   // ----------------------------------------------------------
   // EXPERIENCE AVAILABILITY
   // ----------------------------------------------------------

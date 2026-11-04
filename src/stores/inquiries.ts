@@ -17,6 +17,8 @@ import { useSessionStore } from './session.ts'
 import { Chunking, StatusResults } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
+import { useInquiryStore } from './inquiry.ts'
+import type { MiscUpdateMap } from '@/Types' 
 
 import type {
   Inquiry,
@@ -810,124 +812,145 @@ export const useInquiriesStore = defineStore('inquiries', {
     },
 
     reset(): void {
-      this.$reset()
+	    this.$reset()
+    },
+
+
+    /**
+     * Patch an inquiry's miscFields. Delegates the persistence + plural-store
+     * update to `updateInquiryMiscFields`, then mirrors the result into the
+     * singular `inquiryStore` when it's the inquiry currently on screen.
+     */
+    async patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
+	    await this.updateInquiryMiscFields(item.id, patch)
+
+	    const inquiryStore = useInquiryStore()
+	    if (inquiryStore.id !== item.id) return
+
+		    // `updateInquiryMiscFields` already wrote the freshly-merged `miscFields`
+		    // to the plural store, in the `{ key, value }` format the singular store
+		    // uses internally. Re-use it instead of re-wrapping `patch` here.
+		    const updated = this.inquiries.find((i) => i.id === item.id)
+		    if (!updated) return
+
+			    inquiryStore.miscFields = { ...(updated.miscFields ?? {}) }
     },
 
     async changeOwner(payload: { inquiryId: number; userId: string }) {
-      try {
-        await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error changing inquiry owner', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
+	    try {
+		    await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId)
+	    } catch (error) {
+		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+			    return
+		    }
+		    Logger.error('Error changing inquiry owner', {
+			    error,
+			    payload,
+		    })
+		    throw error
+	    } finally {
+		    this.load()
+	    }
     },
 
     addChunk(): void {
-      this.meta.chunks.loaded = this.meta.chunks.loaded + 1
+	    this.meta.chunks.loaded = this.meta.chunks.loaded + 1
     },
 
     resetChunks(): void {
-      this.meta.chunks.loaded = 1
+	    this.meta.chunks.loaded = 1
     },
 
     async setInquiryStatus(inquiryId, inquiryStatus): Promise<void> {
-      try {
-        await InquiriesAPI.updateInquiryStatus(inquiryId, inquiryStatus)
-        const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
-        if (inquiry) {
-          this.$patch((state) => {
-            const idx = state.inquiries.findIndex((inq) => inq.id === inquiryId)
-            if (idx !== -1) {
-              state.inquiries[idx].status.inquiryStatus = inquiryStatus
-            }
-          })
-        }
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error setting inquiry status:', {
-          error,
-          inquiryStatus,
-          state: this.$state,
-        })
-      }
+	    try {
+		    await InquiriesAPI.updateInquiryStatus(inquiryId, inquiryStatus)
+		    const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
+		    if (inquiry) {
+			    this.$patch((state) => {
+				    const idx = state.inquiries.findIndex((inq) => inq.id === inquiryId)
+				    if (idx !== -1) {
+					    state.inquiries[idx].status.inquiryStatus = inquiryStatus
+				    }
+			    })
+		    }
+	    } catch (error) {
+		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+			    return
+		    }
+		    Logger.error('Error setting inquiry status:', {
+			    error,
+			    inquiryStatus,
+			    state: this.$state,
+		    })
+	    }
     },
 
     async clone(payload: { inquiryId: number }): Promise<void> {
-      try {
-        await InquiriesAPI.cloneInquiry(payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error cloning inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
+	    try {
+		    await InquiriesAPI.cloneInquiry(payload.inquiryId)
+	    } catch (error) {
+		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+			    return
+		    }
+		    Logger.error('Error cloning inquiry', {
+			    error,
+			    payload,
+		    })
+		    throw error
+	    } finally {
+		    this.load()
+	    }
     },
 
     async delete(payload: { inquiryId: number }): Promise<void> {
-      try {
-        await InquiriesAPI.deleteInquiry(payload.inquiryId)
-        // Remove the inquiry from the list
-        this.inquiries = this.inquiries.filter((inq) => inq.id !== payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error deleting inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      }
+	    try {
+		    await InquiriesAPI.deleteInquiry(payload.inquiryId)
+		    // Remove the inquiry from the list
+		    this.inquiries = this.inquiries.filter((inq) => inq.id !== payload.inquiryId)
+	    } catch (error) {
+		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+			    return
+		    }
+		    Logger.error('Error deleting inquiry', {
+			    error,
+			    payload,
+		    })
+		    throw error
+	    }
     },
 
     async toggleArchive(payload: { inquiryId: number }) {
-      try {
-        await InquiriesAPI.toggleArchive(payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error archiving/restoring inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
+	    try {
+		    await InquiriesAPI.toggleArchive(payload.inquiryId)
+	    } catch (error) {
+		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+			    return
+		    }
+		    Logger.error('Error archiving/restoring inquiry', {
+			    error,
+			    payload,
+		    })
+		    throw error
+	    } finally {
+		    this.load()
+	    }
     },
 
     async takeOver(payload: { inquiryId: number }) {
-      try {
-        await InquiriesAPI.takeOver(payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error archiving/restoring inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
+	    try {
+		    await InquiriesAPI.takeOver(payload.inquiryId)
+	    } catch (error) {
+		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+			    return
+		    }
+		    Logger.error('Error archiving/restoring inquiry', {
+			    error,
+			    payload,
+		    })
+		    throw error
+	    } finally {
+		    this.load()
+	    }
     },
   },
 })

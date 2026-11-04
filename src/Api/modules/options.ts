@@ -370,7 +370,7 @@ const options = {
     if (!updateData.key || updateData.key.trim() === '') {
       throw new Error('Key cannot be null or empty for misc field update')
     }
-
+console.log(" UPPPPPPPPPPPPPPPPPPPPPPP ", updateData)
     return httpInstance.request({
       method: 'PUT',
       data: updateData,

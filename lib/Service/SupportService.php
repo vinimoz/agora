@@ -14,6 +14,7 @@ use OCA\Agora\Db\SupportEngine;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Db\InquiryTypeMapper;
 use OCA\Agora\Db\OptionMapper;
 use OCA\Agora\Exceptions\ForbiddenException;
 use OCA\Agora\Service\SupportEngineService;
@@ -30,6 +31,7 @@ class SupportService
 
     public function __construct(
         private InquiryMapper $inquiryMapper,
+        private InquiryTypeMapper $inquiryTypeMapper,
         private SupportMapper $supportMapper,
         private SupportResultService $supportResultService,
         private SupportEngineService $engineService,
@@ -127,13 +129,10 @@ class SupportService
     $engineId = ($engineId === 0) ? null : $engineId;
 
     $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-    $this->requestVote($inquiry, $userId, $optionId, $engineId);
 
-     if ($inquiry->getSupportFeature() === 'trending') {
-        throw new \InvalidArgumentException(
-            'Trending is an informational feature - users cannot submit support votes.'
-        );
-     }
+    $this->inquiryMapper->get($inquiryId, withRoles: true);
+
+    $this->requestVote($inquiry, $userId, $optionId, $engineId);
 
     $normalizedValue = $this->normalizeToJsonFormat($inquiry, $value,$engineId);
     $this->validateSupportValue($inquiry, $normalizedValue,$engineId);
@@ -670,6 +669,19 @@ private function validateArray($value): void
     }
 }
 
+public function delete(int $supportId): ?Support
+{
+    $support = $this->supportMapper->get($supportId);   // throws DoesNotExistException
+    // ensure it belongs to a known inquiry
+    $ok = $this->removeSupport(
+        $support->getInquiryId(),
+        $support->getUserId(),
+        $support->getOptionId(),
+        $support->getSupportEngineId()
+    );
+    return $ok ? $support : null;
+}
+
 public function removeSupport(int $inquiryId, string $userId, int $optionId = 0, ?int $engineId = null): bool
 {
     $engineId = ($engineId === 0) ? null : $engineId;
@@ -695,10 +707,11 @@ public function removeSupport(int $inquiryId, string $userId, int $optionId = 0,
     $currentSupports = $this->getSupportsForTarget($inquiryId, $optionId);
 
     // Update cache with current supports
-    $cacheKey = "{$inquiryId}_{$optionId}";
-    $this->supportsCache[$cacheKey] = array_values($currentSupports);
+$cacheKey = "{$inquiryId}_{$optionId}";
+unset($this->supportsCache[$cacheKey]);
+$currentSupports = $this->getSupportsForTarget($inquiryId, $optionId);
 
-    // Calculate and store result using the current supports
+// Calculate and store result using the current supports
     $this->supportResultService->calculateFromSupports(
         $inquiryId,
         $optionId,
@@ -706,6 +719,7 @@ public function removeSupport(int $inquiryId, string $userId, int $optionId = 0,
         $engineId
     );
 
+    $this->trendingService->updateTrendingScoresForInquiry($inquiryId);
     if ($deleted && $engineId === null) {
         $this->trendingService->invalidateCache($inquiryId);
         $this->logger->debug('Trending cache invalidated after support removal', [
@@ -716,6 +730,27 @@ public function removeSupport(int $inquiryId, string $userId, int $optionId = 0,
 
 
     return true;
+}
+
+public function deleteUserFromInquiry(int $inquiryId, bool $deleteOnlyOrphaned = false): int
+{
+    $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+    $inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
+
+    $userId = $this->userSession->getCurrentUserId();
+    $count  = $this->supportMapper->removeAllByUserForInquiry(
+        $inquiryId, $userId, $deleteOnlyOrphaned
+    );
+
+    if ($count > 0) {
+        $this->supportResultService->calculateFromSupports(
+            $inquiryId, 0, $this->supportMapper->findByInquiryId($inquiryId), null
+        );
+        $this->trendingService->updateTrendingScoresForInquiry($inquiryId);
+        $this->trendingService->invalidateCache($inquiryId);
+    }
+
+    return $count;
 }
 
 /**
@@ -786,7 +821,7 @@ public function list(int $inquiryId, bool $wRoles = true): array
         if ($wRoles) {
             $this->inquiryMapper
                  ->get($inquiryId, withRoles: $wRoles)
-                 ->request(Inquiry::PERMISSION_SUPPORT_ADD);
+                 ->request(Inquiry::PERMISSION_INQUIRY_VIEW);
         } else {
             $this->inquiryMapper->get($inquiryId, withRoles: $wRoles);
         }

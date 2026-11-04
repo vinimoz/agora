@@ -226,7 +226,6 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->addColumn('cover_id', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true]);
         $table->addColumn('protected', Types::BOOLEAN, ['notnull' => false, 'default' => false]);
         $table->addColumn('group_status', Types::STRING, ['notnull' => true, 'default' => 'draft', 'length' => 32]);
-        $table->addColumn('allow_edit', Types::BIGINT, ['notnull' => true, 'default' => 1, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
     }
 

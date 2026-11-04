@@ -699,7 +699,8 @@ class OptionService
      *
      * @return Option
      */
-    public function delete(int $optionId): Option
+
+    public function delete(int $optionId, bool $restore = false): Option
     {
 	    try {
 		    $this->option = $this->optionMapper->get($optionId, withRoles: true);
@@ -725,8 +726,12 @@ class OptionService
 
 	    // Finally delete this option
 	    $this->eventDispatcher->dispatchTyped(new OptionDeletedEvent($this->option));
-	    $this->option->setDeleted(time());
+    	    $this->option->setDeleted($restore ? 0 : time());
 	    $this->option->setUpdated(time());
+    $this->eventDispatcher->dispatchTyped(
+        $restore ? new OptionRestoredEvent($this->option)
+                 : new OptionDeletedEvent($this->option)
+    );
 
 	    $this->optionMapper->delete($this->option);
 	    return $this->supportResultService->redactOption($this->option);

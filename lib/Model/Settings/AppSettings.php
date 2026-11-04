@@ -23,6 +23,7 @@ use OCA\Agora\Service\InquiryGroupTypeService;
 use OCA\Agora\Service\InquiryOptionTypeService;
 use OCA\Agora\Service\InquiryFamilyService;
 use OCA\Agora\Service\OptionFamilyService;
+use OCA\Agora\Service\HomeConfigService;  
 
 class AppSettings implements JsonSerializable
 {
@@ -110,7 +111,7 @@ class AppSettings implements JsonSerializable
 	public const SETTING_INQUIRY_TYPE_RIGHTS = 'inquiryTypeRights';
 
 	public const SETTING_HOME       = 'home';
-
+	public const SETTING_ORGANIZATION_TYPE = 'organizationType';
 
 	public function __construct(
 		private IAppConfig $appConfig,
@@ -125,7 +126,27 @@ class AppSettings implements JsonSerializable
 		private ?InquiryOptionTypeService $inquiryOptionTypeService,
 		private ?InquiryFamilyService $inquiryFamilyService,
 		private ?OptionFamilyService $optionFamilyService,
+		private ?HomeConfigService $homeConfigService,
 	) {
+	}
+
+
+	/**
+	 * The organization type selected for this instance.
+	 *
+	 * Matches the `OrganizationType` union in experience.types.ts:
+	 * 'municipality' | 'university' | 'association' | 'cooperative' | 'company'.
+	 *
+	 * Defaults to 'municipality', which also matches the frontend's
+	 * HOME_DEFAULTS fallback, so a fresh install works before any admin
+	 * ever opens the settings page.
+	 */
+	public function getOrganizationType(): string
+	{
+		return $this->getStringSetting(
+			self::SETTING_ORGANIZATION_TYPE,
+			'municipality'
+		);
 	}
 
 	/**
@@ -149,19 +170,45 @@ class AppSettings implements JsonSerializable
 		];
 	}
 
-public function getHomeConfig(): ?array
-{
-    $value = $this->appConfig->getValueString(
-        AppConstants::APP_ID,
-        self::SETTING_HOME,
-        ''
-    );
-    if ($value === '') {
-        return null;   // null = "use frontend defaults"
-    }
-    $decoded = json_decode($value, true);
-    return is_array($decoded) ? $decoded : null;
-}
+	/**
+	 * Resolve the effective home configuration for the current instance.
+	 *
+	 * Reads the org-type template from `agora_home_configs`, deep-merges
+	 * the instance override on top, and returns the result. Matches
+	 * exactly what the frontend's useHomeConfig.ts expects under
+	 * `session.appSettings.home`.
+	 *
+	 * Returns null when:
+	 *   - the HomeConfigService isn't available (unit-test edge case), or
+	 *   - the migration that seeds templates hasn't run yet, or
+	 *   - the DB query fails for any reason
+	 *
+	 * In those cases the frontend falls back to its bundled
+	 * HOME_TEMPLATES, so a null here is a safe no-op.
+	 */
+	public function getHomeConfig(): ?array
+	{
+		if ($this->homeConfigService === null) {
+			return null;
+		}
+
+		try {
+			$resolved = $this->homeConfigService->resolveForOrganization(
+				$this->getOrganizationType()
+			);
+
+			return $resolved === [] ? null : $resolved;
+		} catch (\Throwable $e) {
+			$this->logger->warning(
+				'Failed to resolve home config',
+				[
+					'organization_type' => $this->getOrganizationType(),
+					'exception' => $e->getMessage(),
+				]
+			);
+			return null;
+		}
+	}
 
 	// Public App settings ( need to be fixed adpated ?) 
 	public function getAppSettings(): array
@@ -186,6 +233,9 @@ public function getHomeConfig(): ?array
 			'optionFamilyTab' =>  $this->optionFamilyService?->findAll() ?? [],
 			'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
 			'inquiryTypeRights' => $this->getInquiryTypeRights(),
+			'organization' => [
+				'type' => $this->getOrganizationType(),
+			],
 			'home' => $this->getHomeConfig(),
 		];
 
@@ -195,6 +245,15 @@ public function getHomeConfig(): ?array
 
 		return array_merge($appSettingsArray, $this->getPublicAppSettings());
 	}
+
+public function setOrganizationType(string $type): void
+{
+    $allowed = ['municipality', 'university', 'association', 'cooperative', 'company'];
+    if (!in_array($type, $allowed, true)) {
+        throw new \InvalidArgumentException("Invalid organization type: {$type}");
+    }
+    $this->setStringSetting(self::SETTING_ORGANIZATION_TYPE, $type);
+}
 
 	public function getModeratorRights(): array
 	{

@@ -4,101 +4,22 @@
 -->
 
 <template>
-  <div
-    ref="gridRef"
-    class="inquiry-grid"
-  >
-    <div
-      v-for="(inquiry, index) in inquiries"
-      :key="inquiry.id"
-      class="grid-item"
-      :class="{
-        featured: isFeatured(inquiry),
-        compact: compact,
-        'size-lg': getSize(inquiry) === 'large',
-        'size-sm': getSize(inquiry) === 'small',
-      }"
-      :style="getItemStyle(index)"
-      @click="handleClick(inquiry)"
+  <div ref="gridRef" class="inquiry-grid">
+    <InquiryItem
+      v-for="(inq, i) in inquiries"
+      :key="inq.id"
+      :inquiry="inq"
+      grid-view
+      :compact="compact"
+      :featured="isFeatured(inq)"
+      :size="getSize(inq)"
+      :style="getItemStyle(i)"
+      @click="$emit('click', $event)"
     >
-      <!-- Cover Image -->
-      <div
-        v-if="getCoverUrl(inquiry)"
-        class="item-cover"
-      >
-        <img
-          :src="getCoverUrl(inquiry)"
-          :alt="inquiry.title"
-          loading="lazy"
-        >
-        <div class="cover-overlay">
-          <span
-            class="type-badge"
-            :class="getTypeClass(inquiry.type)"
-          >
-            {{ getTypeLabel(inquiry.type) }}
-          </span>
-        </div>
-      </div>
-
-      <!-- Content -->
-      <div
-        class="item-content"
-        :class="{ 'no-cover': !getCoverUrl(inquiry) }"
-      >
-        <h4 class="item-title">
-          {{ inquiry.title }}
-        </h4>
-        <p
-          v-if="inquiry.description"
-          class="item-description"
-        >
-          {{ truncateText(stripHtml(inquiry.description), 80) }}
-        </p>
-
-        <div class="item-meta">
-          <div class="meta-author">
-            <NcAvatar
-              v-if="inquiry.ownedGroup"
-              :display-name="inquiry.ownedGroup"
-              :show-user-status="false"
-              :size="20"
-              class="meta-avatar"
-            />
-            <NcAvatar
-              v-else
-              :user="inquiry.owner?.id"
-              :display-name="inquiry.owner?.displayName"
-              :size="20"
-              class="meta-avatar"
-            />
-            <span class="meta-name">{{ inquiry.ownedGroup || inquiry.owner?.displayName }}</span>
-          </div>
-          <div class="meta-stats">
-            <span
-              v-if="inquiry.status?.countComments"
-              class="stat"
-            >
-              <component
-                :is="Icons.MessageSquare"
-                :size="12"
-              />
-              {{ inquiry.status.countComments }}
-            </span>
-            <span
-              v-if="inquiry.status?.countSupports"
-              class="stat"
-            >
-              <component
-                :is="Icons.ThumbUp"
-                :size="12"
-              />
-              {{ inquiry.status.countSupports }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+      <template #actions>
+        <slot name="actions" />
+      </template>
+    </InquiryItem>
   </div>
 </template>
 
@@ -110,6 +31,7 @@ import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
 import { useSessionStore } from '../../stores/session'
 import type { Inquiry } from '../../Types'
+import InquiryItem from '../Inquiry/InquiryItem.vue'
 
 const props = defineProps<{
   inquiries: Inquiry[]

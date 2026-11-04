@@ -90,6 +90,7 @@ use OCA\Agora\Service\InquiryOptionTypeService;
 use OCA\Agora\Service\InquiryFamilyService;
 use OCA\Agora\Service\OptionFamilyService;
 use OCA\Agora\Service\InquiryLinkService;
+use OCA\Agora\Service\HomeConfigService;
 use OCA\Agora\Db\TrendingScore;
 use OCA\Agora\Db\TrendingScoreMapper;
 
@@ -232,6 +233,7 @@ class Application extends App implements IBootstrap
                     $c->get(InquiryOptionTypeService::class),
                     $c->get(InquiryFamilyService::class),
                     $c->get(OptionFamilyService::class),
+                    $c->get(HomeConfigService::class),
                 );
             }
         );
