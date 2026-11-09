@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 export { default as SearchBar } from './SearchBar.vue'
 export { default as WelcomeHero } from './WelcomeHero.vue'
 export { default as CurrentMomentWidget } from './CurrentMomentWidget.vue'

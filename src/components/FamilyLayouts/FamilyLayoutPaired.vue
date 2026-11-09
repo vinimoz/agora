@@ -727,7 +727,12 @@ const showBackButton = computed(() => navigationHistory.value.length > 0)
 
 const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
 
-const familyOptions = computed(() => getItemsForFamily(props.items, familyKey.value))
+const familyOptions = computed(() => {
+  const key = familyKey.value
+  let list = key ? getItemsForFamily(props.items, key) : props.items
+  if (!list.length && props.items.length) list = props.items
+  return list
+})
 
 const allFamilyOptionTypes = computed(() =>
   getOptionTypesForFamily(

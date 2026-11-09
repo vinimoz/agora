@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 import GroupTreeBranch from './GroupTreeBranch.vue'
@@ -77,17 +77,20 @@ interface TreeNode extends InquiryGroup {
 const props = defineProps<{
   groups: InquiryGroup[]
   parentId?: number | null
+  activeId?: number | null
 }>()
 
 const emit = defineEmits<{
   select: [group: InquiryGroup]
 }>()
 
+const selectedId = ref<number | null>(props.activeId ?? null)
 const searchQuery = ref('')
 const expandedNodes = ref<Set<number>>(new Set())
-const selectedId = ref<number | null>(null)
 
-// Build tree structure
+watch(() => props.activeId, (val) => { selectedId.value = val ?? null })
+
+// treeData
 const treeData = computed<TreeNode[]>(() => {
   const map = new Map<number, TreeNode>()
   const roots: TreeNode[] = []
@@ -97,10 +100,13 @@ const treeData = computed<TreeNode[]>(() => {
   })
 
   map.forEach((node) => {
-    const parentId = node.parentId || props.parentId
+    const parentId = node.parentId ?? props.parentId
     if (parentId && map.has(parentId)) {
       map.get(parentId)!.children.push(node)
-    } else if (!node.parentId) {
+    } else {
+      // No parent inside the visible set → root of this view.
+      // (This is the case for a flat sibling list: every node's parent
+      // is the group we're *inside of*, which is not in `props.groups`.)
       roots.push(node)
     }
   })
@@ -226,23 +232,31 @@ function selectNode(node: TreeNode) {
     }
   }
 
-  .controls-right .search-input {
-    padding: 6px 12px 6px 32px;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-main-background);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 10px center;
-    font-size: 14px;
-    transition: all 0.2s;
-    width: 200px;
+  .controls-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
 
-    &:focus {
-      outline: none;
-      border-color: var(--color-primary-element);
-      box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
-      width: 250px;
+    .search-input {
+      width: 100%;
+      max-width: 250px;
+      padding: 6px 12px 6px 32px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-main-background);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
+      font-size: 14px;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary-element);
+        box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+        max-width: 100%;
+      }
     }
   }
 }

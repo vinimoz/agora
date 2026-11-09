@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // src/composables/useUserContext.ts
 import { computed } from 'vue'
 import { useSessionStore } from '../stores/session'

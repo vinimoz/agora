@@ -152,11 +152,17 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
   }
 }
 
+.experience-selector {
+  position: relative;
+  display: inline-flex;
+}
+
+
 .experience-menu {
   position: absolute;
   top: calc(100% + 6px);
-  right: 0;
-  z-index: 200;
+  left: 0;                
+  z-index: 3000;       
   min-width: 200px;
   padding: 4px;
   background: var(--color-main-background);

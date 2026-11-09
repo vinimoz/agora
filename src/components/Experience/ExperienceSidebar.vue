@@ -138,25 +138,19 @@ import { InquiryGeneralIcons as Icons } from '../../utils/icons'
 import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
 import { useSessionStore } from '../../stores/session'
 import type { InquiryGroup } from '../../Types/inquiryGroups.types'
-import type { ToolValue } from '../../Types/experience.types'
+import type { ToolKey } from '../../Types/experience.types'
 import type { Inquiry, Option  } from '../../Types/index.ts'
 
 // Only include tools that are in ALL_TOOLS
-const TOOL_ICON_MAP: Partial<Record<ToolValue, { icon: any; label: string }>> = {
+const TOOL_ICON_MAP: Partial<Record<ToolKey, { icon: any; label: string }>> = {
   debate: { icon: Icons.MessageSquare, label: 'Debate' },
   vote: { icon: Icons.CheckCircle, label: 'Vote' },
   support: { icon: Icons.ThumbUp, label: 'Support' },
   kanban: { icon: Icons.Board, label: 'Kanban' },
   timeline: { icon: Icons.Clock, label: 'Timeline' },
-  wiki: { icon: Icons.Book, label: 'Wiki' },
-  analytics: { icon: Icons.BarChart, label: 'Analytics' },
-  compare: { icon: Icons.Compare, label: 'Compare' },
-  quorum: { icon: Icons.Users, label: 'Quorum' },
   consensus: { icon: Icons.Handshake, label: 'Consensus' },
   structure: { icon: Icons.FolderTree, label: 'Structure' },
   search: { icon: Icons.Magnify, label: 'Search' },
-  filter: { icon: Icons.Filter, label: 'Filter' },
-  resources: { icon: Icons.Document, label: 'Resources' },
 }
 
 const props = defineProps<{
@@ -242,11 +236,11 @@ const navItems = computed(() => {
 const toolItems = computed(() => {
   const availableTools = props.tools || []
   return availableTools
-    .filter((key) => TOOL_ICON_MAP[key as ToolValue])
+    .filter((key) => TOOL_ICON_MAP[key as ToolKey])
     .map((key) => ({
       key,
-      icon: TOOL_ICON_MAP[key as ToolValue]!.icon,
-      label: TOOL_ICON_MAP[key as ToolValue]!.label,
+      icon: TOOL_ICON_MAP[key as ToolKey]!.icon,
+      label: TOOL_ICON_MAP[key as ToolKey]!.label,
       active: false,
       action: () => emit('navigate', key),
     }))

@@ -12,7 +12,7 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import { SupportFeature } from '../Base/index.ts'
 import { canComment, canSupport, createInquiryContext } from '../../utils/permissions.ts'
-
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import { InquiryGeneralIcons, BadgeIcons, StatusIcons } from '../../utils/icons.ts'
 
 import { type Inquiry } from '../../stores/inquiry'
@@ -24,24 +24,41 @@ const sessionStore = useSessionStore()
 interface Props {
   inquiry: Inquiry
   featured?: boolean
+   activeId?: number | null
+  interactionAction?: string
   size?: 'small' | 'normal' | 'large'
   compact?: boolean
   noLink?: boolean
   gridView?: boolean
+  showIcon?: boolean
+  showCover?: boolean
+  showMeta?: boolean
+  showAuthor?: boolean
+  showDescription?: boolean
+  showExpiry?: boolean
+  showType?: boolean
+  showStatus?: boolean
+  showSupport?: boolean
+  showComment?: boolean
+  showParticipants?: boolean
 }
 
 
-const { inquiry, noLink = false, gridView = false,
-        featured = false, size = 'normal', compact = false } = defineProps<Props>()
+const { inquiry, noLink = false, interactionAction = 'open', activeId = null,  gridView = false, showIcon = true, showCover = true, showMeta = true, showDescription = true, showExpiry = true, showStatus = true, showSupport = true, showParticipants = true, featured = false, size = 'normal', compact = false,  } = defineProps<Props>()
 
 const emit = defineEmits<{ click: [inquiry: Inquiry] }>()
 
 function onCardClick(e: MouseEvent) {
-  if (!gridView) return
-  if ((e.target as HTMLElement).closest('a, button')) return  // let RouterLink handle it
+  // Let action buttons / slot content handle their own clicks
+  if ((e.target as HTMLElement).closest('.actions, .compact-actions, button, [data-no-card-click]')) {
+    return
+  }
   emit('click', inquiry)
 }
 
+const isSelectOnly = computed(
+  () => interactionAction === 'select' || interactionAction === 'navigate' && noLink,
+)
 
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
@@ -217,7 +234,7 @@ const hasVotePeriod = computed(
 >
     <!-- List Mode -->
     <template v-if="!gridView">
-      <div
+      <div v-if="showType"
         class="item__type"
         :title="inquiryTypeData.label"
       >
@@ -240,7 +257,7 @@ const hasVotePeriod = computed(
           {{ inquiry.title }}
         </div>
 
-        <div class="description_line">
+        <div v-if="showDescription" class="description_line">
           <component
             :is="StatusIcons.Lock"
             :size="16"
@@ -256,7 +273,7 @@ const hasVotePeriod = computed(
       </div>
 
       <RouterLink
-        v-else-if="!inquiry.status.isArchived"
+        v-else-if="!isSelectOnly && !noLink && !inquiry.status.isArchived"
         class="item__title"
         :title="inquiry.description"
         :to="{
@@ -282,7 +299,7 @@ const hasVotePeriod = computed(
       <div
         v-else
         class="item__title"
-        :class="{ closed: inquiry.status.isExpired }"
+        :class="{ closed: inquiry.status.isExpired , active: inquiry.id === activeId }"
       >
         <div class="title_line">
           <span class="title">
@@ -311,7 +328,7 @@ const hasVotePeriod = computed(
           </RouterLink>
         </div>
 
-        <div v-if="inquiry.type !== 'official'">
+        <div v-if="showStatus && inquiry.type !== 'official'">
           <div
             v-if="inquiryStatusInfo"
             class="chip chip--status"
@@ -326,7 +343,7 @@ const hasVotePeriod = computed(
             <span>{{ inquiryStatusInfo.label }}</span>
           </div>
           <div
-            v-else-if="inquiry.status.inquiryStatus"
+            v-else-if="showStatus && inquiry.status.inquiryStatus"
             class="chip chip--status"
             :title="inquiryStatusLabel"
           >
@@ -358,7 +375,7 @@ const hasVotePeriod = computed(
         </div>
 
         <div
-          v-if="canComment(context)"
+          v-if="showComment && canComment(context)"
           class="chip chip--comments"
           :title="
             t('agora', '{count} comments', {
@@ -378,7 +395,7 @@ const hasVotePeriod = computed(
         </div>
 
         <div
-          v-if="canSupport(context)"
+          v-if="showSupport && canSupport(context)"
           class="chip chip--supports"
         >
           <SupportFeature
@@ -393,7 +410,7 @@ const hasVotePeriod = computed(
         </div>
 
         <div
-          v-if="inquiry.type !== 'official'"
+          v-if="showParticipants && inquiry.type !== 'official'"
           class="chip chip--participants"
           :title="
             t('agora', '{count} participants', {
@@ -436,312 +453,392 @@ const hasVotePeriod = computed(
           </div>
         </div>
 
-        <!-- Expire chip -->
-        <div
-          v-if="!hasVotePeriod && inquiry.configuration.expire"
-          class="chip chip--expire"
-        >
-          <component
-            :is="InquiryGeneralIcons.Expiration"
-            :size="12"
-            class="icon"
-          />
-          <span class="chip-value">{{ timeExpirationRelative }}</span>
-        </div>
+	<!-- Expire chip -->
+	<div
+			v-if="showExpiry && !hasVotePeriod && inquiry.configuration.expire"
+			class="chip chip--expire"
+			>
+			<component
+					:is="InquiryGeneralIcons.Expiration"
+					:size="12"
+					class="icon"
+					/>
+			<span class="chip-value">{{ timeExpirationRelative }}</span>
+	</div>
       </div>
 
       <div class="actions">
-        <slot name="actions" />
+	      <slot name="actions" />
       </div>
     </template>
 
     <!-- Grid Mode -->
-    <template v-else>
-      <div class="grid-card">
-        <!-- Moderation Banner for Grid View -->
-        <div
-          v-if="showModerationBanner"
-          class="grid-moderation-banner"
-          :class="{
-            'moderation-pending': isModerationPending,
-            'moderation-rejected': isModerationRejected,
-          }"
-          :title="moderationStatusDescription"
-        >
-          <component
-            :is="moderationStatusIcon"
-            :size="16"
-            class="icon"
-          />
-          <span>{{ moderationStatusLabel }}</span>
-          <span
-            v-if="isModerationRejected && inquiry.status.moderationReason"
-            class="reason"
-          >
-            {{ inquiry.status.moderationReason }}
-          </span>
-        </div>
+	    <template v-else>
+		    <!-- Compact: minimal single-row card -->
+		    <div v-if="compact" class="grid-card grid-card--compact">
+			    <div class="compact-body">
+				    <NcPopover
+						    placement="top"
+						    :disabled="!inquiryTypeData.label && !inquiry.Description"
+						    >
+						    <template #trigger>
+							    <RouterLink
+									    v-if="!isSelectOnly && !noLink && !inquiry.status.isArchived"
+									    class="compact-title-link"
+									    :to="{ name: 'inquiry', params: { id: inquiry.id } }"
+									    >
+									    {{ inquiry.title }}
+							    </RouterLink>
+							    <span
+									    v-else
+									    class="compact-title"
+									    >{{ inquiry.title }}</span>
+						    </template>
 
-        <!-- Cover Image with User Avatar + Expiration -->
-        <div
-          class="grid-cover-container"
-          :class="{ 'no-cover': !currentCoverUrl }"
-        >
-          <div
-            v-if="currentCoverUrl"
-            class="grid-cover"
-          >
-            <img
-              :src="currentCoverUrl"
-              :alt="inquiry.title"
-              class="cover-image"
-            >
-          </div>
+				    <strong>{{ inquiryTypeData.label }}</strong>
+				    <template v-if="inquiry.description">
+					    <br>
+					    <span>{{ gridDescription }}</span>
+				    </template>
+				    </NcPopover>
+			    </div>
 
-          <!-- User Avatar top left -->
-          <div class="user-avatar-top">
-            <div class="user-avatar">
-              <component
-                :is="NcAvatar"
-                v-if="inquiry.ownedGroup !== ''"
-                :display-name="inquiry.ownedGroup"
-                class="user-avatar-main"
-                :show-user-status="false"
-                :size="44"
-              />
-              <component
-                :is="NcAvatar"
-                v-else
-                :user="inquiry.owner.id"
-                :display-name="inquiry.owner.displayName"
-                :size="44"
-              />
-            </div>
-          </div>
+			    <div class="compact-meta">
+				    <span
+						    v-if="showComment && (canComment(context) && inquiry.status.countComments >0) "
+						    class="compact-count"
+						    :title="t('agora', '{count} comments', { count: inquiry.status.countComments || 0 })"
+						    >
+						    <component
+								    :is="StatusIcons.ForumOutline"
+								    :size="14"
+								    class="icon"
+								    />
+						    <span>{{ inquiry.status.countComments || 0 }}</span>
+				    </span>
 
-          <!-- Expiration top-right corner -->
-          <div
-            v-if="!hasVotePeriod && inquiry.configuration.expire"
-            class="expiration-corner"
-            :title="t('agora', 'Expires {relativeTime}', { relativeTime: timeExpirationRelative })"
-          >
-            <component
-              :is="InquiryGeneralIcons.Expiration"
-              :size="14"
-              class="icon"
-            />
-            <span>{{ timeExpirationRelative }}</span>
-          </div>
-        </div>
+				    <span
+						    v-if="canSupport(context)"
+						    class="compact-count"
+						    :title="t('agora', '{count} supports', { count: inquiry.status.countSupports || 0 })"
+						    >
+						    <component
+								    :is="StatusIcons.ThumbsUp"
+								    :size="14"
+								    class="icon"
+								    />
+						    <span>{{ inquiry.status.countSupports || 0 }}</span>
+				    </span>
+			    </div>
 
-        <!-- Content -->
-        <div
-          class="grid-content"
-          :class="{ 'no-cover': !currentCoverUrl }"
-        >
-          <!-- Type + Title -->
-          <div class="first-line">
-            <div class="type-title">
-              <div class="inquiry-type">
-                <component
-                  :is="inquiryTypeData.icon"
-                  :title="inquiryTypeData.label"
-                  :size="18"
-                  class="type-icon"
-                />
-                <span class="type-label">{{ inquiryTypeData.label }}</span>
-              </div>
-              <RouterLink
-                v-if="!noLink && !inquiry.status.isArchived"
-                class="title-link"
-                :title="inquiry.description"
-                :to="{
-                  name: 'inquiry',
-                  params: { id: inquiry.id },
-                }"
-              >
-                <h3 class="grid-title">
-                  {{ inquiry.title }}
-                </h3>
-              </RouterLink>
-              <h3
-                v-else
-                class="grid-title"
-              >
-                {{ inquiry.title }}
-              </h3>
-            </div>
-            <div class="toggle-view">
-              <slot name="actions" />
-            </div>
-          </div>
+			    <div class="compact-avatar">
+				    <NcAvatar
+						    v-if="inquiry.ownedGroup !== ''"
+						    :display-name="inquiry.ownedGroup"
+						    :show-user-status="false"
+						    :size="26"
+						    />
+				    <NcAvatar
+						    v-else
+						    :user="inquiry.owner.id"
+						    :display-name="inquiry.owner.displayName"
+						    :size="26"
+						    />
+			    </div>
 
-          <!-- Description -->
-          <div class="description-line">
-            <p class="grid-description">
-              {{ gridDescription }}
-            </p>
-          </div>
+			    <div
+					    v-if="$slots.actions"
+					    class="compact-actions"
+					    >
+					    <slot name="actions" />
+			    </div>
+		    </div>
 
-          <!-- Bottom Section: Metadata and Dates -->
-          <div class="bottom-section">
-            <!-- Second Line: Parent Link + Participated + Comments + Supports -->
-            <div class="second-line">
-              <div class="left-items">
-                <div
-                  v-if="inquiry.parentId"
-                  class="meta-chip meta-chip--transparent parent-link"
-                >
-                  <RouterLink :to="`/inquiry/${inquiry.parentId}`">
-                    <component
-                      :is="StatusIcons.LinkIcon"
-                      :size="16"
-                      :title="`id:${inquiry.parentId}`"
-                    />
-                  </RouterLink>
-                </div>
+		    <div v-else class="grid-card">
+			    <!-- Moderation Banner for Grid View -->
+			    <div
+					    v-if="showModerationBanner"
+					    class="grid-moderation-banner"
+					    :class="{
+						    'moderation-pending': isModerationPending,
+						    'moderation-rejected': isModerationRejected,
+						    }"
+					    :title="moderationStatusDescription"
+					    >
+					    <component
+							    :is="moderationStatusIcon"
+							    :size="16"
+							    class="icon"
+							    />
+					    <span>{{ moderationStatusLabel }}</span>
+					    <span
+							    v-if="isModerationRejected && inquiry.status.moderationReason"
+							    class="reason"
+							    >
+							    {{ inquiry.status.moderationReason }}
+					    </span>
+			    </div>
 
-                <div
-                  v-if="inquiry.type !== 'official' && inquiry.status.countParticipants > 0"
-                  class="meta-chip meta-chip--participants"
-                  :title="
-                    t('agora', '{count} participants', {
-                      count: inquiry.status.countParticipants,
-                    })
-                  "
-                >
-                  <component
-                    :is="BadgeIcons.Participated"
-                    :size="14"
-                    class="icon"
-                  />
-                  <NcCounterBubble
-                    :count="inquiry.status.countParticipants || 0"
-                    :raw="true"
-                  />
-                </div>
-              </div>
+			    <!-- Cover Image with User Avatar + Expiration -->
+			    <div
+					    class="grid-cover-container"
+					    :class="{ 'no-cover': !currentCoverUrl }"
+					    >
+					    <div
+							    v-if="showCover && currentCoverUrl"
+							    class="grid-cover"
+							    >
+							    <img
+									    :src="currentCoverUrl"
+									    :alt="inquiry.title"
+									    class="cover-image"
+									    >
+					    </div>
 
-              <div class="right-items">
-                <div
-                  v-if="canComment(context)"
-                  class="meta-chip meta-chip--comments"
-                  :title="
-                    t('agora', '{count} comments', {
-                      count: inquiry.status.countComments || 0,
-                    })
-                  "
-                >
-                  <component
-                    :is="StatusIcons.ForumOutline"
-                    :size="14"
-                    class="icon"
-                  />
-                  <NcCounterBubble
-                    :count="inquiry.status.countComments || 0"
-                    :raw="true"
-                  />
-                </div>
+							    <!-- User Avatar top left -->
+						    <div class="user-avatar-top">
+							    <div class="user-avatar">
+								    <component
+										    :is="NcAvatar"
+										    v-if="inquiry.ownedGroup !== ''"
+										    :display-name="inquiry.ownedGroup"
+										    class="user-avatar-main"
+										    :show-user-status="false"
+										    :size="44"
+										    />
+								    <component
+										    :is="NcAvatar"
+										    v-else
+										    :user="inquiry.owner.id"
+										    :display-name="inquiry.owner.displayName"
+										    :size="44"
+										    />
+							    </div>
+						    </div>
 
-                <SupportFeature
-                  v-if="canSupport(context)"
-                  :item="inquiry"
-                  item-type="inquiry"
-                  :context="context"
-                  :show-quorum="true"
-                  :show-details-on-hover="true"
-                  :icon-size="14"
-                  class="meta-chip meta-chip--supports"
-                />
-              </div>
-            </div>
+						    <!-- Expiration top-right corner -->
+						    <div
+								    v-if="showExpiry && !hasVotePeriod && inquiry.configuration.expire"
+								    class="expiration-corner"
+								    :title="t('agora', 'Expires {relativeTime}', { relativeTime: timeExpirationRelative })"
+								    >
+								    <component
+										    :is="InquiryGeneralIcons.Expiration"
+										    :size="14"
+										    class="icon"
+										    />
+								    <span>{{ timeExpirationRelative }}</span>
+						    </div>
+			    </div>
 
-            <!-- Third Line: Dates or Vote Period -->
-            <div class="third-line">
-              <!-- Vote Period Boxes -->
-              <div
-                v-if="hasVotePeriod"
-                class="vote-period-container"
-              >
-                <div class="vote-date-box start-date">
-                  <component
-                    :is="StatusIcons.Calendar"
-                    :size="12"
-                    class="icon"
-                  />
-                  <span class="vote-date-label">{{ t('agora', 'Start support:') }}</span>
-                  <span class="vote-date-value">{{
-                    formatVoteDate(inquiry.miscFields.support_start)
-                  }}</span>
-                </div>
-                <div class="vote-date-box end-date">
-                  <component
-                    :is="StatusIcons.Expiration"
-                    :size="12"
-                    class="icon"
-                  />
-                  <span class="vote-date-label">{{ t('agora', 'End support:') }}</span>
-                  <span class="vote-date-value">{{
-                    formatVoteDate(inquiry.miscFields.support_end)
-                  }}</span>
-                </div>
-              </div>
+			    <!-- Content -->
+			    <div
+					    class="grid-content"
+					    :class="{ 'no-cover': !currentCoverUrl }"
+					    >
+					    <!-- Type + Title -->
+				    <div class="first-line">
+					    <div class="type-title">
+						    <div class="inquiry-type">
+							    <component
+									    :is="inquiryTypeData.icon"
+									    :title="inquiryTypeData.label"
+									    :size="18"
+									    class="type-icon"
+									    />
+							    <span class="type-label">{{ inquiryTypeData.label }}</span>
+						    </div>
+						    <RouterLink
+								    v-if="!isSelectOnly && !noLink && !inquiry.status.isArchived"
+								    class="title-link"
+								    :title="inquiry.description"
+								    :to="{
+									 name: 'inquiry',
+									 params: { id: inquiry.id },
+									 }"
+								    >
+								    <h3 class="grid-title">
+									    {{ inquiry.title }}
+								    </h3>
+						    </RouterLink>
+						    <h3
+								    v-else
+								    class="grid-title"
+								    >
+								    {{ inquiry.title }}
+						    </h3>
+					    </div>
+					    <div class="toggle-view">
+						    <slot name="actions" />
+					    </div>
+				    </div>
 
-              <!-- Regular Dates when no vote period -->
-              <template v-else>
-                <div class="started-info">
-                  {{ safeDescription }}
-                </div>
-                <div class="dates">
-                  <div
-                    v-if="inquiry.status.lastInteraction"
-                    class="date-item last-interaction"
-                    :title="
-                      t('agora', 'Last interaction on {date}', {
-                        date: formatDate(inquiry.status.lastInteraction),
-                      })
-                    "
-                  >
-                    <component
-                      :is="StatusIcons.Updated"
-                      :size="12"
-                      class="icon"
-                    />
-                    <span>{{ formatDate(inquiry.status.lastInteraction) }}</span>
-                  </div>
+				    <!-- Description -->
+				    <div v-if="showDescription" class="description-line">
+					    <p class="grid-description">
+					    {{ gridDescription }}
+					    </p>
+				    </div>
 
-                  <div
-                    class="date-item created"
-                    :title="
-                      t('agora', 'Created on {date}', {
-                        date: formatDate(inquiry.status.created),
-                      })
-                    "
-                  >
-                    <component
-                      :is="StatusIcons.Calendar"
-                      :size="12"
-                      class="icon"
-                    />
-                    <span>{{ formatDate(inquiry.status.created) }}</span>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
+				    <!-- Bottom Section: Metadata and Dates -->
+				    <div class="bottom-section">
+					    <!-- Second Line: Parent Link + Participated + Comments + Supports -->
+					    <div class="second-line">
+						    <div class="left-items">
+							    <div
+									    v-if="inquiry.parentId"
+									    class="meta-chip meta-chip--transparent parent-link"
+									    >
+									    <RouterLink :to="`/inquiry/${inquiry.parentId}`">
+									    <component
+											    :is="StatusIcons.LinkIcon"
+											    :size="16"
+											    :title="`id:${inquiry.parentId}`"
+											    />
+									    </RouterLink>
+							    </div>
+
+							    <div
+									    v-if="inquiry.type !== 'official' && inquiry.status.countParticipants > 0"
+									    class="meta-chip meta-chip--participants"
+									    :title="
+										    t('agora', '{count} participants', {
+										    count: inquiry.status.countParticipants,
+										    })
+										    "
+									    >
+									    <component
+											    :is="BadgeIcons.Participated"
+											    :size="14"
+											    class="icon"
+											    />
+									    <NcCounterBubble
+											    :count="inquiry.status.countParticipants || 0"
+											    :raw="true"
+											    />
+							    </div>
+						    </div>
+
+						    <div class="right-items">
+							    <div
+									    v-if="showComment && canComment(context)"
+									    class="meta-chip meta-chip--comments"
+									    :title="
+										    t('agora', '{count} comments', {
+										    count: inquiry.status.countComments || 0,
+										    })
+										    "
+									    >
+									    <component
+											    :is="StatusIcons.ForumOutline"
+											    :size="14"
+											    class="icon"
+											    />
+									    <NcCounterBubble
+											    :count="inquiry.status.countComments || 0"
+											    :raw="true"
+											    />
+							    </div>
+
+								    <SupportFeature
+										    v-if="showSupport && canSupport(context)"
+										    :item="inquiry"
+										    item-type="inquiry"
+										    :context="context"
+										    :show-quorum="true"
+										    :show-details-on-hover="true"
+										    :icon-size="14"
+										    class="meta-chip meta-chip--supports"
+										    />
+						    </div>
+					    </div>
+
+					    <!-- Third Line: Dates or Vote Period -->
+					    <div class="third-line">
+						    <!-- Vote Period Boxes -->
+						    <div
+								    v-if="hasVotePeriod"
+								    class="vote-period-container"
+								    >
+								    <div class="vote-date-box start-date">
+									    <component
+											    :is="StatusIcons.Calendar"
+											    :size="12"
+											    class="icon"
+											    />
+									    <span class="vote-date-label">{{ t('agora', 'Start support:') }}</span>
+									    <span class="vote-date-value">{{
+										    formatVoteDate(inquiry.miscFields.support_start)
+										    }}</span>
+								    </div>
+								    <div class="vote-date-box end-date">
+									    <component
+											    :is="StatusIcons.Expiration"
+											    :size="12"
+											    class="icon"
+											    />
+									    <span class="vote-date-label">{{ t('agora', 'End support:') }}</span>
+									    <span class="vote-date-value">{{
+										    formatVoteDate(inquiry.miscFields.support_end)
+										    }}</span>
+								    </div>
+						    </div>
+
+						    <!-- Regular Dates when no vote period -->
+						    <template v-else>
+							    <div class="started-info">
+								    {{ safeDescription }}
+							    </div>
+							    <div class="dates">
+								    <div
+										    v-if="inquiry.status.lastInteraction"
+										    class="date-item last-interaction"
+										    :title="
+											    t('agora', 'Last interaction on {date}', {
+											    date: formatDate(inquiry.status.lastInteraction),
+											    })
+											    "
+										    >
+										    <component
+												    :is="StatusIcons.Updated"
+												    :size="12"
+												    class="icon"
+												    />
+										    <span>{{ formatDate(inquiry.status.lastInteraction) }}</span>
+								    </div>
+
+								    <div
+										    class="date-item created"
+										    :title="
+											    t('agora', 'Created on {date}', {
+											    date: formatDate(inquiry.status.created),
+											    })
+											    "
+										    >
+										    <component
+												    :is="StatusIcons.Calendar"
+												    :size="12"
+												    class="icon"
+												    />
+										    <span>{{ formatDate(inquiry.status.created) }}</span>
+								    </div>
+							    </div>
+						    </template>
+					    </div>
+				    </div>
+			    </div>
+		    </div>
+	    </template>
+	</div>
     </template>
-  </div>
-</template>
 
-<style lang="scss" scoped>
+    <style lang="scss" scoped>
 // Import color module for modern color functions
 @use 'sass:color';
 
 /* =========================================================
    Design tokens
-   ========================================================= */
+	   ========================================================= */
 $chip-bg: #ffffff;
 $chip-border: var(--color-border);
 $chip-radius: 999px;
@@ -751,735 +848,837 @@ $chip-font-size: 0.78rem;
 $chip-min-height: 30px;
 
 $chip-shadow:
-  0 1px 2px rgba(0, 0, 0, 0.06),
-  0 1px 3px rgba(0, 0, 0, 0.04);
+	0 1px 2px rgba(0, 0, 0, 0.06),
+0 1px 3px rgba(0, 0, 0, 0.04);
 $chip-shadow-hover:
-  0 2px 6px rgba(0, 0, 0, 0.08),
-  0 4px 12px rgba(0, 0, 0, 0.06);
+	0 2px 6px rgba(0, 0, 0, 0.08),
+0 4px 12px rgba(0, 0, 0, 0.06);
 
 $transition-fast: 0.18s ease;
 $transition-base: 0.25s ease;
 
 .inquiry-item {
-  /* =========================================================
-       Shared chip primitive
-       ========================================================= */
+	/* =========================================================
+	   Shared chip primitive
+		   ========================================================= */
 
-  .chip,
-  .meta-chip {
-    display: inline-flex;
+	.chip,
+	.meta-chip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: $chip-gap;
+		padding: $chip-padding;
+		border-radius: $chip-radius;
+		font-size: $chip-font-size;
+		line-height: 1;
+		min-height: $chip-min-height;
+		white-space: nowrap;
+		color: var(--color-main-text);
+		background-color: $chip-bg;
+		border: 1px solid $chip-border;
+		box-shadow: $chip-shadow;
+		transition:
+			box-shadow $transition-fast,
+		transform $transition-fast,
+		background-color $transition-fast,
+		border-color $transition-fast;
+
+		.icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			color: var(--color-text-maxcontrast);
+			flex-shrink: 0;
+		}
+
+		.chip-value {
+			font-weight: 500;
+		}
+
+		:deep(.counter-bubble__counter),
+		:deep(.counter-bubble) {
+			background: transparent !important;
+			font-weight: 600;
+			font-size: $chip-font-size;
+		}
+
+		:deep(.support-feature-wrapper),
+		:deep(.support-feature) {
+			display: inline-flex;
+			align-items: center;
+			gap: $chip-gap;
+			background: transparent !important;
+			border: none !important;
+			box-shadow: none !important;
+			padding: 0 !important;
+			margin: 0 !important;
+			min-height: auto;
+		}
+
+		:deep(.quorum-compact) {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
+			font-size: 0.68rem;
+			color: var(--color-text-maxcontrast);
+			margin-left: 4px;
+
+			.quorum-target {
+				font-weight: 700;
+				color: var(--color-primary-element);
+			}
+
+			.quorum-label {
+				opacity: 0.75;
+				margin-left: 2px;
+			}
+		}
+
+		&--comments,
+		&--supports,
+		&--expire,
+		&--participants {
+			cursor: default;
+		}
+
+		&--comments:hover,
+		&--supports:hover {
+			box-shadow: $chip-shadow-hover;
+			transform: translateY(-1px);
+		}
+
+		&--participants {
+			.icon {
+				color: var(--color-primary-element);
+			}
+		}
+
+		&--expire {
+			.icon {
+				color: var(--color-warning);
+			}
+		}
+
+		&--status {
+			background-color: var(--color-primary-element-light, #e8f0fe);
+			border-color: transparent;
+
+			.icon {
+				color: var(--color-primary-element);
+			}
+		}
+
+		&--transparent {
+			background-color: transparent;
+			border-color: transparent;
+			box-shadow: none;
+			padding: 0;
+			min-height: auto;
+		}
+
+		&--moderation-pending {
+			background-color: #fff7e6;
+			border-color: #ffd591;
+
+			.icon,
+			.chip-value {
+				color: #d46b08;
+			}
+		}
+
+		&--moderation-rejected {
+			background-color: #fff1f0;
+			border-color: #ffa39e;
+
+			.icon,
+			.chip-value {
+				color: #cf1322;
+			}
+		}
+	}
+
+
+.inquiry-item.list-view.compact {
+  padding: 0.4rem 0.5rem;
+  gap: 0.5rem;
+
+  .item__title {
+    .title { font-size: 0.85rem; }
+    .description_line { display: none; } /* Hide descriptions in compact lists */
+  }
+
+  .badges {
+    /* Hide non-essential chips in compact lists */
+    .user-info-section, .chip--comments, .chip--participants, .chip--expire {
+      display: none;
+    }
+  }
+}
+	/* =========================================================
+	   LIST VIEW
+		   ========================================================= */
+	&.list-view {
+		display: flex;
+		column-gap: 0.75rem;
+		align-items: center;
+		padding: 0.65rem 0.75rem;
+		border-radius: 10px;
+		border-bottom: 1px solid var(--color-border);
+		margin-bottom: 0.25rem;
+		transition:
+			background-color $transition-fast,
+		box-shadow $transition-fast;
+
+		&:hover {
+			background-color: var(--color-background-hover);
+		}
+
+		&.active {
+			background-color: var(--color-primary-element-light);
+		}
+
+		.item__type {
+			flex: 0 0 2.5rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 4px;
+			color: var(--color-text-maxcontrast);
+		}
+
+		.item__title {
+			flex: 1;
+			min-width: 0;
+			overflow: hidden;
+
+			.title_line,
+			.description_line {
+				display: flex;
+				gap: 0.5rem;
+				align-items: center;
+
+				.title,
+				.description {
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+
+				.title {
+					font-weight: 600;
+					color: var(--color-main-text);
+					font-size: 0.95rem;
+				}
+			}
+
+			.description_line {
+				opacity: 0.7;
+				font-size: 0.85rem;
+				margin-top: 0.2rem;
+
+				.description {
+					flex: 1;
+				}
+			}
+		}
+
+		.badges {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.4rem;
+			align-items: center;
+			justify-content: flex-end;
+
+			.user-info-section {
+				display: inline-flex;
+				align-items: center;
+			}
+		}
+
+		.actions {
+			display: flex;
+			flex: 0 0 auto;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+
+	/* =========================================================
+	   GRID VIEW
+		   ========================================================= */
+	&.grid-view {
+		cursor: pointer;
+
+		&.featured {
+			grid-column: span 2;
+
+			.grid-card {
+				border-color: var(--color-primary-element);
+				background: var(--color-primary-light);
+			}
+		}
+		&.size-lg { grid-row: span 2; }
+		&.size-sm { grid-row: span 1; .grid-title { font-size: 14px; } }
+		&.compact {
+  grid-column: span 1;
+  grid-row: span 1;
+  cursor: pointer;
+
+  .grid-card--compact {
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    gap: $chip-gap;
-    padding: $chip-padding;
-    border-radius: $chip-radius;
-    font-size: $chip-font-size;
-    line-height: 1;
-    min-height: $chip-min-height;
-    white-space: nowrap;
-    color: var(--color-main-text);
-    background-color: $chip-bg;
-    border: 1px solid $chip-border;
-    box-shadow: $chip-shadow;
+    gap: 10px;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-main-background);
+    box-shadow: none;       
+  transform: none;
     transition:
-      box-shadow $transition-fast,
-      transform $transition-fast,
       background-color $transition-fast,
       border-color $transition-fast;
 
-    .icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-text-maxcontrast);
-      flex-shrink: 0;
-    }
-
-    .chip-value {
-      font-weight: 500;
-    }
-
-    :deep(.counter-bubble__counter),
-    :deep(.counter-bubble) {
-      background: transparent !important;
-      font-weight: 600;
-      font-size: $chip-font-size;
-    }
-
-    :deep(.support-feature-wrapper),
-    :deep(.support-feature) {
-      display: inline-flex;
-      align-items: center;
-      gap: $chip-gap;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      min-height: auto;
-    }
-
-    :deep(.quorum-compact) {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      font-size: 0.68rem;
-      color: var(--color-text-maxcontrast);
-      margin-left: 4px;
-
-      .quorum-target {
-        font-weight: 700;
-        color: var(--color-primary-element);
-      }
-
-      .quorum-label {
-        opacity: 0.75;
-        margin-left: 2px;
-      }
-    }
-
-    &--comments,
-    &--supports,
-    &--expire,
-    &--participants {
-      cursor: default;
-    }
-
-    &--comments:hover,
-    &--supports:hover {
-      box-shadow: $chip-shadow-hover;
-      transform: translateY(-1px);
-    }
-
-    &--participants {
-      .icon {
-        color: var(--color-primary-element);
-      }
-    }
-
-    &--expire {
-      .icon {
-        color: var(--color-warning);
-      }
-    }
-
-    &--status {
-      background-color: var(--color-primary-element-light, #e8f0fe);
-      border-color: transparent;
-
-      .icon {
-        color: var(--color-primary-element);
-      }
-    }
-
-    &--transparent {
-      background-color: transparent;
-      border-color: transparent;
-      box-shadow: none;
-      padding: 0;
-      min-height: auto;
-    }
-
-    &--moderation-pending {
-      background-color: #fff7e6;
-      border-color: #ffd591;
-
-      .icon,
-      .chip-value {
-        color: #d46b08;
-      }
-    }
-
-    &--moderation-rejected {
-      background-color: #fff1f0;
-      border-color: #ffa39e;
-
-      .icon,
-      .chip-value {
-        color: #cf1322;
-      }
+    &:hover {
+      background: var(--color-background-hover);
+      border-color: var(--color-primary-element-light, #c7d8f7);
     }
   }
 
-
-  /* =========================================================
-       LIST VIEW
-       ========================================================= */
-  &.list-view {
+  .compact-body {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    column-gap: 0.75rem;
-    align-items: center;
-    padding: 0.65rem 0.75rem;
-    border-radius: 10px;
-    border-bottom: 1px solid var(--color-border);
-    margin-bottom: 0.25rem;
-    transition:
-      background-color $transition-fast,
-      box-shadow $transition-fast;
+    overflow: hidden;
+
+    // NcTooltip renders its trigger inside a wrapper span; make it
+    // a proper flex child so ellipsis still works on the link.
+  	 > :deep(*) {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    overflow: hidden;
+  }
+  }
+
+  .compact-title-link,
+  .compact-title {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-main-text);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &:hover {
-      background-color: var(--color-background-hover);
-    }
-
-    &.active {
-      background-color: var(--color-primary-element-light);
-    }
-
-    .item__type {
-      flex: 0 0 2.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 4px;
-      color: var(--color-text-maxcontrast);
-    }
-
-    .item__title {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-
-      .title_line,
-      .description_line {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-
-        .title,
-        .description {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .title {
-          font-weight: 600;
-          color: var(--color-main-text);
-          font-size: 0.95rem;
-        }
-      }
-
-      .description_line {
-        opacity: 0.7;
-        font-size: 0.85rem;
-        margin-top: 0.2rem;
-
-        .description {
-          flex: 1;
-        }
-      }
-    }
-
-    .badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      align-items: center;
-      justify-content: flex-end;
-
-      .user-info-section {
-        display: inline-flex;
-        align-items: center;
-      }
-    }
-
-    .actions {
-      display: flex;
-      flex: 0 0 auto;
-      justify-content: center;
-      align-items: center;
+      color: var(--color-primary-element);
     }
   }
 
-  /* =========================================================
-       GRID VIEW
-       ========================================================= */
-  &.grid-view {
-       cursor: pointer;
+  .compact-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
 
-  &.featured {
-    grid-column: span 2;
+  .compact-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--color-text-maxcontrast);
 
-    .grid-card {
-      border-color: var(--color-primary-element);
-      background: var(--color-primary-light);
+    .icon {
+      flex-shrink: 0;
     }
   }
-  &.size-lg { grid-row: span 2; }
-  &.size-sm { grid-row: span 1; .grid-title { font-size: 14px; } }
-  &.compact {
-	  .grid-content { padding: 12px; }
 
-	  .grid-content .first-line .type-title .grid-title       { font-size: 14px; }
-	  .grid-content .description-line .grid-description       { -webkit-line-clamp: 1; }
+  .compact-avatar {
+    flex-shrink: 0;
+    display: flex;
   }
 
-  &.size-sm {
-	  .grid-content .first-line .type-title .grid-title       { font-size: 14px; }
-  }
-
-  .grid-card {
-	  display: flex;
-	  flex-direction: column;
-	  height: 100%;
-	  border: 1px solid var(--color-border);
-	  border-radius: 14px;
-	  background-color: var(--color-main-background);
-	  box-shadow:
-		  0 1px 3px rgba(0, 0, 0, 0.04),
-	  0 4px 16px rgba(0, 0, 0, 0.05);
-  transition:
-	  transform $transition-base,
-  box-shadow $transition-base,
-  border-color $transition-base;
-      overflow: hidden;
-      position: relative;
-
-      &:hover {
-	      transform: translateY(-3px);
-	      box-shadow:
-		      0 6px 20px rgba(0, 0, 0, 0.09),
-	      0 10px 30px rgba(0, 0, 0, 0.06);
-      border-color: var(--color-primary-element-light, #c7d8f7);
-      }
-  }
-
-  /* --------- Moderation banner --------- */
-  .grid-moderation-banner {
-	  display: flex;
-	  align-items: center;
-	  gap: 10px;
-	  padding: 10px 16px;
-	  font-size: 13px;
-	  font-weight: 500;
-	  z-index: 3;
-	  position: relative;
-
-	  &.moderation-pending {
-		  background: linear-gradient(135deg, #fff7e6, #ffe7ba);
-		  color: #ad4e00;
-		  border-bottom: 1px solid #ffd591;
-	  }
-
-	  &.moderation-rejected {
-		  background: linear-gradient(135deg, #fff1f0, #ffccc7);
-		  color: #a8071a;
-		  border-bottom: 1px solid #ffa39e;
-	  }
-
-	  .icon {
-		  flex-shrink: 0;
-	  }
-
-	  .reason {
-		  font-weight: 500;
-		  opacity: 0.9;
-		  margin-left: 4px;
-		  font-size: 12px;
-		  background: rgba(255, 255, 255, 0.6);
-		  padding: 2px 8px;
-		  border-radius: 10px;
-	  }
-  }
-
-  /* --------- Cover + overlays --------- */
-  .grid-cover-container {
-	  position: relative;
-	  width: 100%;
-
-	  .grid-cover {
-		  height: 170px;
-		  overflow: hidden;
-		  background-color: var(--color-background-dark);
-
-		  .cover-image {
-			  width: 100%;
-			  height: 100%;
-			  object-fit: cover;
-			  object-position: center;
-			  transition: transform 0.5s ease;
-		  }
-	  }
-
-	  .user-avatar-top {
-		  position: absolute;
-		  top: 12px;
-		  left: 12px;
-		  z-index: 2;
-
-		  .user-avatar-main {
-			  border: 3px solid var(--color-main-background);
-			  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-			  background-color: var(--color-main-background);
-		  }
-	  }
-
-	  /* Expiration pill top-right (frosted white) */
-	  .expiration-corner {
-		  position: absolute;
-		  top: 12px;
-		  right: 12px;
-		  z-index: 3;
-
-		  display: inline-flex;
-		  align-items: center;
-		  gap: 6px;
-
-		  padding: 5px 10px;
-		  border-radius: $chip-radius;
-
-		  font-size: 0.75rem;
-		  font-weight: 600;
-		  line-height: 1;
-		  white-space: nowrap;
-
-		  color: var(--color-main-text);
-		  background: rgba(255, 255, 255, 0.92);
-		  border: 1px solid rgba(255, 255, 255, 0.6);
-		  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-		  backdrop-filter: blur(8px);
-		  -webkit-backdrop-filter: blur(8px);
-
-		  .icon {
-			  color: var(--color-warning);
-		  }
-	  }
-
-	  /* When there is no cover image, add a subtle inset area so the
-	     avatar / expire pill still look intentional at the top */
-	  &.no-cover {
-		  min-height: 88px;
-		  background: linear-gradient(
-			  135deg,
-			  var(--color-background-hover) 0%,
-			  var(--color-background-dark) 100%
-			  );
-
-		  .user-avatar-top {
-			  top: 14px;
-			  left: 14px;
-		  }
-
-		  .expiration-corner {
-			  top: 14px;
-			  right: 14px;
-			  background: $chip-bg;
-			  border-color: $chip-border;
-			  box-shadow: $chip-shadow;
-			  backdrop-filter: none;
-			  -webkit-backdrop-filter: none;
-		  }
-	  }
-  }
-
-  /* --------- Content (stacks under cover) --------- */
-  .grid-content {
-	  flex: 1;
-	  padding: 18px 18px 16px;
-	  display: flex;
-	  flex-direction: column;
-	  gap: 12px;
-
-	  .first-line {
-		  display: flex;
-		  justify-content: space-between;
-		  align-items: flex-start;
-		  gap: 12px;
-
-		  .type-title {
-			  flex: 1;
-			  min-width: 0;
-
-			  /* Icon + label on the top row */
-			  .inquiry-type {
-				  display: flex;
-				  align-items: center;
-				  gap: 6px;
-				  font-size: 11px;
-				  font-weight: 700;
-				  letter-spacing: 0.04em;
-				  text-transform: uppercase;
-				  color: var(--color-text-maxcontrast);
-				  margin-bottom: 6px;
-
-				  .type-icon {
-					  flex-shrink: 0;
-					  color: var(--color-primary-element);
-				  }
-
-				  .type-label {
-					  white-space: nowrap;
-					  overflow: hidden;
-					  text-overflow: ellipsis;
-				  }
-			  }
-
-			  /* Title underneath the type row */
-			  .title-link {
-				  text-decoration: none;
-				  color: inherit;
-
-				  &:hover .grid-title {
-					  color: var(--color-primary-element);
-				  }
-			  }
-
-			  .grid-title {
-				  font-size: 1.05rem;
-				  font-weight: 700;
-				  line-height: 1.35;
-				  margin: 0;
-				  color: var(--color-main-text);
-				  display: -webkit-box;
-				  -webkit-line-clamp: 2;
-				  -webkit-box-orient: vertical;
-				  overflow: hidden;
-				  transition: color $transition-fast;
-			  }
-		  }
-
-		  .toggle-view {
-			  flex-shrink: 0;
-			  margin-left: 8px;
-		  }
-	  }
-
-	  /* Description under the title */
-	  .description-line {
-		  .grid-description {
-			  font-size: 0.85rem;
-			  line-height: 1.5;
-			  color: var(--color-text-maxcontrast);
-			  margin: 0;
-			  display: -webkit-box;
-			  -webkit-line-clamp: 2;
-			  -webkit-box-orient: vertical;
-			  overflow: hidden;
-		  }
-	  }
-
-	  .bottom-section {
-		  margin-top: auto;
-		  display: flex;
-		  flex-direction: column;
-		  gap: 10px;
-		  padding-top: 10px;
-		  border-top: 1px solid var(--color-border);
-
-		  .second-line {
-			  display: flex;
-			  justify-content: space-between;
-			  align-items: center;
-			  gap: 12px;
-
-			  .left-items,
-			  .right-items {
-				  display: flex;
-				  align-items: center;
-				  gap: 8px;
-			  }
-
-			  .meta-chip {
-				  font-size: 0.72rem;
-				  min-height: 28px;
-				  padding: 4px 9px;
-			  }
-		  }
-
-		  .third-line {
-			  display: flex;
-			  justify-content: space-between;
-			  align-items: center;
-			  gap: 12px;
-			  font-size: 0.72rem;
-			  color: var(--color-text-maxcontrast);
-			  width: 100%;
-
-			  .vote-period-container {
-				  display: flex;
-				  justify-content: space-between;
-				  align-items: center;
-				  width: 100%;
-				  gap: 8px;
-			  }
-
-			  .vote-date-box {
-				  display: flex;
-				  align-items: center;
-				  gap: 6px;
-				  padding: 5px 9px;
-				  background-color: $chip-bg;
-				  border: 1px solid $chip-border;
-				  border-radius: $chip-radius;
-				  font-size: 0.72rem;
-				  color: var(--color-main-text);
-				  box-shadow: $chip-shadow;
-				  flex: 1;
-				  min-width: 0;
-
-				  .icon {
-					  color: var(--color-text-maxcontrast);
-					  flex-shrink: 0;
-				  }
-
-				  &.start-date {
-					  justify-content: flex-start;
-
-					  .icon {
-						  color: var(--color-primary-element);
-					  }
-				  }
-
-				  &.end-date {
-					  justify-content: flex-end;
-
-					  .icon {
-						  color: var(--color-warning);
-					  }
-				  }
-
-				  .vote-date-label {
-					  opacity: 0.75;
-					  white-space: nowrap;
-				  }
-
-				  .vote-date-value {
-					  font-weight: 600;
-					  color: var(--color-main-text);
-					  white-space: nowrap;
-					  overflow: hidden;
-					  text-overflow: ellipsis;
-				  }
-			  }
-
-			  .started-info {
-				  flex: 1;
-				  white-space: nowrap;
-				  overflow: hidden;
-				  text-overflow: ellipsis;
-			  }
-
-			  .dates {
-				  display: flex;
-				  align-items: center;
-				  gap: 12px;
-				  flex-shrink: 0;
-
-				  .date-item {
-					  display: flex;
-					  align-items: center;
-					  gap: 5px;
-					  white-space: nowrap;
-
-					  .icon {
-						  color: var(--color-text-maxcontrast);
-					  }
-
-					  &.last-interaction,
-					  &.created {
-						  opacity: 0.85;
-					  }
-				  }
-			  }
-		  }
-	  }
+  .compact-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    margin-left: -2px;
   }
 }
+		&.size-sm {
+			.grid-content .first-line .type-title .grid-title       { font-size: 14px; }
+		}
+
+		.grid-card {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			border: 1px solid var(--color-border);
+			border-radius: 14px;
+			background-color: var(--color-main-background);
+			box-shadow:
+				0 1px 3px rgba(0, 0, 0, 0.04),
+			0 4px 16px rgba(0, 0, 0, 0.05);
+		transition:
+			transform $transition-base,
+		box-shadow $transition-base,
+		border-color $transition-base;
+	overflow: hidden;
+	position: relative;
+
+	&:hover {
+		transform: translateY(-3px);
+		box-shadow:
+			0 6px 20px rgba(0, 0, 0, 0.09),
+		0 10px 30px rgba(0, 0, 0, 0.06);
+	border-color: var(--color-primary-element-light, #c7d8f7);
+	}
+		}
+
+		/* --------- Moderation banner --------- */
+		.grid-moderation-banner {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 10px 16px;
+			font-size: 13px;
+			font-weight: 500;
+			z-index: 3;
+			position: relative;
+
+			&.moderation-pending {
+				background: linear-gradient(135deg, #fff7e6, #ffe7ba);
+				color: #ad4e00;
+				border-bottom: 1px solid #ffd591;
+			}
+
+			&.moderation-rejected {
+				background: linear-gradient(135deg, #fff1f0, #ffccc7);
+				color: #a8071a;
+				border-bottom: 1px solid #ffa39e;
+			}
+
+			.icon {
+				flex-shrink: 0;
+			}
+
+			.reason {
+				font-weight: 500;
+				opacity: 0.9;
+				margin-left: 4px;
+				font-size: 12px;
+				background: rgba(255, 255, 255, 0.6);
+				padding: 2px 8px;
+				border-radius: 10px;
+			}
+		}
+
+		/* --------- Cover + overlays --------- */
+		.grid-cover-container {
+			position: relative;
+			width: 100%;
+
+			.grid-cover {
+				height: 170px;
+				overflow: hidden;
+				background-color: var(--color-background-dark);
+
+				.cover-image {
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					object-position: center;
+					transition: transform 0.5s ease;
+				}
+			}
+
+			.user-avatar-top {
+				position: absolute;
+				top: 12px;
+				left: 12px;
+				z-index: 2;
+
+				.user-avatar-main {
+					border: 3px solid var(--color-main-background);
+					box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+					background-color: var(--color-main-background);
+				}
+			}
+
+			/* Expiration pill top-right (frosted white) */
+			.expiration-corner {
+				position: absolute;
+				top: 12px;
+				right: 12px;
+				z-index: 3;
+
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+
+				padding: 5px 10px;
+				border-radius: $chip-radius;
+
+				font-size: 0.75rem;
+				font-weight: 600;
+				line-height: 1;
+				white-space: nowrap;
+
+				color: var(--color-main-text);
+				background: rgba(255, 255, 255, 0.92);
+				border: 1px solid rgba(255, 255, 255, 0.6);
+				box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+
+				.icon {
+					color: var(--color-warning);
+				}
+			}
+
+			/* When there is no cover image, add a subtle inset area so the
+			   avatar / expire pill still look intentional at the top */
+			&.no-cover {
+				min-height: 88px;
+				background: linear-gradient(
+					135deg,
+					var(--color-background-hover) 0%,
+					var(--color-background-dark) 100%
+					);
+
+				.user-avatar-top {
+					top: 14px;
+					left: 14px;
+				}
+
+				.expiration-corner {
+					top: 14px;
+					right: 14px;
+					background: $chip-bg;
+					border-color: $chip-border;
+					box-shadow: $chip-shadow;
+					backdrop-filter: none;
+					-webkit-backdrop-filter: none;
+				}
+			}
+		}
+
+		/* --------- Content (stacks under cover) --------- */
+		.grid-content {
+			flex: 1;
+			padding: 18px 18px 16px;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+
+			.first-line {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				gap: 12px;
+
+				.type-title {
+					flex: 1;
+					min-width: 0;
+
+					/* Icon + label on the top row */
+					.inquiry-type {
+						display: flex;
+						align-items: center;
+						gap: 6px;
+						font-size: 11px;
+						font-weight: 700;
+						letter-spacing: 0.04em;
+						text-transform: uppercase;
+						color: var(--color-text-maxcontrast);
+						margin-bottom: 6px;
+
+						.type-icon {
+							flex-shrink: 0;
+							color: var(--color-primary-element);
+						}
+
+						.type-label {
+							white-space: nowrap;
+							overflow: hidden;
+							text-overflow: ellipsis;
+						}
+					}
+
+					/* Title underneath the type row */
+					.title-link {
+						text-decoration: none;
+						color: inherit;
+
+						&:hover .grid-title {
+							color: var(--color-primary-element);
+						}
+					}
+
+					.grid-title {
+						font-size: 1.05rem;
+						font-weight: 700;
+						line-height: 1.35;
+						margin: 0;
+						color: var(--color-main-text);
+						display: -webkit-box;
+						-webkit-line-clamp: 2;
+						-webkit-box-orient: vertical;
+						overflow: hidden;
+						transition: color $transition-fast;
+					}
+				}
+
+				.toggle-view {
+					flex-shrink: 0;
+					margin-left: 8px;
+				}
+			}
+
+			/* Description under the title */
+			.description-line {
+				.grid-description {
+					font-size: 0.85rem;
+					line-height: 1.5;
+					color: var(--color-text-maxcontrast);
+					margin: 0;
+					display: -webkit-box;
+					-webkit-line-clamp: 2;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
+				}
+			}
+
+			.bottom-section {
+				margin-top: auto;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+				padding-top: 10px;
+				border-top: 1px solid var(--color-border);
+
+				.second-line {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					gap: 12px;
+
+					.left-items,
+					.right-items {
+						display: flex;
+						align-items: center;
+						gap: 8px;
+					}
+
+					.meta-chip {
+						font-size: 0.72rem;
+						min-height: 28px;
+						padding: 4px 9px;
+					}
+				}
+
+				.third-line {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					gap: 12px;
+					font-size: 0.72rem;
+					color: var(--color-text-maxcontrast);
+					width: 100%;
+
+					.vote-period-container {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						width: 100%;
+						gap: 8px;
+					}
+
+					.vote-date-box {
+						display: flex;
+						align-items: center;
+						gap: 6px;
+						padding: 5px 9px;
+						background-color: $chip-bg;
+						border: 1px solid $chip-border;
+						border-radius: $chip-radius;
+						font-size: 0.72rem;
+						color: var(--color-main-text);
+						box-shadow: $chip-shadow;
+						flex: 1;
+						min-width: 0;
+
+						.icon {
+							color: var(--color-text-maxcontrast);
+							flex-shrink: 0;
+						}
+
+						&.start-date {
+							justify-content: flex-start;
+
+							.icon {
+								color: var(--color-primary-element);
+							}
+						}
+
+						&.end-date {
+							justify-content: flex-end;
+
+							.icon {
+								color: var(--color-warning);
+							}
+						}
+
+						.vote-date-label {
+							opacity: 0.75;
+							white-space: nowrap;
+						}
+
+						.vote-date-value {
+							font-weight: 600;
+							color: var(--color-main-text);
+							white-space: nowrap;
+							overflow: hidden;
+							text-overflow: ellipsis;
+						}
+					}
+
+					.started-info {
+						flex: 1;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
+
+					.dates {
+						display: flex;
+						align-items: center;
+						gap: 12px;
+						flex-shrink: 0;
+
+						.date-item {
+							display: flex;
+							align-items: center;
+							gap: 5px;
+							white-space: nowrap;
+
+							.icon {
+								color: var(--color-text-maxcontrast);
+							}
+
+							&.last-interaction,
+							&.created {
+								opacity: 0.85;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
-    /* =========================================================
-       Responsive
-	       ========================================================= */
-    @media (max-width: 768px) {
-	    .inquiry-item.grid-view {
-		    .grid-card {
-			    border-radius: 12px;
+		    /* =========================================================
+		       Responsive
+			       ========================================================= */
+		    @media (max-width: 768px) {
+			    .inquiry-item.grid-view {
+				    .grid-card {
+					    border-radius: 12px;
+				    }
+
+				    .grid-moderation-banner {
+					    padding: 8px 12px;
+					    font-size: 12px;
+					    flex-wrap: wrap;
+
+					    .reason {
+						    width: 100%;
+						    margin-left: 0;
+						    margin-top: 4px;
+					    }
+				    }
+
+				    .grid-cover-container {
+					    .grid-cover {
+						    height: 140px;
+					    }
+
+					    .user-avatar-top {
+						    top: 10px;
+						    left: 10px;
+
+						    .user-avatar-main {
+							    width: 40px;
+							    height: 40px;
+						    }
+					    }
+
+					    .expiration-corner {
+						    top: 10px;
+						    right: 10px;
+						    font-size: 0.7rem;
+						    padding: 4px 8px;
+					    }
+
+					    &.no-cover {
+						    min-height: 76px;
+					    }
+				    }
+
+				    .grid-content {
+					    padding: 14px;
+					    gap: 10px;
+
+					    .first-line {
+						    .type-title {
+							    .inquiry-type {
+								    font-size: 10px;
+							    }
+
+							    .grid-title {
+								    font-size: 1rem;
+							    }
+						    }
+					    }
+
+					    .description-line {
+						    .grid-description {
+							    font-size: 0.8rem;
+						    }
+					    }
+
+					    .bottom-section {
+						    .second-line {
+							    .meta-chip {
+								    font-size: 0.68rem;
+								    padding: 3px 7px;
+								    min-height: 26px;
+							    }
+						    }
+
+						    .third-line {
+							    font-size: 0.68rem;
+
+							    .vote-date-box {
+								    font-size: 0.68rem;
+								    padding: 4px 7px;
+							    }
+
+							    .dates {
+								    gap: 8px;
+							    }
+						    }
+					    }
+				    }
+			    }
 		    }
-
-		    .grid-moderation-banner {
-			    padding: 8px 12px;
-			    font-size: 12px;
-			    flex-wrap: wrap;
-
-			    .reason {
-				    width: 100%;
-				    margin-left: 0;
-				    margin-top: 4px;
-			    }
-		    }
-
-		    .grid-cover-container {
-			    .grid-cover {
-				    height: 140px;
-			    }
-
-			    .user-avatar-top {
-				    top: 10px;
-				    left: 10px;
-
-				    .user-avatar-main {
-					    width: 40px;
-					    height: 40px;
-				    }
-			    }
-
-			    .expiration-corner {
-				    top: 10px;
-				    right: 10px;
-				    font-size: 0.7rem;
-				    padding: 4px 8px;
-			    }
-
-			    &.no-cover {
-				    min-height: 76px;
-			    }
-		    }
-
-		    .grid-content {
-			    padding: 14px;
-			    gap: 10px;
-
-			    .first-line {
-				    .type-title {
-					    .inquiry-type {
-						    font-size: 10px;
-					    }
-
-					    .grid-title {
-						    font-size: 1rem;
-					    }
-				    }
-			    }
-
-			    .description-line {
-				    .grid-description {
-					    font-size: 0.8rem;
-				    }
-			    }
-
-			    .bottom-section {
-				    .second-line {
-					    .meta-chip {
-						    font-size: 0.68rem;
-						    padding: 3px 7px;
-						    min-height: 26px;
-					    }
-				    }
-
-				    .third-line {
-					    font-size: 0.68rem;
-
-					    .vote-date-box {
-						    font-size: 0.68rem;
-						    padding: 4px 7px;
-					    }
-
-					    .dates {
-						    gap: 8px;
-					    }
-				    }
-			    }
-		    }
-	    }
-    }
-</style>
+    </style>

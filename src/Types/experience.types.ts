@@ -10,7 +10,6 @@ export interface HomeSection {
   key: string
   label: string
   order: number
-  enabled?: boolean
   zones: string[] // keys in displayArchitecture
 }
 // ---------- Vocabulary: ORGANIZATION ----------
@@ -59,7 +58,6 @@ export const CONTENT_VALUES = [
   'hero',
   'group_types',
   'news',
-  // 'services',
   'events',
   'explore',
   'promo',
@@ -74,28 +72,28 @@ export const SOURCE_VALUES = [
   'parent_group',
   'selected',
   'selected_group',
+  'selected_group_children',
   'selected_inquiry',
   'all',
-  'official',
   'featured',
 ] as const
 export type SourceValue = (typeof SOURCE_VALUES)[number]
 
 export const VALID_SOURCES_BY_CONTENT: Record<ContentValue, SourceValue[]> = {
-  inquiry_groups: ['children', 'selected_group', 'parent_group', 'group', 'all'],
-  inquiries: ['children', 'selected_group', 'group', 'all', 'featured'],
-  options: ['selected_inquiry'],
-  resources: ['selected_inquiry'],
-  messages: ['selected_inquiry'],
-  statistics: ['group', 'selected_group', 'selected_inquiry'],
-  activity: ['group', 'children', 'all'],
-  hero: ['all'],
-  news: ['official', 'all', 'featured'],
-  group_types: ['all', 'featured'],
-  events: ['all', 'featured'],
-  explore: ['all'],
-  promo: ['featured', 'all'],
-  search: ['all'],
+  inquiry_groups:  ['children', 'selected_group', 'selected_group_children', 'parent_group', 'group', 'all'],
+  inquiries:       ['children', 'selected_inquiry', 'selected_group', 'group', 'all', 'featured'],
+  options:         ['selected_inquiry'],
+  resources:       ['selected_inquiry'],
+  messages:        ['selected_inquiry'],
+  statistics:      ['group', 'selected_group', 'selected_inquiry'],
+  activity:        ['group', 'children', 'all'],
+  hero:            ['all'],
+  news:            ['all'],
+  group_types:     ['all'],
+  events:          ['all'],
+  explore:         ['all'],
+  promo:           ['all'],
+  search:          ['all'],
 }
 
 // ---------- Vocabulary: DISPLAY ----------
@@ -113,25 +111,22 @@ export const DISPLAY_TYPE_VALUES = [
   'tiles',
   'banner',
   'news_list',
-  'quick_actions',
   'calendar',
   'category_grid',
   'search_bar',
   'promo_card',
   'current_moment',
   'my_spaces',
+  'full',
 ] as const
 export type DisplayType = (typeof DISPLAY_TYPE_VALUES)[number]
-
-/** @deprecated alias kept for backwards compatibility – use `DisplayType`. */
-export type DisplayTypeValue = DisplayType
 
 // ---------- Vocabulary: RELEVANCE ----------
 export const RELEVANCE_TIERS = ['for_you', 'local', 'region', 'public'] as const
 export type RelevanceTier = (typeof RELEVANCE_TIERS)[number]
 
 export const VALID_DISPLAYS_BY_CONTENT: Record<ContentValue, DisplayType[]> = {
-  inquiry_groups: ['list', 'cards', 'tree', 'navigation', 'my_spaces'],
+  inquiry_groups: ['list', 'cards', 'tree', 'navigation'],
   inquiries: [
     'list',
     'cards',
@@ -142,6 +137,8 @@ export const VALID_DISPLAYS_BY_CONTENT: Record<ContentValue, DisplayType[]> = {
     'kanban',
     'tool',
     'current_moment',
+    'navigation',
+    'full',
   ],
   options: ['tool'],
   resources: ['list'],
@@ -171,47 +168,22 @@ export const OPTION_TOOLS = [
 ] as const
 export type OptionTool = (typeof OPTION_TOOLS)[number]
 
-export const MARKETPLACE_TOOLS = ['search', 'filter', 'compare'] as const
+export const MARKETPLACE_TOOLS = ['search'] as const
 export type MarketplaceTool = (typeof MARKETPLACE_TOOLS)[number]
 
 export const ALL_TOOLS = [
   ...INQUIRY_TOOLS,
   ...OPTION_TOOLS,
   ...MARKETPLACE_TOOLS,
-  'wiki',
-  'analytics',
-  'resources',
-  'quorum',
-  'support',
 ] as const
 export type ToolKey = (typeof ALL_TOOLS)[number]
-/** @deprecated alias kept for backwards compatibility – use `ToolKey`. */
-export type ToolValue = ToolKey
 
 export const VALID_TOOLS_BY_CONTENT: Record<ContentValue, ToolKey[]> = {
   inquiry_groups: [],
-  inquiries: [
-    ...INQUIRY_TOOLS,
-    'wiki',
-    'analytics',
-    'resources',
-    'quorum',
-    'support',
-    'search',
-    'filter',
-    'compare', // marketplace needs these
-  ],
-  options: [...OPTION_TOOLS, 'wiki', 'analytics', 'resources'],
-  resources: [],
-  messages: [],
-  statistics: [],
-  activity: [],
-  hero: [],
-  news: [],
-  group_types: [],
-  events: [],
-  explore: [],
-  promo: [],
+  inquiries:      [...INQUIRY_TOOLS, 'search'],   // was +wiki/analytics/resources/quorum/support/filter/compare
+  options:        [...OPTION_TOOLS],              // was +wiki/analytics/resources
+  resources: [], messages: [], statistics: [], activity: [],
+  hero: [], news: [], group_types: [], events: [], explore: [], promo: [],
   search: ['search'],
 }
 
@@ -345,12 +317,6 @@ export interface DisplayZone {
 export interface ExperienceArchitecture {
   /** Active experience key */
   experience: ExperienceKey
-  /** Default experience (if different from active) */
-  defaultExperience?: ExperienceKey
-  /** Default display mode for this experience */
-  defaultDisplay?: DisplayType
-  defaultTool?: ToolKey
-  /** Layout configuration */
   layout: {
     type: LayoutTypeValue
     columns?: number
@@ -376,17 +342,14 @@ export interface ExperienceDefinition {
   description: string
   verb: string
   question: string
-  defaultTools: ToolKey[]
   defaultDisplay: DisplayType
-  /** Required when defaultDisplay === 'tool' */
-  defaultTool?: ToolKey
+  defaultTools: ToolKey[]
   allowedDisplays: DisplayType[]
   allowedTools: ToolKey[]
   layout: LayoutTypeValue
   showHeader: boolean
   showBreadcrumb: boolean
   showStats: boolean
-  supportedGroupTypes: string[]
 }
 
 // ============================================================

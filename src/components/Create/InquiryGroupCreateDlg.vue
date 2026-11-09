@@ -26,7 +26,7 @@ import {
 
 // Define props
 interface Props {
-  inquiryGroupType?: InquiryGroupType | null
+  inquiryGroupType?: InquiryGroupType | string | null
   parentGroupId?: string | number | null
   availableGroups?: string[]
   defaultTitle?: string | null

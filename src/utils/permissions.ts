@@ -335,6 +335,8 @@ function hasAcceptedModeration(ctx: PermissionContext): boolean {
 export function canView(ctx: PermissionContext): boolean {
   const appSettings = useAppSettingsStore()
 
+  if (!ctx) return false
+
   if (ctx.isDeleted) {
     return [UserType.Moderator, UserType.Admin, UserType.Owner].includes(ctx.userType)
   }

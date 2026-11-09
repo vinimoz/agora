@@ -31,7 +31,6 @@ import NcDateTimePicker from '@nextcloud/vue/components/NcDateTimePicker'
 
 import { NcTextArea } from '@nextcloud/vue'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-
 import InquiryEditor from '../Editor/InquiryEditor.vue'
 import OptionEditView from '../Options/OptionEditView.vue'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
@@ -46,6 +45,7 @@ import {
 // Props
 const props = defineProps<{
   isReadonly: boolean
+  inquiry?: Inquiry
 }>()
 
 const hasAccess = ref(true)
@@ -371,7 +371,7 @@ onUnmounted(() => {
 })
 
 // Event subscriptions
-onMounted(async () => {
+/* onMounted(async () => {
   if (!canView(context.value)) {
     hasAccess.value = false
     showError('Error you cannot view this inquiry !')
@@ -379,6 +379,48 @@ onMounted(async () => {
     return
   }
 
+  if (inquiryStore.coverId) {
+    currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
+  }
+
+  if (inquiriesStore.inquiries.length === 0) {
+    inquiriesStore.setFamilyType(inquiryStore.family)
+    inquiriesStore.load()
+  }
+
+  subscribe(Event.UpdateComments, onCommentsUpdated)
+  isLoaded.value = true
+})*/
+onMounted(async () => {
+  // 1. If the shell passed us an inquiry, load it into the store first.
+  //    The store is the single source of truth for the rest of the component.
+  if (props.inquiry?.id && props.inquiry.id !== inquiryStore.id) {
+    try {
+      await inquiryStore.load(props.inquiry.id)
+    } catch (err) {
+      console.error('[InquiryEditViewForm] failed to load inquiry', err)
+      hasAccess.value = false
+      return
+    }
+  }
+
+  // 2. Guard before canView() — a null context means the store is still
+  //    empty (bad id, no permission data, session not ready, …).
+  if (!context.value) {
+    hasAccess.value = false
+    console.warn('[InquiryEditViewForm] context unavailable — cannot verify access')
+    return
+  }
+
+  // 3. Permission check as before.
+  if (!canView(context.value)) {
+    hasAccess.value = false
+    showError('Error you cannot view this inquiry !')
+    router.push({ name: 'list', params: { type: 'relevant' } })
+    return
+  }
+
+  // 4. Everything else — unchanged.
   if (inquiryStore.coverId) {
     currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
   }

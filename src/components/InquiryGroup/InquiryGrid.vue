@@ -4,17 +4,30 @@
 -->
 
 <template>
-  <div ref="gridRef" class="inquiry-grid">
+  <div ref="gridRef" class="inquiry-grid" :class="`mode-${mode ?? 'cards'}`">
     <InquiryItem
       v-for="(inq, i) in inquiries"
       :key="inq.id"
       :inquiry="inq"
-      grid-view
+      :grid-view="mode !== 'list'"
       :compact="compact"
       :featured="isFeatured(inq)"
+      :active-id="activeId"
+      :interaction-action="interactionAction"
       :size="getSize(inq)"
+      :show-icon="showIcon"
+      :show-cover="showCover"
+      :show-meta="showMeta"
+      :show-author="showAuthor"
+      :show-description="showDescription"
+      :show-expiry="showExpiry"
+      :show-type="showType"
+      :show-comment="showComment"
+      :show-status="showStatus"
+      :show-support="showSupport"
+      :show-participants="showParticipants"
       :style="getItemStyle(i)"
-      @click="$emit('click', $event)"
+      @click="handleClick(inq)"
     >
       <template #actions>
         <slot name="actions" />
@@ -37,6 +50,21 @@ const props = defineProps<{
   inquiries: Inquiry[]
   compact?: boolean
   columns?: number
+  activeId?: number | null
+  interactionAction?: string
+  mode?: 'cards' | 'list'
+  showIcon?: boolean
+  showCover?: boolean
+  showMeta?: boolean
+  showStats?: boolean
+  showAuthor?: boolean
+  showDescription?: boolean
+  showExpiry?: boolean
+  showType?: boolean
+  showComment?: boolean
+  showStatus?: boolean
+  showSupport?: boolean
+  showParticipants?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -46,6 +74,7 @@ const emit = defineEmits<{
 const sessionStore = useSessionStore()
 const gridRef = ref<HTMLElement | null>(null)
 
+console.log(' MODE PROPS ', props.mode)
 function getCoverUrl(inquiry: Inquiry): string | null {
   if (!inquiry.coverId) return null
   const baseUrl = window.location.origin
@@ -104,6 +133,12 @@ function handleClick(inquiry: Inquiry) {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
   padding: 4px;
+}
+
+.inquiry-grid.mode-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .grid-item {

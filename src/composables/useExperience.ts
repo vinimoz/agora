@@ -50,15 +50,13 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     description: 'Welcome to your civic space',
     verb: 'Discover',
     question: 'What can I do today?',
-    defaultTools: ['search'],
     defaultDisplay: 'banner',
     allowedDisplays: ['banner', 'cards', 'list'],
-    allowedTools: ['search', 'filter'],
+    allowedTools: ['search'],
     layout: 'grid',
     showHeader: false, 
     showBreadcrumb: false,
     showStats: false,
-    supportedGroupTypes: [], 
   },
 
   dashboard: {
@@ -68,15 +66,13 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     description: 'Understand and see what is happening',
     verb: 'Understand',
     question: 'What is happening here and where can I go?',
-    defaultTools: ['vote', 'kanban', 'timeline'],
-    defaultDisplay: 'widget',
-    allowedDisplays: ['widget', 'cards', 'list', 'feed'],
-    allowedTools: ['vote','kanban','timeline','quorum', 'analytics', 'resources'],
+    defaultDisplay: 'cards',
+    allowedDisplays: ['cards', 'list', 'feed'],
+    allowedTools: ['vote','kanban','timeline'],
     layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: ['project', 'consultation', 'decision', 'initiative_group', 'assembly'],
   },
 
   social: {
@@ -86,15 +82,13 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     description: 'Follow and participate',
     verb: 'Follow',
     question: 'What are others thinking?',
-    defaultTools: ['support', 'debate', 'vote'],
     defaultDisplay: 'feed',
     allowedDisplays: ['feed', 'cards', 'list'],
-    allowedTools: ['support', 'debate', 'vote'],
-    layout: 'full',
+    allowedTools: [],
+    layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: ['consultation', 'debate', 'social', 'poll_group'],
   },
 
   marketplace: {
@@ -104,15 +98,13 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     description: 'Browse and discover',
     verb: 'Discover',
     question: 'What is available?',
-    defaultTools: ['search', 'filter', 'compare'],
     defaultDisplay: 'cards',
     allowedDisplays: ['cards', 'list'],
-    allowedTools: ['search', 'filter', 'compare', 'resources'],
+    allowedTools: ['search'],
     layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: ['project', 'consultation', 'marketplace', 'initiative_group', 'offer'],
   },
 
   wiki: {
@@ -122,15 +114,13 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     description: 'Understand the content',
     verb: 'Understand',
     question: 'What does this information mean / contain?',
-    defaultTools: ['wiki', 'structure'],
     defaultDisplay: 'book',
-    allowedDisplays: ['book', 'list'],
-    allowedTools: ['wiki', 'structure', 'resources'],
-    layout: 'sidebar',
+    allowedDisplays: ['book'],
+    allowedTools: ['structure'],
+    layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
     showStats: false,
-    supportedGroupTypes: ['wiki', 'structure', 'documentation', 'municipal_reports', 'chapter'],
   },
 
   decision_room: {
@@ -140,24 +130,13 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     description: 'Decide',
     verb: 'Decide',
     question: 'How do we decide?',
-    defaultTools: ['debate', 'vote', 'consensus'],
     defaultDisplay: 'book',
-    allowedDisplays: ['book', 'list'],
-    allowedTools: ['debate', 'vote', 'consensus', 'resources'],
-    layout: 'split',
+    allowedDisplays: ['book'],
+    allowedTools: ['debate', 'vote'],
+    layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: [
-      'decision',
-      'consultation',
-      'debate',
-      'citizen_jury',
-      'commission',
-      'chapter',
-      'ethics_review',
-      'investigation_case',
-    ],
   },
 
   classic: {
@@ -167,15 +146,13 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     description: 'Standard group layout',
     verb: 'View',
     question: 'Default view',
-    defaultTools: [],
     defaultDisplay: 'list',
-    allowedDisplays: ['list', 'cards'],
+    allowedDisplays: ['list'],
     allowedTools: [],
     layout: 'full',
     showHeader: true,
     showBreadcrumb: true,
     showStats: true,
-    supportedGroupTypes: [],
   },
 }
 
@@ -194,12 +171,6 @@ if (import.meta.env.DEV) {
       )
     }
 
-    if (def.defaultTool && !def.allowedTools.includes(def.defaultTool)) {
-      console.warn(
-        `[useExperience] ${key}.defaultTool '${def.defaultTool}' ` +
-          `is not in allowedTools [${def.allowedTools.join(', ')}].`
-      )
-    }
   }
 }
 
@@ -233,7 +204,7 @@ export function useExperience(initialExperience?: ExperienceKey) {
     (route.query.display as DisplayMode) || definition.value.defaultDisplay
   )
 
-  const tools = ref<ToolKey[]>([...definition.value.defaultTools])
+  const tools = ref<ToolKey[]>([...definition.value.allowedTools])
 
   const showResources = ref(true)
   const showComments = ref(true)
@@ -280,7 +251,7 @@ function getAvailableExperiences(): ExperienceKey[] {
   }
 
   function getDefaultTool(): ToolKey | undefined {
-    return definition.value.defaultTool
+    return definition.value.allowedTools[0]
   }
 
   function buildQuery(extra: Record<string, string>): Record<string, string> {
@@ -293,19 +264,12 @@ function getAvailableExperiences(): ExperienceKey[] {
   }
 
 function switchExperience(key: ExperienceKey) {
-  if (!EXPERIENCE_DEFINITIONS[key]) return
-
   experience.value = key
   const def = EXPERIENCE_DEFINITIONS[key]
-  displayMode.value = def.defaultDisplay
-  tools.value = [...def.defaultTools]
-
-  const query = buildQuery({
-    experience: key,
-    display: def.defaultDisplay,
-  })
-  if (def.defaultTool) query.tool = def.defaultTool
-  else delete query.tool // do not inherit a stale `tool` from the previous URL
+  const extra: Record<string, string> = { experience: key }
+  if (def) extra.display = def.defaultDisplay
+  const query = buildQuery(extra)
+  delete query.tool
   router.push({ query })
 }
 
@@ -348,7 +312,7 @@ watch(
       // Tools are owned by the `tool` watcher below. Only prefill defaults
       // when the URL is silent about them.
       if (route.query.tool === undefined) {
-        tools.value = [...def.defaultTools]
+        tools.value = [...def.allowedTools]
       }
     }
   }
@@ -359,7 +323,7 @@ watch(
   (newTool) => {
     if (newTool === undefined) {
       // No `tool` in URL → fall back to the current experience's defaults.
-      tools.value = [...definition.value.defaultTools]
+      tools.value = [...definition.value.allowedTools]
       return
     }
     if (typeof newTool !== 'string') return

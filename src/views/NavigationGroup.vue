@@ -13,7 +13,7 @@ import NcAppNavigationSpacer from '@nextcloud/vue/components/NcAppNavigationSpac
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
-import { NavigationIcons } from '../utils/icons.ts'
+import { NavigationIcons, InquiryGeneralIcons } from '../utils/icons.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
@@ -122,12 +122,10 @@ const archivedSubgroups = computed<InquiryGroup[]>(() => {
 // -----------------------------------------------------------
 // Portal view (no slug, no family query): all root spaces
 // -----------------------------------------------------------
-const rootGroups = computed<InquiryGroup[]>(() => {
-  const sorted = inquiryGroupsStore.inquiryGroupsSorted || []
-  const isRoot = (g: InquiryGroup) =>
-    g.parentId === null || g.parentId === 0 || g.parentId === undefined
-  const isLive = (g: InquiryGroup) => g.status?.groupStatus !== 'archived'
-  return sorted.filter((g) => isRoot(g) && isLive(g))
+const allRootTypes = computed<InquiryGroupType[]>(() => {
+  return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
+    .filter((gt: InquiryGroupType) => gt.is_root === true)
+    .sort((a: InquiryGroupType, b: InquiryGroupType) => (a.sort_order || 0) - (b.sort_order || 0))
 })
 
 // -----------------------------------------------------------
@@ -182,9 +180,9 @@ function findTypeDescriptor(typeKey: string): InquiryGroupType | null {
 // -----------------------------------------------------------
 function goToGroup(group: InquiryGroup) {
   if (group.slug) {
-    router.push({ name: 'group-list', params: { slug: group.slug } })
+    router.push({ name: 'group-list', params: { slug: group.slug }, query: { ...route.query } })
   } else if (group.id) {
-    router.push({ name: 'group', params: { id: String(group.id) } })
+    router.push({ name: 'group', params: { id: String(group.id) }, query: { ...route.query } })
   }
 }
 
@@ -193,7 +191,9 @@ function goToType(type: InquiryGroupType) {
   const existing = groupsOfType(key)
   if (existing.length > 0) {
     goToGroup(existing[0])
-  } else {
+    return
+  }
+  if (sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor) {
     openCreateType(type)
   }
 }
@@ -303,6 +303,35 @@ onMounted(() => {
           </h3>
 
           <NcAppNavigationItem
+            :name="activeFamily ? t('agora', 'Back to family') : t('agora', 'Back to spaces')"
+            :to="
+              activeFamily
+                ? { name: 'group-list', params: { slug: '' }, query: { family: activeFamily, viewMode: 'group' } }
+                : { name: 'explore-spaces' }
+            "
+            class="navigation-item"
+          >
+            <template #icon>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+              </svg>
+            </template>
+          </NcAppNavigationItem>
+
+          <NcAppNavigationItem
+            :name="t('agora', 'Home')"
+            :to="{ name: 'home' }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
+
+          <NcAppNavigationItem
             :name="t('agora', 'Overview')"
             :to="{ name: 'group-list', params: { slug: currentGroup.slug } }"
             :exact="true"
@@ -340,7 +369,7 @@ onMounted(() => {
                 v-for="sub in subgroups"
                 :key="sub.id"
                 :name="sub.title"
-                :to="{ name: 'group-list', params: { slug: sub.slug } }"
+                :to="{ name: 'group-list', params: { slug: sub.slug }, query: { ...route.query } }"
                 class="navigation-subitem"
               >
                 <template #icon>
@@ -362,7 +391,7 @@ onMounted(() => {
           >
             <template #icon>
               <component
-                :is="NavigationIcons.View"
+                :is="InquiryGeneralIcons.MessageSquare"
                 class="navigation-icon"
               />
             </template>
@@ -386,10 +415,10 @@ onMounted(() => {
           <NcAppNavigationItem
             v-if="hasArchivedSubgroups"
             :name="t('agora', 'Space archives')"
-            :to="{ name: 'group-archived',
-    		   query: { family: activeFamily ?? undefined, from: currentGroup?.slug },
-
-	    }"
+            :to="{ 
+              name: 'group-archived',
+              query: { family: activeFamily ?? undefined, from: currentGroup?.slug }
+            }"
             class="navigation-item"
           >
             <template #icon>
@@ -440,24 +469,6 @@ onMounted(() => {
                 </template>
                 {{ t('agora', 'New subgroup') }}
               </NcActionButton>
-            </template>
-          </NcAppNavigationItem>
-
-        </NcAppNavigationList>
-
-        <NcAppNavigationSpacer />
-
-        <NcAppNavigationList>
-          <NcAppNavigationItem
-            :name="t('agora', 'Home')"
-            :to="{ name: 'home' }"
-            class="navigation-item"
-          >
-            <template #icon>
-              <component
-                :is="NavigationIcons.Home"
-                class="navigation-icon"
-              />
             </template>
           </NcAppNavigationItem>
         </NcAppNavigationList>
@@ -512,7 +523,7 @@ onMounted(() => {
                 v-for="grp in groupsOfType(type.type || type.group_type || '')"
                 :key="grp.id"
                 :name="grp.title"
-                :to="{ name: 'group-list', params: { slug: grp.slug } }"
+                :to="{ name: 'group-list', params: { slug: grp.slug }, query: { family: activeFamily } }"
                 class="navigation-subitem"
               />
             </ul>
@@ -523,13 +534,26 @@ onMounted(() => {
 
         <NcAppNavigationList>
           <NcAppNavigationItem
-            :name="t('agora', 'All spaces')"
+            :name="t('agora', 'Home')"
             :to="{ name: 'home' }"
             class="navigation-item"
           >
             <template #icon>
               <component
                 :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
+
+          <NcAppNavigationItem
+            :name="t('agora', 'My spaces')"
+            :to="{ name: 'explore-spaces' }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="InquiryGeneralIcons.FolderMultiple"
                 class="navigation-icon"
               />
             </template>
@@ -560,24 +584,48 @@ onMounted(() => {
           </h3>
 
           <NcAppNavigationItem
-            v-for="group in rootGroups"
-            :key="group.id"
-            :name="group.title"
-            :title="group.titleExt || ''"
-            :to="{ name: 'group-list', params: { slug: group.slug } }"
+            v-for="type in allRootTypes"
+            :key="type.type || type.group_type"
+            :name="t('agora', type.label)"
+            :allow-collapse="groupsOfType(type.type || type.group_type || '').length > 0"
+            :open="false"
             class="navigation-item"
+            @click="goToType(type)"
           >
             <template #icon>
               <component
-                :is="getGroupTypeIcon(group.type)"
+                :is="getGroupTypeIcon(type.type || type.group_type || '')"
                 class="navigation-icon"
               />
             </template>
+
+            <template
+              v-if="groupsOfType(type.type || type.group_type || '').length > 0"
+              #counter
+            >
+              <NcCounterBubble
+                :count="groupsOfType(type.type || type.group_type || '').length"
+                class="navigation-counter"
+              />
+            </template>
+
+            <ul
+              v-if="groupsOfType(type.type || type.group_type || '').length > 0"
+              class="navigation-sublist"
+            >
+              <NcAppNavigationItem
+                v-for="grp in groupsOfType(type.type || type.group_type || '')"
+                :key="grp.id"
+                :name="grp.title"
+                :to="{ name: 'group-list', params: { slug: grp.slug } }"
+                class="navigation-subitem"
+              />
+            </ul>
           </NcAppNavigationItem>
 
           <NcAppNavigationItem
-            v-if="rootGroups.length === 0"
-            :name="t('agora', 'No spaces available')"
+            v-if="allRootTypes.length === 0"
+            :name="t('agora', 'No group types available')"
             :disabled="true"
             class="navigation-empty"
           />
@@ -636,7 +684,7 @@ onMounted(() => {
       </template>
     </template>
   </NcAppNavigation>
-
+  
   <InquiryGroupCreateDlg
     v-if="createGroupDlgToggle"
     :inquiry-group-type="selectedInquiryGroupTypeForCreation"
@@ -704,7 +752,6 @@ onMounted(() => {
     }
   }
 
-  // Family header (family browser mode)
   .family-header {
     padding: 12px 16px 10px;
     border-bottom: 1px solid var(--color-border);

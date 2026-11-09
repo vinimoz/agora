@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import InquiryItem     from '../InquiryGroup/InquiryItem.vue'
 import InquirySummary  from '../InquiryGroup/InquirySummary.vue'
 import InquiryDetail   from '../InquiryGroup/InquiryDetail.vue'

@@ -107,6 +107,46 @@ export const useSupportsStore = defineStore('supports', () => {
   // INTERNAL HELPERS
   // ========================================================================
 
+    /**
+   * True if the given engine has an engine‑scoped aggregate ballot row.
+   *
+   * Spec: engine ballots are Case 3 / Case 4 — one row per user per engine,
+   * with `optionId = 0`:
+   *
+   *   Case 3 (option target)  → inquiryId = <inquiry>,  optionId = 0
+   *   Case 4 (inquiry target) → inquiryId = 0,          optionId = 0
+   *
+   * Deliberative rows (`supportEngineId = null`, Cases 1 & 2) are ignored —
+   * they don't lock engine configuration.
+   *
+   * @param engineId   The engine id to look for.
+   * @param parentId   The inquiry id (option mode) or group id (inquiry mode).
+   * @param targetType `'option'` for Case 3, `'inquiry'` for Case 4.
+   */
+  const hasEngineBallot = computed(
+    () =>
+      (engineId: number, parentId: number, targetType: 'inquiry' | 'option'): boolean => {
+        if (!Array.isArray(supports.value)) return false
+
+        if (targetType === 'option') {
+          return supports.value.some(
+            (s) =>
+              s.supportEngineId === engineId &&
+              s.inquiryId === parentId &&
+              s.optionId === 0
+          )
+        }
+
+        return supports.value.some(
+          (s) =>
+            s.supportEngineId === engineId &&
+            s.inquiryId === 0 &&
+            s.optionId === 0
+        )
+      }
+  )
+
+
   function setItem(support: Support): void {
     const index = supports.value.findIndex(
       (s) =>
@@ -1139,6 +1179,7 @@ export const useSupportsStore = defineStore('supports', () => {
     getSupportsByParent,
     getOptionSupports,
     getResult,
+    hasEngineBallot,
 
     // Actions
     setItem,

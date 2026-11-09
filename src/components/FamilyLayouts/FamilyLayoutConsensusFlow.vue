@@ -464,7 +464,13 @@ const emit = defineEmits<{
 // ========================================
 const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
 
-const filtered = computed(() => getItemsForFamily(props.items, familyKey.value))
+
+const filtered = computed(() => {
+  const key = familyKey.value
+  let list = key ? getItemsForFamily(props.items, key) : props.items
+  if (!list.length && props.items.length) list = props.items
+  return list
+})
 
 // ========================================
 // Helper: get option status safely

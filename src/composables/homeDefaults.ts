@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import type { HomeConfig } from '../Types/appSettings.types.ts'
 import type { HeroRoute } from '../Types/appSettings.types.ts'
 import type { OrganizationType } from '../Types/experience.types'

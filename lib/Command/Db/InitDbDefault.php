@@ -1120,7 +1120,7 @@ class InitDbDefault extends Command
 				'official_summary',
 			],
 			'allow_comment' => true,
-			'support_feature' => 'ternary',
+			'support_feature' => 'score',
 			'statuses' => [],
 			'use_title' => false,
 		],
@@ -2045,7 +2045,6 @@ class InitDbDefault extends Command
 		// ============================================================
 		// COLLECTIVE FAMILY
 		// ============================================================
-		// Add to $inquiryTypes
 		[
 			'inquiry_type' => 'citizen',
 			'family' => 'collective',
@@ -2879,7 +2878,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['official_announcements'],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'kanban',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -3631,7 +3630,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['working_group', 'commission', 'official_announcements'],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'navigation',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -3694,7 +3693,7 @@ class InitDbDefault extends Command
 			'allowed_response' => [],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'navigation',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -4098,7 +4097,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['*'],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'navigation',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -4275,7 +4274,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['district'],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'navigation',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -4334,7 +4333,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['municipality'],
 			'is_root' => false,
 			'ui' => [
-				'experience' => 'navigation',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -4393,7 +4392,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['commission', 'consultation_set'],
 			'is_root' => false,
 			'ui' => [
-				'experience' => 'navigation',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -4457,7 +4456,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['official_announcements'],
 			'is_root' => false,
 			'ui' => [
-				'experience' => 'kanban',
+				'experience' => 'dashboard',
 				'context' => [
 					'type' => 'group',
 					'selection' => 'selected',
@@ -4932,7 +4931,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['official_announcements'],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'kanban',
+				'experience' => 'dashboard',
 				'context' => ['type' => 'group', 'selection' => 'selected'],
 				'layout' => ['type' => 'grid', 'columns' => 1, 'rows' => 1, 'responsive' => true],
 				'display_architecture' => [
@@ -4972,7 +4971,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['official_announcements'],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'kanban',
+				'experience' => 'dashboard',
 				'context' => ['type' => 'group', 'selection' => 'selected'],
 				'layout' => ['type' => 'grid', 'columns' => 1, 'rows' => 1, 'responsive' => true],
 				'display_architecture' => [
@@ -5011,7 +5010,7 @@ class InitDbDefault extends Command
 			'allowed_response' => ['official_announcements'],
 			'is_root' => true,
 			'ui' => [
-				'experience' => 'kanban',
+				'experience' => 'dashboard',
 				'context' => ['type' => 'group', 'selection' => 'selected'],
 				'layout' => ['type' => 'grid', 'columns' => 1, 'rows' => 1, 'responsive' => true],
 				'display_architecture' => [

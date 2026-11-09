@@ -20,7 +20,7 @@ import { getExperienceArchitecture } from './experienceArchitecture'
 const NON_GROUP_EXPERIENCES: ExperienceKey[] = ['home']
 
 // Experiences that should always be reachable, regardless of group type
-const ALWAYS_AVAILABLE: ExperienceKey[] = ['classic', 'kanban', 'timeline']
+const ALWAYS_AVAILABLE: ExperienceKey[] = ['classic']
 
 export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   const route = useRoute()
@@ -124,50 +124,63 @@ const defaultExperience = computed<ExperienceKey>(() =>
 	  () => uiConfig.value?.displayArchitecture ?? null
   )
 
-  const layoutConfig = computed<{
-	  type: LayoutTypeValue
-	  columns?: number
-	  rows?: number
-	  responsive: boolean
-  }>(() => {
-	  
-	   // 1. Group-specific override always wins
-	  const ui = uiConfig.value
-	  if (ui?.layout) {
-		  return {
-			  type: (ui.layout.type ?? 'full') as LayoutTypeValue,
-			  columns: ui.layout.columns,
-			  rows: ui.layout.rows,
-			  responsive: ui.layout.responsive !== false,
-		  }
-	  }
+  function computeRequiredDimensions(
+	zones: Record<string, DisplayZone> | undefined | null
+): { columns: number; rows: number } {
+	if (!zones || Object.keys(zones).length === 0) {
+		return { columns: 0, rows: 0 }
+	}
+	let maxCol = 0
+	let maxRow = 0
+	for (const zone of Object.values(zones)) {
+		if (!zone?.position) continue
+		const endCol = (zone.position.column || 1) + (zone.position.columnSpan || 1) - 1
+		const endRow = (zone.position.row || 1) + (zone.position.rowSpan || 1) - 1
+		if (endCol > maxCol) maxCol = endCol
+		if (endRow > maxRow) maxRow = endRow
+	}
+	return { columns: maxCol, rows: maxRow }
+}
 
-   // 2. The experience's architecture is the source of truth for the
-     //    concrete layout (type + grid dimensions). EXPERIENCE_DEFINITIONS
-     //    only carries a coarse `layout` fallback for the rare case where
-     //    an experience has no architecture — it is no longer consulted
-     //    when one exists.
-     // if (archLayout) return { ...archLayout, responsive: archLayout.responsive !== false }
-     const archLayout = getExperienceArchitecture(experience.value)?.layout
-     if (archLayout) {
-         return {
-             type: archLayout.type,
-             columns: archLayout.columns,
-             rows: archLayout.rows,
-             responsive: archLayout.responsive !== false,
-         }
-     }
+const layoutConfig = computed(() => {
+	const ui = uiConfig.value
+	const arch = getExperienceArchitecture(experience.value)
 
-     // 3. Last resort — keep the contract total even though all shipped
-     //    experiences declare an architecture.
-     const def = EXPERIENCE_DEFINITIONS[experience.value]
-     return {
-         type: (def?.layout ?? 'full') as LayoutTypeValue,
-         responsive: true,
-     }
+	const customZones = ui?.displayArchitecture
+	const required =
+		customZones && Object.keys(customZones).length > 0
+			? computeRequiredDimensions(customZones)
+			: computeRequiredDimensions(arch?.displayArchitecture)
 
-  
-  })
+	// 1) UI layout explicit 
+	if (ui?.layout) {
+		return {
+			type: (ui.layout.type ?? 'full') as LayoutTypeValue,
+			columns: Math.max(ui.layout.columns ?? 0, required.columns) || ui.layout.columns,
+			rows: Math.max(ui.layout.rows ?? 0, required.rows) || ui.layout.rows,
+			responsive: ui.layout.responsive !== false,
+		}
+	}
+
+	// 2) Experience architecture 
+	if (arch?.layout) {
+		return {
+			type: arch.layout.type,
+			columns: Math.max(arch.layout.columns ?? 0, required.columns) || arch.layout.columns,
+			rows: Math.max(arch.layout.rows ?? 0, required.rows) || arch.layout.rows,
+			responsive: arch.layout.responsive !== false,
+		}
+	}
+
+	// 3) Fallback
+	const def = EXPERIENCE_DEFINITIONS[experience.value]
+	return {
+		type: (def?.layout ?? 'full') as LayoutTypeValue,
+		columns: required.columns || undefined,
+		rows: required.rows || undefined,
+		responsive: true,
+	}
+})
 
   const contextConfig = computed(
 	  () => uiConfig.value?.context ?? { type: 'group', selection: 'selected' }
@@ -254,8 +267,7 @@ const allowedTools = computed<ToolKey[]>(() => {
 
 		  const matched = allKeys.filter((key) => {
 			  const def = EXPERIENCE_DEFINITIONS[key]
-			  if (!def.supportedGroupTypes?.length) return false
-				  return def.supportedGroupTypes.some((t) => t.toLowerCase() === groupType.toLowerCase())
+			  return def
 		  })
 
 		  // Always keep the escape hatches
@@ -315,7 +327,7 @@ const allowedTools = computed<ToolKey[]>(() => {
 	  const def = EXPERIENCE_DEFINITIONS[key]
 	  const extra: Record<string, string> = { experience: key }
 	  if (def) extra.display = def.defaultDisplay
-		  router.push({ query: buildQuery(extra) })
+	  router.push({ query: buildQuery(extra) })
   }
 
   function switchDisplay(mode: DisplayType) {
