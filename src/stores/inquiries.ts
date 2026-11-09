@@ -14,12 +14,10 @@ import { Logger } from '../helpers/index.ts'
 import { InquiriesAPI } from '../Api/index.ts'
 
 import { useSessionStore } from './session.ts'
-import { Chunking, StatusResults } from '../Types/index.ts'
+import { Chunking, StatusResults,MiscUpdateMap, InquiryWorkflowStatus } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
 import { useInquiryStore } from './inquiry.ts'
-import type { MiscUpdateMap } from '@/Types' 
-
 import type {
   Inquiry,
   InquiryCategory,
@@ -619,53 +617,52 @@ export const useInquiriesStore = defineStore('inquiries', {
       this.viewMode = viewMode
     },
 
-    // Updating an inquiry into the store
-    submitInquiry(inquiryId, action): Promise<void> {
-      const appSettingsStore = useAppSettingsStore()
-      const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
-      if (inquiry) {
-        if (action === 'submit_for_accepted') {
-          inquiry.status.moderationStatus = 'accepted'
-          inquiry.status.publicationStatus = 'published'
-          inquiry.status.inquiryStatus = appSettingsStore.getFirstStatusKeyByInquiryType(
-            inquiry.type
-          ) as InquiryWorkflowStatus
-          inquiry.configuration.visibility = 'everyone'
-        } else if (action === 'submit_for_rejected') {
-          inquiry.status.moderationStatus = 'rejected'
-          inquiry.status.publicationStatus = 'draft'
-          inquiry.configuration.visibility = 'private'
-          inquiry.status.inquiryStatus = 'rejected'
-          inquiry.configuration.visibility = 'private'
-        } else if (action === 'submit_for_moderate') {
-          inquiry.status.moderationStatus = 'pending'
-          inquiry.status.publicationStatus = 'pending'
-          inquiry.status.inquiryStatus = 'waiting_approval'
-          inquiry.configuration.visibility = 'private'
-        }
-      }
-    },
+submitInquiry(inquiryId: number, action: string): Promise<void> {
+  const appSettingsStore = useAppSettingsStore()
+  const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
+  if (!inquiry) return Promise.resolve()
 
+  if (action === 'submit_for_accepted') {
+    inquiry.status.moderationStatus = 'accepted'
+    inquiry.status.publicationStatus = 'published'
+    inquiry.status.inquiryStatus = appSettingsStore
+      .getFirstStatusKeyByInquiryType(inquiry.type) as InquiryWorkflowStatus
+    inquiry.configuration.visibility = 'everyone'
+  } else if (action === 'submit_for_rejected') {
+    inquiry.status.moderationStatus = 'rejected'
+    inquiry.status.publicationStatus = 'draft'
+    inquiry.configuration.visibility = 'private'
+    inquiry.status.inquiryStatus = 'rejected'
+  } else if (action === 'submit_for_moderate') {
+    inquiry.status.moderationStatus = 'pending'
+    inquiry.status.publicationStatus = 'pending'
+    inquiry.status.inquiryStatus = 'waiting_approval'
+    inquiry.configuration.visibility = 'private'
+  }
+  return Promise.resolve()
+},
     /**
      * Persist a miscFields patch on an inquiry and keep the local list in sync.
      * Additive — does not replace existing misc fields, only merges.
      */
     async updateInquiryMiscFields(
-      inquiryId: number,
-      patch: Record<string, unknown>
-    ): Promise<void> {
-      const inquiry = this.inquiries.find((i) => i.id === inquiryId)
-      if (!inquiry) {
-        throw new Error(`Inquiry ${inquiryId} not found in store`)
-      }
+  inquiryId: number,
+  patch: Record<string, unknown>
+): Promise<void> {
+  const inquiry = this.inquiries.find((i) => i.id === inquiryId)
+  if (!inquiry) throw new Error(`Inquiry ${inquiryId} not found in store`)
 
-      const merged = { ...(inquiry.miscFields || {}), ...patch }
-      await InquiriesAPI.updateMiscField(inquiryId, { miscFields: merged })
+  const merged = { ...(inquiry.miscFields || {}), ...patch }
 
-      // Reassign to trigger reactivity reliably
-      inquiry.miscFields = merged
-      this.inquiries = [...this.inquiries]
-    },
+  for (const [key, value] of Object.entries(patch)) {
+    const stringValue =
+      typeof value === 'string' ? value : JSON.stringify(value ?? null)
+    await InquiriesAPI.updateMiscField(inquiryId, { key, value: stringValue })
+  }
+
+  inquiry.miscFields = merged
+  this.inquiries = [...this.inquiries]
+},
 
     addInquiryToStore(inquiry: Inquiry): void {
       const existingIndex = this.inquiries.findIndex((inq) => inq.id === inquiry.id)

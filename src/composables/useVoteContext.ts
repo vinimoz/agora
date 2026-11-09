@@ -1145,8 +1145,12 @@ export function useVoteContext(
   }
 
   // ---------- Results ----------
-  const engineResult = ref<SupportResultData>(null)
-  const resultsMap = ref<Map<number, unknown>>(new Map())
+const engineResult = ref<SupportResultData | null>(null)
+const resultsMap = ref<Map<number, SupportResultData>>(new Map())
+const getPercentage = (item: { id: number }, total: number = percentageBase.value): number => {
+  const count = getItemVoteCount(item.id)
+  return total === 0 ? 0 : Math.round((count / total) * 100)
+}
 
   const getItemMajorityJudgment = (itemId: number): MajorityJudgmentSummary | null => {
       const res = [resultsMap.value.get(itemId), engineResult.value]
@@ -1344,11 +1348,6 @@ const totalVotes = computed(() => { 
     return total
   })
 
-  const getPercentage = (item: VotableItem, total: number = percentageBase.value): number => {
-    const count = getItemVoteCount(item.id)
-    if (total === 0) return 0
-    return Math.round((count / total) * 100)
-  }
 
   const getRankedItems = (items: VotableItem[]): VotableItem[] => {
     const engineType = effectiveEngineId.value

@@ -267,8 +267,23 @@ export interface VotingConfiguration {
 // ============================================================================
 // 📊 SUPPORT DATA
 // ============================================================================
+export interface AggregateSupportValue {
+  scores?: Record<number, number>
+  reactions?: Record<number, string[]>
+  ranking?: Record<number, number>
+  grades?: Record<number, string>
+  selected?: number[]
+  round?: number
+}
 
-export type SupportValue = number | string | string[] | null
+
+export type SupportValue =
+  | number
+  | string
+  | string[]
+  | AggregateSupportValue
+  | null
+
 
 export interface SupportData {
   id?: number
@@ -292,7 +307,6 @@ export interface SupportData {
 // ============================================================================
 // 📈 RESULT TYPES (for SupportResult.result JSON field)
 // ============================================================================
-
 // ============================================================================
 // 📈 RESULT TYPES (for SupportResult.result JSON field)
 // ============================================================================
@@ -301,22 +315,61 @@ export interface BinaryResult {
   type: 'binary'
   totals: { yes: number; no: number }
   percentages: { yes: number; no: number }
+  items?: Record<number, { yes: number; no: number }>
 }
 
 export interface TernaryResult {
   type: 'ternary'
   totals: { yes: number; no: number; abstain: number }
   percentages: { yes: number; no: number; abstain: number }
+  items?: Record<number, { yes: number; no: number; abstain: number }>
 }
 
 export interface ScoreResult {
   type: 'score'
   totals: { total: number; average: number }
+  items?: Record<number, { total: number }>
 }
 
 export interface StarResult {
   type: 'star'
   totals: { total: number; average: number }
+  items?: Record<number, { total: number }>
+}
+
+export interface ReactionResult {
+  type: 'reaction'
+  counts: Record<string, number>
+  items?: Record<number, Record<string, number>>
+}
+
+export interface MajorityJudgmentResult {
+  type: 'majority_judgment'
+  grades: string[]
+  options: Record<number, {
+    median_grade: string | null
+    median_index: number
+    above_share: number
+    below_share: number
+    grade_distribution: Record<string, number>
+    total_votes: number
+  }>
+  items?: Record<number, {
+    median_grade: string | null
+    total_votes: number
+    grade_distribution: Record<string, number>
+  }>
+  winner: number | null
+  winner_name?: string
+  winner_details?: {
+    median_grade: string | null
+    median_index: number
+    above_share: number
+    below_share: number
+    grade_distribution: Record<string, number>
+    total_votes: number
+  }
+  total_votes: number
 }
 
 /** Backend returns average rank per option (lower is better) */

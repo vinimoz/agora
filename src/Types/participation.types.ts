@@ -21,11 +21,6 @@ export type LotteryMode    = 'users' | 'groups'
 
 export type LotteryMethod  = 'random' | 'weighted' | 'stratified'
 
-export type ParticipationPolicyType =
-  | 'none' | 'everyone' | 'users' | 'groups' | 'lottery'
-
-export type ParticipationTargetType =
-  | 'inquiry' | 'option' | 'inquiry_group' | 'engine'
 
 
 export const ALLOWED_PARTICIPATION: Record<VisibilityType, ParticipationPolicyType[]> = {

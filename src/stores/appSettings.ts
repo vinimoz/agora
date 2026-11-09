@@ -128,7 +128,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
       }
     },
 
-    async load(): Promise<void> {
+    async load(): Promise<AppSettings | undefined>  {
       try {
         const response = await AppSettingsAPI.getAppSettings()
         // Initialize inquiryStatusTab with defaults if empty
@@ -140,6 +140,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
         return settings
       } catch (error) {
         Logger.error('Error getting appSettings', { error })
+	return undefined
       }
     },
 
@@ -273,7 +274,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
         inquiryType,
         ...status,
         order: newOrder,
-      }
+      } as InquiryStatusDefinition
 
       try {
         const response = await AppSettingsAPI.addInquiryStatus(newStatus)
@@ -436,7 +437,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
         this.categoryTab = this.categoryTab.filter((c) => c.id !== categoryId)
       }
       try {
-        await AppSettingsAPI.deleteCategory(id)
+        await AppSettingsAPI.deleteCategory(String(id))
         deleteRecursive(id)
       } catch (error) {
         Logger.error('Error deleting category', { error })
@@ -489,7 +490,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
       }
 
       try {
-        await AppSettingsAPI.deleteLocation(id)
+        await AppSettingsAPI.deleteLocation(String(id))
 
         deleteRecursive(id)
       } catch (error) {
@@ -497,8 +498,6 @@ export const useAppSettingsStore = defineStore('appSettings', {
       }
     },
 
-    // METHOD FOR FAMILY
-    // STORE FOR INQUIRY FAMILY MANAGEMENT
     async addFamily(familyData: {
       family_type: string
       label: string
@@ -791,8 +790,6 @@ export const useAppSettingsStore = defineStore('appSettings', {
       }
     },
 
-    // METHOD FOR TYPE
-    // STORE FOR INQUIRY TYPE MANAGEMENT
     async addInquiryType(typeData: {
       inquiry_type: string
       family: string
@@ -860,7 +857,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
     },
 
     // Helper to build tree structure from flat list
-    buildTree<T extends { id: number; parentId: number }>(
+    buildTree<T extends { id: number; parentId: number | null }>(
       items: T[],
       parentId: number = 0
     ): (T & { children: T[] })[] {
@@ -873,7 +870,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
     },
 
     // Get parent options for select dropdowns
-    getParentOptions(type: 'category' | 'location', excludeId: number | null = null) {
+    getParentOptions(type: 'category' | 'location', excludeId: number | null = null ) {
       const items = type === 'category' ? this.categoryTab : this.locationTab
       const tree = this.buildTree(items)
 

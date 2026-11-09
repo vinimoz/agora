@@ -17,7 +17,7 @@ import type {
   Shares,
   ShareType,
   SharePurpose,
-  ParticipationLevel,
+  ShareParticipationLevel,
   PublicInquiryEmailConditions,
 } from '../Types/share.types.ts'
 
@@ -148,7 +148,7 @@ export const useSharesStore = defineStore('shares', {
 
     async setParticipationLevel(payload: {
 	    share: Share
-	    level: ParticipationLevel
+	    level: ShareParticipationLevel
     }): Promise<void> {
 	    try {
 		    const response = await SharesAPI.setParticipationLevel(payload.share.token, payload.level)

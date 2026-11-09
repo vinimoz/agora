@@ -7,7 +7,12 @@ import type { WatcherMode, WatcherStatus } from '../composables/useInquiryWatche
 import type { User } from '../Types/index.ts'
 import type { ViewMode } from '../Types/inquiry.types'
 import type { Share } from './share.types'
-import type { TimeZoneTypes } from '@/Types/dateTime'
+import type { TimeZoneTypes } from './dateTime'
+
+export type WatcherMode = 'off' | 'periodic' | 'long-polling' | 'manual'
+export type WatcherStatus = 'idle' | 'loading' | 'loaded' | 'error'
+
+type RouteName = string | symbol | undefined
 
 interface RouteParams {
   id: number
@@ -18,7 +23,7 @@ interface RouteParams {
 
 export type Route = {
   currentRoute: string
-  name: RouteRecordNameGeneric
+  name: RouteName
   path: string
   params: RouteParams
 }
