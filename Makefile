@@ -106,6 +106,10 @@ package: clean
 	tar -czf $(appstore_package_name).tar.gz --directory="$(build_source_dir)" $(app_name)
 	@echo "Package created: $(appstore_package_name).tar.gz"
 	@if tar -tzf "$(appstore_package_name).tar.gz" | grep -Eq '(^|/)(private\.key|agora\.key)$$'; then echo "ERROR: private key found in package" >&2; exit 1; fi
+	@if [ -f $(nc_cert_dir)/$(app_name).key ]; then \
+		echo "Signing package..."; \
+		openssl dgst -sha512 -sign $(nc_cert_dir)/$(app_name).key $(appstore_build_dir)/$(app_name).tar.gz | openssl base64; \
+	fi
 
 .PHONY: test
 test: composer setup-dev-composer

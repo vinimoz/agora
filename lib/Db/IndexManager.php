@@ -414,11 +414,4 @@ class IndexManager extends DbManager
         return $message;
     }
 
-    /**
-     * Create schema for the manager
-     */
-    public function createSchema(): void
-    {
-        $this->needsSchema();
-    }
 }

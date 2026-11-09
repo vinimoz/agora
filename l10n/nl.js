@@ -324,6 +324,7 @@ OC.L10N.register(
     "Approve" : "Goedkeuren",
     "Time remaining" : "Tijd resterend",
     "Rank" : "Positie",
+    "Percentage" : "Percentage",
     "Invalid email address" : "Ongeldig e-mailadres",
     "Email could not be sent to {emailAddress}" : "E-mail kon niet verstuurd worden naar {emailAddress}",
     "Email" : "E-mail",

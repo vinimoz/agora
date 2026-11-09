@@ -839,6 +839,7 @@ OC.L10N.register(
     "Add links to legal terms, if they exist and add an optional disclaimer to emails." : "新增指向法律條款的連結（若存在）並新增選擇性的免責聲明至電子郵件。",
     "Job control" : "任務控制",
     "Error setting dashboard list" : "設定儀表板清單時發生錯誤",
+    "Delete \"{group}\"" : "刪除「{group}」",
     "Delete group" : "刪除群組",
     "Home" : "首頁",
     "groups" : "群組",

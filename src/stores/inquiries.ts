@@ -160,7 +160,8 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived &&
       inquiry.currentUserStatus.isOwner &&
-      inquiry.configuration.visibility === 'private',
+      ( inquiry.status.inquiryStatus === 'private'  ||
+      ( inquiry.status.inquiryStatus === 'draft' &&  inquiry.configuration.visibility === 'groups' ))
   },
 
   participated: {
@@ -197,11 +198,13 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore()
       return (sessionStore.currentUser?.groups?.length ?? 0) > 0
     },
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      inquiry.permissions.view &&
-      inquiry.configuration.visibility === 'groups',
-  },
+  filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    inquiry.configuration.visibility === 'groups' &&
+    inquiry.status.inquiryStatus !== 'draft' &&
+    (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
+},
   open: {
     id: 'open',
     title: t('agora', 'Openly visible inquiries'),

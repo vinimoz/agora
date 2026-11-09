@@ -760,6 +760,7 @@ OC.L10N.register(
     "Administration settings" : "Адміністрування",
     "Template:" : "Шаблон:",
     "Language:" : "Мова:",
+    "No templates available" : "Немає доступних шаблонів",
     "Types" : "Категорії",
     "Change globally location and category (for all accounts)" : "Глобально змінити місцезнаходження та категорію (для всіх акаунтів)",
     "Inquiry settings" : "Налаштування запиту",
