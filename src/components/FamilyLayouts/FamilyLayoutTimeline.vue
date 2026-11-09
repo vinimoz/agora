@@ -227,7 +227,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -340,9 +339,7 @@ const getStatusColor = (status: string): string => {
 // Item filtering
 // ---------------------------------------------------------------------------
 
-const familyKey = computed(
-  () => props.familyKey ?? (props.family as any)?.family_type ?? ''
-)
+const familyKey = computed(() => props.familyKey ?? (props.family as any)?.family_type ?? '')
 
 const timelineItems = computed<Item[]>(() => {
   const key = familyKey.value
@@ -396,11 +393,7 @@ const getItemEndDate = (item: Item): Date | null => {
   }
   const raw = item.raw as any
   const misc = raw?.miscFields || {}
-  return (
-    toDate(misc.support_end) ||
-    toDate(misc.end_date) ||
-    toDate(misc.due_date)
-  )
+  return toDate(misc.support_end) || toDate(misc.end_date) || toDate(misc.due_date)
 }
 
 // ---------------------------------------------------------------------------
@@ -485,7 +478,6 @@ const handleEventClick = (info: EventClickArg) => {
   }
 }
 
-
 // State refs
 const calendarRef = ref<unknown>(null)
 const calendarInitialized = ref(true)
@@ -526,7 +518,6 @@ const popoverStyle = computed(() => ({
   zIndex: 9999,
 }))
 
-
 const updateCurrentPeriodText = () => {
   if (!calendarRef.value) return
   const api = (calendarRef.value as { getApi: () => { getDate: () => Date } }).getApi()
@@ -536,7 +527,6 @@ const updateCurrentPeriodText = () => {
     year: 'numeric',
   })
 }
-
 
 // Event Handlers
 const handleExternalDrop = async (dropInfo: DropArg) => {

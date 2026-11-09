@@ -461,19 +461,19 @@ export const useInquiryStore = defineStore('inquiry', {
             }
           }
           return updatedInquiry
-                                      } catch (error) { 
-                                        if ((error as AxiosError)?.code === 'ERR_CANCELED') { 
-                                                return 
-                                        } 
-                                        Logger.error('Error updating inquiry', { 
-                                                error, 
-                                                state: this.$state, 
-                                        }) 
-                                        throw error 
-                                }  
-                        }, 500)
-	  
-	return debouncedUpdate()
+        } catch (error) {
+          if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+            return
+          }
+          Logger.error('Error updating inquiry', {
+            error,
+            state: this.$state,
+          })
+          throw error
+        }
+      }, 500)
+
+      return debouncedUpdate()
     },
 
     async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {

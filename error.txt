@@ -1,0 +1,649 @@
+node_modules/@nextcloud/vue/dist/components/NcActionInput/NcActionInput.vue.d.ts(350,26): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcActionInput/NcActionInput.vue.d.ts(350,56): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcActionInput/NcActionInput.vue.d.ts(529,26): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcActionInput/NcActionInput.vue.d.ts(529,56): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcActionInput/NcActionInput.vue.d.ts(2029,30): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcActionInput/NcActionInput.vue.d.ts(2029,60): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcAppNavigationSearch/NcAppNavigationSearch.vue.d.ts(42,22): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcAppNavigationSearch/NcAppNavigationSearch.vue.d.ts(42,52): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcAppNavigationSearch/NcAppNavigationSearch.vue.d.ts(64,32): error TS2344: Type 'GlobalComponents' does not satisfy the constraint 'Record<string, Component<any, any, any, ComputedOptions, MethodOptions, {}, any>>'.
+  Index signature for type 'string' is missing in type 'GlobalComponents'.
+node_modules/@nextcloud/vue/dist/components/NcAppNavigationSearch/NcAppNavigationSearch.vue.d.ts(195,18): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcAppNavigationSearch/NcAppNavigationSearch.vue.d.ts(195,48): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcCollectionList/NcCollectionList.vue.d.ts(2383,30): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcCollectionList/NcCollectionList.vue.d.ts(2383,60): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcEmojiPicker/NcEmojiPicker.vue.d.ts(451,26): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcEmojiPicker/NcEmojiPicker.vue.d.ts(451,56): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcHeaderMenu/NcHeaderMenu.vue.d.ts(112,32): error TS2344: Type 'GlobalComponents' does not satisfy the constraint 'Record<string, Component<any, any, any, ComputedOptions, MethodOptions, {}, any>>'.
+  Index signature for type 'string' is missing in type 'GlobalComponents'.
+node_modules/@nextcloud/vue/dist/components/NcPasswordField/NcPasswordField.vue.d.ts(82,22): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcPasswordField/NcPasswordField.vue.d.ts(82,52): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcPasswordField/NcPasswordField.vue.d.ts(104,32): error TS2344: Type 'GlobalComponents' does not satisfy the constraint 'Record<string, Component<any, any, any, ComputedOptions, MethodOptions, {}, any>>'.
+  Index signature for type 'string' is missing in type 'GlobalComponents'.
+node_modules/@nextcloud/vue/dist/components/NcPasswordField/NcPasswordField.vue.d.ts(206,18): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcPasswordField/NcPasswordField.vue.d.ts(206,48): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePicker.vue.d.ts(312,34): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePicker.vue.d.ts(312,64): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePicker.vue.d.ts(675,30): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePicker.vue.d.ts(675,60): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePicker.vue.d.ts(1096,34): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePicker.vue.d.ts(1096,64): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePickerModal.vue.d.ts(361,38): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePickerModal.vue.d.ts(361,68): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePickerModal.vue.d.ts(724,34): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePickerModal.vue.d.ts(724,64): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePickerModal.vue.d.ts(1145,38): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcReferencePickerModal.vue.d.ts(1145,68): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcSearch.vue.d.ts(323,30): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcRichText/NcReferencePicker/NcSearch.vue.d.ts(323,60): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcSelect/NcSelect.vue.d.ts(193,26): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcSelect/NcSelect.vue.d.ts(193,56): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcSelectTags/NcSelectTags.vue.d.ts(267,30): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcSelectTags/NcSelectTags.vue.d.ts(267,60): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcSettingsSelectGroup/NcSettingsSelectGroup.vue.d.ts(326,30): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcSettingsSelectGroup/NcSettingsSelectGroup.vue.d.ts(326,60): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcTextField/NcTextField.vue.d.ts(87,22): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcTextField/NcTextField.vue.d.ts(87,52): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcTextField/NcTextField.vue.d.ts(109,32): error TS2344: Type 'GlobalComponents' does not satisfy the constraint 'Record<string, Component<any, any, any, ComputedOptions, MethodOptions, {}, any>>'.
+  Index signature for type 'string' is missing in type 'GlobalComponents'.
+node_modules/@nextcloud/vue/dist/components/NcTextField/NcTextField.vue.d.ts(204,18): error TS2300: Duplicate identifier 'event'.
+node_modules/@nextcloud/vue/dist/components/NcTextField/NcTextField.vue.d.ts(204,48): error TS2300: Duplicate identifier 'event'.
+node_modules/@vueuse/core/index.d.mts(643,15): error TS2304: Cannot find name 'BluetoothLEScanFilter'.
+node_modules/@vueuse/core/index.d.mts(651,24): error TS2304: Cannot find name 'BluetoothServiceUUID'.
+node_modules/@vueuse/core/index.d.mts(674,24): error TS2304: Cannot find name 'BluetoothDevice'.
+node_modules/@vueuse/core/index.d.mts(676,24): error TS2304: Cannot find name 'BluetoothRemoteGATTServer'.
+node_modules/tributejs/tributejs.d.ts(79,23): error TS2344: Type 'T' does not satisfy the constraint '{}'.
+node_modules/vue-router/dist/vue-router.d.mts(322,5): error TS2717: Subsequent property declarations must have the same type.  Property 'beforeRouteEnter' must be of type 'NavigationGuardWithThis<undefined> | undefined', but here has type 'NavigationGuardWithThis<undefined> | undefined'.
+node_modules/vue-router/dist/vue-router.d.mts(333,5): error TS2717: Subsequent property declarations must have the same type.  Property 'beforeRouteUpdate' must be of type 'NavigationGuard | undefined', but here has type 'NavigationGuard | undefined'.
+node_modules/vue-router/dist/vue-router.d.mts(343,5): error TS2717: Subsequent property declarations must have the same type.  Property 'beforeRouteLeave' must be of type 'NavigationGuard | undefined', but here has type 'NavigationGuard | undefined'.
+node_modules/vue-router/dist/vue-router.d.mts(349,5): error TS2717: Subsequent property declarations must have the same type.  Property '$route' must be of type 'RouteLocationNormalizedLoadedGeneric', but here has type 'RouteLocationNormalizedLoadedGeneric'.
+node_modules/vue-router/dist/vue-router.d.mts(353,5): error TS2717: Subsequent property declarations must have the same type.  Property '$router' must be of type 'RouterClassic', but here has type 'Router'.
+node_modules/vue-router/dist/vue-router.d.mts(356,5): error TS2717: Subsequent property declarations must have the same type.  Property 'RouterView' must be of type 'new () => { $props: AllowedComponentProps & ComponentCustomProps & VNodeProps & RouterViewProps; $slots: { ...; }; }', but here has type 'new () => { $props: AllowedComponentProps & ComponentCustomProps & VNodeProps & RouterViewProps; $slots: { ...; }; }'.
+node_modules/vue-router/dist/vue-router.d.mts(357,5): error TS2717: Subsequent property declarations must have the same type.  Property 'RouterLink' must be of type '_RouterLinkI', but here has type '_RouterLinkI'.
+src/Api/modules/inquiries.ts(18,47): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/Api/modules/inquiryGroups.ts(7,39): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/Api/modules/options.ts(9,47): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/Api/modules/shares.ts(8,40): error TS2724: '"../../Types/share.types.js"' has no exported member named 'ParticipationLevel'. Did you mean 'ShareParticipationLevel'?
+src/Api/modules/supports.ts(7,49): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/Types/participation.types.ts(7,13): error TS2300: Duplicate identifier 'ParticipationPolicyType'.
+src/Types/participation.types.ts(14,13): error TS2300: Duplicate identifier 'ParticipationTargetType'.
+src/Types/participation.types.ts(24,13): error TS2300: Duplicate identifier 'ParticipationPolicyType'.
+src/Types/participation.types.ts(27,13): error TS2300: Duplicate identifier 'ParticipationTargetType'.
+src/Types/session.types.ts(6,15): error TS2305: Module '"../composables/useInquiryWatcher.types"' has no exported member 'WatcherMode'.
+src/Types/session.types.ts(6,28): error TS2305: Module '"../composables/useInquiryWatcher.types"' has no exported member 'WatcherStatus'.
+src/Types/session.types.ts(20,9): error TS2304: Cannot find name 'FilterType'.
+src/components/Editor/index.ts(9,11): error TS7006: Parameter 'app' implicitly has an 'any' type.
+src/composables/context.ts(44,34): error TS18046: 'error' is of type 'unknown'.
+src/composables/context.ts(45,37): error TS18046: 'error' is of type 'unknown'.
+src/composables/context.ts(46,35): error TS18046: 'error' is of type 'unknown'.
+src/composables/experienceArchitecture.ts(338,76): error TS2353: Object literal may only specify known properties, and 'showComment' does not exist in type '{ showIcon?: boolean | undefined; showCover?: boolean | undefined; showMeta?: boolean | undefined; showStats?: boolean | undefined; showAuthor?: boolean | undefined; showDescription?: boolean | undefined; ... 15 more ...; hideControls?: boolean | undefined; }'.
+src/composables/useExperience.ts(46,3): error TS2741: Property 'defaultTools' is missing in type '{ key: "home"; label: string; icon: string; description: string; verb: string; question: string; defaultDisplay: "banner"; allowedDisplays: ("list" | "cards" | "banner")[]; allowedTools: "search"[]; layout: "grid"; showHeader: false; showBreadcrumb: false; showStats: false; }' but required in type 'ExperienceDefinition'.
+src/composables/useExperience.ts(62,3): error TS2741: Property 'defaultTools' is missing in type '{ key: "dashboard"; label: string; icon: string; description: string; verb: string; question: string; defaultDisplay: "cards"; allowedDisplays: ("list" | "cards" | "feed")[]; allowedTools: ("timeline" | "kanban" | "vote")[]; layout: "grid"; showHeader: true; showBreadcrumb: true; showStats: true; }' but required in type 'ExperienceDefinition'.
+src/composables/useExperience.ts(78,3): error TS2741: Property 'defaultTools' is missing in type '{ key: "social"; label: string; icon: string; description: string; verb: string; question: string; defaultDisplay: "feed"; allowedDisplays: ("list" | "cards" | "feed")[]; allowedTools: never[]; layout: "grid"; showHeader: true; showBreadcrumb: true; showStats: true; }' but required in type 'ExperienceDefinition'.
+src/composables/useExperience.ts(94,3): error TS2741: Property 'defaultTools' is missing in type '{ key: "marketplace"; label: string; icon: string; description: string; verb: string; question: string; defaultDisplay: "cards"; allowedDisplays: ("list" | "cards")[]; allowedTools: "search"[]; layout: "grid"; showHeader: true; showBreadcrumb: true; showStats: true; }' but required in type 'ExperienceDefinition'.
+src/composables/useExperience.ts(110,3): error TS2741: Property 'defaultTools' is missing in type '{ key: "wiki"; label: string; icon: string; description: string; verb: string; question: string; defaultDisplay: "book"; allowedDisplays: "book"[]; allowedTools: "structure"[]; layout: "grid"; showHeader: true; showBreadcrumb: true; showStats: false; }' but required in type 'ExperienceDefinition'.
+src/composables/useExperience.ts(126,3): error TS2741: Property 'defaultTools' is missing in type '{ key: "decision_room"; label: string; icon: string; description: string; verb: string; question: string; defaultDisplay: "book"; allowedDisplays: "book"[]; allowedTools: ("vote" | "debate")[]; layout: "grid"; showHeader: true; showBreadcrumb: true; showStats: true; }' but required in type 'ExperienceDefinition'.
+src/composables/useExperience.ts(142,3): error TS2741: Property 'defaultTools' is missing in type '{ key: "classic"; label: string; icon: string; description: string; verb: string; question: string; defaultDisplay: "list"; allowedDisplays: "list"[]; allowedTools: never[]; layout: "full"; showHeader: true; showBreadcrumb: true; showStats: true; }' but required in type 'ExperienceDefinition'.
+src/composables/useInquiryDisplay.ts(45,39): error TS2339: Property 'rejected' does not exist on type '{ active: string; open: string; closed: string; draft: string; waiting_approval: string; }'.
+src/composables/useInquiryPermissions.ts(7,25): error TS2307: Cannot find module '../Types/inquiry.ts' or its corresponding type declarations.
+src/composables/useInquiryPermissions.ts(9,3): error TS2614: Module '"../utils/permissions.ts"' has no exported member 'createPermissionContextForContent'. Did you mean to use 'import createPermissionContextForContent from "../utils/permissions.ts"' instead?
+src/composables/useInquiryWatcher.ts(22,3): error TS2305: Module '"./useInquiryWatcher.types"' has no exported member 'WatcherMode'.
+src/composables/useInquiryWatcher.ts(23,3): error TS2305: Module '"./useInquiryWatcher.types"' has no exported member 'WatcherProps'.
+src/composables/useInquiryWatcher.ts(24,3): error TS2305: Module '"./useInquiryWatcher.types"' has no exported member 'WatcherData'.
+src/composables/useInquiryWatcher.ts(25,3): error TS2305: Module '"./useInquiryWatcher.types"' has no exported member 'WorkerResponse'.
+src/composables/useInquiryWatcher.ts(117,26): error TS2554: Expected 1-3 arguments, but got 0.
+src/composables/useInquiryWatcher.ts(188,25): error TS2339: Property 'load' does not exist on type 'Store<"supports", Pick<{ supports: Ref<{ id?: number | undefined; inquiryId: number; optionId: number; userId: string; value: string | number | string[] | { scores?: Record<number, number> | undefined; ... 4 more ...; round?: number | undefined; } | null; weight: number; created: number; updated?: number | undefined...'.
+src/composables/useSearch.ts(24,37): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/composables/useSearch.ts(28,10): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/composables/useSearch.ts(32,8): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/composables/useTrending.ts(16,47): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/composables/useUserContext.ts(95,37): error TS2339: Property 'isBoard' does not exist on type '{ array: "richArray" | "simpleArray"; id: string; userId: string; user: string | null; displayName: string; emailAddress: string; type: UserType; isAdmin: boolean; isOfficial: boolean; ... 16 more ...; categories: string[]; }'.
+src/composables/useUserContext.ts(112,16): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/composables/useUserContext.ts(113,13): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/composables/useViewableInquiries.ts(20,38): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/composables/useVoteContext.ts(323,10): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/composables/useVoteContext.ts(328,10): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/composables/useVoteContext.ts(1159,23): error TS2339: Property 'items' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'items' does not exist on type '{ type: "ranking"; rankings: Record<number, number>; total_voters?: number | undefined; }'.
+src/composables/useVoteContext.ts(1160,36): error TS2339: Property 'grades' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'grades' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1227,30): error TS2339: Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1229,30): error TS2339: Property 'rankings' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'rankings' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1231,30): error TS2339: Property 'wins' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'wins' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1233,30): error TS2339: Property 'scores' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'scores' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1235,30): error TS2339: Property 'scores' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'scores' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1237,30): error TS2339: Property 'weights' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'weights' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1239,30): error TS2339: Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1241,30): error TS2339: Property 'totals' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'totals' does not exist on type '{ type: "reaction"; counts: Record<string, number>; items?: Record<number, Record<string, number>> | undefined; }'.
+src/composables/useVoteContext.ts(1264,15): error TS2339: Property 'items' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'items' does not exist on type '{ type: "ranking"; rankings: Record<number, number>; total_voters?: number | undefined; }'.
+src/composables/useVoteContext.ts(1266,35): error TS2339: Property 'items' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'items' does not exist on type '{ type: "ranking"; rankings: Record<number, number>; total_voters?: number | undefined; }'.
+src/composables/useVoteContext.ts(1267,31): error TS2339: Property 'items' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'items' does not exist on type '{ type: "ranking"; rankings: Record<number, number>; total_voters?: number | undefined; }'.
+src/composables/useVoteContext.ts(1273,28): error TS2571: Object is of type 'unknown'.
+src/composables/useVoteContext.ts(1273,64): error TS18046: 'a' is of type 'unknown'.
+src/composables/useVoteContext.ts(1273,68): error TS18046: 'b' is of type 'unknown'.
+src/composables/useVoteContext.ts(1279,17): error TS2339: Property 'totals' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'totals' does not exist on type '{ type: "reaction"; counts: Record<string, number>; items?: Record<number, Record<string, number>> | undefined; }'.
+src/composables/useVoteContext.ts(1324,40): error TS2339: Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1324,71): error TS18046: 'a' is of type 'unknown'.
+src/composables/useVoteContext.ts(1324,75): error TS18046: 'b' is of type 'unknown'.
+src/composables/useVoteContext.ts(1326,26): error TS2339: Property 'total_voters' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'total_voters' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1326,58): error TS2339: Property 'rankings' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'rankings' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1329,26): error TS2339: Property 'total_voters' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'total_voters' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1331,26): error TS2339: Property 'total_votes' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'total_votes' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1333,26): error TS2339: Property 'total_weight' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'total_weight' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1335,40): error TS2339: Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; } | { type: "ternary"; totals: { ...; }; percentages: { ...; }; items?: Record<...> | undefined; } | ... 12 more ... | { ...; }'.
+  Property 'counts' does not exist on type '{ type: "binary"; totals: { yes: number; no: number; }; percentages: { yes: number; no: number; }; items?: Record<number, { yes: number; no: number; }> | undefined; }'.
+src/composables/useVoteContext.ts(1335,71): error TS18046: 'a' is of type 'unknown'.
+src/composables/useVoteContext.ts(1335,75): error TS18046: 'b' is of type 'unknown'.
+src/helpers/index.ts(19,10): error TS2305: Module '"./modules/InquiryHelper.ts"' has no exported member 'InquiryHelper'.
+src/helpers/index.ts(20,10): error TS2305: Module '"./modules/InquiryOptionHelper.ts"' has no exported member 'InquiryOptionHelper'.
+src/helpers/modules/GenericItemHelper.ts(16,52): error TS2312: An interface can only extend an object type or intersection of object types with statically known members.
+src/helpers/modules/GenericItemHelper.ts(31,38): error TS2322: Type '{}' is not assignable to type 'string'.
+src/helpers/modules/GenericItemHelper.ts(60,52): error TS2322: Type '{}' is not assignable to type 'string'.
+src/helpers/modules/GenericItemHelper.ts(202,57): error TS2345: Argument of type 'T' is not assignable to parameter of type 'GenericItem | null | undefined'.
+  Type 'GenericItemWithMiscFields' is not assignable to type 'GenericItem | null | undefined'.
+    Type 'GenericItemWithMiscFields' is missing the following properties from type 'Inquiry': id, type, family, coverId, and 17 more.
+      Type 'T' is not assignable to type 'Inquiry'.
+        Type 'GenericItemWithMiscFields' is missing the following properties from type 'Inquiry': id, type, family, coverId, and 17 more.
+src/helpers/modules/GenericItemHelper.ts(434,10): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+src/helpers/modules/GenericItemHelper.ts(586,10): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+src/helpers/modules/ImportService.ts(80,25): error TS2571: Object is of type 'unknown'.
+src/helpers/modules/InquiryHelper.ts(128,29): error TS2345: Argument of type 'InquiryType | undefined' is not assignable to parameter of type 'InquiryType | InquiryFamily | null'.
+  Type 'undefined' is not assignable to type 'InquiryType | InquiryFamily | null'.
+src/helpers/modules/InquiryHelper.ts(137,34): error TS2345: Argument of type 'InquiryGroupType | undefined' is not assignable to parameter of type 'InquiryGroupType | InquiryFamily | null'.
+  Type 'undefined' is not assignable to type 'InquiryGroupType | InquiryFamily | null'.
+src/helpers/modules/InquiryHelper.ts(342,48): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/helpers/modules/InquiryHelper.ts(408,50): error TS2339: Property 'group_type' does not exist on type 'InquiryType'.
+src/helpers/modules/InquiryHelper.ts(515,14): error TS2339: Property 'inquiryType' does not exist on type 'InquiryStatus'.
+src/helpers/modules/InquiryHelper.ts(515,52): error TS2339: Property 'statusKey' does not exist on type 'InquiryStatus'.
+src/helpers/modules/InquiryOptionHelper.ts(12,38): error TS2307: Cannot find module '@/stores/options' or its corresponding type declarations.
+src/helpers/modules/InquiryOptionHelper.ts(67,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+src/helpers/modules/InquiryOptionHelper.ts(278,16): error TS2304: Cannot find name 'FamilyConfig'.
+src/helpers/modules/InquiryOptionHelper.ts(307,10): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+src/helpers/modules/InquiryOptionHelper.ts(352,5): error TS2322: Type 'string[]' is not assignable to type 'Record<string, unknown>'.
+  Index signature for type 'string' is missing in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(375,5): error TS2322: Type 'string[] | FamilyFeatures' is not assignable to type 'string[]'.
+  Type 'FamilyFeatures' is missing the following properties from type 'string[]': length, pop, push, concat, and 35 more.
+src/helpers/modules/InquiryOptionHelper.ts(401,5): error TS2322: Type 'string[] | { key: string; label: string; icon?: string | undefined; }[]' is not assignable to type '{ key: string; label: string; icon?: string | undefined; }[]'.
+  Type 'string[]' is not assignable to type '{ key: string; label: string; icon?: string | undefined; }[]'.
+    Type 'string' is not assignable to type '{ key: string; label: string; icon?: string | undefined; }'.
+src/helpers/modules/InquiryOptionHelper.ts(471,3): error TS2322: Type '{ key: string; name: string | undefined; label: string; description: string | undefined; icon: any; ui: Record<string, unknown>; rules: Record<string, unknown>; features: string[]; actions: { ...; }[]; optionTypes: InquiryOptionType[]; }[]' is not assignable to type '{ key: string; name: string; label: string; description: string; icon: string; ui: Record<string, unknown>; rules: Record<string, unknown>; features: string[]; actions: { key: string; label: string; icon?: string | undefined; }[]; optionTypes: InquiryOptionType[]; }[]'.
+  Type '{ key: string; name: string | undefined; label: string; description: string | undefined; icon: any; ui: Record<string, unknown>; rules: Record<string, unknown>; features: string[]; actions: { ...; }[]; optionTypes: InquiryOptionType[]; }' is not assignable to type '{ key: string; name: string; label: string; description: string; icon: string; ui: Record<string, unknown>; rules: Record<string, unknown>; features: string[]; actions: { key: string; label: string; icon?: string | undefined; }[]; optionTypes: InquiryOptionType[]; }'.
+    Types of property 'name' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+src/helpers/modules/InquiryOptionHelper.ts(474,27): error TS2339: Property 'optionFamilyTab' does not exist on type '{}'.
+src/helpers/modules/InquiryOptionHelper.ts(476,39): error TS2339: Property 'optionFamilyTab' does not exist on type '{}'.
+src/helpers/modules/InquiryOptionHelper.ts(477,28): error TS18046: 'item' is of type 'unknown'.
+src/helpers/modules/InquiryOptionHelper.ts(546,9): error TS2353: Object literal may only specify known properties, and 'require_initial_position' does not exist in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(568,9): error TS2353: Object literal may only specify known properties, and 'max_depth' does not exist in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(593,9): error TS2353: Object literal may only specify known properties, and 'consensus_threshold' does not exist in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(624,9): error TS2353: Object literal may only specify known properties, and 'require_official_endorsement' does not exist in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(655,9): error TS2353: Object literal may only specify known properties, and 'requires_impact_assessment' does not exist in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(682,9): error TS2353: Object literal may only specify known properties, and 'require_status_transitions' does not exist in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(705,9): error TS2353: Object literal may only specify known properties, and 'chronological_order' does not exist in type 'string[]'.
+src/helpers/modules/InquiryOptionHelper.ts(728,7): error TS2740: Type '{}' is missing the following properties from type 'string[]': length, pop, push, concat, and 35 more.
+src/helpers/modules/InquiryOptionHelper.ts(820,10): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ Drag: { name: string; render(): VNode<RendererNode, RendererElement, { [key: string]: any; }>; }; Plus: { name: string; render(): VNode<RendererNode, RendererElement, { ...; }>; }; ... 90 more ...; ClockOutline: { ...; }; }'.
+src/helpers/modules/InquiryOptionHelper.ts(974,3): error TS2322: Type 'string | boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'.
+src/helpers/modules/InquiryOptionHelper.ts(1007,3): error TS2322: Type 'number | false' is not assignable to type 'boolean'.
+  Type 'number' is not assignable to type 'boolean'.
+src/helpers/modules/InquiryOptionHelper.ts(1084,5): error TS2322: Type '{}' is not assignable to type 'string'.
+src/helpers/modules/InquiryOptionHelper.ts(1216,44): error TS2554: Expected 2 arguments, but got 3.
+src/helpers/modules/InquiryOptionHelper.ts(1243,10): error TS2304: Cannot find name 'hasTimelineDates'.
+src/helpers/modules/InquiryOptionHelper.ts(1267,26): error TS2304: Cannot find name 'getForceLayouts'.
+src/helpers/modules/InquiryOptionHelper.ts(1272,5): error TS2322: Type 'string' is not assignable to type '{ key: string; value: string; }'.
+src/helpers/modules/InquiryOptionHelper.ts(1288,26): error TS2304: Cannot find name 'getForceLayouts'.
+src/helpers/modules/InquiryOptionHelper.ts(1289,49): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/helpers/modules/InquiryOptionHelper.ts(1294,5): error TS2322: Type 'string' is not assignable to type '{ key: string; value: string; }'.
+src/helpers/modules/InquiryOptionHelper.ts(1349,24): error TS2304: Cannot find name 'getForceLayouts'.
+src/helpers/modules/InquiryOptionHelper.ts(1373,26): error TS2304: Cannot find name 'getForceLayouts'.
+src/helpers/modules/InquiryOptionHelper.ts(1427,27): error TS2304: Cannot find name 'setTimelineDates'.
+src/helpers/modules/InquiryOptionHelper.ts(1461,27): error TS2304: Cannot find name 'setTimelineDates'.
+src/helpers/modules/MiscFieldsHelper.ts(285,9): error TS2322: Type 'unknown' is not assignable to type 'MiscValue'.
+src/helpers/modules/MiscFieldsHelper.ts(408,5): error TS2322: Type 'unknown' is not assignable to type 'MiscValue'.
+src/helpers/modules/MiscFieldsHelper.ts(413,30): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/helpers/modules/MiscFieldsHelper.ts(416,26): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/helpers/modules/MiscFieldsHelper.ts(429,49): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'MiscValue'.
+src/helpers/modules/MiscFieldsHelper.ts(431,24): error TS2339: Property 'updateMiscField' does not exist on type '{}'.
+src/helpers/modules/MiscFieldsHelper.ts(432,21): error TS2339: Property 'updateMiscField' does not exist on type '{}'.
+src/helpers/modules/MiscFieldsHelper.ts(450,16): error TS18046: 'store' is of type 'unknown'.
+src/helpers/modules/MiscFieldsHelper.ts(557,39): error TS2367: This comparison appears to be unintentional because the types '"string" | "boolean" | "groups" | "location" | "option" | "json" | "datetime" | "inquiry" | "category" | "users" | "enum"' and '"number"' have no overlap.
+src/helpers/modules/MiscFieldsHelper.ts(607,12): error TS2678: Type '"number"' is not comparable to type '"string" | "boolean" | "groups" | "location" | "option" | "json" | "integer" | "datetime" | "inquiry" | "category" | "users" | "enum"'.
+src/helpers/modules/MiscFieldsHelper.ts(621,39): error TS18048: 'context.users' is possibly 'undefined'.
+src/helpers/modules/MiscFieldsHelper.ts(630,40): error TS18048: 'context.users' is possibly 'undefined'.
+src/helpers/modules/MiscFieldsHelper.ts(641,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/helpers/modules/MiscFieldsHelper.ts(714,32): error TS2339: Property 'depth' does not exist on type 'BaseEntry'.
+src/helpers/modules/MiscFieldsHelper.ts(720,7): error TS2322: Type 'string' is not assignable to type 'number'.
+src/helpers/modules/MiscFieldsHelper.ts(722,17): error TS2352: Conversion of type '{ id: string; name: string; parentId: number; }' to type 'BaseEntry' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'id' are incompatible.
+    Type 'string' is not comparable to type 'number'.
+src/helpers/modules/MiscFieldsHelper.ts(752,61): error TS2365: Operator '>' cannot be applied to types 'number' and '{}'.
+src/helpers/modules/MiscFieldsHelper.ts(753,12): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(app: string, text: "Maximum length is {max} characters", placeholders?: TranslationVariables<"Maximum length is {max} characters"> | undefined, options?: TranslationOptions | undefined): string', gave the following error.
+    Type '{}' is not assignable to type 'string | number | TranslationVariableReplacementObject<string | number>'.
+  Overload 2 of 3, '(app: string, text: "Maximum length is {max} characters", number?: number | undefined, options?: TranslationOptions | undefined): string', gave the following error.
+    Argument of type '{ max: {}; }' is not assignable to parameter of type 'number'.
+  Overload 3 of 3, '(app: string, text: "Maximum length is {max} characters", placeholders?: TranslationVariables<"Maximum length is {max} characters"> | undefined, number?: number | undefined, options?: TranslationOptions | undefined): string', gave the following error.
+    Type '{}' is not assignable to type 'string | number | TranslationVariableReplacementObject<string | number>'.
+src/helpers/modules/MiscFieldsHelper.ts(756,61): error TS2365: Operator '<' cannot be applied to types 'number' and '{}'.
+src/helpers/modules/MiscFieldsHelper.ts(757,12): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(app: string, text: "Minimum length is {min} characters", placeholders?: TranslationVariables<"Minimum length is {min} characters"> | undefined, options?: TranslationOptions | undefined): string', gave the following error.
+    Type '{}' is not assignable to type 'string | number | TranslationVariableReplacementObject<string | number>'.
+  Overload 2 of 3, '(app: string, text: "Minimum length is {min} characters", number?: number | undefined, options?: TranslationOptions | undefined): string', gave the following error.
+    Argument of type '{ min: {}; }' is not assignable to parameter of type 'number'.
+  Overload 3 of 3, '(app: string, text: "Minimum length is {min} characters", placeholders?: TranslationVariables<"Minimum length is {min} characters"> | undefined, number?: number | undefined, options?: TranslationOptions | undefined): string', gave the following error.
+    Type '{}' is not assignable to type 'string | number | TranslationVariableReplacementObject<string | number>'.
+src/helpers/modules/MiscFieldsHelper.ts(761,30): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(pattern: string | RegExp, flags?: string | undefined): RegExp', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type 'string | RegExp'.
+  Overload 2 of 3, '(pattern: string | RegExp): RegExp', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type 'string | RegExp'.
+  Overload 3 of 3, '(pattern: string, flags?: string | undefined): RegExp', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type 'string'.
+src/helpers/modules/MiscFieldsHelper.ts(763,7): error TS2322: Type '{}' is not assignable to type 'string'.
+src/helpers/modules/arrayHelper.ts(18,19): error TS2339: Property 'user' does not exist on type 'Inquiry'.
+src/helpers/modules/arrayHelper.ts(19,24): error TS2339: Property 'inquiryId' does not exist on type 'Inquiry'.
+src/helpers/modules/comments.ts(18,43): error TS2339: Property 'parent' does not exist on type 'Comment'.
+src/helpers/modules/comments.ts(64,36): error TS2339: Property 'parent' does not exist on type 'Comment'.
+src/helpers/modules/itemHelpers.ts(38,5): error TS2353: Object literal may only specify known properties, and 'coverId' does not exist in type 'Item'.
+src/helpers/modules/itemHelpers.ts(54,5): error TS2353: Object literal may only specify known properties, and 'coverId' does not exist in type 'Item'.
+src/helpers/modules/itemHelpers.ts(105,10): error TS2352: Conversion of type 'Item' to type 'Option | Inquiry' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Item' is missing the following properties from type 'Option': targetId, textSafe, sortOrder, configuration, and 8 more.
+src/helpers/modules/itemHelpers.ts(176,22): error TS2345: Argument of type 'Option' is not assignable to parameter of type 'Item'.
+  Type 'Option' is missing the following properties from type 'Item': kind, statusKey, raw
+src/helpers/modules/itemHelpers.ts(177,22): error TS2345: Argument of type 'Option' is not assignable to parameter of type 'Item'.
+  Type 'Option' is missing the following properties from type 'Item': kind, statusKey, raw
+src/helpers/modules/itemHelpers.ts(190,33): error TS2345: Argument of type 'Inquiry' is not assignable to parameter of type 'Item'.
+  Type 'Inquiry' is missing the following properties from type 'Item': kind, text, statusKey, raw
+src/helpers/modules/itemHelpers.ts(190,71): error TS2345: Argument of type 'Inquiry' is not assignable to parameter of type 'Item'.
+  Type 'Inquiry' is missing the following properties from type 'Item': kind, text, statusKey, raw
+src/helpers/modules/supports.ts(11,22): error TS2538: Type 'undefined' cannot be used as an index type.
+src/helpers/modules/supports.ts(18,43): error TS2339: Property 'parent' does not exist on type 'Support'.
+src/helpers/modules/supports.ts(19,23): error TS2339: Property 'timestamp' does not exist on type 'Support'.
+src/helpers/modules/supports.ts(19,37): error TS2339: Property 'timestamp' does not exist on type 'Support'.
+src/helpers/modules/supports.ts(21,36): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/helpers/modules/supports.ts(24,38): error TS2538: Type 'undefined' cannot be used as an index type.
+src/helpers/modules/supports.ts(25,38): error TS2538: Type 'undefined' cannot be used as an index type.
+src/helpers/modules/supports.ts(39,16): error TS18048: 'b.id' is possibly 'undefined'.
+src/helpers/modules/supports.ts(39,23): error TS18048: 'a.id' is possibly 'undefined'.
+src/helpers/modules/supports.ts(64,36): error TS2339: Property 'parent' does not exist on type 'Support'.
+src/helpers/modules/supports.ts(67,22): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/stores/appSettings.ts(33,8): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/appSettings.ts(35,39): error TS2307: Cannot find module '@/Types/experience.types' or its corresponding type declarations.
+src/stores/appSettings.ts(96,20): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(97,18): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/stores/appSettings.ts(97,21): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/stores/appSettings.ts(136,22): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/stores/appSettings.ts(140,9): error TS2322: Type 'AppSettings' is not assignable to type 'void'.
+src/stores/appSettings.ts(151,22): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/stores/appSettings.ts(255,18): error TS7006: Parameter 'status' implicitly has an 'any' type.
+src/stores/appSettings.ts(256,16): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/stores/appSettings.ts(256,19): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/stores/appSettings.ts(262,10): error TS7006: Parameter 'status' implicitly has an 'any' type.
+src/stores/appSettings.ts(299,10): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(325,10): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(331,10): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(347,25): error TS7006: Parameter 'status' implicitly has an 'any' type.
+src/stores/appSettings.ts(347,33): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/stores/appSettings.ts(349,12): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(358,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(363,10): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(366,10): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(377,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(382,10): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(385,10): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/appSettings.ts(396,85): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/stores/appSettings.ts(416,47): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/stores/appSettings.ts(431,51): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/stores/appSettings.ts(433,27): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/stores/appSettings.ts(437,53): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/stores/appSettings.ts(440,45): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+src/stores/appSettings.ts(448,85): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/stores/appSettings.ts(468,47): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/stores/appSettings.ts(483,51): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/stores/appSettings.ts(485,27): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/stores/appSettings.ts(489,53): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/stores/appSettings.ts(493,45): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+src/stores/appSettings.ts(511,83): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/stores/appSettings.ts(547,50): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/stores/appSettings.ts(562,63): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/stores/appSettings.ts(589,55): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(629,51): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(644,69): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(652,47): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(674,56): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(711,52): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(726,71): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(776,49): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/stores/appSettings.ts(789,61): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/stores/appSettings.ts(809,79): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(842,46): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/appSettings.ts(857,59): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/stores/comments.ts(114,44): error TS2339: Property 'getInquiryComments' does not exist on type '{ getComments(inquiryId: number): Promise<AxiosResponse<{ comments: Comment[]; }, any, {}, any>>; addComment(inquiryId: number, message: string, confidential: boolean | undefined, optionId: number): Promise<...>; deleteComment(commentId: number): Promise<...>; restoreComment(commentId: number): Promise<...>; }'.
+src/stores/comments.ts(141,44): error TS2339: Property 'getOptionComments' does not exist on type '{ getComments(inquiryId: number): Promise<AxiosResponse<{ comments: Comment[]; }, any, {}, any>>; addComment(inquiryId: number, message: string, confidential: boolean | undefined, optionId: number): Promise<...>; deleteComment(commentId: number): Promise<...>; restoreComment(commentId: number): Promise<...>; }'.
+src/stores/comments.ts(177,15): error TS2554: Expected 2-3 arguments, but got 4.
+src/stores/comments.ts(296,39): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/inquiries.ts(21,59): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/inquiries.ts(33,8): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/inquiries.ts(84,23): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiries.ts(93,23): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiries.ts(102,23): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiries.ts(344,32): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(354,67): error TS18046: 'category' is of type 'unknown'.
+src/stores/inquiries.ts(366,14): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(372,14): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(395,14): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(429,12): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(442,12): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(447,55): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(455,12): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(463,55): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(471,12): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(477,55): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(480,12): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(486,55): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(489,12): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(502,51): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(514,53): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(549,11): error TS18046: 'category' is of type 'unknown'.
+src/stores/inquiries.ts(554,14): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(573,37): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(589,37): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(605,37): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiries.ts(613,19): error TS7006: Parameter 'familyType' implicitly has an 'any' type.
+src/stores/inquiries.ts(623,40): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiries.ts(653,44): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiries.ts(659,55): error TS2353: Object literal may only specify known properties, and 'miscFields' does not exist in type '{ key: string; value: string; }'.
+src/stores/inquiries.ts(667,55): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiries.ts(678,35): error TS7006: Parameter 'inquiryId' implicitly has an 'any' type.
+src/stores/inquiries.ts(678,46): error TS7006: Parameter 'moderationStatus' implicitly has an 'any' type.
+src/stores/inquiries.ts(679,45): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiries.ts(681,22): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/stores/inquiries.ts(687,25): error TS7006: Parameter 'inquiryId' implicitly has an 'any' type.
+src/stores/inquiries.ts(687,36): error TS7006: Parameter 'inquiryStatus' implicitly has an 'any' type.
+src/stores/inquiries.ts(688,45): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiries.ts(690,22): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/stores/inquiries.ts(696,29): error TS7006: Parameter 'inquiryId' implicitly has an 'any' type.
+src/stores/inquiries.ts(696,40): error TS7006: Parameter 'inquiryVisibility' implicitly has an 'any' type.
+src/stores/inquiries.ts(697,44): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiries.ts(748,45): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiries.ts(751,66): error TS2339: Property 'status' does not exist on type '{ inquiry: Inquiry; }'.
+src/stores/inquiries.ts(752,66): error TS2339: Property 'status' does not exist on type '{ inquiry: Inquiry; }'.
+src/stores/inquiries.ts(809,18): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/stores/inquiries.ts(832,44): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiries.ts(863,28): error TS7006: Parameter 'inquiryId' implicitly has an 'any' type.
+src/stores/inquiries.ts(863,39): error TS7006: Parameter 'inquiryStatus' implicitly has an 'any' type.
+src/stores/inquiries.ts(866,44): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiries.ts(868,21): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/stores/inquiries.ts(869,48): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiries.ts(908,47): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiry.ts(50,8): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/inquiry.ts(211,27): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiry.ts(230,67): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiry.ts(315,54): error TS2339: Property 'attachments' does not exist on type '{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[]; comments: Comment[]; supports: Support[]; shares: Share[]; subscribed: boolean; }'.
+src/stores/inquiry.ts(363,54): error TS2339: Property 'attachments' does not exist on type '{ inquiry: Inquiry; options: Option[]; supports: Support[]; comments: Comment[]; shares: Share[]; subscribed: boolean; }'.
+src/stores/inquiry.ts(364,53): error TS2339: Property 'supportResult' does not exist on type '{ inquiry: Inquiry; options: Option[]; supports: Support[]; comments: Comment[]; shares: Share[]; subscribed: boolean; }'.
+src/stores/inquiry.ts(365,79): error TS2339: Property 'supportEngine' does not exist on type '{ inquiry: Inquiry; options: Option[]; supports: Support[]; comments: Comment[]; shares: Share[]; subscribed: boolean; }'.
+src/stores/inquiry.ts(366,58): error TS2339: Property 'supportEngine' does not exist on type '{ inquiry: Inquiry; options: Option[]; supports: Support[]; comments: Comment[]; shares: Share[]; subscribed: boolean; }'.
+src/stores/inquiry.ts(371,36): error TS2339: Property 'isOwner' does not exist on type '{ array: "richArray" | "simpleArray"; id: string; userId: string; user: string | null; displayName: string; emailAddress: string; type: UserType; isAdmin: boolean; isOfficial: boolean; ... 16 more ...; categories: string[]; }'.
+src/stores/inquiry.ts(373,36): error TS2339: Property 'isOwner' does not exist on type '{ array: "richArray" | "simpleArray"; id: string; userId: string; user: string | null; displayName: string; emailAddress: string; type: UserType; isAdmin: boolean; isOfficial: boolean; ... 16 more ...; categories: string[]; }'.
+src/stores/inquiry.ts(412,11): error TS2322: Type 'User | undefined' is not assignable to type 'string | User'.
+  Type 'undefined' is not assignable to type 'string | User'.
+src/stores/inquiry.ts(449,13): error TS2322: Type 'string | undefined' is not assignable to type 'InquiryType | undefined'.
+  Type 'string' is not assignable to type 'InquiryType'.
+src/stores/inquiry.ts(457,63): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiry.ts(588,59): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiry.ts(607,59): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/inquiry.ts(629,61): error TS7006: Parameter 'inq' implicitly has an 'any' type.
+src/stores/inquiryGroup.ts(29,8): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/inquiryGroup.ts(724,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/stores/inquiryGroup.ts(727,11): error TS2322: Type 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+src/stores/inquiryGroup.ts(729,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/stores/inquiryGroup.ts(770,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/stores/inquiryGroup.ts(918,11): error TS2322: Type 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+src/stores/inquiryGroup.ts(953,70): error TS2345: Argument of type '{ groupStatus: string; }' is not assignable to parameter of type '{ title?: string | undefined; type?: string | undefined; description?: string | undefined; parentId?: number | undefined; protected?: boolean | undefined; ownedGroup: string; groupStatus: string; }'.
+  Property 'ownedGroup' is missing in type '{ groupStatus: string; }' but required in type '{ title?: string | undefined; type?: string | undefined; description?: string | undefined; parentId?: number | undefined; protected?: boolean | undefined; ownedGroup: string; groupStatus: string; }'.
+src/stores/inquiryGroup.ts(980,70): error TS2345: Argument of type '{ groupStatus: string; }' is not assignable to parameter of type '{ title?: string | undefined; type?: string | undefined; description?: string | undefined; parentId?: number | undefined; protected?: boolean | undefined; ownedGroup: string; groupStatus: string; }'.
+  Property 'ownedGroup' is missing in type '{ groupStatus: string; }' but required in type '{ title?: string | undefined; type?: string | undefined; description?: string | undefined; parentId?: number | undefined; protected?: boolean | undefined; ownedGroup: string; groupStatus: string; }'.
+src/stores/inquiryGroups.ts(12,78): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/inquiryGroups.ts(30,48): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(64,50): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(90,55): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(97,43): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(101,41): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(105,41): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(112,31): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(115,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(118,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(144,45): error TS7006: Parameter 'inquiry' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(174,40): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(189,52): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(203,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(210,55): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(210,81): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(211,40): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(239,56): error TS7006: Parameter 'group' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(247,51): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(248,48): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(272,33): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(321,40): error TS7006: Parameter 'group' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(332,40): error TS7006: Parameter 'group' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(453,52): error TS7006: Parameter 'group' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(465,45): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryGroups.ts(548,40): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/stores/inquiryLinks.ts(496,11): error TS2322: Type 'string' is not assignable to type 'object'.
+src/stores/inquiryLinks.ts(500,11): error TS2322: Type 'string' is not assignable to type 'object'.
+src/stores/inquiryLinks.ts(503,22): error TS2339: Property 'expires' does not exist on type 'CreateAppResourceData'.
+src/stores/inquiryLinks.ts(504,44): error TS2339: Property 'expires' does not exist on type 'CreateAppResourceData'.
+src/stores/inquiryLinks.ts(507,22): error TS2339: Property 'showExpiration' does not exist on type 'CreateAppResourceData'.
+src/stores/inquiryLinks.ts(508,51): error TS2339: Property 'showExpiration' does not exist on type 'CreateAppResourceData'.
+src/stores/inquiryLinks.ts(547,13): error TS2353: Object literal may only specify known properties, and 'expires' does not exist in type 'CreateAppResourceData'.
+src/stores/inquiryLinks.ts(557,13): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(592,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(695,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(722,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(807,41): error TS2339: Property 'collective' does not exist on type 'CollectiveResponse'.
+src/stores/inquiryLinks.ts(812,63): error TS2339: Property 'collective' does not exist on type 'CollectiveResponse'.
+src/stores/inquiryLinks.ts(813,43): error TS2339: Property 'collective' does not exist on type 'CollectiveResponse'.
+src/stores/inquiryLinks.ts(821,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(848,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(910,46): error TS2339: Property 'poll' does not exist on type 'PollResponse'.
+src/stores/inquiryLinks.ts(923,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(946,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(1012,39): error TS2339: Property 'id' does not exist on type 'OCSResponse<DeckBoardResponse>'.
+src/stores/inquiryLinks.ts(1012,59): error TS2339: Property 'data' does not exist on type 'OCSResponse<DeckBoardResponse>'.
+src/stores/inquiryLinks.ts(1025,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(1052,11): error TS2353: Object literal may only specify known properties, and 'metadata' does not exist in type 'CreateLinkData'.
+src/stores/inquiryLinks.ts(1145,27): error TS18046: 'c' is of type 'unknown'.
+src/stores/inquiryLinks.ts(1145,62): error TS18046: 'c' is of type 'unknown'.
+src/stores/option.ts(40,8): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/option.ts(348,49): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/option.ts(357,37): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/option.ts(554,36): error TS2339: Property 'isOwner' does not exist on type '{ array: "richArray" | "simpleArray"; id: string; userId: string; user: string | null; displayName: string; emailAddress: string; type: UserType; isAdmin: boolean; isOfficial: boolean; ... 16 more ...; categories: string[]; }'.
+src/stores/option.ts(555,39): error TS2339: Property 'isOwner' does not exist on type '{ array: "richArray" | "simpleArray"; id: string; userId: string; user: string | null; displayName: string; emailAddress: string; type: UserType; isAdmin: boolean; isOfficial: boolean; ... 16 more ...; categories: string[]; }'.
+src/stores/option.ts(623,26): error TS2345: Argument of type '(field: { key: string; value: string; default?: unknown; }) => void' is not assignable to parameter of type '(value: string, index: number, array: string[]) => void'.
+  Types of parameters 'field' and 'value' are incompatible.
+    Type 'string' is not assignable to type '{ key: string; value: string; default?: unknown; }'.
+src/stores/option.ts(639,11): error TS2353: Object literal may only specify known properties, and 'family' does not exist in type '{ title: string; type: string; text: string; targetId?: number | undefined; parentId?: number | undefined; ownedGroup: string; owner: string; configuration?: OptionConfiguration | undefined; }'.
+src/stores/option.ts(729,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/stores/option.ts(730,13): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/stores/option.ts(731,13): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/stores/option.ts(732,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/stores/option.ts(737,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/stores/option.ts(738,13): error TS2322: Type 'string | undefined' is not assignable to type 'OptionCurrentStatus'.
+  Type 'undefined' is not assignable to type 'OptionCurrentStatus'.
+src/stores/option.ts(778,30): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/stores/option.ts(856,20): error TS2339: Property 'DeleteOption' does not exist on type 'typeof Event'.
+src/stores/option.ts(914,22): error TS2551: Property 'UpdateOption' does not exist on type 'typeof Event'. Did you mean 'UpdateOptions'?
+src/stores/option.ts(939,56): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/stores/option.ts(946,63): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/option.ts(953,64): error TS2353: Object literal may only specify known properties, and 'value' does not exist in type '{ key: string; updateData: { key: string; value: string; }; }'.
+src/stores/options.ts(11,29): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/options.ts(28,65): error TS2307: Cannot find module '@/Types' or its corresponding type declarations.
+src/stores/options.ts(50,7): error TS2322: Type '{ id: number; option_type: string; family: string; icon: string; label: string; description?: string | undefined; fields: string[]; allowed_response: string[]; allow_comment: number; support_feature: string; ... 9 more ...; optionType?: string | undefined; }[]' is not assignable to type 'Record<string, InquiryOptionType>'.
+  Index signature for type 'string' is missing in type '{ id: number; option_type: string; family: string; icon: string; label: string; description?: string | undefined; fields: string[]; allowed_response: string[]; allow_comment: number; support_feature: string; ... 9 more ...; optionType?: string | undefined; }[]'.
+src/stores/options.ts(147,33): error TS2339: Property 'sortOrder' does not exist on type '{ key: string; name: string; label: string; description: string; icon: string; ui: Record<string, unknown>; rules: Record<string, unknown>; features: string[]; actions: { key: string; label: string; icon?: string | undefined; }[]; optionTypes: InquiryOptionType[]; }'.
+src/stores/options.ts(156,31): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(163,29): error TS18046: 'type' is of type 'unknown'.
+src/stores/options.ts(164,26): error TS18046: 'type' is of type 'unknown'.
+src/stores/options.ts(166,38): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(171,35): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(178,31): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(182,38): error TS7006: Parameter 'parent' implicitly has an 'any' type.
+src/stores/options.ts(193,65): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/stores/options.ts(211,25): error TS18048: 'a.sortOrder' is possibly 'undefined'.
+src/stores/options.ts(211,39): error TS18048: 'b.sortOrder' is possibly 'undefined'.
+src/stores/options.ts(218,37): error TS7006: Parameter 'type' implicitly has an 'any' type.
+src/stores/options.ts(230,35): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/stores/options.ts(230,42): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(234,35): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/stores/options.ts(234,42): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(239,29): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(247,29): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(259,31): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(270,35): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(277,10): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(330,43): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(339,43): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(351,31): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(378,40): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(388,56): error TS2345: Argument of type '{ key: string; value: string; }' is not assignable to parameter of type '{ key: string; updateData: { key: string; value: string; }; }'.
+  Property 'updateData' is missing in type '{ key: string; value: string; }' but required in type '{ key: string; updateData: { key: string; value: string; }; }'.
+src/stores/options.ts(408,29): error TS7006: Parameter 'family' implicitly has an 'any' type.
+src/stores/options.ts(414,46): error TS1016: A required parameter cannot follow an optional parameter.
+src/stores/options.ts(433,40): error TS2339: Property 'getInquiry' does not exist on type '{ getOptions(): Promise<AxiosResponse<{ options: Option[]; permissions: { optionCreationAllowed: boolean; }; optionGroups: OptionGroup[]; }, any, {}, any>>; getOptionsByInquiry(inquiryId: number): Promise<...>; ... 36 more ...; addChildOption(parentId: number, data: { ...; }): Promise<...>; }'.
+src/stores/options.ts(434,44): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/stores/options.ts(475,18): error TS2339: Property 'OptionsLoaded' does not exist on type 'typeof Event'.
+src/stores/options.ts(493,40): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(500,40): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(507,40): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(522,40): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(547,29): error TS7006: Parameter 'family' implicitly has an 'any' type.
+src/stores/options.ts(552,28): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(577,33): error TS7006: Parameter 'family' implicitly has an 'any' type.
+src/stores/options.ts(578,29): error TS7006: Parameter 'type' implicitly has an 'any' type.
+src/stores/options.ts(579,49): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(595,48): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(618,44): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(646,72): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/stores/options.ts(653,47): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(657,25): error TS2339: Property 'allowed_child_types' does not exist on type '{ id: number; option_type: string; family: string; icon: string; label: string; description?: string | undefined; fields: string[]; allowed_response: string[]; allow_comment: number; support_feature: string; ... 9 more ...; optionType?: string | undefined; }'.
+src/stores/options.ts(658,25): error TS2339: Property 'allowed_child_types' does not exist on type '{ id: number; option_type: string; family: string; icon: string; label: string; description?: string | undefined; fields: string[]; allowed_response: string[]; allow_comment: number; support_feature: string; ... 9 more ...; optionType?: string | undefined; }'.
+src/stores/options.ts(672,26): error TS2339: Property 'createOption' does not exist on type '{ getInquiry(shareToken: string): Promise<AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[]; comments: Comment[]; supports: Support[]; shares: Share[]; subscribed: boolean; }, any, {}, any>>; ... 24 more ...; register(shareToken: string, displayName: string, emailAddress: string, timeZone?: u...'.
+src/stores/options.ts(686,9): error TS2353: Object literal may only specify known properties, and 'miscFields' does not exist in type '{ title: string; type: string; text: string; targetId?: number | undefined; parentId?: number | undefined; ownedGroup: string; owner: string; configuration?: OptionConfiguration | undefined; }'.
+src/stores/options.ts(694,18): error TS2339: Property 'OptionAdded' does not exist on type 'typeof Event'.
+src/stores/options.ts(710,29): error TS7006: Parameter 'optionId' implicitly has an 'any' type.
+src/stores/options.ts(710,39): error TS7006: Parameter 'statValue' implicitly has an 'any' type.
+src/stores/options.ts(710,50): error TS7006: Parameter 'miscFields' implicitly has an 'any' type.
+src/stores/options.ts(712,52): error TS18046: 'e' is of type 'unknown'.
+src/stores/options.ts(715,37): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/stores/options.ts(729,26): error TS2339: Property 'updateOption' does not exist on type '{ getInquiry(shareToken: string): Promise<AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[]; comments: Comment[]; supports: Support[]; shares: Share[]; subscribed: boolean; }, any, {}, any>>; ... 24 more ...; register(shareToken: string, displayName: string, emailAddress: string, timeZone?: u...'.
+src/stores/options.ts(731,26): error TS2554: Expected 2 arguments, but got 1.
+src/stores/options.ts(759,43): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(764,18): error TS2339: Property 'OptionDeleted' does not exist on type 'typeof Event'.
+src/stores/options.ts(784,44): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(826,26): error TS2339: Property 'supportOption' does not exist on type '{ getInquiry(shareToken: string): Promise<AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[]; comments: Comment[]; supports: Support[]; shares: Share[]; subscribed: boolean; }, any, {}, any>>; ... 24 more ...; register(shareToken: string, displayName: string, emailAddress: string, timeZone?: u...'.
+src/stores/options.ts(828,26): error TS2339: Property 'supportOption' does not exist on type '{ getOptions(): Promise<AxiosResponse<{ options: Option[]; permissions: { optionCreationAllowed: boolean; }; optionGroups: OptionGroup[]; }, any, {}, any>>; getOptionsByInquiry(inquiryId: number): Promise<...>; ... 36 more ...; addChildOption(parentId: number, data: { ...; }): Promise<...>; }'.
+src/stores/options.ts(849,26): error TS2339: Property 'unsupportOption' does not exist on type '{ getInquiry(shareToken: string): Promise<AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[]; comments: Comment[]; supports: Support[]; shares: Share[]; subscribed: boolean; }, any, {}, any>>; ... 24 more ...; register(shareToken: string, displayName: string, emailAddress: string, timeZone?: u...'.
+src/stores/options.ts(851,26): error TS2339: Property 'unsupportOption' does not exist on type '{ getOptions(): Promise<AxiosResponse<{ options: Option[]; permissions: { optionCreationAllowed: boolean; }; optionGroups: OptionGroup[]; }, any, {}, any>>; getOptionsByInquiry(inquiryId: number): Promise<...>; ... 36 more ...; addChildOption(parentId: number, data: { ...; }): Promise<...>; }'.
+src/stores/options.ts(867,72): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/stores/options.ts(871,36): error TS7006: Parameter 'field' implicitly has an 'any' type.
+src/stores/options.ts(883,46): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/stores/options.ts(889,28): error TS2339: Property 'allowed_child_types' does not exist on type '{ id: number; option_type: string; family: string; icon: string; label: string; description?: string | undefined; fields: string[]; allowed_response: string[]; allow_comment: number; support_feature: string; ... 9 more ...; optionType?: string | undefined; }'.
+src/stores/options.ts(891,30): error TS2339: Property 'allowed_child_types' does not exist on type '{ id: number; option_type: string; family: string; icon: string; label: string; description?: string | undefined; fields: string[]; allowed_response: string[]; allow_comment: number; support_feature: string; ... 9 more ...; optionType?: string | undefined; }'.
+src/stores/options.ts(892,14): error TS7006: Parameter 'typeKey' implicitly has an 'any' type.
+src/stores/options.ts(894,15): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/stores/options.ts(894,18): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/stores/options.ts(905,72): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/stores/options.ts(940,12): error TS7006: Parameter 'family' implicitly has an 'any' type.
+src/stores/options.ts(944,30): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(955,10): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/stores/options.ts(955,17): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(959,10): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/stores/options.ts(959,17): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/stores/options.ts(970,15): error TS7006: Parameter 'family' implicitly has an 'any' type.
+src/stores/participation.ts(77,47): error TS2551: Property 'participation' does not exist on type '{ isNone: (state: { participation: { id: number; targetType: ParticipationTargetType; targetId: number; policyType: ParticipationPolicyType; policyConfig: { ...; }; createdAt: number; updatedAt: number; createdBy: string | null; } | null; loading: { ...; }; } & PiniaCustomStateProperties<...>) => boolean; ... 9 more...'. Did you mean 'participationType'?
+src/stores/participation.ts(177,82): error TS2345: Argument of type 'string | number | undefined' is not assignable to parameter of type 'string | undefined'.
+  Type 'number' is not assignable to type 'string'.
+src/stores/session.ts(67,26): error TS2741: Property 'sessionSettings' is missing in type '{ appPermissions: { addShares: false; addSharesExternal: false; allAccess: false; changeForeignInquiries: false; deanonymizeInquiry: false; inquiryCreation: false; inquiryDownload: false; publicShares: false; seeMailAddresses: false; unrestrictedOwner: false; }; ... 7 more ...; isLoaded: false; }' but required in type 'Session'.
+src/stores/session.ts(243,89): error TS2345: Argument of type 'RouteLocationNormalizedGeneric | null' is not assignable to parameter of type 'IContext | undefined'.
+  Type 'null' is not assignable to type 'IContext | undefined'.
+src/stores/session.ts(274,23): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(partialState: _DeepPartial<{ appPermissions: { addShares: boolean; addSharesExternal: boolean; allAccess: boolean; changeForeignInquiries: boolean; deanonymizeInquiry: boolean; inquiryCreation: boolean; inquiryDownload: boolean; publicShares: boolean; seeMailAddresses: boolean; unrestrictedOwner: boolean; }; ... 8 more ...; isLoaded: boolean; }>): void', gave the following error.
+    Argument of type 'Session' is not assignable to parameter of type '_DeepPartial<{ appPermissions: { addShares: boolean; addSharesExternal: boolean; allAccess: boolean; changeForeignInquiries: boolean; deanonymizeInquiry: boolean; inquiryCreation: boolean; inquiryDownload: boolean; publicShares: boolean; seeMailAddresses: boolean; unrestrictedOwner: boolean; }; ... 8 more ...; isLoa...'.
+      The types of 'appSettings.navigation' are incompatible between these types.
+        Type 'NavigationConfig | undefined' is not assignable to type '_DeepPartial<NavigationConfig | undefined>'.
+          Type 'NavigationConfig' is not assignable to type '_DeepPartial<NavigationConfig | undefined>'.
+            'string' index signatures are incompatible.
+              Type 'unknown' is not assignable to type '_DeepPartial<unknown> | undefined'.
+  Overload 2 of 2, '(stateMutator: (state: { appPermissions: { addShares: boolean; addSharesExternal: boolean; allAccess: boolean; changeForeignInquiries: boolean; deanonymizeInquiry: boolean; inquiryCreation: boolean; inquiryDownload: boolean; publicShares: boolean; seeMailAddresses: boolean; unrestrictedOwner: boolean; }; ... 8 more ...; isLoaded: boolean; }) => any): void', gave the following error.
+    Argument of type 'Session' is not assignable to parameter of type '(state: { appPermissions: { addShares: boolean; addSharesExternal: boolean; allAccess: boolean; changeForeignInquiries: boolean; deanonymizeInquiry: boolean; inquiryCreation: boolean; inquiryDownload: boolean; publicShares: boolean; seeMailAddresses: boolean; unrestrictedOwner: boolean; }; ... 8 more ...; isLoaded: ...'.
+      Type 'Session' provides no match for the signature '(state: { appPermissions: { addShares: boolean; addSharesExternal: boolean; allAccess: boolean; changeForeignInquiries: boolean; deanonymizeInquiry: boolean; inquiryCreation: boolean; inquiryDownload: boolean; publicShares: boolean; seeMailAddresses: boolean; unrestrictedOwner: boolean; }; ... 8 more ...; isLoaded: boolean; }): any'.
+src/stores/supportEngine.ts(309,19): error TS2551: Property 'value' does not exist on type '{ id?: number | undefined; inquiryId: number; optionId: number; userId: string; value: string | number | string[] | { scores?: Record<number, number> | undefined; reactions?: Record<number, string[]> | undefined; ranking?: Record<...> | undefined; grades?: Record<...> | undefined; selected?: number[] | undefined; ro...'. Did you mean 'values'?
+src/stores/supportEngine.ts(310,21): error TS2551: Property 'value' does not exist on type '{ id?: number | undefined; inquiryId: number; optionId: number; userId: string; value: string | number | string[] | { scores?: Record<number, number> | undefined; reactions?: Record<number, string[]> | undefined; ranking?: Record<...> | undefined; grades?: Record<...> | undefined; selected?: number[] | undefined; ro...'. Did you mean 'values'?
+src/stores/supportEngine.ts(310,33): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/stores/supports.ts(231,49): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/stores/supports.ts(277,49): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/stores/supports.ts(345,11): error TS2322: Type 'SupportValue' is not assignable to type 'string | number | SupportValue'.
+  Type 'null' is not assignable to type 'string | number | SupportValue'.
+src/stores/supports.ts(393,11): error TS2322: Type 'SupportValue' is not assignable to type 'string | number | SupportValue'.
+  Type 'null' is not assignable to type 'string | number | SupportValue'.
+src/utils/icons.ts(313,7): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'Component' is not assignable to type 'string | IconifyIcon'.
+      Type 'ComponentOptions<any, any, any, ComputedOptions, MethodOptions, any, any, any, string, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>' is not assignable to type 'string | IconifyIcon'.
+        Property 'body' is missing in type 'ComponentOptionsBase<any, any, any, ComputedOptions, MethodOptions, any, any, any, string, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions> & ThisType<...>' but required in type 'IconifyIcon'.
+src/utils/permissions.ts(267,52): error TS2339: Property 'includes' does not exist on type '{}'.
+src/utils/permissions.ts(269,53): error TS2339: Property 'some' does not exist on type '{}'.
+src/utils/permissions.ts(269,59): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/utils/permissions.ts(271,56): error TS2339: Property 'selections' does not exist on type '{}'.
+src/utils/permissions.ts(861,52): error TS2339: Property 'includes' does not exist on type '{}'.
+src/utils/permissions.ts(864,53): error TS2339: Property 'some' does not exist on type '{}'.
+src/utils/permissions.ts(864,59): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/utils/permissions.ts(867,56): error TS2339: Property 'selections' does not exist on type '{}'.
+src/utils/permissions.ts(928,56): error TS2339: Property 'includes' does not exist on type '{}'.
+src/utils/permissions.ts(937,57): error TS2339: Property 'some' does not exist on type '{}'.
+src/utils/permissions.ts(937,63): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/utils/permissions.ts(946,56): error TS2339: Property 'selections' does not exist on type '{}'.
+src/utils/permissions.ts(1122,7): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'.
+src/utils/permissions.ts(1136,51): error TS2367: This comparison appears to be unintentional because the types 'number' and 'boolean' have no overlap.
+src/utils/permissions.ts(1148,51): error TS2367: This comparison appears to be unintentional because the types 'number' and 'boolean' have no overlap.
+src/workers/inquiryWatcher.worker.ts(148,19): error TS2345: Argument of type '{ type: string; status: string; mode: string; interval: number; }' is not assignable to parameter of type 'WorkerResponseMessage'.
+  Property 'message' is missing in type '{ type: string; status: string; mode: string; interval: number; }' but required in type 'WorkerResponseMessage'.

@@ -110,22 +110,18 @@ const deleteFamily = async (family) => {
   if (family.typesCount > 0 || family.groupTypesCount > 0) {
     const parts = []
     if (family.typesCount > 0) {
-      parts.push(
-        t('agora', '{count} inquiry type(s)', { count: family.typesCount }),
-      )
+      parts.push(t('agora', '{count} inquiry type(s)', { count: family.typesCount }))
     }
     if (family.groupTypesCount > 0) {
-      parts.push(
-        t('agora', '{count} inquiry group(s)', { count: family.groupTypesCount }),
-      )
+      parts.push(t('agora', '{count} inquiry group(s)', { count: family.groupTypesCount }))
     }
     showError(
       t(
         'agora',
         'Cannot delete this family because it is still in use: {details}. Please remove or reassign them first.',
-        { details: parts.join(', ') },
+        { details: parts.join(', ') }
       ),
-      { timeout: 6000 },
+      { timeout: 6000 }
     )
     return
   }

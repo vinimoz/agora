@@ -71,7 +71,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
     showMailAddressesGroups: [],
     unrestrictedOwnerGroups: [],
     home: undefined,
-     organization: { type: 'municipality' } as OrganizationConfig,
+    organization: { type: 'municipality' } as OrganizationConfig,
     categoryTab: [],
     inquiryTypeTab: [],
     inquiryOptionTypeTab: [],
@@ -108,13 +108,9 @@ export const useAppSettingsStore = defineStore('appSettings', {
 
     optionTypeTab: (state) => state.inquiryOptionTypeTab,
 
-     getOrganizationType: (state): OrganizationType =>
-     
-      state.organization?.type ?? 'municipality',
+    getOrganizationType: (state): OrganizationType => state.organization?.type ?? 'municipality',
 
-      getHomeConfig: (state): HomeConfig | undefined => state.home,
-
-
+    getHomeConfig: (state): HomeConfig | undefined => state.home,
   },
 
   actions: {
@@ -128,7 +124,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
       }
     },
 
-    async load(): Promise<AppSettings | undefined>  {
+    async load(): Promise<AppSettings | undefined> {
       try {
         const response = await AppSettingsAPI.getAppSettings()
         // Initialize inquiryStatusTab with defaults if empty
@@ -140,7 +136,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
         return settings
       } catch (error) {
         Logger.error('Error getting appSettings', { error })
-	return undefined
+        return undefined
       }
     },
 
@@ -163,8 +159,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
       }
     },
 
-
-        // ============================================================
+    // ============================================================
     // HOME / ORGANIZATION
     // ============================================================
 
@@ -208,9 +203,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
       const previous = this.home
       // Merge locally so the UI sees the change immediately. A subsequent
       // load() will overwrite with the server's fully merged result.
-      this.home = previous
-        ? { ...previous, ...data }
-        : (data as HomeConfig)
+      this.home = previous ? { ...previous, ...data } : (data as HomeConfig)
 
       try {
         // Requires: AppSettingsAPI.updateHomeInstance(data)
@@ -870,7 +863,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
     },
 
     // Get parent options for select dropdowns
-    getParentOptions(type: 'category' | 'location', excludeId: number | null = null ) {
+    getParentOptions(type: 'category' | 'location', excludeId: number | null = null) {
       const items = type === 'category' ? this.categoryTab : this.locationTab
       const tree = this.buildTree(items)
 

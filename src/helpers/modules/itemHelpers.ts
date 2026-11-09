@@ -20,7 +20,6 @@ export function isInquiry(item: Item | Option | Inquiry): item is Inquiry {
   return !('targetId' in item)
 }
 
-
 // ---------------------------------------------------------------------------
 // Adapters
 // ---------------------------------------------------------------------------

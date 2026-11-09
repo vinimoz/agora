@@ -3,7 +3,10 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div ref="containerRef" class="experience-selector">
+  <div
+    ref="containerRef"
+    class="experience-selector"
+  >
     <button
       type="button"
       class="experience-trigger"
@@ -11,7 +14,11 @@
       :aria-expanded="isOpen"
       @click="isOpen = !isOpen"
     >
-      <component :is="currentIcon" :size="15" class="trigger-icon" />
+      <component
+        :is="currentIcon"
+        :size="15"
+        class="trigger-icon"
+      />
       <span class="trigger-label">{{ currentLabel }}</span>
       <svg
         width="12"
@@ -25,7 +32,11 @@
     </button>
 
     <Transition name="experience-dropdown">
-      <div v-if="isOpen" class="experience-menu" role="menu">
+      <div
+        v-if="isOpen"
+        class="experience-menu"
+        role="menu"
+      >
         <button
           v-for="exp in allExperiences"
           :key="exp.key"
@@ -35,7 +46,11 @@
           :class="{ active: exp.key === currentExperience }"
           @click="select(exp.key)"
         >
-          <component :is="getIcon(exp.icon)" :size="16" class="option-icon" />
+          <component
+            :is="getIcon(exp.icon)"
+            :size="16"
+            class="option-icon"
+          />
           <span class="option-label">{{ exp.label }}</span>
           <svg
             v-if="exp.key === currentExperience"
@@ -125,7 +140,9 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
     background: var(--color-background-hover);
@@ -157,12 +174,11 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
   display: inline-flex;
 }
 
-
 .experience-menu {
   position: absolute;
   top: calc(100% + 6px);
-  left: 0;                
-  z-index: 3000;       
+  left: 0;
+  z-index: 3000;
   min-width: 200px;
   padding: 4px;
   background: var(--color-main-background);
@@ -215,7 +231,9 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 
 .experience-dropdown-enter-active,
 .experience-dropdown-leave-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
 }
 
 .experience-dropdown-enter-from,

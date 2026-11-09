@@ -16,7 +16,6 @@ export type ShareType =
   | 'circle'
   | 'contactGroup'
 
-
 export const PARTICIPATION = {
   NONE: 0,
   VOTE: 1,

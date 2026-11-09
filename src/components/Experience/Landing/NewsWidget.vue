@@ -1,7 +1,5 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
+AGPL-3.0-or-later */
 
 <template>
   <section class="news-widget">
@@ -12,7 +10,7 @@
           :size="20"
           class="header-icon"
         />
-        <h2>{{ title || t('agora','Your news') }}</h2>
+        <h2>{{ title || t('agora', 'Your news') }}</h2>
       </div>
     </header>
 
@@ -241,4 +239,3 @@ function resolveCoverUrl(src?: number | string): string {
   }
 }
 </style>
-

@@ -1,7 +1,5 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
+AGPL-3.0-or-later */
 
 <template>
   <div class="book-display">
@@ -21,13 +19,19 @@
           class="nav-btn"
           @click="goBack"
         >
-          <component :is="Icons.ArrowLeft" :size="18" />
+          <component
+            :is="Icons.ArrowLeft"
+            :size="18"
+          />
           <span>{{ t('agora', 'Back') }}</span>
         </button>
 
         <div class="book-location">
           <span v-if="parentGroup">{{ parentGroup.name }}</span>
-          <span v-if="parentGroup" class="separator">/</span>
+          <span
+            v-if="parentGroup"
+            class="separator"
+          >/</span>
           <span class="current">{{ inquiry.title }}</span>
         </div>
 
@@ -37,14 +41,20 @@
             :title="t('agora', 'Fullscreen')"
             @click="toggleFullscreen"
           >
-            <component :is="Icons.Fullscreen" :size="18" />
+            <component
+              :is="Icons.Fullscreen"
+              :size="18"
+            />
           </button>
           <button
             class="action-btn"
             :title="t('agora', 'Table of Contents')"
             @click="toggleTOC"
           >
-            <component :is="Icons.Menu" :size="18" />
+            <component
+              :is="Icons.Menu"
+              :size="18"
+            />
           </button>
         </div>
       </div>
@@ -80,8 +90,14 @@
             :disabled="!prevInquiry"
             @click="prevInquiry && navigateTo(prevInquiry.id)"
           >
-            <component :is="Icons.ArrowLeft" :size="16" />
-            <span v-if="prevInquiry" class="page-title">
+            <component
+              :is="Icons.ArrowLeft"
+              :size="16"
+            />
+            <span
+              v-if="prevInquiry"
+              class="page-title"
+            >
               {{ prevInquiry.title }}
             </span>
             <span v-else>{{ t('agora', 'Previous') }}</span>
@@ -96,11 +112,17 @@
             :disabled="!nextInquiry"
             @click="nextInquiry && navigateTo(nextInquiry.id)"
           >
-            <span v-if="nextInquiry" class="page-title">
+            <span
+              v-if="nextInquiry"
+              class="page-title"
+            >
               {{ nextInquiry.title }}
             </span>
             <span v-else>{{ t('agora', 'Next') }}</span>
-            <component :is="Icons.ArrowRight" :size="16" />
+            <component
+              :is="Icons.ArrowRight"
+              :size="16"
+            />
           </button>
         </div>
       </div>
@@ -113,8 +135,14 @@
         >
           <div class="toc-header">
             <h4>{{ t('agora', 'Contents') }}</h4>
-            <button class="close-btn" @click="showTOC = false">
-              <component :is="Icons.Close" :size="16" />
+            <button
+              class="close-btn"
+              @click="showTOC = false"
+            >
+              <component
+                :is="Icons.Close"
+                :size="16"
+              />
             </button>
           </div>
           <div class="toc-items">
@@ -126,7 +154,11 @@
               @click="navigateTo(item.id)"
             >
               <span class="toc-index">{{ idx + 1 }}</span>
-              <component :is="getTocIcon(item)" :size="14" class="toc-icon" />
+              <component
+                :is="getTocIcon(item)"
+                :size="14"
+                class="toc-icon"
+              />
               <span class="toc-title">{{ item.title }}</span>
             </div>
           </div>
@@ -134,8 +166,15 @@
       </transition>
     </div>
 
-    <div v-else class="empty-state">
-      <component :is="Icons.BookOpen" :size="48" class="empty-icon" />
+    <div
+      v-else
+      class="empty-state"
+    >
+      <component
+        :is="Icons.BookOpen"
+        :size="48"
+        class="empty-icon"
+      />
       <h3>{{ t('agora', 'No inquiry selected') }}</h3>
       <p>{{ t('agora', 'Select an inquiry from the table of contents to read it like a book') }}</p>
     </div>
@@ -274,7 +313,11 @@ function handleInquiryClick(inquiry: Inquiry) {
   top: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--color-primary-element), var(--color-primary-element-light, var(--color-primary-element)));
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-element),
+    var(--color-primary-element-light, var(--color-primary-element))
+  );
   transition: width 0.35s ease;
   z-index: 5;
 }
@@ -286,7 +329,11 @@ function handleInquiryClick(inquiry: Inquiry) {
   align-items: center;
   padding: 14px 24px;
   border-bottom: 1px solid var(--color-border);
-  background: linear-gradient(to bottom, var(--color-background-dark), var(--color-main-background));
+  background: linear-gradient(
+    to bottom,
+    var(--color-background-dark),
+    var(--color-main-background)
+  );
   gap: 16px;
 
   .nav-btn {
@@ -321,7 +368,9 @@ function handleInquiryClick(inquiry: Inquiry) {
     flex: 1;
     justify-content: center;
 
-    .separator { opacity: 0.5; }
+    .separator {
+      opacity: 0.5;
+    }
 
     .current {
       font-weight: 600;
@@ -361,13 +410,23 @@ function handleInquiryClick(inquiry: Inquiry) {
   overflow-y: auto;
   max-height: 680px;
   background:
-    radial-gradient(circle at 10% 0%, var(--color-primary-element-light, transparent) 0%, transparent 40%),
-    radial-gradient(circle at 90% 100%, var(--color-primary-element-light, transparent) 0%, transparent 40%),
+    radial-gradient(
+      circle at 10% 0%,
+      var(--color-primary-element-light, transparent) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 100%,
+      var(--color-primary-element-light, transparent) 0%,
+      transparent 40%
+    ),
     var(--color-main-background);
   display: flex;
   flex-direction: column;
 
-  &::-webkit-scrollbar { width: 8px; }
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
   &::-webkit-scrollbar-thumb {
     background: var(--color-border);
     border-radius: 4px;
@@ -384,7 +443,7 @@ function handleInquiryClick(inquiry: Inquiry) {
   :deep(p),
   :deep(li),
   :deep(blockquote) {
-    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
     font-size: 17px;
     line-height: 1.75;
     color: var(--color-main-text);
@@ -400,9 +459,16 @@ function handleInquiryClick(inquiry: Inquiry) {
     margin-top: 1.4em;
   }
 
-  :deep(h1) { font-size: 2em; margin-top: 0.2em; }
-  :deep(h2) { font-size: 1.5em; }
-  :deep(h3) { font-size: 1.2em; }
+  :deep(h1) {
+    font-size: 2em;
+    margin-top: 0.2em;
+  }
+  :deep(h2) {
+    font-size: 1.5em;
+  }
+  :deep(h3) {
+    font-size: 1.2em;
+  }
 
   :deep(blockquote) {
     margin: 1.2em 0;
@@ -548,8 +614,14 @@ function handleInquiryClick(inquiry: Inquiry) {
         background: var(--color-primary-element-light);
         border-left: 3px solid var(--color-primary-element);
 
-        .toc-title { color: var(--color-primary-element); font-weight: 600; }
-        .toc-index { background: var(--color-primary-element); color: white; }
+        .toc-title {
+          color: var(--color-primary-element);
+          font-weight: 600;
+        }
+        .toc-index {
+          background: var(--color-primary-element);
+          color: white;
+        }
       }
 
       .toc-index {
@@ -567,7 +639,10 @@ function handleInquiryClick(inquiry: Inquiry) {
         flex-shrink: 0;
       }
 
-      .toc-icon { color: var(--color-text-lighter); flex-shrink: 0; }
+      .toc-icon {
+        color: var(--color-text-lighter);
+        flex-shrink: 0;
+      }
 
       .toc-title {
         font-size: 13px;
@@ -590,16 +665,29 @@ function handleInquiryClick(inquiry: Inquiry) {
   color: var(--color-text-lighter);
   text-align: center;
 
-  .empty-icon { opacity: 0.25; margin-bottom: 18px; }
+  .empty-icon {
+    opacity: 0.25;
+    margin-bottom: 18px;
+  }
 
-  h3 { margin: 0 0 8px; font-size: 18px; color: var(--color-main-text); }
-  p { margin: 0; font-size: 14px; max-width: 380px; }
+  h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: var(--color-main-text);
+  }
+  p {
+    margin: 0;
+    font-size: 14px;
+    max-width: 380px;
+  }
 }
 
 /* Transitions */
 .toc-slide-enter-active,
 .toc-slide-leave-active {
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
 }
 .toc-slide-enter-from,
 .toc-slide-leave-to {
@@ -620,16 +708,24 @@ function handleInquiryClick(inquiry: Inquiry) {
     }
   }
 
-  .book-page { padding: 20px 18px; }
+  .book-page {
+    padding: 20px 18px;
+  }
 
-  .book-toc { width: 100%; }
+  .book-toc {
+    width: 100%;
+  }
 
   .book-pagination {
-    .page-btn .page-title { display: none; }
+    .page-btn .page-title {
+      display: none;
+    }
   }
 }
 
 @media (max-width: 480px) {
-  .book-navigation .nav-btn span { display: none; }
+  .book-navigation .nav-btn span {
+    display: none;
+  }
 }
 </style>

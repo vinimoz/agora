@@ -68,7 +68,7 @@ export function useHomeConfig() {
           ...override.relevance?.weights,
         },
       },
-       sectionLabels: { ...tpl.sectionLabels, ...override.sectionLabels },
+      sectionLabels: { ...tpl.sectionLabels, ...override.sectionLabels },
     }
   })
 

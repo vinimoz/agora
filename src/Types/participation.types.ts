@@ -4,31 +4,20 @@
  */
 import type { VisibilityType } from './inquiry.types.ts'
 
-export type ParticipationPolicyType =
-  | 'none'
-  | 'everyone'
-  | 'users'
-  | 'groups'
-  | 'lottery'
+export type ParticipationPolicyType = 'none' | 'everyone' | 'users' | 'groups' | 'lottery'
 
-export type ParticipationTargetType =
-  | 'inquiry'
-  | 'option'
-  | 'inquiry_group'
-  | 'engine'
+export type ParticipationTargetType = 'inquiry' | 'option' | 'inquiry_group' | 'engine'
 
-export type LotteryMode    = 'users' | 'groups'
+export type LotteryMode = 'users' | 'groups'
 
-export type LotteryMethod  = 'random' | 'weighted' | 'stratified'
-
-
+export type LotteryMethod = 'random' | 'weighted' | 'stratified'
 
 export const ALLOWED_PARTICIPATION: Record<VisibilityType, ParticipationPolicyType[]> = {
-  private:      ['none'],
-  groups:       ['groups'],
-  users:        ['users'],
+  private: ['none'],
+  groups: ['groups'],
+  users: ['users'],
   participants: ['none', 'users', 'groups', 'lottery'],
-  everyone:     ['none', 'everyone', 'groups', 'users', 'lottery'],
+  everyone: ['none', 'everyone', 'groups', 'users', 'lottery'],
 }
 
 export interface ParticipationPolicy {
@@ -39,7 +28,7 @@ export interface ParticipationPolicy {
   policyConfig: {
     mode?: LotteryMode
     count?: number
-    seed?: string | number   
+    seed?: string | number
     method?: LotteryMethod
     [key: string]: unknown
   }

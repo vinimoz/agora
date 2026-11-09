@@ -14,7 +14,7 @@ import { Logger } from '../helpers/index.ts'
 import { InquiriesAPI } from '../Api/index.ts'
 
 import { useSessionStore } from './session.ts'
-import { Chunking, StatusResults,MiscUpdateMap, InquiryWorkflowStatus } from '../Types/index.ts'
+import { Chunking, StatusResults, MiscUpdateMap, InquiryWorkflowStatus } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
 import { useInquiryStore } from './inquiry.ts'
@@ -158,8 +158,9 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived &&
       inquiry.currentUserStatus.isOwner &&
-      ( inquiry.status.inquiryStatus === 'private'  ||
-      ( inquiry.status.inquiryStatus === 'draft' &&  inquiry.configuration.visibility === 'groups' ))
+      (inquiry.status.inquiryStatus === 'private' ||
+        (inquiry.status.inquiryStatus === 'draft' &&
+          inquiry.configuration.visibility === 'groups')),
   },
 
   participated: {
@@ -196,13 +197,13 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore()
       return (sessionStore.currentUser?.groups?.length ?? 0) > 0
     },
-  filterCondition: (inquiry: Inquiry) =>
-    !inquiry.status.isArchived &&
-    inquiry.permissions.view &&
-    inquiry.configuration.visibility === 'groups' &&
-    inquiry.status.inquiryStatus !== 'draft' &&
-    (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
-},
+    filterCondition: (inquiry: Inquiry) =>
+      !inquiry.status.isArchived &&
+      inquiry.permissions.view &&
+      inquiry.configuration.visibility === 'groups' &&
+      inquiry.status.inquiryStatus !== 'draft' &&
+      (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
+  },
   open: {
     id: 'open',
     title: t('agora', 'Openly visible inquiries'),
@@ -617,52 +618,52 @@ export const useInquiriesStore = defineStore('inquiries', {
       this.viewMode = viewMode
     },
 
-submitInquiry(inquiryId: number, action: string): Promise<void> {
-  const appSettingsStore = useAppSettingsStore()
-  const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
-  if (!inquiry) return Promise.resolve()
+    submitInquiry(inquiryId: number, action: string): Promise<void> {
+      const appSettingsStore = useAppSettingsStore()
+      const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
+      if (!inquiry) return Promise.resolve()
 
-  if (action === 'submit_for_accepted') {
-    inquiry.status.moderationStatus = 'accepted'
-    inquiry.status.publicationStatus = 'published'
-    inquiry.status.inquiryStatus = appSettingsStore
-      .getFirstStatusKeyByInquiryType(inquiry.type) as InquiryWorkflowStatus
-    inquiry.configuration.visibility = 'everyone'
-  } else if (action === 'submit_for_rejected') {
-    inquiry.status.moderationStatus = 'rejected'
-    inquiry.status.publicationStatus = 'draft'
-    inquiry.configuration.visibility = 'private'
-    inquiry.status.inquiryStatus = 'rejected'
-  } else if (action === 'submit_for_moderate') {
-    inquiry.status.moderationStatus = 'pending'
-    inquiry.status.publicationStatus = 'pending'
-    inquiry.status.inquiryStatus = 'waiting_approval'
-    inquiry.configuration.visibility = 'private'
-  }
-  return Promise.resolve()
-},
+      if (action === 'submit_for_accepted') {
+        inquiry.status.moderationStatus = 'accepted'
+        inquiry.status.publicationStatus = 'published'
+        inquiry.status.inquiryStatus = appSettingsStore.getFirstStatusKeyByInquiryType(
+          inquiry.type
+        ) as InquiryWorkflowStatus
+        inquiry.configuration.visibility = 'everyone'
+      } else if (action === 'submit_for_rejected') {
+        inquiry.status.moderationStatus = 'rejected'
+        inquiry.status.publicationStatus = 'draft'
+        inquiry.configuration.visibility = 'private'
+        inquiry.status.inquiryStatus = 'rejected'
+      } else if (action === 'submit_for_moderate') {
+        inquiry.status.moderationStatus = 'pending'
+        inquiry.status.publicationStatus = 'pending'
+        inquiry.status.inquiryStatus = 'waiting_approval'
+        inquiry.configuration.visibility = 'private'
+      }
+      return Promise.resolve()
+    },
     /**
      * Persist a miscFields patch on an inquiry and keep the local list in sync.
      * Additive — does not replace existing misc fields, only merges.
      */
     async updateInquiryMiscFields(
-  inquiryId: number,
-  patch: Record<string, unknown>
-): Promise<void> {
-  const inquiry = this.inquiries.find((i) => i.id === inquiryId)
-  if (!inquiry) throw new Error(`Inquiry ${inquiryId} not found in store`)
+      inquiryId: number,
+      patch: Record<string, unknown>
+    ): Promise<void> {
+      const inquiry = this.inquiries.find((i) => i.id === inquiryId)
+      if (!inquiry) throw new Error(`Inquiry ${inquiryId} not found in store`)
 
-  const merged = { ...(inquiry.miscFields || {}), ...patch }
+      const merged = { ...(inquiry.miscFields || {}), ...patch }
 
-  for (const [key, value] of Object.entries(patch)) {
-    const stringValue =
-      typeof value === 'string' ? value : JSON.stringify(value ?? null)
-    await InquiriesAPI.updateMiscField(inquiryId, { key, value: stringValue })
-  }
+      for (const [key, value] of Object.entries(patch)) {
+        const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? null)
+        await InquiriesAPI.updateMiscField(inquiryId, { key, value: stringValue })
+      }
 
-  inquiry.miscFields = merged
-  this.inquiries = [...this.inquiries]
-},
+      inquiry.miscFields = merged
+      this.inquiries = [...this.inquiries]
+    },
 
     addInquiryToStore(inquiry: Inquiry): void {
       const existingIndex = this.inquiries.findIndex((inq) => inq.id === inquiry.id)
@@ -812,9 +813,8 @@ submitInquiry(inquiryId: number, action: string): Promise<void> {
     },
 
     reset(): void {
-	    this.$reset()
+      this.$reset()
     },
-
 
     /**
      * Patch an inquiry's miscFields. Delegates the persistence + plural-store
@@ -822,135 +822,135 @@ submitInquiry(inquiryId: number, action: string): Promise<void> {
      * singular `inquiryStore` when it's the inquiry currently on screen.
      */
     async patchInquiry(item: Inquiry, patch: MiscUpdateMap): Promise<void> {
-	    await this.updateInquiryMiscFields(item.id, patch)
+      await this.updateInquiryMiscFields(item.id, patch)
 
-	    const inquiryStore = useInquiryStore()
-	    if (inquiryStore.id !== item.id) return
+      const inquiryStore = useInquiryStore()
+      if (inquiryStore.id !== item.id) return
 
-		    // `updateInquiryMiscFields` already wrote the freshly-merged `miscFields`
-		    // to the plural store, in the `{ key, value }` format the singular store
-		    // uses internally. Re-use it instead of re-wrapping `patch` here.
-		    const updated = this.inquiries.find((i) => i.id === item.id)
-		    if (!updated) return
+      // `updateInquiryMiscFields` already wrote the freshly-merged `miscFields`
+      // to the plural store, in the `{ key, value }` format the singular store
+      // uses internally. Re-use it instead of re-wrapping `patch` here.
+      const updated = this.inquiries.find((i) => i.id === item.id)
+      if (!updated) return
 
-			    inquiryStore.miscFields = { ...(updated.miscFields ?? {}) }
+      inquiryStore.miscFields = { ...(updated.miscFields ?? {}) }
     },
 
     async changeOwner(payload: { inquiryId: number; userId: string }) {
-	    try {
-		    await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId)
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error changing inquiry owner', {
-			    error,
-			    payload,
-		    })
-		    throw error
-	    } finally {
-		    this.load()
-	    }
+      try {
+        await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId)
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error changing inquiry owner', {
+          error,
+          payload,
+        })
+        throw error
+      } finally {
+        this.load()
+      }
     },
 
     addChunk(): void {
-	    this.meta.chunks.loaded = this.meta.chunks.loaded + 1
+      this.meta.chunks.loaded = this.meta.chunks.loaded + 1
     },
 
     resetChunks(): void {
-	    this.meta.chunks.loaded = 1
+      this.meta.chunks.loaded = 1
     },
 
     async setInquiryStatus(inquiryId, inquiryStatus): Promise<void> {
-	    try {
-		    await InquiriesAPI.updateInquiryStatus(inquiryId, inquiryStatus)
-		    const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
-		    if (inquiry) {
-			    this.$patch((state) => {
-				    const idx = state.inquiries.findIndex((inq) => inq.id === inquiryId)
-				    if (idx !== -1) {
-					    state.inquiries[idx].status.inquiryStatus = inquiryStatus
-				    }
-			    })
-		    }
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error setting inquiry status:', {
-			    error,
-			    inquiryStatus,
-			    state: this.$state,
-		    })
-	    }
+      try {
+        await InquiriesAPI.updateInquiryStatus(inquiryId, inquiryStatus)
+        const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
+        if (inquiry) {
+          this.$patch((state) => {
+            const idx = state.inquiries.findIndex((inq) => inq.id === inquiryId)
+            if (idx !== -1) {
+              state.inquiries[idx].status.inquiryStatus = inquiryStatus
+            }
+          })
+        }
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error setting inquiry status:', {
+          error,
+          inquiryStatus,
+          state: this.$state,
+        })
+      }
     },
 
     async clone(payload: { inquiryId: number }): Promise<void> {
-	    try {
-		    await InquiriesAPI.cloneInquiry(payload.inquiryId)
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error cloning inquiry', {
-			    error,
-			    payload,
-		    })
-		    throw error
-	    } finally {
-		    this.load()
-	    }
+      try {
+        await InquiriesAPI.cloneInquiry(payload.inquiryId)
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error cloning inquiry', {
+          error,
+          payload,
+        })
+        throw error
+      } finally {
+        this.load()
+      }
     },
 
     async delete(payload: { inquiryId: number }): Promise<void> {
-	    try {
-		    await InquiriesAPI.deleteInquiry(payload.inquiryId)
-		    // Remove the inquiry from the list
-		    this.inquiries = this.inquiries.filter((inq) => inq.id !== payload.inquiryId)
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error deleting inquiry', {
-			    error,
-			    payload,
-		    })
-		    throw error
-	    }
+      try {
+        await InquiriesAPI.deleteInquiry(payload.inquiryId)
+        // Remove the inquiry from the list
+        this.inquiries = this.inquiries.filter((inq) => inq.id !== payload.inquiryId)
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error deleting inquiry', {
+          error,
+          payload,
+        })
+        throw error
+      }
     },
 
     async toggleArchive(payload: { inquiryId: number }) {
-	    try {
-		    await InquiriesAPI.toggleArchive(payload.inquiryId)
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error archiving/restoring inquiry', {
-			    error,
-			    payload,
-		    })
-		    throw error
-	    } finally {
-		    this.load()
-	    }
+      try {
+        await InquiriesAPI.toggleArchive(payload.inquiryId)
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error archiving/restoring inquiry', {
+          error,
+          payload,
+        })
+        throw error
+      } finally {
+        this.load()
+      }
     },
 
     async takeOver(payload: { inquiryId: number }) {
-	    try {
-		    await InquiriesAPI.takeOver(payload.inquiryId)
-	    } catch (error) {
-		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-			    return
-		    }
-		    Logger.error('Error archiving/restoring inquiry', {
-			    error,
-			    payload,
-		    })
-		    throw error
-	    } finally {
-		    this.load()
-	    }
+      try {
+        await InquiriesAPI.takeOver(payload.inquiryId)
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error archiving/restoring inquiry', {
+          error,
+          payload,
+        })
+        throw error
+      } finally {
+        this.load()
+      }
     },
   },
 })

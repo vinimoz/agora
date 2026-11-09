@@ -56,165 +56,164 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
     return null
   })
 
-function resolveDefaultExperience(ui: InquiryGroupUIConfig | null): ExperienceKey {
-	  const candidate =
-		  (ui?.defaultExperience as ExperienceKey | undefined) ??
-		  (ui?.experience as ExperienceKey | undefined)
+  function resolveDefaultExperience(ui: InquiryGroupUIConfig | null): ExperienceKey {
+    const candidate =
+      (ui?.defaultExperience as ExperienceKey | undefined) ??
+      (ui?.experience as ExperienceKey | undefined)
 
-	  if (candidate && EXPERIENCE_DEFINITIONS[candidate]) return candidate
-		  return 'dashboard'
+    if (candidate && EXPERIENCE_DEFINITIONS[candidate]) return candidate
+    return 'dashboard'
   }
 
   // ----------------------------------------------------------
   // EXPERIENCE
   // ----------------------------------------------------------
-const experience = computed<ExperienceKey>({
-  get: () => {
-    const urlExp = route.query.experience as ExperienceKey | undefined
-    if (urlExp && EXPERIENCE_DEFINITIONS[urlExp]) return urlExp
-    return resolveDefaultExperience(uiConfig.value)
-  },
-  set: (val) => {
-    const query: Record<string, string> = {
-      ...Object.fromEntries(
-        Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
-      ),
-      experience: val,
-    }
-    router.push({ query })
-  },
-})
+  const experience = computed<ExperienceKey>({
+    get: () => {
+      const urlExp = route.query.experience as ExperienceKey | undefined
+      if (urlExp && EXPERIENCE_DEFINITIONS[urlExp]) return urlExp
+      return resolveDefaultExperience(uiConfig.value)
+    },
+    set: (val) => {
+      const query: Record<string, string> = {
+        ...Object.fromEntries(
+          Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
+        ),
+        experience: val,
+      }
+      router.push({ query })
+    },
+  })
 
-const defaultExperience = computed<ExperienceKey>(() =>
-  resolveDefaultExperience(uiConfig.value)
-)
+  const defaultExperience = computed<ExperienceKey>(() => resolveDefaultExperience(uiConfig.value))
 
   // ----------------------------------------------------------
   // DISPLAY MODE
   // ----------------------------------------------------------
   const displayMode = computed<DisplayType>({
-	  get: () => {
-		  const urlDisplay = route.query.display as DisplayType | undefined
-		  if (urlDisplay) return urlDisplay
+    get: () => {
+      const urlDisplay = route.query.display as DisplayType | undefined
+      if (urlDisplay) return urlDisplay
 
-			  const def = EXPERIENCE_DEFINITIONS[experience.value]
-			  return def?.defaultDisplay ?? 'cards'
-	  },
-	  set: (val) => {
-		  const query: Record<string, string> = {
-			  ...Object.fromEntries(
-				  Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
-			  ),
-			  display: val,
-		  }
-		  router.push({ query })
-	  },
+      const def = EXPERIENCE_DEFINITIONS[experience.value]
+      return def?.defaultDisplay ?? 'cards'
+    },
+    set: (val) => {
+      const query: Record<string, string> = {
+        ...Object.fromEntries(
+          Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
+        ),
+        display: val,
+      }
+      router.push({ query })
+    },
   })
 
   // ----------------------------------------------------------
   // ARCHITECTURE
   // ----------------------------------------------------------
   const hasCustomArchitecture = computed(
-	  () =>
-	  !!uiConfig.value?.displayArchitecture &&
-		  Object.keys(uiConfig.value.displayArchitecture).length > 0
+    () =>
+      !!uiConfig.value?.displayArchitecture &&
+      Object.keys(uiConfig.value.displayArchitecture).length > 0
   )
 
   const displayArchitecture = computed<Record<string, DisplayZone> | null>(
-	  () => uiConfig.value?.displayArchitecture ?? null
+    () => uiConfig.value?.displayArchitecture ?? null
   )
 
-  function computeRequiredDimensions(
-	zones: Record<string, DisplayZone> | undefined | null
-): { columns: number; rows: number } {
-	if (!zones || Object.keys(zones).length === 0) {
-		return { columns: 0, rows: 0 }
-	}
-	let maxCol = 0
-	let maxRow = 0
-	for (const zone of Object.values(zones)) {
-		if (!zone?.position) continue
-		const endCol = (zone.position.column || 1) + (zone.position.columnSpan || 1) - 1
-		const endRow = (zone.position.row || 1) + (zone.position.rowSpan || 1) - 1
-		if (endCol > maxCol) maxCol = endCol
-		if (endRow > maxRow) maxRow = endRow
-	}
-	return { columns: maxCol, rows: maxRow }
-}
+  function computeRequiredDimensions(zones: Record<string, DisplayZone> | undefined | null): {
+    columns: number
+    rows: number
+  } {
+    if (!zones || Object.keys(zones).length === 0) {
+      return { columns: 0, rows: 0 }
+    }
+    let maxCol = 0
+    let maxRow = 0
+    for (const zone of Object.values(zones)) {
+      if (!zone?.position) continue
+      const endCol = (zone.position.column || 1) + (zone.position.columnSpan || 1) - 1
+      const endRow = (zone.position.row || 1) + (zone.position.rowSpan || 1) - 1
+      if (endCol > maxCol) maxCol = endCol
+      if (endRow > maxRow) maxRow = endRow
+    }
+    return { columns: maxCol, rows: maxRow }
+  }
 
-const layoutConfig = computed(() => {
-	const ui = uiConfig.value
-	const arch = getExperienceArchitecture(experience.value)
+  const layoutConfig = computed(() => {
+    const ui = uiConfig.value
+    const arch = getExperienceArchitecture(experience.value)
 
-	const customZones = ui?.displayArchitecture
-	const required =
-		customZones && Object.keys(customZones).length > 0
-			? computeRequiredDimensions(customZones)
-			: computeRequiredDimensions(arch?.displayArchitecture)
+    const customZones = ui?.displayArchitecture
+    const required =
+      customZones && Object.keys(customZones).length > 0
+        ? computeRequiredDimensions(customZones)
+        : computeRequiredDimensions(arch?.displayArchitecture)
 
-	// 1) UI layout explicit 
-	if (ui?.layout) {
-		return {
-			type: (ui.layout.type ?? 'full') as LayoutTypeValue,
-			columns: Math.max(ui.layout.columns ?? 0, required.columns) || ui.layout.columns,
-			rows: Math.max(ui.layout.rows ?? 0, required.rows) || ui.layout.rows,
-			responsive: ui.layout.responsive !== false,
-		}
-	}
+    // 1) UI layout explicit
+    if (ui?.layout) {
+      return {
+        type: (ui.layout.type ?? 'full') as LayoutTypeValue,
+        columns: Math.max(ui.layout.columns ?? 0, required.columns) || ui.layout.columns,
+        rows: Math.max(ui.layout.rows ?? 0, required.rows) || ui.layout.rows,
+        responsive: ui.layout.responsive !== false,
+      }
+    }
 
-	// 2) Experience architecture 
-	if (arch?.layout) {
-		return {
-			type: arch.layout.type,
-			columns: Math.max(arch.layout.columns ?? 0, required.columns) || arch.layout.columns,
-			rows: Math.max(arch.layout.rows ?? 0, required.rows) || arch.layout.rows,
-			responsive: arch.layout.responsive !== false,
-		}
-	}
+    // 2) Experience architecture
+    if (arch?.layout) {
+      return {
+        type: arch.layout.type,
+        columns: Math.max(arch.layout.columns ?? 0, required.columns) || arch.layout.columns,
+        rows: Math.max(arch.layout.rows ?? 0, required.rows) || arch.layout.rows,
+        responsive: arch.layout.responsive !== false,
+      }
+    }
 
-	// 3) Fallback
-	const def = EXPERIENCE_DEFINITIONS[experience.value]
-	return {
-		type: (def?.layout ?? 'full') as LayoutTypeValue,
-		columns: required.columns || undefined,
-		rows: required.rows || undefined,
-		responsive: true,
-	}
-})
+    // 3) Fallback
+    const def = EXPERIENCE_DEFINITIONS[experience.value]
+    return {
+      type: (def?.layout ?? 'full') as LayoutTypeValue,
+      columns: required.columns || undefined,
+      rows: required.rows || undefined,
+      responsive: true,
+    }
+  })
 
   const contextConfig = computed(
-	  () => uiConfig.value?.context ?? { type: 'group', selection: 'selected' }
+    () => uiConfig.value?.context ?? { type: 'group', selection: 'selected' }
   )
 
   const features = computed<string[]>(() => uiConfig.value?.features ?? [])
 
   function normalizeUi(raw: any): InquiryGroupUIConfig | null {
-	  if (!raw) return null
-		  if (Array.isArray(raw)) return { features: raw } as InquiryGroupUIConfig
+    if (!raw) return null
+    if (Array.isArray(raw)) return { features: raw } as InquiryGroupUIConfig
 
-	  const out: any = { ...raw }
+    const out: any = { ...raw }
 
-	  // display_architecture → displayArchitecture
-	  if (raw.display_architecture && !raw.displayArchitecture) {
-		  out.displayArchitecture = raw.display_architecture
-	  }
+    // display_architecture → displayArchitecture
+    if (raw.display_architecture && !raw.displayArchitecture) {
+      out.displayArchitecture = raw.display_architecture
+    }
 
-	  // Normalize each zone
-	  for (const key of Object.keys(out.displayArchitecture ?? {})) {
-		  const zone = out.displayArchitecture[key]
-		  if (zone.interaction?.on_click) {
-			  zone.interaction = {
-				  action: zone.interaction.on_click.action,
-				  target: zone.interaction.on_click.target,
-			  }
-		  }
-		  // columnSpan → columnSpan (already camelCase in your data?)
-		  if (zone.position?.columnSpan === undefined && zone.position?.column_span) {
-			  zone.position.columnSpan = zone.position.column_span
-		  }
-	  }
+    // Normalize each zone
+    for (const key of Object.keys(out.displayArchitecture ?? {})) {
+      const zone = out.displayArchitecture[key]
+      if (zone.interaction?.on_click) {
+        zone.interaction = {
+          action: zone.interaction.on_click.action,
+          target: zone.interaction.on_click.target,
+        }
+      }
+      // columnSpan → columnSpan (already camelCase in your data?)
+      if (zone.position?.columnSpan === undefined && zone.position?.column_span) {
+        zone.position.columnSpan = zone.position.column_span
+      }
+    }
 
-	  return out as InquiryGroupUIConfig
+    return out as InquiryGroupUIConfig
   }
 
   // ----------------------------------------------------------
@@ -234,177 +233,177 @@ const layoutConfig = computed(() => {
   })
 */
 
-const allowedTools = computed<ToolKey[]>(() => {
-  const architecture = uiConfig.value?.displayArchitecture
+  const allowedTools = computed<ToolKey[]>(() => {
+    const architecture = uiConfig.value?.displayArchitecture
 
-  // 1. Try to extract from custom architecture
-  if (architecture) {
-    const seen = new Set<ToolKey>()
-    for (const zone of Object.values(architecture)) {
-      if (zone.display?.type === 'tool' && zone.display.tool) {
-        seen.add(zone.display.tool)
+    // 1. Try to extract from custom architecture
+    if (architecture) {
+      const seen = new Set<ToolKey>()
+      for (const zone of Object.values(architecture)) {
+        if (zone.display?.type === 'tool' && zone.display.tool) {
+          seen.add(zone.display.tool)
+        }
       }
+      if (seen.size > 0) return [...seen]
     }
-    if (seen.size > 0) return [...seen]
-  }
 
-  // 2. Fallback to the Experience Definition's allowed tools
-  const def = EXPERIENCE_DEFINITIONS[experience.value]
-  return def?.allowedTools ?? []
-})
+    // 2. Fallback to the Experience Definition's allowed tools
+    const def = EXPERIENCE_DEFINITIONS[experience.value]
+    return def?.allowedTools ?? []
+  })
   // ----------------------------------------------------------
   // EXPERIENCE AVAILABILITY
   // ----------------------------------------------------------
 
   const availableExperiences = computed<ExperienceKey[]>(() => {
-	  const groupType = group.value?.type
-	  const allKeys = (Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]).filter(
-		  (key) => !NON_GROUP_EXPERIENCES.includes(key)
-	  )
+    const groupType = group.value?.type
+    const allKeys = (Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]).filter(
+      (key) => !NON_GROUP_EXPERIENCES.includes(key)
+    )
 
-	  // No group context yet → show everything (except home)
-	  if (!groupType) return allKeys
+    // No group context yet → show everything (except home)
+    if (!groupType) return allKeys
 
-		  const matched = allKeys.filter((key) => {
-			  const def = EXPERIENCE_DEFINITIONS[key]
-			  return def
-		  })
+    const matched = allKeys.filter((key) => {
+      const def = EXPERIENCE_DEFINITIONS[key]
+      return def
+    })
 
-		  // Always keep the escape hatches
-		  for (const key of ALWAYS_AVAILABLE) {
-			  if (!matched.includes(key)) matched.push(key)
-		  }
+    // Always keep the escape hatches
+    for (const key of ALWAYS_AVAILABLE) {
+      if (!matched.includes(key)) matched.push(key)
+    }
 
-	  // If the group type matched nothing meaningful (only escape hatches),
-	  // fall back to showing every experience. Better a superset than a dead end.
-	  const meaningful = matched.filter((k) => !ALWAYS_AVAILABLE.includes(k))
-	  return meaningful.length > 0 ? matched : allKeys
+    // If the group type matched nothing meaningful (only escape hatches),
+    // fall back to showing every experience. Better a superset than a dead end.
+    const meaningful = matched.filter((k) => !ALWAYS_AVAILABLE.includes(k))
+    return meaningful.length > 0 ? matched : allKeys
   })
 
   const defaultDisplay = computed<DisplayType>(() => {
-	  const def = EXPERIENCE_DEFINITIONS[experience.value]
-	  return def?.defaultDisplay ?? 'cards'
+    const def = EXPERIENCE_DEFINITIONS[experience.value]
+    return def?.defaultDisplay ?? 'cards'
   })
 
   // ----------------------------------------------------------
   // ZONE HELPERS
   // ----------------------------------------------------------
   function getZonesByContent(contentType: string): Array<{ key: string; zone: DisplayZone }> {
-	  const architecture = displayArchitecture.value
-	  if (!architecture) return []
+    const architecture = displayArchitecture.value
+    if (!architecture) return []
 
-		  return Object.entries(architecture)
-		  .filter(([, zone]) => zone.content === contentType)
-		  .map(([key, zone]) => ({ key, zone }))
+    return Object.entries(architecture)
+      .filter(([, zone]) => zone.content === contentType)
+      .map(([key, zone]) => ({ key, zone }))
   }
 
   function getZone(zoneKey: string): DisplayZone | null {
-	  return displayArchitecture.value?.[zoneKey] ?? null
+    return displayArchitecture.value?.[zoneKey] ?? null
   }
 
   function hasFeature(featureName: string): boolean {
-	  return features.value.includes(featureName)
+    return features.value.includes(featureName)
   }
 
   const definition = computed(
-	  () => EXPERIENCE_DEFINITIONS[experience.value] || EXPERIENCE_DEFINITIONS.dashboard
+    () => EXPERIENCE_DEFINITIONS[experience.value] || EXPERIENCE_DEFINITIONS.dashboard
   )
 
   // ----------------------------------------------------------
   // ACTIONS
   // ----------------------------------------------------------
   function buildQuery(extra: Record<string, string>): Record<string, string> {
-	  return {
-		  ...Object.fromEntries(
-			  Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
-		  ),
-		  ...extra,
-	  }
+    return {
+      ...Object.fromEntries(
+        Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
+      ),
+      ...extra,
+    }
   }
 
   function switchExperience(key: ExperienceKey) {
-	  experience.value = key
-	  const def = EXPERIENCE_DEFINITIONS[key]
-	  const extra: Record<string, string> = { experience: key }
-	  if (def) extra.display = def.defaultDisplay
-	  router.push({ query: buildQuery(extra) })
+    experience.value = key
+    const def = EXPERIENCE_DEFINITIONS[key]
+    const extra: Record<string, string> = { experience: key }
+    if (def) extra.display = def.defaultDisplay
+    router.push({ query: buildQuery(extra) })
   }
 
   function switchDisplay(mode: DisplayType) {
-	  displayMode.value = mode
-	  router.push({ query: buildQuery({ display: mode }) })
+    displayMode.value = mode
+    router.push({ query: buildQuery({ display: mode }) })
   }
 
   // ----------------------------------------------------------
   // COMPUTED COLLECTIONS
   // ----------------------------------------------------------
   const allZones = computed(() => {
-	  const architecture = displayArchitecture.value
-	  if (!architecture) return []
-		  return Object.entries(architecture).map(([key, zone]) => ({
-			  key,
-			  ...zone,
-		  }))
+    const architecture = displayArchitecture.value
+    if (!architecture) return []
+    return Object.entries(architecture).map(([key, zone]) => ({
+      key,
+      ...zone,
+    }))
   })
 
   function getZonesByPosition(
-	  row: number,
-	  column: number
+    row: number,
+    column: number
   ): Array<{ key: string; zone: DisplayZone }> {
-	  const architecture = displayArchitecture.value
-	  if (!architecture) return []
+    const architecture = displayArchitecture.value
+    if (!architecture) return []
 
-		  return Object.entries(architecture)
-		  .filter(([, zone]) => zone.position?.row === row && zone.position?.column === column)
-		  .map(([key, zone]) => ({ key, zone }))
+    return Object.entries(architecture)
+      .filter(([, zone]) => zone.position?.row === row && zone.position?.column === column)
+      .map(([key, zone]) => ({ key, zone }))
   }
 
   // ----------------------------------------------------------
   // WATCHERS
   // ----------------------------------------------------------
   watch(
-	  () => group.value?.type,
-		  (newType) => {
-		  if (!newType) return
+    () => group.value?.type,
+    (newType) => {
+      if (!newType) return
 
-			  const available = availableExperiences.value
-			  if (available.includes(experience.value)) return
+      const available = availableExperiences.value
+      if (available.includes(experience.value)) return
 
-				  const fallback = defaultExperience.value
-				  const next = fallback && available.includes(fallback) ? fallback : available[0]
+      const fallback = defaultExperience.value
+      const next = fallback && available.includes(fallback) ? fallback : available[0]
 
-				  if (next && next !== experience.value) switchExperience(next)
-	  },
-  { immediate: true }
+      if (next && next !== experience.value) switchExperience(next)
+    },
+    { immediate: true }
   )
 
   return {
-	  // State
-	  experience,
-	  displayMode,
-	  uiConfig,
-	  displayArchitecture,
-	  layoutConfig,
-	  contextConfig,
-	  features,
-	  definition,
-	  allowedTools,
-	  defaultExperience,
-	  defaultDisplay,
+    // State
+    experience,
+    displayMode,
+    uiConfig,
+    displayArchitecture,
+    layoutConfig,
+    contextConfig,
+    features,
+    definition,
+    allowedTools,
+    defaultExperience,
+    defaultDisplay,
 
-	  // Computed
-	  hasCustomArchitecture,
-	  availableExperiences,
-	  allZones,
+    // Computed
+    hasCustomArchitecture,
+    availableExperiences,
+    allZones,
 
-	  // Actions
-	  switchExperience,
-	  switchDisplay,
+    // Actions
+    switchExperience,
+    switchDisplay,
 
-	  // Helpers
-	  getZonesByContent,
-	  getZone,
-	  getZonesByPosition,
-	  hasFeature,
+    // Helpers
+    getZonesByContent,
+    getZone,
+    getZonesByPosition,
+    hasFeature,
   }
 }

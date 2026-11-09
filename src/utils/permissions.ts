@@ -386,7 +386,6 @@ export function canSupport(ctx: PermissionContext): boolean {
   return true
 }
 
-
 export function canComment(ctx: PermissionContext): boolean {
   const appSettings = useAppSettingsStore()
 
@@ -411,7 +410,6 @@ export function canComment(ctx: PermissionContext): boolean {
 
   return true
 }
-
 
 /* ============================================================
  * EDIT / DELETE / ARCHIVE / RESTORE / TRANSFER / MODERATE

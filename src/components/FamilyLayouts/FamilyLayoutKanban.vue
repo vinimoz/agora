@@ -178,9 +178,7 @@ const columnCount = computed(() => Math.max(statusColumns.value.length, 1))
 // Item filtering (family + optional kanbanFilters)
 // ---------------------------------------------------------------------------
 
-const familyKey = computed(
-  () => props.familyKey ?? (props.family as any)?.family_type ?? ''
-)
+const familyKey = computed(() => props.familyKey ?? (props.family as any)?.family_type ?? '')
 
 const kanbanItems = computed<Item[]>(() => {
   const key = familyKey.value
@@ -306,9 +304,7 @@ const changeStatus = async (itemId: number, newStatus: string) => {
     } else {
       // publicationStatus / moderationStatus / workflowStatus are not yet
       // persisted by the stores (see French spec §2).
-      showError(
-        t('agora', 'Changing {field} is not yet supported.', { field })
-      )
+      showError(t('agora', 'Changing {field} is not yet supported.', { field }))
       return
     }
 
@@ -426,7 +422,9 @@ const changeStatus = async (itemId: number, newStatus: string) => {
               <div class="item-actions">
                 <NcActions v-if="permissions.changeStatus">
                   <NcActionButton
-                    v-for="target in statusColumns.filter((s) => s.value !== getItemStatusValue(item))"
+                    v-for="target in statusColumns.filter(
+                      (s) => s.value !== getItemStatusValue(item)
+                    )"
                     :key="target.value"
                     @click="changeStatus(item.id, target.value)"
                   >

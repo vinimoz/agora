@@ -362,9 +362,6 @@ watch(
   { immediate: true }
 )
 
-
-
-
 onUnmounted(() => {
   isLoaded.value = false
   unsubscribe(Event.UpdateComments, onCommentsUpdated)
@@ -433,7 +430,6 @@ onMounted(async () => {
   subscribe(Event.UpdateComments, onCommentsUpdated)
   isLoaded.value = true
 })
-
 
 // Determine if category/location should be shown as select or label
 const showCategoryAsLabel = computed(() => {
@@ -540,7 +536,7 @@ const selectedAccess = computed({
   set: (newValue) => {
     if (!newValue || newValue.id === inquiryStore.configuration.access) return
     inquiryStore.configuration.access = newValue.id as typeof inquiryStore.configuration.access
-    inquiryStore.setInquiryAccess(inquiryStore.id , inquiryStore.configuration.access )
+    inquiryStore.setInquiryAccess(inquiryStore.id, inquiryStore.configuration.access)
     showSuccess(t('agora', 'Access level updated'))
   },
 })
@@ -2347,7 +2343,7 @@ const expirationDate = computed({
 
 // Location and category labels wrap instead of being cut in the middle
 .metadata-option {
-    white-space: normal;
-    overflow-wrap: anywhere;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 </style>

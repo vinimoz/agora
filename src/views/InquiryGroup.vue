@@ -17,14 +17,19 @@
             :to="{ name: 'explore-spaces' }"
           >
             <template #icon>
-              <component :is="InquiryGeneralIcons.Home" :size="20" />
+              <component
+                :is="InquiryGeneralIcons.Home"
+                :size="20"
+              />
             </template>
             <span class="breadcrumb-label">{{ t('agora', 'Home') }}</span>
           </NcButton>
 
           <!-- Family (only when we are inside an actual group, not the family browser) -->
           <template v-if="showFamilyCrumb">
-            <div class="breadcrumb-separator">❯</div>
+            <div class="breadcrumb-separator">
+              ❯
+            </div>
             <NcButton
               type="tertiary"
               class="breadcrumb-item breadcrumb-family"
@@ -32,15 +37,23 @@
               @click="goToFamilyRoot"
             >
               <div class="breadcrumb-item-content">
-                <component :is="familyIconComponent" class="breadcrumb-icon" />
+                <component
+                  :is="familyIconComponent"
+                  class="breadcrumb-icon"
+                />
                 <span class="breadcrumb-label">{{ familyLabel }}</span>
               </div>
             </NcButton>
           </template>
 
           <!-- Parent groups -->
-          <template v-for="parent in parentGroups" :key="parent.id">
-            <div class="breadcrumb-separator">❯</div>
+          <template
+            v-for="parent in parentGroups"
+            :key="parent.id"
+          >
+            <div class="breadcrumb-separator">
+              ❯
+            </div>
             <NcButton
               type="tertiary"
               class="breadcrumb-item"
@@ -48,22 +61,36 @@
               @click="selectGroup(parent)"
             >
               <div class="breadcrumb-item-content">
-                <component :is="getGroupTypeIconComponent(parent.type)" class="breadcrumb-icon" />
+                <component
+                  :is="getGroupTypeIconComponent(parent.type)"
+                  class="breadcrumb-icon"
+                />
                 <span class="breadcrumb-label">{{ parent.title }}</span>
               </div>
             </NcButton>
           </template>
 
           <!-- Current -->
-          <div class="breadcrumb-separator">❯</div>
+          <div class="breadcrumb-separator">
+            ❯
+          </div>
           <div class="breadcrumb-current">
             <div class="breadcrumb-current-content">
-              <component :is="currentIconComponent" class="breadcrumb-icon" />
+              <component
+                :is="currentIconComponent"
+                class="breadcrumb-icon"
+              />
               <span class="breadcrumb-label">{{ currentBreadcrumbTitle }}</span>
-              <span v-if="totalInquiries > 0 && hasSlug" class="inquiry-count">
+              <span
+                v-if="totalInquiries > 0 && hasSlug"
+                class="inquiry-count"
+              >
                 ({{ totalInquiries }})
               </span>
-              <span v-else-if="displayedGroups.length > 0 && !hasSlug" class="inquiry-count">
+              <span
+                v-else-if="displayedGroups.length > 0 && !hasSlug"
+                class="inquiry-count"
+              >
                 ({{ displayedGroups.length }})
               </span>
               <span
@@ -81,8 +108,13 @@
       <div class="separation-line" />
 
       <!-- Group not found -->
-      <div v-if="groupNotFound" class="not-found-state">
-        <div class="not-found-icon">🔍</div>
+      <div
+        v-if="groupNotFound"
+        class="not-found-state"
+      >
+        <div class="not-found-icon">
+          🔍
+        </div>
         <h2>{{ t('agora', 'Group not found') }}</h2>
         <p>
           {{
@@ -92,7 +124,10 @@
             )
           }}
         </p>
-        <NcButton type="primary" :to="{ name: 'home' }">
+        <NcButton
+          type="primary"
+          :to="{ name: 'home' }"
+        >
           {{ t('agora', 'Back to home') }}
         </NcButton>
       </div>
@@ -103,7 +138,10 @@
         <div class="group-header">
           <div class="header-left">
             <div class="group-icon-badge">
-              <component :is="currentIconComponent" class="group-icon" />
+              <component
+                :is="currentIconComponent"
+                class="group-icon"
+              />
             </div>
             <div class="group-title-section">
               <h1 class="group-title">
@@ -111,10 +149,16 @@
               </h1>
               <div class="group-subtitle">
                 <p>{{ currentDescription }}</p>
-                <span v-if="totalInquiries > 0 && hasSlug" class="inquiry-count-badge">
+                <span
+                  v-if="totalInquiries > 0 && hasSlug"
+                  class="inquiry-count-badge"
+                >
                   {{ totalInquiries }} {{ t('agora', 'inquiries') }}
                 </span>
-                <span v-if="displayedGroups.length > 0 && !hasSlug" class="groups-count-badge">
+                <span
+                  v-if="displayedGroups.length > 0 && !hasSlug"
+                  class="groups-count-badge"
+                >
                   {{ displayedGroups.length }} {{ t('agora', 'groups') }}
                 </span>
               </div>
@@ -123,7 +167,10 @@
         </div>
 
         <!-- Loading -->
-        <div v-if="isLoading" class="loading-state">
+        <div
+          v-if="isLoading"
+          class="loading-state"
+        >
           <div class="spinner" />
           <p>{{ t('agora', 'Loading …') }}</p>
         </div>
@@ -135,7 +182,10 @@
         <!--   B) no slug + type selected    → show GROUPS of that type         -->
         <!--   C) slug set                   → show CHILDREN + experience       -->
         <!-- ================================================================ -->
-        <div v-else class="content-area">
+        <div
+          v-else
+          class="content-area"
+        >
           <!-- ============================================================= -->
           <!-- STATE A — Group TYPES grid                                     -->
           <!-- ============================================================= -->
@@ -144,14 +194,23 @@
               <h3>
                 {{ activeFamily ? familyLabel : t('agora', 'Group types') }}
               </h3>
-              <div v-if="canCreateInFamily" class="section-actions">
-                <NcButton class="create-button" @click="createInquiryGroup('')">
+              <div
+                v-if="canCreateInFamily"
+                class="section-actions"
+              >
+                <NcButton
+                  class="create-button"
+                  @click="createInquiryGroup('')"
+                >
                   ➕ {{ t('agora', 'Create group') }}
                 </NcButton>
               </div>
             </div>
 
-            <div v-if="rootTypesWithGroups.length > 0" class="types-grid">
+            <div
+              v-if="rootTypesWithGroups.length > 0"
+              class="types-grid"
+            >
               <div
                 v-for="type in rootTypesWithGroups"
                 :key="getTypeKey(type)"
@@ -165,7 +224,10 @@
                   <h4 class="type-vignette__title">
                     {{ t('agora', type.label) }}
                   </h4>
-                  <p v-if="type.description" class="type-vignette__desc">
+                  <p
+                    v-if="type.description"
+                    class="type-vignette__desc"
+                  >
                     {{ t('agora', type.description) }}
                   </p>
                   <span class="type-vignette__count">
@@ -176,8 +238,13 @@
               </div>
             </div>
 
-            <div v-else class="empty-state">
-              <div class="empty-icon">📁</div>
+            <div
+              v-else
+              class="empty-state"
+            >
+              <div class="empty-icon">
+                📁
+              </div>
               <h3>{{ t('agora', 'No group types available') }}</h3>
               <p>{{ t('agora', 'There are no group types you can browse yet.') }}</p>
             </div>
@@ -201,20 +268,42 @@
                 <h3>{{ sectionTitle }}</h3>
               </div>
 
-              <div v-if="canUserEditGroup(currentInquiryGroup)" class="section-actions">
-                <NcButton class="create-button" @click="createInquiryGroup(currentGroupType)">
+              <div
+                v-if="canUserEditGroup(currentInquiryGroup)"
+                class="section-actions"
+              >
+                <NcButton
+                  class="create-button"
+                  @click="createInquiryGroup(currentGroupType)"
+                >
                   ➕ {{ t('agora', 'Create group') }}
                 </NcButton>
               </div>
             </div>
 
             <!-- Groups of the selected type (state B) or children (state C) -->
-            <div v-if="displayedGroups.length > 0" class="groups-grid">
-              <div v-for="group in displayedGroups" :key="group.id" class="group-vignette-wrapper">
+            <div
+              v-if="displayedGroups.length > 0"
+              class="groups-grid"
+            >
+              <div
+                v-for="group in displayedGroups"
+                :key="group.id"
+                class="group-vignette-wrapper"
+              >
                 <div class="vignette-container">
-                  <div class="group-vignette" @click="selectGroup(group)">
-                    <div v-if="group.coverId" class="vignette-cover">
-                      <img :src="getCoverUrl(group.coverId)" :alt="group.title" />
+                  <div
+                    class="group-vignette"
+                    @click="selectGroup(group)"
+                  >
+                    <div
+                      v-if="group.coverId"
+                      class="vignette-cover"
+                    >
+                      <img
+                        :src="getCoverUrl(group.coverId)"
+                        :alt="group.title"
+                      >
                       <div class="vignette-cover-overlay" />
                     </div>
                     <div class="vignette-content">
@@ -222,7 +311,10 @@
                         <component :is="getGroupTypeIconComponent(group.type)" />
                       </div>
                       <h4>{{ group.title }}</h4>
-                      <p v-if="group.description" class="vignette-description">
+                      <p
+                        v-if="group.description"
+                        class="vignette-description"
+                      >
                         {{ group.description }}
                       </p>
                       <div class="vignette-stats">
@@ -232,7 +324,10 @@
                             {{ group.inquiryIds?.length || 0 }}
                           </span>
                         </div>
-                        <div v-if="getGroupChildren(group).length > 0" class="stat-item">
+                        <div
+                          v-if="getGroupChildren(group).length > 0"
+                          class="stat-item"
+                        >
                           <span class="stat-icon">👥</span>
                           <span class="stat-value">
                             {{ getGroupChildren(group).length }}
@@ -240,10 +335,17 @@
                         </div>
                       </div>
                       <div class="vignette-footer">
-                        <NcButton class="view-group-button" @click.stop="selectGroup(group)">
+                        <NcButton
+                          class="view-group-button"
+                          @click.stop="selectGroup(group)"
+                        >
                           {{ t('agora', 'View group') }}
                           <template #icon>
-                            <svg width="16" height="16" viewBox="0 0 24 24">
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                            >
                               <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
                             </svg>
                           </template>
@@ -256,9 +358,9 @@
                   <div
                     v-if="
                       group &&
-                      (canUserEditGroup(group) ||
-                        canUserDeleteGroup(group) ||
-                        canUserArchiveGroup(group))
+                        (canUserEditGroup(group) ||
+                          canUserDeleteGroup(group) ||
+                          canUserArchiveGroup(group))
                     "
                     class="owner-menu-under"
                   >
@@ -270,7 +372,11 @@
                         @click.stop="modifyGroup(group)"
                       >
                         <template #icon>
-                          <svg width="14" height="14" viewBox="0 0 24 24">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                          >
                             <path
                               d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
                             />
@@ -286,7 +392,11 @@
                         @click.stop="deleteGroup(group)"
                       >
                         <template #icon>
-                          <svg width="14" height="14" viewBox="0 0 24 24">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                          >
                             <path
                               d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
                             />
@@ -302,7 +412,11 @@
                         @click.stop="archiveGroup(group)"
                       >
                         <template #icon>
-                          <svg width="14" height="14" viewBox="0 0 24 24">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                          >
                             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                           </svg>
                         </template>
@@ -315,8 +429,13 @@
             </div>
 
             <!-- Empty state for state B / C -->
-            <div v-else class="empty-state">
-              <div class="empty-icon">📁</div>
+            <div
+              v-else
+              class="empty-state"
+            >
+              <div class="empty-icon">
+                📁
+              </div>
               <h3>{{ emptyStateTitle }}</h3>
               <p>{{ emptyStateMessage }}</p>
               <NcButton
@@ -333,7 +452,10 @@
 											Experience selector + display-mode selector sit *below* the
 											children vignettes, never above them.
 										-->
-            <div v-if="hasSlug && currentInquiryGroup" class="view-toolbar">
+            <div
+              v-if="hasSlug && currentInquiryGroup"
+              class="view-toolbar"
+            >
               <div class="view-toolbar__left">
                 <ExperienceSwitcher
                   v-if="availableExperiences.length > 1"
@@ -341,7 +463,10 @@
                   :available-experiences="availableExperiences"
                   @change="handleExperienceChange"
                 />
-                <span v-else-if="availableExperiences.length === 1" class="experience-static">
+                <span
+                  v-else-if="availableExperiences.length === 1"
+                  class="experience-static"
+                >
                   <component
                     :is="
                       (InquiryGeneralIcons as Record<string, unknown>)[
@@ -354,7 +479,10 @@
                 </span>
                 <div class="view-toolbar__tabs">
                   <!-- Overview Tab (The default experience) -->
-                  <button :class="{ active: !activeTool }" @click="selectTool('')">
+                  <button
+                    :class="{ active: !activeTool }"
+                    @click="selectTool('')"
+                  >
                     {{ t('agora', 'Overview') }}
                   </button>
 
@@ -402,14 +530,17 @@
                   @view-inquiry="handleViewInquiry"
                   @view-option="handleViewOption"
                   @view-group="selectGroup"
-                  @openPanel="handleOpenPanel"
+                  @open-panel="handleOpenPanel"
                   @experience-change="handleExperienceChange"
                   @display-change="handleDisplayChange"
                   @create-inquiry="handleCreateInquiry"
                 />
               </div>
 
-              <div v-else class="inquiry-group-content">
+              <div
+                v-else
+                class="inquiry-group-content"
+              >
                 <InquiryGroupViewMain
                   :group="currentInquiryGroup"
                   :inquiry-ids="currentInquiryGroup.inquiryIds"

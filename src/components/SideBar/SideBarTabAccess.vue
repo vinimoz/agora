@@ -16,13 +16,13 @@ import { useSharesStore } from '../../stores/shares.ts'
 import { useInquiryStore } from '../../stores/inquiry.ts'
 
 import UserSearch from '../User/UserSearch.vue'
-import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS} from '../../Types/index.ts'
+import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from '../../Types/index.ts'
 
 import ShareList from '../Shares/SharesList.vue'
 import SharesListUnsent from '../Shares/SharesListUnsent.vue'
 import SharesListLocked from '../Shares/SharesListLocked.vue'
 
-import { ALLOWED_PARTICIPATION} from '../../Types/participation.types.ts'
+import { ALLOWED_PARTICIPATION } from '../../Types/participation.types.ts'
 import type {
   ParticipationPolicyType,
   ParticipationTargetType,
@@ -34,7 +34,11 @@ import type {
 // TYPES
 // ============================================================
 type SearchItem = {
-  id?: string; uid?: string; userId?: string; groupId?: string; value?: string
+  id?: string
+  uid?: string
+  userId?: string
+  groupId?: string
+  value?: string
 }
 
 /** Local UI shape (kept separate from backend policyConfig shape). */
@@ -85,10 +89,7 @@ const confirmRequested = ref(0)
 const confirmAvailable = ref(0)
 const localSelectionSize = ref(10)
 
-
-const isParticipationForced = computed(
-  () => allowedParticipationOptions.value.length === 1,
-)
+const isParticipationForced = computed(() => allowedParticipationOptions.value.length === 1)
 
 // ============================================================
 // VISIBILITY (unchanged)
@@ -105,7 +106,7 @@ const visibilityType = computed({
 })
 
 const allowedParticipationOptions = computed<ParticipationPolicyType[]>(
-  () => ALLOWED_PARTICIPATION[visibilityType.value] ?? ['none'],
+  () => ALLOWED_PARTICIPATION[visibilityType.value] ?? ['none']
 )
 
 // Coerce incompatible current choice when visibility changes
@@ -118,13 +119,16 @@ watch(visibilityType, (vis) => {
   }
 })
 
-
 const extractIds = (items: Array<string | SearchItem>): string[] =>
-  !items || !Array.isArray(items) ? [] : items
-    .map((it) =>
-      typeof it === 'string' ? it
-        : (it.id || it.userId || it.groupId || it.uid || it.value || null))
-    .filter(Boolean) as string[]
+  !items || !Array.isArray(items)
+    ? []
+    : (items
+        .map((it) =>
+          typeof it === 'string'
+            ? it
+            : it.id || it.userId || it.groupId || it.uid || it.value || null
+        )
+        .filter(Boolean) as string[])
 
 const visibilityGroups = computed({
   get: (): string[] => configuration.value?.visibilityGroups || [],
@@ -145,7 +149,9 @@ const visibilityGroupsForDisplay = computed({
     }
     return groups
   },
-  set: (selected: any[]) => { visibilityGroups.value = extractIds(selected) },
+  set: (selected: any[]) => {
+    visibilityGroups.value = extractIds(selected)
+  },
 })
 
 // ============================================================
@@ -164,7 +170,7 @@ const localParticipationConfig = ref<ParticipationConfig>({
 // Map local UI shape ↔ backend policyConfig shape (backend expects `count`, not `selection_size`)
 const toBackendConfig = (c: ParticipationConfig): Record<string, unknown> => ({
   mode: c.mode,
-  count: c.selection_size,           
+  count: c.selection_size,
   method: c.method,
   source_groups: c.source_groups,
   user_ids: c.user_ids,
@@ -212,7 +218,7 @@ const isLotteryCompleted = computed(
   () =>
     lotteryStatus.value?.status === 'completed' ||
     lotteryStatus.value?.status === 'validated' ||
-    lotteryStatus.value?.status === 'cancelled',
+    lotteryStatus.value?.status === 'cancelled'
 )
 
 // ============================================================
@@ -220,12 +226,15 @@ const isLotteryCompleted = computed(
 // ============================================================
 const saveParticipationPolicy = async (
   type: ParticipationPolicyType,
-  config: ParticipationConfig,
+  config: ParticipationConfig
 ) => {
   if (!targetId.value) return
   try {
     await participationStore.setParticipation(
-      targetType.value, targetId.value, type, toBackendConfig(config),
+      targetType.value,
+      targetId.value,
+      type,
+      toBackendConfig(config)
     )
   } catch (error) {
     console.error('Failed to save participation policy', { error, type, config })
@@ -235,8 +244,13 @@ const saveParticipationPolicy = async (
 // ============================================================
 // OPTIONS — include 'none'
 // ============================================================
-const participationOptions: ParticipationPolicyType[] =
-  ['none', 'everyone', 'users', 'groups', 'lottery']
+const participationOptions: ParticipationPolicyType[] = [
+  'none',
+  'everyone',
+  'users',
+  'groups',
+  'lottery',
+]
 
 const participationOptionLabels: Record<ParticipationPolicyType, string> = {
   none: t('agora', 'No participation'),
@@ -267,7 +281,7 @@ const loadAccessData = async () => {
     localParticipationType.value = participationStore.participationType
     if (participationStore.participation) {
       localParticipationConfig.value = fromBackendConfig(
-        participationStore.participation.policyConfig,
+        participationStore.participation.policyConfig
       )
     }
 
@@ -283,7 +297,12 @@ const loadAccessData = async () => {
 
 onMounted(loadAccessData)
 
-watch(() => inquiryStore.id, (n, o) => { if (n && n !== o) loadAccessData() })
+watch(
+  () => inquiryStore.id,
+  (n, o) => {
+    if (n && n !== o) loadAccessData()
+  }
+)
 
 watch(localSelectionSize, (newVal) => {
   if (!isLotteryLocked.value) handleLotteryConfigChange('selection_size', newVal)
@@ -291,26 +310,30 @@ watch(localSelectionSize, (newVal) => {
 
 watch(
   () => localParticipationConfig.value.selection_size,
-  (newVal) => { localSelectionSize.value = newVal },
-  { immediate: true },
+  (newVal) => {
+    localSelectionSize.value = newVal
+  },
+  { immediate: true }
 )
 
 // ── Lottery status / actions (unchanged except typed calls) ──
-const getStatusLabel = (status: string): string => ({
-  not_run: t('agora', 'Not Run'),
-  running: t('agora', 'Running'),
-  completed: t('agora', 'Completed'),
-  validated: t('agora', 'Validated'),
-  failed: t('agora', 'Failed'),
-  cancelled: t('agora', 'Cancelled'),
-}[status] ?? status)
+const getStatusLabel = (status: string): string =>
+  ({
+    not_run: t('agora', 'Not Run'),
+    running: t('agora', 'Running'),
+    completed: t('agora', 'Completed'),
+    validated: t('agora', 'Validated'),
+    failed: t('agora', 'Failed'),
+    cancelled: t('agora', 'Cancelled'),
+  })[status] ?? status
 
-const getSelectionStatusLabel = (status: string): string => ({
-  pending: t('agora', 'Pending'),
-  accepted: t('agora', 'Accepted'),
-  declined: t('agora', 'Declined'),
-  expired: t('agora', 'Expired'),
-}[status] ?? status)
+const getSelectionStatusLabel = (status: string): string =>
+  ({
+    pending: t('agora', 'Pending'),
+    accepted: t('agora', 'Accepted'),
+    declined: t('agora', 'Declined'),
+    expired: t('agora', 'Expired'),
+  })[status] ?? status
 
 const loadLotteryStatus = async () => {
   if (!targetId.value || isLoadingLotteryStatus.value) return
@@ -351,9 +374,11 @@ const executeLottery = async () => {
   try {
     const result = await participationStore.runLottery(targetType.value, targetId.value)
     await loadLotteryStatus()
-    showSuccess(t('agora', 'Lottery completed successfully! {count} users selected.', {
-      count: result.selection_count,
-    }))
+    showSuccess(
+      t('agora', 'Lottery completed successfully! {count} users selected.', {
+        count: result.selection_count,
+      })
+    )
   } catch (error: any) {
     showError(t('agora', 'Failed to run lottery: {error}', { error: error.message }))
     throw error
@@ -376,9 +401,11 @@ const handleRunLottery = async () => {
     }
     const requested = localParticipationConfig.value.selection_size || 1
     if (poolInfo.value.length < requested) {
-      confirmMessage.value = t('agora',
+      confirmMessage.value = t(
+        'agora',
         'Only {available} users are available, but you requested {requested}. Continue?',
-        { available: poolInfo.value.length, requested })
+        { available: poolInfo.value.length, requested }
+      )
       confirmRequested.value = requested
       confirmAvailable.value = poolInfo.value.length
       pendingLotteryRun.value = executeLottery
@@ -419,8 +446,15 @@ const handleCancelLottery = async () => {
 
 const resetLottery = async () => {
   if (!targetId.value) return
-  if (!confirm(t('agora',
-    'Are you sure you want to reset this lottery? This will remove all selections and allow a new lottery to be run.'))) return
+  if (
+    !confirm(
+      t(
+        'agora',
+        'Are you sure you want to reset this lottery? This will remove all selections and allow a new lottery to be run.'
+      )
+    )
+  )
+    return
   try {
     await participationStore.resetLottery(targetType.value, targetId.value)
     await loadLotteryStatus()
@@ -564,7 +598,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 
       <NcSelect
         :model-value="participationType"
-  	:options="allowedParticipationOptions"
+        :options="allowedParticipationOptions"
         :label-outside="true"
         :option-label="(opt: string) => participationOptionLabels[opt] || opt"
         :input-label="t('agora', 'Participation Policy')"

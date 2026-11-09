@@ -30,23 +30,23 @@ type TagSemantics = { tier: RelevanceTier; weightKey: 'locality' | 'region' }
 
 const TAG_SEMANTICS: Record<string, TagSemantics> = {
   // Municipality
-  locality:      { tier: 'local',  weightKey: 'locality' },
-  region:        { tier: 'region', weightKey: 'region' },
+  locality: { tier: 'local', weightKey: 'locality' },
+  region: { tier: 'region', weightKey: 'region' },
 
   // University
-  faculty:       { tier: 'local',  weightKey: 'locality' },
-  campus:        { tier: 'region', weightKey: 'region' },
+  faculty: { tier: 'local', weightKey: 'locality' },
+  campus: { tier: 'region', weightKey: 'region' },
 
   // Association
-  chapter:       { tier: 'local',  weightKey: 'locality' },
-  branch:        { tier: 'region', weightKey: 'region' },
+  chapter: { tier: 'local', weightKey: 'locality' },
+  branch: { tier: 'region', weightKey: 'region' },
 
   // Company
-  team:          { tier: 'local',  weightKey: 'locality' },
-  department:    { tier: 'region', weightKey: 'region' },
+  team: { tier: 'local', weightKey: 'locality' },
+  department: { tier: 'region', weightKey: 'region' },
 
   // Cooperative
-  working_group: { tier: 'local',  weightKey: 'locality' },
+  working_group: { tier: 'local', weightKey: 'locality' },
 }
 
 function tagSemantics(tagType: string): TagSemantics {

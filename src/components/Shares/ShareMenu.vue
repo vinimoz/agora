@@ -307,7 +307,6 @@ async function submitLabel() {
       </template>
     </NcActionButton>
 
-
     <NcActionCaption
       v-if="isActivePublicShare"
       :name="t('agora', 'Options for the registration dialog')"
@@ -358,57 +357,49 @@ async function submitLabel() {
       {{ t('agora', 'Do not ask for an email address') }}
     </NcActionRadio>
     <NcActionCaption
-  v-if="!share.groupId && !share.deleted"
-  :name="t('agora', 'Participation rights')"
-/>
+      v-if="!share.groupId && !share.deleted"
+      :name="t('agora', 'Participation rights')"
+    />
 
-<NcActionRadio
-  v-if="!share.groupId && !share.deleted"
-  name="participationLevel"
-  :value="0"
-  :model-value="share.participationLevel"
-  @update:model-value="
-    sharesStore.setParticipationLevel({ share, level: 0 })
-  "
->
-  {{ t('agora', 'No participation') }}
-</NcActionRadio>
+    <NcActionRadio
+      v-if="!share.groupId && !share.deleted"
+      name="participationLevel"
+      :value="0"
+      :model-value="share.participationLevel"
+      @update:model-value="sharesStore.setParticipationLevel({ share, level: 0 })"
+    >
+      {{ t('agora', 'No participation') }}
+    </NcActionRadio>
 
-<NcActionRadio
-  v-if="!share.groupId && !share.deleted"
-  name="participationLevel"
-  :value="1"
-  :model-value="share.participationLevel"
-  @update:model-value="
-    sharesStore.setParticipationLevel({ share, level: 1 })
-  "
->
-  {{ t('agora', 'Vote only') }}
-</NcActionRadio>
+    <NcActionRadio
+      v-if="!share.groupId && !share.deleted"
+      name="participationLevel"
+      :value="1"
+      :model-value="share.participationLevel"
+      @update:model-value="sharesStore.setParticipationLevel({ share, level: 1 })"
+    >
+      {{ t('agora', 'Vote only') }}
+    </NcActionRadio>
 
-<NcActionRadio
-  v-if="!share.groupId && !share.deleted"
-  name="participationLevel"
-  :value="2"
-  :model-value="share.participationLevel"
-  @update:model-value="
-    sharesStore.setParticipationLevel({ share, level: 2 })
-  "
->
-  {{ t('agora', 'Comment only') }}
-</NcActionRadio>
+    <NcActionRadio
+      v-if="!share.groupId && !share.deleted"
+      name="participationLevel"
+      :value="2"
+      :model-value="share.participationLevel"
+      @update:model-value="sharesStore.setParticipationLevel({ share, level: 2 })"
+    >
+      {{ t('agora', 'Comment only') }}
+    </NcActionRadio>
 
-<NcActionRadio
-  v-if="!share.groupId && !share.deleted"
-  name="participationLevel"
-  :value="3"
-  :model-value="share.participationLevel"
-  @update:model-value="
-    sharesStore.setParticipationLevel({ share, level: 3 })
-  "
->
-  {{ t('agora', 'Vote and comment') }}
-</NcActionRadio>
+    <NcActionRadio
+      v-if="!share.groupId && !share.deleted"
+      name="participationLevel"
+      :value="3"
+      :model-value="share.participationLevel"
+      @update:model-value="sharesStore.setParticipationLevel({ share, level: 3 })"
+    >
+      {{ t('agora', 'Vote and comment') }}
+    </NcActionRadio>
 
     <NcActionButton
       v-if="lockShareButton.activate"

@@ -21,7 +21,7 @@ import {
   UserType,
   InquiryOptionType,
   SupportResult,
-  Comment, 
+  Comment,
   Inquiry,
 } from '../Types/index.ts'
 import { getFamilyColor } from '../helpers/modules/InquiryOptionHelper.ts'

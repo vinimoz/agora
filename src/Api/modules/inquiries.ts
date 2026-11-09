@@ -69,18 +69,18 @@ const inquiries = {
     })
   },
 
-updateModerationStatus(
-	inquiryId: number,
-	moderationStatus: ModerationWorkflowStatus
-): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  updateModerationStatus(
+    inquiryId: number,
+    moderationStatus: ModerationWorkflowStatus
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
       method: 'PUT',
       url: `inquiry/updatemoderation/${inquiryId}/${moderationStatus}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateModerationStatus.name].handleRequestCancellation().token,
+        cancelTokenHandlerObject[this.updateModerationStatus.name].handleRequestCancellation()
+          .token,
     })
   },
-
 
   getFullInquiry(inquiryId: number): Promise<
     AxiosResponse<{
@@ -91,7 +91,7 @@ updateModerationStatus(
       shares: Share[]
       subscribed: boolean
     }>
-   >{
+  > {
     return httpInstance.request({
       method: 'GET',
       url: `inquiry/${inquiryId}`,
@@ -349,7 +349,7 @@ updateModerationStatus(
     if (!updateData.key || updateData.key.trim() === '') {
       throw new Error('Key cannot be null or empty for misc field update')
     }
-    console.log(" WE UPDAT THE MIS FIEILD ", updateData)
+    console.log(' WE UPDAT THE MIS FIEILD ', updateData)
 
     return httpInstance.request({
       method: 'PUT',

@@ -88,7 +88,12 @@ const selectedId = ref<number | null>(props.activeId ?? null)
 const searchQuery = ref('')
 const expandedNodes = ref<Set<number>>(new Set())
 
-watch(() => props.activeId, (val) => { selectedId.value = val ?? null })
+watch(
+  () => props.activeId,
+  (val) => {
+    selectedId.value = val ?? null
+  }
+)
 
 // treeData
 const treeData = computed<TreeNode[]>(() => {

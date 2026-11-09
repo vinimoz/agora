@@ -22,7 +22,6 @@ export const ORGANIZATION_TYPES = [
 ] as const
 export type OrganizationType = (typeof ORGANIZATION_TYPES)[number]
 
-
 // ---------- Vocabulary: EXPERIENCE ----------
 export const EXPERIENCE_VALUES = [
   'dashboard',
@@ -80,20 +79,27 @@ export const SOURCE_VALUES = [
 export type SourceValue = (typeof SOURCE_VALUES)[number]
 
 export const VALID_SOURCES_BY_CONTENT: Record<ContentValue, SourceValue[]> = {
-  inquiry_groups:  ['children', 'selected_group', 'selected_group_children', 'parent_group', 'group', 'all'],
-  inquiries:       ['children', 'selected_inquiry', 'selected_group', 'group', 'all', 'featured'],
-  options:         ['selected_inquiry'],
-  resources:       ['selected_inquiry'],
-  messages:        ['selected_inquiry'],
-  statistics:      ['group', 'selected_group', 'selected_inquiry'],
-  activity:        ['group', 'children', 'all'],
-  hero:            ['all'],
-  news:            ['all'],
-  group_types:     ['all'],
-  events:          ['all'],
-  explore:         ['all'],
-  promo:           ['all'],
-  search:          ['all'],
+  inquiry_groups: [
+    'children',
+    'selected_group',
+    'selected_group_children',
+    'parent_group',
+    'group',
+    'all',
+  ],
+  inquiries: ['children', 'selected_inquiry', 'selected_group', 'group', 'all', 'featured'],
+  options: ['selected_inquiry'],
+  resources: ['selected_inquiry'],
+  messages: ['selected_inquiry'],
+  statistics: ['group', 'selected_group', 'selected_inquiry'],
+  activity: ['group', 'children', 'all'],
+  hero: ['all'],
+  news: ['all'],
+  group_types: ['all'],
+  events: ['all'],
+  explore: ['all'],
+  promo: ['all'],
+  search: ['all'],
 }
 
 // ---------- Vocabulary: DISPLAY ----------
@@ -171,19 +177,23 @@ export type OptionTool = (typeof OPTION_TOOLS)[number]
 export const MARKETPLACE_TOOLS = ['search'] as const
 export type MarketplaceTool = (typeof MARKETPLACE_TOOLS)[number]
 
-export const ALL_TOOLS = [
-  ...INQUIRY_TOOLS,
-  ...OPTION_TOOLS,
-  ...MARKETPLACE_TOOLS,
-] as const
+export const ALL_TOOLS = [...INQUIRY_TOOLS, ...OPTION_TOOLS, ...MARKETPLACE_TOOLS] as const
 export type ToolKey = (typeof ALL_TOOLS)[number]
 
 export const VALID_TOOLS_BY_CONTENT: Record<ContentValue, ToolKey[]> = {
   inquiry_groups: [],
-  inquiries:      [...INQUIRY_TOOLS, 'search'],   // was +wiki/analytics/resources/quorum/support/filter/compare
-  options:        [...OPTION_TOOLS],              // was +wiki/analytics/resources
-  resources: [], messages: [], statistics: [], activity: [],
-  hero: [], news: [], group_types: [], events: [], explore: [], promo: [],
+  inquiries: [...INQUIRY_TOOLS, 'search'], // was +wiki/analytics/resources/quorum/support/filter/compare
+  options: [...OPTION_TOOLS], // was +wiki/analytics/resources
+  resources: [],
+  messages: [],
+  statistics: [],
+  activity: [],
+  hero: [],
+  news: [],
+  group_types: [],
+  events: [],
+  explore: [],
+  promo: [],
   search: ['search'],
 }
 
@@ -227,7 +237,7 @@ export interface ScopeFilter {
 
 export interface Scope {
   source: SourceValue
-    /** Family filter for `content: 'inquiries'` — matches `inquiry.type`. */
+  /** Family filter for `content: 'inquiries'` — matches `inquiry.type`. */
   inquiryFamily?: string
   inquiryFamilies?: string[]
 

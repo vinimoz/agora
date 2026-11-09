@@ -5,7 +5,11 @@
 import { AxiosResponse } from '@nextcloud/axios'
 import { Share, ShareType, User } from '../../Types/index.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { PublicInquiryEmailConditions, ParticipationLevel, SharePurpose } from '../../Types/share.types.js'
+import {
+  PublicInquiryEmailConditions,
+  ParticipationLevel,
+  SharePurpose,
+} from '../../Types/share.types.js'
 
 export type SentResults = {
   sentMails: { emailAddress: string; displayName: string }[]
@@ -73,7 +77,7 @@ const shares = {
     shareToken: string,
     participationLevel: ParticipationLevel
   ): Promise<AxiosResponse<{ share: Share }>> {
-	  console.log(" SET PART ",participationLevel)
+    console.log(' SET PART ', participationLevel)
     return httpInstance.request({
       method: 'PUT',
       url: `share/${shareToken}/participation`,
@@ -81,8 +85,7 @@ const shares = {
         participationLevel,
       },
       cancelToken:
-        cancelTokenHandlerObject[this.setParticipationLevel.name].handleRequestCancellation()
-          .token,
+        cancelTokenHandlerObject[this.setParticipationLevel.name].handleRequestCancellation().token,
     })
   },
 

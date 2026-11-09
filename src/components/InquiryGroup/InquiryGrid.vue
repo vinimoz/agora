@@ -4,7 +4,11 @@
 -->
 
 <template>
-  <div ref="gridRef" class="inquiry-grid" :class="`mode-${mode ?? 'cards'}`">
+  <div
+    ref="gridRef"
+    class="inquiry-grid"
+    :class="`mode-${mode ?? 'cards'}`"
+  >
     <InquiryItem
       v-for="(inq, i) in inquiries"
       :key="inq.id"

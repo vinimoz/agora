@@ -13,7 +13,7 @@
 const U = "agora", j = "1.8.0";
 import { d as b, q as a, s as q, o as p, c as v, g as l, e as _, h as s, v as e, E as D, b as I, f as C, t as u, a1 as S, l as w, _ as x, z as L, A as N } from "./NcEmptyContent-CfFbGoRR.chunk.mjs";
 import { _ as A } from "./agora-icon-DLoygdJQ.chunk.mjs";
-import { c as E, d as M, N as T, s as g, L as B, g as k, I as V } from "./NcDashboardWidget-B0G9t_8Q.chunk.mjs";
+import { c as E, d as M, N as T, s as g, L as B, g as k, I as V } from "./NcDashboardWidget-KCKH0w4s.chunk.mjs";
 const z = ["href"], O = { class: "inquiry-item__item" }, W = { class: "type-icon" }, $ = { class: "item__title" }, F = { class: "item__title__title" }, G = { class: "item__title__description" }, P = b({ __name: "AgoraDashboard", setup(c) {
   const o = E(), d = { emptyContentMessage: a("agora", "No inquiries found for this category"), showMoreText: a("agora", "Relevant inquiries") }, h = w(() => o.appSettings.inquiryTypeTab || []), n = M();
   function m() {

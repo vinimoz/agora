@@ -115,7 +115,7 @@
                   :close-after-click="true"
                   :name="responseType.label"
                   :description="getOptionTypeDescription(responseType.option_type)"
-                  @click="openAddResponseModal(responseType.option_type); subMenu = null"
+		  @click="handleAddResponse(responseType.option_type)"
                 >
                   <template #icon>
                     <component
@@ -785,6 +785,11 @@ const openAddResponseModal = (responseType: string) => {
   }
   selectedChildType.value = responseType
   showAddChildModal.value = true
+}
+
+const handleAddResponse = (responseType: string) => {
+  openAddResponseModal(responseType)
+  subMenu.value = null
 }
 
 const closeAddChildModal = () => {

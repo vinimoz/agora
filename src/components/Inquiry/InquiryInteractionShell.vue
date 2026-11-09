@@ -1,7 +1,5 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
+AGPL-3.0-or-later */
 
 <template>
   <NcAppSidebar
@@ -9,7 +7,10 @@
     :name="inquiry?.title || t('agora', 'Inquiry')"
     @close="close"
   >
-    <InquiryModalBody :inquiry="inquiry" :mode="mode" />
+    <InquiryModalBody
+      :inquiry="inquiry"
+      :mode="mode"
+    />
     <template #actions>
       <NcButton
         v-if="mode === 'view' && canEdit"
@@ -32,7 +33,10 @@
     size="large"
     @closing="close"
   >
-    <InquiryModalBody :inquiry="inquiry" :mode="mode" />
+    <InquiryModalBody
+      :inquiry="inquiry"
+      :mode="mode"
+    />
 
     <template #actions>
       <NcButton
@@ -47,7 +51,10 @@
       >
         {{ t('agora', 'Back to summary') }}
       </NcButton>
-      <NcButton type="primary" @click="close">
+      <NcButton
+        type="primary"
+        @click="close"
+      >
         {{ t('agora', 'Done') }}
       </NcButton>
     </template>
@@ -75,10 +82,7 @@ const canEdit = computed(() => {
   return !!(s?.isOwner || s?.isEditor || s?.isAdmin)
 })
 
-function open(payload: {
-  inquiry: Inquiry
-  target: 'panel' | 'dialog' | 'modal'
-}) {
+function open(payload: { inquiry: Inquiry; target: 'panel' | 'dialog' | 'modal' }) {
   if (!payload?.inquiry) return
   inquiry.value = payload.inquiry
   target.value = payload.target

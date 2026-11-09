@@ -48,14 +48,35 @@
       </p>
 
       <!-- Support and comments stats (when not voting mode) -->
-      <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div v-if="!hideResults && majorityJudgment" class="support-stats" @click.stop="openSupportsModal">
-          <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
+      <div
+        v-if="!canVote || hasUserVoted"
+        class="stats-container"
+      >
+        <div
+          v-if="!hideResults && majorityJudgment"
+          class="support-stats"
+          @click.stop="openSupportsModal"
+        >
+          <component
+            :is="InquiryOptionIcons.Support"
+            :size="14"
+            class="stat-icon"
+          />
           <span class="vote-count">{{ translateGrade(majorityJudgment.median) }}</span>
-          <span class="percentage">{{ n('agora', '%n voter', '%n voters', majorityJudgment.total) }}</span>
+          <span class="percentage">{{
+            n('agora', '%n voter', '%n voters', majorityJudgment.total)
+          }}</span>
         </div>
-        <div v-else-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
-          <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
+        <div
+          v-else-if="!hideResults"
+          class="support-stats"
+          @click.stop="openSupportsModal"
+        >
+          <component
+            :is="InquiryOptionIcons.Support"
+            :size="14"
+            class="stat-icon"
+          />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
         </div>
@@ -74,26 +95,41 @@
       </div>
 
       <!-- Majority judgment: one segment per grade, in the configured order -->
-      <div v-if="(!canVote || hasUserVoted) && !hideResults && majorityJudgment?.total" class="grade-distribution">
+      <div
+        v-if="(!canVote || hasUserVoted) && !hideResults && majorityJudgment?.total"
+        class="grade-distribution"
+      >
         <div class="grade-bar">
           <div
             v-for="([grade, count], index) in majorityJudgment.distribution"
             :key="grade"
             class="grade-segment"
-            :style="{ width: (count / majorityJudgment.total) * 100 + '%', opacity: 1 - index / majorityJudgment.distribution.length }"
+            :style="{
+              width: (count / majorityJudgment.total) * 100 + '%',
+              opacity: 1 - index / majorityJudgment.distribution.length,
+            }"
             :title="`${translateGrade(grade)} : ${count}`"
           />
         </div>
         <ul class="grade-legend">
-          <li v-for="([grade, count], index) in majorityJudgment.distribution" :key="grade">
-            <span class="grade-dot" :style="{ opacity: 1 - index / majorityJudgment.distribution.length }" />
+          <li
+            v-for="([grade, count], index) in majorityJudgment.distribution"
+            :key="grade"
+          >
+            <span
+              class="grade-dot"
+              :style="{ opacity: 1 - index / majorityJudgment.distribution.length }"
+            />
             {{ translateGrade(grade) }} {{ count }}
           </li>
         </ul>
       </div>
 
       <!-- Progress bar for voting mode -->
-      <div v-else-if="(!canVote || hasUserVoted) && !hideResults && !majorityJudgment" class="progress-bar-container">
+      <div
+        v-else-if="(!canVote || hasUserVoted) && !hideResults && !majorityJudgment"
+        class="progress-bar-container"
+      >
         <div class="progress-bar">
           <div
             class="progress-fill"
@@ -158,8 +194,14 @@
           :placeholder="openedByGrade ? t('agora', 'Under which conditions? Why?') : undefined"
         />
       </div>
-      <ul v-if="ownComments.length" class="own-comments">
-        <li v-for="comment in ownComments" :key="comment.id">
+      <ul
+        v-if="ownComments.length"
+        class="own-comments"
+      >
+        <li
+          v-for="comment in ownComments"
+          :key="comment.id"
+        >
           <span>{{ comment.comment }}</span>
           <NcButton
             variant="tertiary"
@@ -279,8 +321,9 @@ const commentsStore = useCommentsStore()
 
 // The user's own comments on this option; others' stay out of the ballot
 const ownComments = computed(() =>
-   commentsStore.getOptionComments(inquiryStore.id, raw.value.id) 
-    .filter((comment) => comment.user?.id === sessionStore.currentUser.id && !comment.deleted),
+  commentsStore
+    .getOptionComments(inquiryStore.id, raw.value.id)
+    .filter((comment) => comment.user?.id === sessionStore.currentUser.id && !comment.deleted)
 )
 
 async function deleteComment(comment: Comment) {
@@ -290,7 +333,6 @@ async function deleteComment(comment: Comment) {
     showError(t('agora', 'Error while deleting the comment'))
   }
 }
-
 
 const allItemTypes = computed(() => {
   if (props.item.kind === 'option') {

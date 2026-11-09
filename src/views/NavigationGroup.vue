@@ -306,13 +306,22 @@ onMounted(() => {
             :name="activeFamily ? t('agora', 'Back to family') : t('agora', 'Back to spaces')"
             :to="
               activeFamily
-                ? { name: 'group-list', params: { slug: '' }, query: { family: activeFamily, viewMode: 'group' } }
+                ? {
+                  name: 'group-list',
+                  params: { slug: '' },
+                  query: { family: activeFamily, viewMode: 'group' },
+                }
                 : { name: 'explore-spaces' }
             "
             class="navigation-item"
           >
             <template #icon>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
               </svg>
             </template>
@@ -415,9 +424,9 @@ onMounted(() => {
           <NcAppNavigationItem
             v-if="hasArchivedSubgroups"
             :name="t('agora', 'Space archives')"
-            :to="{ 
+            :to="{
               name: 'group-archived',
-              query: { family: activeFamily ?? undefined, from: currentGroup?.slug }
+              query: { family: activeFamily ?? undefined, from: currentGroup?.slug },
             }"
             class="navigation-item"
           >
@@ -523,7 +532,11 @@ onMounted(() => {
                 v-for="grp in groupsOfType(type.type || type.group_type || '')"
                 :key="grp.id"
                 :name="grp.title"
-                :to="{ name: 'group-list', params: { slug: grp.slug }, query: { family: activeFamily } }"
+                :to="{
+                  name: 'group-list',
+                  params: { slug: grp.slug },
+                  query: { family: activeFamily },
+                }"
                 class="navigation-subitem"
               />
             </ul>
@@ -684,7 +697,7 @@ onMounted(() => {
       </template>
     </template>
   </NcAppNavigation>
-  
+
   <InquiryGroupCreateDlg
     v-if="createGroupDlgToggle"
     :inquiry-group-type="selectedInquiryGroupTypeForCreation"

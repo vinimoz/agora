@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-B0G9t_8Q.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcEmptyContent-CfFbGoRR.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-DiRSn2Gl.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-BrQ2H2mk.chunk.mjs'),window.OC.filePath('agora', '', 'js/referencePickerModal-DrIYqUVO.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-BeH8ReOb.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-CUx4Eo9y.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-BfY0Tgg-.chunk.mjs'),window.OC.filePath('agora', '', 'js/be-tarask-lRaX7m2J.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcProfileHoverCard-CjkGwu1n.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionProposal-D6Y2SV7I.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-BggrfIVt.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-BCaLXs0d.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-DLoygdJQ.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-Djv7Q5hC.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-KCKH0w4s.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcEmptyContent-CfFbGoRR.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-BKDalnH2.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-CvtG4y-G.chunk.mjs'),window.OC.filePath('agora', '', 'js/referencePickerModal-DrIYqUVO.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-BeH8ReOb.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-BpZX44Kh.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-Xij_VcjP.chunk.mjs'),window.OC.filePath('agora', '', 'js/be-tarask-Bh6X3VrQ.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcProfileHoverCard-CjkGwu1n.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionProposal-Ci9vvm_-.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-DvzRKCG7.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-HliziZaE.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-DLoygdJQ.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-Djv7Q5hC.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -23568,12 +23568,12 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 })();
 const sGe = "agora", oGe = "1.8.0";
 import { a$ as Zr, bn as ji, bC as R$, bD as M$, v as h, bE as O$, bo as z_, d as je, a_ as U$, ax as so, l as R, w as ft, D as ve, a4 as ur, aT as Gg, bF as N$, o as g, c as D, n as xt, R as Ne, t as k, q as y, _ as nt, E as ki, s as Ft, b as I, e as K, h as m, i as P, g as te, M as Ue, T as He, f as Q, P as xs, a as dr, W as $$, r as Qt, m as Vt, S as be, bG as W_, bH as V_, Q as $d, ay as hr, a7 as fn, bI as F$, u as oo, bJ as q$, bK as P$, ac as Xg, bL as L$, bM as B$, bN as z$, aV as W$, bc as ks, H as V$, b3 as H_, bO as H$, bP as j_, O as We, U as jn, au as Fd, a8 as Si, x as ao, y as Nc, bQ as j$, bR as G$, N as pn, k as Er, L as $c, bS as G_, a2 as bt, j as Fc, Y as Et, aL as qd, a3 as Zt, aK as ua, bT as da, bU as Di, $ as fr, bV as X_, bW as X$, bX as pr, bY as Y$, bZ as Pd, b_ as K$, b$ as tr, bw as lo, aY as Q$, a0 as Yg, c0 as Ld, aW as yl, J as Kg, aw as Bd, bA as Qg, a1 as Jg, c1 as J$, a6 as Y_, bh as Ss, c2 as Lr, c3 as Ds, G as Gn, F as _n, z as Z$, A as e8 } from "./NcEmptyContent-CfFbGoRR.chunk.mjs";
-import { n as Ve, I as ae, c as mt, L as wt, o as Ci, d as Gt, p as Xt, t as Cs, q as vl, f as ni, s as ot, a as at, r as K_, v as bl, w as Es, x as t8, y as Gi, z as zd, A as ha, S as kt, B as _l, C as Q_, D as gr, g as dn, F as Ts, G as co, H as n8, J as jt, K as Zg, M as em, O as Wd, P as J_, Q as Rn, R as i8, T as Z_, U as wl, V as Tr, W as ew, X as r8, Y as s8, Z as o8, _ as fa, $ as qc, a0 as ii, a1 as Ln, a2 as tw, a3 as xl, a4 as tm, a5 as Pc, a6 as Vd, a7 as Lc, a8 as Bc, a9 as Hd, aa as jd, ab as nm, ac as zc, ad as nw, ae as iw, af as a8, ag as es, ah as l8, ai as c8, j as rw, aj as im, ak as sw, al as rm, am as u8, an as d8, ao as h8, ap as f8, aq as p8, u as Gd, ar as ow, as as sm, E as Wc, at as g8, au as m8, av as aw, aw as y8, ax as v8, ay as lw, az as b8, aA as _8, aB as As, aC as Is, aD as w8, aE as Br, aF as cw, aG as uw, aH as x8, aI as k8, aJ as S8, aK as D8, aL as dw, aM as C8, aN as E8 } from "./NcDashboardWidget-B0G9t_8Q.chunk.mjs";
-import { u as pa, _ as T8, a as A8 } from "./StyleSettings-BCaLXs0d.chunk.mjs";
-import { k as ts, o as gn, p as I8, q as hw, u as R8, A as M8, _ as O8, S as fw, Q as U8, I as Xd, r as uo, v as N8, h as zr, w as Vc, x as pw, y as gw, z as mw, B as $8, C as mr, D as Hc, O as F8, E as om, i as q8, P as yw, F as P8, G as am, H as vw, j as L8, J as B8 } from "./be-tarask-lRaX7m2J.chunk.mjs";
+import { n as Ve, I as ae, c as mt, L as wt, o as Ci, d as Gt, p as Xt, t as Cs, q as vl, f as ni, s as ot, a as at, r as K_, v as bl, w as Es, x as t8, y as Gi, z as zd, A as ha, S as kt, B as _l, C as Q_, D as gr, g as dn, F as Ts, G as co, H as n8, J as jt, K as Zg, M as em, O as Wd, P as J_, Q as Rn, R as i8, T as Z_, U as wl, V as Tr, W as ew, X as r8, Y as s8, Z as o8, _ as fa, $ as qc, a0 as ii, a1 as Ln, a2 as tw, a3 as xl, a4 as tm, a5 as Pc, a6 as Vd, a7 as Lc, a8 as Bc, a9 as Hd, aa as jd, ab as nm, ac as zc, ad as nw, ae as iw, af as a8, ag as es, ah as l8, ai as c8, j as rw, aj as im, ak as sw, al as rm, am as u8, an as d8, ao as h8, ap as f8, aq as p8, u as Gd, ar as ow, as as sm, E as Wc, at as g8, au as m8, av as aw, aw as y8, ax as v8, ay as lw, az as b8, aA as _8, aB as As, aC as Is, aD as w8, aE as Br, aF as cw, aG as uw, aH as x8, aI as k8, aJ as S8, aK as D8, aL as dw, aM as C8, aN as E8 } from "./NcDashboardWidget-KCKH0w4s.chunk.mjs";
+import { u as pa, _ as T8, a as A8 } from "./StyleSettings-HliziZaE.chunk.mjs";
+import { k as ts, o as gn, p as I8, q as hw, u as R8, A as M8, _ as O8, S as fw, Q as U8, I as Xd, r as uo, v as N8, h as zr, w as Vc, x as pw, y as gw, z as mw, B as $8, C as mr, D as Hc, O as F8, E as om, i as q8, P as yw, F as P8, G as am, H as vw, j as L8, J as B8 } from "./be-tarask-Bh6X3VrQ.chunk.mjs";
 import { _ as bw } from "./agora-icon-DLoygdJQ.chunk.mjs";
 import { a as wn, N as z8 } from "./NcRichText-BeH8ReOb.chunk.mjs";
-import { c as ns, S as lm, G as _w, T as cm, d as ga, a as kl, N as jc, P as um, V as dm, e as W8, I as ww, f as hm, M as fm, C as V8, U as H8, E as xw, _ as j8, b as ma } from "./markdown-BggrfIVt.chunk.mjs";
+import { c as ns, S as lm, G as _w, T as cm, d as ga, a as kl, N as jc, P as um, V as dm, e as W8, I as ww, f as hm, M as fm, C as V8, U as H8, E as xw, _ as j8, b as ma } from "./markdown-DvzRKCG7.chunk.mjs";
 import { b as G8, N as on, _ as Rs, a as Sl } from "./referencePickerModal-DrIYqUVO.chunk.mjs";
 import "./NcProfileHoverCard-CjkGwu1n.chunk.mjs";
 import { N as X8 } from "./NcUserBubble-Djv7Q5hC.chunk.mjs";
@@ -60751,12 +60751,15 @@ function CO(t10, e, n, i) {
       return console.error("Failed to submit multi-vote:", pt), false;
     }
   }
-  const se = ve(null), he = ve(/* @__PURE__ */ new Map()), Te = (ye) => {
+  const se = ve(null), he = ve(/* @__PURE__ */ new Map()), Te = (ye, Me = Oe.value) => {
+    const $e = xe(ye.id);
+    return Me === 0 ? 0 : Math.round($e / Me * 100);
+  }, Fe = (ye) => {
     const Me = [he.value.get(ye), se.value].find((ze) => ze?.type === "majority_judgment" && ze.items?.[ye]);
     if (!Me) return null;
     const $e = Me.items[ye], Pe = Me.grades ?? Object.keys($e.grade_distribution ?? {});
     return { median: $e.median_grade ?? "", total: $e.total_votes ?? 0, distribution: Pe.map((ze) => [ze, $e.grade_distribution?.[ze] ?? 0]) };
-  }, Fe = (ye) => {
+  }, xe = (ye) => {
     if (C.value === "trending") return V();
     const Me = C.value;
     if (["binary", "ternary", "score", "star", "majority_judgment", "reaction"].includes(Me)) {
@@ -60816,7 +60819,7 @@ function CO(t10, e, n, i) {
       default:
         return 0;
     }
-  }, xe = (ye) => se.value?.ranking?.[ye] ?? null, we = R(() => {
+  }, we = (ye) => se.value?.ranking?.[ye] ?? null, ke = R(() => {
     const ye = C.value, Me = ["binary", "ternary", "score", "star", "majority_judgment", "reaction"], $e = se.value;
     if ($e && Me.includes(ye)) {
       if ($e.items) {
@@ -60869,26 +60872,23 @@ function CO(t10, e, n, i) {
       default:
         return 0;
     }
-  }), ke = R(() => {
-    if (!q_e.includes(C.value)) return we.value;
+  }), Oe = R(() => {
+    if (!q_e.includes(C.value)) return ke.value;
     let ye = 0;
-    for (const Me of w.value) ye += Fe(Me.id);
+    for (const Me of w.value) ye += xe(Me.id);
     return ye;
-  }), Oe = (ye, Me = ke.value) => {
-    const $e = Fe(ye.id);
-    return Me === 0 ? 0 : Math.round($e / Me * 100);
-  }, qe = (ye) => {
+  }), qe = (ye) => {
     const Me = C.value;
     return Me === "ranking" ? [...ye].sort(($e, Pe) => {
-      const ze = Fe($e.id), tt = Fe(Pe.id);
+      const ze = xe($e.id), tt = xe(Pe.id);
       return (ze === 0 ? 1 / 0 : ze) - (tt === 0 ? 1 / 0 : tt);
-    }) : ["condorcet", "borda"].includes(Me) ? [...ye].sort(($e, Pe) => (Fe(Pe.id) || 0) - (Fe($e.id) || 0)) : [...ye].sort(($e, Pe) => Fe(Pe.id) - Fe($e.id));
+    }) : ["condorcet", "borda"].includes(Me) ? [...ye].sort(($e, Pe) => (xe(Pe.id) || 0) - (xe($e.id) || 0)) : [...ye].sort(($e, Pe) => xe(Pe.id) - xe($e.id));
   }, Ze = (ye) => {
     const Me = qe(ye);
     return Me.length ? Me[0] : null;
   }, it = (ye) => {
     const Me = Ze(ye);
-    return Me ? Oe(Me) : 0;
+    return Me ? Te(Me) : 0;
   };
   function St(ye) {
     const Me = a.currentUser?.id;
@@ -60980,7 +60980,7 @@ function CO(t10, e, n, i) {
   });
   return Ft(() => {
     b.value.length > 0 && !v.value && (v.value = b.value[0].id);
-  }), { loadingEngines: p, availableEngines: b, selectedEngineId: v, currentEngine: _, votableItems: w, hasActiveEngine: x, rankings: T, scores: M, grades: N, reactions: z, quadraticVotes: G, tokenWeights: H, selectedItems: $, hasUserVoted: q, hasSelectionsChanged: le, canVote: F, canSubmitMultiVote: O, voteSelectionInfo: ue, isEngineMulti: L, hasUserVotedFor: U, isSelectedForVote: Z, toggleSelection: me, updateRanking: oe, updateScore: re, updateGrade: ge, updateReaction: De, updateQuadratic: Ie, updateTokenWeight: Ge, resetSelections: rt, submitSingleVote: Ce, submitMultiVote: ee, totalVotes: we, getItemVoteCount: Fe, getItemMajorityJudgment: Te, getItemRank: xe, getPercentage: Oe, getRankedItems: qe, getWinner: Ze, getUserVoteValueForItem: j, getWinnerPercentage: it, effectiveEngineId: C, maxRank: ie, scoreMin: _e, scoreMax: Re, selectEngine: E, refreshEngines: S, removeMyVote: pe, loadUserVotesForEngine: St };
+  }), { loadingEngines: p, availableEngines: b, selectedEngineId: v, currentEngine: _, votableItems: w, hasActiveEngine: x, rankings: T, scores: M, grades: N, reactions: z, quadraticVotes: G, tokenWeights: H, selectedItems: $, hasUserVoted: q, hasSelectionsChanged: le, canVote: F, canSubmitMultiVote: O, voteSelectionInfo: ue, isEngineMulti: L, hasUserVotedFor: U, isSelectedForVote: Z, toggleSelection: me, updateRanking: oe, updateScore: re, updateGrade: ge, updateReaction: De, updateQuadratic: Ie, updateTokenWeight: Ge, resetSelections: rt, submitSingleVote: Ce, submitMultiVote: ee, totalVotes: ke, getItemVoteCount: xe, getItemMajorityJudgment: Fe, getItemRank: we, getPercentage: Te, getRankedItems: qe, getWinner: Ze, getUserVoteValueForItem: j, getWinnerPercentage: it, effectiveEngineId: C, maxRank: ie, scoreMin: _e, scoreMax: Re, selectEngine: E, refreshEngines: S, removeMyVote: pe, loadUserVotesForEngine: St };
 }
 const P_e = je({ __name: "VoteEmptyState", props: { canManageVote: { type: Boolean }, isReadonly: { type: Boolean }, showAddButton: { type: Boolean }, noEngine: { type: Boolean }, noItemsLinked: { type: Boolean } }, emits: ["configure", "addItem", "addToVote"], setup(t10, { emit: e }) {
   const n = t10, i = e, r = R(() => n.noEngine ? W8 : n.noItemsLinked ? B4 : n.showAddButton ? dm : ww), s = R(() => n.noEngine ? 48 : 64), o = R(() => n.noEngine ? y("agora", "No Voting Method Configured") : n.noItemsLinked ? y("agora", "No Items Linked to Vote") : n.showAddButton ? y("agora", "No items to vote on yet") : y("agora", "No voting data available")), a = R(() => n.noEngine ? y("agora", "A voting method needs to be configured before voting can begin.") : n.noItemsLinked ? n.canManageVote && !n.isReadonly ? y("agora", "The voting method is configured but no items have been added to the vote yet. Click the button below to add items.") : y("agora", "The voting method is configured but no items have been added to the vote yet.") : n.showAddButton ? y("agora", "Add items to start the voting process") : y("agora", "There are no voting items available at this time.")), l = R(() => n.noEngine || n.noItemsLinked || n.showAddButton ? !!n.canManageVote && !n.isReadonly : false), c = R(() => n.noEngine ? y("agora", "Configure Voting Method") : n.noItemsLinked ? y("agora", "Add Items to Vote") : n.showAddButton ? y("agora", "Add Item") : ""), u = () => {
@@ -67330,7 +67330,7 @@ const uEe = { class: "results-layout" }, dEe = { class: "results-summary" }, hEe
   }
   async function N() {
     const { useOptionsStore: G } = await Ss(async () => {
-      const { useOptionsStore: $ } = await import("./NcDashboardWidget-B0G9t_8Q.chunk.mjs").then((Y) => Y.aP);
+      const { useOptionsStore: $ } = await import("./NcDashboardWidget-KCKH0w4s.chunk.mjs").then((Y) => Y.aP);
       return { useOptionsStore: $ };
     }, true ? __vite__mapDeps([0,1]) : void 0, import.meta.url), H = G();
     l.value = H.options.find(($) => $.id === n.optionId);
@@ -67514,16 +67514,16 @@ const uEe = { class: "results-layout" }, dEe = { class: "results-summary" }, hEe
     try {
       let Oe = null;
       if (xe === "vote") {
-        const qe = await Ss(() => import("./ActionVote-DiRSn2Gl.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4,5]) : void 0, import.meta.url);
+        const qe = await Ss(() => import("./ActionVote-BKDalnH2.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4,5]) : void 0, import.meta.url);
         Oe = pr(qe.default || qe);
       } else if (xe === "structure") {
-        const qe = await Ss(() => import("./ActionStructure-CUx4Eo9y.chunk.mjs"), true ? __vite__mapDeps([6,7,1,0,4,5,8,9]) : void 0, import.meta.url);
+        const qe = await Ss(() => import("./ActionStructure-BpZX44Kh.chunk.mjs"), true ? __vite__mapDeps([6,7,1,0,4,5,8,9]) : void 0, import.meta.url);
         Oe = pr(qe.default || qe);
       } else if (xe === "proposal") {
-        const qe = await Ss(() => import("./ActionProposal-D6Y2SV7I.chunk.mjs"), true ? __vite__mapDeps([10,0,1,4,5,11,8,9,12,13,14]) : void 0, import.meta.url);
+        const qe = await Ss(() => import("./ActionProposal-Ci9vvm_-.chunk.mjs"), true ? __vite__mapDeps([10,0,1,4,5,11,8,9,12,13,14]) : void 0, import.meta.url);
         Oe = pr(qe.default || qe);
       } else {
-        const qe = `${we.split("_").map((it) => it.charAt(0).toUpperCase() + it.slice(1)).join("")}Modal`, Ze = await une(Object.assign({ "./Actions/ActionProposal.vue": () => Ss(() => import("./ActionProposal-D6Y2SV7I.chunk.mjs"), true ? __vite__mapDeps([10,0,1,4,5,11,8,9,12,13,14]) : void 0, import.meta.url), "./Actions/ActionStructure.vue": () => Ss(() => import("./ActionStructure-CUx4Eo9y.chunk.mjs"), true ? __vite__mapDeps([6,7,1,0,4,5,8,9]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => Ss(() => import("./ActionVote-DiRSn2Gl.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4,5]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => Ss(() => import("./ExportResultsModal-BrQ2H2mk.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4,5]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => Ss(() => import("./ImportDocumentModal-BfY0Tgg-.chunk.mjs"), true ? __vite__mapDeps([7,1,0,4,5,8,9]) : void 0, import.meta.url) }), `./Actions/${qe}.vue`, 3);
+        const qe = `${we.split("_").map((it) => it.charAt(0).toUpperCase() + it.slice(1)).join("")}Modal`, Ze = await une(Object.assign({ "./Actions/ActionProposal.vue": () => Ss(() => import("./ActionProposal-Ci9vvm_-.chunk.mjs"), true ? __vite__mapDeps([10,0,1,4,5,11,8,9,12,13,14]) : void 0, import.meta.url), "./Actions/ActionStructure.vue": () => Ss(() => import("./ActionStructure-BpZX44Kh.chunk.mjs"), true ? __vite__mapDeps([6,7,1,0,4,5,8,9]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => Ss(() => import("./ActionVote-BKDalnH2.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4,5]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => Ss(() => import("./ExportResultsModal-CvtG4y-G.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4,5]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => Ss(() => import("./ImportDocumentModal-Xij_VcjP.chunk.mjs"), true ? __vite__mapDeps([7,1,0,4,5,8,9]) : void 0, import.meta.url) }), `./Actions/${qe}.vue`, 3);
         Oe = pr(Ze.default || Ze);
       }
       return Oe ? (x.set(ke, Oe), Oe) : null;

@@ -1,7 +1,5 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
+AGPL-3.0-or-later */
 
 <template>
   <section
@@ -40,7 +38,10 @@
         @click="emit('selectFamily', family.family_type)"
       >
         <span class="family-chip__icon-badge">
-          <component :is="familyIcon(family)" :size="20" />
+          <component
+            :is="familyIcon(family)"
+            :size="20"
+          />
         </span>
 
         <span class="family-chip__body">

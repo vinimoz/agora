@@ -195,15 +195,17 @@ const props = withDefaults(
 const emit = defineEmits<{
   close: []
   success: []
-  optionFamilyChanged: [payload: {
-    // keep for backward-compat with existing listeners
-    optionId: number
-    // explicit, target-aware fields
-    itemId: number
-    targetType: TargetType
-    familyKey: EngineFamily
-    action: 'added'
-  }]
+  optionFamilyChanged: [
+    payload: {
+      // keep for backward-compat with existing listeners
+      optionId: number
+      // explicit, target-aware fields
+      itemId: number
+      targetType: TargetType
+      familyKey: EngineFamily
+      action: 'added'
+    },
+  ]
 }>()
 
 /**
@@ -245,9 +247,7 @@ const inquiryGroupsStore = useInquiryGroupsStore()
 function collectGroupInquiryIds(): number[] {
   // Priority 1: the group id we were handed by the layout
   const groupId = props.inquiryId
-  const idsFromGroup = groupId
-    ? (inquiryGroupsStore.byId?.[groupId]?.inquiryIds ?? [])
-    : []
+  const idsFromGroup = groupId ? (inquiryGroupsStore.byId?.[groupId]?.inquiryIds ?? []) : []
 
   if (idsFromGroup.length) return idsFromGroup
 
@@ -258,9 +258,7 @@ function collectGroupInquiryIds(): number[] {
   // Priority 3: groups the currently-loaded inquiry belongs to
   const currentInquiryGroups =
     (inquiriesStore.byId[inquiryStore.id]?.inquiryGroups as number[] | undefined) ?? []
-  return currentInquiryGroups.flatMap(
-    (gid) => inquiryGroupsStore.byId?.[gid]?.inquiryIds ?? []
-  )
+  return currentInquiryGroups.flatMap((gid) => inquiryGroupsStore.byId?.[gid]?.inquiryIds ?? [])
 }
 
 /** Does `inquiry` belong in `familyKey` already? */
@@ -321,16 +319,16 @@ const loading = ref(false)
 const statusColumns = computed(() => {
   if (props.targetType === 'inquiry') {
     return [
-      { value: 'draft',    label: t('agora', 'Draft'),    color: '#949494' },
-      { value: 'active',   label: t('agora', 'Active'),   color: '#3498db' },
-      { value: 'closed',   label: t('agora', 'Closed'),   color: '#27ae60' },
+      { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
+      { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
+      { value: 'closed', label: t('agora', 'Closed'), color: '#27ae60' },
       { value: 'rejected', label: t('agora', 'Rejected'), color: '#e74c3c' },
     ]
   }
   return [
-    { value: 'draft',     label: t('agora', 'Draft'),     color: '#949494' },
+    { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
     { value: 'published', label: t('agora', 'Published'), color: '#3498db' },
-    { value: 'archived',  label: t('agora', 'Archived'),  color: '#27ae60' },
+    { value: 'archived', label: t('agora', 'Archived'), color: '#27ae60' },
   ]
 })
 
@@ -413,10 +411,7 @@ const canAdd = computed(() => {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-function buildForceLayoutsUpdate(
-  item: VotableItem,
-  layout: EngineFamily
-): string[] {
+function buildForceLayoutsUpdate(item: VotableItem, layout: EngineFamily): string[] {
   const current = getForceLayouts(item)
   return current.includes(layout) ? current : [...current, layout]
 }
@@ -438,11 +433,7 @@ function toMiscFieldEntry(key: string, value: unknown): { key: string; value: st
   }
 }
 
-async function patchOption(
-  item: Option,
-  patch: MiscUpdateMap,
-  status?: string,
-): Promise<void> {
+async function patchOption(item: Option, patch: MiscUpdateMap, status?: string): Promise<void> {
   // 1. Persist misc fields one-by-one through the dedicated endpoint.
   //    A bulk `updateOption` with a partial payload is silently no-oped
   //    by the backend (title/text become empty defaults) — which is why

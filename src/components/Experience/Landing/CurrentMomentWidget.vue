@@ -1,7 +1,5 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
+AGPL-3.0-or-later */
 
 <template>
   <section class="current-moment">
@@ -13,9 +11,9 @@
           class="header-icon"
         />
         <div>
-          <h2>{{ title  || t('agora', 'Right now') }}</h2>
+          <h2>{{ title || t('agora', 'Right now') }}</h2>
           <p class="section-subtitle">
-            {{ t('agora', subtitle || 'Topics that need your attention') }}
+            {{ t('agora', subtitle || 'Topics that need your attention') }}
           </p>
         </div>
       </div>

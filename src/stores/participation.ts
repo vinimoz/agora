@@ -33,11 +33,9 @@ export const useParticipationStore = defineStore('participation', {
 
   getters: {
     // ── “no policy” semantics ────────────────────────────────
-    isNone: (state) =>
-      state.participation === null || state.participation.policyType === 'none',
+    isNone: (state) => state.participation === null || state.participation.policyType === 'none',
 
-    hasPolicy: (state) =>
-      state.participation !== null && state.participation.policyType !== 'none',
+    hasPolicy: (state) => state.participation !== null && state.participation.policyType !== 'none',
 
     participationType: (state): ParticipationPolicyType =>
       state.participation?.policyType ?? 'none',
@@ -50,17 +48,14 @@ export const useParticipationStore = defineStore('participation', {
     lotteryMode: (state): LotteryMode =>
       (state.participation?.policyConfig?.mode as LotteryMode) ?? 'users',
 
-    lotteryCount: (state): number =>
-      Number(state.participation?.policyConfig?.count ?? 1),
+    lotteryCount: (state): number => Number(state.participation?.policyConfig?.count ?? 1),
 
     lotterySeed: (state): string | number | null =>
       (state.participation?.policyConfig?.seed as string | number | null) ?? null,
 
     lotteryMethod: (state): LotteryMethod => {
       const m = state.participation?.policyConfig?.method
-      return m === 'random' || m === 'weighted' || m === 'stratified'
-        ? m
-        : 'random'
+      return m === 'random' || m === 'weighted' || m === 'stratified' ? m : 'random'
     },
 
     canCurrentUserParticipate(): boolean {
@@ -79,10 +74,7 @@ export const useParticipationStore = defineStore('participation', {
   },
 
   actions: {
-    async loadParticipation(
-      targetType: ParticipationTargetType,
-      targetId: number,
-    ): Promise<void> {
+    async loadParticipation(targetType: ParticipationTargetType, targetId: number): Promise<void> {
       this.loading.participation = true
       try {
         const response = await ParticipationAPI.getParticipation(targetType, targetId)
@@ -100,7 +92,7 @@ export const useParticipationStore = defineStore('participation', {
       targetType: ParticipationTargetType,
       targetId: number,
       policyType: ParticipationPolicyType,
-      policyConfig: Record<string, unknown> = {},
+      policyConfig: Record<string, unknown> = {}
     ): Promise<void> {
       // Single source of truth for “no policy”
       if (policyType === 'none') {
@@ -108,7 +100,10 @@ export const useParticipationStore = defineStore('participation', {
       }
       try {
         const response = await ParticipationAPI.setParticipation(
-          targetType, targetId, policyType, policyConfig,
+          targetType,
+          targetId,
+          policyType,
+          policyConfig
         )
         this.participation = response.data.participation
         Logger.info('Participation policy updated', { targetType, targetId, policyType })
@@ -120,7 +115,7 @@ export const useParticipationStore = defineStore('participation', {
 
     async deleteParticipation(
       targetType: ParticipationTargetType,
-      targetId: number,
+      targetId: number
     ): Promise<void> {
       try {
         await ParticipationAPI.deleteParticipation(targetType, targetId)
@@ -170,7 +165,7 @@ export const useParticipationStore = defineStore('participation', {
     async runLottery(
       targetType: ParticipationTargetType,
       targetId: number,
-      seed?: string | number,
+      seed?: string | number
     ) {
       this.loading.lottery = true
       try {
@@ -198,11 +193,7 @@ export const useParticipationStore = defineStore('participation', {
       }
     },
 
-    async cancelLottery(
-      targetType: ParticipationTargetType,
-      targetId: number,
-      reason: string,
-    ) {
+    async cancelLottery(targetType: ParticipationTargetType, targetId: number, reason: string) {
       this.loading.lottery = true
       try {
         const response = await ParticipationAPI.cancelLottery(targetType, targetId, reason)

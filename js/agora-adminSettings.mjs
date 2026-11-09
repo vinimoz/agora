@@ -12,13 +12,13 @@
 })();
 const zy = "agora", Ry = "1.8.0";
 import { a0 as Xe, G as Fe, F as Le, d as ve, q as a, o as s, c as n, h as t, t as l, v as e, M, T as G, R as de, S as _, i as h, _ as ue, s as je, g as i, e as g, O as A, b as ae, L as Ve, aL as ea, l as H, D as P, w as ze, f as Ie, $ as aa, m as ta, a7 as Ke, a8 as Pe, aW as Me, a1 as la, a2 as ie, au as be, ay as We, n as sa, x as ke, y as we, z as oa, A as na } from "./NcEmptyContent-CfFbGoRR.chunk.mjs";
-import { I as Re, j as ia, N as he } from "./be-tarask-lRaX7m2J.chunk.mjs";
-import { L as Ce, j as oe, k as Be, l as ra, m as Je, I as Ee, s as Y, a as $e, n as xe, E as He, S as Ge } from "./NcDashboardWidget-B0G9t_8Q.chunk.mjs";
-import { F as ua } from "./FlexSettings-B6vX7rKj.chunk.mjs";
+import { I as Re, j as ia, N as he } from "./be-tarask-Bh6X3VrQ.chunk.mjs";
+import { L as Ce, j as oe, k as Be, l as ra, m as Je, I as Ee, s as Y, a as $e, n as xe, E as He, S as Ge } from "./NcDashboardWidget-KCKH0w4s.chunk.mjs";
+import { F as ua } from "./FlexSettings-1fPg8bJT.chunk.mjs";
 import { a as ee } from "./NcRichText-BeH8ReOb.chunk.mjs";
 import { _ as Ze, a as O, N as le } from "./referencePickerModal-DrIYqUVO.chunk.mjs";
 import "./NcProfileHoverCard-CjkGwu1n.chunk.mjs";
-import { c as da, N as De, a as ca, E as pa, _ as ma, b as ya } from "./markdown-BggrfIVt.chunk.mjs";
+import { c as da, N as De, a as ca, E as pa, _ as ma, b as ya } from "./markdown-DvzRKCG7.chunk.mjs";
 const ga = da("pencil", [["path", { d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z", key: "1a8usu" }], ["path", { d: "m15 5 4 4", key: "1mk7zo" }]]), Oe = Xe("templateWizard", { state: () => ({ isOpen: false, currentStep: "use-case", steps: ["use-case", "template-selection", "language", "preview", "summary", "importing", "results"], templates: [], loadingTemplates: false, selectedUseCase: null, selectedTemplate: null, selectedLanguage: null, customTemplate: null, editableData: null, importing: false, importResult: null, importError: null, isDatabaseEmpty: null }), getters: { currentStepIndex(y) {
   return y.steps.indexOf(y.currentStep);
 }, canGoNext(y) {

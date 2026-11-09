@@ -276,14 +276,7 @@ export interface AggregateSupportValue {
   round?: number
 }
 
-
-export type SupportValue =
-  | number
-  | string
-  | string[]
-  | AggregateSupportValue
-  | null
-
+export type SupportValue = number | string | string[] | AggregateSupportValue | null
 
 export interface SupportData {
   id?: number
@@ -346,19 +339,25 @@ export interface ReactionResult {
 export interface MajorityJudgmentResult {
   type: 'majority_judgment'
   grades: string[]
-  options: Record<number, {
-    median_grade: string | null
-    median_index: number
-    above_share: number
-    below_share: number
-    grade_distribution: Record<string, number>
-    total_votes: number
-  }>
-  items?: Record<number, {
-    median_grade: string | null
-    total_votes: number
-    grade_distribution: Record<string, number>
-  }>
+  options: Record<
+    number,
+    {
+      median_grade: string | null
+      median_index: number
+      above_share: number
+      below_share: number
+      grade_distribution: Record<string, number>
+      total_votes: number
+    }
+  >
+  items?: Record<
+    number,
+    {
+      median_grade: string | null
+      total_votes: number
+      grade_distribution: Record<string, number>
+    }
+  >
   winner: number | null
   winner_name?: string
   winner_details?: {

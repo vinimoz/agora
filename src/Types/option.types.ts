@@ -6,7 +6,7 @@
 import type { User, UserType } from './user.types'
 import type { SupportResult } from './support.types'
 import type { Chunking, StatusResults } from './inquiry.types'
-import type { FamilyStatus } from './index.ts' 
+import type { FamilyStatus } from './index.ts'
 
 // ============================================================================
 // OPTION STATUS

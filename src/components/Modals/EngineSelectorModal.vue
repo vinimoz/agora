@@ -180,33 +180,33 @@
           <Gauge :size="18" />
           <h5>{{ t('agora', 'Configure grades') }}</h5>
         </div>
-<div class="grades-list">
-  <div
-    v-for="(grade, index) in tempConfig.grades || defaultGrades"
-    :key="index"
-    class="grade-item"
-  >
-    <NcTextField
-      v-model="tempConfig.grades[index]"
-      label-outside
-      :placeholder="t('agora', 'Grade {n}', { n: index + 1 })"
-      class="grade-input"
-    />
-    <NcCheckboxRadioSwitch
-      :model-value="commentGrades.includes(grade)"
-      @update:model-value="toggleCommentGrade(grade, $event)"
-    >
-      {{ t('agora', 'Require a justification for this grade') }}
-      <span class="field-hint">{{ t('agora', '(not implemented yet)') }}</span>
-    </NcCheckboxRadioSwitch>
-    <NcButton
-      v-if="(tempConfig.grades || defaultGrades).length > 2"
-      class="grade-remove"
-      :aria-label="t('agora', 'Remove grade')"
-      @click="removeGrade(index)"
-    >
-      <Minus :size="14" />
-    </NcButton>
+        <div class="grades-list">
+          <div
+            v-for="(grade, index) in tempConfig.grades || defaultGrades"
+            :key="index"
+            class="grade-item"
+          >
+            <NcTextField
+              v-model="tempConfig.grades[index]"
+              label-outside
+              :placeholder="t('agora', 'Grade {n}', { n: index + 1 })"
+              class="grade-input"
+            />
+            <NcCheckboxRadioSwitch
+              :model-value="commentGrades.includes(grade)"
+              @update:model-value="toggleCommentGrade(grade, $event)"
+            >
+              {{ t('agora', 'Require a justification for this grade') }}
+              <span class="field-hint">{{ t('agora', '(not implemented yet)') }}</span>
+            </NcCheckboxRadioSwitch>
+            <NcButton
+              v-if="(tempConfig.grades || defaultGrades).length > 2"
+              class="grade-remove"
+              :aria-label="t('agora', 'Remove grade')"
+              @click="removeGrade(index)"
+            >
+              <Minus :size="14" />
+            </NcButton>
           </div>
         </div>
 

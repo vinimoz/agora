@@ -11,7 +11,6 @@ import { useInquiriesStore } from '../stores/inquiries'
 import { usePreferencesStore } from '../stores/preferences'
 import type { InquiryGroup } from '../Types/inquiryGroups.types'
 
-
 export interface AgoraContextTag {
   /** Tag type — e.g. 'locality', 'region', 'campus', 'faculty', 'chapter', 'team' */
   type: string
@@ -117,10 +116,10 @@ export function useUserContext() {
    * Explicit location: prefer preferences, fall back to parsing NC profile string.
    * We DO NOT auto-map a free-form string to a specific group.
    */
-const location = computed<AgoraLocation>(() => {
-  const stored = (prefs.user as any)?.location as Partial<AgoraLocation> | undefined
-  return normalizeLocation(stored, session.currentUser?.location ?? '')
-})
+  const location = computed<AgoraLocation>(() => {
+    const stored = (prefs.user as any)?.location as Partial<AgoraLocation> | undefined
+    return normalizeLocation(stored, session.currentUser?.location ?? '')
+  })
 
   const context = computed<AgoraUserContext>(() => ({
     userId: session.currentUser?.id ?? '',
@@ -166,61 +165,59 @@ export function isValidContextTag(t: unknown): t is AgoraContextTag {
  */
 function normalizeLocation(
   stored: Partial<AgoraLocation> | undefined | null,
-  rawFromProfile: string,
+  rawFromProfile: string
 ): AgoraLocation {
-  const raw =
-    typeof stored?.raw === 'string' && stored.raw.length > 0 ? stored.raw : rawFromProfile
+  const raw = typeof stored?.raw === 'string' && stored.raw.length > 0 ? stored.raw : rawFromProfile
 
   const tags: AgoraContextTag[] = Array.isArray(stored?.tags)
-	  ? stored.tags.filter(isValidContextTag)
-	  : []
+    ? stored.tags.filter(isValidContextTag)
+    : []
 
-	  const spaceSlugs = Array.isArray(stored?.spaceSlugs) ? stored.spaceSlugs : []
+  const spaceSlugs = Array.isArray(stored?.spaceSlugs) ? stored.spaceSlugs : []
 
-	  let locality = typeof stored?.locality === 'string' ? stored.locality : undefined
-	  let region = typeof stored?.region === 'string' ? stored.region : undefined
+  let locality = typeof stored?.locality === 'string' ? stored.locality : undefined
+  let region = typeof stored?.region === 'string' ? stored.region : undefined
 
-	  if (tags.length === 0) {
-		  // Legacy → tags
-		  if (locality) tags.push({ type: 'locality', value: locality })
-		  if (region) tags.push({ type: 'region', value: region })
-	  } else {
-		  // tags → legacy convenience fields
-		  if (!locality) locality = tags.find((t) => t.type === 'locality')?.value
-			  if (!region) region = tags.find((t) => t.type === 'region')?.value
-	  }
+  if (tags.length === 0) {
+    // Legacy → tags
+    if (locality) tags.push({ type: 'locality', value: locality })
+    if (region) tags.push({ type: 'region', value: region })
+  } else {
+    // tags → legacy convenience fields
+    if (!locality) locality = tags.find((t) => t.type === 'locality')?.value
+    if (!region) region = tags.find((t) => t.type === 'region')?.value
+  }
 
   return { raw, tags, locality, region, spaceSlugs }
 }
 
-
 function isUserInGroup(group: InquiryGroup, uid: string, ncGroups: string[]): boolean {
-	if (group.owner?.id === uid) return true
+  if (group.owner?.id === uid) return true
 
-		const cfg = group.configuration
-		if (!cfg) return false
+  const cfg = group.configuration
+  if (!cfg) return false
 
-			if (cfg.visibility === 'groups' && cfg.visibilityGroups?.length) {
-				return cfg.visibilityGroups.some((g) => ncGroups.includes(g))
-			}
-			if (cfg.visibility === 'users' && cfg.visibilityUsers?.length) {
-				return cfg.visibilityUsers.includes(uid)
-			}
-			// 'everyone' → visible but not a "member"; keep it out of spaces
-			return false
+  if (cfg.visibility === 'groups' && cfg.visibilityGroups?.length) {
+    return cfg.visibilityGroups.some((g) => ncGroups.includes(g))
+  }
+  if (cfg.visibility === 'users' && cfg.visibilityUsers?.length) {
+    return cfg.visibilityUsers.includes(uid)
+  }
+  // 'everyone' → visible but not a "member"; keep it out of spaces
+  return false
 }
 
 function toAgoraSpace(group: InquiryGroup, uid: string, ncGroups: string[]): AgoraSpace {
-	let role: AgoraSpace['role'] = 'viewer'
-	if (group.owner?.id === uid) role = 'owner'
-		else if (group.permissions?.edit) role = 'editor'
-			else if (group.permissions?.view) role = 'member'
+  let role: AgoraSpace['role'] = 'viewer'
+  if (group.owner?.id === uid) role = 'owner'
+  else if (group.permissions?.edit) role = 'editor'
+  else if (group.permissions?.view) role = 'member'
 
-				return {
-					id: group.id,
-					slug: group.slug,
-					title: group.title,
-					type: group.type,
-					role,
-				}
+  return {
+    id: group.id,
+    slug: group.slug,
+    title: group.title,
+    type: group.type,
+    role,
+  }
 }

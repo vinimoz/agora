@@ -139,7 +139,7 @@ import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
 import { useSessionStore } from '../../stores/session'
 import type { InquiryGroup } from '../../Types/inquiryGroups.types'
 import type { ToolKey } from '../../Types/experience.types'
-import type { Inquiry, Option  } from '../../Types/index.ts'
+import type { Inquiry, Option } from '../../Types/index.ts'
 
 // Only include tools that are in ALL_TOOLS
 const TOOL_ICON_MAP: Partial<Record<ToolKey, { icon: any; label: string }>> = {

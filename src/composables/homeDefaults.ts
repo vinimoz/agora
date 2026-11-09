@@ -98,11 +98,11 @@ const municipalityDefaults: HomeConfig = {
       },
     ],
   },
-    sectionLabels: {
- 	 news: 'City news',
-	  services: 'Your online services',
- 	 explore: 'Explore / Participate',
-    },
+  sectionLabels: {
+    news: 'City news',
+    services: 'Your online services',
+    explore: 'Explore / Participate',
+  },
 
   promo: {
     title: "Together, let's build tomorrow",
@@ -176,12 +176,12 @@ const universityDefaults: HomeConfig = {
       },
     ],
   },
-    sectionLabels: {
-  news: 'Campus announcements',
-  services: 'Student services',
-  explore: 'Get involved',
-  agenda: 'Academic calendar',
-},
+  sectionLabels: {
+    news: 'Campus announcements',
+    services: 'Student services',
+    explore: 'Get involved',
+    agenda: 'Academic calendar',
+  },
 
   promo: {
     title: 'Get involved in student life',
@@ -189,7 +189,6 @@ const universityDefaults: HomeConfig = {
     cta: 'Explore',
     imageUrl: promoImg,
   },
-
 
   relevance: {
     tiers: [
@@ -256,12 +255,12 @@ const associationDefaults: HomeConfig = {
       },
     ],
   },
-    sectionLabels: {
-  news: 'Association news',
-  services: 'Member services',
-  explore: 'Get involved',
-  agenda: 'Upcoming events',
-},
+  sectionLabels: {
+    news: 'Association news',
+    services: 'Member services',
+    explore: 'Get involved',
+    agenda: 'Upcoming events',
+  },
 
   promo: {
     title: 'Support the association',
@@ -269,7 +268,6 @@ const associationDefaults: HomeConfig = {
     cta: 'Join',
     imageUrl: promoImg,
   },
-
 
   relevance: {
     tiers: [
@@ -337,19 +335,18 @@ const cooperativeDefaults: HomeConfig = {
     ],
   },
 
-    sectionLabels: {
-  news: 'Co-op news',
-  services: 'Member services',
-  explore: 'Get involved',
-  agenda: 'Meetings & assemblies',
-},
+  sectionLabels: {
+    news: 'Co-op news',
+    services: 'Member services',
+    explore: 'Get involved',
+    agenda: 'Meetings & assemblies',
+  },
   promo: {
     title: 'Governance is a shared responsibility',
     text: 'Review the annual report, attend the general assembly, vote on budgets.',
     cta: 'Participate',
     imageUrl: promoImg,
   },
-
 
   relevance: {
     tiers: [
@@ -417,12 +414,12 @@ const companyDefaults: HomeConfig = {
     ],
   },
 
-    	sectionLabels: {
-  news: 'Company announcements',
-  services: 'Employee services',
-  explore: 'Get involved',
-  agenda: 'Events & meetings',
-},
+  sectionLabels: {
+    news: 'Company announcements',
+    services: 'Employee services',
+    explore: 'Get involved',
+    agenda: 'Events & meetings',
+  },
 
   promo: {
     title: 'Your voice shapes the company',

@@ -107,7 +107,7 @@ export const useSupportsStore = defineStore('supports', () => {
   // INTERNAL HELPERS
   // ========================================================================
 
-    /**
+  /**
    * True if the given engine has an engine‑scoped aggregate ballot row.
    *
    * Spec: engine ballots are Case 3 / Case 4 — one row per user per engine,
@@ -130,22 +130,15 @@ export const useSupportsStore = defineStore('supports', () => {
 
         if (targetType === 'option') {
           return supports.value.some(
-            (s) =>
-              s.supportEngineId === engineId &&
-              s.inquiryId === parentId &&
-              s.optionId === 0
+            (s) => s.supportEngineId === engineId && s.inquiryId === parentId && s.optionId === 0
           )
         }
 
         return supports.value.some(
-          (s) =>
-            s.supportEngineId === engineId &&
-            s.inquiryId === 0 &&
-            s.optionId === 0
+          (s) => s.supportEngineId === engineId && s.inquiryId === 0 && s.optionId === 0
         )
       }
   )
-
 
   function setItem(support: Support): void {
     const index = supports.value.findIndex(

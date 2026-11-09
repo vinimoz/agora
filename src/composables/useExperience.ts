@@ -54,7 +54,7 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     allowedDisplays: ['banner', 'cards', 'list'],
     allowedTools: ['search'],
     layout: 'grid',
-    showHeader: false, 
+    showHeader: false,
     showBreadcrumb: false,
     showStats: false,
   },
@@ -68,7 +68,7 @@ export const EXPERIENCE_DEFINITIONS: Record<ExperienceKey, ExperienceDefinition>
     question: 'What is happening here and where can I go?',
     defaultDisplay: 'cards',
     allowedDisplays: ['cards', 'list', 'feed'],
-    allowedTools: ['vote','kanban','timeline'],
+    allowedTools: ['vote', 'kanban', 'timeline'],
     layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
@@ -170,10 +170,8 @@ if (import.meta.env.DEV) {
           `switchDisplay('${def.defaultDisplay}') will silently no-op.`
       )
     }
-
   }
 }
-
 
 // ============================================================
 // COMPOSABLE
@@ -224,15 +222,15 @@ export function useExperience(initialExperience?: ExperienceKey) {
     }
   })
 
-function getAvailableExperiences(): ExperienceKey[] {
-  const allKeys = Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
+  function getAvailableExperiences(): ExperienceKey[] {
+    const allKeys = Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
 
-  // Top-level (no group): every experience is fair game, including `home`.
-  if (!currentGroup.value) return allKeys
+    // Top-level (no group): every experience is fair game, including `home`.
+    if (!currentGroup.value) return allKeys
 
-  // Group context: `home` is the landing page only — never offer it here.
-  return allKeys.filter((key) => key !== 'home')
-}
+    // Group context: `home` is the landing page only — never offer it here.
+    return allKeys.filter((key) => key !== 'home')
+  }
 
   function getAvailableDisplays(): DisplayMode[] {
     return definition.value.allowedDisplays
@@ -263,36 +261,36 @@ function getAvailableExperiences(): ExperienceKey[] {
     }
   }
 
-function switchExperience(key: ExperienceKey) {
-  experience.value = key
-  const def = EXPERIENCE_DEFINITIONS[key]
-  const extra: Record<string, string> = { experience: key }
-  if (def) extra.display = def.defaultDisplay
-  const query = buildQuery(extra)
-  delete query.tool
-  router.push({ query })
-}
-
-function switchDisplay(mode: DisplayMode) {
-  if (!definition.value.allowedDisplays.includes(mode)) return
-  displayMode.value = mode
-  router.push({ query: buildQuery({ display: mode }) })
-}
-
-function toggleTool(tool: ToolKey) {
-  const index = tools.value.indexOf(tool)
-  if (index > -1) tools.value.splice(index, 1)
-  else tools.value.push(tool)
-
-  // Mirror the state change into the URL, matching switchDisplay's contract.
-  const query = buildQuery({})
-  if (tools.value.length > 0) {
-    query.tool = tools.value.join(',')
-  } else {
+  function switchExperience(key: ExperienceKey) {
+    experience.value = key
+    const def = EXPERIENCE_DEFINITIONS[key]
+    const extra: Record<string, string> = { experience: key }
+    if (def) extra.display = def.defaultDisplay
+    const query = buildQuery(extra)
     delete query.tool
+    router.push({ query })
   }
-  router.push({ query })
-}
+
+  function switchDisplay(mode: DisplayMode) {
+    if (!definition.value.allowedDisplays.includes(mode)) return
+    displayMode.value = mode
+    router.push({ query: buildQuery({ display: mode }) })
+  }
+
+  function toggleTool(tool: ToolKey) {
+    const index = tools.value.indexOf(tool)
+    if (index > -1) tools.value.splice(index, 1)
+    else tools.value.push(tool)
+
+    // Mirror the state change into the URL, matching switchDisplay's contract.
+    const query = buildQuery({})
+    if (tools.value.length > 0) {
+      query.tool = tools.value.join(',')
+    } else {
+      delete query.tool
+    }
+    router.push({ query })
+  }
 
   function toggleResources() {
     showResources.value = !showResources.value
@@ -302,38 +300,38 @@ function toggleTool(tool: ToolKey) {
     showComments.value = !showComments.value
   }
 
-watch(
-  () => route.query.experience,
-  (newExp) => {
-    if (newExp && typeof newExp === 'string' && EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]) {
-      experience.value = newExp as ExperienceKey
-      const def = EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]
-      displayMode.value = def.defaultDisplay
-      // Tools are owned by the `tool` watcher below. Only prefill defaults
-      // when the URL is silent about them.
-      if (route.query.tool === undefined) {
-        tools.value = [...def.allowedTools]
+  watch(
+    () => route.query.experience,
+    (newExp) => {
+      if (newExp && typeof newExp === 'string' && EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]) {
+        experience.value = newExp as ExperienceKey
+        const def = EXPERIENCE_DEFINITIONS[newExp as ExperienceKey]
+        displayMode.value = def.defaultDisplay
+        // Tools are owned by the `tool` watcher below. Only prefill defaults
+        // when the URL is silent about them.
+        if (route.query.tool === undefined) {
+          tools.value = [...def.allowedTools]
+        }
       }
     }
-  }
-)
+  )
 
-watch(
-  () => route.query.tool,
-  (newTool) => {
-    if (newTool === undefined) {
-      // No `tool` in URL → fall back to the current experience's defaults.
-      tools.value = [...definition.value.allowedTools]
-      return
-    }
-    if (typeof newTool !== 'string') return
-    const parsed = newTool
-      .split(',')
-      .filter((s): s is ToolKey => (ALL_TOOLS as readonly string[]).includes(s))
-    tools.value = parsed
-  },
-  { immediate: true }
-)
+  watch(
+    () => route.query.tool,
+    (newTool) => {
+      if (newTool === undefined) {
+        // No `tool` in URL → fall back to the current experience's defaults.
+        tools.value = [...definition.value.allowedTools]
+        return
+      }
+      if (typeof newTool !== 'string') return
+      const parsed = newTool
+        .split(',')
+        .filter((s): s is ToolKey => (ALL_TOOLS as readonly string[]).includes(s))
+      tools.value = parsed
+    },
+    { immediate: true }
+  )
   watch(
     () => route.query.display,
     (newDisplay) => {

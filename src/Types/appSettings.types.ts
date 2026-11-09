@@ -24,7 +24,6 @@ export type Group = {
   type: string
 }
 
-
 export interface OrganizationConfig {
   /** Which organization template this deployment (or tenant) uses. */
   type: OrganizationType
@@ -98,7 +97,7 @@ export interface HomeHeroConfig {
   backgroundUrl?: string
   showWeather?: boolean
   weather?: { temp: number; location: string }
-  actions: HeroAction[]   // was: any[]
+  actions: HeroAction[] // was: any[]
 }
 
 export interface HomeConfig {

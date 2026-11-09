@@ -66,9 +66,7 @@ const hasPredefinedType = computed(() => !!(props.inquiryType || props.responseT
 const showStepIndicator = computed(() => !hasPredefinedType.value)
 
 const selectedFamily = ref<string | null>(props.family ?? null)
-const localInquiryType = ref<string>(
-  props.inquiryType?.inquiry_type ?? props.responseType ?? ''
-)
+const localInquiryType = ref<string>(props.inquiryType?.inquiry_type ?? props.responseType ?? '')
 
 const currentStep = ref<WizardStep>(
   hasPredefinedType.value ? 'details' : props.family ? 'type' : 'family'
@@ -308,11 +306,7 @@ function resetInquiry() {
   // Reset the wizard as well
   selectedFamily.value = props.family ?? null
   localInquiryType.value = props.inquiryType?.inquiry_type ?? props.responseType ?? ''
-  currentStep.value = hasPredefinedType.value
-    ? 'details'
-    : props.family
-      ? 'type'
-      : 'family'
+  currentStep.value = hasPredefinedType.value ? 'details' : props.family ? 'type' : 'family'
 }
 </script>
 
@@ -393,7 +387,9 @@ function resetInquiry() {
               <span
                 v-if="family.description"
                 class="family-description"
-              >{{ family.description }}</span>
+              >{{
+                family.description
+              }}</span>
             </NcCheckboxRadioSwitch>
           </div>
         </NcRadioGroup>
@@ -411,7 +407,11 @@ function resetInquiry() {
         </template>
         <p class="step-description">
           <template v-if="selectedFamilyData">
-            {{ t('agora', 'Choose the inquiry type within "{family}".', { family: selectedFamilyData.label }) }}
+            {{
+              t('agora', 'Choose the inquiry type within "{family}".', {
+                family: selectedFamilyData.label,
+              })
+            }}
           </template>
           <template v-else>
             {{ t('agora', 'Select the type of inquiry you want to create.') }}

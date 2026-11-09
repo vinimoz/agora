@@ -24,7 +24,7 @@
         :current-token-weight="tokenWeights[item.id]"
         :total-items="items.length"
         :hide-results="hideResults"
-	:majority-judgment="getItemMajorityJudgment?.(item.id) ?? null"
+        :majority-judgment="getItemMajorityJudgment?.(item.id) ?? null"
         :get-user-vote-value-for-item="getUserVoteValueForItem"
         @vote="(rawItem, value) => $emit('vote', rawItem, value)"
         @approval-toggle="(itemId) => $emit('toggleSelection', itemId)"

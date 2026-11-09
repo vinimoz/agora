@@ -4,11 +4,17 @@
 -->
 
 <template>
-  <div class="experience-renderer" :class="`experience-${experience}`">
+  <div
+    class="experience-renderer"
+    :class="`experience-${experience}`"
+  >
     <!-- ============================================================ -->
     <!-- LOADING STATE                                                -->
     <!-- ============================================================ -->
-    <div v-if="isLoading" class="loading-state">
+    <div
+      v-if="isLoading"
+      class="loading-state"
+    >
       <div class="spinner" />
       <p>{{ t('agora', 'Loading experience…') }}</p>
     </div>
@@ -16,11 +22,20 @@
     <!-- ============================================================ -->
     <!-- ERROR STATE                                                  -->
     <!-- ============================================================ -->
-    <div v-else-if="hasError" class="error-state">
-      <component :is="Icons.AlertCircle" :size="48" />
+    <div
+      v-else-if="hasError"
+      class="error-state"
+    >
+      <component
+        :is="Icons.AlertCircle"
+        :size="48"
+      />
       <h3>{{ t('agora', 'Error loading experience') }}</h3>
       <p>{{ errorMessage }}</p>
-      <NcButton type="primary" @click="emit('retry')">
+      <NcButton
+        type="primary"
+        @click="emit('retry')"
+      >
         {{ t('agora', 'Retry') }}
       </NcButton>
     </div>
@@ -47,8 +62,14 @@
         :style="getZoneStyle(zone)"
       >
         <!-- Zone header -->
-        <div v-if="showZoneHeader(zone)" class="zone-header">
-          <component :is="getZoneHeaderIcon(zone, String(zoneKey))" :size="16" />
+        <div
+          v-if="showZoneHeader(zone)"
+          class="zone-header"
+        >
+          <component
+            :is="getZoneHeaderIcon(zone, String(zoneKey))"
+            :size="16"
+          />
           <span class="zone-title">{{ getZoneLabel(zone, String(zoneKey)) }}</span>
           <span
             v-if="hasZoneData(zone, String(zoneKey)) && isZoneRenderable(zone)"
@@ -85,8 +106,15 @@
           </template>
 
           <!-- Structured empty state -->
-          <div v-else class="zone-empty-state">
-            <component :is="getEmptyIcon(zone)" :size="40" class="empty-icon" />
+          <div
+            v-else
+            class="zone-empty-state"
+          >
+            <component
+              :is="getEmptyIcon(zone)"
+              :size="40"
+              class="empty-icon"
+            />
             <p class="empty-title">
               {{ getEmptyTitle(zone) }}
             </p>
@@ -101,9 +129,16 @@
     <!-- ============================================================ -->
     <!-- STANDARD LAYOUT - Fallback when no architecture defined      -->
     <!-- ============================================================ -->
-    <div v-else class="standard-layout" :class="`layout-${layoutConfig.type}`">
+    <div
+      v-else
+      class="standard-layout"
+      :class="`layout-${layoutConfig.type}`"
+    >
       <!-- Sidebar -->
-      <div v-if="layoutConfig.type === 'sidebar'" class="layout-sidebar">
+      <div
+        v-if="layoutConfig.type === 'sidebar'"
+        class="layout-sidebar"
+      >
         <ExperienceSidebar
           :group="group"
           :inquiries="inquiries"
@@ -120,15 +155,24 @@
       <!-- Main Content -->
       <div class="layout-main">
         <!-- Header -->
-        <div v-if="shouldShowHeader" class="layout-header">
+        <div
+          v-if="shouldShowHeader"
+          class="layout-header"
+        >
           <h1 class="layout-title">
             {{ groupTitle }}
           </h1>
-          <p v-if="groupDescription" class="layout-description">
+          <p
+            v-if="groupDescription"
+            class="layout-description"
+          >
             {{ groupDescription }}
           </p>
 
-          <div v-if="shouldShowStats" class="layout-stats">
+          <div
+            v-if="shouldShowStats"
+            class="layout-stats"
+          >
             <div class="stat-item">
               <span class="stat-value">{{ inquiries ? inquiries.length : 0 }}</span>
               <span class="stat-label">{{ t('agora', 'Inquiries') }}</span>
@@ -153,7 +197,10 @@
               class="inquiries-grid"
               :class="displayModeClass"
             >
-              <template v-for="inquiry in displayedInquiries" :key="inquiry.id">
+              <template
+                v-for="inquiry in displayedInquiries"
+                :key="inquiry.id"
+              >
                 <component
                   :is="getDisplayComponent(displayMode)"
                   v-if="inquiry"
@@ -181,13 +228,26 @@
             </div>
 
             <!-- Empty State -->
-            <div v-else class="empty-state">
-              <component :is="Icons.FolderMultiple" :size="48" />
+            <div
+              v-else
+              class="empty-state"
+            >
+              <component
+                :is="Icons.FolderMultiple"
+                :size="48"
+              />
               <h3>{{ t('agora', 'No inquiries') }}</h3>
               <p>{{ t('agora', 'This group has no inquiries yet') }}</p>
-              <NcButton v-if="canCreateInquiry" type="primary" @click="emit('createInquiry')">
+              <NcButton
+                v-if="canCreateInquiry"
+                type="primary"
+                @click="emit('createInquiry')"
+              >
                 <template #icon>
-                  <component :is="Icons.Plus" :size="18" />
+                  <component
+                    :is="Icons.Plus"
+                    :size="18"
+                  />
                 </template>
                 {{ t('agora', 'Create Inquiry') }}
               </NcButton>
@@ -196,7 +256,10 @@
         </div>
 
         <!-- Comments -->
-        <div v-if="shouldShowComments" class="layout-comments">
+        <div
+          v-if="shouldShowComments"
+          class="layout-comments"
+        >
           <div class="comments-header">
             <h3>{{ t('agora', 'Comments') }}</h3>
             <span class="comments-count">{{ totalComments }}</span>
@@ -210,7 +273,10 @@
         </div>
 
         <!-- Resources -->
-        <div v-if="shouldShowResources" class="layout-resources">
+        <div
+          v-if="shouldShowResources"
+          class="layout-resources"
+        >
           <div>
             <SideBarTabResources
               v-if="selectedInquiry || (inquiries && inquiries[0])"
