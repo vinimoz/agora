@@ -1643,6 +1643,7 @@ OC.L10N.register(
     "Failed to import file: {error}" : "Faili importimine ei õnnestunud: {error}",
     "Not found" : "Ei leidu",
     "No name" : "Nime pole",
+    "Structure" : "Struktuurid",
     "Import Document" : "Impordi dokument",
     "Export as PDF" : "Ekspordi PDF-failina",
     "Workflow" : "Töövoog",
