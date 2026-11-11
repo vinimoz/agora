@@ -4,48 +4,52 @@
 -->
 
 <script setup lang="ts">
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
 
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import EmailAlertIcon from 'vue-material-design-icons/EmailAlert.vue'
-import ShareItem from './ShareItem.vue'
-import BulkMailIcon from 'vue-material-design-icons/EmailMultipleOutline.vue'
+import EmailAlertIcon from "vue-material-design-icons/EmailAlert.vue";
+import ShareItem from "./ShareItem.vue";
+import BulkMailIcon from "vue-material-design-icons/EmailMultipleOutline.vue";
 
-import { ConfigBox } from '../Base/index.ts'
-import { Logger } from '../../helpers/index.ts'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { useSharesStore } from '../../stores/shares.ts'
+import { ConfigBox } from "../Base/index.ts";
+import { Logger } from "../../helpers/index.ts";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { useSharesStore } from "../../stores/shares.ts";
 
-const inquiryStore = useInquiryStore()
-const sharesStore = useSharesStore()
+const inquiryStore = useInquiryStore();
+const sharesStore = useSharesStore();
 
 /**
  *
  */
 async function sendAllInvitations() {
-  const response = await sharesStore.inviteAll({ inquiryId: inquiryStore.id })
+  const response = await sharesStore.inviteAll({ inquiryId: inquiryStore.id });
   if (response.data.sentResult?.sentMails) {
     response.data.sentResult.sentMails.forEach((item) => {
       showSuccess(
-        t('agora', 'Invitation sent to {displayName} ({emailAddress})', {
+        t("agora", "Invitation sent to {displayName} ({emailAddress})", {
           emailAddress: item.emailAddress,
           displayName: item.displayName,
-        })
-      )
-    })
+        }),
+      );
+    });
   }
   if (response.data.sentResult?.abortedMails) {
     response.data.sentResult.abortedMails.forEach((item) => {
-      Logger.error('Mail could not be sent!', { recipient: item })
+      Logger.error("Mail could not be sent!", { recipient: item });
       showError(
-        t('agora', 'Error sending invitation to {displayName} ({emailAddress})', {
-          emailAddress: item.emailAddress,
-          displayName: item.displayName,
-        })
-      )
-    })
+        t(
+          "agora",
+          "Error sending invitation to {displayName} ({emailAddress})",
+          {
+            emailAddress: item.emailAddress,
+            displayName: item.displayName,
+          },
+        ),
+      );
+    });
   }
 }
 </script>

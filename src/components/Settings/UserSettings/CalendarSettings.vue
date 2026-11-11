@@ -4,31 +4,33 @@
 -->
 
 <script setup>
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
 
-import { InputDiv } from '../../Base/index.ts'
-import { usePreferencesStore } from '../../../stores/preferences.ts'
-const preferencesStore = usePreferencesStore()
+import { InputDiv } from "../../Base/index.ts";
+import { usePreferencesStore } from "../../../stores/preferences.ts";
+const preferencesStore = usePreferencesStore();
 
 const calendarChoices = computed(() =>
   preferencesStore.availableCalendars.map((calendar) => ({
     key: calendar.key.toString(),
     name: calendar.name,
     displayColor: calendar.displayColor,
-    selected: preferencesStore.user.checkCalendars.includes(calendar.key.toString()),
-  }))
-)
+    selected: preferencesStore.user.checkCalendars.includes(
+      calendar.key.toString(),
+    ),
+  })),
+);
 
 const clickedCalendar = (calendar) => {
   if (preferencesStore.user.checkCalendars.includes(calendar.key)) {
-    preferencesStore.removeCheckCalendar(calendar)
+    preferencesStore.removeCheckCalendar(calendar);
   } else {
-    preferencesStore.addCheckCalendar(calendar)
+    preferencesStore.addCheckCalendar(calendar);
   }
-}
+};
 </script>
 
 <template>
@@ -39,14 +41,14 @@ const clickedCalendar = (calendar) => {
         type="switch"
         @update:model-value="preferencesStore.write()"
       >
-        {{ t('agora', 'Use calendar lookup for conflicting calendar events') }}
+        {{ t("agora", "Use calendar lookup for conflicting calendar events") }}
       </NcCheckboxRadioSwitch>
 
       <div
         v-show="preferencesStore.user.calendarPeek"
         class="settings_details"
       >
-        {{ t('agora', 'Select the calendars to use for lookup') }}
+        {{ t("agora", "Select the calendars to use for lookup") }}
 
         <div
           v-for="calendar in calendarChoices"
@@ -74,7 +76,7 @@ const clickedCalendar = (calendar) => {
         :label="
           t(
             'inquiries',
-            'Specify in which period (in hours) before the option existing appointments should be included in the search results.'
+            'Specify in which period (in hours) before the option existing appointments should be included in the search results.',
           )
         "
         type="number"
@@ -93,7 +95,7 @@ const clickedCalendar = (calendar) => {
         :label="
           t(
             'inquiries',
-            'Specify in which period (in hours) after the option existing appointments should be included in the search results.'
+            'Specify in which period (in hours) after the option existing appointments should be included in the search results.',
           )
         "
         type="number"

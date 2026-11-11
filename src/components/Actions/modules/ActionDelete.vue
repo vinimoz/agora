@@ -4,88 +4,101 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t, n } from '@nextcloud/l10n'
+import { ref, computed } from "vue";
+import { t, n } from "@nextcloud/l10n";
 
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import DeleteIcon from 'vue-material-design-icons/Delete.vue'
-import RestoreIcon from 'vue-material-design-icons/Recycle.vue'
-import LockIcon from 'vue-material-design-icons/Lock.vue'
-import UndoIcon from 'vue-material-design-icons/ArrowULeftTop.vue'
+import DeleteIcon from "vue-material-design-icons/Delete.vue";
+import RestoreIcon from "vue-material-design-icons/Recycle.vue";
+import LockIcon from "vue-material-design-icons/Lock.vue";
+import UndoIcon from "vue-material-design-icons/ArrowULeftTop.vue";
 
 interface Props {
-  timeout?: number
-  name?: string
-  iconSize?: number
-  restore?: boolean
-  lock?: boolean
+  timeout?: number;
+  name?: string;
+  iconSize?: number;
+  restore?: boolean;
+  lock?: boolean;
 }
 
 const {
   timeout = 4,
-  name = t('agora', 'Delete'),
+  name = t("agora", "Delete"),
   iconSize = 20,
   restore = false,
   lock = false,
-} = defineProps<Props>()
+} = defineProps<Props>();
 
-const deleteInterval = ref<null | NodeJS.Timeout>(null)
-const deleteTimeout = ref<null | NodeJS.Timeout>(null)
-const countdown = ref(4)
+const deleteInterval = ref<null | ReturnType<typeof setInterval>>(null);
+const deleteTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
+
+const countdown = ref(4);
 
 const countdownTitle = computed(() =>
   n(
-    'inquiries',
-    'Deleting in {countdown} second',
-    'Deleting in {countdown} seconds',
+    "inquiries",
+    "Deleting in {countdown} second",
+    "Deleting in {countdown} seconds",
     countdown.value,
-    { countdown: countdown.value }
-  )
-)
+    { countdown: countdown.value },
+  ),
+);
 
-const computedTitle = computed(() => (deleteTimeout.value ? countdownTitle.value : name))
+const computedTitle = computed(() =>
+  deleteTimeout.value ? countdownTitle.value : name,
+);
 
-const emit = defineEmits(['delete', 'restore'])
+const emit = defineEmits(["delete", "restore"]);
 
 function deleteItem(): void {
   // delete immediately
   if (timeout === 0) {
-    emit('delete')
-    return
+    emit("delete");
+    return;
   }
 
-  countdown.value = timeout
+  countdown.value = timeout;
 
   deleteInterval.value = setInterval(() => {
-    countdown.value -= 1
+    countdown.value -= 1;
     if (countdown.value < 0) {
-      countdown.value = 0
+      countdown.value = 0;
     }
-  }, 1000)
+  }, 1000);
 
   deleteTimeout.value = setTimeout(() => {
-    emit('delete')
-    deleteTimeout.value = null
-    deleteInterval.value = null
-    countdown.value = timeout
-  }, timeout * 1000)
+    emit("delete");
+    deleteTimeout.value = null;
+    deleteInterval.value = null;
+    countdown.value = timeout;
+  }, timeout * 1000);
 }
 
 function cancelDelete(): void {
-  clearTimeout(deleteTimeout.value as NodeJS.Timeout)
-  clearInterval(deleteInterval.value as NodeJS.Timeout)
-  deleteTimeout.value = null
-  deleteInterval.value = null
-  countdown.value = timeout
+  if (deleteTimeout.value !== null) {
+    clearTimeout(deleteTimeout.value);
+  }
+
+  if (deleteInterval.value !== null) {
+    clearInterval(deleteInterval.value);
+  }
+  deleteTimeout.value = null;
+  deleteInterval.value = null;
+  countdown.value = timeout;
 }
 
 function restoreItem(): void {
-  clearTimeout(deleteTimeout.value as NodeJS.Timeout)
-  clearInterval(deleteInterval.value as NodeJS.Timeout)
-  deleteTimeout.value = null
-  deleteInterval.value = null
-  emit('restore')
+  if (deleteTimeout.value !== null) {
+    clearTimeout(deleteTimeout.value);
+  }
+
+  if (deleteInterval.value !== null) {
+    clearInterval(deleteInterval.value);
+  }
+  deleteTimeout.value = null;
+  deleteInterval.value = null;
+  emit("restore");
 }
 </script>
 

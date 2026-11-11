@@ -4,127 +4,131 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import { useInquiryGroupStore } from '../../stores/inquiryGroup.ts'
-import { useSessionStore } from '../../stores/session'
-import { useAttachmentsStore } from '../../stores/attachments'
+import { ref, computed, onMounted, watch, onUnmounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcTextArea from "@nextcloud/vue/components/NcTextArea";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import { useInquiryGroupStore } from "../../stores/inquiryGroup.ts";
+import { useAttachmentsStore } from "../../stores/attachments";
 import {
   createInquiryGroupContext,
   canModifyInquiryGroup,
   canManageGroupPermissions,
   UserType,
-} from '../../utils/permissions.ts'
+} from "../../utils/permissions.ts";
 
-import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
 
 // Emits
 const emit = defineEmits<{
-  saved: []
-}>()
+  saved: [];
+}>();
 
 // Stores
-const inquiryGroupStore = useInquiryGroupStore()
-const sessionStore = useSessionStore()
-const attachmentsStore = useAttachmentsStore()
+const inquiryGroupStore = useInquiryGroupStore();
+const attachmentsStore = useAttachmentsStore();
 
 // State
-const loading = ref(false)
-const autoSaving = ref(false)
-const imageFileInput = ref<HTMLInputElement | null>(null)
-const currentCoverUrl = ref('')
+const loading = ref(false);
+const autoSaving = ref(false);
+const imageFileInput = ref<HTMLInputElement | null>(null);
+const currentCoverUrl = ref("");
 
 // Auto-save debouncing
-let saveTimeout: NodeJS.Timeout | null = null
-let lastSaveData = ''
+const saveTimeout = ref<Record<string, ReturnType<typeof setTimeout>>>({});
+let lastSaveData = "";
 
 // Form validation
 const formErrors = ref({
-  title: '',
-  titleExt: '',
-  description: '',
-})
+  title: "",
+  titleExt: "",
+  description: "",
+});
 
 const isProtected = computed({
   get: () => inquiryGroupStore.configuration.protected,
   set: (value: boolean) => {
-    inquiryGroupStore.configuration.protected = value
+    inquiryGroupStore.configuration.protected = value;
   },
-})
+});
 
 // Computed
 const availableGroupStatuses = computed(() => [
-  { id: 'draft', label: t('agora', 'Draft'), icon: StatusIcons.Draft },
-  { id: 'active', label: t('agora', 'Active'), icon: StatusIcons.Active },
-  { id: 'archived', label: t('agora', 'Archived'), icon: StatusIcons.Archived },
-])
+  { id: "draft", label: t("agora", "Draft"), icon: StatusIcons.Draft },
+  { id: "active", label: t("agora", "Active"), icon: StatusIcons.Active },
+  { id: "archived", label: t("agora", "Archived"), icon: StatusIcons.Archived },
+]);
 
 const permissionContext = computed(() => {
   try {
-    return createInquiryGroupContext(inquiryGroupStore)
+    return createInquiryGroupContext(inquiryGroupStore);
   } catch (e) {
-    console.warn('Failed to build group permission context', e)
-    return null
+    console.warn("Failed to build group permission context", e);
+    return null;
   }
-})
+});
 
 const canEditFromContext = computed(() => {
-  const ctx = permissionContext.value
-  if (!ctx) return false
+  const ctx = permissionContext.value;
+  if (!ctx) return false;
 
   // owner / admin always bypass the lock so they can unlock
   if (ctx.isOwner || ctx.userType === UserType.Admin) {
-    return canModifyInquiryGroup(ctx)
+    return canModifyInquiryGroup(ctx);
   }
 
   // everyone else needs both the capability AND an unlocked group
-  return canModifyInquiryGroup(ctx) && !inquiryGroupStore.configuration.protected
-})
+  return (
+    canModifyInquiryGroup(ctx) && !inquiryGroupStore.configuration.protected
+  );
+});
 
 const statusOptions = computed(() =>
   availableGroupStatuses.value.map((status) => ({
     id: status.id,
     label: status.label,
-  }))
-)
+  })),
+);
 
 // Methods
 const loadGroup = async () => {
-  if (!inquiryGroupStore.id) return
+  if (!inquiryGroupStore.id) return;
 
-  loading.value = true
+  loading.value = true;
   try {
-    await inquiryGroupStore.load(inquiryGroupStore.id)
+    await inquiryGroupStore.load(inquiryGroupStore.id);
 
     // Load cover image
     if (inquiryGroupStore.coverId) {
-      currentCoverUrl.value = getNextcloudPreviewUrl(inquiryGroupStore.coverId)
+      currentCoverUrl.value = getNextcloudPreviewUrl(inquiryGroupStore.coverId);
     }
 
     // Initialize last save data
-    lastSaveData = JSON.stringify(getSaveableData())
+    lastSaveData = JSON.stringify(getSaveableData());
   } catch (error) {
-    console.error('Failed to load group:', error)
-    showError(t('agora', 'Failed to load group data'))
+    console.error("Failed to load group:", error);
+    showError(t("agora", "Failed to load group data"));
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
-const getNextcloudPreviewUrl = (fileId: number, x: number = 400, y: number = 200) => {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=1`
-}
+const getNextcloudPreviewUrl = (
+  fileId: number,
+  x: number = 400,
+  y: number = 200,
+) => {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=1`;
+};
 
 const triggerImageUpload = () => {
-  if (!canEditFromContext.value) return
-  imageFileInput.value?.click()
-}
+  if (!canEditFromContext.value) return;
+  imageFileInput.value?.click();
+};
 
 const getSaveableData = () => ({
   title: inquiryGroupStore.title.trim(),
@@ -134,208 +138,231 @@ const getSaveableData = () => ({
   expire: inquiryGroupStore.expire,
   coverId: inquiryGroupStore.coverId,
   protected: inquiryGroupStore.configuration.protected,
-})
+});
 
 /**
  * Upload a single file and add to attachments list
  * @param event
  */
 const handleImageUpload = async (event: Event) => {
-  if (!canEditFromContext.value) return
+  if (!canEditFromContext.value) return;
 
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (!file) return
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
 
-  if (!file.type.startsWith('image/')) {
-    showError(t('agora', 'Please select an image file'))
-    return
+  if (!file.type.startsWith("image/")) {
+    showError(t("agora", "Please select an image file"));
+    return;
   }
 
   // Check image size 5Mb max
-  const maxSize = 5 * 1024 * 1024
+  const maxSize = 5 * 1024 * 1024;
   if (file.size > maxSize) {
-    showError(t('agora', 'Image size should be less than 5mb'))
-    return
+    showError(t("agora", "Image size should be less than 5mb"));
+    return;
   }
 
   try {
-    autoSaving.value = true
+    autoSaving.value = true;
 
-    const response = await attachmentsStore.uploadGroup(inquiryGroupStore.id, file, true)
+    const response = await attachmentsStore.uploadGroup(
+      inquiryGroupStore.id,
+      file,
+      true,
+    );
 
     const attachment = {
-      id: response.id ?? `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id:
+        response.id ??
+        `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: response.name ?? file.name,
       size: response.size ?? file.size,
       fileId: response.fileId ?? undefined,
       mimeType: response.mimeType ?? undefined,
-    }
+    };
 
     // Use immutable update for better reactivity
-    attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
-    currentCoverUrl.value = getNextcloudPreviewUrl(attachment.fileId as number)
-    inquiryGroupStore.coverId = attachment.fileId as number
+    attachmentsStore.attachments = [
+      ...attachmentsStore.attachments,
+      attachment,
+    ];
+    currentCoverUrl.value = getNextcloudPreviewUrl(attachment.fileId as number);
+    inquiryGroupStore.coverId = attachment.fileId as number;
 
     // Auto-save after image upload
-    await autoSaveGroup()
-    showSuccess(t('agora', '{file} uploaded', { file: response.name ?? file.name }))
+    await autoSaveGroup();
+    showSuccess(
+      t("agora", "{file} uploaded", { file: response.name ?? file.name }),
+    );
   } catch (error) {
-    console.error('Failed to upload image:', error)
-    showError(t('agora', 'Failed to upload cover image'))
-    throw error
+    console.error("Failed to upload image:", error);
+    showError(t("agora", "Failed to upload cover image"));
+    throw error;
   } finally {
-    autoSaving.value = false
+    autoSaving.value = false;
     if (imageFileInput.value) {
-      imageFileInput.value.value = ''
+      imageFileInput.value.value = "";
     }
   }
-}
+};
 
 const validateForm = () => {
-  let isValid = true
-  formErrors.value = { title: '', titleExt: '', description: '' }
+  let isValid = true;
+  formErrors.value = { title: "", titleExt: "", description: "" };
 
   if (!inquiryGroupStore.title.trim()) {
-    formErrors.value.title = t('agora', 'Group title is required')
-    isValid = false
+    formErrors.value.title = t("agora", "Group title is required");
+    isValid = false;
   } else if (inquiryGroupStore.title.length > 200) {
-    formErrors.value.title = t('agora', 'Title must be less than 200 characters')
-    isValid = false
+    formErrors.value.title = t(
+      "agora",
+      "Title must be less than 200 characters",
+    );
+    isValid = false;
   }
 
   if (inquiryGroupStore.titleExt.length > 200) {
-    formErrors.value.titleExt = t('agora', 'Extended title must be less than 200 characters')
-    isValid = false
+    formErrors.value.titleExt = t(
+      "agora",
+      "Extended title must be less than 200 characters",
+    );
+    isValid = false;
   }
 
   if (inquiryGroupStore.description.length > 1000) {
-    formErrors.value.description = t('agora', 'Description must be less than 1000 characters')
-    isValid = false
+    formErrors.value.description = t(
+      "agora",
+      "Description must be less than 1000 characters",
+    );
+    isValid = false;
   }
 
-  return isValid
-}
+  return isValid;
+};
 
 const autoSaveGroup = async () => {
-  if (!canEditFromContext.value) return
+  if (!canEditFromContext.value) return;
 
   if (!validateForm()) {
-    return
+    return;
   }
 
   // Check if there are actual changes
-  const currentData = JSON.stringify(getSaveableData())
+  const currentData = JSON.stringify(getSaveableData());
   if (currentData === lastSaveData) {
-    return // No changes to save
+    return; // No changes to save
   }
 
   // Clear any existing timeout
-  if (saveTimeout) {
-    clearTimeout(saveTimeout)
-    saveTimeout = null
+  if (saveTimeout.value) {
+    clearTimeout(saveTimeout);
+    saveTimeout.value = null;
   }
 
-  autoSaving.value = true
+  autoSaving.value = true;
   try {
-    await inquiryGroupStore.update(getSaveableData())
+    await inquiryGroupStore.update(getSaveableData());
 
     // Update last saved data
-    lastSaveData = currentData
+    lastSaveData = currentData;
 
     // Show success feedback (optional, you might want to show this less frequently)
     // showSuccess(t('agora', 'Settings saved'))
-    emit('saved')
+    emit("saved");
   } catch (error) {
-    console.error('Failed to save group:', error)
-    showError(t('agora', 'Failed to save settings'))
+    console.error("Failed to save group:", error);
+    showError(t("agora", "Failed to save settings"));
   } finally {
-    autoSaving.value = false
+    autoSaving.value = false;
   }
-}
+};
 
 const debouncedSave = () => {
-  if (!canEditFromContext.value) return
+  if (!canEditFromContext.value) return;
 
   // Clear any existing timeout
-  if (saveTimeout) {
-    clearTimeout(saveTimeout)
+  if (saveTimeout.value) {
+    clearTimeout(saveTimeout);
   }
 
   // Set new timeout for auto-save (1 second delay)
-  saveTimeout = setTimeout(() => {
-    autoSaveGroup()
-  }, 1000)
-}
+  saveTimeout.value = setTimeout(() => {
+    autoSaveGroup();
+  }, 1000);
+};
 
 const removeCoverImage = async () => {
-  if (!canEditFromContext.value) return
+  if (!canEditFromContext.value) return;
 
   try {
-    autoSaving.value = true
-    currentCoverUrl.value = ''
-    inquiryGroupStore.coverId = null
+    autoSaving.value = true;
+    currentCoverUrl.value = "";
+    inquiryGroupStore.coverId = null;
 
     // Auto-save after removing cover image
-    await autoSaveGroup()
-    showSuccess(t('agora', 'Cover image removed'))
+    await autoSaveGroup();
+    showSuccess(t("agora", "Cover image removed"));
   } catch (error) {
-    console.error('Failed to remove cover image:', error)
-    showError(t('agora', 'Failed to remove cover image'))
+    console.error("Failed to remove cover image:", error);
+    showError(t("agora", "Failed to remove cover image"));
   } finally {
-    autoSaving.value = false
+    autoSaving.value = false;
   }
-}
+};
 
 const formatDate = (timestamp: number | null) => {
-  if (!timestamp) return t('agora', 'Never')
-  return new Date(timestamp * 1000).toLocaleDateString()
-}
+  if (!timestamp) return t("agora", "Never");
+  return new Date(timestamp * 1000).toLocaleDateString();
+};
 
 const getFormFieldState = (field: keyof typeof formErrors) => ({
   error: !!formErrors.value[field],
   success:
-    !formErrors.value[field] && inquiryGroupStore[field as keyof typeof inquiryGroupStore]
+    !formErrors.value[field] &&
+    inquiryGroupStore[field as keyof typeof inquiryGroupStore]
       ? true
       : undefined,
   helperText: formErrors.value[field],
-})
+});
 
 // Watchers for auto-save
-watch(() => inquiryGroupStore.title, debouncedSave, { deep: true })
-watch(() => inquiryGroupStore.titleExt, debouncedSave, { deep: true })
-watch(() => inquiryGroupStore.description, debouncedSave, { deep: true })
-watch(() => inquiryGroupStore.status.groupStatus, debouncedSave, { deep: true })
-watch(() => inquiryGroupStore.expire, debouncedSave, { deep: true })
-watch(() => inquiryGroupStore.coverId, debouncedSave, { deep: true })
-watch(() => inquiryGroupStore.configuration.protected, debouncedSave)
+watch(() => inquiryGroupStore.title, debouncedSave, { deep: true });
+watch(() => inquiryGroupStore.titleExt, debouncedSave, { deep: true });
+watch(() => inquiryGroupStore.description, debouncedSave, { deep: true });
+watch(() => inquiryGroupStore.status.groupStatus, debouncedSave, {
+  deep: true,
+});
+watch(() => inquiryGroupStore.expire, debouncedSave, { deep: true });
+watch(() => inquiryGroupStore.coverId, debouncedSave, { deep: true });
+watch(() => inquiryGroupStore.configuration.protected, debouncedSave);
 
 // Cleanup on unmount
 onUnmounted(() => {
-  if (saveTimeout) {
-    clearTimeout(saveTimeout)
+  if (saveTimeout.value) {
+    clearTimeout(saveTimeout);
   }
-})
+});
 
 // Lifecycle
 onMounted(() => {
-  loadGroup()
-})
+  loadGroup();
+});
 </script>
 
 <template>
   <div class="inquiry-group-sidebar-settings">
     <!-- Header -->
     <div class="sidebar-header">
-      <h2>{{ t('agora', 'Group configuration') }}</h2>
+      <h2>{{ t("agora", "Group configuration") }}</h2>
       <p class="subtitle">
-        {{ inquiryGroupStore.title || t('agora', 'Untitled group') }}
+        {{ inquiryGroupStore.title || t("agora", "Untitled group") }}
       </p>
       <div
         v-if="!canEditFromContext"
         class="readonly-notice"
       >
         <component :is="InquiryGeneralIcons.AlertCircle" />
-        <span>{{ t('agora', 'Read-only mode') }}</span>
+        <span>{{ t("agora", "Read-only mode") }}</span>
       </div>
     </div>
 
@@ -346,17 +373,22 @@ onMounted(() => {
     >
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Status" />
-        {{ t('agora', 'Locking') }}
+        {{ t("agora", "Locking") }}
       </h3>
       <NcCheckboxRadioSwitch
         v-model="isProtected"
         type="switch"
         :disabled="autoSaving"
       >
-        {{ t('agora', 'Protected mode') }}
+        {{ t("agora", "Protected mode") }}
       </NcCheckboxRadioSwitch>
       <p class="form-help">
-        {{ t('agora', 'When on, only you and administrators can edit this group.') }}
+        {{
+          t(
+            "agora",
+            "When on, only you and administrators can edit this group.",
+          )
+        }}
       </p>
     </div>
 
@@ -364,7 +396,7 @@ onMounted(() => {
     <div class="settings-section">
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Image" />
-        {{ t('agora', 'Cover image') }}
+        {{ t("agora", "Cover image") }}
       </h3>
 
       <div class="cover-section">
@@ -398,14 +430,14 @@ onMounted(() => {
               class="change-cover-btn"
             >
               <component :is="InquiryGeneralIcons.Edit" />
-              {{ t('agora', 'Change') }}
+              {{ t("agora", "Change") }}
             </NcButton>
             <NcButton
               type="error"
               class="remove-cover-btn"
               @click.stop="removeCoverImage"
             >
-              {{ t('agora', 'Remove') }}
+              {{ t("agora", "Remove") }}
             </NcButton>
           </div>
         </div>
@@ -426,16 +458,16 @@ onMounted(() => {
               class="add-cover-btn"
               :disabled="!canEditFromContext || autoSaving"
             >
-              {{ t('agora', 'Add cover image') }}
+              {{ t("agora", "Add cover image") }}
             </NcButton>
             <p class="placeholder-text">
-              {{ t('agora', 'Click to add a cover image') }}
+              {{ t("agora", "Click to add a cover image") }}
             </p>
           </div>
         </div>
 
         <p class="cover-help">
-          {{ t('agora', 'Recommended size: 1200×400 pixels') }}
+          {{ t("agora", "Recommended size: 1200×400 pixels") }}
         </p>
       </div>
     </div>
@@ -444,7 +476,7 @@ onMounted(() => {
     <div class="settings-section">
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Title" />
-        {{ t('agora', 'Basic information') }}
+        {{ t("agora", "Basic information") }}
       </h3>
 
       <div class="form-fields">
@@ -488,7 +520,7 @@ onMounted(() => {
     <div class="settings-section">
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Description" />
-        {{ t('agora', 'Description') }}
+        {{ t("agora", "Description") }}
       </h3>
 
       <div class="form-group">
@@ -515,14 +547,14 @@ onMounted(() => {
     <div class="settings-section">
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Status" />
-        {{ t('agora', 'Status & settings') }}
+        {{ t("agora", "Status & settings") }}
       </h3>
 
       <div class="form-fields">
         <!-- Status Field -->
         <div class="form-group full-width">
           <label class="form-label">
-            {{ t('agora', 'Status') }}
+            {{ t("agora", "Status") }}
           </label>
           <NcSelect
             v-model="inquiryGroupStore.status.groupStatus"
@@ -534,7 +566,7 @@ onMounted(() => {
             class="form-select"
           />
           <p class="form-help">
-            {{ t('agora', 'Current status of the group') }}
+            {{ t("agora", "Current status of the group") }}
           </p>
         </div>
 
@@ -544,7 +576,7 @@ onMounted(() => {
           class="form-group full-width"
         >
           <label class="form-label">
-            {{ t('agora', 'Expiration') }}
+            {{ t("agora", "Expiration") }}
           </label>
           <div class="expiration-info">
             <p>{{ formatDate(inquiryGroupStore.expire) }}</p>
@@ -554,7 +586,7 @@ onMounted(() => {
               :disabled="!canEditFromContext || autoSaving"
               @click="inquiryGroupStore.expire = null"
             >
-              {{ t('agora', 'Remove expiration') }}
+              {{ t("agora", "Remove expiration") }}
             </NcButton>
           </div>
         </div>
@@ -571,14 +603,14 @@ onMounted(() => {
         class="saving-indicator"
       >
         <div class="saving-spinner" />
-        <span>{{ t('agora', 'Saving changes …') }}</span>
+        <span>{{ t("agora", "Saving changes …") }}</span>
       </div>
       <div
         v-else
         class="saved-indicator"
       >
         <component :is="InquiryGeneralIcons.CheckCircle" />
-        <span>{{ t('agora', 'Changes saved') }}</span>
+        <span>{{ t("agora", "Changes saved") }}</span>
       </div>
     </div>
 
@@ -589,7 +621,7 @@ onMounted(() => {
     >
       <div class="loading-content">
         <div class="loading-spinner" />
-        <p>{{ t('agora', 'Loading group settings …') }}</p>
+        <p>{{ t("agora", "Loading group settings …") }}</p>
       </div>
     </div>
   </div>

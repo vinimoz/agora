@@ -4,23 +4,23 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref } from "vue";
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { useRouter } from 'vue-router'
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { useRouter } from "vue-router";
 
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
 
-import { useInquiriesStore } from '../../stores/inquiries.ts'
-import { Inquiry } from '../../stores/inquiry.ts'
+import { useInquiriesStore } from "../../stores/inquiries.ts";
+import { Inquiry } from "../../stores/inquiry.ts";
 
-import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue'
-import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue'
-import ArchiveRestoreInquiryDialog from '../Modals/ArchiveRestoreInquiryDialog.vue'
+import DeleteInquiryDialog from "../Modals/DeleteInquiryDialog.vue";
+import TransferInquiryDialog from "../Modals/TransferInquiryDialog.vue";
+import ArchiveRestoreInquiryDialog from "../Modals/ArchiveRestoreInquiryDialog.vue";
 
 import {
   canArchive,
@@ -28,49 +28,51 @@ import {
   canDelete,
   canTransfer,
   createInquiryContext,
-} from '../../utils/permissions.ts'
+} from "../../utils/permissions.ts";
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
-const { inquiry } = defineProps<{ inquiry: Inquiry }>()
+const { inquiry } = defineProps<{ inquiry: Inquiry }>();
 
-defineOptions({ inheritAttrs: false })
+defineOptions({ inheritAttrs: false });
 
-const inquiriesStore = useInquiriesStore()
-const isNavigating = ref(false)
-const showDeleteDialog = ref(false)
-const showTransferDialog = ref(false)
-const showArchiveRestoreDialog = ref(false)
-const subMenu = ref<'addToGroup' | 'removeFromGroup' | null>(null)
+const inquiriesStore = useInquiriesStore();
+const isNavigating = ref(false);
+const showDeleteDialog = ref(false);
+const showTransferDialog = ref(false);
+const showArchiveRestoreDialog = ref(false);
+const subMenu = ref<"addToGroup" | "removeFromGroup" | null>(null);
 // const subMenu = ref(true)
 
 // Context for permissions
-const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
-const router = useRouter()
+const context = computed(() =>
+  createInquiryContext(inquiry, sessionStore.appSettings),
+);
+const router = useRouter();
 
 const emit = defineEmits<{
-  deleted: []
-}>()
+  deleted: [];
+}>();
 
 const onInquiryDeleted = () => {
-  showSuccess(t('agora', 'Inquiry successfully deleted'))
-  emit('deleted') // Emit to parent
+  showSuccess(t("agora", "Inquiry successfully deleted"));
+  emit("deleted"); // Emit to parent
   router
     .push({
-      name: 'list',
-      params: { type: 'relevant' },
-      query: { viewMode: 'view' },
+      name: "list",
+      params: { type: "relevant" },
+      query: { viewMode: "view" },
     })
     .finally(() => {
-      isNavigating.value = false
-    })
-}
+      isNavigating.value = false;
+    });
+};
 
 async function toggleArchive() {
   try {
-    await inquiriesStore.toggleArchive({ inquiryId: inquiry.id })
+    await inquiriesStore.toggleArchive({ inquiryId: inquiry.id });
   } catch {
-    showError(t('agora', 'Error archiving or restoring the  inquiry'))
+    showError(t("agora", "Error archiving or restoring the  inquiry"));
   }
 }
 </script>

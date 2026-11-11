@@ -18,144 +18,156 @@
     <template #option="item">
       <div class="search-option-item">
         <span class="item-id">#{{ item.id }}</span>
-        <span class="item-title">{{ item.title || item.label || t('agora', 'Untitled') }}</span>
+        <span class="item-title">{{
+          item.title || item.label || t("agora", "Untitled")
+        }}</span>
       </div>
     </template>
     <template #selected-option="item">
       <div class="selected-option">
         <span class="item-id">#{{ item.id }}</span>
-        <span class="item-title">{{ item.title || item.label || t('agora', 'Untitled') }}</span>
+        <span class="item-title">{{
+          item.title || item.label || t("agora", "Untitled")
+        }}</span>
       </div>
     </template>
     <template #no-options>
-      {{ t('agora', 'No results found') }}
+      {{ t("agora", "No results found") }}
     </template>
   </NcSelect>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import { useOptionsStore } from '../../../stores/options'
-import { useInquiriesStore } from '../../../stores/inquiries'
-import { useSearch } from '../../../composables/useSearch'
-import type { Option, Inquiry } from '../../../Types'
+import { ref, watch, computed, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import { useOptionsStore } from "../../../stores/options";
+import { useInquiriesStore } from "../../../stores/inquiries";
+import { useSearch } from "../../../composables/useSearch";
+import type { Option, Inquiry } from "../../../Types";
 
 const props = defineProps<{
-  modelValue?: Option | Inquiry | null | string | number
-  type: 'options' | 'inquiries'
-  placeholder?: string
-  inquiryId?: number
-  clearable?: boolean
-  closeOnSelect?: boolean
+  modelValue?: Option | Inquiry | null | string | number;
+  type: "options" | "inquiries";
+  placeholder?: string;
+  inquiryId?: number;
+  clearable?: boolean;
+  closeOnSelect?: boolean;
   /** Legacy: restrict to these Options (ignored for `inquiries`). */
-  availableOptions?: Option[]
+  availableOptions?: Option[];
   /**
    * Restrict results to these ids. Works for both `options` and `inquiries`.
    * Pass an empty array to mean "nothing is available".
    */
-  availableItemIds?: number[]
-}>()
+  availableItemIds?: number[];
+}>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: Option | Inquiry | null]
-  selected: [item: Option | Inquiry]
-}>()
+  "update:modelValue": [value: Option | Inquiry | null];
+  selected: [item: Option | Inquiry];
+}>();
 
-const optionsStore = useOptionsStore()
-const inquiriesStore = useInquiriesStore()
-const { query, results } = useSearch(props.type, props.inquiryId)
+const optionsStore = useOptionsStore();
+const inquiriesStore = useInquiriesStore();
+const { query, results } = useSearch(props.type, props.inquiryId);
 
-const selected = ref<Option | Inquiry | null>(null)
-const isSearching = ref(false)
-const localOptions = ref<(Option | Inquiry)[]>([])
+const selected = ref<Option | Inquiry | null>(null);
+const isSearching = ref(false);
+const localOptions = ref<(Option | Inquiry)[]>([]);
 
 onMounted(() => {
-  localOptions.value = props.type === 'options' ? optionsStore.options : inquiriesStore.inquiries
-})
+  localOptions.value =
+    props.type === "options" ? optionsStore.options : inquiriesStore.inquiries;
+});
 
 const initSelected = () => {
-  const val = props.modelValue
+  const val = props.modelValue;
   if (!val) {
-    selected.value = null
-    return
+    selected.value = null;
+    return;
   }
 
-  if (typeof val === 'string' || typeof val === 'number') {
-    const id = typeof val === 'string' ? parseInt(val) : val
-    if (props.type === 'options') {
-      selected.value = optionsStore.options.find((opt) => opt.id === id) || null
+  if (typeof val === "string" || typeof val === "number") {
+    const id = typeof val === "string" ? parseInt(val) : val;
+    if (props.type === "options") {
+      selected.value =
+        optionsStore.options.find((opt) => opt.id === id) || null;
     } else {
-      selected.value = inquiriesStore.inquiries.find((inq) => inq.id === id) || null
+      selected.value =
+        inquiriesStore.inquiries.find((inq) => inq.id === id) || null;
     }
-  } else if (typeof val === 'object' && val !== null) {
-    selected.value = val as Option | Inquiry
+  } else if (typeof val === "object" && val !== null) {
+    selected.value = val as Option | Inquiry;
   } else {
-    selected.value = null
+    selected.value = null;
   }
-}
+};
 
 watch(
   () => props.modelValue,
   () => {
-    initSelected()
+    initSelected();
   },
-  { immediate: true, deep: true }
-)
+  { immediate: true, deep: true },
+);
 
 watch(
-  () => (props.type === 'options' ? optionsStore.options : inquiriesStore.inquiries),
+  () =>
+    props.type === "options" ? optionsStore.options : inquiriesStore.inquiries,
   (newOptions) => {
-    localOptions.value = newOptions
-    initSelected()
+    localOptions.value = newOptions;
+    initSelected();
   },
-  { deep: true }
-)
+  { deep: true },
+);
 
 const filteredResults = computed(() => {
-  const q = query.value.toLowerCase().trim()
-  let searchResults = results.value
+  const q = query.value.toLowerCase().trim();
+  let searchResults = results.value;
 
   // No query → do not dump the full list (matches previous behavior)
-  if (!q) return []
+  if (!q) return [];
 
   // Legacy Options-only restriction
-  if (props.availableOptions && props.type === 'options' && props.availableOptions.length > 0) {
-    const allowed = new Set(props.availableOptions.map((opt) => opt.id))
-    searchResults = searchResults.filter((item) => allowed.has(item.id))
+  if (
+    props.availableOptions &&
+    props.type === "options" &&
+    props.availableOptions.length > 0
+  ) {
+    const allowed = new Set(props.availableOptions.map((opt) => opt.id));
+    searchResults = searchResults.filter((item) => allowed.has(item.id));
   }
 
   // Generic id restriction — works for options AND inquiries.
   // IMPORTANT: an empty array means "nothing available", so use `!== undefined`.
   if (props.availableItemIds !== undefined) {
-    const allowed = new Set(props.availableItemIds)
-    searchResults = searchResults.filter((item) => allowed.has(item.id))
+    const allowed = new Set(props.availableItemIds);
+    searchResults = searchResults.filter((item) => allowed.has(item.id));
   }
 
-  return searchResults
-})
+  return searchResults;
+});
 
 const handleSearch = (searchQuery: string) => {
-  isSearching.value = true
-  query.value = searchQuery
+  isSearching.value = true;
+  query.value = searchQuery;
   setTimeout(() => {
-    isSearching.value = false
-  }, 200)
-}
+    isSearching.value = false;
+  }, 200);
+};
 
 const emitSelected = (item: Option | Inquiry) => {
-  selected.value = item
-  emit('update:modelValue', item)
-  emit('selected', item)
-}
+  selected.value = item;
+  emit("update:modelValue", item);
+  emit("selected", item);
+};
 
 defineExpose({
   clear: () => {
-    selected.value = null
-    query.value = ''
+    selected.value = null;
+    query.value = "";
   },
-})
+});
 </script>
 
 <style scoped lang="scss">

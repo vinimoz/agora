@@ -4,32 +4,36 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { SortDirection, sortTitlesMapping, useInquiriesStore } from '../../stores/inquiries.ts'
-import { SortType } from '../../Types'
+import { t } from "@nextcloud/l10n";
+import {
+  SortDirection,
+  sortTitlesMapping,
+  useInquiriesStore,
+} from "../../stores/inquiries.ts";
+import { SortType } from "../../Types";
 
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import NcActionSeparator from "@nextcloud/vue/components/NcActionSeparator";
 
-import { NcActionButtonGroup } from '@nextcloud/vue'
-import { computed } from 'vue'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { NcActionButtonGroup } from "@nextcloud/vue";
+import { computed } from "vue";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
 
-const inquiriesStore = useInquiriesStore()
+const inquiriesStore = useInquiriesStore();
 
 const sortDirection = computed({
   get() {
-    return inquiriesStore.sort.reverse ? 'desc' : 'asc'
+    return inquiriesStore.sort.reverse ? "desc" : "asc";
   },
   set(direction: SortDirection) {
-    if (direction === 'asc') {
-      inquiriesStore.sort.reverse = false
+    if (direction === "asc") {
+      inquiriesStore.sort.reverse = false;
     } else {
-      inquiriesStore.sort.reverse = true
+      inquiriesStore.sort.reverse = true;
     }
   },
-})
+});
 
 /**
  *
@@ -39,10 +43,10 @@ const sortDirection = computed({
  */
 function setSort(sort: { by?: SortType; reverse?: boolean }) {
   if (sort.by !== undefined) {
-    inquiriesStore.sort.by = sort.by
+    inquiriesStore.sort.by = sort.by;
   }
   if (sort.reverse !== undefined) {
-    inquiriesStore.sort.reverse = sort.reverse
+    inquiriesStore.sort.reverse = sort.reverse;
   }
 }
 </script>

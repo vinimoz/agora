@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <div
@@ -30,19 +30,21 @@ AGPL-3.0-or-later */
       >
         <div class="stat">
           <span class="stat-value">{{ stats.shared }}</span>
-          <span class="stat-label">{{ t('agora', 'Shared with you') }}</span>
+          <span class="stat-label">{{ t("agora", "Shared with you") }}</span>
         </div>
         <div class="stat">
           <span class="stat-value">{{ stats.withParticipants }}</span>
-          <span class="stat-label">{{ t('agora', 'You participated in') }}</span>
+          <span class="stat-label">{{
+            t("agora", "You participated in")
+          }}</span>
         </div>
         <div class="stat">
           <span class="stat-value">{{ stats.owned }}</span>
-          <span class="stat-label">{{ t('agora', 'Your inquiries') }}</span>
+          <span class="stat-label">{{ t("agora", "Your inquiries") }}</span>
         </div>
         <div class="stat">
           <span class="stat-value">{{ stats.groupInquiries }}</span>
-          <span class="stat-label">{{ t('agora', 'In your groups') }}</span>
+          <span class="stat-label">{{ t("agora", "In your groups") }}</span>
         </div>
       </div>
 
@@ -83,29 +85,38 @@ AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { generateUrl } from "@nextcloud/router";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
 
 const props = defineProps<{
-  title?: string
-  subtitle?: string
-  tagline?: string
-  cityName?: string
-  backgroundUrl?: string
-  actions?: any[]
-  weather?: { temp: number; location: string } | null
-  stats?: { shared: number; withParticipants: number; owned: number; groupInquiries: number }
-}>()
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  cityName?: string;
+  backgroundUrl?: string;
+  actions?: any[];
+  weather?: { temp: number; location: string } | null;
+  stats?: {
+    shared: number;
+    withParticipants: number;
+    owned: number;
+    groupInquiries: number;
+  };
+}>();
 
-const emit = defineEmits<{ action: [key: string] }>()
+const emit = defineEmits<{ action: [key: string] }>();
 
-const title = computed(() => props.title || t('agora', 'Welcome to Agora'))
+const title = computed(() => props.title || t("agora", "Welcome to Agora"));
 const subtitle = computed(
   () =>
-    props.subtitle || t('agora', 'Your civic space for a more direct and participatory democracy')
-)
+    props.subtitle ||
+    t(
+      "agora",
+      "Your civic space for a more direct and participatory democracy",
+    ),
+);
 
 /**
  * Resolve a hero background image:
@@ -113,61 +124,61 @@ const subtitle = computed(
  *  - Numeric fileId → Nextcloud preview endpoint
  */
 function resolveHeroImage(src?: string): string {
-  const s = String(src ?? '').trim()
-  if (!s) return ''
-  if (/^(https?:)?\/\//i.test(s) || /^(data|blob):/i.test(s)) return s
+  const s = String(src ?? "").trim();
+  if (!s) return "";
+  if (/^(https?:)?\/\//i.test(s) || /^(data|blob):/i.test(s)) return s;
   if (/^\d+$/.test(s)) {
     // generateUrl respects sub-folder installs (/nextcloud/…)
-    return generateUrl(`/core/preview?fileId=${s}&x=1920&y=1080&a=1`)
+    return generateUrl(`/core/preview?fileId=${s}&x=1920&y=1080&a=1`);
   }
-  return s.startsWith('/') ? s : generateUrl(`/${s}`)
+  return s.startsWith("/") ? s : generateUrl(`/${s}`);
 }
 
 const heroStyle = computed(() => {
-  const url = resolveHeroImage(props.backgroundUrl)
+  const url = resolveHeroImage(props.backgroundUrl);
   return {
     backgroundImage: url
       ? `linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55)), url('${url}')`
-      : 'linear-gradient(135deg, #0891b2, #0e7490)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-  }
-})
+      : "linear-gradient(135deg, #0891b2, #0e7490)",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  };
+});
 
 const actions = computed(
   () =>
     props.actions || [
       {
-        key: 'participate',
-        label: t('agora', 'Participate'),
-        hint: t('agora', 'Give your opinion'),
+        key: "participate",
+        label: t("agora", "Participate"),
+        hint: t("agora", "Give your opinion"),
         icon: Icons.CheckCircle,
-        color: '#16a34a',
+        color: "#16a34a",
       },
       {
-        key: 'decide',
-        label: t('agora', 'Decide'),
-        hint: t('agora', 'Vote and deliberate'),
+        key: "decide",
+        label: t("agora", "Decide"),
+        hint: t("agora", "Vote and deliberate"),
         icon: Icons.Scale,
-        color: '#7c3aed',
+        color: "#7c3aed",
       },
       {
-        key: 'propose',
-        label: t('agora', 'Propose'),
-        hint: t('agora', 'Share your ideas'),
+        key: "propose",
+        label: t("agora", "Propose"),
+        hint: t("agora", "Share your ideas"),
         icon: Icons.Lightbulb,
-        color: '#f59e0b',
+        color: "#f59e0b",
       },
       {
-        key: 'debate',
-        label: t('agora', 'Debate'),
-        hint: t('agora', 'Exchange with others'),
+        key: "debate",
+        label: t("agora", "Debate"),
+        hint: t("agora", "Exchange with others"),
         icon: Icons.MessageSquare,
-        color: '#0ea5e9',
+        color: "#0ea5e9",
       },
-    ]
-)
+    ],
+);
 </script>
 
 <style lang="scss" scoped>

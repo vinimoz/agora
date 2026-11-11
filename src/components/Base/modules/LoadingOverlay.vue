@@ -4,77 +4,77 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { Spinner } from '../../AppIcons/index.ts'
-import { onMounted, ref, watch } from 'vue'
+import { t } from "@nextcloud/l10n";
+import { Spinner } from "../../AppIcons/index.ts";
+import { onMounted, ref, watch } from "vue";
 
 const {
   show = false,
-  name = t('agora', 'Loading'),
-  loadingTexts = '',
-  teleportTo = '', // no implicit '#content-vue'
+  name = t("agora", "Loading"),
+  loadingTexts = "",
+  teleportTo = "", // no implicit '#content-vue'
 } = defineProps<{
-  show: boolean
-  name: string
-  loadingTexts?: string | string[]
-  teleportTo?: string
-}>()
+  show: boolean;
+  name: string;
+  loadingTexts?: string | string[];
+  teleportTo?: string;
+}>();
 
-const description = ref(t('agora', 'Please wait'))
+const description = ref(t("agora", "Please wait"));
 
 // null = don't teleport; string/HTMLElement = resolved target
-const resolvedTarget = ref<string | HTMLElement | null>(null)
+const resolvedTarget = ref<string | HTMLElement | null>(null);
 
 function resolveTarget() {
-  resolvedTarget.value = teleportTo ? document.querySelector(teleportTo) : null
+  resolvedTarget.value = teleportTo ? document.querySelector(teleportTo) : null;
 }
 
 const sequentialDescriptionOutput = () => {
   // primitive string check
-  if (typeof loadingTexts === 'string') {
-    description.value = loadingTexts
-    return
+  if (typeof loadingTexts === "string") {
+    description.value = loadingTexts;
+    return;
   }
 
   if (loadingTexts.length === 0) {
-    description.value = ''
-    return
+    description.value = "";
+    return;
   }
 
   if (loadingTexts.length === 1) {
-    description.value = loadingTexts[0]
-    return
+    description.value = loadingTexts[0];
+    return;
   }
 
-  let index = 0
+  let index = 0;
   const showDescription = () => {
-    if (show === false) return
+    if (show === false) return;
     if (index < loadingTexts.length) {
-      description.value = loadingTexts[index]
-      index = index + 1
-      const delay = 1500 + Math.floor(Math.random() * 1001) - 500
-      setTimeout(showDescription, delay)
+      description.value = loadingTexts[index];
+      index = index + 1;
+      const delay = 1500 + Math.floor(Math.random() * 1001) - 500;
+      setTimeout(showDescription, delay);
     } else {
-      description.value = loadingTexts[loadingTexts.length - 1]
+      description.value = loadingTexts[loadingTexts.length - 1];
     }
-  }
-  showDescription()
-}
+  };
+  showDescription();
+};
 
 watch(
   () => show,
   (newValue) => {
     if (newValue === true) {
-      resolveTarget()
-      if (loadingTexts.length > 0) sequentialDescriptionOutput()
+      resolveTarget();
+      if (loadingTexts.length > 0) sequentialDescriptionOutput();
     }
-  }
-)
+  },
+);
 
 onMounted(() => {
-  resolveTarget()
-  if (show) sequentialDescriptionOutput()
-})
+  resolveTarget();
+  if (show) sequentialDescriptionOutput();
+});
 </script>
 
 <template>

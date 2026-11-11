@@ -3,200 +3,218 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { watch, ref, computed, nextTick } from 'vue'
-import { useInquiryStore } from '../../stores/inquiry'
-import { useInquiriesStore } from '../../stores/inquiries.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { t } from '@nextcloud/l10n'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
+import { watch, ref, computed, nextTick } from "vue";
+import { useInquiryStore } from "../../stores/inquiry";
+import { useInquiriesStore } from "../../stores/inquiries.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { t } from "@nextcloud/l10n";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
 
-import InquiryContextMenu from './InquiryContextMenu.vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import InquiryItemActions from './InquiryItemActions.vue'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import InquiryContextMenu from "./InquiryContextMenu.vue";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
 import {
-  canViewToggle,
   getAvailableResponseTypesWithPermissions,
   getAvailableTransformTypesWithPermissions,
   createInquiryContext,
-} from '../../utils/permissions.ts'
+} from "../../utils/permissions.ts";
 
 // Props
 const props = defineProps<{
-  inquiryStore: useInquiryStore
-  sessionStore: useSessionStore
-  isSaving?: boolean
-  isReadonly?: boolean
-}>()
+  inquiryStore: useInquiryStore;
+  sessionStore: useSessionStore;
+  isSaving?: boolean;
+  isReadonly?: boolean;
+}>();
 
-const inquiriesStore = useInquiriesStore()
+const inquiriesStore = useInquiriesStore();
 
-const caption = t('agora', 'Inquiry information')
 
 // Emits
 const emit = defineEmits<{
-  save: []
-  allowedResponse: [responseType: string]
-  allowedTransformation: [transformType: string]
-}>()
+  save: [];
+  allowedResponse: [responseType: string];
+  allowedTransformation: [transformType: string];
+}>();
 
 // Context for permissions
 const context = computed(() =>
-  createInquiryContext(props.inquiryStore, props.sessionStore.appSettings)
-)
+  createInquiryContext(props.inquiryStore, props.sessionStore.appSettings),
+);
 
-const selectedStatus = ref(props.inquiryStore.status.moderationStatus || 'pending')
+const selectedStatus = ref(
+  props.inquiryStore.status.moderationStatus || "pending",
+);
 
 const statusOptions = [
-  { id: 'pending', label: t('agora', 'Pending'), value: 'pending' },
-  { id: 'accepted', label: t('agora', 'Accepted'), value: 'accepted' },
-  { id: 'rejected', label: t('agora', 'Rejected'), value: 'rejected' },
-]
+  { id: "pending", label: t("agora", "Pending"), value: "pending" },
+  { id: "accepted", label: t("agora", "Accepted"), value: "accepted" },
+  { id: "rejected", label: t("agora", "Rejected"), value: "rejected" },
+];
 
 const inquiryAccess = computed({
-  get: () => props.inquiryStore.status.publicationStatus === 'pending',
+  get: () => props.inquiryStore.status.publicationStatus === "pending",
 
   set: async (value) => {
-    if (!value) return
+    if (!value) return;
 
     try {
-      const { currentUser, appSettings } = props.sessionStore
-      const { isOfficial } = currentUser
-      const { officialBypassModeration, useModeration } = appSettings
+      const { currentUser, appSettings } = props.sessionStore;
+      const { isOfficial } = currentUser;
+      const { officialBypassModeration, useModeration } = appSettings;
 
-      const shouldAutoAccept = (isOfficial && officialBypassModeration) || !useModeration
+      const shouldAutoAccept =
+        (isOfficial && officialBypassModeration) || !useModeration;
 
-      const status = shouldAutoAccept ? 'accepted' : 'pending'
-      await setModerationStatus(status)
+      const status = shouldAutoAccept ? "accepted" : "pending";
+      await setModerationStatus(status);
     } catch (error) {
-      console.error('Failed to set moderation status:', error)
+      console.error("Failed to set moderation status:", error);
     }
   },
-})
+});
 
 watch(
   () => props.inquiryStore.status.moderationStatus,
   (newStatus) => {
     if (newStatus) {
-      selectedStatus.value = newStatus
+      selectedStatus.value = newStatus;
     }
-  }
-)
+  },
+);
 
 const setModerationStatus = async (status: string) => {
   try {
-    if (status === 'accepted') {
-      await props.inquiryStore.submitInquiry('submit_for_accepted')
-      inquiriesStore.submitInquiry(props.inquiryStore.id, 'submit_for_accepted')
-      showSuccess(t('agora', 'Inquiry accepted'))
-    } else if (status === 'rejected') {
-      await props.inquiryStore.submitInquiry('submit_for_rejected')
-      inquiriesStore.submitInquiry(props.inquiryStore.id, 'submit_for_rejected')
-      showSuccess(t('agora', 'Inquiry rejected'))
-    } else if (status === 'pending') {
-      await props.inquiryStore.submitInquiry('submit_for_moderate')
-      inquiriesStore.submitInquiry(props.inquiryStore.id, 'submit_for_moderate')
-      showSuccess(t('agora', 'Inquiry submitted for moderation'))
+    if (status === "accepted") {
+      await props.inquiryStore.submitInquiry("submit_for_accepted");
+      inquiriesStore.submitInquiry(
+        props.inquiryStore.id,
+        "submit_for_accepted",
+      );
+      showSuccess(t("agora", "Inquiry accepted"));
+    } else if (status === "rejected") {
+      await props.inquiryStore.submitInquiry("submit_for_rejected");
+      inquiriesStore.submitInquiry(
+        props.inquiryStore.id,
+        "submit_for_rejected",
+      );
+      showSuccess(t("agora", "Inquiry rejected"));
+    } else if (status === "pending") {
+      await props.inquiryStore.submitInquiry("submit_for_moderate");
+      inquiriesStore.submitInquiry(
+        props.inquiryStore.id,
+        "submit_for_moderate",
+      );
+      showSuccess(t("agora", "Inquiry submitted for moderation"));
     }
-    await nextTick()
+    await nextTick();
   } catch {
-    showError(t('agora', 'Failed to submit inquiry for moderation'))
+    showError(t("agora", "Failed to submit inquiry for moderation"));
   }
-}
+};
 // Get available types directly (already filtered by permissions)
 const availableResponseTypes = computed(() => {
-  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || []
+  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || [];
   return getAvailableResponseTypesWithPermissions(
     props.inquiryStore.type,
     inquiryTypes,
-    context.value
-  )
-})
+    context.value,
+  );
+});
 
 const availableTransformTypes = computed(() => {
-  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || []
+  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || [];
   return getAvailableTransformTypesWithPermissions(
     props.inquiryStore.type,
     inquiryTypes,
-    context.value
-  )
-})
+    context.value,
+  );
+});
 
 // Check if menus should be shown (just check if any types available)
 
-const showActionsMenu = computed(() => availableResponseTypes.value.length > 0)
-const showTransformActionsMenu = computed(() => availableTransformTypes.value.length > 0)
+const showActionsMenu = computed(() => availableResponseTypes.value.length > 0);
+const showTransformActionsMenu = computed(
+  () => availableTransformTypes.value.length > 0,
+);
 
 // Enriched types for display
 const enrichedResponseTypes = computed(() => {
-  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || []
+  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || [];
   return availableResponseTypes.value.map((responseType) => {
-    const typeData = getInquiryTypeData(responseType.inquiry_type, inquiryTypes)
+    const typeData = getInquiryTypeData(
+      responseType.inquiry_type,
+      inquiryTypes,
+    );
     return {
       ...responseType,
       icon: typeData.icon,
       label: typeData.label,
-    }
-  })
-})
+    };
+  });
+});
 
 const enrichedTransformTypes = computed(() => {
-  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || []
+  const inquiryTypes = props.sessionStore.appSettings.inquiryTypeTab || [];
 
   return availableTransformTypes.value.map((transformType) => {
-    const typeData = getInquiryTypeData(transformType.inquiry_type, inquiryTypes)
+    const typeData = getInquiryTypeData(
+      transformType.inquiry_type,
+      inquiryTypes,
+    );
     return {
       ...transformType,
       icon: typeData.icon,
       label: typeData.label,
-    }
-  })
-})
+    };
+  });
+});
 
+/*
 const getStatusLabel = (status: string) => {
-  if (status === 'draft') return t('agora', 'Draft')
-  const option = statusOptions.find((opt) => opt.value === status)
-  return option ? option.label : status
-}
+  if (status === "draft") return t("agora", "Draft");
+  const option = statusOptions.find((opt) => opt.value === status);
+  return option ? option.label : status;
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'rejected':
-      return 'color: var(--color-error)'
-    case 'accepted':
-      return 'color: var(--color-success)'
-    case 'pending':
-      return 'color: var(--color-warning)'
+    case "rejected":
+      return "color: var(--color-error)";
+    case "accepted":
+      return "color: var(--color-success)";
+    case "pending":
+      return "color: var(--color-warning)";
     default:
-      return ''
+      return "";
   }
-}
+};
+*/
 
-const canEditInquiry = computed(() => !props.isReadonly)
+const canEditInquiry = computed(() => !props.isReadonly);
 
 // Check if save button should be shown
-const showSaveButton = computed(() => canEditInquiry.value)
+const showSaveButton = computed(() => canEditInquiry.value);
 
 // Handle save
 const handleSave = () => {
-  emit('save')
-}
+  emit("save");
+};
 
 // Handle allowed response
 const handleAllowedResponse = (responseType: string) => {
-  emit('allowedResponse', responseType)
-}
+  emit("allowedResponse", responseType);
+};
 
 // Handle allowed transformation
 const handleAllowedTransformation = (transformType: string) => {
-  emit('allowedTransformation', transformType)
-}
+  emit("allowedTransformation", transformType);
+};
 </script>
 
 <template>
@@ -217,7 +235,7 @@ const handleAllowedTransformation = (transformType: string) => {
               :size="16"
             />
           </template>
-          {{ t('agora', 'Save') }}
+          {{ t("agora", "Save") }}
           <span
             v-if="isSaving"
             class="loading-icon"
@@ -294,7 +312,9 @@ const handleAllowedTransformation = (transformType: string) => {
           "
           class="access-control"
         >
-          <label class="control-label">{{ t('agora', 'Submit to moderation') }}</label>
+          <label class="control-label">{{
+            t("agora", "Submit to moderation")
+          }}</label>
           <NcCheckboxRadioSwitch
             v-model="inquiryAccess"
             type="switch"
@@ -307,7 +327,7 @@ const handleAllowedTransformation = (transformType: string) => {
             v-if="inquiryStore.status.moderationStatus === 'pending'"
             class="access-control"
           >
-            <label class="control-label">{{ t('agora', 'Moderate') }}</label>
+            <label class="control-label">{{ t("agora", "Moderate") }}</label>
             <NcSelect
               v-model="selectedStatus"
               :options="statusOptions"
@@ -315,7 +335,9 @@ const handleAllowedTransformation = (transformType: string) => {
               :multiple="false"
               :label-outside="true"
               class="status-select"
-              @update:model-value="(selected) => setModerationStatus(selected.value)"
+              @update:model-value="
+                (selected) => setModerationStatus(selected.value)
+              "
             />
           </div>
         </div>
@@ -324,15 +346,15 @@ const handleAllowedTransformation = (transformType: string) => {
             <div v-if="inquiryStore.status.publicationStatus !== 'accepted'" class="status-section">
                 <div class="status-badge" :style="getStatusColor(inquiryStore.status.moderationStatus)">
                     {{ getStatusLabel(inquiryStore.status.moderationStatus) }}
-                </div>
-	    </div> -->
+            </div>
+    </div> -->
 
       <!-- <div
                     v-if="canViewToggle(context)"
                     class="item-actions"
                     >
                     <InquiryItemActions :key="`actions-${inquiryStore.id}`" :inquiry="inquiryStore" />
-	    </div > -->
+    </div > -->
       <InquiryContextMenu />
     </div>
   </div>
@@ -345,7 +367,11 @@ const handleAllowedTransformation = (transformType: string) => {
   gap: 16px;
   width: 100%;
   padding: 12px 20px;
-  background: linear-gradient(135deg, var(--color-background-dark), var(--color-background-darker));
+  background: linear-gradient(
+    135deg,
+    var(--color-background-dark),
+    var(--color-background-darker)
+  );
   border: 2px solid var(--color-border);
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -549,21 +575,21 @@ const handleAllowedTransformation = (transformType: string) => {
     transition: all 0.2s ease;
 
     /* Force darker text colors with better contrast */
-    &[style*='color: var(--color-success)'] {
+    &[style*="color: var(--color-success)"] {
       color: #0a5228 !important; /* Even darker green for better contrast */
       background: linear-gradient(135deg, #e6f4ea, #d4eedd);
       border: 2px solid #2ecc71;
       font-weight: 800;
     }
 
-    &[style*='color: var(--color-error)'] {
+    &[style*="color: var(--color-error)"] {
       color: #a83232 !important; /* Darker red */
       background: linear-gradient(135deg, #fdeaea, #fbd5d5);
       border: 2px solid #e74c3c;
       font-weight: 800;
     }
 
-    &[style*='color: var(--color-warning)'] {
+    &[style*="color: var(--color-warning)"] {
       color: #7a5900 !important; /* Darker orange/brown */
       background: linear-gradient(135deg, #fff8e6, #ffefcc);
       border: 2px solid #f39c12;
@@ -571,7 +597,7 @@ const handleAllowedTransformation = (transformType: string) => {
     }
 
     /* Fallback for any other status */
-    &:not([style*='color: var(--color-']) {
+    &:not([style*="color: var(--color-"]) {
       color: var(--color-main-text) !important;
       background: linear-gradient(
         135deg,
@@ -754,7 +780,8 @@ const handleAllowedTransformation = (transformType: string) => {
     }
   }
 
-  .moderation-switch :deep(.checkbox-radio-switch .checkbox-radio-switch__switch) {
+  .moderation-switch
+    :deep(.checkbox-radio-switch .checkbox-radio-switch__switch) {
     width: 36px;
     height: 20px;
 

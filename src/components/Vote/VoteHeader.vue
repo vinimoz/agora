@@ -15,28 +15,31 @@
         >
           <Calendar :size="14" />
           {{ formatDate(voteSession.start_date) }}
-          <span v-if="voteSession.end_date"> - {{ formatDate(voteSession.end_date) }} </span>
+          <span v-if="voteSession.end_date">
+            - {{ formatDate(voteSession.end_date) }}
+          </span>
         </span>
         <span
           v-if="voteSession?.quorum"
           class="metadata-badge"
         >
           <Users :size="14" />
-          {{ t('agora', 'Quorum: {quorum}', { quorum: voteSession.quorum }) }}
+          {{ t("agora", "Quorum: {quorum}", { quorum: voteSession.quorum }) }}
         </span>
         <span class="metadata-badge">
           <Vote :size="14" />
-          {{ t('agora', 'Total votes: {total}', { total: totalVotes }) }}
+          {{ t("agora", "Total votes: {total}", { total: totalVotes }) }}
         </span>
         <span
           v-if="
             currentEngine &&
-              (currentEngine.voteScope === 'per_option' || currentEngine.voteScope === 'cross_option')
+              (currentEngine.voteScope === 'per_option' ||
+                currentEngine.voteScope === 'cross_option')
           "
           class="metadata-badge"
         >
           <CheckCircle :size="14" />
-          {{ t('agora', 'Multiple choices allowed') }}
+          {{ t("agora", "Multiple choices allowed") }}
         </span>
       </div>
 
@@ -54,7 +57,7 @@
               :size="16"
             />
           </template>
-          {{ t('agora', capitalize(layout)) }}
+          {{ t("agora", capitalize(layout)) }}
         </NcButton>
       </div>
     </div>
@@ -138,29 +141,40 @@
                     class="meta-tag"
                   >
                     <Hash :size="10" />
-                    {{ item.target_ids.length }} {{ t('agora', 'targets') }}
+                    {{ item.target_ids.length }} {{ t("agora", "targets") }}
                   </span>
                   <span
                     v-if="item.config?.quorum"
                     class="meta-tag"
                   >
                     <Users :size="10" />
-                    {{ t('agora', 'Quorum: {quorum}', { quorum: item.config.quorum }) }}
+                    {{
+                      t("agora", "Quorum: {quorum}", {
+                        quorum: item.config.quorum,
+                      })
+                    }}
                   </span>
                   <span
                     v-if="item.config?.max_votes_per_user"
                     class="meta-tag"
                   >
                     <Vote :size="10" />
-                    {{ t('agora', 'Max votes: {max}', { max: item.config.max_votes_per_user }) }}
+                    {{
+                      t("agora", "Max votes: {max}", {
+                        max: item.config.max_votes_per_user,
+                      })
+                    }}
                   </span>
                   <span
-                    v-if="item.config?.min !== undefined && item.config?.max !== undefined"
+                    v-if="
+                      item.config?.min !== undefined &&
+                        item.config?.max !== undefined
+                    "
                     class="meta-tag"
                   >
                     <Star :size="10" />
                     {{
-                      t('agora', 'Range: {min}-{max}', {
+                      t("agora", "Range: {min}-{max}", {
                         min: item.config.min,
                         max: item.config.max,
                       })
@@ -215,7 +229,7 @@
               class="engine-selected-placeholder"
             >
               <Vote :size="16" />
-              <span>{{ t('agora', 'Select voting method') }}</span>
+              <span>{{ t("agora", "Select voting method") }}</span>
             </div>
           </template>
         </NcSelect>
@@ -233,8 +247,8 @@
         </template>
         {{
           availableEngines.length === 0
-            ? t('agora', 'Create Voting Method')
-            : t('agora', 'New Method')
+            ? t("agora", "Create Voting Method")
+            : t("agora", "New Method")
         }}
       </NcButton>
 
@@ -249,7 +263,7 @@
         <template #icon>
           <Plus :size="16" />
         </template>
-        {{ t('agora', 'Add to vote') }}
+        {{ t("agora", "Add to vote") }}
       </NcButton>
     </div>
 
@@ -315,7 +329,8 @@
             class="stat-item"
           >
             <Hash :size="12" />
-            <span>{{ currentEngine.target_ids.length }} {{ t('agora', 'targets') }}</span>
+            <span>{{ currentEngine.target_ids.length }}
+              {{ t("agora", "targets") }}</span>
           </div>
           <div
             v-if="currentEngine.config?.quorum"
@@ -323,7 +338,9 @@
           >
             <Users :size="12" />
             <span>{{
-              t('agora', 'Quorum: {quorum}', { quorum: currentEngine.config.quorum })
+              t("agora", "Quorum: {quorum}", {
+                quorum: currentEngine.config.quorum,
+              })
             }}</span>
           </div>
           <div
@@ -332,20 +349,21 @@
           >
             <Vote :size="12" />
             <span>{{
-              t('agora', 'Max {max} votes per user', {
+              t("agora", "Max {max} votes per user", {
                 max: currentEngine.config.max_votes_per_user,
               })
             }}</span>
           </div>
           <div
             v-if="
-              currentEngine.config?.min !== undefined && currentEngine.config?.max !== undefined
+              currentEngine.config?.min !== undefined &&
+                currentEngine.config?.max !== undefined
             "
             class="stat-item"
           >
             <Star :size="12" />
             <span>{{
-              t('agora', 'Range: {min} - {max}', {
+              t("agora", "Range: {min} - {max}", {
                 min: currentEngine.config.min,
                 max: currentEngine.config.max,
               })
@@ -356,7 +374,7 @@
             class="stat-item"
           >
             <CheckCircle :size="12" />
-            <span>{{ t('agora', 'Multiple votes allowed') }}</span>
+            <span>{{ t("agora", "Multiple votes allowed") }}</span>
           </div>
         </div>
       </div>
@@ -388,9 +406,9 @@
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
 import {
   Plus,
   Edit,
@@ -410,45 +428,45 @@ import {
   Brain,
   Gauge,
   Hash,
-} from 'lucide-vue-next'
+} from "lucide-vue-next";
 
-import { ENGINE_DEFINITIONS, type SupportEngine } from '../../Types/votingType'
+import { ENGINE_DEFINITIONS, type SupportEngine } from "../../Types/votingType";
 
 interface VoteSession {
-  start_date?: string
-  end_date?: string
-  quorum?: number
+  start_date?: string;
+  end_date?: string;
+  quorum?: number;
 }
 
 const props = defineProps<{
-  voteSession?: VoteSession
-  totalVotes: number
-  currentEngine: SupportEngine | null
-  availableEngines: SupportEngine[]
-  canManageVote: boolean
-  isReadonly: boolean
-  currentLayout: string
-  part?: 'bar' | 'card'
-  allowedLayouts: string[]
-}>()
+  voteSession?: VoteSession;
+  totalVotes: number;
+  currentEngine: SupportEngine | null;
+  availableEngines: SupportEngine[];
+  canManageVote: boolean;
+  isReadonly: boolean;
+  currentLayout: string;
+  part?: "bar" | "card";
+  allowedLayouts: string[];
+}>();
 
 const emit = defineEmits<{
-  'update:layout': [layout: string]
-  'update:engine': [engineId: number | null]
-  createEngine: []
-  editEngine: [engine: SupportEngine]
-  deleteEngine: [engine: SupportEngine]
-  addToVote: [engine: SupportEngine]
-}>()
+  "update:layout": [layout: string];
+  "update:engine": [engineId: number | null];
+  createEngine: [];
+  editEngine: [engine: SupportEngine];
+  deleteEngine: [engine: SupportEngine];
+  addToVote: [engine: SupportEngine];
+}>();
 
 // Handle engine change from NcSelect (receives the full engine object)
 const handleEngineChange = (engine: SupportEngine | null) => {
-  emit('update:engine', engine ? engine.id : null)
-}
+  emit("update:engine", engine ? engine.id : null);
+};
 
 // Get icon for engine type
 const getEngineIcon = (engineId: string) => {
-  if (!engineId) return Vote
+  if (!engineId) return Vote;
   const icons: Record<string, unknown> = {
     binary: ThumbsUp,
     ternary: Scale,
@@ -461,90 +479,94 @@ const getEngineIcon = (engineId: string) => {
     condorcet: Brain,
     majority_judgment: Gauge,
     none: Vote,
-  }
-  return icons[engineId] || Vote
-}
+  };
+  return icons[engineId] || Vote;
+};
 
 // Get label for engine type
 const getEngineLabel = (engineId: string | number | null): string => {
-  if (!engineId) return t('agora', 'Select voting method')
-  if (typeof engineId === 'number') {
-    const engine = props.availableEngines.find((e) => e.id === engineId)
-    if (engine) return engine.title || getEngineLabelFromId(engine.engine)
-    return t('agora', 'Select voting method')
+  if (!engineId) return t("agora", "Select voting method");
+  if (typeof engineId === "number") {
+    const engine = props.availableEngines.find((e) => e.id === engineId);
+    if (engine) return engine.title || getEngineLabelFromId(engine.engine);
+    return t("agora", "Select voting method");
   }
-  return getEngineLabelFromId(engineId)
-}
+  return getEngineLabelFromId(engineId);
+};
 
 const getEngineLabelFromId = (engineId: string): string =>
-  ENGINE_DEFINITIONS[engineId]?.label || engineId
+  ENGINE_DEFINITIONS[engineId]?.label || engineId;
 
 // Get purpose label
 const getPurposeLabel = (purpose: string): string => {
   const purposes: Record<string, string> = {
-    consultation: t('agora', 'Consultation'),
-    voting: t('agora', 'Voting'),
-    survey: t('agora', 'Survey'),
-    poll: t('agora', 'Poll'),
-    election: t('agora', 'Election'),
-    referendum: t('agora', 'Referendum'),
-    feedback: t('agora', 'Feedback'),
-    assessment: t('agora', 'Assessment'),
-  }
-  return purposes[purpose] || purpose.charAt(0).toUpperCase() + purpose.slice(1)
-}
+    consultation: t("agora", "Consultation"),
+    voting: t("agora", "Voting"),
+    survey: t("agora", "Survey"),
+    poll: t("agora", "Poll"),
+    election: t("agora", "Election"),
+    referendum: t("agora", "Referendum"),
+    feedback: t("agora", "Feedback"),
+    assessment: t("agora", "Assessment"),
+  };
+  return (
+    purposes[purpose] || purpose.charAt(0).toUpperCase() + purpose.slice(1)
+  );
+};
 
 // Format phase display
 const formatPhase = (phase: string): string => {
   const phases: Record<string, string> = {
-    draft: t('agora', 'Draft'),
-    voting: t('agora', 'Voting'),
-    counting: t('agora', 'Counting'),
-    published: t('agora', 'Published'),
-    closed: t('agora', 'Closed'),
-  }
-  return phases[phase] || phase
-}
+    draft: t("agora", "Draft"),
+    voting: t("agora", "Voting"),
+    counting: t("agora", "Counting"),
+    published: t("agora", "Published"),
+    closed: t("agora", "Closed"),
+  };
+  return phases[phase] || phase;
+};
 
 // Format target type
 const formatTargetType = (targetType: string): string => {
   const types: Record<string, string> = {
-    inquiry: t('agora', 'Inquiry'),
-    item: t('agora', 'Item'),
-  }
-  return types[targetType] || targetType
-}
+    inquiry: t("agora", "Inquiry"),
+    item: t("agora", "Item"),
+  };
+  return types[targetType] || targetType;
+};
 
 // Format status
 const formatStatus = (status: string): string => {
   const statuses: Record<string, string> = {
-    draft: t('agora', 'Draft'),
-    active: t('agora', 'Active'),
-    closed: t('agora', 'Closed'),
-    pending: t('agora', 'Pending'),
-    completed: t('agora', 'Completed'),
-    cancelled: t('agora', 'Cancelled'),
-  }
-  return statuses[status] || status
-}
+    draft: t("agora", "Draft"),
+    active: t("agora", "Active"),
+    closed: t("agora", "Closed"),
+    pending: t("agora", "Pending"),
+    completed: t("agora", "Completed"),
+    cancelled: t("agora", "Cancelled"),
+  };
+  return statuses[status] || status;
+};
 
 // Truncate text
 const truncateText = (text: string, maxLength: number): string => {
-  if (!text || text.length <= maxLength) return text
-  return `${text.substring(0, maxLength)}...`
-}
+  if (!text || text.length <= maxLength) return text;
+  return `${text.substring(0, maxLength)}...`;
+};
 
-const formatDate = (date?: string): string => (date ? new Date(date).toLocaleDateString() : '')
+const formatDate = (date?: string): string =>
+  date ? new Date(date).toLocaleDateString() : "";
 
-const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1)
+const capitalize = (str: string): string =>
+  str.charAt(0).toUpperCase() + str.slice(1);
 
 const getLayoutIcon = (layout: string): unknown => {
   const icons: Record<string, unknown> = {
     cards: LayoutGrid,
     results: BarChart3,
-  }
-  return icons[layout] || LayoutGrid
-}
+  };
+  return icons[layout] || LayoutGrid;
+};
 </script>
 
 <style scoped lang="scss">

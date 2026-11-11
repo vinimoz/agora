@@ -4,17 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { ref } from "vue";
+import { t } from "@nextcloud/l10n";
 
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcModal from '@nextcloud/vue/components/NcModal'
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcModal from "@nextcloud/vue/components/NcModal";
 
-import PublicRegisterModal from '../../Public/PublicRegisterModal.vue'
+import PublicRegisterModal from "../../Public/PublicRegisterModal.vue";
 
-const caption = t('agora', 'Register')
-const showRegistration = ref(false)
-const registerModalSize = 'large'
+const caption = t("agora", "Register");
+const showRegistration = ref(false);
+const registerModalSize = "large";
 </script>
 
 <template>

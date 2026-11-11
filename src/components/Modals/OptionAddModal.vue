@@ -50,7 +50,7 @@
                   :is="InquiryOptionIcons.ArrowUp"
                   :size="14"
                 />
-                {{ t('agora', 'Parent') }}:
+                {{ t("agora", "Parent") }}:
               </div>
               <div class="parent-details">
                 <component
@@ -71,7 +71,7 @@
                   :is="InquiryOptionIcons.ArrowDown"
                   :size="14"
                 />
-                {{ t('agora', 'Can have responses') }}:
+                {{ t("agora", "Can have responses") }}:
               </div>
               <div class="responses-list">
                 <span
@@ -112,7 +112,9 @@
                     :is="InquiryOptionIcons.Comment"
                     :size="16"
                   />
-                  <span class="feature-label">{{ t('agora', 'Comments allowed') }}</span>
+                  <span class="feature-label">{{
+                    t("agora", "Comments allowed")
+                  }}</span>
                 </div>
 
                 <!-- Statuses -->
@@ -124,7 +126,9 @@
                     :is="InquiryOptionIcons.Circle"
                     :size="16"
                   />
-                  <span class="feature-label">{{ t('agora', 'Has statuses') }}</span>
+                  <span class="feature-label">{{
+                    t("agora", "Has statuses")
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -136,7 +140,7 @@
                 v-if="useTitle"
                 class="form-field"
               >
-                <label for="option-title">{{ t('agora', 'Title') }} *</label>
+                <label for="option-title">{{ t("agora", "Title") }} *</label>
                 <NcRichContenteditable
                   id="option-title"
                   v-model="formData.title"
@@ -152,7 +156,7 @@
 
               <!-- Description -->
               <div class="form-field">
-                <label for="option-text">{{ t('agora', 'Description') }}</label>
+                <label for="option-text">{{ t("agora", "Description") }}</label>
                 <NcRichContenteditable
                   id="option-text"
                   v-model="formData.text"
@@ -173,7 +177,7 @@
                 v-if="hasAdditionalFields"
                 class="additional-fields-section"
               >
-                <h4>{{ t('agora', 'Additional information') }}</h4>
+                <h4>{{ t("agora", "Additional information") }}</h4>
                 <MiscFieldsEditor
                   :fields="additionalFields"
                   :initial-values="miscFieldsValues"
@@ -192,7 +196,7 @@
 
           <!-- Right column: Preview -->
           <div class="preview-column">
-            <h4>{{ t('agora', 'Preview') }}</h4>
+            <h4>{{ t("agora", "Preview") }}</h4>
             <div class="preview-card">
               <ItemCard
                 :item="previewOption"
@@ -221,7 +225,7 @@
               v-if="hasStatuses"
               class="statuses-preview"
             >
-              <h5>{{ t('agora', 'Available statuses') }}</h5>
+              <h5>{{ t("agora", "Available statuses") }}</h5>
               <div class="statuses-list">
                 <span
                   v-for="status in statusesList"
@@ -265,7 +269,7 @@
             type="tertiary"
             @click="$emit('close')"
           >
-            {{ t('agora', 'Cancel') }}
+            {{ t("agora", "Cancel") }}
           </NcButton>
           <NcButton
             type="primary"
@@ -278,7 +282,7 @@
                 :size="16"
               />
             </template>
-            {{ t('agora', 'Create') }}
+            {{ t("agora", "Create") }}
           </NcButton>
         </div>
       </div>
@@ -287,20 +291,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import type { Component } from 'vue'
+import { ref, computed, onMounted } from "vue";
+import type { Component } from "vue";
 
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcRichContenteditable from "@nextcloud/vue/components/NcRichContenteditable";
 
-import type { Option } from '../../Types/index.ts'
+import type { Option } from "../../Types/index.ts";
 
-import { useOptionsStore } from '../../stores/options'
-import { useOptionStore } from '../../stores/option'
-import { useSessionStore } from '../../stores/session'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { useOptionsStore } from "../../stores/options";
+import { useOptionStore } from "../../stores/option";
+import { useSessionStore } from "../../stores/session";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
 import {
   findOptionType,
   getOptionTypeLabel,
@@ -313,184 +317,218 @@ import {
   getSupportFeatureLabel,
   allowsComments,
   usesTitle,
-} from '../../helpers/modules/InquiryOptionHelper'
+} from "../../helpers/modules/InquiryOptionHelper";
 
 // Import MiscFields helper
-import { formatValueForStorage, type MiscField } from '../../helpers/modules/MiscFieldsHelper'
+import {
+  formatValueForStorage,
+  type MiscField,
+} from "../../helpers/modules/MiscFieldsHelper";
 
 // Import components
-import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
-import ItemCard from '../FamilyLayouts/ItemCard.vue'
+import MiscFieldsEditor from "../Options/MiscFieldsEditor.vue";
+import ItemCard from "../FamilyLayouts/ItemCard.vue";
 
 // Props
 const props = defineProps<{
-  inquiryId: number
-  optionType: string | null
-  parentId?: number | null
-}>()
+  inquiryId: number;
+  optionType: string | null;
+  parentId?: number | null;
+}>();
 
 // Emits
 const emit = defineEmits<{
-  close: []
-  created: [option: Option]
-}>()
+  close: [];
+  created: [option: Option];
+}>();
 
 // Stores
-const optionsStore = useOptionsStore()
-const optionStore = useOptionStore()
-const sessionStore = useSessionStore()
+const optionsStore = useOptionsStore();
+const optionStore = useOptionStore();
+const sessionStore = useSessionStore();
 
 // State
-const visible = ref(true)
+const visible = ref(true);
 const formData = ref({
-  title: '',
-  text: '',
-})
-const miscFieldsValues = ref<Record<string, { key: string; value: unknown }>>({})
-const formErrors = ref<string[]>([])
+  title: "",
+  text: "",
+});
+const miscFieldsValues = ref<Record<string, { key: string; value: unknown }>>(
+  {},
+);
+const formErrors = ref<string[]>([]);
 
 // Computed - using helpers
-const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+const allOptionTypes = computed(
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 
 // Get additional fields as MiscField type
 const additionalFields = computed<MiscField[]>(() => {
-  const fields = getOptionTypeFields(props.optionType, allOptionTypes.value) as MiscField[]
-  return fields || []
-})
+  const fields = getOptionTypeFields(
+    props.optionType,
+    allOptionTypes.value,
+  ) as MiscField[];
+  return fields || [];
+});
 
 // Handle misc fields updates from editor
-const handleMiscFieldsUpdate = (values: Record<string, { key: string; value: unknown }>) => {
-  miscFieldsValues.value = { ...values }
-}
+const handleMiscFieldsUpdate = (
+  values: Record<string, { key: string; value: unknown }>,
+) => {
+  miscFieldsValues.value = { ...values };
+};
 
 // Computed properties
 const modalTitle = computed(() => {
-  if (!props.optionType) return t('agora', 'Add option')
-  return t('agora', 'Add {type}', { type: optionTypeLabel.value })
-})
+  if (!props.optionType) return t("agora", "Add option");
+  return t("agora", "Add {type}", { type: optionTypeLabel.value });
+});
 
-const modalSubtitle = computed(() => optionTypeDescription.value || '')
+const modalSubtitle = computed(() => optionTypeDescription.value || "");
 
 const optionTypeLabel = computed(() =>
-  getOptionTypeLabel(props.optionType, allOptionTypes.value, t('agora', 'Option'))
-)
+  getOptionTypeLabel(
+    props.optionType,
+    allOptionTypes.value,
+    t("agora", "Option"),
+  ),
+);
 
 const optionTypeDescription = computed(() =>
-  getOptionTypeDescription(props.optionType, allOptionTypes.value)
-)
+  getOptionTypeDescription(props.optionType, allOptionTypes.value),
+);
 
 const optionTypeIcon = computed(() =>
-  getOptionTypeIconComponent(props.optionType, allOptionTypes.value)
-)
+  getOptionTypeIconComponent(props.optionType, allOptionTypes.value),
+);
 
-const optionTypeColor = computed(() => getOptionTypeColor(props.optionType, allOptionTypes.value))
+const optionTypeColor = computed(() =>
+  getOptionTypeColor(props.optionType, allOptionTypes.value),
+);
 
 const parentOption = computed(() => {
-  if (!props.parentId) return null
-  return optionsStore.options.find((opt) => opt.id === props.parentId)
-})
+  if (!props.parentId) return null;
+  return optionsStore.options.find((opt) => opt.id === props.parentId);
+});
 
-const allowedResponses = computed(() => getAllowedResponses(props.optionType, allOptionTypes.value))
+const allowedResponses = computed(() =>
+  getAllowedResponses(props.optionType, allOptionTypes.value),
+);
 
 const hasSupportFeature = computed(() =>
-  hasSupportFeatureHelper(props.optionType, allOptionTypes.value)
-)
+  hasSupportFeatureHelper(props.optionType, allOptionTypes.value),
+);
 
 const supportFeatureLabel = computed(() =>
-  getSupportFeatureLabel(props.optionType, allOptionTypes.value)
-)
+  getSupportFeatureLabel(props.optionType, allOptionTypes.value),
+);
 
-const allowComment = computed(() => allowsComments(props.optionType, allOptionTypes.value))
+const allowComment = computed(() =>
+  allowsComments(props.optionType, allOptionTypes.value),
+);
 
 const hasStatuses = computed(() => {
-  const optionType = findOptionType(props.optionType, allOptionTypes.value)
-  const statuses = optionType?.statuses || []
-  return statuses.length > 0
-})
+  const optionType = findOptionType(props.optionType, allOptionTypes.value);
+  const statuses = optionType?.statuses || [];
+  return statuses.length > 0;
+});
 
 const statusesList = computed(() => {
-  const optionType = findOptionType(props.optionType, allOptionTypes.value)
-  if (!optionType?.statuses) return []
+  const optionType = findOptionType(props.optionType, allOptionTypes.value);
+  if (!optionType?.statuses) return [];
 
-  const statuses = optionType.statuses
+  const statuses = optionType.statuses;
   if (Array.isArray(statuses)) {
     return statuses.map((status: string) => {
-      const [value, label] = status.split(':')
-      return { value, label: label || value }
-    })
+      const [value, label] = status.split(":");
+      return { value, label: label || value };
+    });
   }
-  return []
-})
+  return [];
+});
 
-const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
+const hasAdditionalFields = computed(() => additionalFields.value.length > 0);
 
-const useTitle = computed(() => usesTitle(props.optionType, allOptionTypes.value))
+const useTitle = computed(() =>
+  usesTitle(props.optionType, allOptionTypes.value),
+);
 
 const optionTypeHelp = computed(() => {
-  if (!props.optionType) return ''
+  if (!props.optionType) return "";
 
   const helpTexts: Record<string, string> = {
     chapter: t(
-      'agora',
-      'Chapters organize the main sections of your proposal. Add articles and sections within chapters.'
+      "agora",
+      "Chapters organize the main sections of your proposal. Add articles and sections within chapters.",
     ),
     article: t(
-      'agora',
-      'Articles contain the normative text of your proposal. Amendments can be proposed to modify articles.'
+      "agora",
+      "Articles contain the normative text of your proposal. Amendments can be proposed to modify articles.",
     ),
     position_for: t(
-      'agora',
-      'A position in favor of the proposal. Others can add arguments supporting or opposing this position.'
+      "agora",
+      "A position in favor of the proposal. Others can add arguments supporting or opposing this position.",
     ),
     position_against: t(
-      'agora',
-      'A position against the proposal. This can include conditional opposition.'
+      "agora",
+      "A position against the proposal. This can include conditional opposition.",
     ),
     argument_for: t(
-      'agora',
-      'An argument supporting a position. Keep arguments concise and evidence-based.'
+      "agora",
+      "An argument supporting a position. Keep arguments concise and evidence-based.",
     ),
     argument_against: t(
-      'agora',
-      'An argument opposing a position. Be constructive in your criticism.'
+      "agora",
+      "An argument opposing a position. Be constructive in your criticism.",
     ),
     alternative: t(
-      'agora',
-      'An alternative proposal that addresses objections while maintaining the original intent.'
+      "agora",
+      "An alternative proposal that addresses objections while maintaining the original intent.",
     ),
     objection: t(
-      'agora',
-      'A formal objection that blocks consensus. Must be resolved before proceeding.'
+      "agora",
+      "A formal objection that blocks consensus. Must be resolved before proceeding.",
     ),
-    exception: t('agora', 'Negative feedback that does not block consensus but should be noted.'),
+    exception: t(
+      "agora",
+      "Negative feedback that does not block consensus but should be noted.",
+    ),
     consultation_question: t(
-      'agora',
-      'A question posed to the collective for consultation and consensus building.'
+      "agora",
+      "A question posed to the collective for consultation and consensus building.",
     ),
     poll_option: t(
-      'agora',
-      'A selectable option in a poll for gathering opinions and preferences.'
+      "agora",
+      "A selectable option in a poll for gathering opinions and preferences.",
     ),
-    official_summary: t('agora', 'Final synthesis or accepted outcome of a discussion or debate.'),
-    official_result: t('agora', 'Official decision or result, typically locked and authoritative.'),
-  }
+    official_summary: t(
+      "agora",
+      "Final synthesis or accepted outcome of a discussion or debate.",
+    ),
+    official_result: t(
+      "agora",
+      "Official decision or result, typically locked and authoritative.",
+    ),
+  };
 
   return (
     helpTexts[props.optionType] ||
-    t('agora', 'Create a new option to contribute to the discussion.')
-  )
-})
+    t("agora", "Create a new option to contribute to the discussion.")
+  );
+});
 
 // Form validation
 const formValid = computed(() =>
-  useTitle.value ? !!formData.value.title.trim() : !!formData.value.text.trim()
-)
+  useTitle.value ? !!formData.value.title.trim() : !!formData.value.text.trim(),
+);
 
 // Helper methods
 const getParentIcon = (parent: Option) =>
-  getOptionTypeIconComponent(parent.type, allOptionTypes.value)
+  getOptionTypeIconComponent(parent.type, allOptionTypes.value);
 
-const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
+const getOptionTypeIcon = (type: string) =>
+  getOptionTypeIconComponent(type, allOptionTypes.value);
 
 const getStatusIcon = (status: string) => {
   const statusIconMap: Record<string, Component> = {
@@ -502,76 +540,84 @@ const getStatusIcon = (status: string) => {
     under_review: InquiryOptionIcons.ClockOutline,
     active: InquiryOptionIcons.Check,
     resolved: InquiryOptionIcons.ThumbUp,
-  }
-  return statusIconMap[status] || InquiryOptionIcons.Circle
-}
+  };
+  return statusIconMap[status] || InquiryOptionIcons.Circle;
+};
 
 // Sanitize value for storage
 const sanitizeValue = (value: unknown): string => {
-  if (value === null || value === undefined) return ''
+  if (value === null || value === undefined) return "";
 
   if (Array.isArray(value) && value.length > 0) {
     if (value[0]?.__v_isVNode) {
-      return String(value[0].children || '')
+      return String(value[0].children || "");
     }
-    return String(value[0] || '')
+    return String(value[0] || "");
   }
 
-  if (value && typeof value === 'object') {
-    if ('id' in value) return String(value.id)
-    if ('userId' in value) return String(value.userId)
+  if (value && typeof value === "object") {
+    if ("id" in value) return String(value.id);
+    if ("userId" in value) return String(value.userId);
     try {
-      return JSON.stringify(value)
+      return JSON.stringify(value);
     } catch {
-      return String(value)
+      return String(value);
     }
   }
 
-  return String(value)
-}
+  return String(value);
+};
 
 // Preview option
 const previewOption = computed((): Option => {
-  const currentUser = sessionStore.currentUser
-  const optionType = findOptionType(props.optionType, allOptionTypes.value) || {}
+  const currentUser = sessionStore.currentUser;
+  const optionType =
+    findOptionType(props.optionType, allOptionTypes.value) || {};
 
-  const previewMiscFields: Record<string, string> = {}
+  const previewMiscFields: Record<string, string> = {};
   additionalFields.value.forEach((field) => {
-    let value = miscFieldsValues.value[field.key]
+    let value = miscFieldsValues.value[field.key];
 
-    if (field.type === 'users' || field.type === 'groups') {
-      value = sanitizeValue(value)
+    if (field.type === "users" || field.type === "groups") {
+      value = sanitizeValue(value);
     }
 
-    if (value !== undefined && value !== null && value !== '') {
-      previewMiscFields[field.key] = formatValueForStorage(value, field.type)
-    } else if (field.default !== undefined && field.default !== null && field.default !== '') {
-      previewMiscFields[field.key] = formatValueForStorage(field.default, field.type)
+    if (value !== undefined && value !== null && value !== "") {
+      previewMiscFields[field.key] = formatValueForStorage(value, field.type);
+    } else if (
+      field.default !== undefined &&
+      field.default !== null &&
+      field.default !== ""
+    ) {
+      previewMiscFields[field.key] = formatValueForStorage(
+        field.default,
+        field.type,
+      );
     }
-  })
+  });
 
   return {
     id: 0,
     targetId: props.inquiryId,
     parentId: props.parentId || 0,
-    type: props.optionType || '',
-    title: formData.value.title || t('agora', 'Preview title'),
-    text: formData.value.text || t('agora', 'Preview text …'),
-    textSafe: '',
+    type: props.optionType || "",
+    title: formData.value.title || t("agora", "Preview title"),
+    text: formData.value.text || t("agora", "Preview text …"),
+    textSafe: "",
     sortOrder: 0,
     configuration: {
-      access: 'private',
-      showResults: 'always',
+      access: "private",
+      showResults: "always",
       allowComment: allowComment.value ? 1 : 0,
-      supportFeature: optionType.support_feature || 'none',
-      family: optionType.family || '',
+      supportFeature: optionType.support_feature || "none",
+      family: optionType.family || "",
     },
     miscFields: previewMiscFields,
-    ownedGroup: '',
+    ownedGroup: "",
     owner: {
-      id: currentUser?.id || 'preview-user',
-      displayName: currentUser?.displayName || t('agora', 'Current user'),
-      userRole: currentUser?.userRole || '',
+      id: currentUser?.id || "preview-user",
+      displayName: currentUser?.displayName || t("agora", "Current user"),
+      userRole: currentUser?.userRole || "",
     },
     currentUserStatus: {
       isInvolved: false,
@@ -579,9 +625,9 @@ const previewOption = computed((): Option => {
       supportValue: null,
       isLoggedIn: !!currentUser?.id,
       isOwner: true,
-      shareToken: '',
-      userId: currentUser?.id || '',
-      userRole: currentUser?.userRole || '',
+      shareToken: "",
+      userId: currentUser?.id || "",
+      userRole: currentUser?.userRole || "",
     },
     status: {
       created: Math.floor(Date.now() / 1000),
@@ -591,7 +637,7 @@ const previewOption = computed((): Option => {
       countParticipants: 0,
       countComments: 0,
       countSupports: 0,
-      optionStatus: 'draft',
+      optionStatus: "draft",
       countPositiveSupports: 0,
       countNegativeSupports: 0,
       countNeutralSupports: 0,
@@ -621,81 +667,92 @@ const previewOption = computed((): Option => {
         size: 0,
         loaded: 0,
       },
-      status: 'loaded',
+      status: "loaded",
     },
     inquiryInfo: {
       targetId: props.inquiryId,
-      inquiryTitle: '',
-      inquiryType: '',
-      inquiryAccess: '',
+      inquiryTitle: "",
+      inquiryType: "",
+      inquiryAccess: "",
     },
-  }
-})
+  };
+});
 
 // Create option
 const createOption = async () => {
-  if (!formValid.value || !props.optionType) return
+  if (!formValid.value || !props.optionType) return;
 
   try {
-    const optionType = findOptionType(props.optionType, allOptionTypes.value) || {}
+    const optionType =
+      findOptionType(props.optionType, allOptionTypes.value) || {};
 
-    const defaultAccess = 'private'
-    const defaultStatus = 'draft'
-    const defaultSupportFeature = optionType.support_feature || 'none'
-    const defaultAllowComment = allowComment.value ? 1 : 0
-    const defaultFamily = optionType.family || ''
+    const defaultAccess = "private";
+    const defaultStatus = "draft";
+    const defaultSupportFeature = optionType.support_feature || "none";
+    const defaultAllowComment = allowComment.value ? 1 : 0;
+    const defaultFamily = optionType.family || "";
 
-    const miscFieldsForStorage: Record<string, string> = {}
+    const miscFieldsForStorage: Record<string, string> = {};
 
     // Process all misc fields from the editor
     additionalFields.value.forEach((field) => {
-      let value = miscFieldsValues.value[field.key]
+      let value = miscFieldsValues.value[field.key];
 
       // Handle special types
-      if (field.type === 'users' || field.type === 'groups') {
-        value = sanitizeValue(value)
+      if (field.type === "users" || field.type === "groups") {
+        value = sanitizeValue(value);
       }
 
       // Use value if present, otherwise use default
-      if (value !== undefined && value !== null && value !== '') {
-        miscFieldsForStorage[field.key] = formatValueForStorage(value, field.type)
-      } else if (field.default !== undefined && field.default !== null && field.default !== '') {
-        miscFieldsForStorage[field.key] = formatValueForStorage(field.default, field.type)
+      if (value !== undefined && value !== null && value !== "") {
+        miscFieldsForStorage[field.key] = formatValueForStorage(
+          value,
+          field.type,
+        );
+      } else if (
+        field.default !== undefined &&
+        field.default !== null &&
+        field.default !== ""
+      ) {
+        miscFieldsForStorage[field.key] = formatValueForStorage(
+          field.default,
+          field.type,
+        );
       }
-    })
+    });
 
     const optionData = {
-      title: formData.value.title.trim() || '',
-      text: formData.value.text.trim() || '',
+      title: formData.value.title.trim() || "",
+      text: formData.value.text.trim() || "",
       type: props.optionType,
       targetId: props.inquiryId,
       parentId: props.parentId || 0,
-      ownedGroup: '',
+      ownedGroup: "",
       access: defaultAccess,
       supportFeature: defaultSupportFeature,
       allowComment: defaultAllowComment,
       family: defaultFamily,
       status: defaultStatus,
       miscFields: miscFieldsForStorage,
-    }
+    };
 
-    const newOption = await optionStore.create(optionData)
+    const newOption = await optionStore.create(optionData);
 
     if (newOption) {
-      emit('created', newOption)
+      emit("created", newOption);
       // Reset form
-      formData.value = { title: '', text: '' }
-      miscFieldsValues.value = {}
+      formData.value = { title: "", text: "" };
+      miscFieldsValues.value = {};
     }
   } catch (error) {
-    console.error('[AddOptionModal] Error creating option:', error)
+    console.error("[AddOptionModal] Error creating option:", error);
     formErrors.value.push(
-      t('agora', 'Error creating option: {error}', {
-        error: (error as Error).message || t('agora', 'Unknown error'),
-      })
-    )
+      t("agora", "Error creating option: {error}", {
+        error: (error as Error).message || t("agora", "Unknown error"),
+      }),
+    );
   }
-}
+};
 /*
 // Watch for option type changes
 watch(() => props.optionType, (newType) => {
@@ -716,10 +773,10 @@ watch(() => props.optionType, (newType) => {
 onMounted(() => {
   // Focus on text input after mount
   setTimeout(() => {
-    const input = document.getElementById('option-text')
-    if (input) input.focus()
-  }, 100)
-})
+    const input = document.getElementById("option-text");
+    if (input) input.focus();
+  }, 100);
+});
 </script>
 
 <style scoped lang="scss">

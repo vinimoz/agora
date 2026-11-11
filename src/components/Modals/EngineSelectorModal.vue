@@ -15,8 +15,8 @@
         <p class="modal-description">
           {{
             t(
-              'agora',
-              'Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process.'
+              "agora",
+              "Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process.",
             )
           }}
         </p>
@@ -28,11 +28,13 @@
         class="engine-basic-info"
       >
         <div class="field">
-          <label>{{ t('agora', 'Title') }} <span class="required">*</span></label>
+          <label>{{ t("agora", "Title") }} <span class="required">*</span></label>
           <NcTextField
             v-model="localTitle"
             :label="t('agora', 'Title')"
-            :placeholder="t('agora', 'E.g., final vote 2025, community decision')"
+            :placeholder="
+              t('agora', 'E.g., final vote 2025, community decision')
+            "
             :error="!!titleError"
           />
           <p
@@ -43,7 +45,7 @@
           </p>
         </div>
         <div class="field">
-          <label>{{ t('agora', 'Description (optional)') }}</label>
+          <label>{{ t("agora", "Description (optional)") }}</label>
           <textarea
             v-model="localDescription"
             :label="t('agora', 'Description')"
@@ -53,11 +55,13 @@
           />
         </div>
         <div class="field">
-          <label>{{ t('agora', 'Purpose') }} <span class="required">*</span></label>
+          <label>{{ t("agora", "Purpose") }} <span class="required">*</span></label>
           <NcSelect
             v-model="selectedPurpose"
             :options="purposeOptions"
-            :placeholder="t('agora', 'Select the purpose of this voting method')"
+            :placeholder="
+              t('agora', 'Select the purpose of this voting method')
+            "
             :reduce="(option) => option.value"
             label="label"
             :label-outside="true"
@@ -100,7 +104,8 @@
               <div
                 v-if="
                   engine.constraints &&
-                    (engine.constraints.min_options || engine.constraints.max_options)
+                    (engine.constraints.min_options ||
+                      engine.constraints.max_options)
                 "
                 class="engine-constraints"
               >
@@ -108,13 +113,17 @@
                   v-if="engine.constraints.min_options"
                   class="constraint-badge"
                 >
-                  {{ t('agora', 'Min {n}', { n: engine.constraints.min_options }) }}
+                  {{
+                    t("agora", "Min {n}", { n: engine.constraints.min_options })
+                  }}
                 </span>
                 <span
                   v-if="engine.constraints.max_options"
                   class="constraint-badge"
                 >
-                  {{ t('agora', 'Max {n}', { n: engine.constraints.max_options }) }}
+                  {{
+                    t("agora", "Max {n}", { n: engine.constraints.max_options })
+                  }}
                 </span>
               </div>
             </div>
@@ -139,7 +148,7 @@
       >
         <div class="subtype-header">
           <Brain :size="18" />
-          <h5>{{ t('agora', 'Select Condorcet method') }}</h5>
+          <h5>{{ t("agora", "Select Condorcet method") }}</h5>
         </div>
         <NcSelect
           v-model="selectedVariant"
@@ -178,7 +187,7 @@
       >
         <div class="config-header">
           <Gauge :size="18" />
-          <h5>{{ t('agora', 'Configure grades') }}</h5>
+          <h5>{{ t("agora", "Configure grades") }}</h5>
         </div>
         <div class="grades-list">
           <div
@@ -196,8 +205,10 @@
               :model-value="commentGrades.includes(grade)"
               @update:model-value="toggleCommentGrade(grade, $event)"
             >
-              {{ t('agora', 'Require a justification for this grade') }}
-              <span class="field-hint">{{ t('agora', '(not implemented yet)') }}</span>
+              {{ t("agora", "Require a justification for this grade") }}
+              <span class="field-hint">{{
+                t("agora", "(not implemented yet)")
+              }}</span>
             </NcCheckboxRadioSwitch>
             <NcButton
               v-if="(tempConfig.grades || defaultGrades).length > 2"
@@ -215,7 +226,7 @@
           @click="addGrade"
         >
           <Plus :size="16" />
-          {{ t('agora', 'Add grade') }}
+          {{ t("agora", "Add grade") }}
         </NcButton>
       </div>
 
@@ -226,7 +237,7 @@
       >
         <div class="config-header">
           <Heart :size="18" />
-          <h5>{{ t('agora', 'Select reactions') }}</h5>
+          <h5>{{ t("agora", "Select reactions") }}</h5>
         </div>
 
         <div class="reactions-grid">
@@ -256,7 +267,7 @@
         </div>
 
         <div class="reaction-limit">
-          <label>{{ t('agora', 'Max reactions per user') }}</label>
+          <label>{{ t("agora", "Max reactions per user") }}</label>
           <NcTextField
             id="max-reactions-input"
             v-model.number="tempConfig.max_per_user"
@@ -283,8 +294,10 @@
           @click="showConfigDialog = true"
         >
           <Settings :size="20" />
-          <span>{{ t('agora', 'Configure settings') }}</span>
-          <span class="config-count-badge">{{ Object.keys(currentConfigSchema).length }}</span>
+          <span>{{ t("agora", "Configure settings") }}</span>
+          <span class="config-count-badge">{{
+            Object.keys(currentConfigSchema).length
+          }}</span>
         </NcButton>
       </div>
 
@@ -292,13 +305,19 @@
         v-else-if="
           selectedEngine &&
             !isSpecialEngine &&
-            (!currentConfigSchema || Object.keys(currentConfigSchema).length === 0)
+            (!currentConfigSchema ||
+              Object.keys(currentConfigSchema).length === 0)
         "
         class="engine-info-section"
       >
         <div class="info-message">
           <Info :size="18" />
-          <span>{{ t('agora', 'This voting method requires no additional configuration.') }}</span>
+          <span>{{
+            t(
+              "agora",
+              "This voting method requires no additional configuration.",
+            )
+          }}</span>
         </div>
       </div>
 
@@ -309,7 +328,7 @@
       >
         <div class="status-header">
           <Info :size="18" />
-          <h5>{{ t('agora', 'Status') }}</h5>
+          <h5>{{ t("agora", "Status") }}</h5>
         </div>
         <NcRadioGroup
           v-model="tempStatus"
@@ -321,25 +340,25 @@
             value="active"
             :disabled="hasVotes"
           >
-            {{ t('agora', 'Active') }}
+            {{ t("agora", "Active") }}
             <span
               v-if="hasVotes"
               class="status-hint"
             >{{
-              t('agora', '(Cannot change - votes exist)')
+              t("agora", "(Cannot change - votes exist)")
             }}</span>
           </NcCheckboxRadioSwitch>
           <NcCheckboxRadioSwitch
             type="radio"
             value="closed"
           >
-            {{ t('agora', 'Closed') }}
+            {{ t("agora", "Closed") }}
           </NcCheckboxRadioSwitch>
           <NcCheckboxRadioSwitch
             type="radio"
             value="draft"
           >
-            {{ t('agora', 'Draft') }}
+            {{ t("agora", "Draft") }}
           </NcCheckboxRadioSwitch>
         </NcRadioGroup>
       </div>
@@ -347,9 +366,11 @@
       <NcCheckboxRadioSwitch
         v-if="mode !== 'deliberative'"
         :model-value="tempConfig.results_visibility === 'closed'"
-        @update:model-value="tempConfig.results_visibility = $event ? 'closed' : 'always'"
+        @update:model-value="
+          tempConfig.results_visibility = $event ? 'closed' : 'always'
+        "
       >
-        {{ t('agora', 'Hide results until voting is closed') }}
+        {{ t("agora", "Hide results until voting is closed") }}
       </NcCheckboxRadioSwitch>
 
       <div class="modal-footer">
@@ -357,7 +378,7 @@
           class="btn-secondary"
           @click="$emit('close')"
         >
-          {{ t('agora', 'Cancel') }}
+          {{ t("agora", "Cancel") }}
         </NcButton>
         <NcButton
           class="btn-primary"
@@ -366,9 +387,9 @@
         >
           <Vote :size="16" />
           {{
-            mode === 'create'
-              ? t('agora', 'Create voting method')
-              : t('agora', 'Update voting method')
+            mode === "create"
+              ? t("agora", "Create voting method")
+              : t("agora", "Update voting method")
           }}
         </NcButton>
       </div>
@@ -377,7 +398,11 @@
     <!-- Settings Dialog -->
     <NcDialog
       v-if="showConfigDialog"
-      :name="t('agora', 'Configure {engine} Settings', { engine: getEngineLabel(selectedEngine) })"
+      :name="
+        t('agora', 'Configure {engine} Settings', {
+          engine: getEngineLabel(selectedEngine),
+        })
+      "
       :close-on-click-outside="true"
       size="normal"
       @close="showConfigDialog = false"
@@ -387,8 +412,8 @@
           <div class="settings-icon">
             <Settings :size="32" />
           </div>
-          <h4>{{ t('agora', 'Configuration settings') }}</h4>
-          <p>{{ t('agora', 'Adjust the settings for this voting method') }}</p>
+          <h4>{{ t("agora", "Configuration settings") }}</h4>
+          <p>{{ t("agora", "Adjust the settings for this voting method") }}</p>
         </div>
 
         <div class="settings-fields">
@@ -404,7 +429,9 @@
               {{ schema.label || key }}
               <span
                 v-if="
-                  schema.type === 'number' && schema.min !== undefined && schema.max !== undefined
+                  schema.type === 'number' &&
+                    schema.min !== undefined &&
+                    schema.max !== undefined
                 "
                 class="field-hint"
               >
@@ -425,14 +452,19 @@
                   <NcCheckboxRadioSwitch
                     type="checkbox"
                     :checked="tempConfig[key] === null"
-                    @update:model-value="(checked) => setUnlimited(key, checked)"
+                    @update:model-value="
+                      (checked) => setUnlimited(key, checked)
+                    "
                   >
-                    {{ t('agora', 'Unlimited') }}
+                    {{ t("agora", "Unlimited") }}
                   </NcCheckboxRadioSwitch>
                 </div>
 
                 <div
-                  v-if="tempConfig[key] !== null || !(schema.nullable || key === 'max_choices')"
+                  v-if="
+                    tempConfig[key] !== null ||
+                      !(schema.nullable || key === 'max_choices')
+                  "
                   class="slider-control"
                 >
                   <input
@@ -445,13 +477,25 @@
                     class="settings-range-input"
                     :style="{
                       '--range-progress':
-                        getRangeProgress(tempConfig[key], schema.min ?? 0, schema.max ?? 100) + '%',
+                        getRangeProgress(
+                          tempConfig[key],
+                          schema.min ?? 0,
+                          schema.max ?? 100,
+                        ) + '%',
                     }"
                   >
                   <div class="slider-value">
-                    <span class="value-number">{{ tempConfig[key] ?? schema.default ?? 0 }}</span>
+                    <span class="value-number">{{
+                      tempConfig[key] ?? schema.default ?? 0
+                    }}</span>
                     <NcProgressBar
-                      :value="getRangeProgress(tempConfig[key], schema.min ?? 0, schema.max ?? 100)"
+                      :value="
+                        getRangeProgress(
+                          tempConfig[key],
+                          schema.min ?? 0,
+                          schema.max ?? 100,
+                        )
+                      "
                       :show-value="true"
                       size="small"
                     />
@@ -461,7 +505,7 @@
                   v-else-if="tempConfig[key] === null"
                   class="null-indicator"
                 >
-                  {{ t('agora', 'Unlimited (no restriction)') }}
+                  {{ t("agora", "Unlimited (no restriction)") }}
                 </span>
               </div>
 
@@ -484,7 +528,11 @@
                   type="switch"
                   class="settings-switch"
                 >
-                  {{ tempConfig[key] ? t('agora', 'Enabled') : t('agora', 'Disabled') }}
+                  {{
+                    tempConfig[key]
+                      ? t("agora", "Enabled")
+                      : t("agora", "Disabled")
+                  }}
                 </NcCheckboxRadioSwitch>
               </div>
 
@@ -513,7 +561,7 @@
 
       <template #actions>
         <NcButton @click="showConfigDialog = false">
-          {{ t('agora', 'Close') }}
+          {{ t("agora", "Close") }}
         </NcButton>
       </template>
     </NcDialog>
@@ -521,16 +569,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
-import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
+import { ref, computed, watch, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcDialog from "@nextcloud/vue/components/NcDialog";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcTextField from "@nextcloud/vue/components/NcTextField";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcRadioGroup from "@nextcloud/vue/components/NcRadioGroup";
+import NcProgressBar from "@nextcloud/vue/components/NcProgressBar";
 import {
   Vote,
   CheckCircle,
@@ -549,203 +597,213 @@ import {
   ListChecks,
   Plus,
   Minus,
-} from 'lucide-vue-next'
+} from "lucide-vue-next";
 
 import {
   ENGINE_DEFINITIONS,
   initializeEngineConfig,
   type ConfigSchemaField,
-} from '../../Types/votingType'
-import type { SupportEngine } from '../../Types/index'
+} from "../../Types/votingType";
+import type { SupportEngine } from "../../Types/index";
 
 const props = defineProps<{
-  mode: 'deliberative' | 'create' | 'edit'
-  existingEngine?: SupportEngine | null
-  hasVotes?: boolean
-  availableEngines: ENGINE_DEFINITIONS
-}>()
+  mode: "deliberative" | "create" | "edit";
+  existingEngine?: SupportEngine | null;
+  hasVotes?: boolean;
+  availableEngines: ENGINE_DEFINITIONS;
+}>();
 
 const emit = defineEmits<{
-  close: []
+  close: [];
   save: [
     data: {
-      title?: string
-      description?: string
-      engine: string
-      purpose?: string
-      config: Record<string, unknown>
-      status?: 'draft' | 'active' | 'closed'
+      title?: string;
+      description?: string;
+      engine: string;
+      purpose?: string;
+      config: Record<string, unknown>;
+      status?: "draft" | "active" | "closed";
     },
-  ]
-}>()
+  ];
+}>();
 
-const localTitle = ref(props.existingEngine?.title || '')
-const localDescription = ref(props.existingEngine?.description || '')
-const selectedEngine = ref(props.existingEngine?.engine || 'binary')
-const selectedVariant = ref('schulze')
-const tempConfig = ref<Record<string, unknown>>(props.existingEngine?.config || {})
-const tempStatus = ref<'draft' | 'active' | 'closed'>(props.existingEngine?.status || 'active')
-const showConfigDialog = ref(false)
+const localTitle = ref(props.existingEngine?.title || "");
+const localDescription = ref(props.existingEngine?.description || "");
+const selectedEngine = ref(props.existingEngine?.engine || "binary");
+const selectedVariant = ref("schulze");
+const tempConfig = ref<Record<string, unknown>>(
+  props.existingEngine?.config || {},
+);
+const tempStatus = ref<"draft" | "active" | "closed">(
+  props.existingEngine?.status || "active",
+);
+const showConfigDialog = ref(false);
 
 const titleError = computed(() => {
   // Only validate title in create/edit mode, not in deliberative mode
-  if (props.mode !== 'deliberative' && !localTitle.value.trim()) {
-    return t('agora', 'Title is required')
+  if (props.mode !== "deliberative" && !localTitle.value.trim()) {
+    return t("agora", "Title is required");
   }
-  return null
-})
+  return null;
+});
 
 const isSaveDisabled = computed(() => {
   // In deliberative mode, only need selected engine
-  if (props.mode === 'deliberative') {
-    return !selectedEngine.value
+  if (props.mode === "deliberative") {
+    return !selectedEngine.value;
   }
   // In create/edit mode, need title and selected engine
-  return !selectedEngine.value || !localTitle.value.trim()
-})
+  return !selectedEngine.value || !localTitle.value.trim();
+});
 
 const modalTitle = computed(() => {
-  if (props.mode === 'deliberative') return t('agora', 'Select support method')
-  if (props.mode === 'create') return t('agora', 'Configure voting method')
-  return t('agora', 'Edit voting method')
-})
+  if (props.mode === "deliberative") return t("agora", "Select support method");
+  if (props.mode === "create") return t("agora", "Configure voting method");
+  return t("agora", "Edit voting method");
+});
 
-const selectedPurpose = ref(props.existingEngine?.purpose || 'vote')
+const selectedPurpose = ref(props.existingEngine?.purpose || "vote");
 
 const purposeOptions = [
   {
-    value: 'vote',
-    label: t('agora', 'Vote'),
-    description: t('agora', 'General voting on options'),
+    value: "vote",
+    label: t("agora", "Vote"),
+    description: t("agora", "General voting on options"),
   },
   {
-    value: 'deliberation',
-    label: t('agora', 'Deliberation'),
-    description: t('agora', 'Deliberative process with voting'),
+    value: "deliberation",
+    label: t("agora", "Deliberation"),
+    description: t("agora", "Deliberative process with voting"),
   },
   {
-    value: 'election',
-    label: t('agora', 'Election'),
-    description: t('agora', 'Elect candidates to positions'),
+    value: "election",
+    label: t("agora", "Election"),
+    description: t("agora", "Elect candidates to positions"),
   },
   {
-    value: 'consultation',
-    label: t('agora', 'Consultation'),
-    description: t('agora', 'Public consultation on matters'),
+    value: "consultation",
+    label: t("agora", "Consultation"),
+    description: t("agora", "Public consultation on matters"),
   },
   {
-    value: 'moderation',
-    label: t('agora', 'Moderation'),
-    description: t('agora', 'Content moderation decisions'),
+    value: "moderation",
+    label: t("agora", "Moderation"),
+    description: t("agora", "Content moderation decisions"),
   },
   {
-    value: 'prioritization',
-    label: t('agora', 'Prioritization'),
-    description: t('agora', 'Prioritize items or tasks'),
+    value: "prioritization",
+    label: t("agora", "Prioritization"),
+    description: t("agora", "Prioritize items or tasks"),
   },
   {
-    value: 'referendum',
-    label: t('agora', 'Referendum'),
-    description: t('agora', 'Referendum on specific issues'),
+    value: "referendum",
+    label: t("agora", "Referendum"),
+    description: t("agora", "Referendum on specific issues"),
   },
-]
+];
 
 // Default grades for majority judgment
 const defaultGrades = [
-  'Reject',
-  'Insufficient',
-  'Passable',
-  'Fairly Good',
-  'Good',
-  'Very Good',
-  'Excellent',
-]
+  "Reject",
+  "Insufficient",
+  "Passable",
+  "Fairly Good",
+  "Good",
+  "Very Good",
+  "Excellent",
+];
 
 // Condorcet variants
 const condorcetVariants = [
   {
-    id: 'schulze',
-    label: t('agora', 'Schulze Method'),
+    id: "schulze",
+    label: t("agora", "Schulze Method"),
     description: t(
-      'agora',
-      'Also known as Beatpath method, considered one of the most robust Condorcet methods'
+      "agora",
+      "Also known as Beatpath method, considered one of the most robust Condorcet methods",
     ),
   },
   {
-    id: 'copeland',
-    label: t('agora', 'Copeland Method'),
-    description: t('agora', 'Simple method based on win-loss record against other candidates'),
-  },
-  {
-    id: 'minimax',
-    label: t('agora', 'Minimax'),
+    id: "copeland",
+    label: t("agora", "Copeland Method"),
     description: t(
-      'agora',
-      'Also known as Simpson-Kramer method, minimizes the largest opposition'
+      "agora",
+      "Simple method based on win-loss record against other candidates",
     ),
   },
   {
-    id: 'ranked_pairs',
-    label: t('agora', 'Ranked Pairs'),
+    id: "minimax",
+    label: t("agora", "Minimax"),
     description: t(
-      'agora',
-      'Tideman method that builds a ranking from strongest to weakest majorities'
+      "agora",
+      "Also known as Simpson-Kramer method, minimizes the largest opposition",
     ),
   },
   {
-    id: 'kemeny_young',
-    label: t('agora', 'Kemeny-Young'),
-    description: t('agora', 'Finds the most likely ranking based on voters preferences'),
+    id: "ranked_pairs",
+    label: t("agora", "Ranked Pairs"),
+    description: t(
+      "agora",
+      "Tideman method that builds a ranking from strongest to weakest majorities",
+    ),
   },
-]
+  {
+    id: "kemeny_young",
+    label: t("agora", "Kemeny-Young"),
+    description: t(
+      "agora",
+      "Finds the most likely ranking based on voters preferences",
+    ),
+  },
+];
 
 // Reaction options
 const reactionOptions = [
-  { value: '👍', label: t('agora', 'Thumbs Up'), emoji: '👍' },
-  { value: '❤️', label: t('agora', 'Heart'), emoji: '❤️' },
-  { value: '😊', label: t('agora', 'Smile'), emoji: '😊' },
-  { value: '🎉', label: t('agora', 'Celebrate'), emoji: '🎉' },
-  { value: '🤔', label: t('agora', 'Thinking'), emoji: '🤔' },
-  { value: '👎', label: t('agora', 'Thumbs Down'), emoji: '👎' },
-  { value: '😢', label: t('agora', 'Sad'), emoji: '😢' },
-  { value: '😡', label: t('agora', 'Angry'), emoji: '😡' },
-]
+  { value: "👍", label: t("agora", "Thumbs Up"), emoji: "👍" },
+  { value: "❤️", label: t("agora", "Heart"), emoji: "❤️" },
+  { value: "😊", label: t("agora", "Smile"), emoji: "😊" },
+  { value: "🎉", label: t("agora", "Celebrate"), emoji: "🎉" },
+  { value: "🤔", label: t("agora", "Thinking"), emoji: "🤔" },
+  { value: "👎", label: t("agora", "Thumbs Down"), emoji: "👎" },
+  { value: "😢", label: t("agora", "Sad"), emoji: "😢" },
+  { value: "😡", label: t("agora", "Angry"), emoji: "😡" },
+];
 
 const currentConfigSchema = computed(() => {
-  if (!selectedEngine.value) return null
-  const engine = ENGINE_DEFINITIONS[selectedEngine.value]
-  return engine?.config_schema || null
-})
+  if (!selectedEngine.value) return null;
+  const engine = ENGINE_DEFINITIONS[selectedEngine.value];
+  return engine?.config_schema || null;
+});
 
 const isSpecialEngine = computed(
   () =>
-    selectedEngine.value === 'condorcet' ||
-    selectedEngine.value === 'majority_judgment' ||
-    selectedEngine.value === 'reaction'
-)
+    selectedEngine.value === "condorcet" ||
+    selectedEngine.value === "majority_judgment" ||
+    selectedEngine.value === "reaction",
+);
 
 // Initialize config for special engines
 watch(
   selectedEngine,
   (newEngine) => {
-    if (newEngine === 'majority_judgment' && !tempConfig.value.grades) {
-      tempConfig.value.grades = [...defaultGrades]
+    if (newEngine === "majority_judgment" && !tempConfig.value.grades) {
+      tempConfig.value.grades = [...defaultGrades];
     }
-    if (newEngine === 'reaction' && !tempConfig.value.allowed_reactions) {
-      tempConfig.value.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
-      if (!tempConfig.value.max_per_user) tempConfig.value.max_per_user = 3
+    if (newEngine === "reaction" && !tempConfig.value.allowed_reactions) {
+      tempConfig.value.allowed_reactions = ["👍", "❤️", "🎉", "🤔", "👎"];
+      if (!tempConfig.value.max_per_user) tempConfig.value.max_per_user = 3;
     }
-    if (newEngine === 'condorcet' && !tempConfig.value.variant) {
-      tempConfig.value.variant = selectedVariant.value
+    if (newEngine === "condorcet" && !tempConfig.value.variant) {
+      tempConfig.value.variant = selectedVariant.value;
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 const getRangeProgress = (value: unknown, min: number, max: number): number => {
-  const numValue = typeof value === 'number' ? value : min + (max - min) / 2
-  return ((numValue - min) / (max - min)) * 100
-}
+  const numValue = typeof value === "number" ? value : min + (max - min) / 2;
+  return ((numValue - min) / (max - min)) * 100;
+};
 
 const getVariantIcon = (variantId: string) => {
   const icons: Record<string, unknown> = {
@@ -754,76 +812,83 @@ const getVariantIcon = (variantId: string) => {
     minimax: TrendingUp,
     ranked_pairs: ListChecks,
     kemeny_young: Award,
-  }
-  return icons[variantId] || Brain
-}
+  };
+  return icons[variantId] || Brain;
+};
 
-const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.label || engineId
+const getEngineLabel = (engineId: string): string =>
+  ENGINE_DEFINITIONS[engineId]?.label || engineId;
 
 const isReactionSelected = (value: string): boolean => {
-  const reactions = (tempConfig.value.allowed_reactions as string[]) || []
-  return reactions.includes(value)
-}
+  const reactions = (tempConfig.value.allowed_reactions as string[]) || [];
+  return reactions.includes(value);
+};
 
 const toggleReaction = (value: string) => {
-  const reactions = (tempConfig.value.allowed_reactions as string[]) || []
+  const reactions = (tempConfig.value.allowed_reactions as string[]) || [];
   if (reactions.includes(value)) {
-    tempConfig.value.allowed_reactions = reactions.filter((r) => r !== value)
+    tempConfig.value.allowed_reactions = reactions.filter((r) => r !== value);
   } else {
-    tempConfig.value.allowed_reactions = [...reactions, value]
+    tempConfig.value.allowed_reactions = [...reactions, value];
   }
-}
+};
 
 const addGrade = () => {
-  const grades = (tempConfig.value.grades as string[]) || defaultGrades
-  tempConfig.value.grades = [...grades, '']
-}
+  const grades = (tempConfig.value.grades as string[]) || defaultGrades;
+  tempConfig.value.grades = [...grades, ""];
+};
 
 const removeGrade = (index: number) => {
-  const grades = (tempConfig.value.grades as string[]) || defaultGrades
+  const grades = (tempConfig.value.grades as string[]) || defaultGrades;
   if (grades.length > 2) {
-    tempConfig.value.grades = grades.filter((_, i) => i !== index)
+    tempConfig.value.grades = grades.filter((_, i) => i !== index);
   }
-}
+};
 
 const commentGrades = computed(
-  () => (tempConfig.value.comment_grades as string[] | undefined) ?? []
-)
+  () => (tempConfig.value.comment_grades as string[] | undefined) ?? [],
+);
 
 const toggleCommentGrade = (grade: string, checked: boolean) => {
-  const others = commentGrades.value.filter((g) => g !== grade)
-  tempConfig.value.comment_grades = checked ? [...others, grade] : others
-}
+  const others = commentGrades.value.filter((g) => g !== grade);
+  tempConfig.value.comment_grades = checked ? [...others, grade] : others;
+};
 
 const getSelectOptions = (schema: ConfigSchemaField) => {
-  if (!schema.options) return []
+  if (!schema.options) return [];
 
-  const options = Array.isArray(schema.options) ? schema.options : Object.values(schema.options)
+  const options = Array.isArray(schema.options)
+    ? schema.options
+    : Object.values(schema.options);
 
   const labels: Record<string, string> = {
-    ...Object.fromEntries(condorcetVariants.map((variant) => [variant.id, variant.label])),
-    none: t('agora', 'None'),
-    'min-max': t('agora', 'Min-max'),
-    'z-score': t('agora', 'Z-score'),
-    bottom: t('agora', 'Bottom'),
-    threshold: t('agora', 'Threshold'),
-    top: t('agora', 'Top'),
-  }
+    ...Object.fromEntries(
+      condorcetVariants.map((variant) => [variant.id, variant.label]),
+    ),
+    none: t("agora", "None"),
+    "min-max": t("agora", "Min-max"),
+    "z-score": t("agora", "Z-score"),
+    bottom: t("agora", "Bottom"),
+    threshold: t("agora", "Threshold"),
+    top: t("agora", "Top"),
+  };
 
   return options.map((opt: string) => ({
     value: opt,
-    label: labels[opt] || opt.charAt(0).toUpperCase() + opt.slice(1).replace(/_/g, ' '),
-  }))
-}
+    label:
+      labels[opt] ||
+      opt.charAt(0).toUpperCase() + opt.slice(1).replace(/_/g, " "),
+  }));
+};
 
 const setUnlimited = (key: string, checked: boolean) => {
   if (checked) {
-    tempConfig.value[key] = null
+    tempConfig.value[key] = null;
   } else {
-    const schema = currentConfigSchema.value?.[key]
-    tempConfig.value[key] = schema?.default ?? 1
+    const schema = currentConfigSchema.value?.[key];
+    tempConfig.value[key] = schema?.default ?? 1;
   }
-}
+};
 
 const getEngineIcon = (engineId: string) => {
   const icons: Record<string, unknown> = {
@@ -840,124 +905,130 @@ const getEngineIcon = (engineId: string) => {
     token_weighted: Users,
     quadratic: TrendingUp,
     trending: TrendingUp,
-  }
-  return icons[engineId] || Vote
-}
+  };
+  return icons[engineId] || Vote;
+};
 
 const getEngineDescription = (engineId: string): string =>
-  ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
+  ENGINE_DEFINITIONS[engineId]?.description ||
+  t("agora", "Vote using this method");
 
 const getScopeLabel = (scope: string): string => {
   const labels: Record<string, string> = {
-    per_option: t('agora', 'Absolute numbers per option decide the winner'),
-    cross_option: t('agora', 'Relative weightings across options decide the winner'),
-    flex: t('agora', 'Flexible'),
-    none: t('agora', 'No voting'),
-  }
-  return labels[scope] || scope
-}
+    per_option: t("agora", "Absolute numbers per option decide the winner"),
+    cross_option: t(
+      "agora",
+      "Relative weightings across options decide the winner",
+    ),
+    flex: t("agora", "Flexible"),
+    none: t("agora", "No voting"),
+  };
+  return labels[scope] || scope;
+};
 
 const selectEngine = (engineId: string): void => {
-  selectedEngine.value = engineId
+  selectedEngine.value = engineId;
 
   // Initialize config for newly selected engine
-  const engine = ENGINE_DEFINITIONS[engineId]
+  const engine = ENGINE_DEFINITIONS[engineId];
   if (engine?.config_schema) {
-    const newConfig = initializeEngineConfig(engineId)
-    tempConfig.value = { ...newConfig }
+    const newConfig = initializeEngineConfig(engineId);
+    tempConfig.value = { ...newConfig };
   } else {
-    tempConfig.value = {}
+    tempConfig.value = {};
   }
 
   // Special initialization
-  if (engineId === 'majority_judgment') {
-    tempConfig.value.grades = [...defaultGrades]
-  } else if (engineId === 'reaction') {
-    tempConfig.value.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
-    tempConfig.value.max_per_user = 3
-  } else if (engineId === 'condorcet') {
-    tempConfig.value.variant = selectedVariant.value
+  if (engineId === "majority_judgment") {
+    tempConfig.value.grades = [...defaultGrades];
+  } else if (engineId === "reaction") {
+    tempConfig.value.allowed_reactions = ["👍", "❤️", "🎉", "🤔", "👎"];
+    tempConfig.value.max_per_user = 3;
+  } else if (engineId === "condorcet") {
+    tempConfig.value.variant = selectedVariant.value;
   }
-}
+};
 
 const save = (): void => {
-  if (isSaveDisabled.value) return
+  if (isSaveDisabled.value) return;
 
-  const config = { ...tempConfig.value }
+  const config = { ...tempConfig.value };
 
   // Add variant for condorcet
-  if (selectedEngine.value === 'condorcet') {
-    config.variant = selectedVariant.value
+  if (selectedEngine.value === "condorcet") {
+    config.variant = selectedVariant.value;
   }
 
   // Clean up empty grades
-  if (selectedEngine.value === 'majority_judgment' && config.grades) {
-    config.grades = (config.grades as string[]).filter((g) => g.trim() !== '')
+  if (selectedEngine.value === "majority_judgment" && config.grades) {
+    config.grades = (config.grades as string[]).filter((g) => g.trim() !== "");
     if (config.comment_grades) {
       config.comment_grades = (config.comment_grades as string[]).filter((g) =>
-        (config.grades as string[]).includes(g)
-      )
+        (config.grades as string[]).includes(g),
+      );
     }
   }
 
   // VALIDATION: Ensure min < max for score/star
-  if (selectedEngine.value === 'score' || selectedEngine.value === 'star') {
-    const min = config.min as number
-    const max = config.max as number
+  if (selectedEngine.value === "score" || selectedEngine.value === "star") {
+    const min = config.min as number;
+    const max = config.max as number;
     if (min !== undefined && max !== undefined && min >= max) {
-      console.warn(`Invalid config: min (${min}) >= max (${max}), swapping values`)
+      console.warn(
+        `Invalid config: min (${min}) >= max (${max}), swapping values`,
+      );
       // Swap them to be valid
-      const temp = config.min
-      config.min = config.max
-      config.max = temp
+      const temp = config.min;
+      config.min = config.max;
+      config.max = temp;
     }
   }
 
   // VALIDATION: Ensure credits_per_user is set for quadratic
-  if (selectedEngine.value === 'quadratic' && !config.credits_per_user) {
-    config.credits_per_user = 100
+  if (selectedEngine.value === "quadratic" && !config.credits_per_user) {
+    config.credits_per_user = 100;
   }
 
   // VALIDATION: Ensure max_rank is properly handled for ranking engines
-  if (['ranking', 'condorcet', 'borda'].includes(selectedEngine.value)) {
+  if (["ranking", "condorcet", "borda"].includes(selectedEngine.value)) {
     if (config.max_rank === undefined || config.max_rank === null) {
-      config.max_rank = null // null means rank all options
+      config.max_rank = null; // null means rank all options
     }
   }
 
   const saveData: {
-    engine: string
-    config: Record<string, unknown>
-    status?: 'draft' | 'active' | 'closed'
-    title?: string
-    description?: string
-    purpose?: string
+    engine: string;
+    config: Record<string, unknown>;
+    status?: "draft" | "active" | "closed";
+    title?: string;
+    description?: string;
+    purpose?: string;
   } = {
     engine: selectedEngine.value,
     config,
-    status: props.mode === 'edit' ? tempStatus.value : 'draft',
-  }
+    status: props.mode === "edit" ? tempStatus.value : "draft",
+  };
 
   // Only include title, description, purpose in create/edit mode
-  if (props.mode !== 'deliberative') {
-    saveData.title = localTitle.value.trim()
-    saveData.description = localDescription.value.trim()
-    saveData.purpose = selectedPurpose.value
+  if (props.mode !== "deliberative") {
+    saveData.title = localTitle.value.trim();
+    saveData.description = localDescription.value.trim();
+    saveData.purpose = selectedPurpose.value;
   }
 
-  emit('save', saveData)
-  emit('close')
-}
+  emit("save", saveData);
+  emit("close");
+};
 
 onMounted(() => {
-  if (props.mode === 'edit' && props.existingEngine?.engine === 'condorcet') {
-    const variant = props.existingEngine.config?.variant as string
+  if (props.mode === "edit" && props.existingEngine?.engine === "condorcet") {
+    const variant = props.existingEngine.config?.variant as string;
     if (variant && condorcetVariants.some((v) => v.id === variant)) {
-      selectedVariant.value = variant
-      if (!tempConfig.value.variant) tempConfig.value.variant = variant
+      selectedVariant.value = variant;
+      if (!tempConfig.value.variant) tempConfig.value.variant = variant;
     }
   }
-})
+});
 </script>
 
 <style scoped lang="scss">

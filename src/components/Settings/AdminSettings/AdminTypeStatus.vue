@@ -4,82 +4,89 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { ref, computed } from 'vue'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import { StatusIcons } from '../../../utils/icons.ts'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
+import { t } from "@nextcloud/l10n";
+import { ref, computed } from "vue";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import { StatusIcons } from "../../../utils/icons.ts";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcInputField from "@nextcloud/vue/components/NcInputField";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
 
 // const emit = defineEmits(['back-to-types'])
 interface Props {
   selectedType?: {
-    inquiry_type: string
-  }
+    inquiry_type: string;
+  };
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 interface StatusForm {
-  id?: number
-  statusKey: string
-  label: string
-  description: string
-  isFinal: boolean
-  icon: string
+  id?: number;
+  statusKey: string;
+  label: string;
+  description: string;
+  isFinal: boolean;
+  icon: string;
 }
 
-const appSettingsStore = useAppSettingsStore()
-const editingStatus = ref<StatusForm | null>(null)
+const appSettingsStore = useAppSettingsStore();
+const editingStatus = ref<StatusForm | null>(null);
 const newStatus = ref<StatusForm>({
-  statusKey: '',
-  label: '',
-  description: '',
+  statusKey: "",
+  label: "",
+  description: "",
   isFinal: false,
-  icon: 'ClockOutline',
-})
+  icon: "ClockOutline",
+});
 
 const availableIcons = computed(() =>
   Object.keys(StatusIcons)
-    .filter((key) => key !== 'default')
+    .filter((key) => key !== "default")
     .map((iconId) => ({
       id: iconId,
-      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    }))
-)
+      label: t("agora", iconId.replace(/([A-Z])/g, " $1").trim()),
+    })),
+);
 
 // Get statuses for the selected inquiry type
 const statuses = computed(() =>
   props.selectedType
-    ? appSettingsStore.getStatusesForInquiryType(props.selectedType.inquiry_type)
-    : []
-)
+    ? appSettingsStore.getStatusesForInquiryType(
+        props.selectedType.inquiry_type,
+      )
+    : [],
+);
 
 // Get the icon component for a given icon name
-const getIconComponent = (iconName: string) => StatusIcons[iconName] || StatusIcons.ClockOutline
+const getIconComponent = (iconName: string) =>
+  StatusIcons[iconName] || StatusIcons.ClockOutline;
 
 // Add a new status
 const addStatus = () => {
-  if (!newStatus.value.statusKey || !newStatus.value.label || !props.selectedType) {
-    return
+  if (
+    !newStatus.value.statusKey ||
+    !newStatus.value.label ||
+    !props.selectedType
+  ) {
+    return;
   }
 
   appSettingsStore.addStatusForInquiryType(props.selectedType.inquiry_type, {
     ...newStatus.value,
     icon: String(newStatus.value.icon),
-  })
+  });
 
   // Reset form
   newStatus.value = {
-    statusKey: '',
-    label: '',
-    description: '',
+    statusKey: "",
+    label: "",
+    description: "",
     isFinal: false,
-    icon: 'ClockOutline',
-  }
-}
+    icon: "ClockOutline",
+  };
+};
 
 // Edit a status
 const editStatus = (status) => {
@@ -87,11 +94,11 @@ const editStatus = (status) => {
     id: status.id,
     statusKey: status.statusKey,
     label: status.label,
-    description: status.description || '',
+    description: status.description || "",
     isFinal: status.isFinal,
-    icon: status.icon || 'ClockOutline',
-  }
-}
+    icon: status.icon || "ClockOutline",
+  };
+};
 
 const saveUpdateStatus = () => {
   if (editingStatus.value && props.selectedType) {
@@ -101,44 +108,50 @@ const saveUpdateStatus = () => {
       {
         ...editingStatus.value,
         icon: editingStatus.value.icon?.id || String(editingStatus.value.icon),
-      }
-    )
-    editingStatus.value = null
+      },
+    );
+    editingStatus.value = null;
   }
-}
+};
 
 // Delete a status
 const deleteStatus = (statusId) => {
-  if (confirm(t('agora', 'Are you sure you want to delete this status?')) && props.selectedType) {
-    appSettingsStore.deleteStatusForInquiryType(props.selectedType.inquiry_type, statusId)
+  if (
+    confirm(t("agora", "Are you sure you want to delete this status?")) &&
+    props.selectedType
+  ) {
+    appSettingsStore.deleteStatusForInquiryType(
+      props.selectedType.inquiry_type,
+      statusId,
+    );
   }
-}
+};
 
 // Move status up
 const moveStatusUp = (statusId) => {
   if (props.selectedType) {
-    appSettingsStore.moveStatusUp(props.selectedType.inquiry_type, statusId)
+    appSettingsStore.moveStatusUp(props.selectedType.inquiry_type, statusId);
   }
-}
+};
 
 // Move status down
 const moveStatusDown = (statusId) => {
   if (props.selectedType) {
-    appSettingsStore.moveStatusDown(props.selectedType.inquiry_type, statusId)
+    appSettingsStore.moveStatusDown(props.selectedType.inquiry_type, statusId);
   }
-}
+};
 
 // Cancel editing
 const cancelEdit = () => {
-  editingStatus.value = null
-}
+  editingStatus.value = null;
+};
 </script>
 
 <template>
   <div class="type-status">
     <div class="header">
       <h2>
-        {{ t('agora', 'Status for {type}', { type: selectedType?.label }) }}
+        {{ t("agora", "Status for {type}", { type: selectedType?.label }) }}
       </h2>
     </div>
 
@@ -148,7 +161,10 @@ const cancelEdit = () => {
     >
       <p class="description">
         {{
-          t('agora', 'Manage statuses for this inquiry type. Statuses define the workflow stages')
+          t(
+            "agora",
+            "Manage statuses for this inquiry type. Statuses define the workflow stages",
+          )
         }}
       </p>
 
@@ -156,7 +172,7 @@ const cancelEdit = () => {
       <div class="status-list">
         <h3>
           {{
-            t('agora', 'Statuses for {type}', {
+            t("agora", "Statuses for {type}", {
               type: selectedType.label,
             })
           }}
@@ -167,7 +183,7 @@ const cancelEdit = () => {
           class="empty-state"
         >
           <p>
-            {{ t('agora', 'No statuses configured for this inquiry type') }}
+            {{ t("agora", "No statuses configured for this inquiry type") }}
           </p>
         </div>
 
@@ -202,8 +218,17 @@ const cancelEdit = () => {
                   {{ status.description }}
                 </p>
                 <div class="status-properties">
-                  <span :class="['status-badge', status.isFinal ? 'final' : 'non-final']">
-                    {{ status.isFinal ? t('agora', 'Final') : t('agora', 'Non-Final') }}
+                  <span
+                    :class="[
+                      'status-badge',
+                      status.isFinal ? 'final' : 'non-final',
+                    ]"
+                  >
+                    {{
+                      status.isFinal
+                        ? t("agora", "Final")
+                        : t("agora", "Non-Final")
+                    }}
                   </span>
                 </div>
               </div>
@@ -214,19 +239,19 @@ const cancelEdit = () => {
                 :disabled="index === 0"
                 @click="moveStatusUp(status.statusKey)"
               >
-                {{ t('agora', 'Up') }}
+                {{ t("agora", "Up") }}
               </NcButton>
               <NcButton
                 :disabled="index === statuses.length - 1"
                 @click="moveStatusDown(status.statusKey)"
               >
-                {{ t('agora', 'Down') }}
+                {{ t("agora", "Down") }}
               </NcButton>
               <NcButton @click="editStatus(status)">
-                {{ t('agora', 'Edit') }}
+                {{ t("agora", "Edit") }}
               </NcButton>
               <NcButton @click="deleteStatus(status.id)">
-                {{ t('agora', 'Delete') }}
+                {{ t("agora", "Delete") }}
               </NcButton>
             </div>
           </div>
@@ -235,7 +260,7 @@ const cancelEdit = () => {
 
       <!-- Add new status form -->
       <div class="add-status-form">
-        <h3>{{ t('agora', 'Add new status') }}</h3>
+        <h3>{{ t("agora", "Add new status") }}</h3>
 
         <div class="form-grid">
           <NcInputField
@@ -271,10 +296,10 @@ const cancelEdit = () => {
               v-model="newStatus.isFinal"
               type="switch"
             >
-              {{ t('agora', 'Final status') }}
+              {{ t("agora", "Final status") }}
             </NcCheckboxRadioSwitch>
             <p class="field-description">
-              {{ t('agora', 'Final statuses cannot be changed once set') }}
+              {{ t("agora", "Final statuses cannot be changed once set") }}
             </p>
           </div>
 
@@ -283,7 +308,7 @@ const cancelEdit = () => {
             :disabled="!newStatus.statusKey || !newStatus.label"
             @click="addStatus"
           >
-            {{ t('agora', 'Add status') }}
+            {{ t("agora", "Add status") }}
           </NcButton>
         </div>
       </div>
@@ -294,7 +319,7 @@ const cancelEdit = () => {
         class="modal-overlay"
       >
         <div class="modal-content">
-          <h3>{{ t('agora', 'Edit status') }}</h3>
+          <h3>{{ t("agora", "Edit status") }}</h3>
 
           <div class="form-grid">
             <NcInputField
@@ -330,24 +355,24 @@ const cancelEdit = () => {
                 v-model="editingStatus.isFinal"
                 type="switch"
               >
-                {{ t('agora', 'Final status') }}
+                {{ t("agora", "Final status") }}
               </NcCheckboxRadioSwitch>
               <p class="field-description">
-                {{ t('agora', 'Final statuses cannot be changed once set') }}
+                {{ t("agora", "Final statuses cannot be changed once set") }}
               </p>
             </div>
           </div>
 
           <div class="modal-actions">
             <NcButton @click="cancelEdit">
-              {{ t('agora', 'Cancel') }}
+              {{ t("agora", "Cancel") }}
             </NcButton>
             <NcButton
               type="primary"
               :disabled="!editingStatus.statusKey || !editingStatus.label"
               @click="saveUpdateStatus"
             >
-              {{ t('agora', 'Save changes') }}
+              {{ t("agora", "Save changes") }}
             </NcButton>
           </div>
         </div>
@@ -358,7 +383,7 @@ const cancelEdit = () => {
       v-else
       class="no-selection"
     >
-      <p>{{ t('agora', 'No type selected') }}</p>
+      <p>{{ t("agora", "No type selected") }}</p>
     </div>
   </div>
 </template>

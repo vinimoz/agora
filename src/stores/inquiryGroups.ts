@@ -3,31 +3,40 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
-import { Inquiry } from '../Types/index'
-import { useSessionStore } from './session'
-import { useInquiriesStore } from './inquiries'
-import { orderBy } from 'lodash'
-import type { InquiryGroup, InquiryGroupType, InquiryGroupPermissions } from '@/Types'
-import { InquiryGroupsAPI } from '../Api'
-import { AxiosError } from 'axios'
-import { Logger } from '../helpers'
-import { t } from '@nextcloud/l10n'
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import { Inquiry } from "../Types/index";
+import { useSessionStore } from "./session";
+import { useInquiriesStore } from "./inquiries";
+import { orderBy } from "lodash";
+import type {
+  InquiryGroup,
+  InquiryGroupType,
+  InquiryGroupPermissions,
+} from "@/Types";
+import { InquiryGroupsAPI } from "../Api";
+import { AxiosError } from "axios";
+import { Logger } from "../helpers";
+import { t } from "@nextcloud/l10n";
 
-export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
-  const inquiryGroups = ref<InquiryGroup[]>([])
-  const updating = ref(false)
-  const selectedGroupType = ref<string>('')
-  const currentInquiryGroupId = ref<number | null>(null)
+export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
+  const inquiryGroups = ref<InquiryGroup[]>([]);
+  const updating = ref(false);
+  const selectedGroupType = ref<string>("");
 
-  const defaultGroupType = computed(() => getDefaultGroupTypeFromFamily())
-  const currentGroupType = computed(() => selectedGroupType.value || defaultGroupType.value)
+  const defaultGroupType = computed(() => getDefaultGroupTypeFromFamily());
+  const currentGroupType = computed(
+    () => selectedGroupType.value || defaultGroupType.value,
+  );
 
   // ===== SINGLE DEFINITION OF addOrUpdateInquiryGroupInList =====
 
-  function addOrUpdateInquiryGroupInList(payload: { inquiryGroup: InquiryGroup }) {
-    const existing = inquiryGroups.value.find((g) => g.id === payload.inquiryGroup.id)
+  function addOrUpdateInquiryGroupInList(payload: {
+    inquiryGroup: InquiryGroup;
+  }) {
+    const existing = inquiryGroups.value.find(
+      (g) => g.id === payload.inquiryGroup.id,
+    );
 
     // Deep merge to preserve nested objects
     const group = existing
@@ -35,7 +44,8 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
           ...existing,
           ...payload.inquiryGroup,
           // Preserve inquiryGroupType
-          inquiryGroupType: payload.inquiryGroup.inquiryGroupType ?? existing.inquiryGroupType,
+          inquiryGroupType:
+            payload.inquiryGroup.inquiryGroupType ?? existing.inquiryGroupType,
           // Preserve permissions
           permissions: payload.inquiryGroup.permissions ?? existing.permissions,
           // Deep merge configuration
@@ -59,319 +69,354 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
               }
             : existing.status,
         }
-      : payload.inquiryGroup
+      : payload.inquiryGroup;
 
-    const index = inquiryGroups.value.findIndex((g) => g.id === group.id)
+    const index = inquiryGroups.value.findIndex((g) => g.id === group.id);
     if (index === -1) {
-      inquiryGroups.value.push(group)
+      inquiryGroups.value.push(group);
     } else {
-      inquiryGroups.value[index] = group
+      inquiryGroups.value[index] = group;
     }
     // Trigger reactivity
-    inquiryGroups.value = [...inquiryGroups.value]
+    inquiryGroups.value = [...inquiryGroups.value];
   }
 
   function addInquiryGroup(group: InquiryGroup) {
-    addOrUpdateInquiryGroupInList({ inquiryGroup: group })
+    addOrUpdateInquiryGroupInList({ inquiryGroup: group });
   }
 
-  function updateInquiryGroup(updatedGroup: Partial<InquiryGroup> & { id: number }) {
-    const existing = byId(updatedGroup.id)
+  function updateInquiryGroup(
+    updatedGroup: Partial<InquiryGroup> & { id: number },
+  ) {
+    const existing = byId(updatedGroup.id);
     const merged = {
       ...existing,
       ...updatedGroup,
-      inquiryGroupType: updatedGroup.inquiryGroupType ?? existing?.inquiryGroupType,
+      inquiryGroupType:
+        updatedGroup.inquiryGroupType ?? existing?.inquiryGroupType,
       permissions: updatedGroup.permissions ?? existing?.permissions,
-    }
-    addOrUpdateInquiryGroupInList({ inquiryGroup: merged })
+    };
+    addOrUpdateInquiryGroupInList({ inquiryGroup: merged });
   }
 
   function removeInquiryGroup(groupId: number) {
-    inquiryGroups.value = inquiryGroups.value.filter((g) => g.id !== groupId)
+    inquiryGroups.value = inquiryGroups.value.filter((g) => g.id !== groupId);
   }
 
   // ===== GETTERS =====
   const bySlug = (slug: string): InquiryGroup | undefined => {
-    if (!slug || slug === 'none' || slug === 'undefined') return undefined
+    if (!slug || slug === "none" || slug === "undefined") return undefined;
 
-    let group = inquiryGroups.value.find((g) => g.slug === slug)
+    let group = inquiryGroups.value.find((g) => g.slug === slug);
 
     if (!group) {
-      const lowerSlug = slug.toLowerCase()
-      group = inquiryGroups.value.find((g) => g.slug?.toLowerCase() === lowerSlug)
+      const lowerSlug = slug.toLowerCase();
+      group = inquiryGroups.value.find(
+        (g) => g.slug?.toLowerCase() === lowerSlug,
+      );
     }
 
     if (!group && !isNaN(Number(slug))) {
-      group = inquiryGroups.value.find((g) => g.id === Number(slug))
+      group = inquiryGroups.value.find((g) => g.id === Number(slug));
     }
 
-    return group
-  }
+    return group;
+  };
 
   const byId = (id: number): InquiryGroup | undefined =>
-    inquiryGroups.value.find((g) => g.id === id)
+    inquiryGroups.value.find((g) => g.id === id);
 
   const byType = (type: string): InquiryGroup[] =>
-    inquiryGroups.value.filter((g) => g.type === type)
+    inquiryGroups.value.filter((g) => g.type === type);
 
   const byParentId = (parentId: number | null): InquiryGroup[] =>
-    inquiryGroups.value.filter((g) => g.parentId === parentId)
+    inquiryGroups.value.filter((g) => g.parentId === parentId);
 
   /**
    * Currently selected inquiry group or undefined if not in an inquiry group route
    */
   const currentInquiryGroup = computed((): InquiryGroup | undefined => {
-    const sessionStore = useSessionStore()
-    if (sessionStore.route.name === 'group' || sessionStore.route.name === 'group-list') {
-      const slug = sessionStore.route.params.slug as string
-      if (slug && slug !== 'none') {
-        return bySlug(slug)
+    const sessionStore = useSessionStore();
+    if (
+      sessionStore.route.name === "group" ||
+      sessionStore.route.name === "group-list"
+    ) {
+      const slug = sessionStore.route.params.slug as string;
+      if (slug && slug !== "none") {
+        return bySlug(slug);
       }
       if (sessionStore.route.params.id) {
-        return byId(Number(sessionStore.route.params.id))
+        return byId(Number(sessionStore.route.params.id));
       }
     }
-    return undefined
-  })
+    return undefined;
+  });
 
   /**
    * Get inquiries in the current inquiry group
    */
   const inquiriesInCurrentInquiryGroup = computed((): Inquiry[] => {
-    const group = currentInquiryGroup.value
-    if (!group) return []
-    const inquiriesStore = useInquiriesStore()
-    return inquiriesStore.inquiries.filter((inquiry) => group.inquiryIds?.includes(inquiry.id))
-  })
+    const group = currentInquiryGroup.value;
+    if (!group) return [];
+    const inquiriesStore = useInquiriesStore();
+    return inquiriesStore.inquiries.filter((inquiry) =>
+      group.inquiryIds?.includes(inquiry.id),
+    );
+  });
 
   /**
    * Get parent groups of the current inquiry group
    */
   const parentGroups = computed((): InquiryGroup[] => {
-    const group = currentInquiryGroup.value
-    if (!group) return []
+    const group = currentInquiryGroup.value;
+    if (!group) return [];
 
-    const parents: InquiryGroup[] = []
-    let current = group
+    const parents: InquiryGroup[] = [];
+    let current = group;
     while (current.parentId) {
-      const parent = byId(current.parentId)
+      const parent = byId(current.parentId);
       if (parent) {
-        parents.unshift(parent)
-        current = parent
+        parents.unshift(parent);
+        current = parent;
       } else {
-        break
+        break;
       }
     }
-    return parents
-  })
+    return parents;
+  });
 
   /**
    * Get child groups of a specific group or current group
    */
   const childGroups = computed((): InquiryGroup[] => {
-    const group = currentInquiryGroup.value
-    if (!group) return []
-    return inquiryGroups.value.filter((g) => g.parentId === group.id)
-  })
+    const group = currentInquiryGroup.value;
+    if (!group) return [];
+    return inquiryGroups.value.filter((g) => g.parentId === group.id);
+  });
 
   /**
    * Get all descendant groups (children, grandchildren, etc.)
    */
   const descendantGroups = computed((): InquiryGroup[] => {
-    const group = currentInquiryGroup.value
-    if (!group) return []
+    const group = currentInquiryGroup.value;
+    if (!group) return [];
 
-    const descendants: InquiryGroup[] = []
-    const queue = [group.id]
+    const descendants: InquiryGroup[] = [];
+    const queue = [group.id];
 
     while (queue.length > 0) {
-      const currentId = queue.shift()!
-      const children = inquiryGroups.value.filter((g) => g.parentId === currentId)
+      const currentId = queue.shift()!;
+      const children = inquiryGroups.value.filter(
+        (g) => g.parentId === currentId,
+      );
       for (const child of children) {
-        descendants.push(child)
-        queue.push(child.id)
+        descendants.push(child);
+        queue.push(child.id);
       }
     }
 
-    return descendants
-  })
+    return descendants;
+  });
 
   /**
    * Get root groups (groups with no parent)
    */
   const rootGroups = computed((): InquiryGroup[] =>
-    inquiryGroups.value.filter((g) => g.parentId === null || g.parentId === 0)
-  )
+    inquiryGroups.value.filter((g) => g.parentId === null || g.parentId === 0),
+  );
 
   /**
    * Get groups that have children
    */
   const withChildren = computed((): InquiryGroup[] => {
-    const childIds = new Set(inquiryGroups.value.map((g) => g.parentId).filter((id) => id !== null))
-    return inquiryGroups.value.filter((g) => childIds.has(g.id))
-  })
+    const childIds = new Set(
+      inquiryGroups.value.map((g) => g.parentId).filter((id) => id !== null),
+    );
+    return inquiryGroups.value.filter((g) => childIds.has(g.id));
+  });
 
   /**
    * Get inquiry groups sorted by visibility priority (everyone first) and title
    * Also filters by the current family type if set
    */
   const inquiryGroupsSorted = computed((): InquiryGroup[] => {
-    const inquiriesStore = useInquiriesStore()
-    const sessionStore = useSessionStore()
-    const currentFamily = inquiriesStore.advancedFilters?.familyType
-    const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+    const inquiriesStore = useInquiriesStore();
+    const sessionStore = useSessionStore();
+    const currentFamily = inquiriesStore.advancedFilters?.familyType;
+    const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || [];
 
-    let rootTypesForFamily: string[] = []
+    let rootTypesForFamily: string[] = [];
 
     if (currentFamily) {
       // Get root types for the selected family
       rootTypesForFamily = typeTabs
-        .filter((tab: InquiryGroupType) => tab.family === currentFamily && tab.is_root === true)
-        .map((tab: InquiryGroupType) => tab.type || tab.group_type)
+        .filter(
+          (tab: InquiryGroupType) =>
+            tab.family === currentFamily && tab.is_root === true,
+        )
+        .map((tab: InquiryGroupType) => tab.type || tab.group_type);
     } else {
       // Get ALL root types (no family filter)
       rootTypesForFamily = typeTabs
         .filter((tab: InquiryGroupType) => tab.is_root === true)
-        .map((tab: InquiryGroupType) => tab.type || tab.group_type)
+        .map((tab: InquiryGroupType) => tab.type || tab.group_type);
     }
 
     // Filter groups: only include groups whose type matches a root type
     const filteredGroups = inquiryGroups.value.filter((group) => {
       // Only include active groups (not archived) when not specifically showing archived
-      if (group.status?.groupStatus === 'archived') return false
-      return rootTypesForFamily.includes(group.type)
-    })
+      if (group.status?.groupStatus === "archived") return false;
+      return rootTypesForFamily.includes(group.type);
+    });
 
     // Sort by visibility priority (everyone first) and then by title
     // Groups with visibility 'everyone' come first, then others by title
-    const everyoneGroups = filteredGroups.filter((g) => g.configuration?.visibility === 'everyone')
-    const otherGroups = filteredGroups.filter((g) => g.configuration?.visibility !== 'everyone')
+    const everyoneGroups = filteredGroups.filter(
+      (g) => g.configuration?.visibility === "everyone",
+    );
+    const otherGroups = filteredGroups.filter(
+      (g) => g.configuration?.visibility !== "everyone",
+    );
 
     return [
-      ...orderBy(everyoneGroups, ['title'], ['asc']),
-      ...orderBy(otherGroups, ['title'], ['asc']),
-    ]
-  })
+      ...orderBy(everyoneGroups, ["title"], ["asc"]),
+      ...orderBy(otherGroups, ["title"], ["asc"]),
+    ];
+  });
 
   /**
    * Count inquiries in each inquiry group
    */
   const countInquiriesInInquiryGroups = computed((): Map<number, number> => {
-    const counts = new Map<number, number>()
+    const counts = new Map<number, number>();
     for (const group of inquiryGroups.value) {
-      counts.set(group.id, group.inquiryIds?.length || 0)
+      counts.set(group.id, group.inquiryIds?.length || 0);
     }
-    return counts
-  })
+    return counts;
+  });
 
   /**
    * Get groups by family
    * @param family
    */
   const byFamily = (family: string): InquiryGroup[] =>
-    inquiryGroups.value.filter((g) => g.inquiryGroupType?.family === family)
+    inquiryGroups.value.filter((g) => g.inquiryGroupType?.family === family);
 
   /**
    * Group inquiry groups by family
    */
   const groupsByFamily = computed((): Record<string, InquiryGroup[]> => {
-    const result: Record<string, InquiryGroup[]> = {}
+    const result: Record<string, InquiryGroup[]> = {};
     for (const group of inquiryGroups.value) {
-      const family = group.inquiryGroupType?.family || 'uncategorized'
+      const family = group.inquiryGroupType?.family || "uncategorized";
       if (!result[family]) {
-        result[family] = []
+        result[family] = [];
       }
-      result[family].push(group)
+      result[family].push(group);
     }
-    return result
-  })
+    return result;
+  });
 
   /**
    * Get families with their group counts as an array
    */
   const familySummary = computed(() => {
-    const summary: Array<{ family: string; count: number; groups: InquiryGroup[] }> = []
-    const grouped = groupsByFamily.value
+    const summary: Array<{
+      family: string;
+      count: number;
+      groups: InquiryGroup[];
+    }> = [];
+    const grouped = groupsByFamily.value;
     for (const [family, groups] of Object.entries(grouped)) {
       summary.push({
         family,
         count: groups.length,
         groups,
-      })
+      });
     }
     // Sort by count descending
-    return summary.sort((a, b) => b.count - a.count)
-  })
+    return summary.sort((a, b) => b.count - a.count);
+  });
 
   /**
    * Get root groups by family type (using the type template family)
    * @param familyType
    */
   const byFamilyType = (familyType: string): InquiryGroup[] => {
-    const sessionStore = useSessionStore()
-    const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+    const sessionStore = useSessionStore();
+    const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || [];
 
     // Get all root types that belong to this family
     const rootTypesForFamily = typeTabs
-      .filter((tab: InquiryGroupType) => tab.family === familyType && tab.is_root === true)
-      .map((tab: InquiryGroupType) => tab.type || tab.group_type)
+      .filter(
+        (tab: InquiryGroupType) =>
+          tab.family === familyType && tab.is_root === true,
+      )
+      .map((tab: InquiryGroupType) => tab.type || tab.group_type);
 
-    if (rootTypesForFamily.length === 0) return []
+    if (rootTypesForFamily.length === 0) return [];
 
-    return inquiryGroups.value.filter((group) => rootTypesForFamily.includes(group.type))
-  }
+    return inquiryGroups.value.filter((group) =>
+      rootTypesForFamily.includes(group.type),
+    );
+  };
 
   /**
    * Get groups that can be added to (for creating child groups)
    */
   const addableInquiryGroups = computed((): InquiryGroup[] => {
-    const sessionStore = useSessionStore()
-    const isAdmin = sessionStore.currentUser.type === 'admin'
-    const isEditor = sessionStore.currentUser.isGroupEditor
+    const sessionStore = useSessionStore();
+    const isAdmin = sessionStore.currentUser.type === "admin";
+    const isEditor = sessionStore.currentUser.isGroupEditor;
 
     return inquiryGroups.value.filter((group) => {
       // Can add if user is admin, editor, or owner
-      const isOwner = group.owner?.id === sessionStore.currentUser.id
-      return (isAdmin || isEditor || isOwner) && group.status.groupStatus !== 'archived'
-    })
-  })
+      const isOwner = group.owner?.id === sessionStore.currentUser.id;
+      return (
+        (isAdmin || isEditor || isOwner) &&
+        group.status.groupStatus !== "archived"
+      );
+    });
+  });
 
   // ===== ACTIONS =====
   function getDefaultGroupTypeFromFamily(): string {
-    const sessionStore = useSessionStore()
-    const inquiriesStore = useInquiriesStore()
+    const sessionStore = useSessionStore();
+    const inquiriesStore = useInquiriesStore();
 
-    const selectedFamily = inquiriesStore.advancedFilters?.familyType
-    const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+    const selectedFamily = inquiriesStore.advancedFilters?.familyType;
+    const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || [];
 
-    if (typeTabs.length === 0) return ''
+    if (typeTabs.length === 0) return "";
 
     if (selectedFamily) {
-      const matchingType = typeTabs.find((type: InquiryGroupType) => type.family === selectedFamily)
-      if (matchingType) return matchingType.type
+      const matchingType = typeTabs.find(
+        (type: InquiryGroupType) => type.family === selectedFamily,
+      );
+      if (matchingType) return matchingType.type;
     }
 
-    return typeTabs[0].type
+    return typeTabs[0].type;
   }
 
   async function fetchAllGroups(): Promise<InquiryGroup[]> {
     try {
-      updating.value = true
+      updating.value = true;
 
-      const response = await InquiryGroupsAPI.getAllGroups()
-      const groups = response.data.inquiryGroups || []
+      const response = await InquiryGroupsAPI.getAllGroups();
+      const groups = response.data.inquiryGroups || [];
 
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
       if (sessionStore.appSettings?.inquiryGroupTypeTab?.length > 0) {
-        selectedGroupType.value = getDefaultGroupTypeFromFamily()
+        selectedGroupType.value = getDefaultGroupTypeFromFamily();
       }
-      const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+      const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || [];
 
-      console.log(' RESPONSSEEEEEEEEEEEEEEEEEEE', groups)
+      console.log(" RESPONSSEEEEEEEEEEEEEEEEEEE", groups);
       inquiryGroups.value = groups.map((group) => ({
         ...group,
         inquiryGroupType: typeTabs.find(
-          (t) => t.type === group.type || t.group_type === group.type
+          (t) => t.type === group.type || t.group_type === group.type,
         ),
         // Default permissions if not provided by API
         permissions: group.permissions || {
@@ -384,19 +429,19 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
           archive: false,
           clone: false,
         },
-      }))
+      }));
 
-      ensureSlugs()
+      ensureSlugs();
 
-      return inquiryGroups.value
+      return inquiryGroups.value;
     } catch (error) {
-      if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-        return inquiryGroups.value
+      if ((error as AxiosError)?.code === "ERR_CANCELED") {
+        return inquiryGroups.value;
       }
-      Logger.error('Error fetching all groups', { error })
-      throw error
+      Logger.error("Error fetching all groups", { error });
+      throw error;
     } finally {
-      updating.value = false
+      updating.value = false;
     }
   }
 
@@ -404,49 +449,54 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * Load a specific group by slug or ID
    * @param slugOrId
    */
-  async function loadGroup(slugOrId: string | number): Promise<InquiryGroup | undefined> {
-    const group = typeof slugOrId === 'string' ? bySlug(slugOrId) : byId(slugOrId)
+  async function loadGroup(
+    slugOrId: string | number,
+  ): Promise<InquiryGroup | undefined> {
+    const group =
+      typeof slugOrId === "string" ? bySlug(slugOrId) : byId(slugOrId);
 
-    if (group) return group
+    if (group) return group;
 
     // Not found in local store, fetch from API
     try {
       const response = await InquiryGroupsAPI.getInquiryGroup(
-        typeof slugOrId === 'string' ? parseInt(slugOrId) : slugOrId
-      )
+        typeof slugOrId === "string" ? parseInt(slugOrId) : slugOrId,
+      );
       if (response.data?.inquiryGroup) {
-        const fetchedGroup = response.data.inquiryGroup
-        const sessionStore = useSessionStore()
-        const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+        const fetchedGroup = response.data.inquiryGroup;
+        const sessionStore = useSessionStore();
+        const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || [];
         const enrichedGroup = {
           ...fetchedGroup,
           inquiryGroupType: typeTabs.find(
-            (t) => t.type === fetchedGroup.type || t.group_type === fetchedGroup.type
+            (t) =>
+              t.type === fetchedGroup.type ||
+              t.group_type === fetchedGroup.type,
           ),
-        }
-        addOrUpdateInquiryGroupInList({ inquiryGroup: enrichedGroup })
-        return enrichedGroup
+        };
+        addOrUpdateInquiryGroupInList({ inquiryGroup: enrichedGroup });
+        return enrichedGroup;
       }
     } catch (error) {
-      Logger.error('Error loading group', { error, slugOrId })
-      throw error
+      Logger.error("Error loading group", { error, slugOrId });
+      throw error;
     }
-    return undefined
+    return undefined;
   }
 
   function generateSlug(text: string, id?: number): string {
-    if (!text) return ''
+    if (!text) return "";
 
     let slug = text
       .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .replace(/-+/g, '-')
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-+/g, "-");
 
-    if (id) slug = `${slug}-${id}`
-    return slug
+    if (id) slug = `${slug}-${id}`;
+    return slug;
   }
 
   function ensureSlugs(): void {
@@ -454,16 +504,16 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
       if (!group.slug) {
         return {
           ...group,
-          slug: generateSlug(group.title || '', group.id),
-        }
+          slug: generateSlug(group.title || "", group.id),
+        };
       }
-      return group
-    })
+      return group;
+    });
   }
 
   function getInquiryGroupName(groupId: number): string {
-    const group = inquiryGroups.value.find((g) => g.id === groupId)
-    return group?.title || t('inquiries', 'Invalid Group ID')
+    const group = inquiryGroups.value.find((g) => g.id === groupId);
+    return group?.title || t("inquiries", "Invalid Group ID");
   }
 
   /**
@@ -471,28 +521,30 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * @param type
    */
   function setCurrentGroupType(type: string): void {
-    selectedGroupType.value = type
+    selectedGroupType.value = type;
   }
 
   /**
    * Write changes to the current inquiry group
    * @param payload
    */
-  async function writeCurrentInquiryGroup(payload: Partial<InquiryGroup>): Promise<void> {
-    const group = currentInquiryGroup.value
+  async function writeCurrentInquiryGroup(
+    payload: Partial<InquiryGroup>,
+  ): Promise<void> {
+    const group = currentInquiryGroup.value;
     if (!group) {
-      Logger.error('No current inquiry group to write')
-      return
+      Logger.error("No current inquiry group to write");
+      return;
     }
 
     try {
-      const response = await InquiryGroupsAPI.updateGroup(group.id, payload)
+      const response = await InquiryGroupsAPI.updateGroup(group.id, payload);
       if (response.data?.inquiryGroup) {
-        updateInquiryGroup(response.data.inquiryGroup)
+        updateInquiryGroup(response.data.inquiryGroup);
       }
     } catch (error) {
-      Logger.error('Error writing inquiry group', { error, payload })
-      throw error
+      Logger.error("Error writing inquiry group", { error, payload });
+      throw error;
     }
   }
 
@@ -501,15 +553,25 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * @param groupId
    * @param inquiryId
    */
-  async function addInquiryToInquiryGroup(groupId: number, inquiryId: number): Promise<void> {
+  async function addInquiryToInquiryGroup(
+    groupId: number,
+    inquiryId: number,
+  ): Promise<void> {
     try {
-      const response = await InquiryGroupsAPI.addInquiryToGroup(inquiryId, groupId)
+      const response = await InquiryGroupsAPI.addInquiryToGroup(
+        inquiryId,
+        groupId,
+      );
       if (response.data?.inquiryGroup) {
-        updateInquiryGroup(response.data.inquiryGroup)
+        updateInquiryGroup(response.data.inquiryGroup);
       }
     } catch (error) {
-      Logger.error('Error adding inquiry to group', { error, groupId, inquiryId })
-      throw error
+      Logger.error("Error adding inquiry to group", {
+        error,
+        groupId,
+        inquiryId,
+      });
+      throw error;
     }
   }
 
@@ -518,41 +580,58 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * @param groupId
    * @param inquiryId
    */
-  async function removeInquiryFromGroup(groupId: number, inquiryId: number): Promise<void> {
+  async function removeInquiryFromGroup(
+    groupId: number,
+    inquiryId: number,
+  ): Promise<void> {
     try {
-      const response = await InquiryGroupsAPI.removeInquiryFromGroup(groupId, inquiryId)
+      const response = await InquiryGroupsAPI.removeInquiryFromGroup(
+        groupId,
+        inquiryId,
+      );
       if (response.data?.inquiryGroup === null) {
         // Group was deleted because it became empty
-        removeInquiryGroup(groupId)
+        removeInquiryGroup(groupId);
       } else if (response.data?.inquiryGroup) {
-        updateInquiryGroup(response.data.inquiryGroup)
+        updateInquiryGroup(response.data.inquiryGroup);
       }
     } catch (error) {
-      Logger.error('Error removing inquiry from group', { error, groupId, inquiryId })
-      throw error
+      Logger.error("Error removing inquiry from group", {
+        error,
+        groupId,
+        inquiryId,
+      });
+      throw error;
     }
   }
 
   /**
    * Check if current user has a specific permission for a group
    */
-  function hasPermission(groupId: number, permission: keyof InquiryGroupPermissions): boolean {
-    const group = byId(groupId)
-    return group?.permissions?.[permission] ?? false
+  function hasPermission(
+    groupId: number,
+    permission: keyof InquiryGroupPermissions,
+  ): boolean {
+    const group = byId(groupId);
+    return group?.permissions?.[permission] ?? false;
   }
 
   /**
    * Get groups where the current user has a specific permission
    */
-  function getGroupsWithPermission(permission: keyof InquiryGroupPermissions): InquiryGroup[] {
-    return inquiryGroups.value.filter((g) => g.permissions?.[permission] === true)
+  function getGroupsWithPermission(
+    permission: keyof InquiryGroupPermissions,
+  ): InquiryGroup[] {
+    return inquiryGroups.value.filter(
+      (g) => g.permissions?.[permission] === true,
+    );
   }
 
   /**
    * Check if current user can edit a specific group
    */
   function canEditGroup(groupId: number): boolean {
-    return hasPermission(groupId, 'edit')
+    return hasPermission(groupId, "edit");
   }
 
   // ===== RETURN =====
@@ -601,5 +680,5 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
     writeCurrentInquiryGroup,
     addInquiryToInquiryGroup,
     removeInquiryFromGroup,
-  }
-})
+  };
+});

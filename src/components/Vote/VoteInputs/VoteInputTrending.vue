@@ -7,30 +7,30 @@
     <div class="trending-info">
       <TrendingUp :size="14" />
       <span class="trend-score">{{ displayScore }}</span>
-      <span class="trend-label">{{ t('agora', 'trending score') }}</span>
+      <span class="trend-label">{{ t("agora", "trending score") }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { TrendingUp } from 'lucide-vue-next'
-import type { SupportData, Item } from '../../../Types/index'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { TrendingUp } from "lucide-vue-next";
+import type { SupportData, Item } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Item
-  userVote?: SupportData
-}>()
+  engineConfig: Record<string, unknown>;
+  item: Item;
+  userVote?: SupportData;
+}>();
 
 const displayScore = computed(() => {
   // If userVote contains a score, display it; otherwise show a placeholder
-  if (props.userVote?.value && typeof props.userVote.value === 'number') {
-    return props.userVote.value.toFixed(1)
+  if (props.userVote?.value && typeof props.userVote.value === "number") {
+    return props.userVote.value.toFixed(1);
   }
-  return '—'
-})
+  return "—";
+});
 </script>
 
 <style scoped lang="scss">

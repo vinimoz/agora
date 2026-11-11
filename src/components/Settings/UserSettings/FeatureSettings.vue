@@ -4,33 +4,35 @@
 -->
 
 <script setup>
-import { computed } from 'vue'
-import { InputDiv } from '../../Base/index.ts'
-import { t } from '@nextcloud/l10n'
+import { computed } from "vue";
+import { InputDiv } from "../../Base/index.ts";
+import { t } from "@nextcloud/l10n";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
 
-import { usePreferencesStore } from '../../../stores/preferences.ts'
+import { usePreferencesStore } from "../../../stores/preferences.ts";
 
-const preferencesStore = usePreferencesStore()
+const preferencesStore = usePreferencesStore();
 
 const defaultViewInquiry = computed({
   get() {
-    return preferencesStore.user.defaultViewInquiry === 'list-view'
+    return preferencesStore.user.defaultViewInquiry === "list-view";
   },
   set(value) {
-    preferencesStore.user.defaultViewInquiry = value ? 'list-view' : 'table-view'
+    preferencesStore.user.defaultViewInquiry = value
+      ? "list-view"
+      : "table-view";
   },
-})
+});
 
 const defaultDisplayMode = computed({
   get() {
-    return preferencesStore.user.defaultDisplayMode === 'create'
+    return preferencesStore.user.defaultDisplayMode === "create";
   },
   set(value) {
-    preferencesStore.user.defaultDisplayMode = value ? 'create' : 'view'
+    preferencesStore.user.defaultDisplayMode = value ? "create" : "view";
   },
-})
+});
 </script>
 
 <template>
@@ -41,13 +43,13 @@ const defaultDisplayMode = computed({
         type="switch"
         @update:model-value="preferencesStore.write()"
       >
-        {{ t('agora', 'Proposal agora inquiry default view to list view') }}
+        {{ t("agora", "Proposal agora inquiry default view to list view") }}
       </NcCheckboxRadioSwitch>
       <div class="settings_details">
         {{
           t(
-            'agora',
-            'Check this, if you prefer to display text inquiry in grid view. The initial default is list view.'
+            "agora",
+            "Check this, if you prefer to display text inquiry in grid view. The initial default is list view.",
           )
         }}
       </div>
@@ -59,13 +61,13 @@ const defaultDisplayMode = computed({
         type="switch"
         @update:model-value="preferencesStore.write()"
       >
-        {{ t('agora', 'Default display mode') }}
+        {{ t("agora", "Default display mode") }}
       </NcCheckboxRadioSwitch>
       <div class="settings_details">
         {{
           t(
-            'agora',
-            'Would you like to display the application in creation mode or view mode? The initial default setting is view mode.'
+            "agora",
+            "Would you like to display the application in creation mode or view mode? The initial default setting is view mode.",
           )
         }}
       </div>
@@ -77,10 +79,12 @@ const defaultDisplayMode = computed({
         type="switch"
         @update:model-value="preferencesStore.write()"
       >
-        {{ t('agora', 'Verbose inquiry list') }}
+        {{ t("agora", "Verbose inquiry list") }}
       </NcCheckboxRadioSwitch>
       <div class="settings_details">
-        {{ t('agora', 'Check this for more inquiry information in the overview') }}
+        {{
+          t("agora", "Check this for more inquiry information in the overview")
+        }}
       </div>
     </div>
 
@@ -93,7 +97,7 @@ const defaultDisplayMode = computed({
         :label="
           t(
             'agora',
-            'Enter the amount of days, inquiries without activity stay in the relevant list:'
+            'Enter the amount of days, inquiries without activity stay in the relevant list:',
           )
         "
         @change="preferencesStore.write()"

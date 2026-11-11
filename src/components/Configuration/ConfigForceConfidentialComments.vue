@@ -4,22 +4,29 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { useInquiryStore } from '../../stores/inquiry'
+import { t } from "@nextcloud/l10n";
+import { useInquiryStore } from "../../stores/inquiry";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import { useSessionStore } from '../../stores/session'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import { useSessionStore } from "../../stores/session";
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(["change"]);
 
-const inquiryStore = useInquiryStore()
-const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore();
 const description =
   inquiryStore.owner.id === sessionStore.currentUser.id
-    ? t('agora', 'Force confidential comments (only visible to you and the author)')
-    : t('agora', 'Force confidential comments (only visible to {displayName} and the author)', {
-        displayName: inquiryStore.owner.displayName,
-      })
+    ? t(
+        "agora",
+        "Force confidential comments (only visible to you and the author)",
+      )
+    : t(
+        "agora",
+        "Force confidential comments (only visible to {displayName} and the author)",
+        {
+          displayName: inquiryStore.owner.displayName,
+        },
+      );
 </script>
 
 <template>

@@ -4,38 +4,43 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { generateUrl } from '@nextcloud/router'
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-import DOMPurify from 'dompurify'
-import { InquiryGeneralIcons } from '../utils/icons.ts'
-import NcDashboardWidget from '@nextcloud/vue/components/NcDashboardWidget'
-import { AgoraAppIcon } from '../components/AppIcons/index.ts'
-import { Logger } from '../helpers/index.ts'
-import { useInquiriesStore } from '../stores/inquiries.ts'
-import { useSessionStore } from '../stores/session.ts'
-import { getInquiryTypeData, type InquiryType } from '../helpers/modules/InquiryHelper.ts'
+import { computed, onMounted } from "vue";
+import { generateUrl } from "@nextcloud/router";
+import { showError } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
+import DOMPurify from "dompurify";
+import { InquiryGeneralIcons } from "../utils/icons.ts";
+import NcDashboardWidget from "@nextcloud/vue/components/NcDashboardWidget";
+import { AgoraAppIcon } from "../components/AppIcons/index.ts";
+import { Logger } from "../helpers/index.ts";
+import { useInquiriesStore } from "../stores/inquiries.ts";
+import { useSessionStore } from "../stores/session.ts";
+import {
+  getInquiryTypeData,
+  type InquiryType,
+} from "../helpers/modules/InquiryHelper.ts";
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 const dashboardWidgetProperties = {
-  emptyContentMessage: t('agora', 'No inquiries found for this category'),
-  showMoreText: t('agora', 'Relevant inquiries'),
-}
+  emptyContentMessage: t("agora", "No inquiries found for this category"),
+  showMoreText: t("agora", "Relevant inquiries"),
+};
 
 // Computed for all inquiry types
-const allInquiryTypes = computed((): InquiryType[] => sessionStore.appSettings.inquiryTypeTab || [])
-const inquiriesStore = useInquiriesStore()
+const allInquiryTypes = computed(
+  (): InquiryType[] => sessionStore.appSettings.inquiryTypeTab || [],
+);
+const inquiriesStore = useInquiriesStore();
 
 /**
  * Load the store
  */
 function loadSessionStore(): void {
   try {
-    sessionStore.load(null, false, false)
+    sessionStore.load(null, false, false);
   } catch {
-    showError(t('agora', 'Error setting dashboard list'))
+    showError(t("agora", "Error setting dashboard list"));
   }
 }
 
@@ -43,32 +48,32 @@ function loadSessionStore(): void {
  * Load the inquiries
  */
 function loadInquiries(): void {
-  Logger.debug('Loading inquiries in dashboard widget')
+  Logger.debug("Loading inquiries in dashboard widget");
   try {
-    inquiriesStore.load()
+    inquiriesStore.load();
   } catch {
-    showError(t('agora', 'Error setting dashboard list'))
+    showError(t("agora", "Error setting dashboard list"));
   }
 }
 
 // Function to get icon component for an inquiry based on its type
 function getInquiryIconComponent(inquiry) {
   if (inquiry.type) {
-    const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value)
+    const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value);
 
     // Try to determine what we're dealing with
     if (typeData?.icon) {
-      return typeData.icon
+      return typeData.icon;
     }
   }
 
-  return InquiryGeneralIcons.Flash
+  return InquiryGeneralIcons.Flash;
 }
 
 onMounted(() => {
-  loadSessionStore()
-  loadInquiries()
-})
+  loadSessionStore();
+  loadInquiries();
+});
 </script>
 
 <template>
@@ -102,7 +107,9 @@ onMounted(() => {
               <div class="item__title__description">
                 {{
                   DOMPurify.sanitize(
-                    item.description ? item.description : t('agora', 'No description provided')
+                    item.description
+                      ? item.description
+                      : t("agora", "No description provided"),
                   )
                 }}
               </div>

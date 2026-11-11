@@ -4,54 +4,54 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import PlusIcon from 'vue-material-design-icons/Plus.vue'
-import MinusIcon from 'vue-material-design-icons/Minus.vue'
-import ArrowRightIcon from 'vue-material-design-icons/ArrowRight.vue'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import AlertIcon from 'vue-material-design-icons/AlertCircleOutline.vue'
-import ChevronLeftIcon from 'vue-material-design-icons/ChevronLeft.vue'
-import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue'
-import { Spinner } from '../../AppIcons/index.ts'
-import { Logger } from '../../../helpers/index.ts'
+import { computed, onMounted } from "vue";
+import PlusIcon from "vue-material-design-icons/Plus.vue";
+import MinusIcon from "vue-material-design-icons/Minus.vue";
+import ArrowRightIcon from "vue-material-design-icons/ArrowRight.vue";
+import CheckIcon from "vue-material-design-icons/Check.vue";
+import AlertIcon from "vue-material-design-icons/AlertCircleOutline.vue";
+import ChevronLeftIcon from "vue-material-design-icons/ChevronLeft.vue";
+import ChevronRightIcon from "vue-material-design-icons/ChevronRight.vue";
+import { Spinner } from "../../AppIcons/index.ts";
+import { Logger } from "../../../helpers/index.ts";
 
-import { SignalingType } from '../../../Types/index.ts'
-import { NcButton } from '@nextcloud/vue'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
+import { SignalingType } from "../../../Types/index.ts";
+import { NcButton } from "@nextcloud/vue";
+import NcTextField from "@nextcloud/vue/components/NcTextField";
 
-import { t } from '@nextcloud/l10n'
+import { t } from "@nextcloud/l10n";
 
 interface Props {
-  signalingClass?: SignalingType
-  placeholder?: string
-  type?: 'text' | 'email' | 'number' | 'url'
-  inputmode?: 'text' | 'none' | 'numeric' | 'email' | 'url'
-  useNumModifiers?: boolean
-  modifierStepValue?: number
-  numMax?: number
-  numMin?: number
-  numWrap?: boolean
-  focus?: boolean
-  submit?: boolean
-  helperText?: string
-  label?: string
-  useNumericVariant?: boolean
-  disabled?: boolean
+  signalingClass?: SignalingType;
+  placeholder?: string;
+  type?: "text" | "email" | "number" | "url";
+  inputmode?: "text" | "none" | "numeric" | "email" | "url";
+  useNumModifiers?: boolean;
+  modifierStepValue?: number;
+  numMax?: number;
+  numMin?: number;
+  numWrap?: boolean;
+  focus?: boolean;
+  submit?: boolean;
+  helperText?: string;
+  label?: string;
+  useNumericVariant?: boolean;
+  disabled?: boolean;
 }
-const model = defineModel<string | number>({ required: true })
+const model = defineModel<string | number>({ required: true });
 
 const vInputFocus = {
   mounted: (el: { focus: () => void }) => {
     if (focus) {
-      el.focus()
+      el.focus();
     }
   },
-}
+};
 
 const {
-  signalingClass = '',
-  placeholder = '',
-  type = 'text',
+  signalingClass = "",
+  placeholder = "",
+  type = "text",
   inputmode,
   useNumModifiers = false,
   modifierStepValue = 1,
@@ -64,34 +64,47 @@ const {
   label = null,
   useNumericVariant = false,
   disabled = false,
-} = defineProps<Props>()
+} = defineProps<Props>();
 
-const emit = defineEmits(['input', 'change', 'submit'])
+const emit = defineEmits(["input", "change", "submit"]);
 
 const numericModelValue = computed(() =>
-  typeof model.value === 'number' ? model.value : parseInt(model.value)
-)
+  typeof model.value === "number" ? model.value : parseInt(model.value),
+);
 
 const computedSignalingClass = computed(() => {
-  if (signalingClass === 'valid') {
-    return 'success'
+  if (signalingClass === "valid") {
+    return "success";
   }
-  if (signalingClass === 'invalid') {
-    return 'error'
+  if (signalingClass === "invalid") {
+    return "error";
   }
-  return signalingClass
-})
+  return signalingClass;
+});
 
-const checking = computed(() => !useNumModifiers && computedSignalingClass.value === 'checking')
+const checking = computed(
+  () => !useNumModifiers && computedSignalingClass.value === "checking",
+);
 const error = computed(
-  () => !checking.value && !useNumModifiers && computedSignalingClass.value === 'error'
-)
+  () =>
+    !checking.value &&
+    !useNumModifiers &&
+    computedSignalingClass.value === "error",
+);
 const success = computed(
-  () => !checking.value && !useNumModifiers && computedSignalingClass.value === 'success' && !submit
-)
+  () =>
+    !checking.value &&
+    !useNumModifiers &&
+    computedSignalingClass.value === "success" &&
+    !submit,
+);
 const showSubmit = computed(
-  () => !checking.value && !useNumModifiers && submit && computedSignalingClass.value !== 'error'
-)
+  () =>
+    !checking.value &&
+    !useNumModifiers &&
+    submit &&
+    computedSignalingClass.value !== "error",
+);
 
 /**
  * Check if numMin is less than numMax, if both are set
@@ -99,10 +112,12 @@ const showSubmit = computed(
  */
 function assertBoundaries() {
   if (numMin && numMax && numMin >= numMax) {
-    Logger.warn('numMin is greater or equal than numMax. Validation will be skipped.')
-    return false
+    Logger.warn(
+      "numMin is greater or equal than numMax. Validation will be skipped.",
+    );
+    return false;
   }
-  return true
+  return true;
 }
 
 /**
@@ -113,33 +128,45 @@ function assertBoundaries() {
  */
 function numCheckBoundaries(value: number) {
   if (numMax && value > numMax) {
-    if (numWrap && numMin && assertBoundaries() && numericModelValue.value === numMax) {
-      value = numMin
+    if (
+      numWrap &&
+      numMin &&
+      assertBoundaries() &&
+      numericModelValue.value === numMax
+    ) {
+      value = numMin;
     } else {
-      value = numMax
+      value = numMax;
     }
   }
 
   if (numMin && value < numMin) {
-    if (numWrap && numMax && assertBoundaries() && numericModelValue.value === numMin) {
-      value = numMax
+    if (
+      numWrap &&
+      numMax &&
+      assertBoundaries() &&
+      numericModelValue.value === numMin
+    ) {
+      value = numMax;
     } else {
-      value = numMin
+      value = numMin;
     }
   }
 
-  return value
+  return value;
 }
 
 /**
  *  Add modifierStepValue to value
  */
 function add() {
-  const nextValue = numCheckBoundaries(numericModelValue.value + modifierStepValue)
+  const nextValue = numCheckBoundaries(
+    numericModelValue.value + modifierStepValue,
+  );
 
   if (model.value !== nextValue) {
-    model.value = nextValue
-    emit('change')
+    model.value = nextValue;
+    emit("change");
   }
 }
 
@@ -148,21 +175,28 @@ function add() {
  * emits 'change' event if model.value has changed
  */
 function subtract() {
-  const nextValue = numCheckBoundaries(numericModelValue.value - modifierStepValue)
+  const nextValue = numCheckBoundaries(
+    numericModelValue.value - modifierStepValue,
+  );
 
   if (model.value !== nextValue) {
-    model.value = nextValue
-    emit('change')
+    model.value = nextValue;
+    emit("change");
   }
 }
 
 onMounted(() => {
-  assertBoundaries()
-})
+  assertBoundaries();
+});
 </script>
 
 <template>
-  <div :class="['input-div', { numeric: useNumModifiers || inputmode === 'numeric' }]">
+  <div
+    :class="[
+      'input-div',
+      { numeric: useNumModifiers || inputmode === 'numeric' },
+    ]"
+  >
     <label v-if="label">
       {{ label }}
     </label>

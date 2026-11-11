@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <section class="news-widget">
@@ -10,7 +10,7 @@ AGPL-3.0-or-later */
           :size="20"
           class="header-icon"
         />
-        <h2>{{ title || t('agora', 'Your news') }}</h2>
+        <h2>{{ title || t("agora", "Your news") }}</h2>
       </div>
     </header>
 
@@ -46,53 +46,55 @@ AGPL-3.0-or-later */
           :is="Icons.Megaphone"
           :size="32"
         />
-        <p>{{ t('agora', 'No news yet') }}</p>
+        <p>{{ t("agora", "No news yet") }}</p>
       </li>
     </ul>
 
     <a
       class="news-all-link"
       @click="emit('viewAll')"
-    > {{ t('agora', 'See all news') }} → </a>
+    >
+      {{ t("agora", "See all news") }} →
+    </a>
   </section>
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
 
 export interface NewsItem {
-  id: number
-  title: string
-  description: string
-  created: string | number
-  coverId?: number | string
-  tag?: string
-  tagColor?: string
-  tagBg?: string
+  id: number;
+  title: string;
+  description: string;
+  created: string | number;
+  coverId?: number | string;
+  tag?: string;
+  tagColor?: string;
+  tagBg?: string;
 }
 
 withDefaults(
   defineProps<{
-    items?: NewsItem[]
-    title?: string
+    items?: NewsItem[];
+    title?: string;
   }>(),
-  { items: () => [], title: '' }
-)
+  { items: () => [], title: "" },
+);
 
 const emit = defineEmits<{
-  click: [item: NewsItem]
-  viewAll: []
-}>()
+  click: [item: NewsItem];
+  viewAll: [];
+}>();
 
 function resolveCoverUrl(src?: number | string): string {
-  if (!src) return ''
-  const s = String(src)
-  if (/^https?:\/\//i.test(s) || s.startsWith('/')) return s
+  if (!src) return "";
+  const s = String(src);
+  if (/^https?:\/\//i.test(s) || s.startsWith("/")) return s;
   if (/^\d+$/.test(s)) {
-    return `${window.location.origin}/index.php/core/preview?fileId=${s}&x=1200&y=400&a=1`
+    return `${window.location.origin}/index.php/core/preview?fileId=${s}&x=1200&y=400&a=1`;
   }
-  return s
+  return s;
 }
 </script>
 <style lang="scss" scoped>

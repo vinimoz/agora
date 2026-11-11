@@ -8,7 +8,7 @@
     <section class="presentation-section">
       <div class="presentation-content">
         <h1 class="presentation-title">
-          {{ t('agora', 'Présentation') }}
+          {{ t("agora", "Présentation") }}
         </h1>
 
         <div
@@ -35,7 +35,11 @@
               @click="isDescriptionExpanded = !isDescriptionExpanded"
             >
               <span class="button-text">
-                {{ isDescriptionExpanded ? t('agora', 'Show less') : t('agora', 'Read more') }}
+                {{
+                  isDescriptionExpanded
+                    ? t("agora", "Show less")
+                    : t("agora", "Read more")
+                }}
               </span>
               <svg
                 width="16"
@@ -43,7 +47,9 @@
                 viewBox="0 0 24 24"
                 :class="{ rotated: isDescriptionExpanded }"
               >
-                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                <path
+                  d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                />
               </svg>
             </button>
           </div>
@@ -110,7 +116,9 @@
                     height="16"
                     viewBox="0 0 24 24"
                   >
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                    <path
+                      d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                    />
                   </svg>
                 </div>
               </div>
@@ -123,7 +131,8 @@
                 <div
                   class="inquiry-grid main-grid"
                   :class="{
-                    'single-full-item': typeGroup.length === 1 && isFullInquiry(typeGroup[0]),
+                    'single-full-item':
+                      typeGroup.length === 1 && isFullInquiry(typeGroup[0]),
                   }"
                 >
                   <template
@@ -174,7 +183,7 @@
       >
         <div class="sidebar-header">
           <h2 class="sidebar-title">
-            {{ t('agora', 'Enquêtes') }}
+            {{ t("agora", "Enquêtes") }}
           </h2>
           <span class="inquiry-count">{{ sidebarInquiries.length }}</span>
         </div>
@@ -209,7 +218,9 @@
                   height="14"
                   viewBox="0 0 24 24"
                 >
-                  <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                  <path
+                    d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                  />
                 </svg>
               </div>
             </div>
@@ -272,119 +283,128 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
+import { computed, ref, onMounted, nextTick } from "vue";
+import { useRouter } from "vue-router";
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
 
-import type { Inquiry } from '../../Types/index.ts'
-import type { InquiryGroup } from '../../Types/inquiryGroups.types.ts'
+import type { Inquiry } from "../../Types/index.ts";
+import type { InquiryGroup } from "../../Types/inquiryGroups.types.ts";
 
 // Import stores
-import { useInquiriesStore } from '../../stores/inquiries.ts'
-import { useAppSettingsStore } from '../../stores/appSettings.ts'
+import { useInquiriesStore } from "../../stores/inquiries.ts";
+import { useAppSettingsStore } from "../../stores/appSettings.ts";
 
 // Import all inquiry display components
-import InquiryCard from './InquiryCard.vue'
-import InquiryListItem from './InquiryListItem.vue'
-import InquiryFull from './InquiryFull.vue'
-import InquiryRichHTML from './InquiryRichHTML.vue'
-import InquirySummary from './InquirySummary.vue'
+import InquiryCard from "./InquiryCard.vue";
+import InquiryListItem from "./InquiryListItem.vue";
+import InquiryFull from "./InquiryFull.vue";
+import InquiryRichHTML from "./InquiryRichHTML.vue";
+import InquirySummary from "./InquirySummary.vue";
 
 // Import helpers
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
 
 interface Props {
-  group: InquiryGroup
-  inquiryIds: number[]
+  group: InquiryGroup;
+  inquiryIds: number[];
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  viewInquiry: [id: number]
-}>()
+  viewInquiry: [id: number];
+}>();
 
 // Initialize stores and router
-const inquiriesStore = useInquiriesStore()
-const appSettingsStore = useAppSettingsStore()
-const router = useRouter()
+const inquiriesStore = useInquiriesStore();
+const appSettingsStore = useAppSettingsStore();
+const router = useRouter();
 
 // State
-const showModal = ref(false)
-const showPopup = ref(false)
-const modalInquiry = ref<Inquiry | null>(null)
-const popupInquiry = ref<Inquiry | null>(null)
-const isDescriptionExpanded = ref(false)
-const isTruncated = ref(false)
-const descriptionText = ref<HTMLElement>()
-const expandedTypes = ref<string[]>([])
-const expandedSidebarTypes = ref<string[]>([])
+const showModal = ref(false);
+const showPopup = ref(false);
+const modalInquiry = ref<Inquiry | null>(null);
+const popupInquiry = ref<Inquiry | null>(null);
+const isDescriptionExpanded = ref(false);
+const isTruncated = ref(false);
+const descriptionText = ref<HTMLElement>();
+const expandedTypes = ref<string[]>([]);
+const expandedSidebarTypes = ref<string[]>([]);
 
 // Get inquiries from store using the IDs
 const inquiries = computed(() => {
-  const allInquiries = inquiriesStore.inquiries || []
+  const allInquiries = inquiriesStore.inquiries || [];
   return props.inquiryIds
     .map((id) => allInquiries.find((inquiry) => inquiry.id === id))
-    .filter(Boolean) as Inquiry[]
-})
+    .filter(Boolean) as Inquiry[];
+});
 
 // Get inquiry types from appSettings
-const inquiryTypes = computed(() => appSettingsStore.inquiryTypeTab || [])
+const inquiryTypes = computed(() => appSettingsStore.inquiryTypeTab || []);
 
 // Helper function to get miscField with fallback
-function getMiscField(inquiry: Inquiry, field: string, defaultValue: undefined = null) {
-  return inquiry.miscFields?.[field] || defaultValue
+function getMiscField(
+  inquiry: Inquiry,
+  field: string,
+  defaultValue: undefined = null,
+) {
+  return inquiry.miscFields?.[field] || defaultValue;
 }
 
 // Check if inquiry should render in full mode
 function isFullInquiry(inquiry: Inquiry): boolean {
-  const renderMode = getMiscField(inquiry, 'render_mode', 'cards')
-  return renderMode === 'full' || renderMode === 'rich_html'
+  const renderMode = getMiscField(inquiry, "render_mode", "cards");
+  return renderMode === "full" || renderMode === "rich_html";
 }
 
 // Get open mode for inquiry with default to 'page'
 function getOpenMode(inquiry: Inquiry): string {
-  return getMiscField(inquiry, 'open_mode', 'page')
+  return getMiscField(inquiry, "open_mode", "page");
 }
 
 // Layout compatibility matrix
 const layoutCompatibility = {
-  sidebar: ['cards', 'list', 'summary'],
-  main: ['rich_html', 'full', 'summary', 'cards', 'list'],
-  footer: ['cards', 'summary', 'list'],
-  header: ['cards', 'summary', 'list'],
-}
+  sidebar: ["cards", "list", "summary"],
+  main: ["rich_html", "full", "summary", "cards", "list"],
+  footer: ["cards", "summary", "list"],
+  header: ["cards", "summary", "list"],
+};
 
 // Get layout zone for inquiry
 function getLayoutZone(inquiry: Inquiry): string {
-  const layoutZone = getMiscField(inquiry, 'layout_zone')
-  if (layoutZone && ['sidebar', 'main', 'footer', 'header'].includes(layoutZone)) {
-    return layoutZone
+  const layoutZone = getMiscField(inquiry, "layout_zone");
+  if (
+    layoutZone &&
+    ["sidebar", "main", "footer", "header"].includes(layoutZone)
+  ) {
+    return layoutZone;
   }
 
   if (isFullInquiry(inquiry)) {
-    return 'main'
+    return "main";
   }
 
-  const renderMode = getMiscField(inquiry, 'render_mode', 'cards')
+  const renderMode = getMiscField(inquiry, "render_mode", "cards");
   const compatibleLayouts = Object.entries(layoutCompatibility)
     .filter(([, modes]) => modes.includes(renderMode))
-    .map(([layout]) => layout)
+    .map(([layout]) => layout);
 
-  const priorityOrder = ['main', 'header', 'sidebar', 'footer']
-  return priorityOrder.find((layout) => compatibleLayouts.includes(layout)) || 'main'
+  const priorityOrder = ["main", "header", "sidebar", "footer"];
+  return (
+    priorityOrder.find((layout) => compatibleLayouts.includes(layout)) || "main"
+  );
 }
 
 // Get appropriate render mode for layout zone
 function getRenderMode(inquiry: Inquiry, layoutZone: string): string {
-  const preferredMode = getMiscField(inquiry, 'render_mode', 'cards')
+  const preferredMode = getMiscField(inquiry, "render_mode", "cards");
 
   if (layoutCompatibility[layoutZone]?.includes(preferredMode)) {
-    return preferredMode
+    return preferredMode;
   }
 
-  return layoutCompatibility[layoutZone]?.[0] || 'cards'
+  return layoutCompatibility[layoutZone]?.[0] || "cards";
 }
 
 // Component mapping
@@ -394,139 +414,145 @@ const componentMap = {
   full: InquiryFull,
   rich_html: InquiryRichHTML,
   summary: InquirySummary,
-}
+};
 
 // Get component for inquiry
 function getInquiryComponent(inquiry: Inquiry, layoutZone: string) {
-  const renderMode = getRenderMode(inquiry, layoutZone)
-  return componentMap[renderMode as keyof typeof componentMap] || InquiryCard
+  const renderMode = getRenderMode(inquiry, layoutZone);
+  return componentMap[renderMode as keyof typeof componentMap] || InquiryCard;
 }
 
 // Get inquiry type icon
 function getInquiryTypeIcon(typeKey: string) {
-  const typeData = getInquiryTypeData(typeKey, inquiryTypes.value)
-  return typeData?.icon || '📝'
+  const typeData = getInquiryTypeData(typeKey, inquiryTypes.value);
+  return typeData?.icon || "📝";
 }
 
 function getInquiryTypeLabel(typeKey: string) {
-  const typeData = getInquiryTypeData(typeKey, inquiryTypes.value)
-  return typeData?.label ? t('agora', typeData.label) : typeKey
+  const typeData = getInquiryTypeData(typeKey, inquiryTypes.value);
+  return typeData?.label ? t("agora", typeData.label) : typeKey;
 }
 
 // Group inquiries by type
 function groupInquiriesByType(inquiryList: Inquiry[]) {
-  const grouped: Record<string, Inquiry[]> = {}
+  const grouped: Record<string, Inquiry[]> = {};
 
   inquiryList.forEach((inquiry) => {
-    const type = inquiry.type || 'default'
-    if (!grouped[type]) grouped[type] = []
-    grouped[type].push(inquiry)
-  })
+    const type = inquiry.type || "default";
+    if (!grouped[type]) grouped[type] = [];
+    grouped[type].push(inquiry);
+  });
 
-  return grouped
+  return grouped;
 }
 
 // Get inquiries for each layout zone
 const sidebarInquiries = computed(() =>
-  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'sidebar')
-)
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === "sidebar"),
+);
 
 const headerInquiries = computed(() =>
-  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'header')
-)
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === "header"),
+);
 
 const mainInquiries = computed(() =>
-  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'main')
-)
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === "main"),
+);
 
 const footerInquiries = computed(() =>
-  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === 'footer')
-)
+  inquiries.value.filter((inquiry) => getLayoutZone(inquiry) === "footer"),
+);
 
 // Grouped inquiries
-const sidebarInquiriesByType = computed(() => groupInquiriesByType(sidebarInquiries.value))
-const mainInquiriesByType = computed(() => groupInquiriesByType(mainInquiries.value))
+const sidebarInquiriesByType = computed(() =>
+  groupInquiriesByType(sidebarInquiries.value),
+);
+const mainInquiriesByType = computed(() =>
+  groupInquiriesByType(mainInquiries.value),
+);
 
 // Helper computed properties
-const hasSidebarInquiries = computed(() => sidebarInquiries.value.length > 0)
+const hasSidebarInquiries = computed(() => sidebarInquiries.value.length > 0);
 
 // Toggle functions
 function toggleType(typeKey: string) {
-  const index = expandedTypes.value.indexOf(typeKey)
+  const index = expandedTypes.value.indexOf(typeKey);
   if (index > -1) {
-    expandedTypes.value.splice(index, 1)
+    expandedTypes.value.splice(index, 1);
   } else {
-    expandedTypes.value.push(typeKey)
+    expandedTypes.value.push(typeKey);
   }
 }
 
 function toggleSidebarType(typeKey: string) {
-  const index = expandedSidebarTypes.value.indexOf(typeKey)
+  const index = expandedSidebarTypes.value.indexOf(typeKey);
   if (index > -1) {
-    expandedSidebarTypes.value.splice(index, 1)
+    expandedSidebarTypes.value.splice(index, 1);
   } else {
-    expandedSidebarTypes.value.push(typeKey)
+    expandedSidebarTypes.value.push(typeKey);
   }
 }
 
 // Handle inquiry click
 function handleInquiryClick(inquiry: Inquiry) {
-  const openMode = getOpenMode(inquiry)
+  const openMode = getOpenMode(inquiry);
 
   switch (openMode) {
-    case 'modal':
-      modalInquiry.value = inquiry
-      showModal.value = true
-      break
+    case "modal":
+      modalInquiry.value = inquiry;
+      showModal.value = true;
+      break;
 
-    case 'none':
-      break
+    case "none":
+      break;
 
-    case 'page':
+    case "page":
     default:
       router.push({
-        name: 'inquiry',
+        name: "inquiry",
         params: { id: inquiry.id },
-      })
-      break
+      });
+      break;
   }
 
-  emit('viewInquiry', inquiry.id)
+  emit("viewInquiry", inquiry.id);
 }
 
 // Close modal
 function closeModal() {
-  showModal.value = false
-  modalInquiry.value = null
+  showModal.value = false;
+  modalInquiry.value = null;
 }
 
 // Close popup
 function closePopup() {
-  showPopup.value = false
-  popupInquiry.value = null
+  showPopup.value = false;
+  popupInquiry.value = null;
 }
 
 // Check if description needs truncation
 onMounted(() => {
   nextTick(() => {
     if (descriptionText.value) {
-      const lineHeight = parseInt(getComputedStyle(descriptionText.value).lineHeight)
-      const maxHeight = lineHeight * 6
-      isTruncated.value = descriptionText.value.scrollHeight > maxHeight
+      const lineHeight = parseInt(
+        getComputedStyle(descriptionText.value).lineHeight,
+      );
+      const maxHeight = lineHeight * 6;
+      isTruncated.value = descriptionText.value.scrollHeight > maxHeight;
     }
-  })
+  });
 
   // Auto-expand first type if only one exists
-  const typeKeys = Object.keys(mainInquiriesByType.value)
+  const typeKeys = Object.keys(mainInquiriesByType.value);
   if (typeKeys.length === 1) {
-    expandedTypes.value = [typeKeys[0]]
+    expandedTypes.value = [typeKeys[0]];
   }
 
-  const sidebarTypeKeys = Object.keys(sidebarInquiriesByType.value)
+  const sidebarTypeKeys = Object.keys(sidebarInquiriesByType.value);
   if (sidebarTypeKeys.length === 1) {
-    expandedSidebarTypes.value = [sidebarTypeKeys[0]]
+    expandedSidebarTypes.value = [sidebarTypeKeys[0]];
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>

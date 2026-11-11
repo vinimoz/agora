@@ -47,31 +47,31 @@
 import {
   getOptionTypeIconComponent,
   getOptionTypeLabel,
-} from '../../helpers/modules/InquiryOptionHelper'
-import type { InquiryOptionType } from '../../Types/index.ts'
+} from "../../helpers/modules/InquiryOptionHelper";
+import type { InquiryOptionType } from "../../Types/index.ts";
 
 interface OptionNode {
-  id: number
-  type: string
-  title?: string
-  label?: string
-  depth: number
-  children: OptionNode[]
-  [key: string]: unknown
+  id: number;
+  type: string;
+  title?: string;
+  label?: string;
+  depth: number;
+  children: OptionNode[];
+  [key: string]: unknown;
 }
 
 defineProps<{
-  node: OptionNode
-  selectedId: number | null
-  optionTypes: InquiryOptionType[]
-}>()
+  node: OptionNode;
+  selectedId: number | null;
+  optionTypes: InquiryOptionType[];
+}>();
 
 defineEmits<{
-  select: [option: OptionNode]
-}>()
+  select: [option: OptionNode];
+}>();
 
 const getOptionLabel = (option: OptionNode): string =>
-  option.title || option.label || getOptionTypeLabel(option.type)
+  option.title || option.label || getOptionTypeLabel(option.type);
 </script>
 
 <style scoped lang="scss">

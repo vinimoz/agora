@@ -16,7 +16,7 @@
         class="loading-state"
       >
         <NcLoadingIcon :size="48" />
-        <p>{{ t('agora', 'Loading option details …') }}</p>
+        <p>{{ t("agora", "Loading option details …") }}</p>
       </div>
 
       <!-- Error state -->
@@ -28,7 +28,7 @@
           {{ error }}
         </NcNoteCard>
         <NcButton @click="loadOption">
-          {{ t('agora', 'Retry') }}
+          {{ t("agora", "Retry") }}
         </NcButton>
       </div>
 
@@ -55,7 +55,9 @@
               </h2>
               <div class="option-meta">
                 <span class="option-type">{{ optionTypeLabel }}</span>
-                <span class="option-date">{{ formatDate(optionStore.status.created) }}</span>
+                <span class="option-date">{{
+                  formatDate(optionStore.status.created)
+                }}</span>
               </div>
             </div>
           </div>
@@ -70,19 +72,19 @@
                 <template #icon>
                   <Pencil :size="20" />
                 </template>
-                {{ t('agora', 'Edit') }}
+                {{ t("agora", "Edit") }}
               </NcButton>
             </template>
             <template v-else>
               <NcButton @click="cancelEdit">
-                {{ t('agora', 'Cancel') }}
+                {{ t("agora", "Cancel") }}
               </NcButton>
               <NcButton
                 type="primary"
                 :disabled="!canSaveEdit"
                 @click="saveEdit"
               >
-                {{ t('agora', 'Save') }}
+                {{ t("agora", "Save") }}
               </NcButton>
             </template>
 
@@ -114,8 +116,10 @@
                   :key="responseType.option_type"
                   :close-after-click="true"
                   :name="responseType.label"
-                  :description="getOptionTypeDescription(responseType.option_type)"
-		  @click="handleAddResponse(responseType.option_type)"
+                  :description="
+                    getOptionTypeDescription(responseType.option_type)
+                  "
+                  @click="handleAddResponse(responseType.option_type)"
                 >
                   <template #icon>
                     <component
@@ -138,7 +142,7 @@
                     :size="20"
                   />
                 </template>
-                {{ t('agora', 'Delete') }}
+                {{ t("agora", "Delete") }}
               </NcActionButton>
             </NcActions>
           </div>
@@ -182,7 +186,7 @@
                 v-if="hasAdditionalFields"
                 class="additional-fields"
               >
-                <h4>{{ t('agora', 'Additional information') }}</h4>
+                <h4>{{ t("agora", "Additional information") }}</h4>
                 <MiscFieldsEditor
                   :fields="additionalFields"
                   :initial-values="miscFieldsValues"
@@ -217,9 +221,13 @@
                 v-if="hasAdditionalFieldsData"
                 class="additional-fields-display"
               >
-                <h4>{{ t('agora', 'Additional information') }}</h4>
+                <h4>{{ t("agora", "Additional information") }}</h4>
                 <MiscFieldsEditor
-                  :key="optionStore.id + '-' + JSON.stringify(optionStore.miscFields)"
+                  :key="
+                    optionStore.id +
+                      '-' +
+                      JSON.stringify(optionStore.miscFields)
+                  "
                   :fields="additionalFields"
                   :initial-values="optionStore.miscFields || {}"
                   :editable="false"
@@ -281,7 +289,11 @@
                             :size="16"
                           />
                         </template>
-                        {{ showCommentForm ? t('agora', 'Cancel') : t('agora', 'Add comment') }}
+                        {{
+                          showCommentForm
+                            ? t("agora", "Cancel")
+                            : t("agora", "Add comment")
+                        }}
                       </NcButton>
                     </div>
                   </div>
@@ -298,7 +310,8 @@
                     />
                     <div class="owner-text">
                       <span class="owner-name">{{
-                        optionStore.owner?.displayName || t('agora', 'Unknown owner')
+                        optionStore.owner?.displayName ||
+                          t("agora", "Unknown owner")
                       }}</span>
                     </div>
                   </div>
@@ -313,7 +326,7 @@
             class="children-section"
           >
             <div class="section-header">
-              <h3>{{ t('agora', 'Child options') }}</h3>
+              <h3>{{ t("agora", "Child options") }}</h3>
             </div>
             <div class="children-list">
               <div
@@ -324,8 +337,12 @@
                   :is="InquiryOptionIcons.MessageText"
                   :size="48"
                 />
-                <h4>{{ t('agora', 'No child options yet') }}</h4>
-                <p>{{ t('agora', 'Child options will appear here when created') }}</p>
+                <h4>{{ t("agora", "No child options yet") }}</h4>
+                <p>
+                  {{
+                    t("agora", "Child options will appear here when created")
+                  }}
+                </p>
               </div>
 
               <div
@@ -387,8 +404,8 @@
                 :is="InquiryOptionIcons.Comment"
                 :size="48"
               />
-              <h4>{{ t('agora', 'No comments yet') }}</h4>
-              <p>{{ t('agora', 'Start the discussion') }}</p>
+              <h4>{{ t("agora", "No comments yet") }}</h4>
+              <p>{{ t("agora", "Start the discussion") }}</p>
             </div>
           </div>
         </div>
@@ -418,29 +435,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onUnmounted, toRaw } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import { ref, computed, onMounted, watch, onUnmounted, toRaw } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import NcLoadingIcon from "@nextcloud/vue/components/NcLoadingIcon";
+import NcRichContenteditable from "@nextcloud/vue/components/NcRichContenteditable";
+import NcNoteCard from "@nextcloud/vue/components/NcNoteCard";
+import NcCounterBubble from "@nextcloud/vue/components/NcCounterBubble";
 
-import { DateTime } from 'luxon'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
+import { DateTime } from "luxon";
+import Pencil from "vue-material-design-icons/Pencil.vue";
+import MiscFieldsEditor from "../Options/MiscFieldsEditor.vue";
 
-import { useCommentsStore } from '../../stores/comments'
-import { useOptionsStore } from '../../stores/options'
-import { useOptionStore } from '../../stores/option'
-import { useSessionStore } from '../../stores/session'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { SupportFeature } from '../Base/index.ts'
-import ItemCard from '../FamilyLayouts/ItemCard.vue'
+import { useCommentsStore } from "../../stores/comments";
+import { useOptionsStore } from "../../stores/options";
+import { useOptionStore } from "../../stores/option";
+import { useSessionStore } from "../../stores/session";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import { SupportFeature } from "../Base/index.ts";
+import ItemCard from "../FamilyLayouts/ItemCard.vue";
 import {
   getOptionTypeLabel as getOptionTypeLabelHelper,
   getOptionTypeIconComponent,
@@ -452,279 +469,318 @@ import {
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments,
   usesTitle,
-} from '../../helpers/modules/InquiryOptionHelper'
+} from "../../helpers/modules/InquiryOptionHelper";
 
 // Import components
-import Comments from '../Comments/Comments.vue'
-import CommentAdd from '../Comments/CommentAdd.vue'
-import OptionAddModal from './OptionAddModal.vue'
+import Comments from "../Comments/Comments.vue";
+import CommentAdd from "../Comments/CommentAdd.vue";
+import OptionAddModal from "./OptionAddModal.vue";
 
 // Types
-import type { Option, MiscField } from '../../Types/index.ts'
-import { createOptionContext, canEditOption, canDeleteOption } from '../../utils/permissions.ts'
+import type { Option, MiscField } from "../../Types/index.ts";
+import {
+  createOptionContext,
+  canEditOption,
+  canDeleteOption,
+} from "../../utils/permissions.ts";
 
 // Props
 const props = defineProps<{
-  optionId: number | null
-  inquiryId: number
-}>()
+  optionId: number | null;
+  inquiryId: number;
+}>();
 
 // Emits
 const emit = defineEmits<{
-  close: []
-  updated: [option: Option]
-  deleted: [optionId: number]
-}>()
+  close: [];
+  updated: [option: Option];
+  deleted: [optionId: number];
+}>();
 
 // Stores
-const optionsStore = useOptionsStore()
-const optionStore = useOptionStore()
-const sessionStore = useSessionStore()
-const commentsStore = useCommentsStore()
+const optionsStore = useOptionsStore();
+const optionStore = useOptionStore();
+const sessionStore = useSessionStore();
+const commentsStore = useCommentsStore();
 
 // State
-const show = ref(true)
-const isLoading = ref(false)
-const error = ref<string | null>(null)
-const showCommentForm = ref(false)
-const isEditing = ref(false)
+const show = ref(true);
+const isLoading = ref(false);
+const error = ref<string | null>(null);
+const showCommentForm = ref(false);
+const isEditing = ref(false);
 const editForm = ref({
-  title: '',
-  text: '',
-})
-const showChildModal = ref(false)
-const selectedChildId = ref<number | null>(null)
-const showAddChildModal = ref(false)
-const selectedChildType = ref<string | null>(null)
-const subMenu = ref<string | null>(null)
-const commentsSection = ref<HTMLElement | null>(null)
-const activeFilter = ref<string | null>(null)
-const miscFieldsValues = ref<Record<string, MiscField>>({})
+  title: "",
+  text: "",
+});
+const showChildModal = ref(false);
+const selectedChildId = ref<number | null>(null);
+const showAddChildModal = ref(false);
+const selectedChildType = ref<string | null>(null);
+const subMenu = ref<string | null>(null);
+const commentsSection = ref<HTMLElement | null>(null);
+const activeFilter = ref<string | null>(null);
+const miscFieldsValues = ref<Record<string, MiscField>>({});
 
 // Get all option types from session store
-const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+const allOptionTypes = computed(
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 
 // Get additional fields as MiscField type - filter out special fields
-const SPECIAL_FIELDS = ['force_layouts']
+const SPECIAL_FIELDS = ["force_layouts"];
 
 const additionalFields = computed<MiscField[]>(() => {
-  const fields = getOptionTypeFields(optionStore.type, allOptionTypes.value) as MiscField[]
+  const fields = getOptionTypeFields(
+    optionStore.type,
+    allOptionTypes.value,
+  ) as MiscField[];
   // Filter out special fields that shouldn't be displayed in misc fields editor
-  return fields.filter((field) => !SPECIAL_FIELDS.includes(field.key))
-})
+  return fields.filter((field) => !SPECIAL_FIELDS.includes(field.key));
+});
 
 // Handle misc fields updates from editor
 const handleMiscFieldsUpdate = (values: Record<string, MiscField>) => {
-  miscFieldsValues.value = { ...values }
-}
+  miscFieldsValues.value = { ...values };
+};
 
 // Computed properties from helpers
 const optionTypeLabel = computed(() =>
-  getOptionTypeLabelHelper(optionStore.type, allOptionTypes.value, t('agora', 'Option'))
-)
+  getOptionTypeLabelHelper(
+    optionStore.type,
+    allOptionTypes.value,
+    t("agora", "Option"),
+  ),
+);
 
 const optionIcon = computed(() =>
-  getOptionTypeIconComponent(optionStore.type, allOptionTypes.value)
-)
+  getOptionTypeIconComponent(optionStore.type, allOptionTypes.value),
+);
 
-const optionTypeColor = computed(() => getOptionTypeColor(optionStore.type, allOptionTypes.value))
+const optionTypeColor = computed(() =>
+  getOptionTypeColor(optionStore.type, allOptionTypes.value),
+);
 
-const allowComment = computed(() => allowsComments(optionStore.type, allOptionTypes.value))
+const allowComment = computed(() =>
+  allowsComments(optionStore.type, allOptionTypes.value),
+);
 
 const hasSupportFeature = computed(() =>
-  hasSupportFeatureHelper(optionStore.type, allOptionTypes.value)
-)
+  hasSupportFeatureHelper(optionStore.type, allOptionTypes.value),
+);
 
-const useTitle = computed(() => usesTitle(optionStore.type, allOptionTypes.value))
+const useTitle = computed(() =>
+  usesTitle(optionStore.type, allOptionTypes.value),
+);
 
 const allowedResponses = computed(() => {
   if (!optionStore?.type || isLoading.value) {
-    return []
+    return [];
   }
-  return getAllowedResponses(optionStore.type, allOptionTypes.value)
-})
+  return getAllowedResponses(optionStore.type, allOptionTypes.value);
+});
 
-const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
+const hasAllowedResponses = computed(() => allowedResponses.value.length > 0);
 
 const availableResponseTypes = computed(() =>
-  getAvailableResponseTypes(optionStore.type, allOptionTypes.value)
-)
+  getAvailableResponseTypes(optionStore.type, allOptionTypes.value),
+);
 
 // Create context once as computed
 const optionContext = computed(() => {
-  if (!optionStore?.id) return null
-  return createOptionContext(toRaw(optionStore))
-})
+  if (!optionStore?.id) return null;
+  return createOptionContext(toRaw(optionStore));
+});
 
-const canEdit = computed(() => (optionContext.value ? canEditOption(optionContext.value) : false))
+const canEdit = computed(() =>
+  optionContext.value ? canEditOption(optionContext.value) : false,
+);
 const canDelete = computed(() =>
-  optionContext.value ? canDeleteOption(optionContext.value) : false
-)
+  optionContext.value ? canDeleteOption(optionContext.value) : false,
+);
 
 // Computed properties
-const modalTitle = computed(() => optionStore.title || t('agora', 'Option details'))
+const modalTitle = computed(
+  () => optionStore.title || t("agora", "Option details"),
+);
 
-const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
+const canEditOrDelete = computed(() => canEdit.value || canDelete.value);
 
-const canSaveEdit = computed(() => editForm.value.text.trim().length > 0)
+const canSaveEdit = computed(() => editForm.value.text.trim().length > 0);
 
 // Get actual child options
 const childOptions = computed(() => {
-  if (!optionStore?.id) return []
-  return optionsStore.options.filter((opt) => opt.parentId === optionStore.id)
-})
+  if (!optionStore?.id) return [];
+  return optionsStore.options.filter((opt) => opt.parentId === optionStore.id);
+});
 
-const hasChildOptions = computed(() => childOptions.value.length > 0)
+const hasChildOptions = computed(() => childOptions.value.length > 0);
 
-const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
+const hasAdditionalFields = computed(() => additionalFields.value.length > 0);
 
 const hasAdditionalFieldsData = computed(() => {
-  if (!optionStore.miscFields) return false
+  if (!optionStore.miscFields) return false;
   // Check if there are any non-special fields with values
   return Object.keys(optionStore.miscFields).some(
     (key) =>
       !SPECIAL_FIELDS.includes(key) &&
       optionStore.miscFields?.[key] !== undefined &&
       optionStore.miscFields[key] !== null &&
-      optionStore.miscFields[key] !== ''
-  )
-})
+      optionStore.miscFields[key] !== "",
+  );
+});
 
 // Filtered child options
 const filteredChildOptions = computed(() => {
-  if (!activeFilter.value) return childOptions.value
-  return childOptions.value.filter((child) => child.type === activeFilter.value)
-})
+  if (!activeFilter.value) return childOptions.value;
+  return childOptions.value.filter(
+    (child) => child.type === activeFilter.value,
+  );
+});
 
 // Methods
 const formatDate = (timestamp: number) =>
-  DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
+  DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT);
 
 const getOptionTypeDescription = (type: string) =>
-  getOptionTypeDescriptionHelper(type, allOptionTypes.value)
+  getOptionTypeDescriptionHelper(type, allOptionTypes.value);
 
-const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
+const getOptionTypeIcon = (type: string) =>
+  getOptionTypeIconComponent(type, allOptionTypes.value);
 
 const loadOption = async () => {
-  if (!props.optionId) return
-  isLoading.value = true
-  error.value = null
+  if (!props.optionId) return;
+  isLoading.value = true;
+  error.value = null;
 
   try {
-    await optionStore.load(props.optionId)
+    await optionStore.load(props.optionId);
     if (optionStore) {
       // Initialize edit form with current values
       editForm.value = {
-        title: optionStore.title || '',
-        text: optionStore.text || '',
-      }
+        title: optionStore.title || "",
+        text: optionStore.text || "",
+      };
 
       // Initialize misc fields values with proper defaults
-      const currentMiscFields = optionStore.miscFields || {}
-      const initializedMiscFields: Record<string, MiscField> = {}
+      const currentMiscFields = optionStore.miscFields || {};
+      const initializedMiscFields: Record<string, MiscField> = {};
 
       // Set default values for all fields that have defaults
       additionalFields.value.forEach((field) => {
         // Use existing value if present, otherwise use default
-        if (currentMiscFields[field.key] !== undefined && currentMiscFields[field.key] !== null) {
-          initializedMiscFields[field.key] = currentMiscFields[field.key]
-        } else if (field.default !== undefined && field.default !== null && field.default !== '') {
-          initializedMiscFields[field.key] = field.default
+        if (
+          currentMiscFields[field.key] !== undefined &&
+          currentMiscFields[field.key] !== null
+        ) {
+          initializedMiscFields[field.key] = currentMiscFields[field.key];
+        } else if (
+          field.default !== undefined &&
+          field.default !== null &&
+          field.default !== ""
+        ) {
+          initializedMiscFields[field.key] = field.default;
         } else {
           // Initialize with appropriate empty value based on type
           switch (field.type) {
-            case 'boolean':
-              initializedMiscFields[field.key] = false
-              break
-            case 'integer':
-            case 'number':
-              initializedMiscFields[field.key] = null
-              break
-            case 'json':
-              initializedMiscFields[field.key] = {}
-              break
+            case "boolean":
+              initializedMiscFields[field.key] = false;
+              break;
+            case "integer":
+            case "number":
+              initializedMiscFields[field.key] = null;
+              break;
+            case "json":
+              initializedMiscFields[field.key] = {};
+              break;
             default:
-              initializedMiscFields[field.key] = ''
+              initializedMiscFields[field.key] = "";
           }
         }
-      })
+      });
 
-      miscFieldsValues.value = initializedMiscFields
+      miscFieldsValues.value = initializedMiscFields;
     } else {
-      error.value = t('agora', 'Error loading option store')
+      error.value = t("agora", "Error loading option store");
     }
   } catch (err) {
-    console.error('Error loading option:', err)
-    error.value = t('agora', 'Failed to load option details')
+    console.error("Error loading option:", err);
+    error.value = t("agora", "Failed to load option details");
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const closeModal = () => {
-  show.value = false
+  show.value = false;
   setTimeout(() => {
-    emit('close')
-  }, 300)
-}
+    emit("close");
+  }, 300);
+};
 
 const editOption = () => {
-  isEditing.value = true
-}
+  isEditing.value = true;
+};
 
 const cancelEdit = () => {
-  isEditing.value = false
+  isEditing.value = false;
   // Reset to original values
   if (optionStore) {
     editForm.value = {
-      title: optionStore.title || '',
-      text: optionStore.text || '',
-    }
+      title: optionStore.title || "",
+      text: optionStore.text || "",
+    };
     // Reset misc fields to original values
-    const originalMiscFields: Record<string, MiscField> = {}
+    const originalMiscFields: Record<string, MiscField> = {};
     additionalFields.value.forEach((field) => {
       if (optionStore.miscFields?.[field.key] !== undefined) {
-        originalMiscFields[field.key] = optionStore.miscFields[field.key]
-      } else if (field.default !== undefined && field.default !== null && field.default !== '') {
-        originalMiscFields[field.key] = field.default
+        originalMiscFields[field.key] = optionStore.miscFields[field.key];
+      } else if (
+        field.default !== undefined &&
+        field.default !== null &&
+        field.default !== ""
+      ) {
+        originalMiscFields[field.key] = field.default;
       }
-    })
-    miscFieldsValues.value = originalMiscFields
+    });
+    miscFieldsValues.value = originalMiscFields;
   }
-}
+};
 
 const saveEdit = async () => {
-  if (!optionStore || !canSaveEdit.value) return
+  if (!optionStore || !canSaveEdit.value) return;
 
   try {
     // Prepare misc fields for storage - only include fields that have values
-    const miscFieldsForStorage: Record<string, string> = {}
+    const miscFieldsForStorage: Record<string, string> = {};
     additionalFields.value.forEach((field) => {
-      const value = miscFieldsValues.value[field.key]
+      const value = miscFieldsValues.value[field.key];
       // Only save if value is not empty/undefined/null
-      if (value !== undefined && value !== null && value !== '') {
+      if (value !== undefined && value !== null && value !== "") {
         // Convert to string for storage based on type
-        let stringValue = ''
-        if (field.type === 'boolean') {
-          stringValue = value ? 'true' : 'false'
-        } else if (field.type === 'json') {
-          stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value)
-        } else if (field.type === 'datetime' || field.type === 'date') {
-          stringValue = value instanceof Date ? value.toISOString() : String(value)
+        let stringValue = "";
+        if (field.type === "boolean") {
+          stringValue = value ? "true" : "false";
+        } else if (field.type === "json") {
+          stringValue =
+            typeof value === "object" ? JSON.stringify(value) : String(value);
+        } else if (field.type === "datetime" || field.type === "date") {
+          stringValue =
+            value instanceof Date ? value.toISOString() : String(value);
         } else {
-          stringValue = String(value)
+          stringValue = String(value);
         }
-        miscFieldsForStorage[field.key] = stringValue
+        miscFieldsForStorage[field.key] = stringValue;
       }
-    })
+    });
 
     // Preserve special fields (start_date, end_date, force_layouts) if they exist
     if (optionStore.miscFields) {
       SPECIAL_FIELDS.forEach((field) => {
         if (optionStore.miscFields?.[field] !== undefined) {
-          miscFieldsForStorage[field] = optionStore.miscFields[field]
+          miscFieldsForStorage[field] = optionStore.miscFields[field];
         }
-      })
+      });
     }
 
     const updatedOption = await optionStore.update({
@@ -732,101 +788,107 @@ const saveEdit = async () => {
       title: editForm.value.title,
       text: editForm.value.text,
       miscFields: miscFieldsForStorage,
-    })
+    });
 
-    isEditing.value = false
-    emit('updated', updatedOption)
+    isEditing.value = false;
+    emit("updated", updatedOption);
 
     // Reload to refresh view
-    await loadOption()
+    await loadOption();
   } catch (err) {
-    console.error('Error saving edit:', err)
-    error.value = t('agora', 'Failed to save changes')
+    console.error("Error saving edit:", err);
+    error.value = t("agora", "Failed to save changes");
   }
-}
+};
 
 const confirmDelete = () => {
-  if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
-    deleteOption()
+  if (confirm(t("agora", "Are you sure you want to delete this option?"))) {
+    deleteOption();
   }
-}
+};
 
 const deleteOption = async () => {
-  if (!optionStore) return
+  if (!optionStore) return;
 
   try {
-    await optionStore.delete(optionStore.id)
+    await optionStore.delete(optionStore.id);
 
-    const index = optionsStore.options.findIndex((opt) => opt.id === optionStore?.id)
+    const index = optionsStore.options.findIndex(
+      (opt) => opt.id === optionStore?.id,
+    );
     if (index >= 0) {
-      optionsStore.options.splice(index, 1)
+      optionsStore.options.splice(index, 1);
     }
 
-    closeModal()
-    emit('deleted', optionStore.id)
+    closeModal();
+    emit("deleted", optionStore.id);
   } catch (err) {
-    console.error('Error deleting option:', err)
-    error.value = t('agora', 'Failed to delete option')
+    console.error("Error deleting option:", err);
+    error.value = t("agora", "Failed to delete option");
   }
-}
+};
 
 const toggleSubMenu = (menu: string | null = null) => {
-  subMenu.value = subMenu.value === menu ? null : menu
-}
+  subMenu.value = subMenu.value === menu ? null : menu;
+};
 
 const handleChildComment = (option: Option) => {
-  openChildModal(option.id)
-}
+  openChildModal(option.id);
+};
 
 const openAddResponseModal = (responseType: string) => {
   if (!responseType) {
-    console.error('Cannot open modal: responseType is undefined or empty')
-    return
+    console.error("Cannot open modal: responseType is undefined or empty");
+    return;
   }
-  selectedChildType.value = responseType
-  showAddChildModal.value = true
-}
+  selectedChildType.value = responseType;
+  showAddChildModal.value = true;
+};
 
 const handleAddResponse = (responseType: string) => {
-  openAddResponseModal(responseType)
-  subMenu.value = null
-}
+  openAddResponseModal(responseType);
+  subMenu.value = null;
+};
 
 const closeAddChildModal = () => {
-  showAddChildModal.value = false
-  selectedChildType.value = null
-}
+  showAddChildModal.value = false;
+  selectedChildType.value = null;
+};
 
 const handleChildCreated = (newChild: Option) => {
-  optionsStore.options.push(newChild)
-  closeAddChildModal()
-  loadOption() // Refresh option to update child counts
-}
+  optionsStore.options.push(newChild);
+  closeAddChildModal();
+  loadOption(); // Refresh option to update child counts
+};
 
 const openChildModal = (childId: number) => {
-  selectedChildId.value = childId
-  showChildModal.value = true
-}
+  selectedChildId.value = childId;
+  showChildModal.value = true;
+};
 
 const closeChildModal = () => {
-  showChildModal.value = false
-  selectedChildId.value = null
-}
+  showChildModal.value = false;
+  selectedChildId.value = null;
+};
 
 const handleChildUpdated = (updatedChild: Option) => {
-  const index = optionsStore.options.findIndex((opt) => opt.id === updatedChild.id)
+  const index = optionsStore.options.findIndex(
+    (opt) => opt.id === updatedChild.id,
+  );
   if (index >= 0) {
-    optionsStore.options[index] = updatedChild
+    optionsStore.options[index] = updatedChild;
   }
-}
+};
 
 const handleChildDeleted = (deletedChildId: number) => {
-  const index = optionsStore.options.findIndex((opt) => opt.id === deletedChildId)
+  const index = optionsStore.options.findIndex(
+    (opt) => opt.id === deletedChildId,
+  );
   if (index >= 0) {
-    optionsStore.options.splice(index, 1)
+    optionsStore.options.splice(index, 1);
   }
-  loadOption() // Refresh current option to update child counts
-}
+  loadOption(); // Refresh current option to update child counts
+};
 
 const handleCommentAdded = () => {
   if (optionStore.id) {
@@ -834,48 +896,48 @@ const handleCommentAdded = () => {
       (comment) =>
         comment.inquiryId === props.inquiryId &&
         comment.optionId === optionStore.id &&
-        comment.deleted === 0
-    ).length
+        comment.deleted === 0,
+    ).length;
 
-    optionsStore.updateOptionCommentCount(optionStore.id, count)
+    optionsStore.updateOptionCommentCount(optionStore.id, count);
 
     if (optionStore.status) {
-      optionStore.status.countComments = count
+      optionStore.status.countComments = count;
     }
   }
 
-  showCommentForm.value = false
+  showCommentForm.value = false;
 
   if (commentsSection.value) {
-    commentsSection.value.scrollIntoView({ behavior: 'smooth' })
+    commentsSection.value.scrollIntoView({ behavior: "smooth" });
   }
-}
+};
 
 const handleCommentCountUpdated = (newCount: number) => {
   if (optionStore) {
-    optionStore.status.countComments = newCount
-    emit('updated', { ...optionStore })
+    optionStore.status.countComments = newCount;
+    emit("updated", { ...optionStore });
   }
-}
+};
 
 // Lifecycle
 onMounted(() => {
-  loadOption()
-})
+  loadOption();
+});
 
 onUnmounted(() => {
   // Cleanup if needed
-})
+});
 
 watch(
   () => props.optionId,
   (newId) => {
     if (newId) {
-      loadOption()
+      loadOption();
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 watch(
   () => commentsStore.comments,
@@ -885,18 +947,18 @@ watch(
         (comment) =>
           comment.inquiryId === props.inquiryId &&
           comment.optionId === optionStore.id &&
-          comment.deleted === 0
-      ).length
+          comment.deleted === 0,
+      ).length;
 
-      optionsStore.updateOptionCommentCount(optionStore.id, count)
+      optionsStore.updateOptionCommentCount(optionStore.id, count);
 
       if (optionStore.status) {
-        optionStore.status.countComments = count
+        optionStore.status.countComments = count;
       }
     }
   },
-  { deep: true }
-)
+  { deep: true },
+);
 </script>
 
 <style scoped lang="scss">
@@ -1051,7 +1113,7 @@ watch(
             gap: 8px;
 
             &::before {
-              content: '';
+              content: "";
               width: 3px;
               height: 20px;
               background: var(--color-primary-element);

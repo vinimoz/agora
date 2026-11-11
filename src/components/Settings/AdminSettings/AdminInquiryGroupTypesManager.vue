@@ -4,52 +4,55 @@
 -->
 
 <script setup>
-import { computed, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import { computed, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcInputField from "@nextcloud/vue/components/NcInputField";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcLoadingIcon from "@nextcloud/vue/components/NcLoadingIcon";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import { InquiryOptionIcons } from "../../../utils/icons.ts";
 
 const props = defineProps({
   selectedFamily: { type: Object, default: null },
-})
+});
 
-const familyKey = computed(() => props.selectedFamily?.family_type ?? '')
-const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value)
+const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
+const familyLabel = computed(
+  () => props.selectedFamily?.label ?? familyKey.value,
+);
 
-const emit = defineEmits(['groupTypeSelected'])
-const appSettingsStore = useAppSettingsStore()
+const emit = defineEmits(["groupTypeSelected"]);
+const appSettingsStore = useAppSettingsStore();
 
-const toBool = (value) => value === true || value === 1 || value === '1' || value === 'true'
+const toBool = (value) =>
+  value === true || value === 1 || value === "1" || value === "true";
 // ============================================================
 // STATE
 // ============================================================
-const searchQuery = ref('')
-const editingType = ref(null)
-const savingType = ref(false)
-const editTab = ref('basic') // basic | fields | responses | ui | rules | features | actions
-const expandedTypeId = ref(null)
+const searchQuery = ref("");
+const editingType = ref(null);
+const savingType = ref(false);
+const editTab = ref("basic"); // basic | fields | responses | ui | rules | features | actions
+const expandedTypeId = ref(null);
 
-const newType = ref(emptyType())
-const newField = ref(emptyField())
-const newAllowedResponse = ref('')
-const newAllowedInquiryType = ref('')
+const newType = ref(emptyType());
+const newField = ref(emptyField());
+const newAllowedResponse = ref("");
+const newAllowedInquiryType = ref("");
 
 // ============================================================
 // HELPERS
 // ============================================================
 function emptyType() {
   return {
-    group_type: '',
+    group_type: "",
     family: familyKey.value,
     icon: null,
-    label: '',
-    description: '',
+    label: "",
+    description: "",
     fields: [],
     allowed_inquiry_types: [],
     allowed_response: [],
@@ -59,31 +62,31 @@ function emptyType() {
     actions: [],
     is_root: false,
     sort_order: 0,
-  }
+  };
 }
 
 function emptyField() {
-  return { key: '', label: '', type: 'string', required: false, default: null }
+  return { key: "", label: "", type: "string", required: false, default: null };
 }
 
 const FIELD_TYPES = [
-  'string',
-  'text',
-  'textarea',
-  'rich_text',
-  'integer',
-  'boolean',
-  'datetime',
-  'date',
-  'enum',
-  'array',
-  'json',
-  'users',
-  'groups',
-  'files',
-  'location',
-  'inquiry',
-]
+  "string",
+  "text",
+  "textarea",
+  "rich_text",
+  "integer",
+  "boolean",
+  "datetime",
+  "date",
+  "enum",
+  "array",
+  "json",
+  "users",
+  "groups",
+  "files",
+  "location",
+  "inquiry",
+];
 
 // ============================================================
 // COMPUTED
@@ -92,84 +95,86 @@ const inquiryTypeOptions = computed(() =>
   (appSettingsStore.inquiryTypeTab ?? []).map((t) => ({
     id: t.inquiry_type,
     label: `${t.label || t.inquiry_type} (${t.inquiry_type})`,
-  }))
-)
+  })),
+);
 
 const groupTypeOptions = computed(() =>
   (appSettingsStore.inquiryGroupTypeTab ?? []).map((t) => ({
     id: t.group_type,
     label: `${t.label || t.group_type} (${t.group_type})`,
-  }))
-)
+  })),
+);
 
 const availableIcons = computed(() =>
   Object.keys(InquiryOptionIcons)
-    .filter((key) => key !== 'default')
+    .filter((key) => key !== "default")
     .map((iconId) => ({
       id: iconId,
-      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    }))
-)
+      label: t("agora", iconId.replace(/([A-Z])/g, " $1").trim()),
+    })),
+);
 
 const getIconComponent = (iconName) => {
-  const id = typeof iconName === 'object' ? iconName?.id : iconName
-  return InquiryOptionIcons[id] || InquiryOptionIcons.default
-}
+  const id = typeof iconName === "object" ? iconName?.id : iconName;
+  return InquiryOptionIcons[id] || InquiryOptionIcons.default;
+};
 
 const findIconById = (iconId) => {
-  if (!iconId) return null
-  if (typeof iconId === 'object') return iconId
-  return availableIcons.value.find((i) => i.id === iconId) || null
-}
+  if (!iconId) return null;
+  if (typeof iconId === "object") return iconId;
+  return availableIcons.value.find((i) => i.id === iconId) || null;
+};
 
 const extractIconId = (icon) => {
-  if (!icon) return ''
-  if (typeof icon === 'string') return icon
-  if (typeof icon === 'object') return icon.id || ''
-  return String(icon)
-}
+  if (!icon) return "";
+  if (typeof icon === "string") return icon;
+  if (typeof icon === "object") return icon.id || "";
+  return String(icon);
+};
 
 const normalizeArray = (value) => {
-  if (Array.isArray(value)) return value
-  if (typeof value === 'string' && value) {
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string" && value) {
     try {
-      const parsed = JSON.parse(value)
-      return Array.isArray(parsed) ? parsed : []
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return []
+      return [];
     }
   }
-  return []
-}
+  return [];
+};
 
 const normalizeObject = (value) => {
-  if (value && typeof value === 'object' && !Array.isArray(value)) return value
-  if (typeof value === 'string' && value) {
+  if (value && typeof value === "object" && !Array.isArray(value)) return value;
+  if (typeof value === "string" && value) {
     try {
-      const parsed = JSON.parse(value)
-      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}
+      const parsed = JSON.parse(value);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? parsed
+        : {};
     } catch {
-      return {}
+      return {};
     }
   }
-  return {}
-}
+  return {};
+};
 
-const allTypes = computed(() => appSettingsStore.inquiryGroupTypeTab ?? [])
+const allTypes = computed(() => appSettingsStore.inquiryGroupTypeTab ?? []);
 
 const filteredTypes = computed(() => {
   let list = familyKey.value
     ? allTypes.value.filter((t) => t.family === familyKey.value)
-    : allTypes.value
+    : allTypes.value;
   if (searchQuery.value.trim()) {
-    const q = searchQuery.value.toLowerCase()
+    const q = searchQuery.value.toLowerCase();
     list = list.filter(
       (t) =>
         t.group_type?.toLowerCase().includes(q) ||
         t.label?.toLowerCase().includes(q) ||
         t.description?.toLowerCase().includes(q) ||
-        t.family?.toLowerCase().includes(q)
-    )
+        t.family?.toLowerCase().includes(q),
+    );
   }
   return list.map((type) => ({
     ...type,
@@ -181,50 +186,50 @@ const filteredTypes = computed(() => {
     ui: normalizeObject(type.ui),
     rules: normalizeObject(type.rules),
     is_root: toBool(type.is_root), // ← convert 0/1 to Boolean
-  }))
-})
+  }));
+});
 
 // ============================================================
 // VALIDATION
 // ============================================================
 const validateType = (type, isEdit = false) => {
   if (!type.group_type?.trim()) {
-    showError(t('agora', 'Group type key is mandatory'))
-    return false
+    showError(t("agora", "Group type key is mandatory"));
+    return false;
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(type.group_type)) {
     showError(
       t(
-        'agora',
-        'Group type key must be alphanumeric (underscores allowed), starting with a letter'
-      )
-    )
-    return false
+        "agora",
+        "Group type key must be alphanumeric (underscores allowed), starting with a letter",
+      ),
+    );
+    return false;
   }
   if (!type.family?.trim()) {
-    showError(t('agora', 'Family is mandatory'))
-    return false
+    showError(t("agora", "Family is mandatory"));
+    return false;
   }
   if (!type.label?.trim()) {
-    showError(t('agora', 'Label is mandatory'))
-    return false
+    showError(t("agora", "Label is mandatory"));
+    return false;
   }
   if (!isEdit) {
-    const exists = allTypes.value.some((t) => t.group_type === type.group_type)
+    const exists = allTypes.value.some((t) => t.group_type === type.group_type);
     if (exists) {
-      showError(t('agora', 'A group type with this key already exists'))
-      return false
+      showError(t("agora", "A group type with this key already exists"));
+      return false;
     }
   }
-  return true
-}
+  return true;
+};
 
 // ============================================================
 // CRUD
 // ============================================================
 const addType = async () => {
-  if (!validateType(newType.value, false)) return
-  savingType.value = true
+  if (!validateType(newType.value, false)) return;
+  savingType.value = true;
   try {
     await appSettingsStore.addInquiryGroupType({
       ...newType.value,
@@ -232,16 +237,18 @@ const addType = async () => {
       icon: extractIconId(newType.value.icon),
       is_root: newType.value.is_root ? 1 : 0,
       created: Date.now(),
-    })
+    });
 
-    showSuccess(t('agora', 'Group type added'))
-    newType.value = emptyType()
+    showSuccess(t("agora", "Group type added"));
+    newType.value = emptyType();
   } catch (e) {
-    showError(t('agora', 'Failed to add group type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to add group type: {msg}", { msg: e?.message ?? "" }),
+    );
   } finally {
-    savingType.value = false
+    savingType.value = false;
   }
-}
+};
 
 const startEditing = (type) => {
   editingType.value = {
@@ -255,161 +262,187 @@ const startEditing = (type) => {
     rules: normalizeObject(type.rules),
     features: normalizeArray(type.features),
     actions: normalizeArray(type.actions),
-  }
-  editTab.value = 'basic'
-}
+  };
+  editTab.value = "basic";
+};
 
 const cancelEditing = () => {
-  editingType.value = null
-  editTab.value = 'basic'
-}
+  editingType.value = null;
+  editTab.value = "basic";
+};
 
 const updateType = async (type) => {
-  if (!type || !validateType(type, true)) return
-  savingType.value = true
+  if (!type || !validateType(type, true)) return;
+  savingType.value = true;
   try {
     await appSettingsStore.updateInquiryGroupType(type.id, {
       ...type,
       family: familyKey.value,
       icon: extractIconId(type.icon),
       is_root: type.is_root ? 1 : 0,
-    })
+    });
 
-    showSuccess(t('agora', 'Group type updated'))
-    editingType.value = null
+    showSuccess(t("agora", "Group type updated"));
+    editingType.value = null;
   } catch (e) {
-    showError(t('agora', 'Failed to update group type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to update group type: {msg}", {
+        msg: e?.message ?? "",
+      }),
+    );
   } finally {
-    savingType.value = false
+    savingType.value = false;
   }
-}
+};
 
 const deleteType = async (type) => {
   if (
     !confirm(
-      t('agora', 'Are you sure you want to delete the group type "{label}"?', {
+      t("agora", 'Are you sure you want to delete the group type "{label}"?', {
         label: type.label || type.group_type,
-      })
+      }),
     )
   ) {
-    return
+    return;
   }
   try {
-    await appSettingsStore.deleteInquiryGroupType(type.id)
-    showSuccess(t('agora', 'Group type deleted'))
+    await appSettingsStore.deleteInquiryGroupType(type.id);
+    showSuccess(t("agora", "Group type deleted"));
   } catch (e) {
-    showError(t('agora', 'Failed to delete group type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to delete group type: {msg}", {
+        msg: e?.message ?? "",
+      }),
+    );
   }
-}
+};
 
 const toggleExpand = (id) => {
-  expandedTypeId.value = expandedTypeId.value === id ? null : id
-}
+  expandedTypeId.value = expandedTypeId.value === id ? null : id;
+};
 
 // ============================================================
 // FIELD EDITOR
 // ============================================================
 const addField = (target) => {
-  const field = newField.value
+  const field = newField.value;
   if (!field.key?.trim()) {
-    showError(t('agora', 'Field key is required'))
-    return
+    showError(t("agora", "Field key is required"));
+    return;
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(field.key)) {
-    showError(t('agora', 'Field key must be alphanumeric (underscores allowed)'))
-    return
+    showError(
+      t("agora", "Field key must be alphanumeric (underscores allowed)"),
+    );
+    return;
   }
-  const arr = target === 'new' ? newType.value.fields : editingType.value.fields
+  const arr =
+    target === "new" ? newType.value.fields : editingType.value.fields;
   if (arr.some((f) => f.key === field.key)) {
-    showError(t('agora', 'A field with this key already exists'))
-    return
+    showError(t("agora", "A field with this key already exists"));
+    return;
   }
-  arr.push({ ...field })
-  newField.value = emptyField()
-}
+  arr.push({ ...field });
+  newField.value = emptyField();
+};
 
 const removeField = (target, index) => {
-  const arr = target === 'new' ? newType.value.fields : editingType.value.fields
-  arr.splice(index, 1)
-}
+  const arr =
+    target === "new" ? newType.value.fields : editingType.value.fields;
+  arr.splice(index, 1);
+};
 
 // ============================================================
 // ALLOWED RESPONSE / INQUIRY TYPES
 // ============================================================
 const addAllowedResponse = (target, value) => {
-  const val = (value ?? '').trim()
-  if (!val) return
-  const arr = target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
-  if (!arr.includes(val)) arr.push(val)
-  newAllowedResponse.value = ''
-}
+  const val = (value ?? "").trim();
+  if (!val) return;
+  const arr =
+    target === "new"
+      ? newType.value.allowed_response
+      : editingType.value.allowed_response;
+  if (!arr.includes(val)) arr.push(val);
+  newAllowedResponse.value = "";
+};
 
 const removeAllowedResponse = (target, index) => {
-  const arr = target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
-  arr.splice(index, 1)
-}
+  const arr =
+    target === "new"
+      ? newType.value.allowed_response
+      : editingType.value.allowed_response;
+  arr.splice(index, 1);
+};
 
 const addAllowedInquiryType = (target, value) => {
-  const val = (value ?? '').trim()
-  if (!val) return
+  const val = (value ?? "").trim();
+  if (!val) return;
   const arr =
-    target === 'new' ? newType.value.allowed_inquiry_types : editingType.value.allowed_inquiry_types
-  if (!arr.includes(val)) arr.push(val)
-  newAllowedInquiryType.value = ''
-}
+    target === "new"
+      ? newType.value.allowed_inquiry_types
+      : editingType.value.allowed_inquiry_types;
+  if (!arr.includes(val)) arr.push(val);
+  newAllowedInquiryType.value = "";
+};
 
 const removeAllowedInquiryType = (target, index) => {
   const arr =
-    target === 'new' ? newType.value.allowed_inquiry_types : editingType.value.allowed_inquiry_types
-  arr.splice(index, 1)
-}
+    target === "new"
+      ? newType.value.allowed_inquiry_types
+      : editingType.value.allowed_inquiry_types;
+  arr.splice(index, 1);
+};
 
 // ============================================================
 // FEATURE LIST
 // ============================================================
-const newFeature = ref('')
+const newFeature = ref("");
 const addFeature = (target) => {
-  const value = newFeature.value?.trim()
-  if (!value) return
-  const arr = target === 'new' ? newType.value.features : editingType.value.features
-  if (!arr.includes(value)) arr.push(value)
-  newFeature.value = ''
-}
+  const value = newFeature.value?.trim();
+  if (!value) return;
+  const arr =
+    target === "new" ? newType.value.features : editingType.value.features;
+  if (!arr.includes(value)) arr.push(value);
+  newFeature.value = "";
+};
 const removeFeature = (target, index) => {
-  const arr = target === 'new' ? newType.value.features : editingType.value.features
-  arr.splice(index, 1)
-}
+  const arr =
+    target === "new" ? newType.value.features : editingType.value.features;
+  arr.splice(index, 1);
+};
 
 // ============================================================
 // ACTION LIST
 // ============================================================
-const newAction = ref({ key: '', label: '', icon: '' })
+const newAction = ref({ key: "", label: "", icon: "" });
 const addAction = (target) => {
-  const { key, label, icon } = newAction.value
+  const { key, label, icon } = newAction.value;
   if (!key?.trim() || !label?.trim()) {
-    showError(t('agora', 'Action key and label are required'))
-    return
+    showError(t("agora", "Action key and label are required"));
+    return;
   }
-  const arr = target === 'new' ? newType.value.actions : editingType.value.actions
-  arr.push({ key: key.trim(), label: label.trim(), icon: icon?.trim() || '' })
-  newAction.value = { key: '', label: '', icon: '' }
-}
+  const arr =
+    target === "new" ? newType.value.actions : editingType.value.actions;
+  arr.push({ key: key.trim(), label: label.trim(), icon: icon?.trim() || "" });
+  newAction.value = { key: "", label: "", icon: "" };
+};
 const removeAction = (target, index) => {
-  const arr = target === 'new' ? newType.value.actions : editingType.value.actions
-  arr.splice(index, 1)
-}
+  const arr =
+    target === "new" ? newType.value.actions : editingType.value.actions;
+  arr.splice(index, 1);
+};
 </script>
 
 <template>
   <div class="group-types-manager">
     <header class="manager-header">
       <div>
-        <h2>{{ t('agora', 'Inquiry group types management') }}</h2>
+        <h2>{{ t("agora", "Inquiry group types management") }}</h2>
         <p class="description">
           {{
             t(
-              'agora',
-              'Configure inquiry group types (e.g., citizen_jury, investigation_case). Each group type belongs to an inquiry family and defines the UI layout, rules, features and actions shared by all groups of this type.'
+              "agora",
+              "Configure inquiry group types (e.g., citizen_jury, investigation_case). Each group type belongs to an inquiry family and defines the UI layout, rules, features and actions shared by all groups of this type.",
             )
           }}
         </p>
@@ -419,7 +452,7 @@ const removeAction = (target, index) => {
     <!-- ==================== EXISTING TYPES ==================== -->
     <section class="types-list">
       <h3>
-        {{ t('agora', 'Existing group types') }}
+        {{ t("agora", "Existing group types") }}
         <span class="count-badge">{{ filteredTypes.length }}</span>
       </h3>
 
@@ -427,7 +460,7 @@ const removeAction = (target, index) => {
         v-if="!filteredTypes.length"
         class="empty-state"
       >
-        {{ t('agora', 'No group types match your filters.') }}
+        {{ t("agora", "No group types match your filters.") }}
       </div>
 
       <div
@@ -455,7 +488,9 @@ const removeAction = (target, index) => {
               <span
                 v-if="type.is_root"
                 class="root-badge"
-              >{{ t('agora', 'root') }}</span>
+              >{{
+                t("agora", "root")
+              }}</span>
             </div>
             <p
               v-if="type.description"
@@ -465,33 +500,47 @@ const removeAction = (target, index) => {
             </p>
             <div class="type-stats">
               <span class="stat-chip">
-                {{ t('agora', '{count} fields', { count: type.fields.length }) }}
+                {{
+                  t("agora", "{count} fields", { count: type.fields.length })
+                }}
               </span>
               <span
                 v-if="type.allowed_inquiry_types.length"
                 class="stat-chip"
               >
                 {{
-                  t('agora', '{count} inquiry types', { count: type.allowed_inquiry_types.length })
+                  t("agora", "{count} inquiry types", {
+                    count: type.allowed_inquiry_types.length,
+                  })
                 }}
               </span>
               <span
                 v-if="type.allowed_response.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} responses', { count: type.allowed_response.length }) }}
+                {{
+                  t("agora", "{count} responses", {
+                    count: type.allowed_response.length,
+                  })
+                }}
               </span>
               <span
                 v-if="type.features.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} features', { count: type.features.length }) }}
+                {{
+                  t("agora", "{count} features", {
+                    count: type.features.length,
+                  })
+                }}
               </span>
               <span
                 v-if="type.actions.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} actions', { count: type.actions.length }) }}
+                {{
+                  t("agora", "{count} actions", { count: type.actions.length })
+                }}
               </span>
               <span
                 v-if="type.ui?.experience"
@@ -507,16 +556,20 @@ const removeAction = (target, index) => {
             @click.stop
           >
             <NcButton @click="toggleExpand(type.id)">
-              {{ expandedTypeId === type.id ? t('agora', 'Hide') : t('agora', 'Details') }}
+              {{
+                expandedTypeId === type.id
+                  ? t("agora", "Hide")
+                  : t("agora", "Details")
+              }}
             </NcButton>
             <NcButton @click="startEditing(type)">
-              {{ t('agora', 'Edit') }}
+              {{ t("agora", "Edit") }}
             </NcButton>
             <NcButton
               type="error"
               @click="deleteType(type)"
             >
-              {{ t('agora', 'Delete') }}
+              {{ t("agora", "Delete") }}
             </NcButton>
           </div>
         </div>
@@ -526,17 +579,17 @@ const removeAction = (target, index) => {
           class="type-details"
         >
           <div class="detail-section">
-            <h5>{{ t('agora', 'Fields') }}</h5>
+            <h5>{{ t("agora", "Fields") }}</h5>
             <table
               v-if="type.fields.length"
               class="mini-table"
             >
               <thead>
                 <tr>
-                  <th>{{ t('agora', 'Key') }}</th>
-                  <th>{{ t('agora', 'Label') }}</th>
-                  <th>{{ t('agora', 'Type') }}</th>
-                  <th>{{ t('agora', 'Required') }}</th>
+                  <th>{{ t("agora", "Key") }}</th>
+                  <th>{{ t("agora", "Label") }}</th>
+                  <th>{{ t("agora", "Type") }}</th>
+                  <th>{{ t("agora", "Required") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -549,7 +602,7 @@ const removeAction = (target, index) => {
                   </td>
                   <td>{{ f.label }}</td>
                   <td>{{ f.type }}</td>
-                  <td>{{ f.required ? '✓' : '—' }}</td>
+                  <td>{{ f.required ? "✓" : "—" }}</td>
                 </tr>
               </tbody>
             </table>
@@ -557,12 +610,12 @@ const removeAction = (target, index) => {
               v-else
               class="muted"
             >
-              {{ t('agora', 'No custom fields') }}
+              {{ t("agora", "No custom fields") }}
             </p>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Allowed inquiry types') }}</h5>
+            <h5>{{ t("agora", "Allowed inquiry types") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(r, i) in type.allowed_inquiry_types"
@@ -575,13 +628,13 @@ const removeAction = (target, index) => {
                 v-if="!type.allowed_inquiry_types.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Allowed responses') }}</h5>
+            <h5>{{ t("agora", "Allowed responses") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(r, i) in type.allowed_response"
@@ -594,13 +647,13 @@ const removeAction = (target, index) => {
                 v-if="!type.allowed_response.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Features') }}</h5>
+            <h5>{{ t("agora", "Features") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(f, i) in type.features"
@@ -613,13 +666,13 @@ const removeAction = (target, index) => {
                 v-if="!type.features.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Actions') }}</h5>
+            <h5>{{ t("agora", "Actions") }}</h5>
             <ul class="action-list">
               <li
                 v-for="(a, i) in type.actions"
@@ -635,18 +688,18 @@ const removeAction = (target, index) => {
                 v-if="!type.actions.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'UI') }}</h5>
+            <h5>{{ t("agora", "UI") }}</h5>
             <pre>{{ JSON.stringify(type.ui, null, 2) }}</pre>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Rules') }}</h5>
+            <h5>{{ t("agora", "Rules") }}</h5>
             <pre>{{ JSON.stringify(type.rules, null, 2) }}</pre>
           </div>
         </div>
@@ -655,7 +708,7 @@ const removeAction = (target, index) => {
 
     <!-- ==================== ADD NEW TYPE ==================== -->
     <section class="add-type-form">
-      <h3>{{ t('agora', 'Add new group type') }}</h3>
+      <h3>{{ t("agora", "Add new group type") }}</h3>
 
       <div class="form-grid">
         <NcInputField
@@ -696,7 +749,7 @@ const removeAction = (target, index) => {
           v-model="newType.is_root"
           type="switch"
         >
-          {{ t('agora', 'Is root group') }}
+          {{ t("agora", "Is root group") }}
         </NcCheckboxRadioSwitch>
 
         <NcInputField
@@ -708,7 +761,7 @@ const removeAction = (target, index) => {
 
         <!-- Fields -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Custom fields') }}</label>
+          <label class="field-label">{{ t("agora", "Custom fields") }}</label>
           <div class="inline-editor field-editor">
             <NcInputField
               v-model="newField.key"
@@ -735,13 +788,13 @@ const removeAction = (target, index) => {
               v-model="newField.required"
               type="checkbox"
             >
-              {{ t('agora', 'Req.') }}
+              {{ t("agora", "Req.") }}
             </NcCheckboxRadioSwitch>
             <NcButton
               type="secondary"
               @click="addField('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <ul class="field-list">
@@ -762,7 +815,9 @@ const removeAction = (target, index) => {
 
         <!-- Allowed inquiry types -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Allowed inquiry types') }}</label>
+          <label class="field-label">{{
+            t("agora", "Allowed inquiry types")
+          }}</label>
           <div class="inline-editor">
             <NcSelect
               v-model="newAllowedInquiryType"
@@ -779,7 +834,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addAllowedInquiryType('new', newAllowedInquiryType?.id)"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -796,7 +851,9 @@ const removeAction = (target, index) => {
 
         <!-- Allowed responses -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Allowed responses (group types)') }}</label>
+          <label class="field-label">{{
+            t("agora", "Allowed responses (group types)")
+          }}</label>
           <div class="inline-editor">
             <NcSelect
               v-model="newAllowedResponse"
@@ -813,7 +870,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addAllowedResponse('new', newAllowedResponse?.id)"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -830,7 +887,7 @@ const removeAction = (target, index) => {
 
         <!-- Features -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Features') }}</label>
+          <label class="field-label">{{ t("agora", "Features") }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newFeature"
@@ -845,7 +902,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addFeature('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -862,7 +919,7 @@ const removeAction = (target, index) => {
 
         <!-- Actions -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Actions') }}</label>
+          <label class="field-label">{{ t("agora", "Actions") }}</label>
           <div class="inline-editor action-editor">
             <NcInputField
               v-model="newAction.key"
@@ -886,7 +943,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addAction('new')"
             >
-              {{ t('agora', 'Add action') }}
+              {{ t("agora", "Add action") }}
             </NcButton>
           </div>
           <ul class="action-list">
@@ -907,7 +964,7 @@ const removeAction = (target, index) => {
 
         <!-- UI / Rules JSON text areas -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'UI (JSON)') }}</label>
+          <label class="field-label">{{ t("agora", "UI (JSON)") }}</label>
           <textarea
             class="json-editor"
             rows="6"
@@ -915,7 +972,7 @@ const removeAction = (target, index) => {
             @input="
               (e) => {
                 try {
-                  newType.ui = JSON.parse(e.target.value)
+                  newType.ui = JSON.parse(e.target.value);
                 } catch (_) {
                   /* keep raw */
                 }
@@ -924,7 +981,7 @@ const removeAction = (target, index) => {
           />
         </div>
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Rules (JSON)') }}</label>
+          <label class="field-label">{{ t("agora", "Rules (JSON)") }}</label>
           <textarea
             class="json-editor"
             rows="6"
@@ -932,7 +989,7 @@ const removeAction = (target, index) => {
             @input="
               (e) => {
                 try {
-                  newType.rules = JSON.parse(e.target.value)
+                  newType.rules = JSON.parse(e.target.value);
                 } catch (_) {
                   /* keep raw */
                 }
@@ -944,14 +1001,19 @@ const removeAction = (target, index) => {
         <div class="form-actions full-width">
           <NcButton
             type="primary"
-            :disabled="savingType || !newType.group_type || !newType.label || !newType.family"
+            :disabled="
+              savingType ||
+                !newType.group_type ||
+                !newType.label ||
+                !newType.family
+            "
             @click="addType"
           >
             <NcLoadingIcon
               v-if="savingType"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Add group type') }}</span>
+            <span v-else>{{ t("agora", "Add group type") }}</span>
           </NcButton>
         </div>
       </div>
@@ -965,7 +1027,7 @@ const removeAction = (target, index) => {
     >
       <div class="modal-content large-modal">
         <header class="modal-header">
-          <h3>{{ t('agora', 'Edit group type') }}: {{ editingType.label }}</h3>
+          <h3>{{ t("agora", "Edit group type") }}: {{ editingType.label }}</h3>
           <NcButton
             type="tertiary"
             @click="cancelEditing"
@@ -976,13 +1038,21 @@ const removeAction = (target, index) => {
 
         <nav class="tabs">
           <button
-            v-for="tab in ['basic', 'fields', 'responses', 'ui', 'rules', 'features', 'actions']"
+            v-for="tab in [
+              'basic',
+              'fields',
+              'responses',
+              'ui',
+              'rules',
+              'features',
+              'actions',
+            ]"
             :key="tab"
             class="tab"
             :class="{ active: editTab === tab }"
             @click="editTab = tab"
           >
-            {{ t('agora', tab) }}
+            {{ t("agora", tab) }}
           </button>
         </nav>
 
@@ -1025,7 +1095,7 @@ const removeAction = (target, index) => {
             v-model="editingType.is_root"
             type="switch"
           >
-            {{ t('agora', 'Is root group') }}
+            {{ t("agora", "Is root group") }}
           </NcCheckboxRadioSwitch>
           <NcInputField
             v-model="editingType.description"
@@ -1060,13 +1130,13 @@ const removeAction = (target, index) => {
               v-model="newField.required"
               type="checkbox"
             >
-              {{ t('agora', 'Req.') }}
+              {{ t("agora", "Req.") }}
             </NcCheckboxRadioSwitch>
             <NcButton
               type="secondary"
               @click="addField('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <ul class="field-list">
@@ -1090,7 +1160,9 @@ const removeAction = (target, index) => {
           v-if="editTab === 'responses'"
           class="tab-panel"
         >
-          <label class="field-label">{{ t('agora', 'Allowed inquiry types') }}</label>
+          <label class="field-label">{{
+            t("agora", "Allowed inquiry types")
+          }}</label>
           <div class="inline-editor">
             <NcSelect
               v-model="newAllowedInquiryType"
@@ -1104,7 +1176,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addAllowedInquiryType('edit', newAllowedInquiryType?.id)"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -1122,7 +1194,7 @@ const removeAction = (target, index) => {
             class="field-label"
             style="margin-top: 20px"
           >
-            {{ t('agora', 'Allowed responses (group types)') }}
+            {{ t("agora", "Allowed responses (group types)") }}
           </label>
           <div class="inline-editor">
             <NcSelect
@@ -1137,7 +1209,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addAllowedResponse('edit', newAllowedResponse?.id)"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -1159,7 +1231,10 @@ const removeAction = (target, index) => {
         >
           <p class="help-text">
             {{
-              t('agora', 'UI configuration as JSON (experience, layout, display_architecture…).')
+              t(
+                "agora",
+                "UI configuration as JSON (experience, layout, display_architecture…).",
+              )
             }}
           </p>
           <textarea
@@ -1169,7 +1244,7 @@ const removeAction = (target, index) => {
             @input="
               (e) => {
                 try {
-                  editingType.ui = JSON.parse(e.target.value)
+                  editingType.ui = JSON.parse(e.target.value);
                 } catch (_) {
                   /* keep raw */
                 }
@@ -1184,7 +1259,7 @@ const removeAction = (target, index) => {
           class="tab-panel"
         >
           <p class="help-text">
-            {{ t('agora', 'Rules configuration as JSON.') }}
+            {{ t("agora", "Rules configuration as JSON.") }}
           </p>
           <textarea
             class="json-editor"
@@ -1193,7 +1268,7 @@ const removeAction = (target, index) => {
             @input="
               (e) => {
                 try {
-                  editingType.rules = JSON.parse(e.target.value)
+                  editingType.rules = JSON.parse(e.target.value);
                 } catch (_) {
                   /* keep raw */
                 }
@@ -1217,7 +1292,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addFeature('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -1254,7 +1329,7 @@ const removeAction = (target, index) => {
               type="secondary"
               @click="addAction('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <ul class="action-list">
@@ -1275,7 +1350,7 @@ const removeAction = (target, index) => {
 
         <footer class="modal-actions">
           <NcButton @click="cancelEditing">
-            {{ t('agora', 'Cancel') }}
+            {{ t("agora", "Cancel") }}
           </NcButton>
           <NcButton
             type="primary"
@@ -1286,7 +1361,7 @@ const removeAction = (target, index) => {
               v-if="savingType"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Save changes') }}</span>
+            <span v-else>{{ t("agora", "Save changes") }}</span>
           </NcButton>
         </footer>
       </div>

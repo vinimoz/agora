@@ -110,7 +110,7 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Edit') }}
+            {{ t("agora", "Edit") }}
           </NcActionButton>
 
           <NcActionButton
@@ -124,7 +124,7 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Delete') }}
+            {{ t("agora", "Delete") }}
           </NcActionButton>
         </NcActions>
       </div>
@@ -152,12 +152,12 @@
               :is="InquiryOptionIcons.FileText"
               :size="14"
             />
-            <span class="resolution-title">{{ t('agora', 'Resolution') }}</span>
+            <span class="resolution-title">{{ t("agora", "Resolution") }}</span>
             <span
               class="resolution-status-badge"
               :class="`status-${resolutionChild.status || 'proposed'}`"
             >
-              {{ getStatusLabel(resolutionChild.status || 'proposed') }}
+              {{ getStatusLabel(resolutionChild.status || "proposed") }}
             </span>
           </div>
           <p class="resolution-text">
@@ -170,8 +170,11 @@
                 :size="12"
               />
               {{
-                t('agora', 'Proposed {date}', {
-                  date: formatDate(resolutionChild.createdAt || resolutionChild.status?.created),
+                t("agora", "Proposed {date}", {
+                  date: formatDate(
+                    resolutionChild.createdAt ||
+                      resolutionChild.status?.created,
+                  ),
                 })
               }}
             </span>
@@ -183,7 +186,11 @@
                 :is="InquiryOptionIcons.Account"
                 :size="12"
               />
-              {{ t('agora', 'by {user}', { user: resolutionChild.owner.displayName }) }}
+              {{
+                t("agora", "by {user}", {
+                  user: resolutionChild.owner.displayName,
+                })
+              }}
             </span>
             <span
               v-if="resolutionChild.status?.countSupports !== undefined"
@@ -210,7 +217,7 @@
               :is="InquiryOptionIcons.MessageSquare"
               :size="12"
             />
-            {{ discussionCount }} {{ t('agora', 'responses') }}
+            {{ discussionCount }} {{ t("agora", "responses") }}
           </span>
           <span
             v-if="proposedSolutionCount > 0"
@@ -220,7 +227,7 @@
               :is="InquiryOptionIcons.FileText"
               :size="12"
             />
-            {{ proposedSolutionCount }} {{ t('agora', 'proposed solutions') }}
+            {{ proposedSolutionCount }} {{ t("agora", "proposed solutions") }}
           </span>
           <span
             v-if="participantCount > 0"
@@ -230,7 +237,7 @@
               :is="InquiryOptionIcons.Users"
               :size="12"
             />
-            {{ participantCount }} {{ t('agora', 'participants') }}
+            {{ participantCount }} {{ t("agora", "participants") }}
           </span>
         </div>
       </div>
@@ -245,7 +252,14 @@
           :size="12"
         />
         <span>
-          {{ n('agora', 'Raised by %n participant', 'Raised by %n participants', raisedByCount) }}
+          {{
+            n(
+              "agora",
+              "Raised by %n participant",
+              "Raised by %n participants",
+              raisedByCount,
+            )
+          }}
         </span>
       </div>
     </div>
@@ -270,7 +284,7 @@
             :size="14"
           />
         </template>
-        {{ t('agora', 'Discuss') }}
+        {{ t("agora", "Discuss") }}
       </NcButton>
 
       <!-- Propose Resolution -->
@@ -286,12 +300,14 @@
             :size="14"
           />
         </template>
-        {{ t('agora', 'Propose Resolution') }}
+        {{ t("agora", "Propose Resolution") }}
       </NcButton>
 
       <!-- Accept Resolution -->
       <NcButton
-        v-if="canResolve && hasResolution && resolutionChild?.status === 'proposed'"
+        v-if="
+          canResolve && hasResolution && resolutionChild?.status === 'proposed'
+        "
         type="primary"
         size="small"
         @click="acceptResolution"
@@ -302,12 +318,14 @@
             :size="14"
           />
         </template>
-        {{ t('agora', 'Accept Resolution') }}
+        {{ t("agora", "Accept Resolution") }}
       </NcButton>
 
       <!-- Implement Resolution -->
       <NcButton
-        v-if="canResolve && hasResolution && resolutionChild?.status === 'accepted'"
+        v-if="
+          canResolve && hasResolution && resolutionChild?.status === 'accepted'
+        "
         type="success"
         size="small"
         @click="implementResolution"
@@ -318,12 +336,15 @@
             :size="14"
           />
         </template>
-        {{ t('agora', 'Implement') }}
+        {{ t("agora", "Implement") }}
       </NcButton>
 
       <!-- Reopen -->
       <NcButton
-        v-if="canReopen && (currentStatus === 'resolved' || currentStatus === 'accepted')"
+        v-if="
+          canReopen &&
+            (currentStatus === 'resolved' || currentStatus === 'accepted')
+        "
         type="secondary"
         size="small"
         @click="$emit('reopen', option.id)"
@@ -334,7 +355,7 @@
             :size="14"
           />
         </template>
-        {{ t('agora', 'Reopen') }}
+        {{ t("agora", "Reopen") }}
       </NcButton>
 
       <!-- Status change dropdown -->
@@ -349,25 +370,25 @@
           />
         </template>
         <NcActionButton @click="changeStatus('open')">
-          {{ t('agora', 'Mark Open') }}
+          {{ t("agora", "Mark Open") }}
         </NcActionButton>
         <NcActionButton @click="changeStatus('under_discussion')">
-          {{ t('agora', 'Mark Under Discussion') }}
+          {{ t("agora", "Mark Under Discussion") }}
         </NcActionButton>
         <NcActionButton @click="changeStatus('addressed')">
-          {{ t('agora', 'Mark Addressed') }}
+          {{ t("agora", "Mark Addressed") }}
         </NcActionButton>
         <NcActionButton @click="changeStatus('withdrawn')">
-          {{ t('agora', 'Mark Withdrawn') }}
+          {{ t("agora", "Mark Withdrawn") }}
         </NcActionButton>
         <NcActionButton @click="changeStatus('blocked')">
-          {{ t('agora', 'Mark Blocked') }}
+          {{ t("agora", "Mark Blocked") }}
         </NcActionButton>
         <NcActionButton @click="changeStatus('deferred')">
-          {{ t('agora', 'Mark Deferred') }}
+          {{ t("agora", "Mark Deferred") }}
         </NcActionButton>
         <NcActionButton @click="changeStatus('resolved')">
-          {{ t('agora', 'Mark Resolved') }}
+          {{ t("agora", "Mark Resolved") }}
         </NcActionButton>
       </NcActions>
     </div>
@@ -388,15 +409,18 @@
       </div>
       <div class="quorum-info">
         <span class="quorum-text">
-          {{ option.status.countSupports }} {{ t('agora', 'supports') }}
+          {{ option.status.countSupports }} {{ t("agora", "supports") }}
         </span>
         <span
           v-if="quorumNeeded"
           class="quorum-required"
         >
           {{
-            t('agora', 'need {count} more', {
-              count: Math.max(0, quorumNeeded - (option.status.countSupports || 0)),
+            t("agora", "need {count} more", {
+              count: Math.max(
+                0,
+                quorumNeeded - (option.status.countSupports || 0),
+              ),
             })
           }}
         </span>
@@ -430,334 +454,371 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
 import {
   getOptionTypeLabel,
   getOptionTypeIconComponent,
   getOptionTypeColor,
-} from '../../helpers/modules/InquiryOptionHelper'
-import { useOptionsStore } from '../../stores/options'
-import { useSessionStore } from '../../stores/session'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { createOptionContext, canEditOption, canDeleteOption } from '../../utils/permissions.ts'
-import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
-import ResolutionModal from '../Modals/ResolutionModal.vue'
-import type { Option } from '../../Types/index.ts'
+} from "../../helpers/modules/InquiryOptionHelper";
+import { useOptionsStore } from "../../stores/options";
+import { useSessionStore } from "../../stores/session";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import {
+  createOptionContext,
+  canEditOption,
+  canDeleteOption,
+} from "../../utils/permissions.ts";
+import DeleteConfirmationDialog from "../Modals/DeleteConfirmationDialog.vue";
+import ResolutionModal from "../Modals/ResolutionModal.vue";
+import type { Option } from "../../Types/index.ts";
 
 // ========================================
 // PROPS
 // ========================================
 const props = defineProps<{
-  option: Option
-  inquiryId: number
-  highlight?: boolean
-  showQuorum?: boolean
-  showStatus?: boolean
-  showResolution?: boolean
-  showDiscussion?: boolean
-  showAction?: boolean
-  compact?: boolean
-  inline?: boolean
-  quorumNeeded?: number
-  canDiscuss?: boolean
-  canProposeResolution?: boolean
-  canResolve?: boolean
-  canReopen?: boolean
-  canChangeStatus?: boolean
-  familyType?: string
-}>()
+  option: Option;
+  inquiryId: number;
+  highlight?: boolean;
+  showQuorum?: boolean;
+  showStatus?: boolean;
+  showResolution?: boolean;
+  showDiscussion?: boolean;
+  showAction?: boolean;
+  compact?: boolean;
+  inline?: boolean;
+  quorumNeeded?: number;
+  canDiscuss?: boolean;
+  canProposeResolution?: boolean;
+  canResolve?: boolean;
+  canReopen?: boolean;
+  canChangeStatus?: boolean;
+  familyType?: string;
+}>();
 
 // ========================================
 // EMITS
 // ========================================
 const emit = defineEmits<{
-  click: [option: Option]
-  discuss: [optionId: number]
-  proposeResolution: [optionId: number]
-  resolve: [optionId: number]
-  reopen: [optionId: number]
-  statusChange: [optionId: number, status: string]
-  edit: [option: Option]
-  delete: [optionId: number]
-  removeFromView: [optionId: number, updatedForceLayouts: string[]]
-}>()
+  click: [option: Option];
+  discuss: [optionId: number];
+  proposeResolution: [optionId: number];
+  resolve: [optionId: number];
+  reopen: [optionId: number];
+  statusChange: [optionId: number, status: string];
+  edit: [option: Option];
+  delete: [optionId: number];
+  removeFromView: [optionId: number, updatedForceLayouts: string[]];
+}>();
 
 // ========================================
 // STORES
 // ========================================
-const optionsStore = useOptionsStore()
-const sessionStore = useSessionStore()
+const optionsStore = useOptionsStore();
+const sessionStore = useSessionStore();
 
 // ========================================
 // STATE
 // ========================================
-const showDeleteDialog = ref(false)
-const showResolutionModal = ref(false)
+const showDeleteDialog = ref(false);
+const showResolutionModal = ref(false);
 
 // ========================================
 // COMPUTED: Status
 // ========================================
 const currentStatus = computed(() => {
   // Get status from option's miscFields or from the option type definition
-  const miscStatus = props.option.miscFields?.status
-  if (typeof miscStatus === 'string') return miscStatus
+  const miscStatus = props.option.miscFields?.status;
+  if (typeof miscStatus === "string") return miscStatus;
 
   // Fallback to option's own status
-  const status = props.option.status?.status || props.option.status?.optionStatus
-  if (status) return status
+  const status =
+    props.option.status?.status || props.option.status?.optionStatus;
+  if (status) return status;
 
   // Default based on type
-  if (props.option.type === 'objection' || props.option.type === 'blocking_objection') {
-    return 'open'
+  if (
+    props.option.type === "objection" ||
+    props.option.type === "blocking_objection"
+  ) {
+    return "open";
   }
-  if (props.option.type === 'consultation_question') {
-    return 'open'
+  if (props.option.type === "consultation_question") {
+    return "open";
   }
-  if (props.option.type === 'exception') {
-    return 'open'
+  if (props.option.type === "exception") {
+    return "open";
   }
-  return 'draft'
-})
+  return "draft";
+});
 
 const isBlocking = computed(
-  () => props.option.type === 'objection' || props.option.type === 'blocking_objection'
-)
+  () =>
+    props.option.type === "objection" ||
+    props.option.type === "blocking_objection",
+);
 
 // ========================================
 // COMPUTED: Resolution Child
 // ========================================
 
 const getOptionStatus = (option: Option): string => {
-  if (!option) return 'open'
+  if (!option) return "open";
 
   // Check miscFields first (where status is often stored)
-  if (option.miscFields?.status && typeof option.miscFields.status === 'string') {
-    return option.miscFields.status
+  if (
+    option.miscFields?.status &&
+    typeof option.miscFields.status === "string"
+  ) {
+    return option.miscFields.status;
   }
 
   // Check status object
   if (option.status) {
-    if (typeof option.status === 'string') return option.status
-    if (option.status.status) return option.status.status
-    if (option.status.optionStatus) return option.status.optionStatus
+    if (typeof option.status === "string") return option.status;
+    if (option.status.status) return option.status.status;
+    if (option.status.optionStatus) return option.status.optionStatus;
   }
 
   // Default based on type
-  if (option.type === 'objection' || option.type === 'blocking_objection') return 'open'
-  if (option.type === 'consultation_question') return 'open'
-  if (option.type === 'exception') return 'open'
-  if (option.type === 'resolution') return 'proposed'
-  if (option.type === 'recommendation') return 'draft'
+  if (option.type === "objection" || option.type === "blocking_objection")
+    return "open";
+  if (option.type === "consultation_question") return "open";
+  if (option.type === "exception") return "open";
+  if (option.type === "resolution") return "proposed";
+  if (option.type === "recommendation") return "draft";
 
-  return 'draft'
-}
+  return "draft";
+};
 
 const resolutionChildStatus = computed(() => {
-  if (!resolutionChild.value) return null
-  return getOptionStatus(resolutionChild.value)
-})
+  if (!resolutionChild.value) return null;
+  return getOptionStatus(resolutionChild.value);
+});
 
-const hasResolution = computed(() => !!resolutionChild.value)
+const hasResolution = computed(() => !!resolutionChild.value);
 
 const resolutionStatusLabel = computed(() => {
-  if (!resolutionChild.value) return t('agora', 'No resolution')
-  return getStatusLabel(resolutionChildStatus.value || 'proposed')
-})
+  if (!resolutionChild.value) return t("agora", "No resolution");
+  return getStatusLabel(resolutionChildStatus.value || "proposed");
+});
 
 const resolutionChild = computed(() =>
   // Use the options store to find children
-  optionsStore.options.find((opt) => opt.parentId === props.option.id && opt.type === 'resolution')
-)
+  optionsStore.options.find(
+    (opt) => opt.parentId === props.option.id && opt.type === "resolution",
+  ),
+);
 
 const resolutionStatusClass = computed(() => {
-  if (!resolutionChild.value) return ''
+  if (!resolutionChild.value) return "";
   const status =
-    resolutionChild.value.status?.status || resolutionChild.value.status?.optionStatus || 'proposed'
-  return `resolution-${status}`
-})
+    resolutionChild.value.status?.status ||
+    resolutionChild.value.status?.optionStatus ||
+    "proposed";
+  return `resolution-${status}`;
+});
 
 // ========================================
 // COMPUTED: Discussion Stats
 // ========================================
 const discussionCount = computed(
   () =>
-    optionsStore.options.filter((opt) => opt.parentId === props.option.id && opt.type === 'message')
-      .length
-)
+    optionsStore.options.filter(
+      (opt) => opt.parentId === props.option.id && opt.type === "message",
+    ).length,
+);
 
 const proposedSolutionCount = computed(
   () =>
     optionsStore.options.filter(
       (opt) =>
-        opt.parentId === props.option.id && (opt.type === 'amendment' || opt.type === 'proposal')
-    ).length
-)
+        opt.parentId === props.option.id &&
+        (opt.type === "amendment" || opt.type === "proposal"),
+    ).length,
+);
 
 const participantCount = computed(() => {
   // Count unique participants from children
-  const childParticipants = new Set()
+  const childParticipants = new Set();
   optionsStore.options
     .filter((opt) => opt.parentId === props.option.id)
     .forEach((opt) => {
-      if (opt.owner?.id) childParticipants.add(opt.owner.id)
-    })
-  return childParticipants.size
-})
+      if (opt.owner?.id) childParticipants.add(opt.owner.id);
+    });
+  return childParticipants.size;
+});
 
 const raisedByCount = computed(() => {
   // Count unique participants who have supported or commented
-  const participants = new Set()
+  const participants = new Set();
   optionsStore.options
     .filter((opt) => opt.parentId === props.option.id)
     .forEach((opt) => {
-      if (opt.owner?.id) participants.add(opt.owner.id)
-    })
-  return participants.size
-})
+      if (opt.owner?.id) participants.add(opt.owner.id);
+    });
+  return participants.size;
+});
 
 // ========================================
 // COMPUTED: Display Helpers
 // ========================================
 const displayTitle = computed(() => {
-  if (props.option.title) return props.option.title
-  if (props.option.label) return props.option.label
-  if (props.option.text && typeof props.option.text === 'string') {
+  if (props.option.title) return props.option.title;
+  if (props.option.label) return props.option.label;
+  if (props.option.text && typeof props.option.text === "string") {
     try {
-      const parsed = JSON.parse(props.option.text)
-      return parsed.title || parsed.label || parsed.content || props.option.text.substring(0, 50)
+      const parsed = JSON.parse(props.option.text);
+      return (
+        parsed.title ||
+        parsed.label ||
+        parsed.content ||
+        props.option.text.substring(0, 50)
+      );
     } catch {
-      return props.option.text.substring(0, 50)
+      return props.option.text.substring(0, 50);
     }
   }
-  return t('agora', 'Untitled')
-})
+  return t("agora", "Untitled");
+});
 
 const displayText = computed(() => {
-  if (props.option.content) return props.option.content
-  if (props.option.text && typeof props.option.text === 'string') {
+  if (props.option.content) return props.option.content;
+  if (props.option.text && typeof props.option.text === "string") {
     try {
-      const parsed = JSON.parse(props.option.text)
-      return parsed.content || parsed.text || parsed.description || props.option.text
+      const parsed = JSON.parse(props.option.text);
+      return (
+        parsed.content || parsed.text || parsed.description || props.option.text
+      );
     } catch {
-      return props.option.text
+      return props.option.text;
     }
   }
-  return ''
-})
+  return "";
+});
 
 // ========================================
 // COMPUTED: Type Info
 // ========================================
-const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+const allOptionTypes = computed(
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 
 const optionTypeLabel = computed(() => {
   if (!props.option?.type || !allOptionTypes.value) {
-    return t('agora', 'Option')
+    return t("agora", "Option");
   }
-  return getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
-})
+  return getOptionTypeLabel(
+    props.option.type,
+    allOptionTypes.value,
+    t("agora", "Option"),
+  );
+});
 
 const optionIcon = computed(() => {
   if (!props.option?.type || !allOptionTypes.value) {
-    return InquiryOptionIcons.File
+    return InquiryOptionIcons.File;
   }
-  return getOptionTypeIconComponent(props.option.type, allOptionTypes.value)
-})
+  return getOptionTypeIconComponent(props.option.type, allOptionTypes.value);
+});
 
 const optionTypeColor = computed(() => {
   if (!props.option?.type || !allOptionTypes.value) {
-    return 'var(--color-text-light)'
+    return "var(--color-text-light)";
   }
-  return getOptionTypeColor(props.option.type, allOptionTypes.value)
-})
+  return getOptionTypeColor(props.option.type, allOptionTypes.value);
+});
 
 // ========================================
 // COMPUTED: Quorum
 // ========================================
 const quorumPercentage = computed(() => {
-  const maxSupport = props.quorumNeeded || 100
-  const count = props.option.status?.countSupports || 0
-  return Math.min((count / maxSupport) * 100, 100)
-})
+  const maxSupport = props.quorumNeeded || 100;
+  const count = props.option.status?.countSupports || 0;
+  return Math.min((count / maxSupport) * 100, 100);
+});
 
 const quorumClass = computed(() => {
-  const pct = quorumPercentage.value
-  if (pct >= 100) return 'complete'
-  if (pct >= 75) return 'high'
-  if (pct >= 50) return 'medium'
-  return 'low'
-})
+  const pct = quorumPercentage.value;
+  if (pct >= 100) return "complete";
+  if (pct >= 75) return "high";
+  if (pct >= 50) return "medium";
+  return "low";
+});
 
 // ========================================
 // COMPUTED: Permissions
 // ========================================
 const optionContext = computed(() => {
-  if (!props.option) return null
-  return createOptionContext(props.option)
-})
+  if (!props.option) return null;
+  return createOptionContext(props.option);
+});
 
 const canEdit = computed(() => {
-  if (!props.option || optionContext.value === null) return false
-  return canEditOption(optionContext.value)
-})
+  if (!props.option || optionContext.value === null) return false;
+  return canEditOption(optionContext.value);
+});
 
 const canDelete = computed(() => {
-  if (!props.option || optionContext.value === null) return false
-  return canDeleteOption(optionContext.value)
-})
+  if (!props.option || optionContext.value === null) return false;
+  return canDeleteOption(optionContext.value);
+});
 
-const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
+const canEditOrDelete = computed(() => canEdit.value || canDelete.value);
 
 const canDiscussAction = computed(
   () =>
-    currentStatus.value === 'open' ||
-    currentStatus.value === 'under_discussion' ||
-    currentStatus.value === 'blocked'
-)
+    currentStatus.value === "open" ||
+    currentStatus.value === "under_discussion" ||
+    currentStatus.value === "blocked",
+);
 
 // ========================================
 // COMPUTED: Other
 // ========================================
-const isImportedFromView = computed(() => props.option.family !== props.familyType)
+const isImportedFromView = computed(
+  () => props.option.family !== props.familyType,
+);
 
 const hasChildren = computed(() =>
-  optionsStore.options.some((opt) => opt.parentId === props.option.id)
-)
+  optionsStore.options.some((opt) => opt.parentId === props.option.id),
+);
 
 const childrenCount = computed(
-  () => optionsStore.options.filter((opt) => opt.parentId === props.option.id).length
-)
+  () =>
+    optionsStore.options.filter((opt) => opt.parentId === props.option.id)
+      .length,
+);
 
 // ========================================
 // METHODS: Status Helpers
 // ========================================
 const getStatusLabel = (status?: string) => {
   const labels: Record<string, string> = {
-    open: t('agora', 'Open'),
-    under_discussion: t('agora', 'Under Discussion'),
-    addressed: t('agora', 'Addressed'),
-    withdrawn: t('agora', 'Withdrawn'),
-    accepted: t('agora', 'Accepted'),
-    resolved: t('agora', 'Resolved'),
-    blocked: t('agora', 'Blocked'),
-    deferred: t('agora', 'Deferred'),
-    proposed: t('agora', 'Proposed'),
-    under_review: t('agora', 'Under Review'),
-    rejected: t('agora', 'Rejected'),
-    implemented: t('agora', 'Implemented'),
-    draft: t('agora', 'Draft'),
-    published: t('agora', 'Published'),
-    closed: t('agora', 'Closed'),
-    answered: t('agora', 'Answered'),
-    active: t('agora', 'Active'),
-  }
-  return status ? labels[status] || status : t('agora', 'No status')
-}
+    open: t("agora", "Open"),
+    under_discussion: t("agora", "Under Discussion"),
+    addressed: t("agora", "Addressed"),
+    withdrawn: t("agora", "Withdrawn"),
+    accepted: t("agora", "Accepted"),
+    resolved: t("agora", "Resolved"),
+    blocked: t("agora", "Blocked"),
+    deferred: t("agora", "Deferred"),
+    proposed: t("agora", "Proposed"),
+    under_review: t("agora", "Under Review"),
+    rejected: t("agora", "Rejected"),
+    implemented: t("agora", "Implemented"),
+    draft: t("agora", "Draft"),
+    published: t("agora", "Published"),
+    closed: t("agora", "Closed"),
+    answered: t("agora", "Answered"),
+    active: t("agora", "Active"),
+  };
+  return status ? labels[status] || status : t("agora", "No status");
+};
 
 const getStatusIcon = (status?: string) => {
   const icons: Record<string, string> = {
@@ -778,156 +839,166 @@ const getStatusIcon = (status?: string) => {
     closed: InquiryOptionIcons.Lock,
     answered: InquiryOptionIcons.MessageSquare,
     active: InquiryOptionIcons.Play,
-  }
-  return status ? icons[status] || InquiryOptionIcons.HelpCircle : InquiryOptionIcons.HelpCircle
-}
+  };
+  return status
+    ? icons[status] || InquiryOptionIcons.HelpCircle
+    : InquiryOptionIcons.HelpCircle;
+};
 
 const formatDate = (date: string | Date | number | undefined) => {
-  if (!date) return ''
-  const d = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date
-  if (isNaN(d.getTime())) return ''
+  if (!date) return "";
+  const d =
+    typeof date === "string" || typeof date === "number"
+      ? new Date(date)
+      : date;
+  if (isNaN(d.getTime())) return "";
   return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(d)
-}
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(d);
+};
 
 const changeStatus = (status: string) => {
-  emit('statusChange', props.option.id, status)
-}
+  emit("statusChange", props.option.id, status);
+};
 
 // ========================================
 // METHODS: Resolution
 // ========================================
 const openResolutionModal = () => {
-  showResolutionModal.value = true
-}
+  showResolutionModal.value = true;
+};
 
-const handleResolutionSubmit = async (resolutionData: { text: string; status: string }) => {
+const handleResolutionSubmit = async (resolutionData: {
+  text: string;
+  status: string;
+}) => {
   try {
     await optionsStore.add({
-      title: 'Resolution',
+      title: "Resolution",
       text: resolutionData.text,
-      type: 'resolution',
+      type: "resolution",
       parentId: props.option.id,
       miscFields: {
-        resolution_text: { key: 'resolution_text', value: resolutionData.text },
-        status: { key: 'status', value: resolutionData.status },
+        resolution_text: { key: "resolution_text", value: resolutionData.text },
+        status: { key: "status", value: resolutionData.status },
       },
-    })
-    showResolutionModal.value = false
-    showSuccess(t('agora', 'Resolution proposed successfully'))
+    });
+    showResolutionModal.value = false;
+    showSuccess(t("agora", "Resolution proposed successfully"));
   } catch (error) {
-    console.error('Failed to add resolution:', error)
-    showError(t('agora', 'Failed to propose resolution'))
+    console.error("Failed to add resolution:", error);
+    showError(t("agora", "Failed to propose resolution"));
   }
-}
+};
 
 const acceptResolution = async () => {
-  if (!resolutionChild.value) return
+  if (!resolutionChild.value) return;
   try {
     await optionsStore.update({
       id: resolutionChild.value.id,
       miscFields: {
         ...resolutionChild.value.miscFields,
-        status: { key: 'status', value: 'accepted' },
+        status: { key: "status", value: "accepted" },
       },
-    })
+    });
     // Also update parent status
     await optionsStore.update({
       id: props.option.id,
       miscFields: {
         ...props.option.miscFields,
-        status: { key: 'status', value: 'addressed' },
+        status: { key: "status", value: "addressed" },
       },
-    })
-    showSuccess(t('agora', 'Resolution accepted'))
+    });
+    showSuccess(t("agora", "Resolution accepted"));
   } catch (error) {
-    console.error('Failed to accept resolution:', error)
-    showError(t('agora', 'Failed to accept resolution'))
+    console.error("Failed to accept resolution:", error);
+    showError(t("agora", "Failed to accept resolution"));
   }
-}
+};
 
 const implementResolution = async () => {
-  if (!resolutionChild.value) return
+  if (!resolutionChild.value) return;
   try {
     await optionsStore.update({
       id: resolutionChild.value.id,
       miscFields: {
         ...resolutionChild.value.miscFields,
-        status: { key: 'status', value: 'implemented' },
+        status: { key: "status", value: "implemented" },
       },
-    })
+    });
     await optionsStore.update({
       id: props.option.id,
       miscFields: {
         ...props.option.miscFields,
-        status: { key: 'status', value: 'resolved' },
+        status: { key: "status", value: "resolved" },
       },
-    })
-    showSuccess(t('agora', 'Resolution implemented successfully'))
+    });
+    showSuccess(t("agora", "Resolution implemented successfully"));
   } catch (error) {
-    console.error('Failed to implement resolution:', error)
-    showError(t('agora', 'Failed to implement resolution'))
+    console.error("Failed to implement resolution:", error);
+    showError(t("agora", "Failed to implement resolution"));
   }
-}
+};
 
 // ========================================
 // METHODS: Event Handlers
 // ========================================
 const handleCardClick = () => {
-  emit('click', props.option)
-}
+  emit("click", props.option);
+};
 
 const handleEdit = () => {
-  emit('edit', props.option)
-}
+  emit("edit", props.option);
+};
 
 const confirmDelete = () => {
-  showDeleteDialog.value = true
-}
+  showDeleteDialog.value = true;
+};
 
 const handleConfirmDelete = async () => {
-  showDeleteDialog.value = false
+  showDeleteDialog.value = false;
   try {
-    await optionsStore.deleteOption(props.option.id)
-    emit('delete', props.option.id)
-    showSuccess(t('agora', 'Option deleted successfully'))
+    await optionsStore.deleteOption(props.option.id);
+    emit("delete", props.option.id);
+    showSuccess(t("agora", "Option deleted successfully"));
   } catch (err) {
-    console.error('Error deleting option:', err)
-    showError(t('agora', 'Failed to delete option'))
+    console.error("Error deleting option:", err);
+    showError(t("agora", "Failed to delete option"));
   }
-}
+};
 
 const handleRemoveFromView = async () => {
   try {
-    let currentLayouts = props.option.miscFields?.force_layouts || []
-    if (typeof currentLayouts === 'string') {
+    let currentLayouts = props.option.miscFields?.force_layouts || [];
+    if (typeof currentLayouts === "string") {
       try {
-        currentLayouts = JSON.parse(currentLayouts)
+        currentLayouts = JSON.parse(currentLayouts);
       } catch {
-        currentLayouts = []
+        currentLayouts = [];
       }
     }
     if (!Array.isArray(currentLayouts)) {
-      currentLayouts = []
+      currentLayouts = [];
     }
-    const updatedLayouts = currentLayouts.filter((layout: string) => layout !== props.familyType)
+    const updatedLayouts = currentLayouts.filter(
+      (layout: string) => layout !== props.familyType,
+    );
     await optionsStore.update({
       ...props.option,
       miscFields: {
         ...props.option.miscFields,
         force_layouts: updatedLayouts,
       },
-    })
-    emit('removeFromView', props.option.id, updatedLayouts)
-    showSuccess(t('agora', 'Option removed from view'))
+    });
+    emit("removeFromView", props.option.id, updatedLayouts);
+    showSuccess(t("agora", "Option removed from view"));
   } catch (err) {
-    console.error('Error removing option from view:', err)
-    showError(t('agora', 'Failed to remove option from view'))
+    console.error("Error removing option from view:", err);
+    showError(t("agora", "Failed to remove option from view"));
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -1428,19 +1499,35 @@ const handleRemoveFromView = async () => {
       transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
       &.complete {
-        background: linear-gradient(90deg, var(--color-success), var(--color-success-light));
+        background: linear-gradient(
+          90deg,
+          var(--color-success),
+          var(--color-success-light)
+        );
       }
 
       &.high {
-        background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+        background: linear-gradient(
+          90deg,
+          var(--color-primary),
+          var(--color-primary-light)
+        );
       }
 
       &.medium {
-        background: linear-gradient(90deg, var(--color-warning), var(--color-warning-light));
+        background: linear-gradient(
+          90deg,
+          var(--color-warning),
+          var(--color-warning-light)
+        );
       }
 
       &.low {
-        background: linear-gradient(90deg, var(--color-error), var(--color-error-light));
+        background: linear-gradient(
+          90deg,
+          var(--color-error),
+          var(--color-error-light)
+        );
       }
     }
   }

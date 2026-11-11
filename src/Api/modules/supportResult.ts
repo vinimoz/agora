@@ -3,66 +3,81 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { AxiosResponse } from '@nextcloud/axios'
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import type { SupportResult } from '../../Types/index.ts'
+import { AxiosResponse } from "@nextcloud/axios";
+import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
+import type { SupportResult } from "../../Types/index.ts";
 
 export const supportResultApi = {
   // Get results for a specific engine
-  getResultsByEngine(engineId: number): Promise<AxiosResponse<{ results: SupportResult[] }>> {
+  getResultsByEngine(
+    engineId: number,
+  ): Promise<AxiosResponse<{ results: SupportResult[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `support/engine/${engineId}/results`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getResultsByEngine.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getResultsByEngine.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   // Calculate/refresh results for an engine
-  calculateResults(engineId: number): Promise<AxiosResponse<{ results: SupportResult[] }>> {
+  calculateResults(
+    engineId: number,
+  ): Promise<AxiosResponse<{ results: SupportResult[] }>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `support/engine/${engineId}/calculate`,
       cancelToken:
-        cancelTokenHandlerObject[this.calculateResults.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.calculateResults.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   // Export results
-  exportResults(engineId: number, format: 'json' | 'csv' = 'json'): Promise<AxiosResponse<Blob>> {
+  exportResults(
+    engineId: number,
+    format: "json" | "csv" = "json",
+  ): Promise<AxiosResponse<Blob>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `support/engine/${engineId}/results/export`,
       params: { format },
-      responseType: 'blob',
+      responseType: "blob",
       cancelToken:
-        cancelTokenHandlerObject[this.exportResults.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.exportResults.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   createEmptyResult(data: {
-    support_engine_id: number
-    target_type: 'inquiry' | 'option'
-    target_id: number
+    support_engine_id: number;
+    target_type: "inquiry" | "option";
+    target_id: number;
   }): Promise<AxiosResponse<{ result: SupportResult }>> {
     return httpInstance.request({
-      method: 'POST',
-      url: 'support/result/empty',
+      method: "POST",
+      url: "support/result/empty",
       data,
       cancelToken:
-        cancelTokenHandlerObject[this.createEmptyResult.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.createEmptyResult.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   getResultsByTarget(
-    targetType: 'inquiry' | 'option',
+    targetType: "inquiry" | "option",
     targetId: number,
-    engineId?: number
+    engineId?: number,
   ): Promise<AxiosResponse<{ results: SupportResult[] }>> {
     return httpInstance.request({
-      method: 'GET',
-      url: 'support/result/by-target',
+      method: "GET",
+      url: "support/result/by-target",
       params: {
         target_type: targetType,
         target_id: targetId,
@@ -70,21 +85,27 @@ export const supportResultApi = {
         time: +new Date(),
       },
       cancelToken:
-        cancelTokenHandlerObject[this.getResultsByTarget.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getResultsByTarget.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getResultHistory(resultId: number): Promise<AxiosResponse<{ history: SupportResult[] }>> {
+  getResultHistory(
+    resultId: number,
+  ): Promise<AxiosResponse<{ history: SupportResult[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `support/result/${resultId}/history`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getResultHistory.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getResultHistory.name
+        ].handleRequestCancellation().token,
+    });
   },
-}
+};
 
-const cancelTokenHandlerObject = createCancelTokenHandler(supportResultApi)
+const cancelTokenHandlerObject = createCancelTokenHandler(supportResultApi);
 
-export default supportResultApi
+export default supportResultApi;

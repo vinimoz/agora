@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-export { default as SearchBar } from './SearchBar.vue'
-export { default as WelcomeHero } from './WelcomeHero.vue'
-export { default as CurrentMomentWidget } from './CurrentMomentWidget.vue'
-export { default as MySpacesWidget } from './MySpacesWidget.vue'
-export { default as ExploreWidget } from './ExploreWidget.vue'
-export { default as NewsWidget } from './NewsWidget.vue'
-export { default as UpcomingWidget } from './UpcomingWidget.vue'
-export { default as PromoCard } from './PromoCard.vue'
-export { default as LandingBreadcrumb } from './LandingBreadcrumb.vue'
+export { default as SearchBar } from "./SearchBar.vue";
+export { default as WelcomeHero } from "./WelcomeHero.vue";
+export { default as CurrentMomentWidget } from "./CurrentMomentWidget.vue";
+export { default as MySpacesWidget } from "./MySpacesWidget.vue";
+export { default as ExploreWidget } from "./ExploreWidget.vue";
+export { default as NewsWidget } from "./NewsWidget.vue";
+export { default as UpcomingWidget } from "./UpcomingWidget.vue";
+export { default as PromoCard } from "./PromoCard.vue";
+export { default as LandingBreadcrumb } from "./LandingBreadcrumb.vue";

@@ -4,61 +4,63 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import { InquiryGeneralIcons } from '../../../utils/icons.ts'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcInputField from "@nextcloud/vue/components/NcInputField";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcLoadingIcon from "@nextcloud/vue/components/NcLoadingIcon";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import { InquiryGeneralIcons } from "../../../utils/icons.ts";
 
 interface Props {
   selectedFamily?: {
-    family_type: string
-    label?: string
-  } | null
+    family_type: string;
+    label?: string;
+  } | null;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits(['typeSelected', 'backToFamilies'])
+const props = defineProps<Props>();
+const emit = defineEmits(["typeSelected", "backToFamilies"]);
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 
 // ============================================================
 // FAMILY
 // ============================================================
-const familyKey = computed(() => props.selectedFamily?.family_type ?? '')
-const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value)
+const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
+const familyLabel = computed(
+  () => props.selectedFamily?.label ?? familyKey.value,
+);
 
 // ============================================================
 // STATE
 // ============================================================
-const searchQuery = ref('')
-const editingType = ref<unknown>(null)
-const savingType = ref(false)
-const editTab = ref('basic')
-const expandedTypeId = ref<number | null>(null)
+const searchQuery = ref("");
+const editingType = ref<unknown>(null);
+const savingType = ref(false);
+const editTab = ref("basic");
+const expandedTypeId = ref<number | null>(null);
 
-const newType = ref(emptyType())
-const newField = ref('')
-const newAllowedResponse = ref('')
-const newAllowedTransformation = ref('')
-const newAllowedOptionType = ref('')
+const newType = ref(emptyType());
+const newField = ref("");
+const newAllowedResponse = ref("");
+const newAllowedTransformation = ref("");
+const newAllowedOptionType = ref("");
 
 function emptyType() {
   return {
-    inquiry_type: '',
-    label: '',
+    inquiry_type: "",
+    label: "",
     family: familyKey.value,
     icon: null as unknown,
-    description: '',
+    description: "",
     fields: [] as string[],
     allowed_response: [] as string[],
     allowed_transformation: [] as string[],
     allowed_option_type: [] as string[],
-  }
+  };
 }
 
 // ============================================================
@@ -66,72 +68,76 @@ function emptyType() {
 // ============================================================
 const availableIcons = computed(() =>
   Object.keys(InquiryGeneralIcons)
-    .filter((key) => key !== 'default')
+    .filter((key) => key !== "default")
     .map((iconId) => ({
       id: iconId,
-      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    }))
-)
+      label: t("agora", iconId.replace(/([A-Z])/g, " $1").trim()),
+    })),
+);
 
 const getIconComponent = (iconName: unknown) => {
-  const id = typeof iconName === 'object' ? iconName?.id : iconName
-  return InquiryGeneralIcons[id] || InquiryGeneralIcons.default
-}
+  const id = typeof iconName === "object" ? iconName?.id : iconName;
+  return InquiryGeneralIcons[id] || InquiryGeneralIcons.default;
+};
 
 const findIconById = (iconId: unknown) => {
-  if (!iconId) return null
-  if (typeof iconId === 'object') return iconId
-  return availableIcons.value.find((i) => i.id === iconId) || null
-}
+  if (!iconId) return null;
+  if (typeof iconId === "object") return iconId;
+  return availableIcons.value.find((i) => i.id === iconId) || null;
+};
 
 const extractIconId = (icon: unknown) => {
-  if (!icon) return ''
-  if (typeof icon === 'string') return icon
-  if (typeof icon === 'object') return icon.id || ''
-  return String(icon)
-}
+  if (!icon) return "";
+  if (typeof icon === "string") return icon;
+  if (typeof icon === "object") return icon.id || "";
+  return String(icon);
+};
 
 // ============================================================
 // NORMALIZATION
 // ============================================================
 const normalizeArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
-    return value.map((v) => (typeof v === 'string' ? v : (v?.key ?? String(v))))
+    return value.map((v) =>
+      typeof v === "string" ? v : (v?.key ?? String(v)),
+    );
   }
-  if (typeof value === 'string' && value) {
+  if (typeof value === "string" && value) {
     try {
-      const parsed = JSON.parse(value)
+      const parsed = JSON.parse(value);
       return Array.isArray(parsed)
-        ? parsed.map((v) => (typeof v === 'string' ? v : (v?.key ?? String(v))))
-        : []
+        ? parsed.map((v) => (typeof v === "string" ? v : (v?.key ?? String(v))))
+        : [];
     } catch {
-      return []
+      return [];
     }
   }
-  return []
-}
+  return [];
+};
 
 // ============================================================
 // COMPUTED
 // ============================================================
-const allTypes = computed<unknown[]>(() => appSettingsStore.inquiryTypeTab ?? [])
+const allTypes = computed<unknown[]>(
+  () => appSettingsStore.inquiryTypeTab ?? [],
+);
 
 const familyTypes = computed(() =>
   familyKey.value
     ? allTypes.value.filter((type: unknown) => type.family === familyKey.value)
-    : allTypes.value
-)
+    : allTypes.value,
+);
 
 const filteredTypes = computed(() => {
-  let list = familyTypes.value
+  let list = familyTypes.value;
   if (searchQuery.value.trim()) {
-    const q = searchQuery.value.toLowerCase()
+    const q = searchQuery.value.toLowerCase();
     list = list.filter(
       (type: unknown) =>
         type.inquiry_type?.toLowerCase().includes(q) ||
         type.label?.toLowerCase().includes(q) ||
-        type.description?.toLowerCase().includes(q)
-    )
+        type.description?.toLowerCase().includes(q),
+    );
   }
   return list.map((type: unknown) => ({
     ...type,
@@ -139,15 +145,15 @@ const filteredTypes = computed(() => {
     allowed_response: normalizeArray(type.allowed_response),
     allowed_transformation: normalizeArray(type.allowed_transformation),
     allowed_option_type: normalizeArray(type.allowed_option_type),
-  }))
-})
+  }));
+});
 
 /** All inquiry group types attached to the current family */
 const groupTypesInFamily = computed<unknown[]>(() => {
-  const all = appSettingsStore.inquiryGroupTypeTab ?? []
-  if (!familyKey.value) return all
-  return all.filter((gt: unknown) => gt.family === familyKey.value)
-})
+  const all = appSettingsStore.inquiryGroupTypeTab ?? [];
+  if (!familyKey.value) return all;
+  return all.filter((gt: unknown) => gt.family === familyKey.value);
+});
 
 /**
  * How munknown group types reference a given inquiry type
@@ -155,68 +161,74 @@ const groupTypesInFamily = computed<unknown[]>(() => {
  */
 const getUsageCount = (inquiryType: string): number =>
   groupTypesInFamily.value.filter((gt: unknown) =>
-    normalizeArray(gt.allowed_inquiry_types).includes(inquiryType)
-  ).length
+    normalizeArray(gt.allowed_inquiry_types).includes(inquiryType),
+  ).length;
 
 // ============================================================
 // VALIDATION
 // ============================================================
 const validateType = (type: unknown, isEdit = false) => {
   if (!type.inquiry_type?.trim()) {
-    showError(t('agora', 'Inquiry type key is mandatory'))
-    return false
+    showError(t("agora", "Inquiry type key is mandatory"));
+    return false;
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(type.inquiry_type)) {
     showError(
       t(
-        'agora',
-        'Inquiry type key must be alphanumeric (underscores allowed), starting with a letter'
-      )
-    )
-    return false
+        "agora",
+        "Inquiry type key must be alphanumeric (underscores allowed), starting with a letter",
+      ),
+    );
+    return false;
   }
   if (!type.label?.trim()) {
-    showError(t('agora', 'Label is mandatory'))
-    return false
+    showError(t("agora", "Label is mandatory"));
+    return false;
   }
   if (!isEdit) {
     const exists = allTypes.value.some(
-      (existing: unknown) => existing.inquiry_type === type.inquiry_type
-    )
+      (existing: unknown) => existing.inquiry_type === type.inquiry_type,
+    );
     if (exists) {
-      showError(t('agora', 'An inquiry type with this key already exists'))
-      return false
+      showError(t("agora", "An inquiry type with this key already exists"));
+      return false;
     }
   }
-  return true
-}
+  return true;
+};
 
 // ============================================================
 // CRUD
 // ============================================================
 const addType = async () => {
-  if (!validateType(newType.value, false)) return
-  savingType.value = true
+  if (!validateType(newType.value, false)) return;
+  savingType.value = true;
   try {
     await appSettingsStore.addInquiryType({
       ...newType.value,
       family: familyKey.value,
       created: Date.now(),
       icon: extractIconId(newType.value.icon),
-      description: newType.value.description || '',
+      description: newType.value.description || "",
       fields: JSON.stringify(newType.value.fields),
       allowed_response: JSON.stringify(newType.value.allowed_response),
-      allowed_transformation: JSON.stringify(newType.value.allowed_transformation),
+      allowed_transformation: JSON.stringify(
+        newType.value.allowed_transformation,
+      ),
       allowed_option_type: JSON.stringify(newType.value.allowed_option_type),
-    })
-    showSuccess(t('agora', 'Inquiry type added'))
-    newType.value = emptyType()
+    });
+    showSuccess(t("agora", "Inquiry type added"));
+    newType.value = emptyType();
   } catch (e: unknown) {
-    showError(t('agora', 'Failed to add inquiry type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to add inquiry type: {msg}", {
+        msg: e?.message ?? "",
+      }),
+    );
   } finally {
-    savingType.value = false
+    savingType.value = false;
   }
-}
+};
 
 const startEditing = (type: unknown) => {
   editingType.value = {
@@ -226,18 +238,18 @@ const startEditing = (type: unknown) => {
     allowed_response: normalizeArray(type.allowed_response),
     allowed_transformation: normalizeArray(type.allowed_transformation),
     allowed_option_type: normalizeArray(type.allowed_option_type),
-  }
-  editTab.value = 'basic'
-}
+  };
+  editTab.value = "basic";
+};
 
 const cancelEditing = () => {
-  editingType.value = null
-  editTab.value = 'basic'
-}
+  editingType.value = null;
+  editTab.value = "basic";
+};
 
 const updateType = async (type: unknown) => {
-  if (!type || !validateType(type, true)) return
-  savingType.value = true
+  if (!type || !validateType(type, true)) return;
+  savingType.value = true;
   try {
     await appSettingsStore.updateInquiryType(type.id, {
       ...type,
@@ -247,84 +259,112 @@ const updateType = async (type: unknown) => {
       allowed_response: JSON.stringify(type.allowed_response),
       allowed_transformation: JSON.stringify(type.allowed_transformation),
       allowed_option_type: JSON.stringify(type.allowed_option_type),
-    })
-    showSuccess(t('agora', 'Inquiry type updated'))
-    editingType.value = null
+    });
+    showSuccess(t("agora", "Inquiry type updated"));
+    editingType.value = null;
   } catch (e: unknown) {
-    showError(t('agora', 'Failed to update inquiry type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to update inquiry type: {msg}", {
+        msg: e?.message ?? "",
+      }),
+    );
   } finally {
-    savingType.value = false
+    savingType.value = false;
   }
-}
+};
 
 const deleteType = async (type: unknown) => {
   if (
     !confirm(
-      t('agora', 'Are you sure you want to delete the inquiry type "{label}"?', {
-        label: type.label || type.inquiry_type,
-      })
+      t(
+        "agora",
+        'Are you sure you want to delete the inquiry type "{label}"?',
+        {
+          label: type.label || type.inquiry_type,
+        },
+      ),
     )
   ) {
-    return
+    return;
   }
   try {
-    await appSettingsStore.deleteType(type.id)
-    showSuccess(t('agora', 'Inquiry type deleted'))
+    await appSettingsStore.deleteType(type.id);
+    showSuccess(t("agora", "Inquiry type deleted"));
   } catch (e: unknown) {
-    showError(t('agora', 'Failed to delete inquiry type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to delete inquiry type: {msg}", {
+        msg: e?.message ?? "",
+      }),
+    );
   }
-}
+};
 
 const toggleExpand = (id: number) => {
-  expandedTypeId.value = expandedTypeId.value === id ? null : id
-}
+  expandedTypeId.value = expandedTypeId.value === id ? null : id;
+};
 
 // ============================================================
 // ARRAY FIELD MANAGEMENT
 // ============================================================
-type ArrayKey = 'fields' | 'allowed_response' | 'allowed_transformation' | 'allowed_option_type'
+type ArrayKey =
+  | "fields"
+  | "allowed_response"
+  | "allowed_transformation"
+  | "allowed_option_type";
 
-const addArrayItem = (target: 'new' | 'edit', key: ArrayKey, value: string) => {
-  const val = value?.trim()
-  if (!val) return
+const addArrayItem = (target: "new" | "edit", key: ArrayKey, value: string) => {
+  const val = value?.trim();
+  if (!val) return;
   const arr =
-    target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
-  if (!arr.includes(val)) arr.push(val)
-}
+    target === "new"
+      ? (newType.value as unknown)[key]
+      : (editingType.value as unknown)[key];
+  if (!arr.includes(val)) arr.push(val);
+};
 
-const removeArrayItem = (target: 'new' | 'edit', key: ArrayKey, index: number) => {
+const removeArrayItem = (
+  target: "new" | "edit",
+  key: ArrayKey,
+  index: number,
+) => {
   const arr =
-    target === 'new' ? (newType.value as unknown)[key] : (editingType.value as unknown)[key]
-  arr.splice(index, 1)
-}
+    target === "new"
+      ? (newType.value as unknown)[key]
+      : (editingType.value as unknown)[key];
+  arr.splice(index, 1);
+};
 
-const addField = (target: 'new' | 'edit') => {
-  addArrayItem(target, 'fields', newField.value)
-  newField.value = ''
-}
-const removeField = (target: 'new' | 'edit', index: number) =>
-  removeArrayItem(target, 'fields', index)
+const addField = (target: "new" | "edit") => {
+  addArrayItem(target, "fields", newField.value);
+  newField.value = "";
+};
+const removeField = (target: "new" | "edit", index: number) =>
+  removeArrayItem(target, "fields", index);
 
-const addAllowedResponse = (target: 'new' | 'edit') => {
-  addArrayItem(target, 'allowed_response', newAllowedResponse.value)
-  newAllowedResponse.value = ''
-}
-const removeAllowedResponse = (target: 'new' | 'edit', index: number) =>
-  removeArrayItem(target, 'allowed_response', index)
+const addAllowedResponse = (target: "new" | "edit") => {
+  addArrayItem(target, "allowed_response", newAllowedResponse.value);
+  newAllowedResponse.value = "";
+};
+const removeAllowedResponse = (target: "new" | "edit", index: number) =>
+  removeArrayItem(target, "allowed_response", index);
 
-const addAllowedTransformation = (target: 'new' | 'edit') => {
-  addArrayItem(target, 'allowed_transformation', newAllowedTransformation.value)
-  newAllowedTransformation.value = ''
-}
-const removeAllowedTransformation = (target: 'new' | 'edit', index: number) =>
-  removeArrayItem(target, 'allowed_transformation', index)
+const addAllowedTransformation = (target: "new" | "edit") => {
+  addArrayItem(
+    target,
+    "allowed_transformation",
+    newAllowedTransformation.value,
+  );
+  newAllowedTransformation.value = "";
+};
+const removeAllowedTransformation = (target: "new" | "edit", index: number) =>
+  removeArrayItem(target, "allowed_transformation", index);
 
-const addAllowedOptionType = (target: 'new' | 'edit') => {
-  addArrayItem(target, 'allowed_option_type', newAllowedOptionType.value)
-  newAllowedOptionType.value = ''
-}
-const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
-  removeArrayItem(target, 'allowed_option_type', index)
+const addAllowedOptionType = (target: "new" | "edit") => {
+  addArrayItem(target, "allowed_option_type", newAllowedOptionType.value);
+  newAllowedOptionType.value = "";
+};
+const removeAllowedOptionType = (target: "new" | "edit", index: number) =>
+  removeArrayItem(target, "allowed_option_type", index);
 </script>
 
 <template>
@@ -336,17 +376,17 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
           class="back-btn"
           @click="emit('backToFamilies')"
         >
-          ← {{ t('agora', 'Back to families') }}
+          ← {{ t("agora", "Back to families") }}
         </NcButton>
         <h2>
-          {{ t('agora', 'Inquiry types — {family}', { family: familyLabel }) }}
+          {{ t("agora", "Inquiry types — {family}", { family: familyLabel }) }}
         </h2>
         <p class="description">
           {{
             t(
-              'agora',
+              "agora",
               'Configure inquiry types available in the "{family}" family (fields, allowed responses, transformations and option types).',
-              { family: familyLabel }
+              { family: familyLabel },
             )
           }}
         </p>
@@ -356,11 +396,11 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
         <div class="family-stats">
           <div class="stat-block">
             <span class="stat-value">{{ filteredTypes.length }}</span>
-            <span class="stat-label">{{ t('agora', 'inquiry types') }}</span>
+            <span class="stat-label">{{ t("agora", "inquiry types") }}</span>
           </div>
           <div class="stat-block accent">
             <span class="stat-value">{{ groupTypesInFamily.length }}</span>
-            <span class="stat-label">{{ t('agora', 'group types') }}</span>
+            <span class="stat-label">{{ t("agora", "group types") }}</span>
           </div>
         </div>
         <NcInputField
@@ -377,7 +417,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
     <!-- ==================== EXISTING TYPES ==================== -->
     <section class="types-list">
       <h3>
-        {{ t('agora', 'Existing inquiry types') }}
+        {{ t("agora", "Existing inquiry types") }}
         <span class="count-badge">{{ filteredTypes.length }}</span>
       </h3>
 
@@ -385,7 +425,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
         v-if="!filteredTypes.length"
         class="empty-state"
       >
-        {{ t('agora', 'No inquiry types match your filters.') }}
+        {{ t("agora", "No inquiry types match your filters.") }}
       </div>
 
       <div
@@ -419,7 +459,11 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
                   })
                 "
               >
-                {{ t('agora', '{n} groups', { n: getUsageCount(type.inquiry_type) }) }}
+                {{
+                  t("agora", "{n} groups", {
+                    n: getUsageCount(type.inquiry_type),
+                  })
+                }}
               </span>
             </div>
             <p
@@ -430,20 +474,26 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             </p>
             <div class="type-stats">
               <span class="stat-chip">
-                {{ t('agora', '{count} fields', { count: type.fields.length }) }}
+                {{
+                  t("agora", "{count} fields", { count: type.fields.length })
+                }}
               </span>
               <span
                 v-if="type.allowed_response.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} responses', { count: type.allowed_response.length }) }}
+                {{
+                  t("agora", "{count} responses", {
+                    count: type.allowed_response.length,
+                  })
+                }}
               </span>
               <span
                 v-if="type.allowed_transformation.length"
                 class="stat-chip"
               >
                 {{
-                  t('agora', '{count} transformations', {
+                  t("agora", "{count} transformations", {
                     count: type.allowed_transformation.length,
                   })
                 }}
@@ -452,7 +502,11 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
                 v-if="type.allowed_option_type.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} option types', { count: type.allowed_option_type.length }) }}
+                {{
+                  t("agora", "{count} option types", {
+                    count: type.allowed_option_type.length,
+                  })
+                }}
               </span>
             </div>
           </div>
@@ -462,22 +516,26 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
             @click.stop
           >
             <NcButton @click="toggleExpand(type.id)">
-              {{ expandedTypeId === type.id ? t('agora', 'Hide') : t('agora', 'Details') }}
+              {{
+                expandedTypeId === type.id
+                  ? t("agora", "Hide")
+                  : t("agora", "Details")
+              }}
             </NcButton>
             <NcButton
               type="primary"
               @click="emit('typeSelected', type)"
             >
-              {{ t('agora', 'Configure') }}
+              {{ t("agora", "Configure") }}
             </NcButton>
             <NcButton @click="startEditing(type)">
-              {{ t('agora', 'Edit') }}
+              {{ t("agora", "Edit") }}
             </NcButton>
             <NcButton
               type="error"
               @click="deleteType(type)"
             >
-              {{ t('agora', 'Delete') }}
+              {{ t("agora", "Delete") }}
             </NcButton>
           </div>
         </div>
@@ -488,7 +546,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
           class="type-details"
         >
           <div class="detail-section">
-            <h5>{{ t('agora', 'Fields') }}</h5>
+            <h5>{{ t("agora", "Fields") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(f, i) in type.fields"
@@ -501,13 +559,13 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
                 v-if="!type.fields.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Allowed responses') }}</h5>
+            <h5>{{ t("agora", "Allowed responses") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(r, i) in type.allowed_response"
@@ -520,13 +578,13 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
                 v-if="!type.allowed_response.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Allowed transformations') }}</h5>
+            <h5>{{ t("agora", "Allowed transformations") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(r, i) in type.allowed_transformation"
@@ -539,13 +597,13 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
                 v-if="!type.allowed_transformation.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Allowed option types') }}</h5>
+            <h5>{{ t("agora", "Allowed option types") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(r, i) in type.allowed_option_type"
@@ -558,17 +616,19 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
                 v-if="!type.allowed_option_type.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section full-width">
-            <h5>{{ t('agora', 'Used by group types') }}</h5>
+            <h5>{{ t("agora", "Used by group types") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="gt in groupTypesInFamily.filter((g) =>
-                  normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
+                  normalizeArray(g.allowed_inquiry_types).includes(
+                    type.inquiry_type,
+                  ),
                 )"
                 :key="gt.id"
                 class="pill group-pill"
@@ -578,12 +638,16 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               <li
                 v-if="
                   !groupTypesInFamily.some((g) =>
-                    normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
+                    normalizeArray(g.allowed_inquiry_types).includes(
+                      type.inquiry_type,
+                    ),
                   )
                 "
                 class="muted"
               >
-                {{ t('agora', 'No group types reference this inquiry type yet') }}
+                {{
+                  t("agora", "No group types reference this inquiry type yet")
+                }}
               </li>
             </ul>
           </div>
@@ -593,7 +657,13 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
 
     <!-- ==================== ADD NEW TYPE ==================== -->
     <section class="add-type-form">
-      <h3>{{ t('agora', 'Add new inquiry type to {family}', { family: familyLabel }) }}</h3>
+      <h3>
+        {{
+          t("agora", "Add new inquiry type to {family}", {
+            family: familyLabel,
+          })
+        }}
+      </h3>
 
       <div class="form-grid">
         <NcInputField
@@ -634,7 +704,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
 
         <!-- FIELDS -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Fields') }}</label>
+          <label class="field-label">{{ t("agora", "Fields") }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newField"
@@ -647,7 +717,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addField('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -663,14 +733,16 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!newType.fields.length"
               class="muted"
             >
-              {{ t('agora', 'No fields added yet') }}
+              {{ t("agora", "No fields added yet") }}
             </span>
           </div>
         </div>
 
         <!-- ALLOWED RESPONSES -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Allowed responses') }}</label>
+          <label class="field-label">{{
+            t("agora", "Allowed responses")
+          }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedResponse"
@@ -683,7 +755,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addAllowedResponse('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -699,14 +771,16 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!newType.allowed_response.length"
               class="muted"
             >
-              {{ t('agora', 'None') }}
+              {{ t("agora", "None") }}
             </span>
           </div>
         </div>
 
         <!-- ALLOWED TRANSFORMATIONS -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Allowed transformations') }}</label>
+          <label class="field-label">{{
+            t("agora", "Allowed transformations")
+          }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedTransformation"
@@ -719,7 +793,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addAllowedTransformation('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -735,14 +809,16 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!newType.allowed_transformation.length"
               class="muted"
             >
-              {{ t('agora', 'None') }}
+              {{ t("agora", "None") }}
             </span>
           </div>
         </div>
 
         <!-- ALLOWED OPTION TYPES -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Allowed option types') }}</label>
+          <label class="field-label">{{
+            t("agora", "Allowed option types")
+          }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedOptionType"
@@ -755,7 +831,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addAllowedOptionType('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -771,7 +847,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!newType.allowed_option_type.length"
               class="muted"
             >
-              {{ t('agora', 'None') }}
+              {{ t("agora", "None") }}
             </span>
           </div>
         </div>
@@ -779,14 +855,19 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
         <div class="form-actions full-width">
           <NcButton
             type="primary"
-            :disabled="savingType || !newType.inquiry_type || !newType.label || !familyKey"
+            :disabled="
+              savingType ||
+                !newType.inquiry_type ||
+                !newType.label ||
+                !familyKey
+            "
             @click="addType"
           >
             <NcLoadingIcon
               v-if="savingType"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Add inquiry type') }}</span>
+            <span v-else>{{ t("agora", "Add inquiry type") }}</span>
           </NcButton>
         </div>
       </div>
@@ -800,7 +881,9 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
     >
       <div class="modal-content large-modal">
         <header class="modal-header">
-          <h3>{{ t('agora', 'Edit inquiry type') }}: {{ editingType.label }}</h3>
+          <h3>
+            {{ t("agora", "Edit inquiry type") }}: {{ editingType.label }}
+          </h3>
           <NcButton
             type="tertiary"
             @click="cancelEditing"
@@ -811,13 +894,19 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
 
         <nav class="tabs">
           <button
-            v-for="tab in ['basic', 'fields', 'responses', 'transformations', 'option-types']"
+            v-for="tab in [
+              'basic',
+              'fields',
+              'responses',
+              'transformations',
+              'option-types',
+            ]"
             :key="tab"
             class="tab"
             :class="{ active: editTab === tab }"
             @click="editTab = tab"
           >
-            {{ t('agora', tab) }}
+            {{ t("agora", tab) }}
           </button>
         </nav>
 
@@ -876,7 +965,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addField('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -892,7 +981,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!editingType.fields.length"
               class="muted"
             >
-              {{ t('agora', 'No fields added yet') }}
+              {{ t("agora", "No fields added yet") }}
             </span>
           </div>
         </div>
@@ -914,7 +1003,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addAllowedResponse('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -930,7 +1019,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!editingType.allowed_response.length"
               class="muted"
             >
-              {{ t('agora', 'None') }}
+              {{ t("agora", "None") }}
             </span>
           </div>
         </div>
@@ -952,7 +1041,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addAllowedTransformation('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -968,7 +1057,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!editingType.allowed_transformation.length"
               class="muted"
             >
-              {{ t('agora', 'None') }}
+              {{ t("agora", "None") }}
             </span>
           </div>
         </div>
@@ -990,7 +1079,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               type="secondary"
               @click="addAllowedOptionType('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -1006,14 +1095,14 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="!editingType.allowed_option_type.length"
               class="muted"
             >
-              {{ t('agora', 'None') }}
+              {{ t("agora", "None") }}
             </span>
           </div>
         </div>
 
         <footer class="modal-actions">
           <NcButton @click="cancelEditing">
-            {{ t('agora', 'Cancel') }}
+            {{ t("agora", "Cancel") }}
           </NcButton>
           <NcButton
             type="primary"
@@ -1024,7 +1113,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
               v-if="savingType"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Save changes') }}</span>
+            <span v-else>{{ t("agora", "Save changes") }}</span>
           </NcButton>
         </footer>
       </div>

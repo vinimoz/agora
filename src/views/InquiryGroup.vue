@@ -22,7 +22,7 @@
                 :size="20"
               />
             </template>
-            <span class="breadcrumb-label">{{ t('agora', 'Home') }}</span>
+            <span class="breadcrumb-label">{{ t("agora", "Home") }}</span>
           </NcButton>
 
           <!-- Family (only when we are inside an actual group, not the family browser) -->
@@ -94,7 +94,11 @@
                 ({{ displayedGroups.length }})
               </span>
               <span
-                v-else-if="rootTypesWithGroups.length > 0 && !hasSlug && !currentGroupType"
+                v-else-if="
+                  rootTypesWithGroups.length > 0 &&
+                    !hasSlug &&
+                    !currentGroupType
+                "
                 class="inquiry-count"
               >
                 ({{ rootTypesWithGroups.length }})
@@ -115,12 +119,12 @@
         <div class="not-found-icon">
           🔍
         </div>
-        <h2>{{ t('agora', 'Group not found') }}</h2>
+        <h2>{{ t("agora", "Group not found") }}</h2>
         <p>
           {{
             t(
-              'agora',
-              'The group you are looking for does not exist or you do not have permission to access it.'
+              "agora",
+              "The group you are looking for does not exist or you do not have permission to access it.",
             )
           }}
         </p>
@@ -128,7 +132,7 @@
           type="primary"
           :to="{ name: 'home' }"
         >
-          {{ t('agora', 'Back to home') }}
+          {{ t("agora", "Back to home") }}
         </NcButton>
       </div>
 
@@ -153,13 +157,13 @@
                   v-if="totalInquiries > 0 && hasSlug"
                   class="inquiry-count-badge"
                 >
-                  {{ totalInquiries }} {{ t('agora', 'inquiries') }}
+                  {{ totalInquiries }} {{ t("agora", "inquiries") }}
                 </span>
                 <span
                   v-if="displayedGroups.length > 0 && !hasSlug"
                   class="groups-count-badge"
                 >
-                  {{ displayedGroups.length }} {{ t('agora', 'groups') }}
+                  {{ displayedGroups.length }} {{ t("agora", "groups") }}
                 </span>
               </div>
             </div>
@@ -172,7 +176,7 @@
           class="loading-state"
         >
           <div class="spinner" />
-          <p>{{ t('agora', 'Loading …') }}</p>
+          <p>{{ t("agora", "Loading …") }}</p>
         </div>
 
         <!-- ================================================================ -->
@@ -192,7 +196,7 @@
           <template v-if="!hasSlug && !currentGroupType">
             <div class="section-header">
               <h3>
-                {{ activeFamily ? familyLabel : t('agora', 'Group types') }}
+                {{ activeFamily ? familyLabel : t("agora", "Group types") }}
               </h3>
               <div
                 v-if="canCreateInFamily"
@@ -202,7 +206,7 @@
                   class="create-button"
                   @click="createInquiryGroup('')"
                 >
-                  ➕ {{ t('agora', 'Create group') }}
+                  ➕ {{ t("agora", "Create group") }}
                 </NcButton>
               </div>
             </div>
@@ -218,21 +222,23 @@
                 @click="selectType(type)"
               >
                 <div class="type-vignette__icon">
-                  <component :is="getGroupTypeIconComponent(getTypeKey(type))" />
+                  <component
+                    :is="getGroupTypeIconComponent(getTypeKey(type))"
+                  />
                 </div>
                 <div class="type-vignette__body">
                   <h4 class="type-vignette__title">
-                    {{ t('agora', type.label) }}
+                    {{ t("agora", type.label) }}
                   </h4>
                   <p
                     v-if="type.description"
                     class="type-vignette__desc"
                   >
-                    {{ t('agora', type.description) }}
+                    {{ t("agora", type.description) }}
                   </p>
                   <span class="type-vignette__count">
                     {{ groupCountOfType(getTypeKey(type)) }}
-                    {{ t('agora', 'groups') }}
+                    {{ t("agora", "groups") }}
                   </span>
                 </div>
               </div>
@@ -245,8 +251,10 @@
               <div class="empty-icon">
                 📁
               </div>
-              <h3>{{ t('agora', 'No group types available') }}</h3>
-              <p>{{ t('agora', 'There are no group types you can browse yet.') }}</p>
+              <h3>{{ t("agora", "No group types available") }}</h3>
+              <p>
+                {{ t("agora", "There are no group types you can browse yet.") }}
+              </p>
             </div>
           </template>
 
@@ -263,7 +271,7 @@
                   class="back-to-types"
                   @click="clearSelectedType"
                 >
-                  ← {{ t('agora', 'All group types') }}
+                  ← {{ t("agora", "All group types") }}
                 </NcButton>
                 <h3>{{ sectionTitle }}</h3>
               </div>
@@ -276,7 +284,7 @@
                   class="create-button"
                   @click="createInquiryGroup(currentGroupType)"
                 >
-                  ➕ {{ t('agora', 'Create group') }}
+                  ➕ {{ t("agora", "Create group") }}
                 </NcButton>
               </div>
             </div>
@@ -308,7 +316,9 @@
                     </div>
                     <div class="vignette-content">
                       <div class="vignette-icon">
-                        <component :is="getGroupTypeIconComponent(group.type)" />
+                        <component
+                          :is="getGroupTypeIconComponent(group.type)"
+                        />
                       </div>
                       <h4>{{ group.title }}</h4>
                       <p
@@ -339,14 +349,16 @@
                           class="view-group-button"
                           @click.stop="selectGroup(group)"
                         >
-                          {{ t('agora', 'View group') }}
+                          {{ t("agora", "View group") }}
                           <template #icon>
                             <svg
                               width="16"
                               height="16"
                               viewBox="0 0 24 24"
                             >
-                              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                              <path
+                                d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"
+                              />
                             </svg>
                           </template>
                         </NcButton>
@@ -382,7 +394,7 @@
                             />
                           </svg>
                         </template>
-                        {{ t('agora', 'Modify') }}
+                        {{ t("agora", "Modify") }}
                       </NcButton>
 
                       <NcButton
@@ -402,7 +414,7 @@
                             />
                           </svg>
                         </template>
-                        {{ t('agora', 'Delete') }}
+                        {{ t("agora", "Delete") }}
                       </NcButton>
 
                       <NcButton
@@ -420,7 +432,7 @@
                             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                           </svg>
                         </template>
-                        {{ t('agora', 'Archive') }}
+                        {{ t("agora", "Archive") }}
                       </NcButton>
                     </div>
                   </div>
@@ -443,7 +455,7 @@
                 type="primary"
                 @click="createInquiryGroup(currentGroupType)"
               >
-                {{ t('agora', 'Create first group') }}
+                {{ t("agora", "Create first group") }}
               </NcButton>
             </div>
 
@@ -483,7 +495,7 @@
                     :class="{ active: !activeTool }"
                     @click="selectTool('')"
                   >
-                    {{ t('agora', 'Overview') }}
+                    {{ t("agora", "Overview") }}
                   </button>
 
                   <!-- Inquiries Tools -->
@@ -493,7 +505,7 @@
                     :class="{ active: activeTool === tool }"
                     @click="selectTool(tool)"
                   >
-                    {{ t('agora', tool) }}
+                    {{ t("agora", tool) }}
                   </button>
                 </div>
               </div>
@@ -592,88 +604,102 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { t } from '@nextcloud/l10n'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
-import { useSessionStore } from '../stores/session.ts'
-import { useInquiriesStore } from '../stores/inquiries.ts'
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
-import { useInquiryGroupStore } from '../stores/inquiryGroup.ts'
-import { InquiryGeneralIcons } from '../utils/icons.ts'
-import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
-import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
-import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
-import type { InquiryGroupType, InquiryGroup } from '../Types/inquiryGroups.types.ts'
-import { createInquiryGroupContext, canArchive, canEdit, canDelete } from '../utils/permissions.ts'
-import InquiryGroupViewMain from '../components/InquiryGroup/InquiryGroupViewMain.vue'
-import ExperienceRenderer from '../components/Experience/ExperienceRenderer.vue'
-import ExperienceSwitcher from '../components/Experience/ExperienceSwitcher.vue'
-import { useGroupExperience } from '../composables/useGroupExperience'
-import DisplayModeSwitcher from '../components/Experience/DisplayModeSwitcher.vue'
-import type { ExperienceKey, DisplayMode } from '../composables/useExperience'
-import type { DisplayType } from '../Types/experience.types'
-import type { Inquiry, Option } from '../Types/index.ts'
-import InquiryInteractionShell from '../components/Inquiry/InquiryInteractionShell.vue'
+import { computed, ref, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { t } from "@nextcloud/l10n";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import NcAppContent from "@nextcloud/vue/components/NcAppContent";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcDialog from "@nextcloud/vue/components/NcDialog";
+import { useSessionStore } from "../stores/session.ts";
+import { useInquiriesStore } from "../stores/inquiries.ts";
+import { useInquiryGroupsStore } from "../stores/inquiryGroups.ts";
+import { useInquiryGroupStore } from "../stores/inquiryGroup.ts";
+import { InquiryGeneralIcons } from "../utils/icons.ts";
+import { getInquiryGroupTypeData } from "../helpers/modules/InquiryHelper.ts";
+import InquiryGroupCreateDlg from "../components/Create/InquiryGroupCreateDlg.vue";
+import InquiryCreateDlg from "../components/Create/InquiryCreateDlg.vue";
+import type {
+  InquiryGroupType,
+  InquiryGroup,
+} from "../Types/inquiryGroups.types.ts";
+import {
+  createInquiryGroupContext,
+  canArchive,
+  canEdit,
+  canDelete,
+} from "../utils/permissions.ts";
+import InquiryGroupViewMain from "../components/InquiryGroup/InquiryGroupViewMain.vue";
+import ExperienceRenderer from "../components/Experience/ExperienceRenderer.vue";
+import ExperienceSwitcher from "../components/Experience/ExperienceSwitcher.vue";
+import { useGroupExperience } from "../composables/useGroupExperience";
+import DisplayModeSwitcher from "../components/Experience/DisplayModeSwitcher.vue";
+import type { ExperienceKey, DisplayMode } from "../composables/useExperience";
+import type { DisplayType } from "../Types/experience.types";
+import type { Inquiry, Option } from "../Types/index.ts";
+import InquiryInteractionShell from "../components/Inquiry/InquiryInteractionShell.vue";
 
 // ============================================================
 // Props (route-provided)
 // ============================================================
 const props = defineProps<{
-  slug?: string
-}>()
+  slug?: string;
+}>();
 
 // ============================================================
 // Stores
 // ============================================================
-const route = useRoute()
-const router = useRouter()
-const sessionStore = useSessionStore()
-const inquiriesStore = useInquiriesStore()
-const inquiryGroupsStore = useInquiryGroupsStore()
-const inquiryGroupStore = useInquiryGroupStore()
-const shellRef = ref()
+const route = useRoute();
+const router = useRouter();
+const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore();
+const inquiryGroupsStore = useInquiryGroupsStore();
+const inquiryGroupStore = useInquiryGroupStore();
+const shellRef = ref();
 
 // ============================================================
 // Local state
 // ============================================================
-const isLoading = ref(true)
-const selectedParentId = ref<number | null>(null)
-const createGroupDlgToggle = ref(false)
-const selectedInquiryGroupTypeForCreation = ref<InquiryGroupType | null>(null)
-const groupNotFound = ref(false)
+const isLoading = ref(true);
+const selectedParentId = ref<number | null>(null);
+const createGroupDlgToggle = ref(false);
+const selectedInquiryGroupTypeForCreation = ref<InquiryGroupType | null>(null);
+const groupNotFound = ref(false);
 
-const showCreateDialog = computed(() => route.query.viewMode === 'create')
+const showCreateDialog = computed(() => route.query.viewMode === "create");
 
-const showDeleteDialog = ref(false)
-const deleteDialogGroup = ref<InquiryGroup | null>(null)
+const showDeleteDialog = ref(false);
+const deleteDialogGroup = ref<InquiryGroup | null>(null);
 
 // ============================================================
 // Route-derived state
 // ============================================================
-const routeSlug = computed(() => props.slug ?? (route.params.slug as string | undefined))
+const routeSlug = computed(
+  () => props.slug ?? (route.params.slug as string | undefined),
+);
 const hasSlug = computed(() => {
-  const slug = routeSlug.value
-  return !!slug && slug !== 'undefined' && slug !== 'null' && slug !== '0'
-})
+  const slug = routeSlug.value;
+  return !!slug && slug !== "undefined" && slug !== "null" && slug !== "0";
+});
 
-const activeFamily = computed<string | null>(() => (route.query.family as string) || null)
+const activeFamily = computed<string | null>(
+  () => (route.query.family as string) || null,
+);
 
-const isFamilyBrowserMode = computed(() => !hasSlug.value && !!activeFamily.value)
+const isFamilyBrowserMode = computed(
+  () => !hasSlug.value && !!activeFamily.value,
+);
 
 const currentInquiryGroup = computed<InquiryGroup | null>(() => {
-  if (!hasSlug.value) return null
-  const slug = route.params.slug as string
-  const group = inquiryGroupsStore.bySlug(slug)
-  if (!group || !group.owner) return null
-  console.log(' ACTIVE FAMILY ', activeFamily.value)
-  console.log(' IS FAMILY BROS ', isFamilyBrowserMode.value)
-  console.log(' CURRENT INQUIRY GROUP ', currentInquiryGroup.value)
-  return group
-})
+  if (!hasSlug.value) return null;
+  const slug = route.params.slug as string;
+  const group = inquiryGroupsStore.bySlug(slug);
+  if (!group || !group.owner) return null;
+  console.log(" ACTIVE FAMILY ", activeFamily.value);
+  console.log(" IS FAMILY BROS ", isFamilyBrowserMode.value);
+  console.log(" CURRENT INQUIRY GROUP ", currentInquiryGroup.value);
+  return group;
+});
 
 // ============================================================
 // Experience
@@ -688,428 +714,482 @@ const {
   switchExperience,
   definition,
   switchDisplay,
-} = useGroupExperience(computed(() => currentInquiryGroup.value))
+} = useGroupExperience(computed(() => currentInquiryGroup.value));
 
 // ============================================================
 // Permissions
 // ============================================================
 function contextFor(group: InquiryGroup | null) {
-  return group ? createInquiryGroupContext(group) : null
+  return group ? createInquiryGroupContext(group) : null;
 }
 
 function canUserArchiveGroup(group: InquiryGroup | null): boolean {
-  if (!group) return false
-  const ctx = contextFor(group)
-  return ctx ? canArchive(ctx) : false
+  if (!group) return false;
+  const ctx = contextFor(group);
+  return ctx ? canArchive(ctx) : false;
 }
 
 function canUserEditGroup(group: InquiryGroup | null): boolean {
-  if (sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor) return true
-  if (!group) return false
-  const ctx = contextFor(group)
-  return ctx ? canEdit(ctx) : false
+  if (
+    sessionStore.currentUser.isAdmin ||
+    sessionStore.currentUser.isGroupEditor
+  )
+    return true;
+  if (!group) return false;
+  const ctx = contextFor(group);
+  return ctx ? canEdit(ctx) : false;
 }
 
 function canUserDeleteGroup(group: InquiryGroup | null): boolean {
-  if (!group) return false
-  const ctx = contextFor(group)
-  return ctx ? canDelete(ctx) : false
+  if (!group) return false;
+  const ctx = contextFor(group);
+  return ctx ? canDelete(ctx) : false;
 }
 
-function handleOpenPanel(payload: { inquiry: Inquiry; zone: string; target: string }) {
-  shellRef.value?.open(payload)
+function handleOpenPanel(payload: {
+  inquiry: Inquiry;
+  zone: string;
+  target: string;
+}) {
+  shellRef.value?.open(payload);
 }
 
 const canCreateInFamily = computed(
-  () => sessionStore.currentUser.isAdmin === true || sessionStore.currentUser.isGroupEditor === true
-)
+  () =>
+    sessionStore.currentUser.isAdmin === true ||
+    sessionStore.currentUser.isGroupEditor === true,
+);
 
-const activeTool = ref<string>('')
+const activeTool = ref<string>("");
 
 function selectTool(tool: string) {
-  activeTool.value = tool
+  activeTool.value = tool;
 }
 
 // ============================================================
 // Family breadcrumb
 // ============================================================
-const showFamilyCrumb = computed(() => hasSlug.value && !!activeFamily.value)
+const showFamilyCrumb = computed(() => hasSlug.value && !!activeFamily.value);
 
 const familyIconComponent = computed(() => {
-  const fam = activeFamily.value
-  if (!fam) return 'Folder'
+  const fam = activeFamily.value;
+  if (!fam) return "Folder";
   const family = (sessionStore.appSettings?.inquiryFamilyTab || []).find(
-    (f: { family_type?: string; type?: string }) => (f.family_type || f.type) === fam
-  )
-  const icon = family?.icon
-  return icon ? (InquiryGeneralIcons as Record<string, unknown>)[icon] || 'Folder' : 'Folder'
-})
+    (f: { family_type?: string; type?: string }) =>
+      (f.family_type || f.type) === fam,
+  );
+  const icon = family?.icon;
+  return icon
+    ? (InquiryGeneralIcons as Record<string, unknown>)[icon] || "Folder"
+    : "Folder";
+});
 
 function goToFamilyRoot() {
-  if (!activeFamily.value) return
+  if (!activeFamily.value) return;
   router.push({
-    name: 'group-list',
-    params: { slug: '' },
-    query: { family: activeFamily.value, viewMode: 'group' },
-  })
+    name: "group-list",
+    params: { slug: "" },
+    query: { family: activeFamily.value, viewMode: "group" },
+  });
 }
 
 // ============================================================
 // Derived data
 // ============================================================
 function getTypeKey(type: InquiryGroupType): string {
-  return type.type || type.group_type || ''
+  return type.type || type.group_type || "";
 }
 
 const availableInquiryTools = computed(() => {
-  const allowed = definition.value?.allowedTools
+  const allowed = definition.value?.allowedTools;
   // The dashboard architecture does not declare allowedTools → fall back
   // so the toolbar exposes the layouts that actually make sense.
   const fallbackByExperience: Record<string, string[]> = {
-    dashboard: ['kanban', 'timeline'],
-    decision_room: ['vote', 'kanban', 'timeline'],
-  }
+    dashboard: ["kanban", "timeline"],
+    decision_room: ["vote", "kanban", "timeline"],
+  };
   const tools =
-    allowed && allowed.length > 0 ? allowed : (fallbackByExperience[experience.value] ?? [])
-  return tools.filter((t) => ['vote', 'kanban', 'timeline'].includes(t))
-})
+    allowed && allowed.length > 0
+      ? allowed
+      : (fallbackByExperience[experience.value] ?? []);
+  return tools.filter((t) => ["vote", "kanban", "timeline"].includes(t));
+});
 
 const availableDisplayModes = computed<DisplayType[]>(() => {
-  const allowed = definition.value?.allowedDisplays ?? []
-  if (allowed.length === 0) return []
+  const allowed = definition.value?.allowedDisplays ?? [];
+  if (allowed.length === 0) return [];
   return allowed.filter(
-    (m) => m !== 'tool' && m !== 'widget' && m !== 'banner' && m !== 'search_bar'
-  )
-})
+    (m) =>
+      m !== "tool" && m !== "widget" && m !== "banner" && m !== "search_bar",
+  );
+});
 
 const familyRootTypeKeys = computed<string[]>(() => {
-  const fam = activeFamily.value
-  if (!fam) return []
+  const fam = activeFamily.value;
+  if (!fam) return [];
   return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
     .filter(
       (gt: InquiryGroupType & { family?: string; family_type?: string }) =>
-        gt.is_root === true && (gt.family === fam || gt.family_type === fam)
+        gt.is_root === true && (gt.family === fam || gt.family_type === fam),
     )
-    .map((gt) => gt.type || gt.group_type || '')
-    .filter(Boolean)
-})
+    .map((gt) => gt.type || gt.group_type || "")
+    .filter(Boolean);
+});
 
 const rootTypesWithGroups = computed<InquiryGroupType[]>(() => {
-  const fam = activeFamily.value
-  const familyKeys = new Set(familyRootTypeKeys.value)
+  const fam = activeFamily.value;
+  const familyKeys = new Set(familyRootTypeKeys.value);
   return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
     .filter((tt: InquiryGroupType) => tt.is_root === true)
-    .filter((tt: InquiryGroupType) => (fam ? familyKeys.has(getTypeKey(tt)) : true))
+    .filter((tt: InquiryGroupType) =>
+      fam ? familyKeys.has(getTypeKey(tt)) : true,
+    )
     .filter((tt: InquiryGroupType) => groupsOfType(getTypeKey(tt)).length > 0)
-    .sort((a: InquiryGroupType, b: InquiryGroupType) => (a.sort_order || 0) - (b.sort_order || 0))
-})
+    .sort(
+      (a: InquiryGroupType, b: InquiryGroupType) =>
+        (a.sort_order || 0) - (b.sort_order || 0),
+    );
+});
 
 function selectType(type: InquiryGroupType) {
-  inquiryGroupsStore.setCurrentGroupType(getTypeKey(type))
+  inquiryGroupsStore.setCurrentGroupType(getTypeKey(type));
 }
 
 function clearSelectedType() {
-  inquiryGroupsStore.setCurrentGroupType('')
+  inquiryGroupsStore.setCurrentGroupType("");
 }
 
 const currentGroupType = computed(
-  () => currentInquiryGroup.value?.type || inquiryGroupsStore.currentGroupType || ''
-)
+  () =>
+    currentInquiryGroup.value?.type ||
+    inquiryGroupsStore.currentGroupType ||
+    "",
+);
 
 const parentGroups = computed<InquiryGroup[]>(() => {
-  if (!currentInquiryGroup.value) return []
-  const parents: InquiryGroup[] = []
-  let current = currentInquiryGroup.value
+  if (!currentInquiryGroup.value) return [];
+  const parents: InquiryGroup[] = [];
+  let current = currentInquiryGroup.value;
   while (current.parentId) {
-    const parent = inquiryGroupsStore.inquiryGroups.find((g) => g.id === current.parentId)
-    if (!parent) break
-    parents.unshift(parent)
-    current = parent
+    const parent = inquiryGroupsStore.inquiryGroups.find(
+      (g) => g.id === current.parentId,
+    );
+    if (!parent) break;
+    parents.unshift(parent);
+    current = parent;
   }
-  return parents
-})
+  return parents;
+});
 
 const displayedGroups = computed<InquiryGroup[]>(() => {
-  const familyKeys = new Set(familyRootTypeKeys.value)
+  const familyKeys = new Set(familyRootTypeKeys.value);
 
   if (!hasSlug.value) {
     // State A shows types, not groups
-    if (!inquiryGroupsStore.currentGroupType) return []
+    if (!inquiryGroupsStore.currentGroupType) return [];
 
     return inquiryGroupsStore.inquiryGroups
       .filter((g) => {
-        const isRoot = g.parentId === null || g.parentId === 0 || g.parentId === undefined
-        if (!isRoot) return false
-        if (g.status?.groupStatus === 'archived') return false
-        if (familyKeys.size > 0 && !familyKeys.has(g.type)) return false
-        return g.type === inquiryGroupsStore.currentGroupType
+        const isRoot =
+          g.parentId === null || g.parentId === 0 || g.parentId === undefined;
+        if (!isRoot) return false;
+        if (g.status?.groupStatus === "archived") return false;
+        if (familyKeys.size > 0 && !familyKeys.has(g.type)) return false;
+        return g.type === inquiryGroupsStore.currentGroupType;
       })
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => a.title.localeCompare(b.title));
   }
 
-  if (!currentInquiryGroup.value) return []
+  if (!currentInquiryGroup.value) return [];
   return inquiryGroupsStore.inquiryGroups
     .filter(
-      (g) => g.parentId === currentInquiryGroup.value!.id && g.status?.groupStatus !== 'archived'
+      (g) =>
+        g.parentId === currentInquiryGroup.value!.id &&
+        g.status?.groupStatus !== "archived",
     )
-    .sort((a, b) => a.title.localeCompare(b.title))
-})
+    .sort((a, b) => a.title.localeCompare(b.title));
+});
 
 const groupInquiries = computed<Inquiry[]>(() => {
-  const ids = currentInquiryGroup.value?.inquiryIds ?? []
-  if (ids.length === 0) return []
+  const ids = currentInquiryGroup.value?.inquiryIds ?? [];
+  if (ids.length === 0) return [];
   return ids
     .map((id) => inquiriesStore.inquiries.find((i) => i.id === id))
-    .filter((i): i is Inquiry => Boolean(i))
-})
+    .filter((i): i is Inquiry => Boolean(i));
+});
 
 const totalInquiries = computed(() =>
-  hasSlug.value ? (currentInquiryGroup.value?.inquiryIds?.length ?? 0) : 0
-)
+  hasSlug.value ? (currentInquiryGroup.value?.inquiryIds?.length ?? 0) : 0,
+);
 
 // ============================================================
 // Type data + titles
 // ============================================================
 function getGroupTypeIconComponent(type: string) {
-  const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return typeData?.icon || 'Folder'
+  const typeData = getInquiryGroupTypeData(
+    type,
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  );
+  return typeData?.icon || "Folder";
 }
 
 const selectedTypeData = computed(() =>
-  getInquiryGroupTypeData(currentGroupType.value, sessionStore.appSettings.inquiryGroupTypeTab)
-)
+  getInquiryGroupTypeData(
+    currentGroupType.value,
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  ),
+);
 
 const selectedTypeLabel = computed(() =>
-  selectedTypeData.value?.label ? t('agora', selectedTypeData.value.label) : t('agora', 'Groups')
-)
+  selectedTypeData.value?.label
+    ? t("agora", selectedTypeData.value.label)
+    : t("agora", "Groups"),
+);
 
 const selectedTypeDescription = computed(() =>
   selectedTypeData.value?.description
-    ? t('agora', selectedTypeData.value.description)
-    : t('agora', 'Browse available groups')
-)
+    ? t("agora", selectedTypeData.value.description)
+    : t("agora", "Browse available groups"),
+);
 
 // ------- Family helpers -------
 const familyLabel = computed(() => {
-  const fam = activeFamily.value
-  if (!fam) return t('agora', 'Spaces')
+  const fam = activeFamily.value;
+  if (!fam) return t("agora", "Spaces");
   const family = (sessionStore.appSettings?.inquiryFamilyTab || []).find(
-    (f: { family_type?: string; type?: string }) => (f.family_type || f.type) === fam
-  )
-  return family?.label ? t('agora', family.label) : fam
-})
+    (f: { family_type?: string; type?: string }) =>
+      (f.family_type || f.type) === fam,
+  );
+  return family?.label ? t("agora", family.label) : fam;
+});
 
 function handleCreateInquiry() {
-  if (!currentInquiryGroup.value) return
+  if (!currentInquiryGroup.value) return;
   router.push({
-    name: 'group-list',
+    name: "group-list",
     params: { slug: currentInquiryGroup.value.slug },
-    query: { ...route.query, viewMode: 'create' },
-  })
+    query: { ...route.query, viewMode: "create" },
+  });
 }
 
 function groupsOfType(typeKey: string): InquiryGroup[] {
   return inquiryGroupsStore.inquiryGroups.filter(
     (g) =>
       g.type === typeKey &&
-      (g.parentId === null || g.parentId === 0 || (g.parentId as unknown) === undefined) &&
-      g.status?.groupStatus !== 'archived'
-  )
+      (g.parentId === null ||
+        g.parentId === 0 ||
+        (g.parentId as unknown) === undefined) &&
+      g.status?.groupStatus !== "archived",
+  );
 }
 
 function groupCountOfType(typeKey: string): number {
-  return groupsOfType(typeKey).length
+  return groupsOfType(typeKey).length;
 }
 
 const currentIconComponent = computed(() => {
   if (isFamilyBrowserMode.value) {
-    const fam = activeFamily.value
+    const fam = activeFamily.value;
     const family = (sessionStore.appSettings?.inquiryFamilyTab || []).find(
       (f: { family_type?: string; type?: string; icon?: string }) =>
-        (f.family_type || f.type) === fam
-    )
-    const icon = family?.icon
-    return icon ? (InquiryGeneralIcons as Record<string, unknown>)[icon] || 'Folder' : 'Folder'
+        (f.family_type || f.type) === fam,
+    );
+    const icon = family?.icon;
+    return icon
+      ? (InquiryGeneralIcons as Record<string, unknown>)[icon] || "Folder"
+      : "Folder";
   }
   return getGroupTypeIconComponent(
     hasSlug.value && currentInquiryGroup.value
       ? currentInquiryGroup.value.type
-      : currentGroupType.value
-  )
-})
+      : currentGroupType.value,
+  );
+});
 
 // NOTE: only ONE definition of currentTitle / currentDescription
 const currentTitle = computed(() => {
-  if (isFamilyBrowserMode.value) return familyLabel.value
+  if (isFamilyBrowserMode.value) return familyLabel.value;
   if (hasSlug.value && currentInquiryGroup.value) {
-    return currentInquiryGroup.value.title || currentInquiryGroup.value.name
+    return currentInquiryGroup.value.title || currentInquiryGroup.value.name;
   }
   // State A: no type selected yet
   if (!currentGroupType.value) {
-    return activeFamily.value ? familyLabel.value : t('agora', 'Group types')
+    return activeFamily.value ? familyLabel.value : t("agora", "Group types");
   }
-  return selectedTypeLabel.value
-})
+  return selectedTypeLabel.value;
+});
 
 const currentDescription = computed(() => {
   if (isFamilyBrowserMode.value) {
-    return t('agora', 'Browse the group types of this family.')
+    return t("agora", "Browse the group types of this family.");
   }
   if (hasSlug.value && currentInquiryGroup.value) {
     return (
       currentInquiryGroup.value.titleExt ||
       currentInquiryGroup.value.configuration?.description ||
       selectedTypeDescription.value
-    )
+    );
   }
   if (!currentGroupType.value) {
-    return t('agora', 'Choose a group type to browse its groups.')
+    return t("agora", "Choose a group type to browse its groups.");
   }
-  return selectedTypeDescription.value
-})
+  return selectedTypeDescription.value;
+});
 
-const currentBreadcrumbTitle = computed(() => currentTitle.value)
+const currentBreadcrumbTitle = computed(() => currentTitle.value);
 
 const sectionTitle = computed(() => {
   if (hasSlug.value && currentInquiryGroup.value) {
-    return t('agora', 'Subgroups')
+    return t("agora", "Subgroups");
   }
-  return selectedTypeLabel.value
-})
+  return selectedTypeLabel.value;
+});
 
 // ============================================================
 // Empty-state copy
 // ============================================================
 const emptyStateTitle = computed(() =>
-  hasSlug.value ? t('agora', 'No subgroups yet') : t('agora', 'No groups available')
-)
+  hasSlug.value
+    ? t("agora", "No subgroups yet")
+    : t("agora", "No groups available"),
+);
 
 const emptyStateMessage = computed(() =>
   hasSlug.value
-    ? t('agora', 'This space does not have any subgroups yet.')
-    : t('agora', 'There are no groups in this section yet.')
-)
+    ? t("agora", "This space does not have any subgroups yet.")
+    : t("agora", "There are no groups in this section yet."),
+);
 
 // ============================================================
 // Helpers
 // ============================================================
 function getGroupChildren(group: InquiryGroup): InquiryGroup[] {
-  if (!group?.id) return []
-  const storeGroup = inquiryGroupsStore.inquiryGroups.find((g) => g.id === group.id)
-  if (storeGroup?.childs?.length) return storeGroup.childs as unknown as InquiryGroup[]
-  return inquiryGroupsStore.inquiryGroups.filter((g) => g.parentId === group.id)
+  if (!group?.id) return [];
+  const storeGroup = inquiryGroupsStore.inquiryGroups.find(
+    (g) => g.id === group.id,
+  );
+  if (storeGroup?.childs?.length)
+    return storeGroup.childs as unknown as InquiryGroup[];
+  return inquiryGroupsStore.inquiryGroups.filter(
+    (g) => g.parentId === group.id,
+  );
 }
 
-const BASE_URL = window.location.origin
+const BASE_URL = window.location.origin;
 
-function getNextcloudPreviewUrl(fileId: number, x = 1920, y = 1080, autoScale = true) {
-  return `${BASE_URL}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`
+function getNextcloudPreviewUrl(
+  fileId: number,
+  x = 1920,
+  y = 1080,
+  autoScale = true,
+) {
+  return `${BASE_URL}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`;
 }
 
 function getCoverUrl(coverId: number) {
-  return getNextcloudPreviewUrl(coverId)
+  return getNextcloudPreviewUrl(coverId);
 }
 
 // ============================================================
 // Navigation + CRUD
 // ============================================================
 function selectGroup(group: InquiryGroup) {
-  if (!group) return
+  if (!group) return;
   if (currentInquiryGroup.value?.id === group.id) {
-    inquiryGroupStore.load(group.id)
-    return
+    inquiryGroupStore.load(group.id);
+    return;
   }
   if (group.slug) {
     router.push({
-      name: 'group-list',
+      name: "group-list",
       params: { slug: group.slug },
       query: { ...route.query },
-    })
+    });
   } else if (group.id) {
     router.push({
-      name: 'group',
+      name: "group",
       params: { id: String(group.id) },
       query: { ...route.query },
-    })
+    });
   }
 }
 
 function modifyGroup(group: InquiryGroup) {
   router.push({
-    name: 'group',
+    name: "group",
     params: { id: String(group.id) },
     query: { ...route.query },
-  })
+  });
 }
 
-const createDialogFamily = ref<string | null>(null)
+const createDialogFamily = ref<string | null>(null);
 
 function createInquiryGroup(inquiryGroupType: InquiryGroupType | string) {
   if (hasSlug.value) {
-    selectedParentId.value = currentInquiryGroup?.value.id ?? null
-    createDialogFamily.value = null // parent type drives filtering
+    selectedParentId.value = currentInquiryGroup?.value.id ?? null;
+    createDialogFamily.value = null; // parent type drives filtering
   } else {
-    selectedParentId.value = null
-    createDialogFamily.value = activeFamily.value
+    selectedParentId.value = null;
+    createDialogFamily.value = activeFamily.value;
   }
-  selectedInquiryGroupTypeForCreation.value = inquiryGroupType
-  createGroupDlgToggle.value = true
+  selectedInquiryGroupTypeForCreation.value = inquiryGroupType;
+  createGroupDlgToggle.value = true;
 }
 
 async function deleteGroup(group: InquiryGroup) {
-  deleteDialogGroup.value = group
-  showDeleteDialog.value = true
+  deleteDialogGroup.value = group;
+  showDeleteDialog.value = true;
 }
 
 async function performDeleteGroup(group: InquiryGroup) {
   try {
-    await inquiryGroupStore.deleteGroup(group.id)
-    showSuccess(t('agora', 'Group deleted successfully'))
-    await inquiryGroupsStore.fetchAllGroups()
+    await inquiryGroupStore.deleteGroup(group.id);
+    showSuccess(t("agora", "Group deleted successfully"));
+    await inquiryGroupsStore.fetchAllGroups();
 
     if (currentInquiryGroup.value?.id === group.id) {
       const parent = group.parentId
         ? inquiryGroupsStore.inquiryGroups.find((g) => g.id === group.parentId)
-        : null
+        : null;
       if (parent?.slug) {
-        router.push({ name: 'group-list', params: { slug: parent.slug } })
+        router.push({ name: "group-list", params: { slug: parent.slug } });
       } else {
-        router.push({ name: 'home' })
+        router.push({ name: "home" });
       }
     }
   } catch (error) {
-    console.error('Error deleting group:', error)
-    showError(t('agora', 'Failed to delete group'))
+    console.error("Error deleting group:", error);
+    showError(t("agora", "Failed to delete group"));
   }
 }
 
 async function archiveGroup(group: InquiryGroup) {
   try {
-    await inquiryGroupStore.archive(group.id)
-    showSuccess(t('agora', 'Group archived successfully'))
+    await inquiryGroupStore.archive(group.id);
+    showSuccess(t("agora", "Group archived successfully"));
     router.push({
-      name: 'group-archived',
+      name: "group-archived",
       query: { family: activeFamily.value ?? undefined, from: group.slug },
-    })
+    });
   } catch (error) {
-    showError(t('agora', 'Failed to archive group'))
+    showError(t("agora", "Failed to archive group"),error);
   }
 }
 
 function handleCloseGroupDialog() {
-  createGroupDlgToggle.value = false
-  selectedParentId.value = null
-  selectedInquiryGroupTypeForCreation.value = null
+  createGroupDlgToggle.value = false;
+  selectedParentId.value = null;
+  selectedInquiryGroupTypeForCreation.value = null;
 }
 
 function inquiryGroupAdded(newGroup: InquiryGroup) {
-  createGroupDlgToggle.value = false
+  createGroupDlgToggle.value = false;
   if (newGroup.slug) {
     setTimeout(() => {
-      router.push({ name: 'group-list', params: { slug: newGroup.slug } })
-    }, 100)
+      router.push({ name: "group-list", params: { slug: newGroup.slug } });
+    }, 100);
   } else if (newGroup.id) {
-    router.push({ name: 'group', params: { id: String(newGroup.id) } })
+    router.push({ name: "group", params: { id: String(newGroup.id) } });
   }
 }
 
@@ -1117,33 +1197,37 @@ function inquiryGroupAdded(newGroup: InquiryGroup) {
 // Experience handlers
 // ============================================================
 function handleExperienceChange(key: ExperienceKey) {
-  switchExperience(key)
+  switchExperience(key);
 }
 
 function handleDisplayChange(mode: DisplayMode) {
-  switchDisplay(mode)
+  switchDisplay(mode);
 }
 
 function handleViewInquiry(inquiry: Inquiry) {
   if (!inquiry?.id) {
-    showError(t('agora', 'Cannot open inquiry: missing ID'))
-    return
+    showError(t("agora", "Cannot open inquiry: missing ID"));
+    return;
   }
-  router.push({ name: 'inquiry', params: { id: String(inquiry.id) } }).catch((err) => {
-    console.error(err)
-    showError(t('agora', 'Failed to navigate to inquiry'))
-  })
+  router
+    .push({ name: "inquiry", params: { id: String(inquiry.id) } })
+    .catch((err) => {
+      console.error(err);
+      showError(t("agora", "Failed to navigate to inquiry"));
+    });
 }
 
 function handleViewOption(option: Option) {
   if (!option?.id) {
-    showError(t('agora', 'Cannot open option: missing ID'))
-    return
+    showError(t("agora", "Cannot open option: missing ID"));
+    return;
   }
-  router.push({ name: 'option', params: { id: String(option.id) } }).catch((err) => {
-    console.error(err)
-    showError(t('agora', 'Failed to navigate to option'))
-  })
+  router
+    .push({ name: "option", params: { id: String(option.id) } })
+    .catch((err) => {
+      console.error(err);
+      showError(t("agora", "Failed to navigate to option"));
+    });
 }
 
 // ============================================================
@@ -1151,104 +1235,107 @@ function handleViewOption(option: Option) {
 // ============================================================
 const deleteDialogTitle = computed(() =>
   deleteDialogGroup.value
-    ? t('agora', 'Delete "{group}"', { group: deleteDialogGroup.value.title })
-    : t('agora', 'Delete group')
-)
+    ? t("agora", 'Delete "{group}"', { group: deleteDialogGroup.value.title })
+    : t("agora", "Delete group"),
+);
 
 const deleteDialogMessage = computed(() =>
   t(
-    'agora',
-    'Are you sure you want to delete this group? All subgroups and inquiries within it will also be deleted. This action cannot be undone.'
-  )
-)
+    "agora",
+    "Are you sure you want to delete this group? All subgroups and inquiries within it will also be deleted. This action cannot be undone.",
+  ),
+);
 
 const deleteDialogButtons = computed(() => [
   {
-    label: t('agora', 'Cancel'),
-    type: 'secondary',
+    label: t("agora", "Cancel"),
+    type: "secondary",
     callback: () => {
-      showDeleteDialog.value = false
-      deleteDialogGroup.value = null
+      showDeleteDialog.value = false;
+      deleteDialogGroup.value = null;
     },
   },
   {
-    label: t('agora', 'Delete'),
-    type: 'error',
+    label: t("agora", "Delete"),
+    type: "error",
     callback: async () => {
-      if (deleteDialogGroup.value) await performDeleteGroup(deleteDialogGroup.value)
-      showDeleteDialog.value = false
-      deleteDialogGroup.value = null
+      if (deleteDialogGroup.value)
+        await performDeleteGroup(deleteDialogGroup.value);
+      showDeleteDialog.value = false;
+      deleteDialogGroup.value = null;
     },
   },
-])
+]);
 
 // ============================================================
 // Available Nextcloud groups for the creation dialog
 // ============================================================
 const availableGroups = computed(() => {
-  const groups = sessionStore.currentUser.groups || {}
-  if (typeof groups === 'object' && !Array.isArray(groups)) {
-    return Object.keys(groups)
+  const groups = sessionStore.currentUser.groups || {};
+  if (typeof groups === "object" && !Array.isArray(groups)) {
+    return Object.keys(groups);
   }
-  return groups as string[]
-})
+  return groups as string[];
+});
 
 // ============================================================
 // Lifecycle
 // ============================================================
-const shouldGroupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value)
+const shouldGroupNotFound = computed(
+  () => hasSlug.value && !currentInquiryGroup.value,
+);
 
 watch(
   shouldGroupNotFound,
   (v) => {
-    groupNotFound.value = v
+    groupNotFound.value = v;
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 onMounted(async () => {
-  isLoading.value = true
+  isLoading.value = true;
   try {
     if (inquiryGroupsStore.inquiryGroups.length === 0) {
-      await inquiryGroupsStore.fetchAllGroups()
+      await inquiryGroupsStore.fetchAllGroups();
     }
     if (inquiriesStore.inquiries.length === 0) {
-      await inquiriesStore.load()
+      await inquiriesStore.load();
     }
     if (hasSlug.value) {
-      const slug = route.params.slug as string
-      const group = inquiryGroupsStore.bySlug(slug)
+      const slug = route.params.slug as string;
+      const group = inquiryGroupsStore.bySlug(slug);
       if (group) {
-        await inquiryGroupStore.load(group.id)
+        await inquiryGroupStore.load(group.id);
       } else {
-        groupNotFound.value = true
+        groupNotFound.value = true;
       }
     }
   } catch (error) {
-    console.error('Error loading data:', error)
-    showError(t('agora', 'Failed to load data'))
+    console.error("Error loading data:", error);
+    showError(t("agora", "Failed to load data"));
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-})
+});
 
 watch(
   () => route.params.slug,
   async (newSlug, oldSlug) => {
-    if (newSlug === oldSlug) return
-    isLoading.value = true
-    groupNotFound.value = false
+    if (newSlug === oldSlug) return;
+    isLoading.value = true;
+    groupNotFound.value = false;
     if (hasSlug.value) {
-      const group = inquiryGroupsStore.bySlug(route.params.slug as string)
+      const group = inquiryGroupsStore.bySlug(route.params.slug as string);
       if (group) {
-        await inquiryGroupStore.load(group.id)
+        await inquiryGroupStore.load(group.id);
       } else {
-        groupNotFound.value = true
+        groupNotFound.value = true;
       }
     }
-    isLoading.value = false
-  }
-)
+    isLoading.value = false;
+  },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -1261,9 +1348,12 @@ watch(
   --ig-radius-lg: 16px;
 
   --ig-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --ig-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --ig-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
-  --ig-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
+  --ig-shadow-sm:
+    0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --ig-shadow-md:
+    0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --ig-shadow-lg:
+    0 12px 32px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
 
   --ig-accent: var(--color-primary-element, #4a6f8f);
   --ig-accent-soft: rgba(74, 111, 143, 0.08);
@@ -1588,7 +1678,11 @@ watch(
     .vignette-cover-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, transparent 55%, rgba(15, 23, 42, 0.35));
+      background: linear-gradient(
+        to bottom,
+        transparent 55%,
+        rgba(15, 23, 42, 0.35)
+      );
     }
   }
 

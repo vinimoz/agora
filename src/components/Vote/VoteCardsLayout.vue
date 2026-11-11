@@ -28,18 +28,36 @@
         :get-user-vote-value-for-item="getUserVoteValueForItem"
         @vote="(rawItem, value) => $emit('vote', rawItem, value)"
         @approval-toggle="(itemId) => $emit('toggleSelection', itemId)"
-        @change-rank="(itemId, rank) => $emit('update:rankings', { ...rankings, [itemId]: rank })"
-        @change-grade="(itemId, grade) => $emit('update:grades', { ...grades, [itemId]: grade })"
-        @update:score="(itemId, score) => $emit('update:scores', { ...scores, [itemId]: score })"
-        @update:star="(itemId, star) => $emit('update:scores', { ...scores, [itemId]: star })"
+        @change-rank="
+          (itemId, rank) =>
+            $emit('update:rankings', { ...rankings, [itemId]: rank })
+        "
+        @change-grade="
+          (itemId, grade) =>
+            $emit('update:grades', { ...grades, [itemId]: grade })
+        "
+        @update:score="
+          (itemId, score) =>
+            $emit('update:scores', { ...scores, [itemId]: score })
+        "
+        @update:star="
+          (itemId, star) =>
+            $emit('update:scores', { ...scores, [itemId]: star })
+        "
         @update:reaction="
-          (itemId, reaction) => $emit('update:reactions', { ...reactions, [itemId]: reaction })
+          (itemId, reaction) =>
+            $emit('update:reactions', { ...reactions, [itemId]: reaction })
         "
         @update:quadratic="
-          (itemId, votes) => $emit('update:quadraticVotes', { ...quadraticVotes, [itemId]: votes })
+          (itemId, votes) =>
+            $emit('update:quadraticVotes', {
+              ...quadraticVotes,
+              [itemId]: votes,
+            })
         "
         @update:token_weight="
-          (itemId, weight) => $emit('update:tokenWeights', { ...tokenWeights, [itemId]: weight })
+          (itemId, weight) =>
+            $emit('update:tokenWeights', { ...tokenWeights, [itemId]: weight })
         "
         @open-supports-modal="(itemId) => $emit('openSupportsModal', itemId)"
       />
@@ -54,7 +72,7 @@
         :is="emptyIcon"
         :size="48"
       />
-      <p>{{ t('agora', 'No items available') }}</p>
+      <p>{{ t("agora", "No items available") }}</p>
     </div>
 
     <!-- Submit section -->
@@ -66,7 +84,9 @@
         <NcButton
           type="primary"
           size="large"
-          :disabled="!canSubmitMultiVote || (hasUserVoted && !hasSelectionsChanged)"
+          :disabled="
+            !canSubmitMultiVote || (hasUserVoted && !hasSelectionsChanged)
+          "
           @click="$emit('submitMultiVote')"
         >
           <template #icon>
@@ -84,7 +104,7 @@
           <template #icon>
             <X :size="18" />
           </template>
-          {{ t('agora', 'Remove my vote') }}
+          {{ t("agora", "Remove my vote") }}
         </NcButton>
 
         <div
@@ -103,85 +123,90 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { Vote as VoteIcon, X } from 'lucide-vue-next'
-import VoteCard from './VoteCard.vue'
-import { InquiryOptionIcons, InquiryGeneralIcons } from '../../utils/icons.ts'
-import type { Item, SupportEngine } from '../../Types/index'
-import type { SupportValue } from '../../Types/votingType'
-import type { MajorityJudgmentSummary } from '../../../composables/useVoteContext'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { Vote as VoteIcon, X } from "lucide-vue-next";
+import VoteCard from "./VoteCard.vue";
+import { InquiryOptionIcons, InquiryGeneralIcons } from "../../utils/icons.ts";
+import type { Item, SupportEngine } from "../../Types/index";
+import type { SupportValue } from "../../Types/votingType";
+import type { MajorityJudgmentSummary } from "../../../composables/useVoteContext";
 
 const props = defineProps<{
   /**
    * Required — this is the list of full Item wrappers (not the trimmed
    * `VotableItem` shape from useVoteContext).
    */
-  items: Item[]
-  effectiveEngineId: string
-  activeEngine?: SupportEngine
-  canVote?: boolean
-  hasUserVoted: boolean
-  hasSelectionsChanged: boolean
-  rankings: Record<number, number>
-  scores: Record<number, number>
-  grades: Record<number, string | null>
-  reactions: Record<number, string[] | null>
-  quadraticVotes: Record<number, number>
-  tokenWeights: Record<number, number>
-  canSubmitMultiVote: boolean
-  voteSelectionInfo: string | null
-  getItemVoteCount: (itemId: number) => number
-  getItemMajorityJudgment?: (itemId: number) => MajorityJudgmentSummary | null
-  getPercentage: (item: Item | { id: number }) => number
-  hasUserVotedFor: (itemId: number) => boolean
-  isSelectedForVote: (itemId: number) => boolean
-  getUserVoteValueForItem: (itemId: number) => SupportValue | null
-  autoSave?: boolean
-  hideResults?: boolean
-}>()
+  items: Item[];
+  effectiveEngineId: string;
+  activeEngine?: SupportEngine;
+  canVote?: boolean;
+  hasUserVoted: boolean;
+  hasSelectionsChanged: boolean;
+  rankings: Record<number, number>;
+  scores: Record<number, number>;
+  grades: Record<number, string | null>;
+  reactions: Record<number, string[] | null>;
+  quadraticVotes: Record<number, number>;
+  tokenWeights: Record<number, number>;
+  canSubmitMultiVote: boolean;
+  voteSelectionInfo: string | null;
+  getItemVoteCount: (itemId: number) => number;
+  getItemMajorityJudgment?: (itemId: number) => MajorityJudgmentSummary | null;
+  getPercentage: (item: Item | { id: number }) => number;
+  hasUserVotedFor: (itemId: number) => boolean;
+  isSelectedForVote: (itemId: number) => boolean;
+  getUserVoteValueForItem: (itemId: number) => SupportValue | null;
+  autoSave?: boolean;
+  hideResults?: boolean;
+}>();
 
 const emit = defineEmits<{
-  toggleSelection: [itemId: number]
-  'update:rankings': [rankings: Record<number, number>]
-  'update:scores': [scores: Record<number, number>]
-  'update:grades': [grades: Record<number, string | null>]
-  'update:reactions': [reactions: Record<number, string[] | null>]
-  'update:quadraticVotes': [votes: Record<number, number>]
-  'update:tokenWeights': [weights: Record<number, number>]
-  vote: [item: Item, value: unknown]
-  removeMyVote: []
-  openSupportsModal: [itemId: number]
-  submitMultiVote: []
-}>()
+  toggleSelection: [itemId: number];
+  "update:rankings": [rankings: Record<number, number>];
+  "update:scores": [scores: Record<number, number>];
+  "update:grades": [grades: Record<number, string | null>];
+  "update:reactions": [reactions: Record<number, string[] | null>];
+  "update:quadraticVotes": [votes: Record<number, number>];
+  "update:tokenWeights": [weights: Record<number, number>];
+  vote: [item: Item, value: unknown];
+  removeMyVote: [];
+  openSupportsModal: [itemId: number];
+  submitMultiVote: [];
+}>();
 
-void emit
+void emit;
 
-const emptyIcon = computed(() => InquiryOptionIcons.Inbox ?? InquiryGeneralIcons.File)
+const emptyIcon = computed(
+  () => InquiryOptionIcons.Inbox ?? InquiryGeneralIcons.File,
+);
 const infoIcon = computed(
-  () => InquiryOptionIcons.Info ?? InquiryGeneralIcons.Info ?? InquiryGeneralIcons.File
-)
+  () =>
+    InquiryOptionIcons.Info ??
+    InquiryGeneralIcons.Info ??
+    InquiryGeneralIcons.File,
+);
 
 const showSubmitButton = computed(
   () =>
     props.canVote &&
-    props.activeEngine?.status === 'active' &&
-    props.effectiveEngineId !== 'trending' &&
-    props.items.length > 0
-)
+    props.activeEngine?.status === "active" &&
+    props.effectiveEngineId !== "trending" &&
+    props.items.length > 0,
+);
 
 const getSubmitButtonText = (): string => {
   const texts: Record<string, string> = {
-    approval: t('agora', 'Submit selections'),
-    ranking: t('agora', 'Submit ranking'),
-    score: t('agora', 'Submit scores'),
-    star: t('agora', 'Submit ratings'),
-    condorcet: t('agora', 'Submit ranking'),
-    borda: t('agora', 'Submit ranking'),
-  }
-  return texts[props.effectiveEngineId] || t('agora', 'Submit vote')
-}
+    approval: t("agora", "Submit selections"),
+    ranking: t("agora", "Submit ranking"),
+    score: t("agora", "Submit scores"),
+    star: t("agora", "Submit ratings"),
+    condorcet: t("agora", "Submit ranking"),
+    borda: t("agora", "Submit ranking"),
+  };
+  return texts[props.effectiveEngineId] || t("agora", "Submit vote");
+};
 </script>
 
 <style scoped lang="scss">

@@ -4,96 +4,103 @@
 -->
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import { computed, ref, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcInputField from "@nextcloud/vue/components/NcInputField";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcLoadingIcon from "@nextcloud/vue/components/NcLoadingIcon";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import { InquiryOptionIcons } from "../../../utils/icons.ts";
 
-const emit = defineEmits(['familySelected'])
-const appSettingsStore = useAppSettingsStore()
+const emit = defineEmits(["familySelected"]);
+const appSettingsStore = useAppSettingsStore();
 
 // ============================================================
 // STATE
 // ============================================================
-const editingFamily = ref(null)
-const savingFamily = ref(false)
-const searchQuery = ref('')
-const expandedFamilyId = ref(null)
-const editTab = ref('basic') // basic | ui | rules | features | actions
+const editingFamily = ref(null);
+const savingFamily = ref(false);
+const searchQuery = ref("");
+const expandedFamilyId = ref(null);
+const editTab = ref("basic"); // basic | ui | rules | features | actions
 
 const emptyFamily = () => ({
-  family_type: '',
-  label: '',
-  description: '',
+  family_type: "",
+  label: "",
+  description: "",
   icon: null,
   sort_order: appSettingsStore.optionFamilyTab?.length ?? 0,
   ui: {},
   rules: {},
   features: [],
   actions: [],
-})
+});
 
-const newFamily = ref(emptyFamily())
-const newFeature = ref('')
-const newAction = ref({ key: '', label: '', icon: '' })
+const newFamily = ref(emptyFamily());
+const newFeature = ref("");
+const newAction = ref({ key: "", label: "", icon: "" });
 
 // ============================================================
 // ICONS
 // ============================================================
 const availableIcons = computed(() =>
   Object.keys(InquiryOptionIcons)
-    .filter((key) => key !== 'default')
+    .filter((key) => key !== "default")
     .map((iconId) => ({
       id: iconId,
-      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    }))
-)
+      label: t("agora", iconId.replace(/([A-Z])/g, " $1").trim()),
+    })),
+);
 
 const findIconById = (iconId) => {
-  if (!iconId) return null
-  if (typeof iconId === 'object') return iconId
-  return availableIcons.value.find((icon) => icon.id === iconId) || null
-}
+  if (!iconId) return null;
+  if (typeof iconId === "object") return iconId;
+  return availableIcons.value.find((icon) => icon.id === iconId) || null;
+};
 
 const getIconComponent = (iconName) => {
-  const id = typeof iconName === 'object' ? iconName?.id : iconName
-  return InquiryOptionIcons[id] || InquiryOptionIcons.default
-}
+  const id = typeof iconName === "object" ? iconName?.id : iconName;
+  return InquiryOptionIcons[id] || InquiryOptionIcons.default;
+};
 
 const extractIconId = (icon) => {
-  if (!icon) return ''
-  if (typeof icon === 'string') return icon
-  if (typeof icon === 'object') return icon.id || ''
-  return String(icon)
-}
+  if (!icon) return "";
+  if (typeof icon === "string") return icon;
+  if (typeof icon === "object") return icon.id || "";
+  return String(icon);
+};
 
 // ============================================================
 // COMPUTED
 // ============================================================
 const familiesWithStats = computed(() => {
-  const families = appSettingsStore.optionFamilyTab ?? []
+  const families = appSettingsStore.optionFamilyTab ?? [];
   return families.map((family) => {
     const typesCount = (appSettingsStore.optionTypeTab ?? []).filter(
-      (type) => type.family === family.family_type
-    ).length
+      (type) => type.family === family.family_type,
+    ).length;
 
-    let parsedUi = family.ui
-    let parsedRules = family.rules
-    let parsedFeatures = family.features
-    let parsedActions = family.actions
+    let parsedUi = family.ui;
+    let parsedRules = family.rules;
+    let parsedFeatures = family.features;
+    let parsedActions = family.actions;
 
     try {
-      if (typeof parsedUi === 'string') parsedUi = JSON.parse(parsedUi || '{}')
-      if (typeof parsedRules === 'string') parsedRules = JSON.parse(parsedRules || '{}')
-      if (typeof parsedFeatures === 'string') parsedFeatures = JSON.parse(parsedFeatures || '[]')
-      if (typeof parsedActions === 'string') parsedActions = JSON.parse(parsedActions || '[]')
+      if (typeof parsedUi === "string") parsedUi = JSON.parse(parsedUi || "{}");
+      if (typeof parsedRules === "string")
+        parsedRules = JSON.parse(parsedRules || "{}");
+      if (typeof parsedFeatures === "string")
+        parsedFeatures = JSON.parse(parsedFeatures || "[]");
+      if (typeof parsedActions === "string")
+        parsedActions = JSON.parse(parsedActions || "[]");
     } catch (e) {
-      showError(t('agora', 'Failed with family stats : {msg}', { msg: e?.message ?? '' }))
+      showError(
+        t("agora", "Failed with family stats : {msg}", {
+          msg: e?.message ?? "",
+        }),
+      );
     }
 
     return {
@@ -103,35 +110,35 @@ const familiesWithStats = computed(() => {
       parsedRules,
       parsedFeatures: Array.isArray(parsedFeatures) ? parsedFeatures : [],
       parsedActions: Array.isArray(parsedActions) ? parsedActions : [],
-    }
-  })
-})
+    };
+  });
+});
 
 const filteredFamilies = computed(() => {
-  if (!searchQuery.value.trim()) return familiesWithStats.value
-  const q = searchQuery.value.toLowerCase()
+  if (!searchQuery.value.trim()) return familiesWithStats.value;
+  const q = searchQuery.value.toLowerCase();
   return familiesWithStats.value.filter(
     (f) =>
       f.family_type?.toLowerCase().includes(q) ||
       f.label?.toLowerCase().includes(q) ||
-      f.description?.toLowerCase().includes(q)
-  )
-})
+      f.description?.toLowerCase().includes(q),
+  );
+});
 
 // ============================================================
 // HELPERS
 // ============================================================
 const normalizeJsonField = (value, fallback) => {
-  if (value === null || value === undefined || value === '') return fallback
-  if (typeof value === 'object') return value
+  if (value === null || value === undefined || value === "") return fallback;
+  if (typeof value === "object") return value;
   try {
-    return JSON.parse(value)
+    return JSON.parse(value);
   } catch {
-    return fallback
+    return fallback;
   }
-}
+};
 
-const deepClone = (obj) => JSON.parse(JSON.stringify(obj))
+const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
 // ============================================================
 // ACTIONS
@@ -144,67 +151,69 @@ const startEditing = (family) => {
     rules: normalizeJsonField(family.rules, {}),
     features: normalizeJsonField(family.features, []),
     actions: normalizeJsonField(family.actions, []),
-  }
-  editTab.value = 'basic'
-}
+  };
+  editTab.value = "basic";
+};
 
 const cancelEditing = () => {
-  editingFamily.value = null
-  editTab.value = 'basic'
-}
+  editingFamily.value = null;
+  editTab.value = "basic";
+};
 
 const validateFamily = (family, isEdit = false) => {
   if (!family.family_type?.trim()) {
-    showError(t('agora', 'Family type key is mandatory'))
-    return false
+    showError(t("agora", "Family type key is mandatory"));
+    return false;
   }
   if (!family.label?.trim()) {
-    showError(t('agora', 'Display label is mandatory'))
-    return false
+    showError(t("agora", "Display label is mandatory"));
+    return false;
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(family.family_type)) {
     showError(
       t(
-        'agora',
-        'Family type key must be alphanumeric (underscores allowed), starting with a letter'
-      )
-    )
-    return false
+        "agora",
+        "Family type key must be alphanumeric (underscores allowed), starting with a letter",
+      ),
+    );
+    return false;
   }
   if (!isEdit) {
     const exists = (appSettingsStore.optionFamilyTab ?? []).some(
-      (f) => f.family_type === family.family_type
-    )
+      (f) => f.family_type === family.family_type,
+    );
     if (exists) {
-      showError(t('agora', 'A family with this key already exists'))
-      return false
+      showError(t("agora", "A family with this key already exists"));
+      return false;
     }
   }
-  return true
-}
+  return true;
+};
 
 const addFamily = async () => {
-  if (!validateFamily(newFamily.value, false)) return
-  savingFamily.value = true
+  if (!validateFamily(newFamily.value, false)) return;
+  savingFamily.value = true;
   try {
     await appSettingsStore.addOptionFamily({
       ...newFamily.value,
       icon: extractIconId(newFamily.value.icon),
       created: Date.now(),
-    })
-    showSuccess(t('agora', 'Family added'))
-    newFamily.value = emptyFamily()
+    });
+    showSuccess(t("agora", "Family added"));
+    newFamily.value = emptyFamily();
   } catch (e) {
-    showError(t('agora', 'Failed to add family: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to add family: {msg}", { msg: e?.message ?? "" }),
+    );
   } finally {
-    savingFamily.value = false
+    savingFamily.value = false;
   }
-}
+};
 
 const updateFamily = async (family) => {
-  if (!family) return
-  if (!validateFamily(family, true)) return
-  savingFamily.value = true
+  if (!family) return;
+  if (!validateFamily(family, true)) return;
+  savingFamily.value = true;
   try {
     await appSettingsStore.updateOptionFamily(family.id, {
       ...family,
@@ -213,128 +222,143 @@ const updateFamily = async (family) => {
       rules: normalizeJsonField(family.rules, {}),
       features: normalizeJsonField(family.features, []),
       actions: normalizeJsonField(family.actions, []),
-    })
-    showSuccess(t('agora', 'Family updated'))
-    editingFamily.value = null
+    });
+    showSuccess(t("agora", "Family updated"));
+    editingFamily.value = null;
   } catch (e) {
-    showError(t('agora', 'Failed to update family: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to update family: {msg}", { msg: e?.message ?? "" }),
+    );
   } finally {
-    savingFamily.value = false
+    savingFamily.value = false;
   }
-}
+};
 
 const deleteFamily = async (family) => {
-  const typesCount = family.typesCount ?? 0
+  const typesCount = family.typesCount ?? 0;
   const message =
     typesCount > 0
-      ? t('agora', 'This family contains {count} option types. Delete anyway?', {
-          count: typesCount,
-        })
-      : t('agora', 'Are you sure you want to delete this family?')
-  if (!confirm(message)) return
+      ? t(
+          "agora",
+          "This family contains {count} option types. Delete anyway?",
+          {
+            count: typesCount,
+          },
+        )
+      : t("agora", "Are you sure you want to delete this family?");
+  if (!confirm(message)) return;
   try {
-    await appSettingsStore.deleteOptionFamily(family.id)
-    showSuccess(t('agora', 'Family deleted'))
-    if (expandedFamilyId.value === family.id) expandedFamilyId.value = null
+    await appSettingsStore.deleteOptionFamily(family.id);
+    showSuccess(t("agora", "Family deleted"));
+    if (expandedFamilyId.value === family.id) expandedFamilyId.value = null;
   } catch (e) {
-    showError(t('agora', 'Failed to delete family: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to delete family: {msg}", { msg: e?.message ?? "" }),
+    );
   }
-}
+};
 
 const selectFamily = (family) => {
-  emit('familySelected', family)
-}
+  emit("familySelected", family);
+};
 
 const toggleExpand = (familyId) => {
-  expandedFamilyId.value = expandedFamilyId.value === familyId ? null : familyId
-}
+  expandedFamilyId.value =
+    expandedFamilyId.value === familyId ? null : familyId;
+};
 
 // ============================================================
 // FEATURE / ACTION LIST MANAGEMENT
 // ============================================================
 const addFeature = () => {
-  const value = newFeature.value?.trim()
-  if (!value) return
-  if (!Array.isArray(editingFamily.value.features)) editingFamily.value.features = []
+  const value = newFeature.value?.trim();
+  if (!value) return;
+  if (!Array.isArray(editingFamily.value.features))
+    editingFamily.value.features = [];
   if (editingFamily.value.features.includes(value)) {
-    showError(t('agora', 'Feature already present'))
-    return
+    showError(t("agora", "Feature already present"));
+    return;
   }
-  editingFamily.value.features.push(value)
-  newFeature.value = ''
-}
+  editingFamily.value.features.push(value);
+  newFeature.value = "";
+};
 
 const removeFeature = (index) => {
-  editingFamily.value.features.splice(index, 1)
-}
+  editingFamily.value.features.splice(index, 1);
+};
 
 const addAction = () => {
-  const { key, label, icon } = newAction.value
+  const { key, label, icon } = newAction.value;
   if (!key?.trim() || !label?.trim()) {
-    showError(t('agora', 'Action key and label are required'))
-    return
+    showError(t("agora", "Action key and label are required"));
+    return;
   }
-  if (!Array.isArray(editingFamily.value.actions)) editingFamily.value.actions = []
+  if (!Array.isArray(editingFamily.value.actions))
+    editingFamily.value.actions = [];
   editingFamily.value.actions.push({
     key: key.trim(),
     label: label.trim(),
-    icon: icon?.trim() || '',
-  })
-  newAction.value = { key: '', label: '', icon: '' }
-}
+    icon: icon?.trim() || "",
+  });
+  newAction.value = { key: "", label: "", icon: "" };
+};
 
 const removeAction = (index) => {
-  editingFamily.value.actions.splice(index, 1)
-}
+  editingFamily.value.actions.splice(index, 1);
+};
 
 const addNewFamilyFeature = () => {
-  const value = newFeature.value?.trim()
-  if (!value) return
-  if (!Array.isArray(newFamily.value.features)) newFamily.value.features = []
+  const value = newFeature.value?.trim();
+  if (!value) return;
+  if (!Array.isArray(newFamily.value.features)) newFamily.value.features = [];
   if (!newFamily.value.features.includes(value)) {
-    newFamily.value.features.push(value)
+    newFamily.value.features.push(value);
   }
-  newFeature.value = ''
-}
+  newFeature.value = "";
+};
 
 const removeNewFamilyFeature = (index) => {
-  newFamily.value.features.splice(index, 1)
-}
+  newFamily.value.features.splice(index, 1);
+};
 
 const addNewFamilyAction = () => {
-  const { key, label, icon } = newAction.value
+  const { key, label, icon } = newAction.value;
   if (!key?.trim() || !label?.trim()) {
-    showError(t('agora', 'Action key and label are required'))
-    return
+    showError(t("agora", "Action key and label are required"));
+    return;
   }
-  if (!Array.isArray(newFamily.value.actions)) newFamily.value.actions = []
-  newFamily.value.actions.push({ key: key.trim(), label: label.trim(), icon: icon?.trim() || '' })
-  newAction.value = { key: '', label: '', icon: '' }
-}
+  if (!Array.isArray(newFamily.value.actions)) newFamily.value.actions = [];
+  newFamily.value.actions.push({
+    key: key.trim(),
+    label: label.trim(),
+    icon: icon?.trim() || "",
+  });
+  newAction.value = { key: "", label: "", icon: "" };
+};
 
 const removeNewFamilyAction = (index) => {
-  newFamily.value.actions.splice(index, 1)
-}
+  newFamily.value.actions.splice(index, 1);
+};
 
 watch(
   () => appSettingsStore.optionFamilyTab,
   () => {
     // Keep computed lists reactive
   },
-  { deep: true }
-)
+  { deep: true },
+);
 </script>
 
 <template>
   <div class="option-families-manager">
     <header class="manager-header">
       <div>
-        <h2>{{ t('agora', 'Option families management') }}</h2>
+        <h2>{{ t("agora", "Option families management") }}</h2>
         <p class="description">
           {{
             t(
-              'agora',
-              'Manage option families that group different types of options (e.g., debate, vote, proposal). Each family defines layout, rules, features and actions shared by its option types.'
+              "agora",
+              "Manage option families that group different types of options (e.g., debate, vote, proposal). Each family defines layout, rules, features and actions shared by its option types.",
             )
           }}
         </p>
@@ -354,7 +378,7 @@ watch(
     <!-- ==================== EXISTING FAMILIES ==================== -->
     <section class="families-list">
       <h3>
-        {{ t('agora', 'Existing families') }}
+        {{ t("agora", "Existing families") }}
         <span class="count-badge">{{ filteredFamilies.length }}</span>
       </h3>
 
@@ -362,7 +386,7 @@ watch(
         v-if="!filteredFamilies.length"
         class="empty-state"
       >
-        {{ t('agora', 'No families found.') }}
+        {{ t("agora", "No families found.") }}
       </div>
 
       <div
@@ -395,25 +419,37 @@ watch(
             </p>
             <div class="family-stats">
               <span class="stat-chip types">
-                {{ t('agora', '{count} types', { count: family.typesCount }) }}
+                {{ t("agora", "{count} types", { count: family.typesCount }) }}
               </span>
               <span
                 v-if="family.parsedFeatures?.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} features', { count: family.parsedFeatures.length }) }}
+                {{
+                  t("agora", "{count} features", {
+                    count: family.parsedFeatures.length,
+                  })
+                }}
               </span>
               <span
                 v-if="family.parsedActions?.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} actions', { count: family.parsedActions.length }) }}
+                {{
+                  t("agora", "{count} actions", {
+                    count: family.parsedActions.length,
+                  })
+                }}
               </span>
               <span
                 v-if="family.parsedUi?.layout"
                 class="stat-chip layout"
               >
-                {{ t('agora', 'layout: {layout}', { layout: family.parsedUi.layout }) }}
+                {{
+                  t("agora", "layout: {layout}", {
+                    layout: family.parsedUi.layout,
+                  })
+                }}
               </span>
             </div>
           </div>
@@ -426,16 +462,20 @@ watch(
               :aria-label="t('agora', 'Show details')"
               @click="toggleExpand(family.id)"
             >
-              {{ expandedFamilyId === family.id ? t('agora', 'Hide') : t('agora', 'Details') }}
+              {{
+                expandedFamilyId === family.id
+                  ? t("agora", "Hide")
+                  : t("agora", "Details")
+              }}
             </NcButton>
             <NcButton @click="startEditing(family)">
-              {{ t('agora', 'Edit') }}
+              {{ t("agora", "Edit") }}
             </NcButton>
             <NcButton
               type="error"
               @click="deleteFamily(family)"
             >
-              {{ t('agora', 'Delete') }}
+              {{ t("agora", "Delete") }}
             </NcButton>
           </div>
         </div>
@@ -446,15 +486,15 @@ watch(
           class="family-details"
         >
           <div class="detail-section">
-            <h5>{{ t('agora', 'UI') }}</h5>
+            <h5>{{ t("agora", "UI") }}</h5>
             <pre>{{ JSON.stringify(family.parsedUi, null, 2) }}</pre>
           </div>
           <div class="detail-section">
-            <h5>{{ t('agora', 'Rules') }}</h5>
+            <h5>{{ t("agora", "Rules") }}</h5>
             <pre>{{ JSON.stringify(family.parsedRules, null, 2) }}</pre>
           </div>
           <div class="detail-section">
-            <h5>{{ t('agora', 'Features') }}</h5>
+            <h5>{{ t("agora", "Features") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(f, i) in family.parsedFeatures"
@@ -467,12 +507,12 @@ watch(
                 v-if="!family.parsedFeatures?.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
           <div class="detail-section">
-            <h5>{{ t('agora', 'Actions') }}</h5>
+            <h5>{{ t("agora", "Actions") }}</h5>
             <ul class="action-list">
               <li
                 v-for="(a, i) in family.parsedActions"
@@ -488,7 +528,7 @@ watch(
                 v-if="!family.parsedActions?.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
@@ -498,7 +538,7 @@ watch(
 
     <!-- ==================== ADD NEW FAMILY ==================== -->
     <section class="add-family-form">
-      <h3>{{ t('agora', 'Add new family') }}</h3>
+      <h3>{{ t("agora", "Add new family") }}</h3>
 
       <div class="form-grid">
         <NcInputField
@@ -545,7 +585,7 @@ watch(
 
         <!-- Features inline editor -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Features') }}</label>
+          <label class="field-label">{{ t("agora", "Features") }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newFeature"
@@ -559,7 +599,7 @@ watch(
               type="secondary"
               @click="addNewFamilyFeature"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -576,7 +616,7 @@ watch(
 
         <!-- Actions inline editor -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Actions') }}</label>
+          <label class="field-label">{{ t("agora", "Actions") }}</label>
           <div class="inline-editor action-editor">
             <NcInputField
               v-model="newAction.key"
@@ -600,7 +640,7 @@ watch(
               type="secondary"
               @click="addNewFamilyAction"
             >
-              {{ t('agora', 'Add action') }}
+              {{ t("agora", "Add action") }}
             </NcButton>
           </div>
           <ul class="action-list">
@@ -622,14 +662,16 @@ watch(
         <div class="form-actions full-width">
           <NcButton
             type="primary"
-            :disabled="savingFamily || !newFamily.family_type || !newFamily.label"
+            :disabled="
+              savingFamily || !newFamily.family_type || !newFamily.label
+            "
             @click="addFamily"
           >
             <NcLoadingIcon
               v-if="savingFamily"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Add family') }}</span>
+            <span v-else>{{ t("agora", "Add family") }}</span>
           </NcButton>
         </div>
       </div>
@@ -643,7 +685,7 @@ watch(
     >
       <div class="modal-content large-modal">
         <header class="modal-header">
-          <h3>{{ t('agora', 'Edit family') }}: {{ editingFamily.label }}</h3>
+          <h3>{{ t("agora", "Edit family") }}: {{ editingFamily.label }}</h3>
           <NcButton
             type="tertiary"
             @click="cancelEditing"
@@ -660,7 +702,7 @@ watch(
             :class="{ active: editTab === tab }"
             @click="editTab = tab"
           >
-            {{ t('agora', tab) }}
+            {{ t("agora", tab) }}
           </button>
         </nav>
 
@@ -712,8 +754,8 @@ watch(
           <p class="help-text">
             {{
               t(
-                'agora',
-                'UI configuration as JSON. Defines the layout and display options for this family.'
+                "agora",
+                "UI configuration as JSON. Defines the layout and display options for this family.",
               )
             }}
           </p>
@@ -724,7 +766,7 @@ watch(
             @input="
               (e) => {
                 try {
-                  editingFamily.ui = JSON.parse(e.target.value)
+                  editingFamily.ui = JSON.parse(e.target.value);
                 } catch (_) {
                   /* keep raw */
                 }
@@ -741,8 +783,8 @@ watch(
           <p class="help-text">
             {{
               t(
-                'agora',
-                'Rules configuration as JSON. Defines validation and behavior constraints.'
+                "agora",
+                "Rules configuration as JSON. Defines validation and behavior constraints.",
               )
             }}
           </p>
@@ -753,7 +795,7 @@ watch(
             @input="
               (e) => {
                 try {
-                  editingFamily.rules = JSON.parse(e.target.value)
+                  editingFamily.rules = JSON.parse(e.target.value);
                 } catch (_) {
                   /* keep raw */
                 }
@@ -779,7 +821,7 @@ watch(
               type="secondary"
               @click="addFeature"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -823,7 +865,7 @@ watch(
               type="secondary"
               @click="addAction"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <ul class="action-list">
@@ -844,7 +886,7 @@ watch(
 
         <footer class="modal-actions">
           <NcButton @click="cancelEditing">
-            {{ t('agora', 'Cancel') }}
+            {{ t("agora", "Cancel") }}
           </NcButton>
           <NcButton
             type="primary"
@@ -855,7 +897,7 @@ watch(
               v-if="savingFamily"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Save changes') }}</span>
+            <span v-else>{{ t("agora", "Save changes") }}</span>
           </NcButton>
         </footer>
       </div>

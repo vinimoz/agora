@@ -4,103 +4,103 @@
 -->
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { NcModal, NcButton } from '@nextcloud/vue'
-import { useTemplateWizardStore } from '../../stores/templateWizard'
+import { computed, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import { NcModal, NcButton } from "@nextcloud/vue";
+import { useTemplateWizardStore } from "../../stores/templateWizard";
 
 // Step components
-import StepUseCaseSelection from './steps/StepUseCaseSelection.vue'
-import StepTemplateSelection from './steps/StepTemplateSelection.vue'
-import StepLanguageSelection from './steps/StepLanguageSelection.vue'
-import StepPreview from './steps/StepPreview.vue'
-import StepSummary from './steps/StepSummary.vue'
-import StepImporting from './steps/StepImporting.vue'
-import StepResults from './steps/StepResults.vue'
+import StepUseCaseSelection from "./steps/StepUseCaseSelection.vue";
+import StepTemplateSelection from "./steps/StepTemplateSelection.vue";
+import StepLanguageSelection from "./steps/StepLanguageSelection.vue";
+import StepPreview from "./steps/StepPreview.vue";
+import StepSummary from "./steps/StepSummary.vue";
+import StepImporting from "./steps/StepImporting.vue";
+import StepResults from "./steps/StepResults.vue";
 
-const wizardStore = useTemplateWizardStore()
+const wizardStore = useTemplateWizardStore();
 
 // Computed properties
 const isOpen = computed({
   get: () => wizardStore.isOpen,
   set: (value: boolean) => {
     if (!value) {
-      wizardStore.closeWizard()
+      wizardStore.closeWizard();
     }
   },
-})
+});
 
 const currentStepComponent = computed(() => {
   const stepMap = {
-    'use-case': StepUseCaseSelection,
-    'template-selection': StepTemplateSelection,
+    "use-case": StepUseCaseSelection,
+    "template-selection": StepTemplateSelection,
     language: StepLanguageSelection,
     preview: StepPreview,
     summary: StepSummary,
     importing: StepImporting,
     results: StepResults,
-  }
-  return stepMap[wizardStore.currentStep] || StepUseCaseSelection
-})
+  };
+  return stepMap[wizardStore.currentStep] || StepUseCaseSelection;
+});
 
 const stepTitle = computed(() => {
   const titles = {
-    'use-case': t('agora', 'Choose your use case'),
-    'template-selection': t('agora', 'Select template'),
-    language: t('agora', 'Choose language'),
-    preview: t('agora', 'Preview template'),
-    summary: t('agora', 'Review & confirm'),
-    importing: t('agora', 'Importing template'),
-    results: t('agora', 'Import complete'),
-  }
-  return titles[wizardStore.currentStep] || ''
-})
+    "use-case": t("agora", "Choose your use case"),
+    "template-selection": t("agora", "Select template"),
+    language: t("agora", "Choose language"),
+    preview: t("agora", "Preview template"),
+    summary: t("agora", "Review & confirm"),
+    importing: t("agora", "Importing template"),
+    results: t("agora", "Import complete"),
+  };
+  return titles[wizardStore.currentStep] || "";
+});
 
 const getStepTitle = (step: string): string => {
   const titles = {
-    'use-case': t('agora', 'Use case'),
-    'template-selection': t('agora', 'Template'),
-    language: t('agora', 'Language'),
-    preview: t('agora', 'Preview'),
-    summary: t('agora', 'Confirm'),
-    importing: t('agora', 'Importing'),
-    results: t('agora', 'Results'),
-  }
-  return titles[step] || ''
-}
+    "use-case": t("agora", "Use case"),
+    "template-selection": t("agora", "Template"),
+    language: t("agora", "Language"),
+    preview: t("agora", "Preview"),
+    summary: t("agora", "Confirm"),
+    importing: t("agora", "Importing"),
+    results: t("agora", "Results"),
+  };
+  return titles[step] || "";
+};
 
 const canShowNavigation = computed(
-  () => !['importing', 'results'].includes(wizardStore.currentStep)
-)
+  () => !["importing", "results"].includes(wizardStore.currentStep),
+);
 
 const nextButtonLabel = computed(() => {
-  if (wizardStore.currentStep === 'summary') {
-    return t('agora', 'Import template')
+  if (wizardStore.currentStep === "summary") {
+    return t("agora", "Import template");
   }
-  return t('agora', 'Next')
-})
+  return t("agora", "Next");
+});
 
 // Actions
 const handleNext = async () => {
-  if (wizardStore.currentStep === 'summary') {
+  if (wizardStore.currentStep === "summary") {
     // Trigger import
     try {
-      await wizardStore.importTemplate()
+      await wizardStore.importTemplate();
     } catch (error) {
-      console.error('Import failed:', error)
+      console.error("Import failed:", error);
     }
   } else {
-    wizardStore.nextStep()
+    wizardStore.nextStep();
   }
-}
+};
 
 const handlePrevious = () => {
-  wizardStore.previousStep()
-}
+  wizardStore.previousStep();
+};
 
 const handleClose = () => {
-  wizardStore.closeWizard()
-}
+  wizardStore.closeWizard();
+};
 
 // Watch for auto-launch when database is empty
 watch(
@@ -109,10 +109,10 @@ watch(
     if (isEmpty && !wizardStore.isOpen) {
       // Auto-launch wizard for empty database
       // This can be controlled by a user preference later
-      console.info('Database is empty - wizard can be auto-launched')
+      console.info("Database is empty - wizard can be auto-launched");
     }
-  }
-)
+  },
+);
 </script>
 
 <template>
@@ -132,7 +132,7 @@ watch(
       >
         <div
           v-for="(step, index) in wizardStore.steps.filter(
-            (s) => !['importing', 'results'].includes(s)
+            (s) => !['importing', 'results'].includes(s),
           )"
           :key="step"
           class="progress-step"
@@ -166,7 +166,7 @@ watch(
           type="tertiary"
           @click="handlePrevious"
         >
-          {{ t('agora', 'Back') }}
+          {{ t("agora", "Back") }}
         </NcButton>
 
         <div class="spacer" />
@@ -175,7 +175,7 @@ watch(
           type="secondary"
           @click="handleClose"
         >
-          {{ t('agora', 'Cancel') }}
+          {{ t("agora", "Cancel") }}
         </NcButton>
 
         <NcButton
@@ -213,7 +213,7 @@ watch(
   position: relative;
 
   &:not(:last-child)::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 18px;
     left: 50%;

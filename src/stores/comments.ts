@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-import { CommentsAPI, PublicAPI } from '../Api'
-import { groupComments } from '../helpers/modules/comments'
-import { Logger } from '../helpers/modules/logger'
-import { useInquiryStore } from './inquiry'
-import { useOptionsStore } from './options' // was: useOptionStore (singular)
-import { useSessionStore } from './session'
+import { CommentsAPI, PublicAPI } from "../Api";
+import { groupComments } from "../helpers/modules/comments";
+import { Logger } from "../helpers/modules/logger";
+import { useInquiryStore } from "./inquiry";
+import { useOptionsStore } from "./options"; // was: useOptionStore (singular)
+import { useSessionStore } from "./session";
 
-import type { AxiosError } from '@nextcloud/axios'
-import type { Comment, CommentsStore } from '../Types/index.ts'
+import type { AxiosError } from "@nextcloud/axios";
+import type { Comment, CommentsStore } from "../Types/index.ts";
 
-export const useCommentsStore = defineStore('comments', {
+export const useCommentsStore = defineStore("comments", {
   state: (): CommentsStore => ({
     comments: [],
   }),
@@ -28,14 +28,16 @@ export const useCommentsStore = defineStore('comments', {
       (state) =>
       (inquiryId: number): Comment[] =>
         state.comments.filter(
-          (comment) => comment.inquiryId === inquiryId && comment.optionId === 0
+          (comment) =>
+            comment.inquiryId === inquiryId && comment.optionId === 0,
         ),
 
     getOptionComments:
       (state) =>
       (inquiryId: number, optionId: number): Comment[] =>
         state.comments.filter(
-          (comment) => comment.inquiryId === inquiryId && comment.optionId === optionId
+          (comment) =>
+            comment.inquiryId === inquiryId && comment.optionId === optionId,
         ),
 
     getAllInquiryComments:
@@ -52,14 +54,16 @@ export const useCommentsStore = defineStore('comments', {
       (state) =>
       (inquiryId: number): number =>
         state.comments.filter(
-          (comment) => comment.inquiryId === inquiryId && comment.optionId === 0
+          (comment) =>
+            comment.inquiryId === inquiryId && comment.optionId === 0,
         ).length,
 
     optionCommentsCount:
       (state) =>
       (inquiryId: number, optionId: number): number =>
         state.comments.filter(
-          (comment) => comment.inquiryId === inquiryId && comment.optionId === optionId
+          (comment) =>
+            comment.inquiryId === inquiryId && comment.optionId === optionId,
         ).length,
   },
 
@@ -72,90 +76,103 @@ export const useCommentsStore = defineStore('comments', {
      *  - status counts are updated even when `inquiryId` param is null
      */
     async load(inquiryId: number | null = null): Promise<void> {
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
 
       const targetInquiryId: number | null =
         inquiryId ??
-        (['inquiry', 'page'].includes(sessionStore.route.name as string)
+        (["inquiry", "page"].includes(sessionStore.route.name as string)
           ? sessionStore.currentInquiryId
-          : null)
+          : null);
 
       try {
         const response = await (() => {
-          if (sessionStore.route.name === 'publicInquiry') {
-            return PublicAPI.getComments(sessionStore.route.params.token as string)
+          if (sessionStore.route.name === "publicInquiry") {
+            return PublicAPI.getComments(
+              sessionStore.route.params.token as string,
+            );
           }
           if (targetInquiryId) {
-            return CommentsAPI.getComments(targetInquiryId)
+            return CommentsAPI.getComments(targetInquiryId);
           }
-          return null
-        })()
+          return null;
+        })();
 
         if (!response) {
-          this.$reset()
-          return
+          this.$reset();
+          return;
         }
 
-        this.comments = response.data.comments
+        this.comments = response.data.comments;
 
         if (targetInquiryId) {
-          this.updateStatusCounts(targetInquiryId)
+          this.updateStatusCounts(targetInquiryId);
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        this.$reset()
+        this.$reset();
       }
     },
 
     async loadInquiryComments(inquiryId: number): Promise<void> {
       try {
-        const response = await CommentsAPI.getInquiryComments(inquiryId)
+        const response = await CommentsAPI.getInquiryComments(inquiryId);
 
         const otherComments = this.comments.filter(
-          (comment) => !(comment.inquiryId === inquiryId && comment.optionId === 0)
-        )
+          (comment) =>
+            !(comment.inquiryId === inquiryId && comment.optionId === 0),
+        );
 
-        this.comments = [...otherComments, ...response.data.comments]
-        this.updateStatusCounts(inquiryId)
+        this.comments = [...otherComments, ...response.data.comments];
+        this.updateStatusCounts(inquiryId);
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error loading inquiry comments', { error, inquiryId })
-        throw error
+        Logger.error("Error loading inquiry comments", { error, inquiryId });
+        throw error;
       }
     },
 
-    async loadOptionComments(optionId: number, inquiryId?: number): Promise<void> {
-      const sessionStore = useSessionStore()
+    async loadOptionComments(
+      optionId: number,
+      inquiryId?: number,
+    ): Promise<void> {
+      const sessionStore = useSessionStore();
       try {
-        const targetInquiryId = inquiryId || sessionStore.currentInquiryId
+        const targetInquiryId = inquiryId || sessionStore.currentInquiryId;
 
         if (!targetInquiryId) {
-          Logger.warn('No inquiryId available for loading option comments')
-          return
+          Logger.warn("No inquiryId available for loading option comments");
+          return;
         }
 
-        const response = await CommentsAPI.getOptionComments(targetInquiryId, optionId)
+        const response = await CommentsAPI.getOptionComments(
+          targetInquiryId,
+          optionId,
+        );
 
         const otherComments = this.comments.filter(
-          (comment) => !(comment.inquiryId === targetInquiryId && comment.optionId === optionId)
-        )
+          (comment) =>
+            !(
+              comment.inquiryId === targetInquiryId &&
+              comment.optionId === optionId
+            ),
+        );
 
-        this.comments = [...otherComments, ...response.data.comments]
-        this.updateStatusCounts(targetInquiryId)
+        this.comments = [...otherComments, ...response.data.comments];
+        this.updateStatusCounts(targetInquiryId);
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error loading option comments', {
+        Logger.error("Error loading option comments", {
           error,
           optionId,
           inquiryId,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
@@ -165,105 +182,119 @@ export const useCommentsStore = defineStore('comments', {
      * Fix: do NOT $reset() when no routable context — that destroyed
      * every loaded comment. Just log and return.
      */
-    async add(payload: { message: string; confidential: boolean; optionId?: number }) {
-      const sessionStore = useSessionStore()
+    async add(payload: {
+      message: string;
+      confidential: boolean;
+      optionId?: number;
+    }) {
+      const sessionStore = useSessionStore();
       try {
         const response = await (() => {
-          if (sessionStore.route.name === 'publicInquiry') {
+          if (sessionStore.route.name === "publicInquiry") {
             return PublicAPI.addComment(
               sessionStore.publicToken,
               payload.message,
               payload.confidential,
-              payload.optionId || 0
-            )
+              payload.optionId || 0,
+            );
           }
 
-          if (['inquiry', 'page', 'group-list'].includes(sessionStore.route.name as string)) {
-            const targetInquiryId = sessionStore.currentInquiryId
+          if (
+            ["inquiry", "page", "group-list"].includes(
+              sessionStore.route.name as string,
+            )
+          ) {
+            const targetInquiryId = sessionStore.currentInquiryId;
 
             if (!targetInquiryId) {
-              Logger.warn('No inquiryId available for adding comment')
-              return null
+              Logger.warn("No inquiryId available for adding comment");
+              return null;
             }
 
             return CommentsAPI.addComment(
               targetInquiryId,
               payload.message,
               payload.confidential,
-              payload.optionId || 0
-            )
+              payload.optionId || 0,
+            );
           }
-          return null
-        })()
+          return null;
+        })();
 
         if (!response?.data?.comment) {
-          Logger.warn('add() called without a routable inquiry context')
-          return
+          Logger.warn("add() called without a routable inquiry context");
+          return;
         }
 
-        const newComment = response.data.comment
-        this.setItem({ comment: newComment })
-        this.updateStatusCounts(newComment.inquiryId)
+        const newComment = response.data.comment;
+        this.setItem({ comment: newComment });
+        this.updateStatusCounts(newComment.inquiryId);
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error writing comment', { error, payload })
-        throw error
+        Logger.error("Error writing comment", { error, payload });
+        throw error;
       }
     },
 
     async delete(payload: { comment: Comment }) {
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
       try {
         const response = await (() => {
-          if (sessionStore.route.name === 'publicInquiry') {
-            return PublicAPI.deleteComment(sessionStore.publicToken, payload.comment.id)
+          if (sessionStore.route.name === "publicInquiry") {
+            return PublicAPI.deleteComment(
+              sessionStore.publicToken,
+              payload.comment.id,
+            );
           }
-          return CommentsAPI.deleteComment(payload.comment.id)
-        })()
+          return CommentsAPI.deleteComment(payload.comment.id);
+        })();
 
         // Fix: guard against unexpected payload
         if (!response?.data?.comment) {
-          Logger.warn('delete() returned no comment payload')
-          return
+          Logger.warn("delete() returned no comment payload");
+          return;
         }
 
-        this.setItem({ comment: response.data.comment })
-        this.updateStatusCounts(payload.comment.inquiryId)
+        this.setItem({ comment: response.data.comment });
+        this.updateStatusCounts(payload.comment.inquiryId);
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error deleting comment', { error, payload })
-        throw error
+        Logger.error("Error deleting comment", { error, payload });
+        throw error;
       }
     },
 
     async restore(payload: { comment: Comment }) {
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
       try {
         const response = await (() => {
-          if (sessionStore.route.name === 'publicInquiry') {
-            return PublicAPI.restoreComment(sessionStore.publicToken, payload.comment.id)
+          if (sessionStore.route.name === "publicInquiry") {
+            return PublicAPI.restoreComment(
+              sessionStore.publicToken,
+              payload.comment.id,
+            );
           }
-          return CommentsAPI.restoreComment(payload.comment.id)
-        })()
+          return CommentsAPI.restoreComment(payload.comment.id);
+        })();
 
         // Fix: guard against unexpected payload
         if (!response?.data?.comment) {
-          Logger.warn('restore() returned no comment payload')
-          return
+          Logger.warn("restore() returned no comment payload");
+          return;
         }
 
-        this.setItem({ comment: response.data.comment })
-        this.updateStatusCounts(payload.comment.inquiryId)
+        this.setItem({ comment: response.data.comment });
+        this.updateStatusCounts(payload.comment.inquiryId);
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error restoring comment', { error, payload })
-        throw error
+        Logger.error("Error restoring comment", { error, payload });
+        throw error;
       }
     },
 
@@ -276,18 +307,20 @@ export const useCommentsStore = defineStore('comments', {
      * was always false, so option comment counts never updated.
      */
     updateStatusCounts(inquiryId: number) {
-      const inquiryStore = useInquiryStore()
-      const optionsStore = useOptionsStore()
+      const inquiryStore = useInquiryStore();
+      const optionsStore = useOptionsStore();
 
       // Inquiry-level comment count (optionId === 0)
       if (inquiryStore.id === inquiryId) {
         const inquiryCommentCount = this.comments.filter(
           (comment) =>
-            comment.inquiryId === inquiryId && comment.optionId === 0 && comment.deleted === 0
-        ).length
+            comment.inquiryId === inquiryId &&
+            comment.optionId === 0 &&
+            comment.deleted === 0,
+        ).length;
 
         if (inquiryStore.status) {
-          inquiryStore.status.countComments = inquiryCommentCount
+          inquiryStore.status.countComments = inquiryCommentCount;
         }
       }
 
@@ -298,40 +331,49 @@ export const useCommentsStore = defineStore('comments', {
             (comment) =>
               comment.inquiryId === inquiryId &&
               comment.optionId === option.id &&
-              comment.deleted === 0
-          ).length
+              comment.deleted === 0,
+          ).length;
 
           if (option.status) {
-            option.status.countComments = optionCommentCount
+            option.status.countComments = optionCommentCount;
           }
-        })
+        });
       }
     },
 
     setItem(payload: { comment: Comment }) {
-      const index = this.comments.findIndex((comment) => comment.id === payload.comment.id)
+      const index = this.comments.findIndex(
+        (comment) => comment.id === payload.comment.id,
+      );
 
       if (index < 0) {
-        this.comments.push(payload.comment)
+        this.comments.push(payload.comment);
       } else {
-        this.comments[index] = Object.assign(this.comments[index], payload.comment)
+        this.comments[index] = Object.assign(
+          this.comments[index],
+          payload.comment,
+        );
       }
     },
 
     clearInquiryComments(inquiryId: number): void {
       this.comments = this.comments.filter(
-        (comment) => !(comment.inquiryId === inquiryId && comment.optionId === 0)
-      )
+        (comment) =>
+          !(comment.inquiryId === inquiryId && comment.optionId === 0),
+      );
     },
 
     clearOptionComments(inquiryId: number, optionId: number): void {
       this.comments = this.comments.filter(
-        (comment) => !(comment.inquiryId === inquiryId && comment.optionId === optionId)
-      )
+        (comment) =>
+          !(comment.inquiryId === inquiryId && comment.optionId === optionId),
+      );
     },
 
     clearAllInquiryComments(inquiryId: number): void {
-      this.comments = this.comments.filter((comment) => comment.inquiryId !== inquiryId)
+      this.comments = this.comments.filter(
+        (comment) => comment.inquiryId !== inquiryId,
+      );
     },
   },
-})
+});

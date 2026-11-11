@@ -4,16 +4,16 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { NcNoteCard } from '@nextcloud/vue'
-import { useTemplateWizardStore } from '../../../stores/templateWizard'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { NcNoteCard } from "@nextcloud/vue";
+import { useTemplateWizardStore } from "../../../stores/templateWizard";
 
-const wizardStore = useTemplateWizardStore()
+const wizardStore = useTemplateWizardStore();
 
-const template = computed(() => wizardStore.selectedTemplate)
-const language = computed(() => wizardStore.selectedLanguage)
-const editableData = computed(() => wizardStore.editableData)
+const template = computed(() => wizardStore.selectedTemplate);
+const language = computed(() => wizardStore.selectedLanguage);
+const editableData = computed(() => wizardStore.editableData);
 
 // Compute counts from editableData (reflects user modifications) instead of original template.counts
 const counts = computed(() => ({
@@ -24,7 +24,7 @@ const counts = computed(() => ({
   inquiry_group_types: editableData.value?.inquiry_group_types?.length || 0,
   categories: editableData.value?.categories?.length || 0,
   locations: editableData.value?.locations?.length || 0,
-}))
+}));
 
 const totalItems = computed(
   () =>
@@ -34,16 +34,16 @@ const totalItems = computed(
     counts.value.option_types +
     counts.value.inquiry_group_types +
     counts.value.categories +
-    counts.value.locations
-)
+    counts.value.locations,
+);
 </script>
 
 <template>
   <div class="summary-step">
     <div class="summary-header">
-      <h2>{{ t('agora', 'Review & confirm') }}</h2>
+      <h2>{{ t("agora", "Review & confirm") }}</h2>
       <p class="subtitle">
-        {{ t('agora', 'Please review your selections before importing') }}
+        {{ t("agora", "Please review your selections before importing") }}
       </p>
     </div>
 
@@ -54,8 +54,8 @@ const totalItems = computed(
       <p>
         {{
           t(
-            'agora',
-            'This will create new configuration data in your database. If you want to replace existing data, run the cleanup command first.'
+            "agora",
+            "This will create new configuration data in your database. If you want to replace existing data, run the cleanup command first.",
           )
         }}
       </p>
@@ -66,68 +66,68 @@ const totalItems = computed(
       class="summary-content"
     >
       <div class="summary-box">
-        <h3>{{ t('agora', 'Import summary') }}</h3>
+        <h3>{{ t("agora", "Import summary") }}</h3>
 
         <div class="summary-item">
-          <span class="label">{{ t('agora', 'Template:') }}</span>
+          <span class="label">{{ t("agora", "Template:") }}</span>
           <span class="value">{{ template.name }} (v{{ template.version }})</span>
         </div>
 
         <div class="summary-item">
-          <span class="label">{{ t('agora', 'Language:') }}</span>
+          <span class="label">{{ t("agora", "Language:") }}</span>
           <span class="value">{{ language }}</span>
         </div>
 
         <div class="summary-divider" />
 
         <div class="summary-item">
-          <span class="label">{{ t('agora', 'Families:') }}</span>
-          <span class="value">{{ counts.inquiry_families }} {{ t('agora', 'items') }}</span>
+          <span class="label">{{ t("agora", "Families:") }}</span>
+          <span class="value">{{ counts.inquiry_families }} {{ t("agora", "items") }}</span>
         </div>
 
         <div class="summary-item">
-          <span class="label">{{ t('agora', 'Inquiry types:') }}</span>
-          <span class="value">{{ counts.inquiry_types }} {{ t('agora', 'items') }}</span>
+          <span class="label">{{ t("agora", "Inquiry types:") }}</span>
+          <span class="value">{{ counts.inquiry_types }} {{ t("agora", "items") }}</span>
         </div>
 
         <div class="summary-item">
-          <span class="label">{{ t('agora', 'Statuses:') }}</span>
-          <span class="value">{{ counts.inquiry_statuses }} {{ t('agora', 'items') }}</span>
+          <span class="label">{{ t("agora", "Statuses:") }}</span>
+          <span class="value">{{ counts.inquiry_statuses }} {{ t("agora", "items") }}</span>
         </div>
 
         <div
           v-if="counts.option_types > 0"
           class="summary-item"
         >
-          <span class="label">{{ t('agora', 'Option types:') }}</span>
-          <span class="value">{{ counts.option_types }} {{ t('agora', 'items') }}</span>
+          <span class="label">{{ t("agora", "Option types:") }}</span>
+          <span class="value">{{ counts.option_types }} {{ t("agora", "items") }}</span>
         </div>
 
         <div
           v-if="counts.inquiry_group_types > 0"
           class="summary-item"
         >
-          <span class="label">{{ t('agora', 'Group types:') }}</span>
-          <span class="value">{{ counts.inquiry_group_types }} {{ t('agora', 'items') }}</span>
+          <span class="label">{{ t("agora", "Group types:") }}</span>
+          <span class="value">{{ counts.inquiry_group_types }} {{ t("agora", "items") }}</span>
         </div>
 
         <div class="summary-item">
-          <span class="label">{{ t('agora', 'Categories:') }}</span>
-          <span class="value">{{ counts.categories }} {{ t('agora', 'items') }}</span>
+          <span class="label">{{ t("agora", "Categories:") }}</span>
+          <span class="value">{{ counts.categories }} {{ t("agora", "items") }}</span>
         </div>
 
         <div
           v-if="counts.locations > 0"
           class="summary-item"
         >
-          <span class="label">{{ t('agora', 'Locations:') }}</span>
-          <span class="value">{{ counts.locations }} {{ t('agora', 'items') }}</span>
+          <span class="label">{{ t("agora", "Locations:") }}</span>
+          <span class="value">{{ counts.locations }} {{ t("agora", "items") }}</span>
         </div>
 
         <div class="summary-divider" />
 
         <div class="summary-total">
-          <span class="label">{{ t('agora', 'Total items:') }}</span>
+          <span class="label">{{ t("agora", "Total items:") }}</span>
           <span class="value">{{ totalItems }}</span>
         </div>
       </div>

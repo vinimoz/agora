@@ -4,41 +4,41 @@
 -->
 
 <script setup>
-import { Logger } from '../../../helpers/index.ts'
-import { t } from '@nextcloud/l10n'
+import { Logger } from "../../../helpers/index.ts";
+import { t } from "@nextcloud/l10n";
 
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import { AdminAPI } from '../../../Api/index.ts'
+import { AdminAPI } from "../../../Api/index.ts";
 
 const autoreminder = {
-  text: t('agora', 'Run autoreminder'),
+  text: t("agora", "Run autoreminder"),
   disabled: false,
-}
+};
 
 const janitor = {
-  text: t('agora', 'Run janitor'),
+  text: t("agora", "Run janitor"),
   disabled: false,
-}
+};
 
 const notification = {
-  text: t('agora', 'Run notification'),
+  text: t("agora", "Run notification"),
   disabled: false,
-}
+};
 
 /**
  * start AutoReminder job
  */
 async function runAutoReminderJob() {
   try {
-    AdminAPI.runAutoReminder()
-    autoreminder.disabled = true
-    autoreminder.text = t('agora', 'Autoreminder started')
+    AdminAPI.runAutoReminder();
+    autoreminder.disabled = true;
+    autoreminder.text = t("agora", "Autoreminder started");
   } catch (error) {
-    autoreminder.text = t('agora', 'Autoreminder failed')
-    Logger.error('Error on executing autoreminder job', { error })
+    autoreminder.text = t("agora", "Autoreminder failed");
+    Logger.error("Error on executing autoreminder job", { error });
   } finally {
-    autoreminder.disabled = true
+    autoreminder.disabled = true;
   }
 }
 
@@ -47,13 +47,13 @@ async function runAutoReminderJob() {
  */
 async function runJanitorJob() {
   try {
-    AdminAPI.runJanitor()
-    janitor.text = t('agora', 'Janitor started')
+    AdminAPI.runJanitor();
+    janitor.text = t("agora", "Janitor started");
   } catch (error) {
-    janitor.text = t('agora', 'Janitor failed')
-    Logger.error('Error on executing janitor job', { error })
+    janitor.text = t("agora", "Janitor failed");
+    Logger.error("Error on executing janitor job", { error });
   } finally {
-    janitor.disabled = true
+    janitor.disabled = true;
   }
 }
 
@@ -62,13 +62,13 @@ async function runJanitorJob() {
  */
 async function runNotificationJob() {
   try {
-    AdminAPI.runNotification()
-    notification.text = t('agora', 'Notification started')
+    AdminAPI.runNotification();
+    notification.text = t("agora", "Notification started");
   } catch (error) {
-    notification.text = t('agora', 'Notification failed')
-    Logger.error('Error on executing notification job', { error })
+    notification.text = t("agora", "Notification failed");
+    Logger.error("Error on executing notification job", { error });
   } finally {
-    notification.disabled = true
+    notification.disabled = true;
   }
 }
 </script>
@@ -79,31 +79,31 @@ async function runNotificationJob() {
       <p>
         {{
           t(
-            'agora',
-            'Please understand, that the jobs were defined as asynchronous jobs by intention.'
+            "agora",
+            "Please understand, that the jobs were defined as asynchronous jobs by intention.",
           )
         }}
         {{
           t(
-            'agora',
-            'Only use them, if it is absolutely neccessary (i.error. your cron does not work properly) or for testing.'
+            "agora",
+            "Only use them, if it is absolutely neccessary (i.error. your cron does not work properly) or for testing.",
           )
         }}
         {{
           t(
-            'agora',
-            'Starting the jobs does not mean, that the rules for these actions are overridden.'
+            "agora",
+            "Starting the jobs does not mean, that the rules for these actions are overridden.",
           )
         }}
       </p>
       <p>
         {{
           t(
-            'agora',
-            'Each job can only be run once. If you want to rerun them, you have to refresh the page.'
+            "agora",
+            "Each job can only be run once. If you want to rerun them, you have to refresh the page.",
           )
         }}
-        {{ t('agora', 'If you want to see the result please check the logs') }}
+        {{ t("agora", "If you want to see the result please check the logs") }}
       </p>
     </div>
     <div class="job_buttons_section">

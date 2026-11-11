@@ -9,24 +9,28 @@
     @close="$emit('close')"
   >
     <div class="resolution-modal">
-      <h3>{{ t('agora', 'Propose Resolution') }}</h3>
+      <h3>{{ t("agora", "Propose Resolution") }}</h3>
       <p class="subtitle">
         {{
-          t('agora', 'Propose a resolution for: {title}', { title: option.title || option.text })
+          t("agora", "Propose a resolution for: {title}", {
+            title: option.title || option.text,
+          })
         }}
       </p>
 
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
           <label for="resolution-text">
-            {{ t('agora', 'Resolution Text') }}
+            {{ t("agora", "Resolution Text") }}
             <span class="required">*</span>
           </label>
           <textarea
             id="resolution-text"
             v-model="resolutionText"
             class="resolution-textarea"
-            :placeholder="t('agora', 'Describe how this objection can be resolved …')"
+            :placeholder="
+              t('agora', 'Describe how this objection can be resolved …')
+            "
             required
             rows="6"
           />
@@ -34,7 +38,7 @@
 
         <div class="form-group">
           <label for="resolution-status">
-            {{ t('agora', 'Status') }}
+            {{ t("agora", "Status") }}
           </label>
           <select
             id="resolution-status"
@@ -42,13 +46,13 @@
             class="resolution-select"
           >
             <option value="proposed">
-              {{ t('agora', 'Proposed') }}
+              {{ t("agora", "Proposed") }}
             </option>
             <option value="under_review">
-              {{ t('agora', 'Under Review') }}
+              {{ t("agora", "Under Review") }}
             </option>
             <option value="accepted">
-              {{ t('agora', 'Accepted') }}
+              {{ t("agora", "Accepted") }}
             </option>
           </select>
         </div>
@@ -58,14 +62,14 @@
             type="secondary"
             @click="$emit('close')"
           >
-            {{ t('agora', 'Cancel') }}
+            {{ t("agora", "Cancel") }}
           </NcButton>
           <NcButton
             type="primary"
             native-type="submit"
             :disabled="!resolutionText.trim()"
           >
-            {{ t('agora', 'Propose Resolution') }}
+            {{ t("agora", "Propose Resolution") }}
           </NcButton>
         </div>
       </form>
@@ -74,37 +78,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import type { Option } from '../../Types/index.ts'
+import { ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import type { Option } from "../../Types/index.ts";
 
 // eslint-disable-next-line
 const props = defineProps<{
-  visible: boolean
-  option: Option
+  visible: boolean;
+  option: Option;
   // eslint-disable-next-line
-  inquiryId: number
-}>()
+  inquiryId: number;
+}>();
 
 const emit = defineEmits<{
-  close: []
-  submit: [data: { text: string; status: string }]
-}>()
+  close: [];
+  submit: [data: { text: string; status: string }];
+}>();
 
-const resolutionText = ref('')
-const resolutionStatus = ref('proposed')
+const resolutionText = ref("");
+const resolutionStatus = ref("proposed");
 
 const handleSubmit = () => {
-  if (!resolutionText.value.trim()) return
-  emit('submit', {
+  if (!resolutionText.value.trim()) return;
+  emit("submit", {
     text: resolutionText.value,
     status: resolutionStatus.value,
-  })
-  resolutionText.value = ''
-  resolutionStatus.value = 'proposed'
-}
+  });
+  resolutionText.value = "";
+  resolutionStatus.value = "proposed";
+};
 </script>
 
 <style scoped lang="scss">

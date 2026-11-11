@@ -133,7 +133,7 @@
           v-if="inquiry.status?.isArchived"
           class="archived-badge"
         >
-          {{ t('agora', 'Archived') }}
+          {{ t("agora", "Archived") }}
         </span>
       </div>
     </div>
@@ -141,37 +141,41 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { InquiryGeneralIcons as Icons, StatusIcons } from '../../utils/icons'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { Inquiry } from '../../Types'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { Inquiry } from "../../Types";
 
 interface Props {
-  inquiry: Inquiry
-  mode: 'compact' | 'detailed' | 'calendar'
-  isActive?: boolean
+  inquiry: Inquiry;
+  mode: "compact" | "detailed" | "calendar";
+  isActive?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isActive: false,
-})
+});
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-}>()
+  click: [inquiry: Inquiry];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
-const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
 
-const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
+const typeData = computed(() =>
+  getInquiryTypeData(props.inquiry.type, inquiryTypes.value),
+);
 
 const typeIcon = computed(() => {
   if (typeData.value?.icon) {
-    return typeData.value.icon
+    return typeData.value.icon;
   }
   const iconMap: Record<string, any> = {
     survey: Icons.ClipboardList,
@@ -184,90 +188,95 @@ const typeIcon = computed(() => {
     document: Icons.Document,
     proposal: Icons.Scale,
     general: Icons.FolderMultiple,
-  }
-  return iconMap[props.inquiry.type?.toLowerCase()] || Icons.FolderMultiple
-})
+  };
+  return iconMap[props.inquiry.type?.toLowerCase()] || Icons.FolderMultiple;
+});
 
 const statusIcon = computed(() => {
-  const status = props.inquiry.status?.inquiryStatus || 'draft'
+  const status = props.inquiry.status?.inquiryStatus || "draft";
   const map: Record<string, any> = {
     active: Icons.CheckCircle,
     closed: Icons.Close,
     draft: Icons.Edit,
     waiting_approval: Icons.Clock,
     rejected: Icons.Close,
-  }
-  return map[status] || Icons.Circle
-})
+  };
+  return map[status] || Icons.Circle;
+});
 
 const statusDotClass = computed(() => {
-  const status = props.inquiry.status?.inquiryStatus || 'draft'
-  return `dot-${status}`
-})
+  const status = props.inquiry.status?.inquiryStatus || "draft";
+  return `dot-${status}`;
+});
 
 const statusBadgeClass = computed(() => {
-  const status = props.inquiry.status?.inquiryStatus || 'draft'
-  return `badge-${status}`
-})
+  const status = props.inquiry.status?.inquiryStatus || "draft";
+  return `badge-${status}`;
+});
 
 const statusText = computed(() => {
-  const status = props.inquiry.status?.inquiryStatus || 'draft'
+  const status = props.inquiry.status?.inquiryStatus || "draft";
   const map: Record<string, string> = {
-    active: t('agora', 'Active'),
-    closed: t('agora', 'Closed'),
-    draft: t('agora', 'Draft'),
-    waiting_approval: t('agora', 'Pending'),
-    rejected: t('agora', 'Rejected'),
-  }
-  return map[status] || status
-})
+    active: t("agora", "Active"),
+    closed: t("agora", "Closed"),
+    draft: t("agora", "Draft"),
+    waiting_approval: t("agora", "Pending"),
+    rejected: t("agora", "Rejected"),
+  };
+  return map[status] || status;
+});
 
 const shortDescription = computed(() => {
-  if (!props.inquiry.description) return ''
-  const plain = props.inquiry.description.replace(/<[^>]*>/g, '')
-  return plain.length > 100 ? `${plain.substring(0, 100)}…` : plain
-})
+  if (!props.inquiry.description) return "";
+  const plain = props.inquiry.description.replace(/<[^>]*>/g, "");
+  return plain.length > 100 ? `${plain.substring(0, 100)}…` : plain;
+});
 
 const expiryClass = computed(() => {
-  if (!props.inquiry.configuration?.expire) return ''
-  const now = Date.now() / 1000
-  const diff = props.inquiry.configuration.expire - now
-  if (diff < 0) return 'expiry-expired'
-  if (diff < 86400) return 'expiry-soon'
-  if (diff < 259200) return 'expiry-warning'
-  return 'expiry-normal'
-})
+  if (!props.inquiry.configuration?.expire) return "";
+  const now = Date.now() / 1000;
+  const diff = props.inquiry.configuration.expire - now;
+  if (diff < 0) return "expiry-expired";
+  if (diff < 86400) return "expiry-soon";
+  if (diff < 259200) return "expiry-warning";
+  return "expiry-normal";
+});
 
 function getExpiryText(inquiry: Inquiry): string {
-  if (!inquiry.configuration?.expire) return ''
-  const now = Date.now() / 1000
-  const diff = inquiry.configuration.expire - now
-  if (diff < 0) return t('agora', 'Expired')
-  const days = Math.floor(diff / 86400)
-  if (days === 0) return t('agora', 'Today')
-  if (days === 1) return t('agora', '1 day')
-  return t('agora', '{days}d', { days })
+  if (!inquiry.configuration?.expire) return "";
+  const now = Date.now() / 1000;
+  const diff = inquiry.configuration.expire - now;
+  if (diff < 0) return t("agora", "Expired");
+  const days = Math.floor(diff / 86400);
+  if (days === 0) return t("agora", "Today");
+  if (days === 1) return t("agora", "1 day");
+  return t("agora", "{days}d", { days });
 }
 
 function formatTime(timestamp?: number): string {
-  if (!timestamp) return ''
-  const date = new Date(timestamp * 1000)
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  const hours = Math.floor(diff / (1000 * 60 * 60))
-  const minutes = Math.floor(diff / (1000 * 60))
+  if (!timestamp) return "";
+  const date = new Date(timestamp * 1000);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor(diff / (1000 * 60));
 
   if (hours < 1) {
-    return minutes === 0 ? t('agora', 'Now') : t('agora', '{m}m ago', { m: minutes })
+    return minutes === 0
+      ? t("agora", "Now")
+      : t("agora", "{m}m ago", { m: minutes });
   }
   if (hours < 24) {
-    return t('agora', '{h}h ago', { h: hours })
+    return t("agora", "{h}h ago", { h: hours });
   }
-  return date.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString("default", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function handleClick() {
-  emit('click', props.inquiry)
+  emit("click", props.inquiry);
 }
 </script>
 

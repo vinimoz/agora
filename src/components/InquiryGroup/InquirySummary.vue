@@ -193,12 +193,13 @@
         </div>
 
         <!-- Description -->
+        <!-- eslint-disable vue/no-v-html -->
         <div
           v-if="showDescription && safeDescription"
           class="summary-description"
           v-html="safeDescription"
         />
-
+        <!-- eslint-enable vue/no-v-html -->
         <!-- Meta: Location & Category -->
         <div
           v-if="showMeta"
@@ -318,43 +319,44 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import type { Inquiry } from '../../Types/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
-import { createInquiryContext } from '../../utils/permissions.ts'
-import { SupportFeature } from '../Base/index.ts'
+import { computed, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import type { Inquiry } from "../../Types/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
+import { createInquiryContext } from "../../utils/permissions.ts";
+import { SupportFeature } from "../Base/index.ts";
 
 interface Props {
-  inquiry: Inquiry
-  inquiries?: Inquiry[]
-  compact?: boolean
-  interactive?: boolean
+  inquiry: Inquiry;
+  inquiries?: Inquiry[];
+  compact?: boolean;
+  interactive?: boolean;
 
   // Display feature toggles
-  showIcon?: boolean
-  showCover?: boolean
-  showMeta?: boolean
-  showStats?: boolean
-  showAuthor?: boolean
-  showDescription?: boolean
-  showExpiry?: boolean
-  showType?: boolean
-  showStatus?: boolean
-  showComments?: boolean
-  showSupport?: boolean
-  showParticipants?: boolean
+  showIcon?: boolean;
+  showCover?: boolean;
+  showMeta?: boolean;
+  showStats?: boolean;
+  showAuthor?: boolean;
+  showDescription?: boolean;
+  showExpiry?: boolean;
+  showType?: boolean;
+  showStatus?: boolean;
+  showComments?: boolean;
+  showSupport?: boolean;
+  showParticipants?: boolean;
 
   // Display mode
-  displayMode?: 'summary' | 'compact' | 'regular'
+  displayMode?: "summary" | "compact" | "regular";
 }
 
 const props = withDefaults(defineProps<Props>(), {
   compact: false,
   interactive: true,
+  inquiries: null,
   showIcon: true,
   showCover: true,
   showMeta: true,
@@ -367,293 +369,318 @@ const props = withDefaults(defineProps<Props>(), {
   showComments: true,
   showSupport: true,
   showParticipants: true,
-  displayMode: 'regular',
-})
+  displayMode: "regular",
+});
 
 const emit = defineEmits<{
-  view: [id: number]
-}>()
+  view: [id: number];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
-const InquiryGeneralIconsComponents = InquiryGeneralIcons
+const InquiryGeneralIconsComponents = InquiryGeneralIcons;
 
 // Computed properties
-const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
 
 const summaryClasses = computed(() => ({
-  'is-compact': props.compact || props.displayMode === 'summary',
-  'is-interactive': props.interactive,
-  'has-expiry': props.showExpiry && showExpiryBadge.value,
-  'has-cover': props.showCover && !!coverUrl.value,
-}))
+  "is-compact": props.compact || props.displayMode === "summary",
+  "is-interactive": props.interactive,
+  "has-expiry": props.showExpiry && showExpiryBadge.value,
+  "has-cover": props.showCover && !!coverUrl.value,
+}));
 
 // Context for permissions
-const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
+const context = computed(() =>
+  createInquiryContext(props.inquiry, sessionStore.appSettings),
+);
 
 // Get type data
-const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
+const typeData = computed(() =>
+  getInquiryTypeData(props.inquiry.type, inquiryTypes.value),
+);
 
-const typeLabel = computed(() => typeData.value?.label || props.inquiry.type)
+const typeLabel = computed(() => typeData.value?.label || props.inquiry.type);
 
 // Type icon
 const typeIconComponent = computed(() => {
   if (typeData.value?.icon) {
-    const iconName = typeData.value.icon
-    if (typeof iconName === 'string' && InquiryGeneralIcons[iconName]) {
-      return InquiryGeneralIcons[iconName]
+    const iconName = typeData.value.icon;
+    if (typeof iconName === "string" && InquiryGeneralIcons[iconName]) {
+      return InquiryGeneralIcons[iconName];
     }
-    if (typeof iconName === 'function' || typeof iconName === 'object') {
-      return iconName
+    if (typeof iconName === "function" || typeof iconName === "object") {
+      return iconName;
     }
   }
 
   const iconMap = {
-    survey: 'ClipboardList',
-    poll: 'CheckCircle',
-    question: 'Question',
-    discussion: 'MessageSquare',
-    news: 'Newspaper',
-    announcement: 'Megaphone',
-    meeting: 'Users',
-    document: 'Document',
-    proposal: 'Scale',
-    general: 'FolderMultiple',
-    draft: 'Empty',
-  }
+    survey: "ClipboardList",
+    poll: "CheckCircle",
+    question: "Question",
+    discussion: "MessageSquare",
+    news: "Newspaper",
+    announcement: "Megaphone",
+    meeting: "Users",
+    document: "Document",
+    proposal: "Scale",
+    general: "FolderMultiple",
+    draft: "Empty",
+  };
 
-  const iconName = iconMap[props.inquiry.type?.toLowerCase()] || 'FolderMultiple'
-  return InquiryGeneralIconsComponents[iconName] || InquiryGeneralIconsComponents.FolderMultiple
-})
+  const iconName =
+    iconMap[props.inquiry.type?.toLowerCase()] || "FolderMultiple";
+  return (
+    InquiryGeneralIconsComponents[iconName] ||
+    InquiryGeneralIconsComponents.FolderMultiple
+  );
+});
 
 const typeBadgeClass = computed(() => {
-  const type = props.inquiry.type?.toLowerCase().replace(/\s+/g, '-')
-  return `type-${type}`
-})
+  const type = props.inquiry.type?.toLowerCase().replace(/\s+/g, "-");
+  return `type-${type}`;
+});
 
 // Status
 const currentInquiryStatus = computed(() => {
-  if (!props.inquiry.status?.inquiryStatus) return null
+  if (!props.inquiry.status?.inquiryStatus) return null;
 
   const specialStatuses = {
     draft: {
-      statusKey: 'draft',
-      label: 'Draft',
-      icon: 'draft',
+      statusKey: "draft",
+      label: "Draft",
+      icon: "draft",
       inquiryType: props.inquiry.type,
       order: 0,
     },
     waiting_approval: {
-      statusKey: 'waiting_approval',
-      label: 'Waiting Approval',
-      icon: 'waitingapproval',
+      statusKey: "waiting_approval",
+      label: "Waiting Approval",
+      icon: "waitingapproval",
       inquiryType: props.inquiry.type,
       order: 1,
     },
-  }
+  };
 
-  const currentStatus = props.inquiry.status.inquiryStatus
+  const currentStatus = props.inquiry.status.inquiryStatus;
   if (specialStatuses[currentStatus]) {
-    return specialStatuses[currentStatus]
+    return specialStatuses[currentStatus];
   }
 
   const statusesFromSettings =
     sessionStore.appSettings?.inquiryStatusTab?.filter(
-      (status) => status.inquiryType === props.inquiry.type
-    ) || []
+      (status) => status.inquiryType === props.inquiry.type,
+    ) || [];
 
   return (
     statusesFromSettings.find((status) => status.statusKey === currentStatus) ||
     specialStatuses.draft
-  )
-})
+  );
+});
 
 const statusText = computed(() =>
-  currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : ''
-)
+  currentInquiryStatus.value?.label
+    ? t("agora", currentInquiryStatus.value.label)
+    : "",
+);
 
 const statusIconComponent = computed(() => {
-  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
-  const iconName = currentInquiryStatus.value.icon
-  return StatusIcons[iconName] || StatusIcons.Default
-})
+  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default;
+  const iconName = currentInquiryStatus.value.icon;
+  return StatusIcons[iconName] || StatusIcons.Default;
+});
 
 const statusBadgeClass = computed(() => {
-  const status = props.inquiry.status?.inquiryStatus
+  const status = props.inquiry.status?.inquiryStatus;
   const map: Record<string, string> = {
-    active: 'status-open',
-    open: 'status-open',
-    closed: 'status-closed',
-    draft: 'status-draft',
-    waiting_approval: 'status-waiting',
-  }
-  return map[status || ''] || 'status-unknown'
-})
+    active: "status-open",
+    open: "status-open",
+    closed: "status-closed",
+    draft: "status-draft",
+    waiting_approval: "status-waiting",
+  };
+  return map[status || ""] || "status-unknown";
+});
 
 // Owner display
 const ownerDisplayName = computed(
-  () => props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
-)
+  () => props.inquiry.ownedGroup || props.inquiry.owner?.displayName || "",
+);
 
 // Truncated text
 const truncatedTitle = computed(() => {
-  if (!props.inquiry.title) return ''
-  const maxLen = props.compact ? 35 : 50
+  if (!props.inquiry.title) return "";
+  const maxLen = props.compact ? 35 : 50;
   return props.inquiry.title.length > maxLen
     ? `${props.inquiry.title.substring(0, maxLen)}…`
-    : props.inquiry.title
-})
+    : props.inquiry.title;
+});
 
 const truncatedAuthorName = computed(() => {
-  const name = ownerDisplayName.value
-  return name.length > 15 ? `${name.substring(0, 15)}…` : name
-})
+  const name = ownerDisplayName.value;
+  return name.length > 15 ? `${name.substring(0, 15)}…` : name;
+});
 
 // Safe description handling
 const safeDescription = computed(() => {
-  if (!props.inquiry.descriptionSafe) return ''
+  if (!props.inquiry.descriptionSafe) return "";
 
-  const description = props.inquiry.descriptionSafe
-  const maxLength = props.compact ? 80 : 150
+  const description = props.inquiry.descriptionSafe;
+  const maxLength = props.compact ? 80 : 150;
 
   if (description.length > maxLength) {
-    return `${description.substring(0, maxLength)}…`
+    return `${description.substring(0, maxLength)}…`;
   }
 
-  return description
-})
+  return description;
+});
 
 // Cover image
 const coverUrl = computed(() => {
-  if (!props.showCover) return ''
-  if (!props.inquiry.coverId || props.inquiry.coverId === 0) return ''
-  return getNextcloudPreviewUrl(props.inquiry.coverId)
-})
+  if (!props.showCover) return "";
+  if (!props.inquiry.coverId || props.inquiry.coverId === 0) return "";
+  return getNextcloudPreviewUrl(props.inquiry.coverId);
+});
 
-function getNextcloudPreviewUrl(fileId: number, x = 400, y = 200, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`
+function getNextcloudPreviewUrl(
+  fileId: number,
+  x = 400,
+  y = 200,
+  autoScale = true,
+) {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`;
 }
 
-const imageLoaded = ref(false)
+const imageLoaded = ref(false);
 function handleImageLoad() {
-  imageLoaded.value = true
+  imageLoaded.value = true;
 }
 
 // Expiry handling
 const showExpiryBadge = computed(
-  () => !!props.inquiry.configuration?.expire && props.inquiry.configuration.expire > 0
-)
+  () =>
+    !!props.inquiry.configuration?.expire &&
+    props.inquiry.configuration.expire > 0,
+);
 
 const expiryText = computed(() => {
-  if (!props.inquiry.configuration?.expire) return ''
+  if (!props.inquiry.configuration?.expire) return "";
 
-  const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
-  const now = new Date()
-  const diff = expiryDate.getTime() - now.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const expiryDate = new Date(props.inquiry.configuration.expire * 1000);
+  const now = new Date();
+  const diff = expiryDate.getTime() - now.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
   if (days > 0) {
-    return t('agora', '{days}d', { days })
+    return t("agora", "{days}d", { days });
   }
   if (hours > 0) {
-    return t('agora', '{hours}h', { hours })
+    return t("agora", "{hours}h", { hours });
   }
-  return t('agora', 'Soon')
-})
+  return t("agora", "Soon");
+});
 
 const expiryBadgeClass = computed(() => {
-  if (!props.inquiry.configuration?.expire) return ''
+  if (!props.inquiry.configuration?.expire) return "";
 
-  const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
-  const now = new Date()
-  const diff = expiryDate.getTime() - now.getTime()
-  const hours = diff / (1000 * 60 * 60)
+  const expiryDate = new Date(props.inquiry.configuration.expire * 1000);
+  const now = new Date();
+  const diff = expiryDate.getTime() - now.getTime();
+  const hours = diff / (1000 * 60 * 60);
 
-  if (hours < 24) return 'expiry-soon'
-  if (hours < 72) return 'expiry-warning'
-  return 'expiry-normal'
-})
+  if (hours < 24) return "expiry-soon";
+  if (hours < 72) return "expiry-warning";
+  return "expiry-normal";
+});
 
 // Time formatting
 const formattedTime = computed(() => {
-  if (!props.inquiry.status?.created) return ''
+  if (!props.inquiry.status?.created) return "";
 
-  const created = new Date(props.inquiry.status.created * 1000)
-  const now = new Date()
-  const diff = now.getTime() - created.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor(diff / (1000 * 60 * 60))
-  const minutes = Math.floor(diff / (1000 * 60))
+  const created = new Date(props.inquiry.status.created * 1000);
+  const now = new Date();
+  const diff = now.getTime() - created.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor(diff / (1000 * 60));
 
   if (days > 30) {
-    return created.toLocaleDateString()
+    return created.toLocaleDateString();
   }
   if (days > 0) {
-    return t('agora', '{days} days ago', { days })
+    return t("agora", "{days} days ago", { days });
   }
   if (hours > 0) {
-    return t('agora', '{hours} hours ago', { hours })
+    return t("agora", "{hours} hours ago", { hours });
   }
   if (minutes > 0) {
-    return t('agora', '{minutes} minutes ago', { minutes })
+    return t("agora", "{minutes} minutes ago", { minutes });
   }
-  return t('agora', 'Just now')
-})
+  return t("agora", "Just now");
+});
 
 // Location and Category paths
 function getHierarchyPath(items, targetId) {
-  if (!items || !Array.isArray(items)) return ''
+  if (!items || !Array.isArray(items)) return "";
 
-  const itemMap = {}
+  const itemMap = {};
 
   items.forEach((item) => {
-    itemMap[item.id] = item
-  })
+    itemMap[item.id] = item;
+  });
 
   if (!itemMap[targetId]) {
-    return itemMap[1]?.name || ''
+    return itemMap[1]?.name || "";
   }
 
   function buildPath(item) {
     if (item.parentId === 0) {
-      return item.name
+      return item.name;
     }
-    const parent = itemMap[item.parentId]
+    const parent = itemMap[item.parentId];
     if (parent) {
-      return `${buildPath(parent)} → ${item.name}`
+      return `${buildPath(parent)} → ${item.name}`;
     }
-    return item.name
+    return item.name;
   }
 
-  return buildPath(itemMap[targetId])
+  return buildPath(itemMap[targetId]);
 }
 
 const locationPath = computed(() =>
-  getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId)
-)
+  getHierarchyPath(
+    sessionStore.appSettings?.locationTab,
+    props.inquiry.locationId,
+  ),
+);
 const categoryPath = computed(() =>
-  getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId)
-)
+  getHierarchyPath(
+    sessionStore.appSettings?.categoryTab,
+    props.inquiry.categoryId,
+  ),
+);
 
 const truncatedLocation = computed(() => {
-  if (!locationPath.value) return ''
+  if (!locationPath.value) return "";
   return locationPath.value.length > 20
     ? `${locationPath.value.substring(0, 20)}…`
-    : locationPath.value
-})
+    : locationPath.value;
+});
 
 const truncatedCategory = computed(() => {
-  if (!categoryPath.value) return ''
+  if (!categoryPath.value) return "";
   return categoryPath.value.length > 20
     ? `${categoryPath.value.substring(0, 20)}…`
-    : categoryPath.value
-})
+    : categoryPath.value;
+});
 
 function handleClick() {
   if (props.interactive) {
-    emit('view', props.inquiry.id)
+    emit("view", props.inquiry.id);
   }
 }
 </script>
@@ -865,7 +892,7 @@ function handleClick() {
   background: var(--color-main-background);
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -901,7 +928,11 @@ function handleClick() {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
   }
 
   &:hover .cover-image {

@@ -4,29 +4,29 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { NcButton } from '@nextcloud/vue'
-import { useTemplateWizardStore } from '../../../stores/templateWizard'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { NcButton } from "@nextcloud/vue";
+import { useTemplateWizardStore } from "../../../stores/templateWizard";
 
-const wizardStore = useTemplateWizardStore()
+const wizardStore = useTemplateWizardStore();
 
-const importResult = computed(() => wizardStore.importResult)
-const hasErrors = computed(() => importResult.value?.failed.length > 0)
-const hasSuccess = computed(() => importResult.value?.success.length > 0)
-const hasSkipped = computed(() => importResult.value?.skipped.length > 0)
+const importResult = computed(() => wizardStore.importResult);
+const hasErrors = computed(() => importResult.value?.failed.length > 0);
+const hasSuccess = computed(() => importResult.value?.success.length > 0);
+const hasSkipped = computed(() => importResult.value?.skipped.length > 0);
 
 const goToAgora = () => {
-  window.location.href = '/apps/agora'
-}
+  window.location.href = "/apps/agora";
+};
 
 const goToSettings = () => {
-  window.location.reload()
-}
+  window.location.reload();
+};
 
 const closeWizard = () => {
-  wizardStore.closeWizard()
-}
+  wizardStore.closeWizard();
+};
 </script>
 
 <template>
@@ -46,10 +46,10 @@ const closeWizard = () => {
       </div>
 
       <h2 v-if="!hasErrors">
-        {{ t('agora', 'Import complete!') }}
+        {{ t("agora", "Import complete!") }}
       </h2>
       <h2 v-else>
-        {{ t('agora', 'Import completed with warnings') }}
+        {{ t("agora", "Import completed with warnings") }}
       </h2>
     </div>
 
@@ -63,8 +63,10 @@ const closeWizard = () => {
         class="result-section success-section"
       >
         <h3>
-          ✅ {{ t('agora', 'Successfully created') }} ({{ importResult.success.length }}
-          {{ t('agora', 'items') }})
+          ✅ {{ t("agora", "Successfully created") }} ({{
+            importResult.success.length
+          }}
+          {{ t("agora", "items") }})
         </h3>
         <ul class="result-list">
           <li
@@ -82,8 +84,10 @@ const closeWizard = () => {
         class="result-section skipped-section"
       >
         <h3>
-          ⏭️ {{ t('agora', 'Skipped - already exist') }} ({{ importResult.skipped.length }}
-          {{ t('agora', 'items') }})
+          ⏭️ {{ t("agora", "Skipped - already exist") }} ({{
+            importResult.skipped.length
+          }}
+          {{ t("agora", "items") }})
         </h3>
         <ul class="result-list">
           <li
@@ -101,8 +105,10 @@ const closeWizard = () => {
         class="result-section error-section"
       >
         <h3>
-          ❌ {{ t('agora', 'Failed to process') }} ({{ importResult.failed.length }}
-          {{ t('agora', 'items') }})
+          ❌ {{ t("agora", "Failed to process") }} ({{
+            importResult.failed.length
+          }}
+          {{ t("agora", "items") }})
         </h3>
         <ul class="result-list">
           <li
@@ -121,19 +127,19 @@ const closeWizard = () => {
         type="primary"
         @click="goToAgora"
       >
-        {{ t('agora', 'Go to agora') }}
+        {{ t("agora", "Go to agora") }}
       </NcButton>
       <NcButton
         type="secondary"
         @click="goToSettings"
       >
-        {{ t('agora', 'Administration settings') }}
+        {{ t("agora", "Administration settings") }}
       </NcButton>
       <NcButton
         type="tertiary"
         @click="closeWizard"
       >
-        {{ t('agora', 'Close') }}
+        {{ t("agora", "Close") }}
       </NcButton>
     </div>
   </div>

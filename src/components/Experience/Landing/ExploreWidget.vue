@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <section class="explore">
@@ -11,9 +11,9 @@ AGPL-3.0-or-later */
           class="header-icon"
         />
         <div>
-          <h2>{{ title || t('agora', 'Explore / Participate') }}</h2>
+          <h2>{{ title || t("agora", "Explore / Participate") }}</h2>
           <p class="section-subtitle">
-            {{ t('agora', 'Discover, propose, debate…') }}
+            {{ t("agora", "Discover, propose, debate…") }}
           </p>
         </div>
       </div>
@@ -21,7 +21,7 @@ AGPL-3.0-or-later */
         class="header-link"
         @click="emit('viewAll')"
       >
-        {{ t('agora', 'View all categories') }} →
+        {{ t("agora", "View all categories") }} →
       </a>
     </header>
 
@@ -35,7 +35,7 @@ AGPL-3.0-or-later */
           :is="Icons.Compass"
           :size="32"
         />
-        <p>{{ t('agora', 'No active categories yet') }}</p>
+        <p>{{ t("agora", "No active categories yet") }}</p>
       </div>
 
       <!-- Grid: only when there is at least one category -->
@@ -64,13 +64,13 @@ AGPL-3.0-or-later */
       </div>
 
       <aside class="cta-card">
-        <h3>{{ t('agora', 'An idea ...') }}</h3>
-        <p>{{ t('agora', 'Propose, debate, vote!') }}</p>
+        <h3>{{ t("agora", "An idea ...") }}</h3>
+        <p>{{ t("agora", "Propose, debate, vote!") }}</p>
         <button
           class="cta-button"
           @click="emit('create', { inquiryType: defaultCreateType })"
         >
-          {{ t('agora', 'Create a proposal') }}
+          {{ t("agora", "Create a proposal") }}
         </button>
       </aside>
     </div>
@@ -78,53 +78,53 @@ AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
-import { getInquiryTypeData } from '../../../helpers/modules/InquiryHelper.ts'
-import { useSessionStore } from '../../../stores/session.ts'
-import type { Inquiry } from '../../../Types'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
+import { getInquiryTypeData } from "../../../helpers/modules/InquiryHelper.ts";
+import { useSessionStore } from "../../../stores/session.ts";
+import type { Inquiry } from "../../../Types";
 const props = defineProps<{
-  inquiries?: Inquiry[]
-  createType?: string
-  title?: string
-}>()
+  inquiries?: Inquiry[];
+  createType?: string;
+  title?: string;
+}>();
 
 const emit = defineEmits<{
-  category: [key: string]
-  create: [payload?: { inquiryType?: string }]
-  viewAll: []
-}>()
+  category: [key: string];
+  create: [payload?: { inquiryType?: string }];
+  viewAll: [];
+}>();
 
 // Pick the type to preselect: explicit prop → top category → first root type
 const defaultCreateType = computed(() => {
-  if (props.createType) return props.createType
-  if (categories.value.length > 0) return categories.value[0].key
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  return types.find((t) => t.is_root)?.inquiry_type
-})
+  if (props.createType) return props.createType;
+  if (categories.value.length > 0) return categories.value[0].key;
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  return types.find((t) => t.is_root)?.inquiry_type;
+});
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 /**
  * Colour palette for category tiles — deterministic by type key so the same
  * type always gets the same colour across renders.
  */
 const PALETTE = [
-  '#16a34a', // green  – proposals / initiatives
-  '#2563eb', // blue   – debates / discussions
-  '#0ea5e9', // cyan   – consultations
-  '#dc2626', // red    – petitions / urgent
-  '#f59e0b', // amber  – questions / enquiries
-  '#7c3aed', // violet – projects / assemblies
-  '#06b6d4', // teal   – news / reports
-  '#6b7280', // grey   – fallback
-]
+  "#16a34a", // green  – proposals / initiatives
+  "#2563eb", // blue   – debates / discussions
+  "#0ea5e9", // cyan   – consultations
+  "#dc2626", // red    – petitions / urgent
+  "#f59e0b", // amber  – questions / enquiries
+  "#7c3aed", // violet – projects / assemblies
+  "#06b6d4", // teal   – news / reports
+  "#6b7280", // grey   – fallback
+];
 
 function colorFor(key: string): string {
-  let h = 0
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0
-  return PALETTE[Math.abs(h) % PALETTE.length]
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0;
+  return PALETTE[Math.abs(h) % PALETTE.length];
 }
 
 /**
@@ -133,28 +133,28 @@ function colorFor(key: string): string {
  * Capped at 9 tiles to keep the grid layout stable (3×3).
  */
 const categories = computed(() => {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const roots = types.filter((ty) => ty.is_root === true)
-  const list = props.inquiries || []
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const roots = types.filter((ty) => ty.is_root === true);
+  const list = props.inquiries || [];
 
   return roots
     .map((ty) => {
-      const key = ty.inquiry_type
-      const count = list.filter((i) => i.type === key).length
-      const data = getInquiryTypeData(key, types)
+      const key = ty.inquiry_type;
+      const count = list.filter((i) => i.type === key).length;
+      const data = getInquiryTypeData(key, types);
       return {
         key,
         label: data?.label || key,
-        countLabel: t('agora', '{n} active', { n: count }),
+        countLabel: t("agora", "{n} active", { n: count }),
         count,
         icon: data?.icon || Icons.FolderMultiple,
         color: colorFor(key),
-      }
+      };
     })
     .filter((c) => c.count > 0)
     .sort((a, b) => b.count - a.count)
-    .slice(0, 9)
-})
+    .slice(0, 9);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -295,12 +295,20 @@ const categories = computed(() => {
     overflow: hidden;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15), transparent 40%),
-        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1), transparent 40%);
+        radial-gradient(
+          circle at 80% 20%,
+          rgba(255, 255, 255, 0.15),
+          transparent 40%
+        ),
+        radial-gradient(
+          circle at 20% 80%,
+          rgba(255, 255, 255, 0.1),
+          transparent 40%
+        );
       pointer-events: none;
     }
 

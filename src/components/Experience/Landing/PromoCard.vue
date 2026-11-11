@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <section class="promo-card">
@@ -31,26 +31,26 @@ AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { generateUrl } from "@nextcloud/router";
 
 const props = withDefaults(
   defineProps<{
-    title?: string
-    text?: string
-    cta?: string
-    imageUrl?: string
+    title?: string;
+    text?: string;
+    cta?: string;
+    imageUrl?: string;
   }>(),
   {
-    title: () => t('agora', 'Together, let’s build tomorrow'),
-    text: () => t('agora', 'Participate in the life of your community!'),
-    cta: () => t('agora', 'Discover'),
-    imageUrl: '',
-  }
-)
+    title: () => t("agora", "Together, let’s build tomorrow"),
+    text: () => t("agora", "Participate in the life of your community!"),
+    cta: () => t("agora", "Discover"),
+    imageUrl: "",
+  },
+);
 
-const emit = defineEmits<{ action: [] }>()
+const emit = defineEmits<{ action: [] }>();
 
 /**
  * Accepts:
@@ -59,16 +59,16 @@ const emit = defineEmits<{ action: [] }>()
  *  - relative path                 → resolved against the Nextcloud root
  */
 function resolveImage(src?: string): string {
-  const s = String(src ?? '').trim()
-  if (!s) return ''
-  if (/^(https?:)?\/\//i.test(s) || /^(data|blob):/i.test(s)) return s
+  const s = String(src ?? "").trim();
+  if (!s) return "";
+  if (/^(https?:)?\/\//i.test(s) || /^(data|blob):/i.test(s)) return s;
   if (/^\d+$/.test(s)) {
-    return generateUrl(`/core/preview?fileId=${s}&x=800&y=800&a=1`)
+    return generateUrl(`/core/preview?fileId=${s}&x=800&y=800&a=1`);
   }
-  return s.startsWith('/') ? s : generateUrl(`/${s}`)
+  return s.startsWith("/") ? s : generateUrl(`/${s}`);
 }
 
-const resolvedImage = computed(() => resolveImage(props.imageUrl))
+const resolvedImage = computed(() => resolveImage(props.imageUrl));
 </script>
 
 <style lang="scss" scoped>
@@ -89,7 +89,11 @@ const resolvedImage = computed(() => resolveImage(props.imageUrl))
     background-color: rgba(0, 0, 0, 0.12);
 
     &--empty {
-      background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.18));
+      background-image: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.12),
+        rgba(0, 0, 0, 0.18)
+      );
     }
   }
 

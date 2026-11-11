@@ -4,51 +4,51 @@
 -->
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
+import { ref, onMounted, onUnmounted } from "vue";
+import { emit, subscribe, unsubscribe } from "@nextcloud/event-bus";
+import { t } from "@nextcloud/l10n";
 
-import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
-import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
-import { Event } from '../Types/index.ts'
+import NcAppSidebar from "@nextcloud/vue/components/NcAppSidebar";
+import NcAppSidebarTab from "@nextcloud/vue/components/NcAppSidebarTab";
+import { Event } from "../Types/index.ts";
 
-import { InquiryGeneralIcons } from '../utils/icons.ts'
+import { InquiryGeneralIcons } from "../utils/icons.ts";
 import {
   SideBarTabConfigurationInquiryGroup,
   SideBarTabAccessInquiryGroup,
   SideBarTabGroupMisc,
-} from '../components/SideBar/index.js'
+} from "../components/SideBar/index.js";
 
-const showSidebar = ref(window.innerWidth > 920)
-const activeTab = ref(t('agora', 'Comments').toLowerCase())
+const showSidebar = ref(window.innerWidth > 920);
+const activeTab = ref(t("agora", "Comments").toLowerCase());
 
 onMounted(() => {
   subscribe(Event.SidebarToggle, (payload) => {
-    showSidebar.value = payload?.open ?? !showSidebar.value
-    activeTab.value = payload?.activeTab ?? activeTab.value
-  })
+    showSidebar.value = payload?.open ?? !showSidebar.value;
+    activeTab.value = payload?.activeTab ?? activeTab.value;
+  });
   subscribe(Event.SidebarChangeTab, (payload) => {
-    activeTab.value = payload?.activeTab ?? activeTab.value
-  })
-})
+    activeTab.value = payload?.activeTab ?? activeTab.value;
+  });
+});
 
 onUnmounted(() => {
   // Store the toggle handler to properly unsubscribe
   const toggleHandler = (payload: any) => {
-    showSidebar.value = payload?.open ?? !showSidebar.value
-    activeTab.value = payload?.activeTab ?? activeTab.value
-  }
+    showSidebar.value = payload?.open ?? !showSidebar.value;
+    activeTab.value = payload?.activeTab ?? activeTab.value;
+  };
   const changeTabHandler = (payload: any) => {
-    activeTab.value = payload?.activeTab ?? activeTab.value
-  }
+    activeTab.value = payload?.activeTab ?? activeTab.value;
+  };
 
-  unsubscribe(Event.SidebarToggle, toggleHandler)
-  unsubscribe(Event.SidebarChangeTab, changeTabHandler)
-})
+  unsubscribe(Event.SidebarToggle, toggleHandler);
+  unsubscribe(Event.SidebarChangeTab, changeTabHandler);
+});
 
 function closeSideBar() {
-  showSidebar.value = false
-  emit(Event.SidebarToggle, { open: false })
+  showSidebar.value = false;
+  emit(Event.SidebarToggle, { open: false });
 }
 </script>
 

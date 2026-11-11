@@ -40,7 +40,9 @@
               (supportFeature === 'ternary' || supportFeature === 'reaction'),
           }"
         >
-          <template v-if="supportFeature === 'ternary' || supportFeature === 'binary'">
+          <template
+            v-if="supportFeature === 'ternary' || supportFeature === 'binary'"
+          >
             <TernarySupportIcon
               :support-value="Number(currentUserSupportValue)"
               :size="iconSize"
@@ -60,9 +62,7 @@
             <span
               class="reaction-emoji"
               :class="{ inactive: !hasUserParticipated }"
-            >{{
-              getUserReaction || '👍'
-            }}</span>
+            >{{ getUserReaction || "👍" }}</span>
           </div>
           <div
             v-else-if="supportFeature === 'star'"
@@ -79,7 +79,11 @@
                 v-for="n in 5"
                 :key="n"
                 :size="12"
-                :class="{ filled: hasUserParticipated && (currentUserSupportValue as number) >= n }"
+                :class="{
+                  filled:
+                    hasUserParticipated &&
+                    (currentUserSupportValue as number) >= n,
+                }"
               />
             </div>
           </div>
@@ -177,12 +181,16 @@
         v-if="!hasDetailedResults"
         class="no-results-message"
       >
-        <p>{{ t('agora', 'No detailed results available yet.') }}</p>
+        <p>{{ t("agora", "No detailed results available yet.") }}</p>
         <p
           v-if="totalParticipants > 0"
           class="total-participants"
         >
-          {{ t('agora', 'Total participants: {count}', { count: totalParticipants }) }}
+          {{
+            t("agora", "Total participants: {count}", {
+              count: totalParticipants,
+            })
+          }}
         </p>
       </div>
 
@@ -197,7 +205,7 @@
               :supported="true"
               :size="iconSize * 0.8"
             />
-            <span class="breakdown-label">{{ t('agora', 'Yes') }}</span>
+            <span class="breakdown-label">{{ t("agora", "Yes") }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ binaryResult.total_yes }}</span>
@@ -217,7 +225,7 @@
               :supported="false"
               :size="iconSize * 0.8"
             />
-            <span class="breakdown-label">{{ t('agora', 'No') }}</span>
+            <span class="breakdown-label">{{ t("agora", "No") }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ binaryResult.total_no }}</span>
@@ -243,7 +251,7 @@
               :support-value="1"
               :size="iconSize * 0.8"
             />
-            <span class="breakdown-label">{{ t('agora', 'In favor') }}</span>
+            <span class="breakdown-label">{{ t("agora", "In favor") }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ ternaryResult.totals.yes }}</span>
@@ -263,7 +271,7 @@
               :support-value="0"
               :size="iconSize * 0.8"
             />
-            <span class="breakdown-label">{{ t('agora', 'Neutral') }}</span>
+            <span class="breakdown-label">{{ t("agora", "Neutral") }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ ternaryResult.totals.abstain }}</span>
@@ -283,7 +291,7 @@
               :supported="false"
               :size="iconSize * 0.8"
             />
-            <span class="breakdown-label">{{ t('agora', 'Against') }}</span>
+            <span class="breakdown-label">{{ t("agora", "Against") }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ ternaryResult.totals.no }}</span>
@@ -305,13 +313,13 @@
       >
         <div class="score-summary">
           <div class="score-stat">
-            <span class="stat-label">{{ t('agora', 'Average') }}</span>
+            <span class="stat-label">{{ t("agora", "Average") }}</span>
             <span class="stat-value">{{
-              scoreResult.average ? scoreResult.average.toFixed(1) : '0.0'
+              scoreResult.average ? scoreResult.average.toFixed(1) : "0.0"
             }}</span>
           </div>
           <div class="score-stat">
-            <span class="stat-label">{{ t('agora', 'Total votes') }}</span>
+            <span class="stat-label">{{ t("agora", "Total votes") }}</span>
             <span class="stat-value">{{ scoreResult.total || 0 }}</span>
           </div>
         </div>
@@ -324,13 +332,15 @@
       >
         <div class="score-summary">
           <div class="score-stat">
-            <span class="stat-label">{{ t('agora', 'Average') }}</span>
+            <span class="stat-label">{{ t("agora", "Average") }}</span>
             <span class="stat-value">{{
-              starResult.totals.average ? starResult.totals.average.toFixed(1) : '0.0'
+              starResult.totals.average
+                ? starResult.totals.average.toFixed(1)
+                : "0.0"
             }}</span>
           </div>
           <div class="score-stat">
-            <span class="stat-label">{{ t('agora', 'Total ratings') }}</span>
+            <span class="stat-label">{{ t("agora", "Total ratings") }}</span>
             <span class="stat-value">{{ starResult.totals.total || 0 }}</span>
           </div>
         </div>
@@ -365,14 +375,16 @@
               :supported="true"
               :size="iconSize * 0.8"
             />
-            <span class="breakdown-label">{{ t('agora', 'Approved') }}</span>
+            <span class="breakdown-label">{{ t("agora", "Approved") }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ approvalDelibResult.totals.approved }}</span>
             <span
               v-if="approvalDelibResult.totals.total > 0"
               class="percentage"
-            >({{ Math.round(approvalDelibResult.percentages.approved) }}%)</span>
+            >({{
+              Math.round(approvalDelibResult.percentages.approved)
+            }}%)</span>
             <span
               v-else
               class="percentage"
@@ -398,7 +410,9 @@
             :key="gradeIndex"
             class="grade-bar"
           >
-            <span class="grade-label">{{ getGradeLabel(Number(gradeIndex)) }}</span>
+            <span class="grade-label">{{
+              getGradeLabel(Number(gradeIndex))
+            }}</span>
             <div class="grade-bar-container">
               <div
                 class="grade-bar-fill"
@@ -411,10 +425,11 @@
           </div>
         </div>
         <div class="median-info">
-          <span class="median-label">{{ t('agora', 'Median grade') }}:</span>
+          <span class="median-label">{{ t("agora", "Median grade") }}:</span>
           <span class="median-value">
             {{
-              translateGrade(majorityResult.median_label) || getGradeLabel(majorityResult.median)
+              translateGrade(majorityResult.median_label) ||
+                getGradeLabel(majorityResult.median)
             }}
           </span>
         </div>
@@ -423,14 +438,16 @@
       <!-- Footer Summary -->
       <div class="tooltip-footer">
         <div class="summary-item">
-          <span class="summary-label">{{ t('agora', 'Total participants') }}</span>
+          <span class="summary-label">{{
+            t("agora", "Total participants")
+          }}</span>
           <span class="summary-value">{{ totalParticipants }}</span>
         </div>
         <div
           v-if="quorumValue"
           class="summary-item"
         >
-          <span class="summary-label">{{ t('agora', 'Quorum') }}</span>
+          <span class="summary-label">{{ t("agora", "Quorum") }}</span>
           <span
             class="summary-value"
             :class="{ reached: totalParticipants >= quorumValue }"
@@ -475,7 +492,7 @@
         v-else-if="supportFeature === 'reaction'"
         class="reaction-icon"
       >
-        <span class="reaction-emoji">{{ getUserReaction || '👍' }}</span>
+        <span class="reaction-emoji">{{ getUserReaction || "👍" }}</span>
       </div>
 
       <div
@@ -487,13 +504,18 @@
             v-for="n in 5"
             :key="n"
             :size="iconSize * 0.7"
-            :class="{ filled: hasUserParticipated && (currentUserSupportValue as number) >= n }"
+            :class="{
+              filled:
+                hasUserParticipated && (currentUserSupportValue as number) >= n,
+            }"
           />
         </div>
         <span
           v-if="hasUserParticipated"
           class="rating-value"
-        >{{ currentUserSupportValue }}</span>
+        >{{
+          currentUserSupportValue
+        }}</span>
       </div>
 
       <div
@@ -504,7 +526,9 @@
         <span
           v-if="hasUserParticipated"
           class="score-value"
-        >{{ currentUserSupportValue }}</span>
+        >{{
+          currentUserSupportValue
+        }}</span>
       </div>
 
       <div
@@ -566,19 +590,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
-import { useSupportsStore } from '../../../stores/supports'
-import { useOptionsStore } from '../../../stores/options'
-import { useSessionStore } from '../../../stores/session'
-import TernarySupportIcon from '../../AppIcons/modules/TernarySupportIcon.vue'
-import ThumbIcon from '../../AppIcons/modules/ThumbIcon.vue'
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
-import { Star, Hash, Gauge, ListOrdered, TrendingUp } from 'lucide-vue-next'
-import type { Inquiry, Option } from '../../../Types/index.ts'
-import { canSupportOption, canSupport as canSupportInquiry } from '../../../utils/permissions.ts'
+import { ref, computed } from "vue";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
+import NcPopover from "@nextcloud/vue/components/NcPopover";
+import { useSupportsStore } from "../../../stores/supports";
+import { useOptionsStore } from "../../../stores/options";
+import { useSessionStore } from "../../../stores/session";
+import TernarySupportIcon from "../../AppIcons/modules/TernarySupportIcon.vue";
+import ThumbIcon from "../../AppIcons/modules/ThumbIcon.vue";
+import NcCounterBubble from "@nextcloud/vue/components/NcCounterBubble";
+import { Star, Hash, Gauge, ListOrdered, TrendingUp } from "lucide-vue-next";
+import type { Inquiry, Option } from "../../../Types/index.ts";
+import {
+  canSupportOption,
+  canSupport as canSupportInquiry,
+} from "../../../utils/permissions.ts";
 import type {
   SupportFeature,
   SupportResultData,
@@ -589,201 +616,232 @@ import type {
   ApprovalDelibResult,
   ReactionResult,
   MajorityJudgmentResult,
-} from '../../../Types/votingType'
-import { translateGrade } from '../../../Types/votingType'
+} from "../../../Types/votingType";
+import { translateGrade } from "../../../Types/votingType";
 
 // Define emits
 const emit = defineEmits<{
-  (e: 'supportToggled', itemId: number, newState: boolean): void
-}>()
+  (e: "supportToggled", itemId: number, newState: boolean): void;
+}>();
 
 interface Props {
-  item: Inquiry | Option
-  itemType: 'inquiry' | 'option'
-  context?: Record<string, unknown> | null
-  showQuorum?: boolean
-  viewOnly?: boolean
-  showDetailsOnHover?: boolean
-  iconSize?: number
-  tooltipTitle?: string
+  item: Inquiry | Option;
+  itemType: "inquiry" | "option";
+  context?: Record<string, unknown> | null;
+  showQuorum?: boolean;
+  viewOnly?: boolean;
+  showDetailsOnHover?: boolean;
+  iconSize?: number;
+  tooltipTitle?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showQuorum: false,
   showDetailsOnHover: true,
   iconSize: 22,
-  tooltipTitle: '',
+  tooltipTitle: "",
   context: () => ({}),
   viewOnly: false,
-})
+});
 
-type Item = Inquiry | Option
+type Item = Inquiry | Option;
 
 // Refs
-const containerRef = ref<HTMLElement>()
+const containerRef = ref<HTMLElement>();
 
 // Computed tooltip title - use computed instead of mutating props
-const resolvedTooltipTitle = computed(() => props.tooltipTitle || t('agora', 'Support details'))
+const resolvedTooltipTitle = computed(
+  () => props.tooltipTitle || t("agora", "Support details"),
+);
 
 // Support feature from item configuration
 const supportFeature = computed(
-  (): SupportFeature => (props.item?.configuration?.supportFeature as SupportFeature) || 'none'
-)
+  (): SupportFeature =>
+    (props.item?.configuration?.supportFeature as SupportFeature) || "none",
+);
 // Current user support
-const currentUserSupportValue = computed(() => props.item?.currentUserStatus?.supportValue ?? null)
+const currentUserSupportValue = computed(
+  () => props.item?.currentUserStatus?.supportValue ?? null,
+);
 
-const hasUserParticipated = computed(() => props.item?.currentUserStatus?.hasSupported ?? false)
+const hasUserParticipated = computed(
+  () => props.item?.currentUserStatus?.hasSupported ?? false,
+);
 
 const getUserReaction = computed(() => {
-  if (supportFeature.value !== 'reaction') return null
-  const raw = currentUserSupportValue.value
-  if (!raw) return null
+  if (supportFeature.value !== "reaction") return null;
+  const raw = currentUserSupportValue.value;
+  if (!raw) return null;
 
-  let value = raw
-  if (typeof value === 'string') {
+  let value = raw;
+  if (typeof value === "string") {
     try {
-      const parsed = JSON.parse(value)
-      if (parsed?.value) value = parsed.value
-    } catch {}
-  } else if (value && typeof value === 'object' && 'value' in value) {
-    value = value.value
+      const parsed = JSON.parse(value);
+      if (parsed?.value) value = parsed.value;
+    } catch {
+       showError(t('agora','Cannot get reaction'))
+    }
+  } else if (value && typeof value === "object" && "value" in value) {
+    value = value.value;
   }
 
-  if (!value) return null
-  if (Array.isArray(value) && value.length > 0) value = value[0]
+  if (!value) return null;
+  if (Array.isArray(value) && value.length > 0) value = value[0];
 
   // Normalise: remove variation selectors (U+FE0F) and trim
-  return typeof value === 'string' ? value.replace(/[\uFE0F]/g, '').trim() : null
-})
+  return typeof value === "string"
+    ? value.replace(/[\uFE0F]/g, "").trim()
+    : null;
+});
 
-const getCounterType = (): 'highlighted' | 'outlined' | '' => {
-  if (hasUserParticipated.value) return 'highlighted'
-  if (displayCount.value > 0) return 'outlined'
-  return ''
-}
+const getCounterType = (): "highlighted" | "outlined" | "" => {
+  if (hasUserParticipated.value) return "highlighted";
+  if (displayCount.value > 0) return "outlined";
+  return "";
+};
 
 // Results from item (set by parent/inquiry store)
 const normalizedSupportResult = computed((): SupportResultData => {
-  const raw = (props.item as Item)?.status?.supportResult
-  if (!raw) return null
+  const raw = (props.item as Item)?.status?.supportResult;
+  if (!raw) return null;
 
   // If it's an array, check if it's empty or get the first element
   if (Array.isArray(raw)) {
     // If array is empty, return null
-    if (raw.length === 0) return null
+    if (raw.length === 0) return null;
 
-    const first = raw[0]
+    const first = raw[0];
     // If the first element has a result property, use that
-    const actual = first?.result ?? first
+    const actual = first?.result ?? first;
     // If actual is undefined or null, return null
-    if (!actual) return null
+    if (!actual) return null;
 
     // If actual is an empty array or empty object, return null
-    if (Array.isArray(actual) && actual.length === 0) return null
-    if (typeof actual === 'object' && actual !== null && Object.keys(actual).length === 0)
-      return null
+    if (Array.isArray(actual) && actual.length === 0) return null;
+    if (
+      typeof actual === "object" &&
+      actual !== null &&
+      Object.keys(actual).length === 0
+    )
+      return null;
 
     // Process string/object as before
-    return processResultData(actual)
+    return processResultData(actual);
   }
 
   // If it's a string, try to parse it
-  if (typeof raw === 'string') {
+  if (typeof raw === "string") {
     try {
-      const parsed = JSON.parse(raw)
-      return processResultData(parsed)
+      const parsed = JSON.parse(raw);
+      return processResultData(parsed);
     } catch (e) {
-      console.error('Failed to parse support result:', e)
-      return null
+      console.error("Failed to parse support result:", e);
+      return null;
     }
   }
 
   // If it's an object, process it directly
-  if (raw && typeof raw === 'object') {
-    return processResultData(raw)
+  if (raw && typeof raw === "object") {
+    return processResultData(raw);
   }
 
-  return null
-})
+  return null;
+});
 
 // Helper function to process result data
 const processResultData = (data: unknown): SupportResultData => {
-  if (!data) return null
-  if (Array.isArray(data) && data.length === 0) return null
-  if (typeof data === 'object' && data !== null && Object.keys(data).length === 0) return null
+  if (!data) return null;
+  if (Array.isArray(data) && data.length === 0) return null;
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    Object.keys(data).length === 0
+  )
+    return null;
 
   // If it's still not an object, return null
-  if (!data || typeof data !== 'object') {
-    return null
+  if (!data || typeof data !== "object") {
+    return null;
   }
 
   // Return as is - it already has the correct structure from CSV
   // Just ensure it has a type
   if (!data.type) {
-    console.warn('Result missing type:', data)
-    return null
+    console.warn("Result missing type:", data);
+    return null;
   }
 
-  return data
-}
+  return data;
+};
 
 const hasDetailedResults = computed(() => {
-  if (supportFeature.value === 'binary') return !!binaryResult.value
-  if (supportFeature.value === 'ternary') return !!ternaryResult.value
-  if (supportFeature.value === 'score') return !!scoreResult.value
-  if (supportFeature.value === 'star') return !!starResult.value
-  if (supportFeature.value === 'approval_delib') return !!approvalDelibResult.value
-  if (supportFeature.value === 'reaction') return !!reactionResult.value
-  if (supportFeature.value === 'majority_judgment') return !!majorityResult.value
-  return false
-})
+  if (supportFeature.value === "binary") return !!binaryResult.value;
+  if (supportFeature.value === "ternary") return !!ternaryResult.value;
+  if (supportFeature.value === "score") return !!scoreResult.value;
+  if (supportFeature.value === "star") return !!starResult.value;
+  if (supportFeature.value === "approval_delib")
+    return !!approvalDelibResult.value;
+  if (supportFeature.value === "reaction") return !!reactionResult.value;
+  if (supportFeature.value === "majority_judgment")
+    return !!majorityResult.value;
+  return false;
+});
 
 const hasResults = computed(() => {
-  if (supportFeature.value === 'none') return false
-  if (supportFeature.value === 'binary') return !!binaryResult.value
-  if (supportFeature.value === 'ternary') return !!ternaryResult.value
-  if (supportFeature.value === 'star') return !!starResult.value
-  if (supportFeature.value === 'score') return !!scoreResult.value
-  if (supportFeature.value === 'approval_delib') return !!approvalDelibResult.value
-  if (supportFeature.value === 'reaction') return !!reactionResult.value
-  if (supportFeature.value === 'majority_judgment') return !!majorityResult.value
+  if (supportFeature.value === "none") return false;
+  if (supportFeature.value === "binary") return !!binaryResult.value;
+  if (supportFeature.value === "ternary") return !!ternaryResult.value;
+  if (supportFeature.value === "star") return !!starResult.value;
+  if (supportFeature.value === "score") return !!scoreResult.value;
+  if (supportFeature.value === "approval_delib")
+    return !!approvalDelibResult.value;
+  if (supportFeature.value === "reaction") return !!reactionResult.value;
+  if (supportFeature.value === "majority_judgment")
+    return !!majorityResult.value;
   // Fallback - check if we have any result data
   return (
-    normalizedSupportResult.value !== null && Object.keys(normalizedSupportResult.value).length > 0
-  )
-})
+    normalizedSupportResult.value !== null &&
+    Object.keys(normalizedSupportResult.value).length > 0
+  );
+});
 
 const binaryResult = computed((): BinaryResult | null => {
-  if (supportFeature.value !== 'binary' || normalizedSupportResult.value == null) {
-    return null
+  if (
+    supportFeature.value !== "binary" ||
+    normalizedSupportResult.value == null
+  ) {
+    return null;
   }
 
-  const result = normalizedSupportResult.value
+  const result = normalizedSupportResult.value;
 
   // Your data structure: { type: 'binary', totals: { yes: 1, no: 0 }, percentages: {...} }
-  if (result.type === 'binary' && (result as BinaryResult).totals) {
-    const r = result as BinaryResult
+  if (result.type === "binary" && (result as BinaryResult).totals) {
+    const r = result as BinaryResult;
     return {
       total_yes: r.totals.yes || 0,
       total_no: r.totals.no || 0,
       percentage_yes: r.percentages?.yes || 0,
       percentage_no: r.percentages?.no || 0,
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 const ternaryResult = computed((): TernaryResult | null => {
-  if (supportFeature.value !== 'ternary' || normalizedSupportResult.value == null) {
-    return null
+  if (
+    supportFeature.value !== "ternary" ||
+    normalizedSupportResult.value == null
+  ) {
+    return null;
   }
 
-  const result = normalizedSupportResult.value
+  const result = normalizedSupportResult.value;
 
   // Your data structure: { type: 'ternary', totals: {...}, percentages: {...} }
-  if (result.type === 'ternary' && (result as TernaryResult).totals) {
-    const r = result as TernaryResult
+  if (result.type === "ternary" && (result as TernaryResult).totals) {
+    const r = result as TernaryResult;
     return {
       totals: {
         yes: r.totals.yes || 0,
@@ -795,61 +853,73 @@ const ternaryResult = computed((): TernaryResult | null => {
         no: r.percentages?.no || 0,
         abstain: r.percentages?.abstain || 0,
       },
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 const starResult = computed((): StarResult | null => {
-  if (supportFeature.value !== 'star' || normalizedSupportResult.value == null) {
-    return null
+  if (
+    supportFeature.value !== "star" ||
+    normalizedSupportResult.value == null
+  ) {
+    return null;
   }
 
-  const result = normalizedSupportResult.value
+  const result = normalizedSupportResult.value;
 
   // Your data structure: { type: 'star', totals: { total: 2, average: 2.5 } }
-  if (result.type === 'star' && (result as StarResult).totals) {
-    const r = result as StarResult
+  if (result.type === "star" && (result as StarResult).totals) {
+    const r = result as StarResult;
     return {
       totals: {
         total: r.totals.total || 0,
         average: r.totals.average || 0,
       },
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 const scoreResult = computed((): ScoreResult | null => {
-  if (supportFeature.value !== 'score' || normalizedSupportResult.value == null) {
-    return null
+  if (
+    supportFeature.value !== "score" ||
+    normalizedSupportResult.value == null
+  ) {
+    return null;
   }
 
-  const result = normalizedSupportResult.value
+  const result = normalizedSupportResult.value;
 
   // Your data structure: { type: 'score', totals: { total: 2, average: 7 } }
-  if (result.type === 'score' && (result as ScoreResult).totals) {
-    const r = result as ScoreResult
+  if (result.type === "score" && (result as ScoreResult).totals) {
+    const r = result as ScoreResult;
     return {
       average: r.totals.average || 0,
       total: r.totals.total || 0,
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 const approvalDelibResult = computed((): ApprovalDelibResult | null => {
-  if (supportFeature.value !== 'approval_delib' || normalizedSupportResult.value == null) {
-    return null
+  if (
+    supportFeature.value !== "approval_delib" ||
+    normalizedSupportResult.value == null
+  ) {
+    return null;
   }
 
-  const result = normalizedSupportResult.value
+  const result = normalizedSupportResult.value;
 
-  if (result.type === 'approval_delib' && (result as ApprovalDelibResult).totals) {
-    const r = result as ApprovalDelibResult
+  if (
+    result.type === "approval_delib" &&
+    (result as ApprovalDelibResult).totals
+  ) {
+    const r = result as ApprovalDelibResult;
     return {
       totals: {
         approved: r.totals.approved || 0,
@@ -858,96 +928,102 @@ const approvalDelibResult = computed((): ApprovalDelibResult | null => {
       percentages: {
         approved: r.percentages?.approved || 0,
       },
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 const reactionResult = computed((): ReactionResult | null => {
-  if (supportFeature.value !== 'reaction' || normalizedSupportResult.value == null) {
-    return null
+  if (
+    supportFeature.value !== "reaction" ||
+    normalizedSupportResult.value == null
+  ) {
+    return null;
   }
 
-  const result = normalizedSupportResult.value
+  const result = normalizedSupportResult.value;
 
   // Your data structure: { type: 'reaction', counts: {...} }
-  if (result.type === 'reaction' && (result as ReactionResult).counts) {
+  if (result.type === "reaction" && (result as ReactionResult).counts) {
     return {
       counts: (result as ReactionResult).counts,
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 const majorityResult = computed((): MajorityJudgmentResult | null => {
-  if (supportFeature.value !== 'majority_judgment' || normalizedSupportResult.value == null) {
-    return null
+  if (
+    supportFeature.value !== "majority_judgment" ||
+    normalizedSupportResult.value == null
+  ) {
+    return null;
   }
 
-  const result = normalizedSupportResult.value as MajorityJudgmentResult
+  const result = normalizedSupportResult.value as MajorityJudgmentResult;
 
   // Handle the nested structure from your CSV
-  if (result.type === 'majority_judgment') {
+  if (result.type === "majority_judgment") {
     // For inquiries with options (like #4 and #5004)
     if (result.options != null && Object.keys(result.options).length > 0) {
       // Get the first option's data (or find the winner)
-      const firstOptionId = Object.keys(result.options)[0]
-      const optionData = result.options[firstOptionId]
+      const firstOptionId = Object.keys(result.options)[0];
+      const optionData = result.options[firstOptionId];
 
       if (optionData?.grade_distribution != null) {
         // Convert the distribution object to array format
-        const distribution: Record<number, number> = {}
-        const gradeLabels = result.grades || []
+        const distribution: Record<number, number> = {};
+        const gradeLabels = result.grades || [];
 
         // Map grade names to indices
         gradeLabels.forEach((gradeName: string, index: number) => {
-          distribution[index] = optionData.grade_distribution[gradeName] || 0
-        })
+          distribution[index] = optionData.grade_distribution[gradeName] || 0;
+        });
 
         return {
           distribution,
           median: optionData.median_index || 0,
           total_votes: optionData.total_votes || 0,
-          median_label: optionData.median_grade || '',
+          median_label: optionData.median_grade || "",
           grades: result.grades,
           options: result.options,
           winner: result.winner,
           winner_details: result.winner_details,
           winner_name: result.winner_name,
-        }
+        };
       }
     }
 
     // For direct result format (if no options wrapper)
     if (result.grade_distribution != null) {
-      const distribution: Record<number, number> = {}
-      const gradeLabels = result.grades || []
+      const distribution: Record<number, number> = {};
+      const gradeLabels = result.grades || [];
 
       gradeLabels.forEach((gradeName: string, index: number) => {
-        distribution[index] = result.grade_distribution?.[gradeName] || 0
-      })
+        distribution[index] = result.grade_distribution?.[gradeName] || 0;
+      });
 
       return {
         distribution,
         median: result.median_index || 0,
         total_votes: result.total_votes || 0,
-        median_label: result.median_grade || '',
+        median_label: result.median_grade || "",
         grades: result.grades,
         options: result.options,
         winner: result.winner,
         winner_details: result.winner_details,
         winner_name: result.winner_name,
-      }
+      };
     }
 
     // Fallback for empty data
     if (result.grades != null && Array.isArray(result.grades)) {
-      const distribution: Record<number, number> = {}
+      const distribution: Record<number, number> = {};
       result.grades.forEach((_: string, index: number) => {
-        distribution[index] = 0
-      })
+        distribution[index] = 0;
+      });
 
       return {
         distribution,
@@ -958,36 +1034,38 @@ const majorityResult = computed((): MajorityJudgmentResult | null => {
         winner: result.winner,
         winner_details: result.winner_details,
         winner_name: result.winner_name,
-      }
+      };
     }
   }
 
-  return null
-})
+  return null;
+});
 
-const displayCount = computed(() => props.item?.status?.countSupports ?? 0)
+const displayCount = computed(() => props.item?.status?.countSupports ?? 0);
 
-const totalParticipants = computed(() => displayCount.value)
+const totalParticipants = computed(() => displayCount.value);
 
-const quorumValue = computed(() => (props.item as Item)?.miscFields?.quorum ?? 0)
+const quorumValue = computed(
+  () => (props.item as Item)?.miscFields?.quorum ?? 0,
+);
 
 interface SupportTemplate {
-  grades?: Record<number, string>
-  allowed_reactions?: string[]
+  grades?: Record<number, string>;
+  allowed_reactions?: string[];
 }
 
 const supportTemplate = computed<SupportTemplate | null>(() => {
-  const raw = (props.item as Item)?.miscFields?.support_template
-  if (typeof raw === 'string' && raw) {
+  const raw = (props.item as Item)?.miscFields?.support_template;
+  if (typeof raw === "string" && raw) {
     try {
-      return JSON.parse(raw)
+      return JSON.parse(raw);
     } catch {
-      return null
+      return null;
     }
   }
-  if (raw && typeof raw === 'object') return raw
-  return null
-})
+  if (raw && typeof raw === "object") return raw;
+  return null;
+});
 
 // Styles
 const containerStyles = computed(() => ({
@@ -995,342 +1073,400 @@ const containerStyles = computed(() => ({
   gap: `${props.iconSize * 0.5}px`,
   borderRadius: `${props.iconSize * 0.6}px`,
   borderWidth: `${props.iconSize * 0.05}px`,
-}))
+}));
 
 const iconContainerStyles = computed(() => ({
   width: `${props.iconSize * 1.2}px`,
   height: `${props.iconSize * 1.2}px`,
   borderRadius: `${props.iconSize * 0.3}px`,
-}))
+}));
 
 // Current user support info
 const currentUserSupportInfo = computed(() => {
-  if (!hasUserParticipated.value) return null
+  if (!hasUserParticipated.value) return null;
 
-  const feature = supportFeature.value
-  const value = currentUserSupportValue.value
+  const feature = supportFeature.value;
+  const value = currentUserSupportValue.value;
 
-  if (feature === 'binary') {
-    return value === 1 ? `✅ ${t('agora', 'You voted yes')}` : null
+  if (feature === "binary") {
+    return value === 1 ? `✅ ${t("agora", "You voted yes")}` : null;
   }
-  if (feature === 'ternary') {
-    if (value === 1) return `✅ ${t('agora', 'You voted in favor')}`
-    if (value === 0) return `⚪ ${t('agora', 'You voted neutral')}`
-    if (value === -1) return `❌ ${t('agora', 'You voted against')}`
+  if (feature === "ternary") {
+    if (value === 1) return `✅ ${t("agora", "You voted in favor")}`;
+    if (value === 0) return `⚪ ${t("agora", "You voted neutral")}`;
+    if (value === -1) return `❌ ${t("agora", "You voted against")}`;
   }
-  if (feature === 'star') {
-    return `⭐ ${value}/5 ${t('agora', 'stars')}`
+  if (feature === "star") {
+    return `⭐ ${value}/5 ${t("agora", "stars")}`;
   }
-  if (feature === 'score') {
-    return `📊 ${value}/10`
+  if (feature === "score") {
+    return `📊 ${value}/10`;
   }
-  if (feature === 'reaction' && value) {
-    return `${value} ${t('agora', 'reacted')}`
+  if (feature === "reaction" && value) {
+    return `${value} ${t("agora", "reacted")}`;
   }
-  if (feature === 'majority_judgment') {
-    return `📝 ${getGradeLabel(value as number)}`
+  if (feature === "majority_judgment") {
+    return `📝 ${getGradeLabel(value as number)}`;
   }
-  if (feature === 'approval_delib') {
-    return `✅ ${t('agora', 'Approved')}`
+  if (feature === "approval_delib") {
+    return `✅ ${t("agora", "Approved")}`;
   }
-  if (feature === 'ranking') {
-    return `📊 ${t('agora', 'Ranked')}`
+  if (feature === "ranking") {
+    return `📊 ${t("agora", "Ranked")}`;
   }
 
-  return `👍 ${t('agora', 'Supported')}`
-})
+  return `👍 ${t("agora", "Supported")}`;
+});
 
 const userSupportClass = computed(() => {
-  const feature = supportFeature.value
-  const value = currentUserSupportValue.value
+  const feature = supportFeature.value;
+  const value = currentUserSupportValue.value;
 
-  if (feature === 'ternary') {
-    if (value === 1) return 'positive'
-    if (value === 0) return 'neutral'
-    if (value === -1) return 'negative'
+  if (feature === "ternary") {
+    if (value === 1) return "positive";
+    if (value === 0) return "neutral";
+    if (value === -1) return "negative";
   }
-  return 'positive'
-})
+  return "positive";
+});
 
 // Permissions
 const canSupport = computed(() => {
-  if (!props.item) return false
+  if (!props.item) return false;
 
-  if (props.itemType === 'option') {
-    return canSupportOption(props.context)
+  if (props.itemType === "option") {
+    return canSupportOption(props.context);
   }
-  return canSupportInquiry(props.context)
-})
+  return canSupportInquiry(props.context);
+});
 
-const isReadonly = computed(() => props.viewOnly || !canSupport.value)
+const isReadonly = computed(() => props.viewOnly || !canSupport.value);
 
 // Helpers
 const getSupportLabel = (): string => {
   const labels: Record<SupportFeature, string> = {
-    binary: t('agora', 'Binary'),
-    ternary: t('agora', 'Ternary'),
-    reaction: t('agora', 'Reactions'),
-    star: t('agora', 'Ratings'),
-    score: t('agora', 'Scores'),
-    majority_judgment: t('agora', 'Grades'),
-    approval_delib: t('agora', 'Approvals'),
-    ranking: t('agora', 'Rankings'),
-    none: t('agora', 'Supports'),
-  }
+    binary: t("agora", "Binary"),
+    ternary: t("agora", "Ternary"),
+    reaction: t("agora", "Reactions"),
+    star: t("agora", "Ratings"),
+    score: t("agora", "Scores"),
+    majority_judgment: t("agora", "Grades"),
+    approval_delib: t("agora", "Approvals"),
+    ranking: t("agora", "Rankings"),
+    none: t("agora", "Supports"),
+  };
 
-  return labels[supportFeature.value] || t('agora', 'Supports')
-}
+  return labels[supportFeature.value] || t("agora", "Supports");
+};
 
 const getGradeLabel = (grade: number | string | null): string => {
-  if (grade === null || grade === undefined) return ''
+  if (grade === null || grade === undefined) return "";
 
   // Convert numeric strings to numbers
-  if (typeof grade === 'string') {
-    const num = Number(grade)
-    if (isNaN(num)) return translateGrade(grade) // it's a real string label
-    grade = num
+  if (typeof grade === "string") {
+    const num = Number(grade);
+    if (isNaN(num)) return translateGrade(grade); // it's a real string label
+    grade = num;
   }
 
-  if (typeof grade === 'number') {
-    const idx = grade
+  if (typeof grade === "number") {
+    const idx = grade;
     // Use supportTemplate.grades first
     if (supportTemplate.value?.grades && supportTemplate.value.grades[idx]) {
-      return translateGrade(supportTemplate.value.grades[idx])
+      return translateGrade(supportTemplate.value.grades[idx]);
     }
     // Fallback to result's grades if available
-    if (majorityResult.value && (majorityResult.value as unknown).grades?.[idx]) {
-      return translateGrade((majorityResult.value as unknown).grades[idx])
+    if (
+      majorityResult.value &&
+      (majorityResult.value as unknown).grades?.[idx]
+    ) {
+      return translateGrade((majorityResult.value as unknown).grades[idx]);
     }
     // Default grades
     const defaultGrades = [
-      t('agora', 'Reject'),
-      t('agora', 'Insufficient'),
-      t('agora', 'Passable'),
-      t('agora', 'Fairly good'),
-      t('agora', 'Good'),
-      t('agora', 'Very good'),
-      t('agora', 'Excellent'),
-    ]
-    return defaultGrades[idx] || String(idx)
+      t("agora", "Reject"),
+      t("agora", "Insufficient"),
+      t("agora", "Passable"),
+      t("agora", "Fairly good"),
+      t("agora", "Good"),
+      t("agora", "Very good"),
+      t("agora", "Excellent"),
+    ];
+    return defaultGrades[idx] || String(idx);
   }
 
-  return String(grade)
-}
+  return String(grade);
+};
 
 const handleSupportClick = async () => {
-  if (!canSupport.value || isReadonly.value) return
+  if (!canSupport.value || isReadonly.value) return;
 
-  const hadSupportedBefore = props.item.currentUserStatus?.hasSupported
-  const currentValue = props.item.currentUserStatus?.supportValue
-  const feature = supportFeature.value
+  const hadSupportedBefore = props.item.currentUserStatus?.hasSupported;
+  const currentValue = props.item.currentUserStatus?.supportValue;
+  const feature = supportFeature.value;
 
   // Skip non-actionable features
-  if (feature === 'ranking' || feature === 'trending') return
+  if (feature === "ranking" || feature === "trending") return;
 
   try {
-    const supportsStore = useSupportsStore()
-    const sessionStore = useSessionStore()
-    const optionsStore = useOptionsStore()
+    const supportsStore = useSupportsStore();
+    const sessionStore = useSessionStore();
+    const optionsStore = useOptionsStore();
 
-    const itemId = props.item.id
-    const userId = sessionStore.currentUser.id
-    const item = props.item
-    const itemType = props.itemType
+    const itemId = props.item.id;
+    const userId = sessionStore.currentUser.id;
+    const item = props.item;
+    const itemType = props.itemType;
 
     switch (feature) {
-      case 'binary':
-        await supportsStore.toggleBinarySupport(itemId, userId, item, itemType)
-        break
+      case "binary":
+        await supportsStore.toggleBinarySupport(itemId, userId, item, itemType);
+        break;
 
-      case 'approval_delib':
-        await supportsStore.toggleApprovalDeliberativeSupport(itemId, userId, item, itemType)
-        break
+      case "approval_delib":
+        await supportsStore.toggleApprovalDeliberativeSupport(
+          itemId,
+          userId,
+          item,
+          itemType,
+        );
+        break;
 
-      case 'ternary':
-        await supportsStore.toggleTernarySupport(itemId, userId, item, itemType)
-        break
+      case "ternary":
+        await supportsStore.toggleTernarySupport(
+          itemId,
+          userId,
+          item,
+          itemType,
+        );
+        break;
 
-      case 'star': {
-        let nextValue: number | null = null
+      case "star": {
+        let nextValue: number | null = null;
         if (!hadSupportedBefore) {
-          nextValue = 5
+          nextValue = 5;
         } else if (currentValue === 5) {
-          nextValue = 4
+          nextValue = 4;
         } else if (currentValue === 4) {
-          nextValue = 3
+          nextValue = 3;
         } else if (currentValue === 3) {
-          nextValue = 2
+          nextValue = 2;
         } else if (currentValue === 2) {
-          nextValue = 1
+          nextValue = 1;
         } else if (currentValue === 1) {
-          nextValue = null
+          nextValue = null;
         }
-        await supportsStore.submitScoreSupport(itemId, userId, item, itemType, nextValue)
-        break
+        await supportsStore.submitScoreSupport(
+          itemId,
+          userId,
+          item,
+          itemType,
+          nextValue,
+        );
+        break;
       }
 
-      case 'score': {
-        let nextValue: number | null = null
+      case "score": {
+        let nextValue: number | null = null;
         if (!hadSupportedBefore) {
-          nextValue = 10
-        } else if (typeof currentValue === 'number' && currentValue > 0) {
-          nextValue = currentValue - 1
+          nextValue = 10;
+        } else if (typeof currentValue === "number" && currentValue > 0) {
+          nextValue = currentValue - 1;
         } else if (currentValue === 0) {
-          nextValue = null
+          nextValue = null;
         }
-        await supportsStore.submitScoreSupport(itemId, userId, item, itemType, nextValue)
-        break
+        await supportsStore.submitScoreSupport(
+          itemId,
+          userId,
+          item,
+          itemType,
+          nextValue,
+        );
+        break;
       }
 
-      case 'majority_judgment': {
+      case "majority_judgment": {
         // Numeric grade indices: 0 = lowest, length-1 = highest
         const gradeLabels = supportTemplate.value?.grades || [
-          'Reject',
-          'Insufficient',
-          'Passable',
-          'Fairly Good',
-          'Good',
-          'Very Good',
-          'Excellent',
-        ]
-        const maxGrade = gradeLabels.length - 1
-        const currentGrade = typeof currentValue === 'number' ? currentValue : null
-        let nextValue: number | null = null
+          "Reject",
+          "Insufficient",
+          "Passable",
+          "Fairly Good",
+          "Good",
+          "Very Good",
+          "Excellent",
+        ];
+        const maxGrade = gradeLabels.length - 1;
+        const currentGrade =
+          typeof currentValue === "number" ? currentValue : null;
+        let nextValue: number | null = null;
 
         if (!hadSupportedBefore) {
-          nextValue = maxGrade // start with highest grade
+          nextValue = maxGrade; // start with highest grade
         } else if (currentGrade !== null && currentGrade > 0) {
-          nextValue = currentGrade - 1 // move one step down
+          nextValue = currentGrade - 1; // move one step down
         } else if (currentGrade === 0) {
-          nextValue = null // remove after lowest grade
+          nextValue = null; // remove after lowest grade
         }
-        await supportsStore.submitScoreSupport(itemId, userId, item, itemType, nextValue)
-        break
+        await supportsStore.submitScoreSupport(
+          itemId,
+          userId,
+          item,
+          itemType,
+          nextValue,
+        );
+        break;
       }
 
-      case 'reaction': {
-        const normaliseReaction = (r: string) => r.replace(/[\uFE0F]/g, '').trim()
-        const reactions = (supportTemplate.value?.allowed_reactions ?? []).map(normaliseReaction)
-        const currentReaction = normaliseReaction(getUserReaction.value ?? '')
-        let nextReaction: string | null = null
+      case "reaction": {
+        const normaliseReaction = (r: string) =>
+          r.replace(/[\uFE0F]/g, "").trim();
+        const reactions = (supportTemplate.value?.allowed_reactions ?? []).map(
+          normaliseReaction,
+        );
+        const currentReaction = normaliseReaction(getUserReaction.value ?? "");
+        let nextReaction: string | null = null;
 
         if (hadSupportedBefore) {
-          const currentIndex = reactions.indexOf(currentReaction as string)
+          const currentIndex = reactions.indexOf(currentReaction as string);
           if (currentIndex !== -1 && currentIndex < reactions.length - 1) {
-            nextReaction = reactions[currentIndex + 1]
+            nextReaction = reactions[currentIndex + 1];
           } else {
-            nextReaction = null
+            nextReaction = null;
           }
         } else {
-          nextReaction = reactions.length > 0 ? reactions[0] : null
+          nextReaction = reactions.length > 0 ? reactions[0] : null;
         }
 
-        await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
-        break
+        await supportsStore.toggleReactionSupport(
+          itemId,
+          userId,
+          item,
+          itemType,
+          nextReaction,
+        );
+        break;
       }
 
       default:
-        return
+        return;
     }
 
     // Update local store and emit
-    if (itemType === 'option' && item.id) {
+    if (itemType === "option" && item.id) {
       optionsStore.updateOptionSupportDetails(item.id, {
         countSupports: item.status?.countSupports ?? 0,
         hasSupported: item.currentUserStatus?.hasSupported ?? false,
         supportValue: item.currentUserStatus?.supportValue ?? null,
-      })
+      });
     }
-    emit('supportToggled', item.id, item.currentUserStatus?.hasSupported ?? false)
-    showSupportSuccessMessage(hadSupportedBefore ?? false)
+    emit(
+      "supportToggled",
+      item.id,
+      item.currentUserStatus?.hasSupported ?? false,
+    );
+    showSupportSuccessMessage(hadSupportedBefore ?? false);
   } catch (error) {
-    console.error('Failed to toggle support:', error)
-    showError(t('agora', 'Failed to update support status'))
+    console.error("Failed to toggle support:", error);
+    showError(t("agora", "Failed to update support status"));
   }
-}
+};
 
 const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
-  const hasSupportedAfter = props.item.currentUserStatus?.hasSupported
-  const supportValueAfter = props.item.currentUserStatus?.supportValue
-  const feature = supportFeature.value
+  const hasSupportedAfter = props.item.currentUserStatus?.hasSupported;
+  const supportValueAfter = props.item.currentUserStatus?.supportValue;
+  const feature = supportFeature.value;
   switch (feature) {
-    case 'binary':
+    case "binary":
       if (supportValueAfter === 1) {
-        showSuccess(t('agora', 'Voted: yes'), { timeout: 2000 })
+        showSuccess(t("agora", "Voted: yes"), { timeout: 2000 });
       } else if (supportValueAfter === -1) {
-        showSuccess(t('agora', 'Voted: no'), { timeout: 2000 })
+        showSuccess(t("agora", "Voted: no"), { timeout: 2000 });
       } else {
-        showSuccess(t('agora', 'Vote removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Vote removed"), { timeout: 2000 });
       }
-      break
+      break;
 
-    case 'ternary':
+    case "ternary":
       if (supportValueAfter === 1) {
-        showSuccess(t('agora', 'Voted: in favor'), { timeout: 2000 })
+        showSuccess(t("agora", "Voted: in favor"), { timeout: 2000 });
       } else if (supportValueAfter === 0) {
-        showSuccess(t('agora', 'Voted: neutral'), { timeout: 2000 })
+        showSuccess(t("agora", "Voted: neutral"), { timeout: 2000 });
       } else if (supportValueAfter === -1) {
-        showSuccess(t('agora', 'Voted: against'), { timeout: 2000 })
+        showSuccess(t("agora", "Voted: against"), { timeout: 2000 });
       } else {
-        showSuccess(t('agora', 'Vote removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Vote removed"), { timeout: 2000 });
       }
-      break
+      break;
 
-    case 'approval_delib':
+    case "approval_delib":
       if (hasSupportedAfter) {
-        showSuccess(t('agora', 'Approved'), { timeout: 2000 })
+        showSuccess(t("agora", "Approved"), { timeout: 2000 });
       } else {
-        showSuccess(t('agora', 'Approval removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Approval removed"), { timeout: 2000 });
       }
-      break
+      break;
 
-    case 'star':
+    case "star":
       if (supportValueAfter) {
-        showSuccess(t('agora', 'Rating: {stars} stars', { stars: supportValueAfter }), {
-          timeout: 2000,
-        })
+        showSuccess(
+          t("agora", "Rating: {stars} stars", { stars: supportValueAfter }),
+          {
+            timeout: 2000,
+          },
+        );
       } else {
-        showSuccess(t('agora', 'Rating removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Rating removed"), { timeout: 2000 });
       }
-      break
+      break;
 
-    case 'score':
+    case "score":
       if (supportValueAfter === null) {
-        showSuccess(t('agora', 'Score removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Score removed"), { timeout: 2000 });
       } else {
-        showSuccess(t('agora', 'Score: {score}/10', { score: supportValueAfter }), {
-          timeout: 2000,
-        })
+        showSuccess(
+          t("agora", "Score: {score}/10", { score: supportValueAfter }),
+          {
+            timeout: 2000,
+          },
+        );
       }
-      break
+      break;
 
-    case 'reaction':
+    case "reaction":
       if (hasSupportedAfter && getUserReaction.value) {
-        showSuccess(t('agora', 'Reaction: {reaction}', { reaction: getUserReaction.value }), {
-          timeout: 2000,
-        })
+        showSuccess(
+          t("agora", "Reaction: {reaction}", {
+            reaction: getUserReaction.value,
+          }),
+          {
+            timeout: 2000,
+          },
+        );
       } else {
-        showSuccess(t('agora', 'Reaction removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Reaction removed"), { timeout: 2000 });
       }
-      break
+      break;
 
-    case 'majority_judgment':
+    case "majority_judgment":
       if (supportValueAfter === null) {
-        showSuccess(t('agora', 'Grade removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Grade removed"), { timeout: 2000 });
       } else {
-        const gradeLabel = getGradeLabel(supportValueAfter as string) // adapt to string
-        showSuccess(t('agora', 'Grade: {grade}', { grade: gradeLabel }), { timeout: 2000 })
+        const gradeLabel = getGradeLabel(supportValueAfter as string); // adapt to string
+        showSuccess(t("agora", "Grade: {grade}", { grade: gradeLabel }), {
+          timeout: 2000,
+        });
       }
-      break
+      break;
 
     default:
       if (hasSupportedAfter && !hadSupportedBefore) {
-        showSuccess(t('agora', 'Supported'), { timeout: 2000 })
+        showSuccess(t("agora", "Supported"), { timeout: 2000 });
       } else if (!hasSupportedAfter && hadSupportedBefore) {
-        showSuccess(t('agora', 'Support removed'), { timeout: 2000 })
+        showSuccess(t("agora", "Support removed"), { timeout: 2000 });
       }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

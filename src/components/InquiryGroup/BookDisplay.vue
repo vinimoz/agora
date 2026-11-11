@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <div class="book-display">
@@ -23,7 +23,7 @@ AGPL-3.0-or-later */
             :is="Icons.ArrowLeft"
             :size="18"
           />
-          <span>{{ t('agora', 'Back') }}</span>
+          <span>{{ t("agora", "Back") }}</span>
         </button>
 
         <div class="book-location">
@@ -100,7 +100,7 @@ AGPL-3.0-or-later */
             >
               {{ prevInquiry.title }}
             </span>
-            <span v-else>{{ t('agora', 'Previous') }}</span>
+            <span v-else>{{ t("agora", "Previous") }}</span>
           </button>
 
           <span class="page-indicator">
@@ -118,7 +118,7 @@ AGPL-3.0-or-later */
             >
               {{ nextInquiry.title }}
             </span>
-            <span v-else>{{ t('agora', 'Next') }}</span>
+            <span v-else>{{ t("agora", "Next") }}</span>
             <component
               :is="Icons.ArrowRight"
               :size="16"
@@ -134,7 +134,7 @@ AGPL-3.0-or-later */
           class="book-toc"
         >
           <div class="toc-header">
-            <h4>{{ t('agora', 'Contents') }}</h4>
+            <h4>{{ t("agora", "Contents") }}</h4>
             <button
               class="close-btn"
               @click="showTOC = false"
@@ -175,71 +175,80 @@ AGPL-3.0-or-later */
         :size="48"
         class="empty-icon"
       />
-      <h3>{{ t('agora', 'No inquiry selected') }}</h3>
-      <p>{{ t('agora', 'Select an inquiry from the table of contents to read it like a book') }}</p>
+      <h3>{{ t("agora", "No inquiry selected") }}</h3>
+      <p>
+        {{
+          t(
+            "agora",
+            "Select an inquiry from the table of contents to read it like a book",
+          )
+        }}
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import InquiryRichHTML from './InquiryRichHTML.vue'
-import type { Inquiry, InquiryGroup } from '../../Types'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import InquiryRichHTML from "./InquiryRichHTML.vue";
+import type { Inquiry, InquiryGroup } from "../../Types";
 
 interface Props {
-  inquiry: Inquiry | null
-  inquiries?: Inquiry[]
-  groups?: InquiryGroup[]
-  parentGroup?: InquiryGroup | null
+  inquiry: Inquiry | null;
+  inquiries?: Inquiry[];
+  groups?: InquiryGroup[];
+  parentGroup?: InquiryGroup | null;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  navigate: [inquiryId: number]
-  back: []
-}>()
+  navigate: [inquiryId: number];
+  back: [];
+}>();
 
-const showTOC = ref(false)
-const isFullscreen = ref(false)
+const showTOC = ref(false);
+const isFullscreen = ref(false);
 
 // Flat, ordered list of inquiries used for prev/next & progress.
 const sortedInquiries = computed<Inquiry[]>(() => {
-  const list = props.inquiries?.filter(Boolean) ?? []
-  return [...list].sort((a, b) => (a.title || '').localeCompare(b.title || ''))
-})
+  const list = props.inquiries?.filter(Boolean) ?? [];
+  return [...list].sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+});
 
 const currentIndex = computed(() =>
-  sortedInquiries.value.findIndex((i) => i.id === props.inquiry?.id)
-)
+  sortedInquiries.value.findIndex((i) => i.id === props.inquiry?.id),
+);
 
 const prevInquiry = computed<Inquiry | null>(() => {
-  const i = currentIndex.value
-  return i > 0 ? sortedInquiries.value[i - 1] : null
-})
+  const i = currentIndex.value;
+  return i > 0 ? sortedInquiries.value[i - 1] : null;
+});
 
 const nextInquiry = computed<Inquiry | null>(() => {
-  const i = currentIndex.value
-  return i >= 0 && i < sortedInquiries.value.length - 1 ? sortedInquiries.value[i + 1] : null
-})
+  const i = currentIndex.value;
+  return i >= 0 && i < sortedInquiries.value.length - 1
+    ? sortedInquiries.value[i + 1]
+    : null;
+});
 
 const readingProgress = computed(() => {
-  const total = sortedInquiries.value.length
-  if (total <= 1) return 100
-  return Math.round(((currentIndex.value + 1) / total) * 100)
-})
+  const total = sortedInquiries.value.length;
+  if (total <= 1) return 100;
+  return Math.round(((currentIndex.value + 1) / total) * 100);
+});
 
 // Simple flat TOC — groups no longer complicate navigation.
 const tableOfContents = computed(() => {
   return sortedInquiries.value.map((inq) => ({
     id: inq.id,
     title: inq.title,
-    type: 'inquiry',
+    type: "inquiry",
     icon: getInquiryIcon(inq),
-  }))
-})
+  }));
+});
 
 function getInquiryIcon(inquiry: Inquiry): any {
   const iconMap: Record<string, any> = {
@@ -252,40 +261,40 @@ function getInquiryIcon(inquiry: Inquiry): any {
     meeting: Icons.Users,
     document: Icons.Document,
     proposal: Icons.Scale,
-  }
-  return iconMap[inquiry.type?.toLowerCase()] || Icons.File
+  };
+  return iconMap[inquiry.type?.toLowerCase()] || Icons.File;
 }
 
 function getTocIcon(item: any): any {
-  return item.icon || Icons.File
+  return item.icon || Icons.File;
 }
 
 function navigateTo(id: number | string) {
-  if (typeof id === 'number') {
-    emit('navigate', id)
-    showTOC.value = false
+  if (typeof id === "number") {
+    emit("navigate", id);
+    showTOC.value = false;
   }
 }
 
 function goBack() {
-  emit('back')
+  emit("back");
 }
 
 function toggleFullscreen() {
-  isFullscreen.value = !isFullscreen.value
+  isFullscreen.value = !isFullscreen.value;
   if (isFullscreen.value) {
-    document.documentElement.requestFullscreen?.()
+    document.documentElement.requestFullscreen?.();
   } else {
-    document.exitFullscreen?.()
+    document.exitFullscreen?.();
   }
 }
 
 function toggleTOC() {
-  showTOC.value = !showTOC.value
+  showTOC.value = !showTOC.value;
 }
 
 function handleInquiryClick(inquiry: Inquiry) {
-  emit('navigate', inquiry.id)
+  emit("navigate", inquiry.id);
 }
 </script>
 
@@ -443,7 +452,7 @@ function handleInquiryClick(inquiry: Inquiry) {
   :deep(p),
   :deep(li),
   :deep(blockquote) {
-    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
     font-size: 17px;
     line-height: 1.75;
     color: var(--color-main-text);

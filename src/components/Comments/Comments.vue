@@ -3,26 +3,26 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import CommentItem from './CommentItem.vue'
-import { t } from '@nextcloud/l10n'
-import { usePreferencesStore } from '../../stores/preferences.ts'
-import { useCommentsStore } from '../../stores/comments.ts'
-import { Comment } from '../../Types/index.ts'
+import { computed, ref, watch } from "vue";
+import CommentItem from "./CommentItem.vue";
+import { t } from "@nextcloud/l10n";
+import { usePreferencesStore } from "../../stores/preferences.ts";
+import { useCommentsStore } from "../../stores/comments.ts";
+import { Comment } from "../../Types/index.ts";
 
-const commentsStore = useCommentsStore()
-const preferencesStore = usePreferencesStore()
+const commentsStore = useCommentsStore();
+const preferencesStore = usePreferencesStore();
 
 const props = defineProps<{
-  optionId?: number
-  inquiryOnly?: boolean
-}>()
+  optionId?: number;
+  inquiryOnly?: boolean;
+}>();
 
 // Add a ref to force re-renders
-const updateTrigger = ref(0)
+const updateTrigger = ref(0);
 
 // Store user positions outside computed to prevent recreation
-const userPositions = new Map<string | number, 'left' | 'right'>()
+const userPositions = new Map<string | number, "left" | "right">();
 
 // Group comments by user + time proximity (within 60 seconds)
 
@@ -68,30 +68,30 @@ function groupCommentsByUserAndTime(comments: Comment[]) {
 } */
 
 function groupCommentsByUserAndTime(comments: Comment[]) {
-  if (!comments || comments.length === 0) return []
+  if (!comments || comments.length === 0) return [];
 
-  const groups = []
-  let currentGroup = null
+  const groups = [];
+  let currentGroup = null;
 
   for (let i = 0; i < comments.length; i++) {
-    const comment = comments[i]
+    const comment = comments[i];
     // eslint-disable-next-line no-continue
-    if (!comment || !comment.user) continue // still needed to skip invalid entries
+    if (!comment || !comment.user) continue; // still needed to skip invalid entries
 
     if (currentGroup) {
       // We already have a group; check if this comment belongs to it
-      const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp)
+      const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp);
       if (comment.user.id === currentGroup.userId && timeDiff <= 60) {
-        currentGroup.comments.push(comment)
+        currentGroup.comments.push(comment);
       } else {
         // Finish the current group and start a new one
-        groups.push(currentGroup)
+        groups.push(currentGroup);
         currentGroup = {
           userId: comment.user.id,
           user: comment.user,
           timestamp: comment.timestamp,
           comments: [comment],
-        }
+        };
       }
     } else {
       // First comment – start a new group
@@ -100,89 +100,90 @@ function groupCommentsByUserAndTime(comments: Comment[]) {
         user: comment.user,
         timestamp: comment.timestamp,
         comments: [comment],
-      }
+      };
     }
   }
 
-  if (currentGroup) groups.push(currentGroup)
-  return groups
+  if (currentGroup) groups.push(currentGroup);
+  return groups;
 }
 
-function getAvatarPosition(userId: string | number): 'left' | 'right' {
+function getAvatarPosition(userId: string | number): "left" | "right" {
   // Get last position for this user
-  const lastPosition = userPositions.get(userId)
+  const lastPosition = userPositions.get(userId);
 
   // Determine new position
-  let position: 'left' | 'right'
+  let position: "left" | "right";
   if (lastPosition) {
-    position = lastPosition === 'left' ? 'right' : 'left'
+    position = lastPosition === "left" ? "right" : "left";
   } else {
     // Alternate
-    position = 'left'
+    position = "left";
   }
 
   // Store for next time
-  userPositions.set(userId, position)
-  return position
+  userPositions.set(userId, position);
+  return position;
 }
 
 // In Comments.vue, update the filteredComments computed property
 const filteredComments = computed(() => {
   // Force recomputation by accessing the store directly
-  const allComments = commentsStore.comments || []
+  const allComments = commentsStore.comments || [];
 
   // Reset positions for new filter
-  userPositions.clear()
+  userPositions.clear();
 
   // Default: use groupedComments
   if (props.optionId === undefined && !props.inquiryOnly) {
-    return commentsStore.groupedComments || []
+    return commentsStore.groupedComments || [];
   }
 
   // Get base comments
-  let baseComments = []
+  let baseComments = [];
   if (props.optionId !== undefined) {
     baseComments = allComments
       .filter((comment) => comment && comment.optionId === props.optionId)
-      .sort((a, b) => b.timestamp - a.timestamp)
+      .sort((a, b) => b.timestamp - a.timestamp);
   } else if (props.inquiryOnly) {
     baseComments = allComments
       .filter((comment) => comment && comment.optionId === 0)
-      .sort((a, b) => b.timestamp - a.timestamp)
+      .sort((a, b) => b.timestamp - a.timestamp);
   }
 
   // Group by user + time
-  const groups = groupCommentsByUserAndTime(baseComments)
+  const groups = groupCommentsByUserAndTime(baseComments);
 
   // Assign avatar positions
   return groups.map((group) => ({
     ...group,
     avatarPosition: getAvatarPosition(group.userId),
-  }))
-})
+  }));
+});
 
 // Improve the watch to detect all changes
 watch(
   () => commentsStore.comments,
   () => {
-    updateTrigger.value = updateTrigger.value + 1
+    updateTrigger.value = updateTrigger.value + 1;
   },
-  { deep: true, immediate: true }
-)
+  { deep: true, immediate: true },
+);
 
 // Watch for changes in commentsStore.comments
 watch(
   () => commentsStore.comments,
   () => {
-    updateTrigger.value = updateTrigger.value + 1
+    updateTrigger.value = updateTrigger.value + 1;
   },
-  { deep: true }
-)
+  { deep: true },
+);
 
 const cssVar = {
-  '--content-deleted': `"(${t('agora', 'deleted')})"`,
-}
-const alternativestyle = preferencesStore.user?.useCommentsAlternativeStyling || false
+  "--content-deleted": `"(${t("agora", "deleted")})"`,
+};
+const alternativestyle =
+  preferencesStore.user?.useCommentsAlternativeStyling || false;
 </script>
 
 <template>
@@ -193,7 +194,9 @@ const alternativestyle = preferencesStore.user?.useCommentsAlternativeStyling ||
     :style="cssVar"
   >
     <!-- Grouped view for option/inquiry comments -->
-    <template v-if="filteredComments.length > 0 && filteredComments[0]?.comments">
+    <template
+      v-if="filteredComments.length > 0 && filteredComments[0]?.comments"
+    >
       <li
         v-for="(group, index) in filteredComments"
         :key="`group-${group.userId}-${group.timestamp}-${index}`"
@@ -222,7 +225,7 @@ const alternativestyle = preferencesStore.user?.useCommentsAlternativeStyling ||
       v-else
       class="no-comments"
     >
-      {{ t('agora', 'No comments yet') }}
+      {{ t("agora", "No comments yet") }}
     </li>
   </TransitionGroup>
 </template>

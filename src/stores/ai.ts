@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import { Logger } from '../helpers/modules/logger'
-import { AiAPI } from '../Api/index.ts'
-import type { AxiosError } from '@nextcloud/axios'
+import { defineStore } from "pinia";
+import { Logger } from "../helpers/modules/logger";
+import { AiAPI } from "../Api/index.ts";
+import type { AxiosError } from "@nextcloud/axios";
 
 interface AiState {
-  isLoading: boolean
+  isLoading: boolean;
   // General AI
-  enhancedContent: Record<number, string>
+  enhancedContent: Record<number, string>;
   // Option generation from discussion
-  generatedOptions: Record<number, string[]>
+  generatedOptions: Record<number, string[]>;
   // Document-based options
-  documentOptions: Record<number, unknown[]>
+  documentOptions: Record<number, unknown[]>;
   // Debate/analysis
-  summaries: Record<number, string>
-  sentiments: Record<number, unknown>
-  topics: Record<number, string>
+  summaries: Record<number, string>;
+  sentiments: Record<number, unknown>;
+  topics: Record<number, string>;
   // Translation
-  translations: Record<number, Record<string, string>>
+  translations: Record<number, Record<string, string>>;
 }
 
-export const useAiStore = defineStore('ai', {
+export const useAiStore = defineStore("ai", {
   state: (): AiState => ({
     isLoading: false,
     enhancedContent: {},
@@ -68,20 +68,20 @@ export const useAiStore = defineStore('ai', {
      * @param prompt
      */
     async enhanceContent(inquiryId: number, prompt: string): Promise<string> {
-      this.isLoading = true
+      this.isLoading = true;
       try {
         // Use the inquiry store's AI service or direct API
-        const response = await AiAPI.enhanceContent(inquiryId, prompt)
-        this.enhancedContent[inquiryId] = response.data.enhanced
-        return response.data.enhanced
+        const response = await AiAPI.enhanceContent(inquiryId, prompt);
+        this.enhancedContent[inquiryId] = response.data.enhanced;
+        return response.data.enhanced;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return ''
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return "";
         }
-        Logger.error('Error enhancing content', { error, inquiryId })
-        throw error
+        Logger.error("Error enhancing content", { error, inquiryId });
+        throw error;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -93,25 +93,34 @@ export const useAiStore = defineStore('ai', {
      * @param inquiryId
      * @param count
      */
-    async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<string[]> {
-      this.isLoading = true
+    async generateOptionsFromInquiry(
+      inquiryId: number,
+      count: number = 4,
+    ): Promise<string[]> {
+      this.isLoading = true;
       try {
-        const response = await AiAPI.generateOptionsFromInquiry(inquiryId, count)
+        const response = await AiAPI.generateOptionsFromInquiry(
+          inquiryId,
+          count,
+        );
         // Make sure we handle the response properly
         if (response.data && response.data.options) {
-          const options = response.data.options
-          this.generatedOptions[inquiryId] = options
-          return options
+          const options = response.data.options;
+          this.generatedOptions[inquiryId] = options;
+          return options;
         }
-        throw new Error('Invalid response from AI service')
+        throw new Error("Invalid response from AI service");
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return []
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return [];
         }
-        Logger.error('Error generating options from inquiry', { error, inquiryId })
-        throw error // Re-throw to be caught by the component
+        Logger.error("Error generating options from inquiry", {
+          error,
+          inquiryId,
+        });
+        throw error; // Re-throw to be caught by the component
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -126,27 +135,32 @@ export const useAiStore = defineStore('ai', {
     async generateOptionsFromDocument(
       inquiryId: number,
       documentPath: string,
-      optionType: 'chapter' | 'section' | 'subsection' | 'paragraph' | 'custom' = 'section',
-      options: Record<string, unknown> = {}
+      optionType:
+        | "chapter"
+        | "section"
+        | "subsection"
+        | "paragraph"
+        | "custom" = "section",
+      options: Record<string, unknown> = {},
     ): Promise<unknown[]> {
-      this.isLoading = true
+      this.isLoading = true;
       try {
         const response = await AiAPI.generateDocumentOptions(
           inquiryId,
           documentPath,
           optionType,
-          options
-        )
-        this.documentOptions[inquiryId] = response.data.options
-        return response.data.options
+          options,
+        );
+        this.documentOptions[inquiryId] = response.data.options;
+        return response.data.options;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return []
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return [];
         }
-        Logger.error('Error generating document options', { error, inquiryId })
-        throw error
+        Logger.error("Error generating document options", { error, inquiryId });
+        throw error;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -157,20 +171,23 @@ export const useAiStore = defineStore('ai', {
      */
     async generateDecisionOptions(
       inquiryId: number,
-      constraints: Record<string, unknown> = {}
+      constraints: Record<string, unknown> = {},
     ): Promise<unknown[]> {
-      this.isLoading = true
+      this.isLoading = true;
       try {
-        const response = await AiAPI.generateDecisionOptions(inquiryId, constraints)
-        return response.data.options
+        const response = await AiAPI.generateDecisionOptions(
+          inquiryId,
+          constraints,
+        );
+        return response.data.options;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return []
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return [];
         }
-        Logger.error('Error generating decision options', { error, inquiryId })
-        throw error
+        Logger.error("Error generating decision options", { error, inquiryId });
+        throw error;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -179,19 +196,22 @@ export const useAiStore = defineStore('ai', {
      * @param inquiryId
      * @param count
      */
-    async generateCreativeIdeas(inquiryId: number, count: number = 5): Promise<string[]> {
-      this.isLoading = true
+    async generateCreativeIdeas(
+      inquiryId: number,
+      count: number = 5,
+    ): Promise<string[]> {
+      this.isLoading = true;
       try {
-        const response = await AiAPI.generateCreativeIdeas(inquiryId, count)
-        return response.data.ideas
+        const response = await AiAPI.generateCreativeIdeas(inquiryId, count);
+        return response.data.ideas;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return []
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return [];
         }
-        Logger.error('Error generating creative ideas', { error, inquiryId })
-        throw error
+        Logger.error("Error generating creative ideas", { error, inquiryId });
+        throw error;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -204,21 +224,21 @@ export const useAiStore = defineStore('ai', {
      */
     async summarizeInquiry(
       inquiryId: number,
-      format: 'concise' | 'detailed' | 'bullet_points' = 'concise'
+      format: "concise" | "detailed" | "bullet_points" = "concise",
     ): Promise<string> {
-      this.isLoading = true
+      this.isLoading = true;
       try {
-        const response = await AiAPI.summarizeInquiry(inquiryId, format)
-        this.summaries[inquiryId] = response.data.summary
-        return response.data.summary
+        const response = await AiAPI.summarizeInquiry(inquiryId, format);
+        this.summaries[inquiryId] = response.data.summary;
+        return response.data.summary;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return ''
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return "";
         }
-        Logger.error('Error summarizing inquiry', { error, inquiryId })
-        throw error
+        Logger.error("Error summarizing inquiry", { error, inquiryId });
+        throw error;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -229,19 +249,19 @@ export const useAiStore = defineStore('ai', {
      * @param inquiryId
      */
     async analyzeSentiment(inquiryId: number): Promise<unknown> {
-      this.isLoading = true
+      this.isLoading = true;
       try {
-        const response = await AiAPI.analyzeSentiment(inquiryId)
-        this.sentiments[inquiryId] = response.data.sentiment
-        return response.data.sentiment
+        const response = await AiAPI.analyzeSentiment(inquiryId);
+        this.sentiments[inquiryId] = response.data.sentiment;
+        return response.data.sentiment;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return null
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return null;
         }
-        Logger.error('Error analyzing sentiment', { error, inquiryId })
-        throw error
+        Logger.error("Error analyzing sentiment", { error, inquiryId });
+        throw error;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -250,27 +270,27 @@ export const useAiStore = defineStore('ai', {
      * @param inquiryId
      */
     clearAiData(inquiryId: number): void {
-      delete this.enhancedContent[inquiryId]
-      delete this.generatedOptions[inquiryId]
-      delete this.documentOptions[inquiryId]
-      delete this.summaries[inquiryId]
-      delete this.sentiments[inquiryId]
-      delete this.topics[inquiryId]
-      delete this.translations[inquiryId]
+      delete this.enhancedContent[inquiryId];
+      delete this.generatedOptions[inquiryId];
+      delete this.documentOptions[inquiryId];
+      delete this.summaries[inquiryId];
+      delete this.sentiments[inquiryId];
+      delete this.topics[inquiryId];
+      delete this.translations[inquiryId];
     },
 
     /**
      * Reset all AI data
      */
     reset(): void {
-      this.isLoading = false
-      this.enhancedContent = {}
-      this.generatedOptions = {}
-      this.documentOptions = {}
-      this.summaries = {}
-      this.sentiments = {}
-      this.topics = {}
-      this.translations = {}
+      this.isLoading = false;
+      this.enhancedContent = {};
+      this.generatedOptions = {};
+      this.documentOptions = {};
+      this.summaries = {};
+      this.sentiments = {};
+      this.topics = {};
+      this.translations = {};
     },
   },
-})
+});

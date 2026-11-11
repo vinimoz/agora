@@ -43,7 +43,10 @@
           >
             <template #actions>
               <InquiryItemActions
-                v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
+                v-if="
+                  inquiry.permissions.edit ||
+                    sessionStore.appPermissions.inquiryCreation
+                "
                 :key="`actions-${inquiry.id}`"
                 class="reel-actions-wrapper"
                 :inquiry="inquiry"
@@ -57,7 +60,9 @@
           >
             <div
               class="reel-progress-bar"
-              :style="{ width: `${((currentIndex + 1) / inquiries.length) * 100}%` }"
+              :style="{
+                width: `${((currentIndex + 1) / inquiries.length) * 100}%`,
+              }"
             />
           </div>
         </div>
@@ -94,171 +99,175 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import InquiryItem from './InquiryItem.vue'
-import InquiryItemActions from './InquiryItemActions.vue'
-import { useSessionStore } from '../../stores/session.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { Inquiry } from '../../stores/inquiry.ts'
-const ArrowLeft = InquiryGeneralIcons.ArrowLeft || 'span'
-const ArrowRight = InquiryGeneralIcons.ArrowRight || 'span'
-const ArrowUp = InquiryGeneralIcons.ArrowUp || 'span'
-const ArrowDown = InquiryGeneralIcons.ArrowDown || 'span'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import InquiryItem from "./InquiryItem.vue";
+import InquiryItemActions from "./InquiryItemActions.vue";
+import { useSessionStore } from "../../stores/session.ts";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
+import { Inquiry } from "../../stores/inquiry.ts";
+const ArrowLeft = InquiryGeneralIcons.ArrowLeft || "span";
+const ArrowRight = InquiryGeneralIcons.ArrowRight || "span";
+const ArrowUp = InquiryGeneralIcons.ArrowUp || "span";
+const ArrowDown = InquiryGeneralIcons.ArrowDown || "span";
 
 const props = defineProps<{
-  inquiries: Inquiry[]
-  orientation?: 'vertical' | 'horizontal'
-  showArrows?: boolean
-  showProgress?: boolean
-}>()
+  inquiries: Inquiry[];
+  orientation?: "vertical" | "horizontal";
+  showArrows?: boolean;
+  showProgress?: boolean;
+}>();
 
 const emit = defineEmits<{
-  (e: 'change', index: number): void
-}>()
+  (e: "change", index: number): void;
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
-const currentIndex = ref(0)
-const isTransitioning = ref(false)
-const touchStartX = ref(0)
-const touchStartY = ref(0)
-const touchDelta = ref(0)
-const isDragging = ref(false)
+const currentIndex = ref(0);
+const isTransitioning = ref(false);
+const touchStartX = ref(0);
+const touchStartY = ref(0);
+const touchDelta = ref(0);
+const isDragging = ref(false);
 
-const orientation = computed(() => props.orientation || 'vertical')
-const isVertical = computed(() => orientation.value === 'vertical')
+const orientation = computed(() => props.orientation || "vertical");
+const isVertical = computed(() => orientation.value === "vertical");
 
-const hasPrevious = computed(() => currentIndex.value > 0)
-const hasNext = computed(() => currentIndex.value < props.inquiries.length - 1)
+const hasPrevious = computed(() => currentIndex.value > 0);
+const hasNext = computed(() => currentIndex.value < props.inquiries.length - 1);
 
 const trackStyle = computed(() => {
   if (isVertical.value) {
     return {
       transform: `translateY(-${currentIndex.value * 100}%)`,
-      transition: isTransitioning.value ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-    }
+      transition: isTransitioning.value
+        ? "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+        : "none",
+    };
   }
   return {
     transform: `translateX(-${currentIndex.value * 100}%)`,
-    transition: isTransitioning.value ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-  }
-})
+    transition: isTransitioning.value
+      ? "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+      : "none",
+  };
+});
 
 const goToNext = () => {
   if (hasNext.value && !isTransitioning.value) {
-    isTransitioning.value = true
-    currentIndex.value = currentIndex.value + 1
-    emit('change', currentIndex.value)
+    isTransitioning.value = true;
+    currentIndex.value = currentIndex.value + 1;
+    emit("change", currentIndex.value);
     setTimeout(() => {
-      isTransitioning.value = false
-    }, 500)
+      isTransitioning.value = false;
+    }, 500);
   }
-}
+};
 
 const goToPrevious = () => {
   if (hasPrevious.value && !isTransitioning.value) {
-    isTransitioning.value = true
-    currentIndex.value = currentIndex.value - 1
-    emit('change', currentIndex.value)
+    isTransitioning.value = true;
+    currentIndex.value = currentIndex.value - 1;
+    emit("change", currentIndex.value);
     setTimeout(() => {
-      isTransitioning.value = false
-    }, 500)
+      isTransitioning.value = false;
+    }, 500);
   }
-}
+};
 
 const goToIndex = (index: number) => {
   if (index >= 0 && index < props.inquiries.length && !isTransitioning.value) {
-    isTransitioning.value = true
-    currentIndex.value = index
-    emit('change', currentIndex.value)
+    isTransitioning.value = true;
+    currentIndex.value = index;
+    emit("change", currentIndex.value);
     setTimeout(() => {
-      isTransitioning.value = false
-    }, 500)
+      isTransitioning.value = false;
+    }, 500);
   }
-}
+};
 
 // Touch handlers for mobile
 const handleTouchStart = (e: TouchEvent) => {
-  const touch = e.touches[0]
-  touchStartX.value = touch.clientX
-  touchStartY.value = touch.clientY
-  isDragging.value = true
-  touchDelta.value = 0
-}
+  const touch = e.touches[0];
+  touchStartX.value = touch.clientX;
+  touchStartY.value = touch.clientY;
+  isDragging.value = true;
+  touchDelta.value = 0;
+};
 
 const handleTouchMove = (e: TouchEvent) => {
-  if (!isDragging.value) return
+  if (!isDragging.value) return;
 
-  const touch = e.touches[0]
-  const deltaX = touch.clientX - touchStartX.value
-  const deltaY = touch.clientY - touchStartY.value
+  const touch = e.touches[0];
+  const deltaX = touch.clientX - touchStartX.value;
+  const deltaY = touch.clientY - touchStartY.value;
 
   if (isVertical.value) {
-    touchDelta.value = deltaY
+    touchDelta.value = deltaY;
   } else {
-    touchDelta.value = deltaX
+    touchDelta.value = deltaX;
   }
-}
+};
 
 const handleTouchEnd = () => {
-  isDragging.value = false
-  const threshold = 50
+  isDragging.value = false;
+  const threshold = 50;
 
   if (Math.abs(touchDelta.value) > threshold) {
     if (isVertical.value) {
       if (touchDelta.value < 0 && hasNext.value) {
-        goToNext()
+        goToNext();
       } else if (touchDelta.value > 0 && hasPrevious.value) {
-        goToPrevious()
+        goToPrevious();
       }
     } else if (touchDelta.value < 0 && hasNext.value) {
-      goToNext()
+      goToNext();
     } else if (touchDelta.value > 0 && hasPrevious.value) {
-      goToPrevious()
+      goToPrevious();
     }
   }
 
-  touchDelta.value = 0
-}
+  touchDelta.value = 0;
+};
 
 // Keyboard navigation
 const handleKeydown = (e: KeyboardEvent) => {
   if (isVertical.value) {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      goToNext()
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      goToPrevious()
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      goToNext();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      goToPrevious();
     }
-  } else if (e.key === 'ArrowRight') {
-    e.preventDefault()
-    goToNext()
-  } else if (e.key === 'ArrowLeft') {
-    e.preventDefault()
-    goToPrevious()
+  } else if (e.key === "ArrowRight") {
+    e.preventDefault();
+    goToNext();
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    goToPrevious();
   }
-}
+};
 
 // Watch for changes in inquiries
 watch(
   () => props.inquiries.length,
   () => {
     if (currentIndex.value >= props.inquiries.length) {
-      currentIndex.value = Math.max(0, props.inquiries.length - 1)
+      currentIndex.value = Math.max(0, props.inquiries.length - 1);
     }
-  }
-)
+  },
+);
 
 // Lifecycle
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
+  document.addEventListener("keydown", handleKeydown);
+});
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+  document.removeEventListener("keydown", handleKeydown);
+});
 
 // Expose methods
 defineExpose({
@@ -266,7 +275,7 @@ defineExpose({
   goToPrevious,
   goToIndex,
   currentIndex,
-})
+});
 </script>
 
 <style lang="scss" scoped>

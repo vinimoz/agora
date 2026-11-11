@@ -3,24 +3,27 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { Option, Inquiry, Participant } from '../../Types'
+import { Option, Inquiry, Participant } from "../../Types";
 
 const uniqueArrayOfObjects = (array: unknown[]) =>
-  [...new Set(array.map((obj) => JSON.stringify(obj)))].map((string) => JSON.parse(string))
+  [...new Set(array.map((obj) => JSON.stringify(obj)))].map((string) =>
+    JSON.parse(string),
+  );
 
 const uniqueOptions = (options: Option[]) =>
   options.filter(
-    (option, index, array) => array.findIndex((compare) => compare.text === option.text) === index
-  )
+    (option, index, array) =>
+      array.findIndex((compare) => compare.text === option.text) === index,
+  );
 
 const uniqueParticipants = (inquiries: Inquiry[]): Participant[] => {
   const participants: Participant[] = inquiries.map((inquiry) => ({
     user: inquiry.user,
     inquiryId: inquiry.inquiryId,
-  }))
+  }));
 
-  return uniqueArrayOfObjects(participants)
-}
+  return uniqueArrayOfObjects(participants);
+};
 
 /**
  * Creates a Record object from an array of objects
@@ -31,20 +34,25 @@ const uniqueParticipants = (inquiries: Inquiry[]): Participant[] => {
  */
 function createRecordFromArray<T extends object>(
   arr: T[],
-  key: keyof T = 'id' as keyof T
+  key: keyof T = "id" as keyof T,
 ): Record<string | number, T> {
   // Use reduce to iterate over the array and build the Record object
   return arr.reduce(
     (acc, item) => {
       // Ensure the key exists in the current item (type safety)
-      const keyValue = item[key]
+      const keyValue = item[key];
 
       // Explicitly cast the key value to 'string | number'
-      acc[keyValue as string | number] = item
-      return acc
+      acc[keyValue as string | number] = item;
+      return acc;
     },
-    {} as Record<string | number, T>
-  )
+    {} as Record<string | number, T>,
+  );
 }
 
-export { uniqueArrayOfObjects, uniqueOptions, uniqueParticipants, createRecordFromArray }
+export {
+  uniqueArrayOfObjects,
+  uniqueOptions,
+  uniqueParticipants,
+  createRecordFromArray,
+};

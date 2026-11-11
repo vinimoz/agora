@@ -4,21 +4,21 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
+import { t } from "@nextcloud/l10n";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcPopover from "@nextcloud/vue/components/NcPopover";
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
 
-import InformationIcon from 'vue-material-design-icons/InformationVariant.vue'
-import AutoReminderInformation from './AutoReminderInformation.vue'
+import InformationIcon from "vue-material-design-icons/InformationVariant.vue";
+import AutoReminderInformation from "./AutoReminderInformation.vue";
 
-import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useInquiryStore } from "../../stores/inquiry.ts";
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(["change"]);
 
-const inquiryStore = useInquiryStore()
+const inquiryStore = useInquiryStore();
 </script>
 
 <template>
@@ -28,7 +28,7 @@ const inquiryStore = useInquiryStore()
       type="switch"
       @update:model-value="emit('change')"
     >
-      {{ t('agora', 'Use autoreminder') }}
+      {{ t("agora", "Use autoreminder") }}
     </NcCheckboxRadioSwitch>
     <NcPopover :focus-trap="false">
       <template #trigger>

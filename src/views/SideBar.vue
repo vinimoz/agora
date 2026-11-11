@@ -4,17 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { ref, onMounted, computed, onUnmounted } from 'vue'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-import { useSessionStore } from '../stores/session.ts'
-import { useInquiryStore } from '../stores/inquiry.ts'
+import { ref, onMounted, computed, onUnmounted } from "vue";
+import { emit, subscribe, unsubscribe } from "@nextcloud/event-bus";
+import { t } from "@nextcloud/l10n";
+import { useSessionStore } from "../stores/session.ts";
+import { useInquiryStore } from "../stores/inquiry.ts";
 
-import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
-import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
-import { Event } from '../Types/index.ts'
+import NcAppSidebar from "@nextcloud/vue/components/NcAppSidebar";
+import NcAppSidebarTab from "@nextcloud/vue/components/NcAppSidebarTab";
+import { Event } from "../Types/index.ts";
 
-import { InquiryGeneralIcons } from '../utils/icons.ts'
+import { InquiryGeneralIcons } from "../utils/icons.ts";
 import {
   canComment,
   canUseResource,
@@ -22,62 +22,64 @@ import {
   canEdit,
   canView,
   createInquiryContext,
-} from '../utils/permissions.ts'
+} from "../utils/permissions.ts";
 import {
   SideBarTabComments,
   SideBarTabAccess,
   SideBarTabResources,
   SideBarTabMisc,
-} from '../components/SideBar/index.js'
+} from "../components/SideBar/index.js";
 
-const inquiryStore = useInquiryStore()
-const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore();
 
 // Context for permissions
-const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
+const context = computed(() =>
+  createInquiryContext(inquiryStore, sessionStore.appSettings),
+);
 
 // Compute isReadonly
 const isReadonly = computed(() => {
-  const user = sessionStore.currentUser
+  const user = sessionStore.currentUser;
   if (
-    inquiryStore.status.moderationStatus === 'rejected' ||
-    inquiryStore.status.moderationStatus === 'pending'
+    inquiryStore.status.moderationStatus === "rejected" ||
+    inquiryStore.status.moderationStatus === "pending"
   )
-    return true
+    return true;
   if (!user) {
-    return true
+    return true;
   }
-  const canEditResult = canEdit(context.value)
-  return !canEditResult
-})
+  const canEditResult = canEdit(context.value);
+  return !canEditResult;
+});
 
-const showSidebar = ref(window.innerWidth > 920)
-const activeTab = ref('comments') // Use lowercase string directly
+const showSidebar = ref(window.innerWidth > 920);
+const activeTab = ref("comments"); // Use lowercase string directly
 
 const shouldDisplay = computed(() => {
-  if (!inquiryStore || typeof inquiryStore.status !== 'object') {
-    return false
+  if (!inquiryStore || typeof inquiryStore.status !== "object") {
+    return false;
   }
-  return inquiryStore.status.forceEditMode === true
-})
+  return inquiryStore.status.forceEditMode === true;
+});
 
 onMounted(() => {
   subscribe(Event.SidebarToggle, (payload) => {
-    showSidebar.value = payload?.open ?? !showSidebar.value
-    activeTab.value = payload?.activeTab ?? activeTab.value
-  })
+    showSidebar.value = payload?.open ?? !showSidebar.value;
+    activeTab.value = payload?.activeTab ?? activeTab.value;
+  });
   subscribe(Event.SidebarChangeTab, (payload) => {
-    activeTab.value = payload?.activeTab ?? activeTab.value
-  })
-})
+    activeTab.value = payload?.activeTab ?? activeTab.value;
+  });
+});
 
 onUnmounted(() => {
-  unsubscribe(Event.SidebarToggle)
-  unsubscribe(Event.SidebarChangeTab)
-})
+  unsubscribe(Event.SidebarToggle);
+  unsubscribe(Event.SidebarChangeTab);
+});
 
 function closeSideBar() {
-  emit(Event.SidebarToggle, { open: false })
+  emit(Event.SidebarToggle, { open: false });
 }
 </script>
 

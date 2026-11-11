@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Nextcloud contributors
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { computed, type ComputedRef } from 'vue'
-import { useInquiriesStore } from '../stores/inquiries'
-import type { Inquiry } from '../Types'
+import { computed, type ComputedRef } from "vue";
+import { useInquiriesStore } from "../stores/inquiries";
+import type { Inquiry } from "../Types";
 
 /**
  * Non-archived inquiries that the current user is allowed to view.
@@ -14,9 +14,11 @@ import type { Inquiry } from '../Types'
  * future surface that needs the same baseline.
  */
 export function useViewableInquiries(): ComputedRef<Inquiry[]> {
-  const inquiriesStore = useInquiriesStore()
+  const inquiriesStore = useInquiriesStore();
 
   return computed(() =>
-    inquiriesStore.inquiries.filter((i) => !i.status?.isArchived && i.permissions?.view === true)
-  )
+    inquiriesStore.inquiries.filter(
+      (i) => !i.status?.isArchived && i.permissions?.view === true,
+    ),
+  );
 }

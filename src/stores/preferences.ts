@@ -3,38 +3,39 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
-import { UserSettingsAPI } from '../Api/index.ts'
-import { Logger } from '../helpers/index.ts'
-import { AxiosError } from '@nextcloud/axios'
+import { defineStore } from "pinia";
+import { UserSettingsAPI } from "../Api/index.ts";
+import { Logger } from "../helpers/index.ts";
+import { AxiosError } from "@nextcloud/axios";
 
-export type ViewMode = 'table-view' | 'list-view' | 'reel-view' | 'feed' | 'timeline'
+export type ViewMode =
+  "table-view" | "list-view" | "reel-view" | "feed" | "timeline";
 
 export type UserPreferences = {
-  defaultViewInquiry: ViewMode
-  defaultDisplayMode?: string // ← added
-  inquiryCombo: number[]
-  relevantOffset: number
-  useNewInquiryDialogInNavigation: boolean
-  useNewInquiryInInquiryist: boolean
-  useCommentsAlternativeStyling: boolean
-  useAlternativeStyling: boolean
-  verboseInquiriesList: boolean
-}
+  defaultViewInquiry: ViewMode;
+  defaultDisplayMode?: string; // ← added
+  inquiryCombo: number[];
+  relevantOffset: number;
+  useNewInquiryDialogInNavigation: boolean;
+  useNewInquiryInInquiryist: boolean;
+  useCommentsAlternativeStyling: boolean;
+  useAlternativeStyling: boolean;
+  verboseInquiriesList: boolean;
+};
 
 export type SessionSettings = {
-  manualViewInquiry: '' | ViewMode
-}
+  manualViewInquiry: "" | ViewMode;
+};
 
 export type Preferences = {
-  user: UserPreferences
-  session: SessionSettings
-}
+  user: UserPreferences;
+  session: SessionSettings;
+};
 
-export const usePreferencesStore = defineStore('preferences', {
+export const usePreferencesStore = defineStore("preferences", {
   state: (): Preferences => ({
     user: {
-      defaultViewInquiry: 'table-view',
+      defaultViewInquiry: "table-view",
       inquiryCombo: [],
       relevantOffset: 30,
       useNewInquiryDialogInNavigation: false,
@@ -42,73 +43,79 @@ export const usePreferencesStore = defineStore('preferences', {
       useCommentsAlternativeStyling: false,
       useAlternativeStyling: false,
       verboseInquiriesList: false,
-      defaultDisplayMode: 'view',
+      defaultDisplayMode: "view",
     },
     session: {
-      manualViewInquiry: '',
+      manualViewInquiry: "",
     },
   }),
 
   getters: {
     viewInquiry(state): ViewMode {
       if (state.session.manualViewInquiry) {
-        return state.session.manualViewInquiry
+        return state.session.manualViewInquiry;
       }
       if (window.innerWidth > 480) {
-        return state.user.defaultViewInquiry
+        return state.user.defaultViewInquiry;
       }
-      return 'list-view'
+      return "list-view";
     },
 
     useNcAppNavigationNew(state): boolean {
-      return !state.user.useNewInquiryDialogInNavigation && !state.user.useNewInquiryInInquiryist
+      return (
+        !state.user.useNewInquiryDialogInNavigation &&
+        !state.user.useNewInquiryInInquiryist
+      );
     },
 
     useActionAddInquiryInNavigation(state): boolean {
-      return state.user.useNewInquiryDialogInNavigation && !state.user.useNewInquiryInInquiryist
+      return (
+        state.user.useNewInquiryDialogInNavigation &&
+        !state.user.useNewInquiryInInquiryist
+      );
     },
   },
 
   actions: {
     setViewInquiry(viewMode: ViewMode) {
-      this.session.manualViewInquiry = viewMode
+      this.session.manualViewInquiry = viewMode;
     },
 
     async load(): Promise<void> {
       try {
-        const response = await UserSettingsAPI.getUserSettings()
-        this.$patch({ user: response.data.preferences })
+        const response = await UserSettingsAPI.getUserSettings();
+        this.$patch({ user: response.data.preferences });
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        this.$reset()
-        throw error
+        this.$reset();
+        throw error;
       }
     },
 
     async write(): Promise<void> {
       try {
-        const response = await UserSettingsAPI.writeUserSettings(this.user)
-        this.$patch({ user: response.data.preferences })
+        const response = await UserSettingsAPI.writeUserSettings(this.user);
+        this.$patch({ user: response.data.preferences });
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error writing preferences', {
+        Logger.error("Error writing preferences", {
           error,
           preferences: this.user,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async setUserPreference<K extends keyof UserPreferences>(
       key: K,
-      value: UserPreferences[K]
+      value: UserPreferences[K],
     ): Promise<void> {
-      this.user[key] = value
-      await this.write()
+      this.user[key] = value;
+      await this.write();
     },
   },
-})
+});

@@ -4,41 +4,41 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { computed, ref, watch } from 'vue'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { Pencil } from 'lucide-vue-next'
+import { t } from "@nextcloud/l10n";
+import { computed, ref, watch } from "vue";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { Pencil } from "lucide-vue-next";
 
-import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
-import { useAppSettingsStore } from '../../../stores/appSettings.js'
-import type { InquiryTypeRights } from '../../../utils/permissions'
+import EngineSelectorModal from "../../Modals/EngineSelectorModal.vue";
+import { useAppSettingsStore } from "../../../stores/appSettings.js";
+import type { InquiryTypeRights } from "../../../utils/permissions";
 import {
   ENGINE_DEFINITIONS,
   type EngineDefinition,
   type SupportFeature,
-} from '../../../Types/votingType'
+} from "../../../Types/votingType";
 
 interface Props {
   selectedType?: {
-    inquiry_type: string
-    label?: string
-  }
+    inquiry_type: string;
+    label?: string;
+  };
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 const emit = defineEmits<{
-  updateRights: [type: string, rights: InquiryTypeRights]
-}>()
+  updateRights: [type: string, rights: InquiryTypeRights];
+}>();
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 
 const editorOptions = [
-  { value: 'wysiwyg', label: t('agora', 'Rich text editor') },
-  { value: 'textarea', label: t('agora', 'Simple text area') },
-  { value: 'texteditor', label: t('agora', 'Nextcloud text editor') },
-]
+  { value: "wysiwyg", label: t("agora", "Rich text editor") },
+  { value: "textarea", label: t("agora", "Simple text area") },
+  { value: "texteditor", label: t("agora", "Nextcloud text editor") },
+];
 
 //
 // Anything with `supportFeature: true` in ENGINE_DEFINITIONS is eligible for
@@ -48,88 +48,102 @@ const editorOptions = [
 // decision, not a sensible type-wide default. Drop the `id !== 'none'`
 // check if you want to allow it.
 const supportEngines = computed<Record<string, EngineDefinition>>(() => {
-  const result: Record<string, EngineDefinition> = {}
+  const result: Record<string, EngineDefinition> = {};
   for (const [id, engine] of Object.entries(ENGINE_DEFINITIONS)) {
-    if (engine.supportFeature && id !== 'none') {
-      result[id] = engine
+    if (engine.supportFeature && id !== "none") {
+      result[id] = engine;
     }
   }
-  return result
-})
+  return result;
+});
 
 const typeRights = computed({
   get: () => {
-    if (!props.selectedType) return {} as Partial<InquiryTypeRights>
-    return appSettingsStore.inquiryTypeRights[props.selectedType.inquiry_type] || getDefaultRights()
+    if (!props.selectedType) return {} as Partial<InquiryTypeRights>;
+    return (
+      appSettingsStore.inquiryTypeRights[props.selectedType.inquiry_type] ||
+      getDefaultRights()
+    );
   },
   set: (newRights) => {
     if (props.selectedType) {
-      emit('updateRights', props.selectedType.inquiry_type, newRights as InquiryTypeRights)
+      emit(
+        "updateRights",
+        props.selectedType.inquiry_type,
+        newRights as InquiryTypeRights,
+      );
     }
   },
-})
+});
 
 const getDefaultRights = (): InquiryTypeRights => ({
   supportInquiry: true,
-  supportFeature: 'binary' as SupportFeature,
+  supportFeature: "binary" as SupportFeature,
   supportConfig: {},
   commentInquiry: true,
   useResourceInquiry: true,
-  editorType: 'wysiwyg',
-})
+  editorType: "wysiwyg",
+});
 
 watch(
   () => props.selectedType,
   (newType) => {
     if (newType && !appSettingsStore.inquiryTypeRights[newType.inquiry_type]) {
-      emit('updateRights', newType.inquiry_type, getDefaultRights())
+      emit("updateRights", newType.inquiry_type, getDefaultRights());
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 const updateRights = () => {
   if (props.selectedType) {
-    emit('updateRights', props.selectedType.inquiry_type, typeRights.value as InquiryTypeRights)
+    emit(
+      "updateRights",
+      props.selectedType.inquiry_type,
+      typeRights.value as InquiryTypeRights,
+    );
   }
-}
+};
 
 watch(
   () => typeRights.value.supportInquiry,
   (enabled) => {
     if (!enabled) {
       // Reset to a safe default when support is turned off
-      typeRights.value.supportFeature = 'binary'
-      typeRights.value.supportConfig = {}
+      typeRights.value.supportFeature = "binary";
+      typeRights.value.supportConfig = {};
     }
-    updateRights()
-  }
-)
+    updateRights();
+  },
+);
 
-const showEngineSelector = ref(false)
+const showEngineSelector = ref(false);
 
 const currentEngineLabel = computed(() => {
-  const id = typeRights.value.supportFeature
-  return (id && ENGINE_DEFINITIONS[id]?.label) || t('agora', 'None')
-})
+  const id = typeRights.value.supportFeature;
+  return (id && ENGINE_DEFINITIONS[id]?.label) || t("agora", "None");
+});
 
 const openEngineSelector = () => {
-  if (!typeRights.value.supportInquiry) return
-  showEngineSelector.value = true
-}
+  if (!typeRights.value.supportInquiry) return;
+  showEngineSelector.value = true;
+};
 
-const onEngineSelected = (data: { engine: string; config: Record<string, unknown> }) => {
-  typeRights.value.supportFeature = data.engine as SupportFeature
-  typeRights.value.supportConfig = data.config ?? {}
-  updateRights()
-}
+const onEngineSelected = (data: {
+  engine: string;
+  config: Record<string, unknown>;
+}) => {
+  typeRights.value.supportFeature = data.engine as SupportFeature;
+  typeRights.value.supportConfig = data.config ?? {};
+  updateRights();
+};
 </script>
 
 <template>
   <div class="type-rights">
     <div class="header">
       <h2>
-        {{ t('agora', 'Rights for {type}', { type: selectedType?.label }) }}
+        {{ t("agora", "Rights for {type}", { type: selectedType?.label }) }}
       </h2>
       <p
         v-if="selectedType"
@@ -144,7 +158,12 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
       class="settings-container"
     >
       <p class="description">
-        {{ t('agora', 'Configure default rights and settings for this inquiry type') }}
+        {{
+          t(
+            "agora",
+            "Configure default rights and settings for this inquiry type",
+          )
+        }}
       </p>
 
       <div class="settings-list">
@@ -155,10 +174,10 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
             type="switch"
             @update:model-value="updateRights"
           >
-            {{ t('agora', 'Allow support') }}
+            {{ t("agora", "Allow support") }}
           </NcCheckboxRadioSwitch>
           <p class="setting-description">
-            {{ t('agora', 'Allow users to support this inquiry type') }}
+            {{ t("agora", "Allow users to support this inquiry type") }}
           </p>
         </div>
 
@@ -168,7 +187,7 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
           class="setting-item engine-mode-setting"
         >
           <div class="setting-label">
-            {{ t('agora', 'Support mode') }}
+            {{ t("agora", "Support mode") }}
           </div>
 
           <div class="engine-picker">
@@ -182,12 +201,17 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
               @click="openEngineSelector"
             >
               <Pencil :size="16" />
-              <span>{{ t('agora', 'Change method') }}</span>
+              <span>{{ t("agora", "Change method") }}</span>
             </NcButton>
           </div>
 
           <p class="setting-description">
-            {{ t('agora', 'Choose which voting method users can use to support this inquiry.') }}
+            {{
+              t(
+                "agora",
+                "Choose which voting method users can use to support this inquiry.",
+              )
+            }}
           </p>
         </div>
 
@@ -198,10 +222,10 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
             type="switch"
             @update:model-value="updateRights"
           >
-            {{ t('agora', 'Allow comments') }}
+            {{ t("agora", "Allow comments") }}
           </NcCheckboxRadioSwitch>
           <p class="setting-description">
-            {{ t('agora', 'Allow users to comment on this inquiry type') }}
+            {{ t("agora", "Allow users to comment on this inquiry type") }}
           </p>
         </div>
 
@@ -212,17 +236,19 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
             type="switch"
             @update:model-value="updateRights"
           >
-            {{ t('agora', 'Allow using resources') }}
+            {{ t("agora", "Allow using resources") }}
           </NcCheckboxRadioSwitch>
           <p class="setting-description">
-            {{ t('agora', 'Allow users to use resources for this inquiry type') }}
+            {{
+              t("agora", "Allow users to use resources for this inquiry type")
+            }}
           </p>
         </div>
 
         <!-- Editor type -->
         <div class="setting-item">
           <label for="editor-type-select">
-            {{ t('agora', 'Editor type') }}
+            {{ t("agora", "Editor type") }}
           </label>
           <NcSelect
             id="editor-type-select"
@@ -234,7 +260,7 @@ const onEngineSelected = (data: { engine: string; config: Record<string, unknown
             @update:model-value="updateRights"
           />
           <p class="setting-description">
-            {{ t('agora', 'Select the editor type for this inquiry') }}
+            {{ t("agora", "Select the editor type for this inquiry") }}
           </p>
         </div>
       </div>

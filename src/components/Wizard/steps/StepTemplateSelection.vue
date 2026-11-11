@@ -4,139 +4,151 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-import { NcLoadingIcon, NcEmptyContent, NcButton, NcNoteCard } from '@nextcloud/vue'
+import { computed, onMounted, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import axios from "@nextcloud/axios";
+import { generateOcsUrl } from "@nextcloud/router";
+import {
+  NcLoadingIcon,
+  NcEmptyContent,
+  NcButton,
+  NcNoteCard,
+} from "@nextcloud/vue";
 import {
   useTemplateWizardStore,
   type Template,
   type TemplateContent,
-} from '../../../stores/templateWizard'
+} from "../../../stores/templateWizard";
 
-const wizardStore = useTemplateWizardStore()
+const wizardStore = useTemplateWizardStore();
 
-const templates = computed(() => wizardStore.availableTemplates)
-const isLoading = computed(() => wizardStore.loadingTemplates)
-const fileInput = ref<HTMLInputElement | null>(null)
-const uploadError = ref<string | null>(null)
-const showHelp = ref(false)
+const templates = computed(() => wizardStore.availableTemplates);
+const isLoading = computed(() => wizardStore.loadingTemplates);
+const fileInput = ref<HTMLInputElement | null>(null);
+const uploadError = ref<string | null>(null);
+const showHelp = ref(false);
 
 onMounted(async () => {
   // Ensure templates are loaded when component mounts
   if (wizardStore.templates.length === 0 && !wizardStore.loadingTemplates) {
-    await wizardStore.loadTemplates()
+    await wizardStore.loadTemplates();
   }
-})
+});
 
 const selectTemplate = (template: Template) => {
-  wizardStore.selectTemplate(template)
-}
+  wizardStore.selectTemplate(template);
+};
 
 const triggerFileUpload = () => {
-  fileInput.value?.click()
-}
+  fileInput.value?.click();
+};
 
 const handleFileUpload = async (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
 
-  if (!file) return
+  if (!file) return;
 
-  uploadError.value = null
+  uploadError.value = null;
 
   try {
-    const text = await file.text()
-    const template = JSON.parse(text) as TemplateContent
+    const text = await file.text();
+    const template = JSON.parse(text) as TemplateContent;
 
     // Validate template has required structure
     if (!template.template_info || !template.template_info.name) {
-      throw new Error('Invalid template format: missing template_info')
+      throw new Error("Invalid template format: missing template_info");
     }
 
     // Optionally validate with backend
-    await wizardStore.validateTemplate(template)
+    await wizardStore.validateTemplate(template);
 
     // Upload successful - store custom template
-    wizardStore.uploadCustomTemplate(template)
+    wizardStore.uploadCustomTemplate(template);
   } catch (error) {
-    uploadError.value = error instanceof Error ? error.message : 'Failed to parse template file'
-    console.error('Template upload error:', error)
+    uploadError.value =
+      error instanceof Error ? error.message : "Failed to parse template file";
+    console.error("Template upload error:", error);
   }
-}
+};
 
 const downloadSchema = async () => {
   try {
-    const url = generateOcsUrl('/apps/agora/api/v1.0/templates/schema')
-    const response = await axios.get(url)
+    const url = generateOcsUrl("/apps/agora/api/v1.0/templates/schema");
+    const response = await axios.get(url);
 
     if (response.data?.ocs?.data?.error) {
-      throw new Error(response.data.ocs.data.error)
+      throw new Error(response.data.ocs.data.error);
     }
 
-    const schema = response.data.ocs.data
-    const blob = new Blob([JSON.stringify(schema, null, 2)], { type: 'application/json' })
-    const downloadUrl = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = downloadUrl
-    a.download = 'agora-template-schema.json'
-    document.body.appendChild(a)
-    a.click()
-    window.URL.revokeObjectURL(downloadUrl)
-    document.body.removeChild(a)
+    const schema = response.data.ocs.data;
+    const blob = new Blob([JSON.stringify(schema, null, 2)], {
+      type: "application/json",
+    });
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = "agora-template-schema.json";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(downloadUrl);
+    document.body.removeChild(a);
   } catch (error) {
-    console.error('Failed to download schema:', error)
-    uploadError.value = error instanceof Error ? error.message : 'Failed to download schema file'
+    console.error("Failed to download schema:", error);
+    uploadError.value =
+      error instanceof Error ? error.message : "Failed to download schema file";
   }
-}
+};
 
 const downloadInstructions = async () => {
   try {
-    const url = generateOcsUrl('/apps/agora/api/v1.0/templates/instructions')
-    const response = await axios.get(url)
+    const url = generateOcsUrl("/apps/agora/api/v1.0/templates/instructions");
+    const response = await axios.get(url);
 
     if (response.data?.ocs?.data?.error) {
-      throw new Error(response.data.ocs.data.error)
+      throw new Error(response.data.ocs.data.error);
     }
 
-    const instructions = response.data.ocs.data.content
-    const blob = new Blob([instructions], { type: 'text/markdown' })
-    const downloadUrl = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = downloadUrl
-    a.download = response.data.ocs.data.filename || 'agora-template-instructions.md'
-    document.body.appendChild(a)
-    a.click()
-    window.URL.revokeObjectURL(downloadUrl)
-    document.body.removeChild(a)
+    const instructions = response.data.ocs.data.content;
+    const blob = new Blob([instructions], { type: "text/markdown" });
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download =
+      response.data.ocs.data.filename || "agora-template-instructions.md";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(downloadUrl);
+    document.body.removeChild(a);
   } catch (error) {
-    console.error('Failed to download instructions:', error)
+    console.error("Failed to download instructions:", error);
     uploadError.value =
-      error instanceof Error ? error.message : 'Failed to download instructions file'
+      error instanceof Error
+        ? error.message
+        : "Failed to download instructions file";
   }
-}
+};
 
 const toggleHelp = () => {
-  showHelp.value = !showHelp.value
-}
+  showHelp.value = !showHelp.value;
+};
 </script>
 
 <template>
   <div class="template-selection">
     <div class="template-header">
-      <h2>{{ t('agora', 'Select a template') }}</h2>
+      <h2>{{ t("agora", "Select a template") }}</h2>
       <p
         v-if="wizardStore.selectedUseCase === 'custom'"
         class="subtitle"
       >
-        {{ t('agora', 'Choose a pre-configured template or upload your own') }}
+        {{ t("agora", "Choose a pre-configured template or upload your own") }}
       </p>
       <p
         v-else
         class="subtitle"
       >
-        {{ t('agora', 'Choose a pre-configured template for your use case') }}
+        {{ t("agora", "Choose a pre-configured template for your use case") }}
       </p>
     </div>
 
@@ -152,7 +164,7 @@ const toggleHelp = () => {
         <template #icon>
           <span class="icon-upload" />
         </template>
-        {{ t('agora', 'Upload custom template') }}
+        {{ t("agora", "Upload custom template") }}
       </NcButton>
       <input
         ref="fileInput"
@@ -176,7 +188,7 @@ const toggleHelp = () => {
         class="upload-success"
       >
         {{
-          t('agora', 'Custom template loaded: {name}', {
+          t("agora", "Custom template loaded: {name}", {
             name: wizardStore.customTemplate.template_info.name,
           })
         }}
@@ -191,7 +203,7 @@ const toggleHelp = () => {
           <template #icon>
             <span :class="showHelp ? 'icon-triangle-s' : 'icon-triangle-e'" />
           </template>
-          {{ t('agora', 'Need help creating a template?') }}
+          {{ t("agora", "Need help creating a template?") }}
         </NcButton>
 
         <div
@@ -202,8 +214,8 @@ const toggleHelp = () => {
             <p>
               {{
                 t(
-                  'agora',
-                  'Use ai assistants like chatgpt, claude, gemini, or local llms to generate custom templates.'
+                  "agora",
+                  "Use ai assistants like chatgpt, claude, gemini, or local llms to generate custom templates.",
                 )
               }}
             </p>
@@ -217,7 +229,7 @@ const toggleHelp = () => {
               <template #icon>
                 <span class="icon-download" />
               </template>
-              {{ t('agora', 'Download schema') }}
+              {{ t("agora", "Download schema") }}
             </NcButton>
 
             <NcButton
@@ -227,41 +239,64 @@ const toggleHelp = () => {
               <template #icon>
                 <span class="icon-info" />
               </template>
-              {{ t('agora', 'Download instructions') }}
+              {{ t("agora", "Download instructions") }}
             </NcButton>
           </div>
 
           <div class="help-instructions">
-            <h4>{{ t('agora', 'Quick guide:') }}</h4>
+            <h4>{{ t("agora", "Quick guide:") }}</h4>
             <ol>
-              <li>{{ t('agora', 'Download the schema and instructions above') }}</li>
+              <li>
+                {{ t("agora", "Download the schema and instructions above") }}
+              </li>
               <li>
                 {{
                   t(
-                    'agora',
-                    'Open your preferred ai assistant (chatgpt, claude, gemini, or local llm)'
+                    "agora",
+                    "Open your preferred ai assistant (chatgpt, claude, gemini, or local llm)",
                   )
                 }}
               </li>
-              <li>{{ t('agora', 'Provide the schema and describe your use case') }}</li>
-              <li>{{ t('agora', 'Copy the generated json and save it as a .json file') }}</li>
-              <li>{{ t('agora', 'Upload the file using the button above') }}</li>
+              <li>
+                {{
+                  t("agora", "Provide the schema and describe your use case")
+                }}
+              </li>
+              <li>
+                {{
+                  t(
+                    "agora",
+                    "Copy the generated json and save it as a .json file",
+                  )
+                }}
+              </li>
+              <li>
+                {{ t("agora", "Upload the file using the button above") }}
+              </li>
             </ol>
 
-            <h4>{{ t('agora', 'Recommended ai tools:') }}</h4>
+            <h4>{{ t("agora", "Recommended ai tools:") }}</h4>
             <ul class="ai-list">
               <li>
                 <strong>ChatGPT:</strong>
-                {{ t('agora', 'Best for complex templates with many types') }}
+                {{ t("agora", "Best for complex templates with many types") }}
               </li>
               <li>
                 <strong>Claude:</strong>
-                {{ t('agora', 'Best for detailed, well-structured templates') }}
+                {{ t("agora", "Best for detailed, well-structured templates") }}
               </li>
-              <li><strong>Gemini:</strong> {{ t('agora', 'Best for multilingual templates') }}</li>
+              <li>
+                <strong>Gemini:</strong>
+                {{ t("agora", "Best for multilingual templates") }}
+              </li>
               <li>
                 <strong>Local LLMs:</strong>
-                {{ t('agora', 'Best for privacy-sensitive use cases (ollama, lm studio)') }}
+                {{
+                  t(
+                    "agora",
+                    "Best for privacy-sensitive use cases (ollama, lm studio)",
+                  )
+                }}
               </li>
             </ul>
           </div>
@@ -270,10 +305,12 @@ const toggleHelp = () => {
     </div>
 
     <div
-      v-if="wizardStore.selectedUseCase === 'custom' && !wizardStore.customTemplate"
+      v-if="
+        wizardStore.selectedUseCase === 'custom' && !wizardStore.customTemplate
+      "
       class="divider"
     >
-      <span>{{ t('agora', 'Or choose from catalog') }}</span>
+      <span>{{ t("agora", "Or choose from catalog") }}</span>
     </div>
 
     <NcLoadingIcon
@@ -284,7 +321,9 @@ const toggleHelp = () => {
     <NcEmptyContent
       v-else-if="templates.length === 0 && !wizardStore.customTemplate"
       :name="t('agora', 'No templates available')"
-      :description="t('agora', 'Please check your installation or upload a custom template')"
+      :description="
+        t('agora', 'Please check your installation or upload a custom template')
+      "
     >
       <template #icon>
         <span class="icon-folder" />
@@ -299,7 +338,9 @@ const toggleHelp = () => {
         v-for="template in templates"
         :key="template.name"
         class="template-card"
-        :class="{ selected: wizardStore.selectedTemplate?.name === template.name }"
+        :class="{
+          selected: wizardStore.selectedTemplate?.name === template.name,
+        }"
         @click="selectTemplate(template)"
       >
         <div class="template-card-header">
@@ -315,31 +356,37 @@ const toggleHelp = () => {
 
         <div class="template-meta">
           <div class="meta-item">
-            <span class="meta-label">{{ t('agora', 'Author:') }}</span>
+            <span class="meta-label">{{ t("agora", "Author:") }}</span>
             <span class="meta-value">{{ template.author }}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">{{ t('agora', 'Languages:') }}</span>
-            <span class="meta-value">{{ template.available_languages.join(', ') }}</span>
+            <span class="meta-label">{{ t("agora", "Languages:") }}</span>
+            <span class="meta-value">{{
+              template.available_languages.join(", ")
+            }}</span>
           </div>
         </div>
 
         <div class="template-stats">
           <div class="stat-item">
-            <span class="stat-value">{{ template.counts.inquiry_families }}</span>
-            <span class="stat-label">{{ t('agora', 'Families') }}</span>
+            <span class="stat-value">{{
+              template.counts.inquiry_families
+            }}</span>
+            <span class="stat-label">{{ t("agora", "Families") }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-value">{{ template.counts.inquiry_types }}</span>
-            <span class="stat-label">{{ t('agora', 'Types') }}</span>
+            <span class="stat-label">{{ t("agora", "Types") }}</span>
           </div>
           <div class="stat-item">
-            <span class="stat-value">{{ template.counts.inquiry_statuses }}</span>
-            <span class="stat-label">{{ t('agora', 'Statuses') }}</span>
+            <span class="stat-value">{{
+              template.counts.inquiry_statuses
+            }}</span>
+            <span class="stat-label">{{ t("agora", "Statuses") }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-value">{{ template.counts.categories }}</span>
-            <span class="stat-label">{{ t('agora', 'Categories') }}</span>
+            <span class="stat-label">{{ t("agora", "Categories") }}</span>
           </div>
         </div>
 
@@ -348,7 +395,7 @@ const toggleHelp = () => {
           class="selected-badge"
         >
           <span class="check-icon">✓</span>
-          {{ t('agora', 'Selected') }}
+          {{ t("agora", "Selected") }}
         </div>
       </div>
     </div>
@@ -458,7 +505,7 @@ const toggleHelp = () => {
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     right: 0;

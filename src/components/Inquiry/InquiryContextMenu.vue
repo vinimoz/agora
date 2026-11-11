@@ -4,207 +4,230 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { debounce } from 'lodash'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
-import { DateTime } from 'luxon'
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { debounce } from "lodash";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { t, n } from "@nextcloud/l10n";
+import { DateTime } from "luxon";
 
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionCheckbox from '@nextcloud/vue/components/NcActionCheckbox'
-import NcActionInput from '@nextcloud/vue/components/NcActionInput'
-import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import NcActionCheckbox from "@nextcloud/vue/components/NcActionCheckbox";
+import NcActionInput from "@nextcloud/vue/components/NcActionInput";
+import NcActionSeparator from "@nextcloud/vue/components/NcActionSeparator";
 
 // Icons from icons.ts
-import { StatusIcons, UserIcons, NavigationIcons } from '../../utils/icons.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { StatusIcons, UserIcons, NavigationIcons } from "../../utils/icons.ts";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
 
-import { ValidatorAPI } from '../../Api/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { useSubscriptionStore } from '../../stores/subscription.ts'
-import { useInquiriesStore } from '../../stores/inquiries.ts'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { useOptionsStore } from '../../stores/options.ts'
-import { StatusResults } from '../../Types/index.ts'
-import { deleteCookieByValue, findCookieByValue } from '../../helpers/index.ts'
-import UserBubble from '../User/UserBubble.vue'
-import BadgeDiv from '../Base/modules/BadgeDiv.vue'
-import ActionInquiryUnified from '../Actions/modules/ActionInquiryUnified.vue'
+import { ValidatorAPI } from "../../Api/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { useSubscriptionStore } from "../../stores/subscription.ts";
+import { useInquiriesStore } from "../../stores/inquiries.ts";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { useOptionsStore } from "../../stores/options.ts";
+import { StatusResults } from "../../Types/index.ts";
+import { deleteCookieByValue, findCookieByValue } from "../../helpers/index.ts";
+import UserBubble from "../User/UserBubble.vue";
+import BadgeDiv from "../Base/modules/BadgeDiv.vue";
+import ActionInquiryUnified from "../Actions/modules/ActionInquiryUnified.vue";
 
 type InputProps = {
-  success: boolean
-  error: boolean
-  showTrailingButton: boolean
-  labelOutside: boolean
-  label: string
-}
+  success: boolean;
+  error: boolean;
+  showTrailingButton: boolean;
+  labelOutside: boolean;
+  label: string;
+};
 
-type TabType = 'profile' | 'info' | 'actions'
+type TabType = "profile" | "info" | "actions";
 
-const sessionStore = useSessionStore()
-const subscriptionStore = useSubscriptionStore()
-const inquiriesStore = useInquiriesStore()
-const inquiryStore = useInquiryStore()
-const optionsStore = useOptionsStore()
-const router = useRouter()
+const sessionStore = useSessionStore();
+const subscriptionStore = useSubscriptionStore();
+const inquiriesStore = useInquiriesStore();
+const inquiryStore = useInquiryStore();
+const optionsStore = useOptionsStore();
+const router = useRouter();
 
-const hasCookie = !!findCookieByValue(sessionStore.publicToken)
-const showPanel = ref(false)
-const activeTab = ref<TabType>('profile')
+const hasCookie = !!findCookieByValue(sessionStore.publicToken);
+const showPanel = ref(false);
+const activeTab = ref<TabType>("profile");
 
 // ---- Computed ----
-const isExternalShare = computed(() => sessionStore.share?.type === 'external')
-const hasEmail = computed(() => !!sessionStore.share?.user?.emailAddress)
+const isExternalShare = computed(() => sessionStore.share?.type === "external");
+const hasEmail = computed(() => !!sessionStore.share?.user?.emailAddress);
 const displayName = computed(
-  () => sessionStore.share?.user?.displayName || sessionStore.currentUser?.displayName || 'User'
-)
-const isSubscribed = computed(() => subscriptionStore.subscribed)
+  () =>
+    sessionStore.share?.user?.displayName ||
+    sessionStore.currentUser?.displayName ||
+    "User",
+);
+const isSubscribed = computed(() => subscriptionStore.subscribed);
 
 // ---- Inquiry Information ----
-const creationDateTime = computed(() => DateTime.fromSeconds(inquiryStore.status.created))
+const creationDateTime = computed(() =>
+  DateTime.fromSeconds(inquiryStore.status.created),
+);
 
 const expirationDateTime = computed(() =>
-  inquiryStore.configuration.expire ? DateTime.fromSeconds(inquiryStore.configuration.expire) : null
-)
+  inquiryStore.configuration.expire
+    ? DateTime.fromSeconds(inquiryStore.configuration.expire)
+    : null,
+);
 
 const accessCaption = computed(() => {
-  const visibility = inquiryStore.configuration.visibility
+  const visibility = inquiryStore.configuration.visibility;
   const map: Record<string, string> = {
-    private: t('agora', 'Private'),
-    groups: t('agora', 'Groups only'),
-    participants: t('agora', 'Participants only'),
-    everyone: t('agora', 'Public'),
-  }
-  return map[visibility] || visibility
-})
+    private: t("agora", "Private"),
+    groups: t("agora", "Groups only"),
+    participants: t("agora", "Participants only"),
+    everyone: t("agora", "Public"),
+  };
+  return map[visibility] || visibility;
+});
 
 const resultsCaption = computed(() => {
   const showResults = inquiryStore.configuration.showResults as
-    'always' | 'closed' | 'never' | undefined
-  if (showResults === 'closed' && !inquiryStore.isClosed) {
-    return t('agora', 'Hidden until closed')
+    "always" | "closed" | "never" | undefined;
+  if (showResults === "closed" && !inquiryStore.isClosed) {
+    return t("agora", "Hidden until closed");
   }
-  if (showResults === 'closed' && inquiryStore.isClosed) {
-    return t('agora', 'Visible since closed')
+  if (showResults === "closed" && inquiryStore.isClosed) {
+    return t("agora", "Visible since closed");
   }
-  if (showResults === 'never') {
-    return t('agora', 'Always hidden')
+  if (showResults === "never") {
+    return t("agora", "Always hidden");
   }
-  return t('agora', 'Visible')
-})
+  return t("agora", "Visible");
+});
 
-const childCount = computed(() => (inquiryStore.childs || []).length)
+const childCount = computed(() => (inquiryStore.childs || []).length);
 
 const trendingScore = computed(() => {
-  return (inquiryStore.miscFields?.trendingScore as number) ?? 0
-})
+  return (inquiryStore.miscFields?.trendingScore as number) ?? 0;
+});
 
 const trendingLevel = computed(() => {
-  const score = trendingScore.value
-  if (score >= 80) return { label: t('agora', 'Hot'), color: 'var(--color-error)' }
-  if (score >= 60) return { label: t('agora', 'Trending'), color: 'var(--color-warning)' }
-  if (score >= 40) return { label: t('agora', 'Growing'), color: 'var(--color-success)' }
-  if (score >= 20) return { label: t('agora', 'Emerging'), color: 'var(--color-primary-element)' }
-  return null
-})
+  const score = trendingScore.value;
+  if (score >= 80)
+    return { label: t("agora", "Hot"), color: "var(--color-error)" };
+  if (score >= 60)
+    return { label: t("agora", "Trending"), color: "var(--color-warning)" };
+  if (score >= 40)
+    return { label: t("agora", "Growing"), color: "var(--color-success)" };
+  if (score >= 20)
+    return {
+      label: t("agora", "Emerging"),
+      color: "var(--color-primary-element)",
+    };
+  return null;
+});
 
 // Moderation status - using proper colors without green
 const moderationStatus = computed(() => {
-  const status = inquiryStore.status.moderationStatus
+  const status = inquiryStore.status.moderationStatus;
   const map: Record<string, { label: string; color: string }> = {
-    draft: { label: t('agora', 'Draft'), color: 'var(--color-text-lighter)' },
-    pending: { label: t('agora', 'Pending'), color: 'var(--color-warning)' },
-    accepted: { label: t('agora', 'Accepted'), color: 'var(--color-primary-element)' },
-    rejected: { label: t('agora', 'Rejected'), color: 'var(--color-error)' },
-  }
-  return map[status] || { label: status, color: 'var(--color-text-lighter)' }
-})
+    draft: { label: t("agora", "Draft"), color: "var(--color-text-lighter)" },
+    pending: { label: t("agora", "Pending"), color: "var(--color-warning)" },
+    accepted: {
+      label: t("agora", "Accepted"),
+      color: "var(--color-primary-element)",
+    },
+    rejected: { label: t("agora", "Rejected"), color: "var(--color-error)" },
+  };
+  return map[status] || { label: status, color: "var(--color-text-lighter)" };
+});
 
 const publicationStatus = computed(() => {
-  const status = inquiryStore.status.publicationStatus
+  const status = inquiryStore.status.publicationStatus;
   const map: Record<string, string> = {
-    draft: t('agora', 'Draft'),
-    pending: t('agora', 'Pending review'),
-    published: t('agora', 'Published'),
-    archived: t('agora', 'Archived'),
-    deleted: t('agora', 'Deleted'),
-  }
-  return map[status] || status
-})
+    draft: t("agora", "Draft"),
+    pending: t("agora", "Pending review"),
+    published: t("agora", "Published"),
+    archived: t("agora", "Archived"),
+    deleted: t("agora", "Deleted"),
+  };
+  return map[status] || status;
+});
 
 // ---- Current User Status (from inquiryStore.currentUserStatus) ----
-const currentUserStatus = computed(() => inquiryStore.currentUserStatus)
+const currentUserStatus = computed(() => inquiryStore.currentUserStatus);
 
-const isOwner = computed(() => currentUserStatus.value.isOwner)
-const isInvolved = computed(() => currentUserStatus.value.isInvolved)
-const hasSupported = computed(() => currentUserStatus.value.hasSupported)
-const userRole = computed(() => currentUserStatus.value.userRole || 'Participant')
-const countInquiries = computed(() => currentUserStatus.value.countInquiries || 0)
-const orphanedInquiries = computed(() => currentUserStatus.value.orphanedInquiries || 0)
+const isOwner = computed(() => currentUserStatus.value.isOwner);
+const isInvolved = computed(() => currentUserStatus.value.isInvolved);
+const hasSupported = computed(() => currentUserStatus.value.hasSupported);
+const userRole = computed(
+  () => currentUserStatus.value.userRole || "Participant",
+);
+const countInquiries = computed(
+  () => currentUserStatus.value.countInquiries || 0,
+);
+const orphanedInquiries = computed(
+  () => currentUserStatus.value.orphanedInquiries || 0,
+);
 
 // ---- Owner Info ----
-const owner = computed(() => inquiryStore.owner)
-const ownerDisplayName = computed(() => owner.value?.displayName || 'Unknown')
-const ownerEmail = computed(() => owner.value?.emailAddress || '')
-const ownerIsAdmin = computed(() => owner.value?.isAdmin || false)
-const ownerIsModerator = computed(() => owner.value?.isModerator || false)
+const owner = computed(() => inquiryStore.owner);
+const ownerEmail = computed(() => owner.value?.emailAddress || "");
+const ownerIsAdmin = computed(() => owner.value?.isAdmin || false);
+const ownerIsModerator = computed(() => owner.value?.isModerator || false);
 
-const currentTimeZone = sessionStore.currentTimezoneName
+const currentTimeZone = sessionStore.currentTimezoneName;
 
 // ---- Methods ----
 function togglePanel() {
-  showPanel.value = !showPanel.value
+  showPanel.value = !showPanel.value;
   if (showPanel.value) {
-    activeTab.value = 'profile'
+    activeTab.value = "profile";
   }
 }
 
 function switchTab(tab: TabType) {
-  activeTab.value = tab
+  activeTab.value = tab;
 }
 
 function logout() {
-  const reRouteTo = deleteCookieByValue(sessionStore.publicToken)
+  const reRouteTo = deleteCookieByValue(sessionStore.publicToken);
   if (reRouteTo) {
     router.push({
-      name: 'publicInquiry',
+      name: "publicInquiry",
       params: { token: reRouteTo },
-    })
+    });
   }
-  showPanel.value = false
+  showPanel.value = false;
 }
 
 async function toggleSubscription() {
   try {
-    await subscriptionStore.write()
+    await subscriptionStore.write();
     showSuccess(
-      subscriptionStore.subscribed ? t('agora', 'Subscribed') : t('agora', 'Unsubscribed')
-    )
+      subscriptionStore.subscribed
+        ? t("agora", "Subscribed")
+        : t("agora", "Unsubscribed"),
+    );
   } catch {
-    showError(t('agora', 'Could not update subscription'))
+    showError(t("agora", "Could not update subscription"));
   }
 }
 
 async function deleteEmailAddress() {
   try {
-    await sessionStore.deleteEmailAddress()
-    showSuccess(t('agora', 'Email address deleted'))
+    await sessionStore.deleteEmailAddress();
+    showSuccess(t("agora", "Email address deleted"));
   } catch {
-    showError(t('agora', 'Error deleting email address'))
+    showError(t("agora", "Error deleting email address"));
   }
 }
 
 async function resendInvitation() {
   try {
-    const response = await sessionStore.resendInvitation()
+    const response = await sessionStore.resendInvitation();
     if (response) {
-      showSuccess(t('agora', 'Invitation resent'))
+      showSuccess(t("agora", "Invitation resent"));
     }
   } catch {
-    showError(t('agora', 'Mail could not be resent'))
+    showError(t("agora", "Mail could not be resent"));
   }
 }
 
@@ -212,15 +235,15 @@ async function copyLink() {
   const personalLink =
     window.location.origin +
     router.resolve({
-      name: 'publicInquiry',
+      name: "publicInquiry",
       params: { token: sessionStore.publicToken },
-    }).href
+    }).href;
 
   try {
-    await navigator.clipboard.writeText(personalLink)
-    showSuccess(t('agora', 'Link copied'))
+    await navigator.clipboard.writeText(personalLink);
+    showSuccess(t("agora", "Link copied"));
   } catch {
-    showError(t('agora', 'Error copying link'))
+    showError(t("agora", "Error copying link"));
   }
 }
 
@@ -230,47 +253,49 @@ const displayNameInputProps = ref<InputProps>({
   error: false,
   showTrailingButton: true,
   labelOutside: false,
-  label: t('agora', 'Change name'),
-})
+  label: t("agora", "Change name"),
+});
 
 const validateDisplayName = debounce(async function () {
-  if (!sessionStore.share) return
+  if (!sessionStore.share) return;
   if (sessionStore.share.user.displayName.length < 1) {
-    setDisplayNameStatus('error')
-    return
+    setDisplayNameStatus("error");
+    return;
   }
-  if (sessionStore.share.user.displayName === sessionStore.currentUser.displayName) {
-    setDisplayNameStatus('unchanged')
-    return
+  if (
+    sessionStore.share.user.displayName === sessionStore.currentUser.displayName
+  ) {
+    setDisplayNameStatus("unchanged");
+    return;
   }
   try {
     await ValidatorAPI.validateName(
       sessionStore.route.params.token,
-      sessionStore.share.user.displayName
-    )
-    setDisplayNameStatus('success')
+      sessionStore.share.user.displayName,
+    );
+    setDisplayNameStatus("success");
   } catch {
-    setDisplayNameStatus('error')
+    setDisplayNameStatus("error");
   }
-}, 500)
+}, 500);
 
 function setDisplayNameStatus(status: StatusResults) {
-  displayNameInputProps.value.success = status === 'success'
-  displayNameInputProps.value.error = status === 'error'
-  displayNameInputProps.value.showTrailingButton = status === 'success'
+  displayNameInputProps.value.success = status === "success";
+  displayNameInputProps.value.error = status === "error";
+  displayNameInputProps.value.showTrailingButton = status === "success";
 }
 
 async function submitDisplayName() {
-  if (!sessionStore.share) return
+  if (!sessionStore.share) return;
   try {
     await sessionStore.updateDisplayName({
       displayName: sessionStore.share.user.displayName,
-    })
-    showSuccess(t('agora', 'Name changed'))
-    setDisplayNameStatus('unchanged')
+    });
+    showSuccess(t("agora", "Name changed"));
+    setDisplayNameStatus("unchanged");
   } catch {
-    showError(t('agora', 'Error changing name'))
-    setDisplayNameStatus('error')
+    showError(t("agora", "Error changing name"));
+    setDisplayNameStatus("error");
   }
 }
 
@@ -280,40 +305,45 @@ const eMailInputProps = ref<InputProps>({
   error: false,
   showTrailingButton: true,
   labelOutside: false,
-  label: t('agora', 'Edit email'),
-})
+  label: t("agora", "Edit email"),
+});
 
 const validateEMail = debounce(async function () {
-  if (!sessionStore.share) return
-  if (sessionStore.share.user.emailAddress === sessionStore.currentUser.emailAddress) {
-    setEMailStatus('unchanged')
-    return
+  if (!sessionStore.share) return;
+  if (
+    sessionStore.share.user.emailAddress ===
+    sessionStore.currentUser.emailAddress
+  ) {
+    setEMailStatus("unchanged");
+    return;
   }
   try {
-    await ValidatorAPI.validateEmailAddress(sessionStore.share.user.emailAddress)
-    setEMailStatus('success')
+    await ValidatorAPI.validateEmailAddress(
+      sessionStore.share.user.emailAddress,
+    );
+    setEMailStatus("success");
   } catch {
-    setEMailStatus('error')
+    setEMailStatus("error");
   }
-}, 500)
+}, 500);
 
 function setEMailStatus(status: StatusResults) {
-  eMailInputProps.value.success = status === 'success'
-  eMailInputProps.value.error = status === 'error'
-  eMailInputProps.value.showTrailingButton = status === 'success'
+  eMailInputProps.value.success = status === "success";
+  eMailInputProps.value.error = status === "error";
+  eMailInputProps.value.showTrailingButton = status === "success";
 }
 
 async function submitEmail() {
-  if (!sessionStore.share) return
+  if (!sessionStore.share) return;
   try {
     await sessionStore.updateEmailAddress({
       emailAddress: sessionStore.share.user.emailAddress,
-    })
-    showSuccess(t('agora', 'Email saved'))
-    setEMailStatus('unchanged')
+    });
+    showSuccess(t("agora", "Email saved"));
+    setEMailStatus("unchanged");
   } catch {
-    showError(t('agora', 'Error saving email'))
-    setEMailStatus('error')
+    showError(t("agora", "Error saving email"));
+    setEMailStatus("error");
   }
 }
 </script>
@@ -352,7 +382,7 @@ async function submitEmail() {
             :size="20"
           />
           <h3 class="panel-title">
-            {{ t('agora', 'Settings') }}
+            {{ t("agora", "Settings") }}
           </h3>
         </div>
         <button
@@ -377,7 +407,7 @@ async function submitEmail() {
             :is="StatusIcons.AccountMultiple"
             :size="16"
           />
-          {{ t('agora', 'Profile') }}
+          {{ t("agora", "Profile") }}
         </button>
         <button
           class="tab-btn"
@@ -388,7 +418,7 @@ async function submitEmail() {
             :is="InquiryGeneralIcons.Info"
             :size="16"
           />
-          {{ t('agora', 'Info') }}
+          {{ t("agora", "Info") }}
         </button>
         <button
           class="tab-btn"
@@ -399,7 +429,7 @@ async function submitEmail() {
             :is="InquiryGeneralIcons.Tools"
             :size="16"
           />
-          {{ t('agora', 'Actions') }}
+          {{ t("agora", "Actions") }}
         </button>
       </div>
 
@@ -427,13 +457,13 @@ async function submitEmail() {
                 v-if="sessionStore.currentUser.isAdmin"
                 class="user-role"
               >
-                {{ t('agora', 'Administrator') }}
+                {{ t("agora", "Administrator") }}
               </span>
               <span
                 v-if="sessionStore.currentUser.isModerator"
                 class="user-role"
               >
-                {{ t('agora', 'Moderator') }}
+                {{ t("agora", "Moderator") }}
               </span>
             </div>
           </div>
@@ -450,7 +480,7 @@ async function submitEmail() {
                 <template #icon>
                   <component :is="UserIcons.ListView" />
                 </template>
-                {{ t('agora', 'Copy link') }}
+                {{ t("agora", "Copy link") }}
               </NcActionButton>
 
               <NcActionInput
@@ -483,7 +513,7 @@ async function submitEmail() {
                 <template #icon>
                   <component :is="InquiryGeneralIcons.Share" />
                 </template>
-                {{ t('agora', 'Resend invitation') }}
+                {{ t("agora", "Resend invitation") }}
               </NcActionButton>
 
               <NcActionButton
@@ -494,7 +524,7 @@ async function submitEmail() {
                 <template #icon>
                   <component :is="InquiryGeneralIcons.Delete" />
                 </template>
-                {{ t('agora', 'Remove email') }}
+                {{ t("agora", "Remove email") }}
               </NcActionButton>
 
               <NcActionSeparator />
@@ -507,7 +537,7 @@ async function submitEmail() {
                 <template #icon>
                   <component :is="UserIcons.Logout" />
                 </template>
-                {{ t('agora', 'Logout') }}
+                {{ t("agora", "Logout") }}
               </NcActionButton>
             </template>
           </NcActions>
@@ -552,7 +582,7 @@ async function submitEmail() {
           <!-- Owner Info -->
           <div class="info-section">
             <div class="section-label">
-              {{ t('agora', 'Owner') }}
+              {{ t("agora", "Owner") }}
             </div>
             <BadgeDiv>
               <template #icon>
@@ -579,12 +609,14 @@ async function submitEmail() {
               <span
                 v-if="ownerIsAdmin"
                 class="role-badge admin"
-              >{{ t('agora', 'Admin') }}</span>
+              >{{
+                t("agora", "Admin")
+              }}</span>
               <span
                 v-if="ownerIsModerator"
                 class="role-badge moderator"
               >{{
-                t('agora', 'Moderator')
+                t("agora", "Moderator")
               }}</span>
             </div>
           </div>
@@ -592,7 +624,7 @@ async function submitEmail() {
           <!-- Current User Status -->
           <div class="info-section">
             <div class="section-label">
-              {{ t('agora', 'Your Status') }}
+              {{ t("agora", "Your Status") }}
             </div>
             <BadgeDiv>
               <template #icon>
@@ -601,7 +633,7 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'Role:') }} {{ userRole }}
+              {{ t("agora", "Role:") }} {{ userRole }}
             </BadgeDiv>
             <BadgeDiv v-if="isOwner">
               <template #icon>
@@ -610,7 +642,7 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'You are the owner') }}
+              {{ t("agora", "You are the owner") }}
             </BadgeDiv>
             <BadgeDiv v-if="isInvolved">
               <template #icon>
@@ -619,7 +651,7 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'You are involved') }}
+              {{ t("agora", "You are involved") }}
             </BadgeDiv>
             <BadgeDiv v-if="hasSupported">
               <template #icon>
@@ -628,7 +660,7 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'You have supported this') }}
+              {{ t("agora", "You have supported this") }}
             </BadgeDiv>
             <BadgeDiv v-if="countInquiries > 0">
               <template #icon>
@@ -637,7 +669,14 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ n('agora', '%n inquiry created', '%n inquiries created', countInquiries) }}
+              {{
+                n(
+                  "agora",
+                  "%n inquiry created",
+                  "%n inquiries created",
+                  countInquiries,
+                )
+              }}
             </BadgeDiv>
             <BadgeDiv v-if="orphanedInquiries > 0">
               <template #icon>
@@ -646,14 +685,21 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ n('agora', '%n orphaned inquiry', '%n orphaned inquiries', orphanedInquiries) }}
+              {{
+                n(
+                  "agora",
+                  "%n orphaned inquiry",
+                  "%n orphaned inquiries",
+                  orphanedInquiries,
+                )
+              }}
             </BadgeDiv>
           </div>
 
           <!-- Inquiry Basic Info -->
           <div class="info-section">
             <div class="section-label">
-              {{ t('agora', 'Inquiry Details') }}
+              {{ t("agora", "Inquiry Details") }}
             </div>
             <BadgeDiv>
               <template #icon>
@@ -675,7 +721,7 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'Created') }} {{ creationDateTime.toRelative() }}
+              {{ t("agora", "Created") }} {{ creationDateTime.toRelative() }}
             </BadgeDiv>
             <BadgeDiv v-if="inquiryStore.configuration.expire">
               <template #icon>
@@ -684,7 +730,7 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'Closes') }} {{ expirationDateTime?.toRelative() }}
+              {{ t("agora", "Closes") }} {{ expirationDateTime?.toRelative() }}
             </BadgeDiv>
             <BadgeDiv>
               <template #icon>
@@ -700,10 +746,13 @@ async function submitEmail() {
           <!-- Stats -->
           <div class="info-section">
             <div class="section-label">
-              {{ t('agora', 'Statistics') }}
+              {{ t("agora", "Statistics") }}
             </div>
             <BadgeDiv
-              v-if="inquiryStore.status.countParticipants && inquiryStore.permissions.seeResults"
+              v-if="
+                inquiryStore.status.countParticipants &&
+                  inquiryStore.permissions.seeResults
+              "
             >
               <template #icon>
                 <component
@@ -713,10 +762,10 @@ async function submitEmail() {
               </template>
               {{
                 n(
-                  'agora',
-                  '%n participant',
-                  '%n participants',
-                  inquiryStore.status.countParticipants
+                  "agora",
+                  "%n participant",
+                  "%n participants",
+                  inquiryStore.status.countParticipants,
                 )
               }}
             </BadgeDiv>
@@ -727,7 +776,14 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ n('agora', '%n option', '%n options', optionsStore.options.length) }}
+              {{
+                n(
+                  "agora",
+                  "%n option",
+                  "%n options",
+                  optionsStore.options.length,
+                )
+              }}
             </BadgeDiv>
             <BadgeDiv v-if="childCount > 0">
               <template #icon>
@@ -736,7 +792,9 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ n('agora', '%n child inquiry', '%n child inquiries', childCount) }}
+              {{
+                n("agora", "%n child inquiry", "%n child inquiries", childCount)
+              }}
             </BadgeDiv>
             <BadgeDiv>
               <template #icon>
@@ -758,7 +816,7 @@ async function submitEmail() {
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'Anonymous') }}
+              {{ t("agora", "Anonymous") }}
             </BadgeDiv>
           </div>
         </div>
@@ -770,7 +828,7 @@ async function submitEmail() {
         >
           <div class="action-group">
             <div class="section-label">
-              {{ t('agora', 'Inquiry Actions') }}
+              {{ t("agora", "Inquiry Actions") }}
             </div>
             <ActionInquiryUnified :inquiry="inquiryStore" />
           </div>
@@ -780,7 +838,7 @@ async function submitEmail() {
             class="action-group"
           >
             <div class="section-label">
-              {{ t('agora', 'Subscription') }}
+              {{ t("agora", "Subscription") }}
             </div>
             <NcActions
               class="settings-actions"
@@ -792,11 +850,19 @@ async function submitEmail() {
               >
                 <template #icon>
                   <component
-                    :is="isSubscribed ? InquiryGeneralIcons.Bell : InquiryGeneralIcons.BellOutline"
+                    :is="
+                      isSubscribed
+                        ? InquiryGeneralIcons.Bell
+                        : InquiryGeneralIcons.BellOutline
+                    "
                     :size="20"
                   />
                 </template>
-                {{ isSubscribed ? t('agora', 'Unsubscribe') : t('agora', 'Subscribe') }}
+                {{
+                  isSubscribed
+                    ? t("agora", "Unsubscribe")
+                    : t("agora", "Subscribe")
+                }}
               </NcActionCheckbox>
 
               <NcActionSeparator />
@@ -808,7 +874,7 @@ async function submitEmail() {
                 <template #icon>
                   <component :is="UserIcons.Reset" />
                 </template>
-                {{ t('agora', 'Reset inquiries') }}
+                {{ t("agora", "Reset inquiries") }}
               </NcActionButton>
             </NcActions>
           </div>

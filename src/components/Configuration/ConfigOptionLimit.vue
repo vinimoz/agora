@@ -4,36 +4,36 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
 
-import { InputDiv } from '../Base/index.ts'
+import { InputDiv } from "../Base/index.ts";
 
-import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useInquiryStore } from "../../stores/inquiry.ts";
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(["change"]);
 
-const inquiryStore = useInquiryStore()
+const inquiryStore = useInquiryStore();
 const useLimit = computed({
   get: () => !!inquiryStore.configuration.maxInquiriesPerOption,
   set: (value) => {
-    inquiryStore.configuration.maxInquiriesPerOption = value ? 1 : 0
+    inquiryStore.configuration.maxInquiriesPerOption = value ? 1 : 0;
   },
-})
+});
 
 /**
  *
  */
 function validateLimit() {
   if (!useLimit.value) {
-    inquiryStore.configuration.maxInquiriesPerOption = 0
+    inquiryStore.configuration.maxInquiriesPerOption = 0;
   } else if (inquiryStore.configuration.maxInquiriesPerOption < 1) {
-    inquiryStore.configuration.maxInquiriesPerOption = 1
+    inquiryStore.configuration.maxInquiriesPerOption = 1;
   }
 
-  emit('change')
+  emit("change");
 }
 </script>
 
@@ -44,7 +44,7 @@ function validateLimit() {
       type="switch"
       @update:model-value="validateLimit()"
     >
-      {{ t('agora', 'Limit inquiries per option') }}
+      {{ t("agora", "Limit inquiries per option") }}
     </NcCheckboxRadioSwitch>
 
     <InputDiv
@@ -65,7 +65,7 @@ function validateLimit() {
       type="switch"
       @update:model-value="emit('change')"
     >
-      {{ t('agora', 'Hide unavailable options') }}
+      {{ t("agora", "Hide unavailable options") }}
     </NcCheckboxRadioSwitch>
   </div>
 </template>

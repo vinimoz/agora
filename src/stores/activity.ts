@@ -3,43 +3,45 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-import { ActivityAPI } from '../Api'
+import { ActivityAPI } from "../Api";
 
-import { useSessionStore } from './session'
+import { useSessionStore } from "./session";
 
-import type { AxiosError } from '@nextcloud/axios'
-import type { Activity, ActivityStore } from '../Types/activity.types.ts'
+import type { AxiosError } from "@nextcloud/axios";
+import type { Activity, ActivityStore } from "../Types/activity.types.ts";
 
-export const useActivityStore = defineStore('activity', {
+export const useActivityStore = defineStore("activity", {
   state: (): ActivityStore => ({
     activities: [],
   }),
 
   actions: {
     async load(): Promise<void> {
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
       try {
-        const response = await ActivityAPI.getActivities(sessionStore.currentInquiryId)
-        this.activities = response.data.ocs.data
+        const response = await ActivityAPI.getActivities(
+          sessionStore.currentInquiryId,
+        );
+        this.activities = response.data.ocs.data;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        this.$reset()
+        this.$reset();
       }
     },
   },
 
   getters: {
     getActivitiesForInquiry(state): Activity[] {
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
       return state.activities.filter(
         (activity: Activity) =>
-          activity.object_type === 'inquiry' &&
-          activity.object_id === Number(sessionStore.currentInquiryId)
-      )
+          activity.object_type === "inquiry" &&
+          activity.object_id === Number(sessionStore.currentInquiryId),
+      );
     },
   },
-})
+});

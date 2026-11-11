@@ -3,12 +3,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed } from 'vue'
-import type { Inquiry } from '../Types'
-import { useHomeConfig } from './useHomeConfig'
-import type { RelevanceTier } from '../Types/experience.types'
-export type { RelevanceTier }
-import { useUserContext, isValidContextTag, type AgoraContextTag } from './useUserContext'
+import { computed } from "vue";
+import type { Inquiry } from "../Types";
+import { useHomeConfig } from "./useHomeConfig";
+import type { RelevanceTier } from "../Types/experience.types";
+export type { RelevanceTier };
+import {
+  useUserContext,
+  isValidContextTag,
+  type AgoraContextTag,
+} from "./useUserContext";
 
 // ------------------------------------------------------------
 // Tag → tier semantics
@@ -26,31 +30,31 @@ import { useUserContext, isValidContextTag, type AgoraContextTag } from './useUs
 // Unknown tag types default to 'local' (conservative: assume narrow scope).
 // Adding a new tag type is a one-line edit here — no schema change.
 // ------------------------------------------------------------
-type TagSemantics = { tier: RelevanceTier; weightKey: 'locality' | 'region' }
+type TagSemantics = { tier: RelevanceTier; weightKey: "locality" | "region" };
 
 const TAG_SEMANTICS: Record<string, TagSemantics> = {
   // Municipality
-  locality: { tier: 'local', weightKey: 'locality' },
-  region: { tier: 'region', weightKey: 'region' },
+  locality: { tier: "local", weightKey: "locality" },
+  region: { tier: "region", weightKey: "region" },
 
   // University
-  faculty: { tier: 'local', weightKey: 'locality' },
-  campus: { tier: 'region', weightKey: 'region' },
+  faculty: { tier: "local", weightKey: "locality" },
+  campus: { tier: "region", weightKey: "region" },
 
   // Association
-  chapter: { tier: 'local', weightKey: 'locality' },
-  branch: { tier: 'region', weightKey: 'region' },
+  chapter: { tier: "local", weightKey: "locality" },
+  branch: { tier: "region", weightKey: "region" },
 
   // Company
-  team: { tier: 'local', weightKey: 'locality' },
-  department: { tier: 'region', weightKey: 'region' },
+  team: { tier: "local", weightKey: "locality" },
+  department: { tier: "region", weightKey: "region" },
 
   // Cooperative
-  working_group: { tier: 'local', weightKey: 'locality' },
-}
+  working_group: { tier: "local", weightKey: "locality" },
+};
 
 function tagSemantics(tagType: string): TagSemantics {
-  return TAG_SEMANTICS[tagType] ?? { tier: 'local', weightKey: 'locality' }
+  return TAG_SEMANTICS[tagType] ?? { tier: "local", weightKey: "locality" };
 }
 
 /**
@@ -62,56 +66,56 @@ function tagSemantics(tagType: string): TagSemantics {
  */
 
 function getInquiryTags(inquiry: Inquiry): AgoraContextTag[] {
-  const raw = inquiry.miscFields?.tags
+  const raw = inquiry.miscFields?.tags;
   if (Array.isArray(raw) && raw.length > 0) {
-    return raw.filter(isValidContextTag)
+    return raw.filter(isValidContextTag);
   }
-  const legacy = inquiry.miscFields?.location
-  if (typeof legacy === 'string' && legacy.length > 0) {
-    return [{ type: 'locality', value: legacy }]
+  const legacy = inquiry.miscFields?.location;
+  if (typeof legacy === "string" && legacy.length > 0) {
+    return [{ type: "locality", value: legacy }];
   }
-  return []
+  return [];
 }
 
 function buildTagMap(tags: AgoraContextTag[]): Map<string, Set<string>> {
-  const map = new Map<string, Set<string>>()
+  const map = new Map<string, Set<string>>();
   for (const t of tags) {
-    let set = map.get(t.type)
+    let set = map.get(t.type);
     if (!set) {
-      set = new Set()
-      map.set(t.type, set)
+      set = new Set();
+      map.set(t.type, set);
     }
-    set.add(t.value)
+    set.add(t.value);
   }
-  return map
+  return map;
 }
 
 export function useRelevance() {
-  const { context } = useUserContext()
-  const { config } = useHomeConfig()
+  const { context } = useUserContext();
+  const { config } = useHomeConfig();
 
-  const weights = computed(() => config.value.relevance.weights)
-  const tierLabels = computed(() => config.value.relevance.tiers)
+  const weights = computed(() => config.value.relevance.weights);
+  const tierLabels = computed(() => config.value.relevance.tiers);
 
   function score(inquiry: Inquiry) {
-    const ctx = context.value
-    const w = weights.value
-    let score = 0
-    const reasons: string[] = []
-    let tier: RelevanceTier = 'public'
+    const ctx = context.value;
+    const w = weights.value;
+    let score = 0;
+    const reasons: string[] = [];
+    let tier: RelevanceTier = "public";
 
     // ---- Ownership ----
     if (inquiry.owner?.id === ctx.userId) {
-      score += w.owner
-      reasons.push('owner')
-      tier = 'for_you'
+      score += w.owner;
+      reasons.push("owner");
+      tier = "for_you";
     }
 
     // ---- Space membership ----
     if (ctx.spaces.some((s) => inquiry.inquiryGroups?.includes(s.id))) {
-      score += w.space
-      reasons.push('your space')
-      if (tier === 'public') tier = 'for_you'
+      score += w.space;
+      reasons.push("your space");
+      if (tier === "public") tier = "for_you";
     }
 
     // ---- Context tags ----
@@ -123,47 +127,49 @@ export function useRelevance() {
     //
     // Tier only upgrades from 'public' — a 'for_you' match from ownership
     // never downgrades to 'local' just because a tag also matched.
-    const inquiryTags = getInquiryTags(inquiry)
+    const inquiryTags = getInquiryTags(inquiry);
     if (inquiryTags.length > 0 && ctx.location.tags.length > 0) {
-      const userTagMap = buildTagMap(ctx.location.tags)
-      let bestTierScore = 0 // local = 2, region = 1, none = 0
+      const userTagMap = buildTagMap(ctx.location.tags);
+      let bestTierScore = 0; // local = 2, region = 1, none = 0
 
       for (const inqTag of inquiryTags) {
-        const userValues = userTagMap.get(inqTag.type)
-        if (!userValues?.has(inqTag.value)) continue
+        const userValues = userTagMap.get(inqTag.type);
+        if (!userValues?.has(inqTag.value)) continue;
 
-        const { tier: tagTier, weightKey } = tagSemantics(inqTag.type)
-        const tagWeight = w[weightKey] ?? 0
+        const { tier: tagTier, weightKey } = tagSemantics(inqTag.type);
+        const tagWeight = w[weightKey] ?? 0;
 
-        score += tagWeight
-        reasons.push(`your ${inqTag.type}`)
+        score += tagWeight;
+        reasons.push(`your ${inqTag.type}`);
 
-        const tagTierScore = tagTier === 'local' ? 2 : tagTier === 'region' ? 1 : 0
-        if (tier === 'public' && tagTierScore > bestTierScore) {
-          bestTierScore = tagTierScore
-          tier = tagTier
+        const tagTierScore =
+          tagTier === "local" ? 2 : tagTier === "region" ? 1 : 0;
+        if (tier === "public" && tagTierScore > bestTierScore) {
+          bestTierScore = tagTierScore;
+          tier = tagTier;
         }
       }
     }
 
     // ---- Active phase ----
     if (inquiry.miscFields?.activePhase) {
-      score += w.activePhase
-      reasons.push('active phase')
+      score += w.activePhase;
+      reasons.push("active phase");
     }
 
     // ---- Recency ----
-    const ageDays = (Date.now() / 1000 - (inquiry.status?.created || 0)) / 86400
+    const ageDays =
+      (Date.now() / 1000 - (inquiry.status?.created || 0)) / 86400;
     if (ageDays < 7) {
-      score += w.new
-      reasons.push('new')
+      score += w.new;
+      reasons.push("new");
     }
 
-    return { inquiry, score, tier, reasons }
+    return { inquiry, score, tier, reasons };
   }
 
   function rank(list: Inquiry[]) {
-    return list.map(score).sort((a, b) => b.score - a.score)
+    return list.map(score).sort((a, b) => b.score - a.score);
   }
 
   function byTier(list: Inquiry[]) {
@@ -172,10 +178,10 @@ export function useRelevance() {
       local: [],
       region: [],
       public: [],
-    }
-    for (const s of rank(list)) out[s.tier].push(s)
-    return out
+    };
+    for (const s of rank(list)) out[s.tier].push(s);
+    return out;
   }
 
-  return { score, rank, byTier, tierLabels }
+  return { score, rank, byTier, tierLabels };
 }

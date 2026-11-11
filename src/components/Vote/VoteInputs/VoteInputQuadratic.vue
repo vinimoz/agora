@@ -31,7 +31,7 @@
         class="cost-progress"
       />
       <span class="cost-value">{{ currentCost }}</span>
-      <span class="credits-label">{{ t('agora', 'credits') }}</span>
+      <span class="credits-label">{{ t("agora", "credits") }}</span>
     </div>
     <NcButton
       v-if="currentValue !== null && currentValue > 0"
@@ -45,69 +45,73 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
-import { Plus, Minus, X } from 'lucide-vue-next'
-import type { Item } from '../../../Types/index'
+import { ref, computed, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcProgressBar from "@nextcloud/vue/components/NcProgressBar";
+import { Plus, Minus, X } from "lucide-vue-next";
+import type { Item } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Item
-  currentVotes?: number | null
-}>()
+  engineConfig: Record<string, unknown>;
+  item: Item;
+  currentVotes?: number | null;
+}>();
 
 const emit = defineEmits<{
-  'update:quadratic': [itemId: number, votes: number | null]
-}>()
+  "update:quadratic": [itemId: number, votes: number | null];
+}>();
 
-const maxCredits = computed(() => (props.engineConfig.credits_per_user as number) || 100)
-const currentValue = computed(() => props.currentVotes ?? null)
-const displayValue = ref(currentValue.value ?? 0)
+const maxCredits = computed(
+  () => (props.engineConfig.credits_per_user as number) || 100,
+);
+const currentValue = computed(() => props.currentVotes ?? null);
+const displayValue = ref(currentValue.value ?? 0);
 
 watch(currentValue, (newValue) => {
-  displayValue.value = newValue ?? 0
-})
+  displayValue.value = newValue ?? 0;
+});
 
 function getCost(votes: number): number {
-  return votes * votes
+  return votes * votes;
 }
 
 const currentCost = computed(() => {
-  const val = currentValue.value
-  if (val === null || val === 0) return 0
-  return getCost(val)
-})
+  const val = currentValue.value;
+  if (val === null || val === 0) return 0;
+  return getCost(val);
+});
 
-const costPercentage = computed(() => (currentCost.value / maxCredits.value) * 100)
+const costPercentage = computed(
+  () => (currentCost.value / maxCredits.value) * 100,
+);
 
 const canIncrement = computed(() => {
-  const current = currentValue.value || 0
-  const nextVotes = current + 1
-  return getCost(nextVotes) <= maxCredits.value
-})
+  const current = currentValue.value || 0;
+  const nextVotes = current + 1;
+  return getCost(nextVotes) <= maxCredits.value;
+});
 
 function increment() {
-  const current = currentValue.value || 0
-  const newValue = current + 1
+  const current = currentValue.value || 0;
+  const newValue = current + 1;
   if (getCost(newValue) <= maxCredits.value) {
-    emit('update:quadratic', props.item.id, newValue)
+    emit("update:quadratic", props.item.id, newValue);
   }
 }
 
 function decrement() {
-  const current = currentValue.value || 0
-  const newValue = Math.max(0, current - 1)
+  const current = currentValue.value || 0;
+  const newValue = Math.max(0, current - 1);
   if (newValue === 0) {
-    emit('update:quadratic', props.item.id, null)
+    emit("update:quadratic", props.item.id, null);
   } else {
-    emit('update:quadratic', props.item.id, newValue)
+    emit("update:quadratic", props.item.id, newValue);
   }
 }
 
 function clearVotes() {
-  emit('update:quadratic', props.item.id, null)
+  emit("update:quadratic", props.item.id, null);
 }
 </script>
 

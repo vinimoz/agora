@@ -4,32 +4,32 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
 
 export type CheckboxOption = {
-  value: string
-  label: string
-}
+  value: string;
+  label: string;
+};
 
 interface Props {
-  id?: string
-  options: CheckboxOption[]
+  id?: string;
+  options: CheckboxOption[];
 }
 
-const { id, options } = defineProps<Props>()
-const model = defineModel<string>({ required: true })
+const { id, options } = defineProps<Props>();
+const model = defineModel<string>({ required: true });
 
 const RandId = () =>
   Math.random()
     .toString(36)
-    .replace(/[^a-z]+/g, '')
-    .slice(2, 12)
+    .replace(/[^a-z]+/g, "")
+    .slice(2, 12);
 
-const emit = defineEmits(['update'])
+const emit = defineEmits(["update"]);
 
-const elementId = computed(() => id ?? `rg-${RandId()}`)
+const elementId = computed(() => id ?? `rg-${RandId()}`);
 </script>
 
 <template>

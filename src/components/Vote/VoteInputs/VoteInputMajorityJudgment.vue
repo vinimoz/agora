@@ -29,49 +29,51 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import { translateGrade } from '../../../Types/votingType'
-import type { Item } from '../../../Types/index'
+import { computed, useTemplateRef } from "vue";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import CheckIcon from "vue-material-design-icons/Check.vue";
+import { translateGrade } from "../../../Types/votingType";
+import type { Item } from "../../../Types/index";
 
 const props = defineProps<{
-  item: Item
-  engineConfig: Record<string, unknown>
-  grade?: string | null
-  disabled?: boolean
-}>()
+  item: Item;
+  engineConfig: Record<string, unknown>;
+  grade?: string | null;
+  disabled?: boolean;
+}>();
 
 const emit = defineEmits<{
-  changeGrade: [grade: string | null]
-}>()
+  changeGrade: [grade: string | null];
+}>();
 
 const grades = computed(() => {
-  const g = props.engineConfig.grades as string[]
-  return g || ['Reject', 'Poor', 'Fair', 'Good', 'Excellent']
-})
+  const g = props.engineConfig.grades as string[];
+  return g || ["Reject", "Poor", "Fair", "Good", "Excellent"];
+});
 
 // A label wraps between words, so a button only needs room for its
 // longest word, measured in pixels in the font of the button labels.
-const group = useTemplateRef<HTMLElement>('group')
+const group = useTemplateRef<HTMLElement>("group");
 const longestWord = computed(() => {
-  const label = group.value?.querySelector('.button-vue__text')
-  const context = document.createElement('canvas').getContext('2d')
+  const label = group.value?.querySelector(".button-vue__text");
+  const context = document.createElement("canvas").getContext("2d");
   if (!label || !context) {
-    return 0
+    return 0;
   }
-  const style = getComputedStyle(label)
-  context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
+  const style = getComputedStyle(label);
+  context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
   return Math.max(
     ...grades.value
       .flatMap((g) => translateGrade(g).split(/\s+/))
-      .map((w) => context.measureText(w).width)
-  )
-})
+      .map((w) => context.measureText(w).width),
+  );
+});
 
 // Buttons per row in the grid step: two for an even count, otherwise the
 // whole count so that the step never leaves one button alone on a row.
-const perRow = computed(() => (grades.value.length % 2 ? grades.value.length : 2))
+const perRow = computed(() =>
+  grades.value.length % 2 ? grades.value.length : 2,
+);
 </script>
 
 <style scoped lang="scss">
@@ -88,9 +90,12 @@ $button-extra: calc(
   --button-width: calc(v-bind(longestWord) * 1px + #{$button-extra});
   // Width of one row holding every button, then of a row of the grid step.
   --row-width: calc(
-    v-bind('grades.length') * var(--button-width) + (v-bind('grades.length') - 1) * #{$gap}
+    v-bind("grades.length") * var(--button-width) +
+      (v-bind("grades.length") - 1) * #{$gap}
   );
-  --pair-width: calc(v-bind(perRow) * var(--button-width) + (v-bind(perRow) - 1) * #{$gap});
+  --pair-width: calc(
+    v-bind(perRow) * var(--button-width) + (v-bind(perRow) - 1) * #{$gap}
+  );
   display: flex;
   flex: 1 1 100%;
   flex-wrap: wrap;

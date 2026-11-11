@@ -50,12 +50,12 @@
           :is="Icons.Tree"
           :size="48"
         />
-        <h3>{{ t('agora', 'No items to display') }}</h3>
+        <h3>{{ t("agora", "No items to display") }}</h3>
         <p>
           {{
             searchQuery
-              ? t('agora', 'No results found for your search')
-              : t('agora', 'This tree is empty')
+              ? t("agora", "No results found for your search")
+              : t("agora", "This tree is empty")
           }}
         </p>
       </div>
@@ -75,125 +75,125 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import TreeBranch from './TreeBranch.vue'
-import type { Inquiry } from '../../Types'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import TreeBranch from "./TreeBranch.vue";
+import type { Inquiry } from "../../Types";
 
 interface TreeNode extends Inquiry {
-  children: TreeNode[]
-  parentId: number | null
+  children: TreeNode[];
+  parentId: number | null;
 }
 
 const props = defineProps<{
-  inquiries: Inquiry[]
-  parentId?: number | null
-}>()
+  inquiries: Inquiry[];
+  parentId?: number | null;
+}>();
 
 const emit = defineEmits<{
-  select: [inquiry: Inquiry]
-}>()
+  select: [inquiry: Inquiry];
+}>();
 
-const searchQuery = ref('')
-const expandedNodes = ref<Set<number>>(new Set())
-const selectedId = ref<number | null>(null)
+const searchQuery = ref("");
+const expandedNodes = ref<Set<number>>(new Set());
+const selectedId = ref<number | null>(null);
 
 // Build tree structure
 const treeData = computed<TreeNode[]>(() => {
-  const map = new Map<number, TreeNode>()
-  const roots: TreeNode[] = []
+  const map = new Map<number, TreeNode>();
+  const roots: TreeNode[] = [];
 
   // Create nodes
   props.inquiries.forEach((inquiry) => {
-    map.set(inquiry.id, { ...inquiry, children: [] })
-  })
+    map.set(inquiry.id, { ...inquiry, children: [] });
+  });
 
   // Build relationships
   map.forEach((node) => {
-    const parentId = node.parentId || props.parentId
+    const parentId = node.parentId || props.parentId;
     if (parentId && map.has(parentId)) {
-      map.get(parentId)!.children.push(node)
+      map.get(parentId)!.children.push(node);
     } else {
       // Only add as root if no parent or parent not in list
       if (!node.parentId) {
-        roots.push(node)
+        roots.push(node);
       }
     }
-  })
+  });
 
-  return roots
-})
+  return roots;
+});
 
 const filteredRoots = computed(() => {
-  if (!searchQuery.value) return treeData.value
+  if (!searchQuery.value) return treeData.value;
 
-  const query = searchQuery.value.toLowerCase()
+  const query = searchQuery.value.toLowerCase();
 
   function filterNode(node: TreeNode): TreeNode | null {
     const matches =
       node.title.toLowerCase().includes(query) ||
       node.description?.toLowerCase().includes(query) ||
-      false
+      false;
 
     const filteredChildren = node.children
       .map((child) => filterNode(child))
-      .filter((child): child is TreeNode => child !== null)
+      .filter((child): child is TreeNode => child !== null);
 
     if (matches || filteredChildren.length > 0) {
       return {
         ...node,
         children: filteredChildren,
-      }
+      };
     }
-    return null
+    return null;
   }
 
   return treeData.value
     .map((node) => filterNode(node))
-    .filter((node): node is TreeNode => node !== null)
-})
+    .filter((node): node is TreeNode => node !== null);
+});
 
 // Flatten for counting
 const flattenedNodes = computed(() => {
   function flatten(nodes: TreeNode[]): TreeNode[] {
-    let result: TreeNode[] = []
+    let result: TreeNode[] = [];
     nodes.forEach((node) => {
-      result.push(node)
-      result = result.concat(flatten(node.children))
-    })
-    return result
+      result.push(node);
+      result = result.concat(flatten(node.children));
+    });
+    return result;
   }
-  return flatten(filteredRoots.value)
-})
+  return flatten(filteredRoots.value);
+});
 
 function toggleNode(id: number) {
   if (expandedNodes.value.has(id)) {
-    expandedNodes.value.delete(id)
+    expandedNodes.value.delete(id);
   } else {
-    expandedNodes.value.add(id)
+    expandedNodes.value.add(id);
   }
 }
 
 function isExpanded(id: number): boolean {
-  return expandedNodes.value.has(id)
+  return expandedNodes.value.has(id);
 }
 
 function expandAll() {
   flattenedNodes.value.forEach((node) => {
     if (node.children.length > 0) {
-      expandedNodes.value.add(node.id)
+      expandedNodes.value.add(node.id);
     }
-  })
+  });
 }
 
 function collapseAll() {
-  expandedNodes.value.clear()
+  expandedNodes.value.clear();
 }
 
 function selectNode(node: TreeNode) {
-  selectedId.value = node.id
-  emit('select', node)
+  selectedId.value = node.id;
+  emit("select", node);
 }
 </script>
 

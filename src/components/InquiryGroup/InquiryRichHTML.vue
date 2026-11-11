@@ -190,7 +190,7 @@
               :size="14"
             />
             <span>{{ inquiry.status.countComments }}</span>
-            <span class="stat-label">{{ t('agora', 'comments') }}</span>
+            <span class="stat-label">{{ t("agora", "comments") }}</span>
           </div>
           <div
             v-if="showSupport && inquiry.status?.countSupports"
@@ -201,7 +201,7 @@
               :size="14"
             />
             <span>{{ inquiry.status.countSupports }}</span>
-            <span class="stat-label">{{ t('agora', 'supports') }}</span>
+            <span class="stat-label">{{ t("agora", "supports") }}</span>
           </div>
           <div
             v-if="showParticipants && inquiry.status?.countParticipants"
@@ -212,7 +212,7 @@
               :size="14"
             />
             <span>{{ inquiry.status.countParticipants }}</span>
-            <span class="stat-label">{{ t('agora', 'participants') }}</span>
+            <span class="stat-label">{{ t("agora", "participants") }}</span>
           </div>
         </div>
       </div>
@@ -236,46 +236,47 @@
           class="warning-icon"
           :size="18"
         />
-        <span>{{ t('agora', 'This inquiry has expired') }}</span>
+        <span>{{ t("agora", "This inquiry has expired") }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import DOMPurify from 'dompurify'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import DOMPurify from "dompurify";
 
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import type { Inquiry } from '../../Types/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import type { Inquiry } from "../../Types/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
 
 interface Props {
-  inquiry: Inquiry
-  inquiries?: Inquiry[]
+  inquiry: Inquiry;
+  inquiries?: Inquiry[];
 
   // Display feature toggles
-  showIcon?: boolean
-  showCover?: boolean
-  showMeta?: boolean
-  showStats?: boolean
-  showAuthor?: boolean
-  showDescription?: boolean
-  showExpiry?: boolean
-  showType?: boolean
-  showStatus?: boolean
-  showComments?: boolean
-  showSupport?: boolean
-  showParticipants?: boolean
+  showIcon?: boolean;
+  showCover?: boolean;
+  showMeta?: boolean;
+  showStats?: boolean;
+  showAuthor?: boolean;
+  showDescription?: boolean;
+  showExpiry?: boolean;
+  showType?: boolean;
+  showStatus?: boolean;
+  showComments?: boolean;
+  showSupport?: boolean;
+  showParticipants?: boolean;
 
   // Display mode
-  displayMode?: 'full' | 'book' | 'summary'
+  displayMode?: "full" | "book" | "summary";
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  inquiries: null,
   showIcon: true,
   showCover: true,
   showMeta: true,
@@ -288,254 +289,276 @@ const props = withDefaults(defineProps<Props>(), {
   showComments: true,
   showSupport: true,
   showParticipants: true,
-  displayMode: 'full',
-})
+  displayMode: "full",
+});
 
+/*
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-}>()
+  click: [inquiry: Inquiry];
+}>(); */
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // Import icon components
-const InquiryGeneralIconsComponents = InquiryGeneralIcons
+const InquiryGeneralIconsComponents = InquiryGeneralIcons;
 
 // Get type data
-const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
 
-const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
+const typeData = computed(() =>
+  getInquiryTypeData(props.inquiry.type, inquiryTypes.value),
+);
 
-const typeLabel = computed(() => typeData.value?.label || props.inquiry.type)
+const typeLabel = computed(() => typeData.value?.label || props.inquiry.type);
 
 // Get type icon
 const typeIconComponent = computed(() => {
   if (typeData.value?.icon) {
-    const iconName = typeData.value.icon
-    if (typeof iconName === 'string' && InquiryGeneralIconsComponents[iconName]) {
-      return InquiryGeneralIconsComponents[iconName]
+    const iconName = typeData.value.icon;
+    if (
+      typeof iconName === "string" &&
+      InquiryGeneralIconsComponents[iconName]
+    ) {
+      return InquiryGeneralIconsComponents[iconName];
     }
   }
 
   const iconMap = {
-    survey: 'ClipboardList',
-    poll: 'CheckCircle',
-    question: 'Question',
-    discussion: 'MessageSquare',
-    news: 'Newspaper',
-    announcement: 'Megaphone',
-    meeting: 'Users',
-    document: 'Document',
-    proposal: 'Scale',
-    general: 'FolderMultiple',
-    draft: 'Empty',
-  }
+    survey: "ClipboardList",
+    poll: "CheckCircle",
+    question: "Question",
+    discussion: "MessageSquare",
+    news: "Newspaper",
+    announcement: "Megaphone",
+    meeting: "Users",
+    document: "Document",
+    proposal: "Scale",
+    general: "FolderMultiple",
+    draft: "Empty",
+  };
 
-  const mappedIconName = iconMap[props.inquiry.type?.toLowerCase()] || 'FolderMultiple'
-  return InquiryGeneralIconsComponents[mappedIconName]
-})
+  const mappedIconName =
+    iconMap[props.inquiry.type?.toLowerCase()] || "FolderMultiple";
+  return InquiryGeneralIconsComponents[mappedIconName];
+});
 
 // Status
 const currentInquiryStatus = computed(() => {
-  if (!props.inquiry.status?.inquiryStatus) return null
+  if (!props.inquiry.status?.inquiryStatus) return null;
 
   const specialStatuses = {
     draft: {
-      statusKey: 'draft',
-      label: 'Draft',
-      icon: 'draft',
+      statusKey: "draft",
+      label: "Draft",
+      icon: "draft",
       inquiryType: props.inquiry.type,
       order: 0,
     },
     waiting_approval: {
-      statusKey: 'waiting_approval',
-      label: 'Waiting Approval',
-      icon: 'waitingapproval',
+      statusKey: "waiting_approval",
+      label: "Waiting Approval",
+      icon: "waitingapproval",
       inquiryType: props.inquiry.type,
       order: 1,
     },
-  }
+  };
 
-  const currentStatus = props.inquiry.status.inquiryStatus
+  const currentStatus = props.inquiry.status.inquiryStatus;
   if (specialStatuses[currentStatus]) {
-    return specialStatuses[currentStatus]
+    return specialStatuses[currentStatus];
   }
 
   const statusesFromSettings =
     sessionStore.appSettings?.inquiryStatusTab?.filter(
-      (status) => status.inquiryType === props.inquiry.type
-    ) || []
+      (status) => status.inquiryType === props.inquiry.type,
+    ) || [];
 
   return (
     statusesFromSettings.find((status) => status.statusKey === currentStatus) ||
     specialStatuses.draft
-  )
-})
+  );
+});
 
 const statusText = computed(() =>
-  currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : ''
-)
+  currentInquiryStatus.value?.label
+    ? t("agora", currentInquiryStatus.value.label)
+    : "",
+);
 
 const statusIconComponent = computed(() => {
-  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
-  const iconName = currentInquiryStatus.value.icon
-  return StatusIcons[iconName] || StatusIcons.Default
-})
+  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default;
+  const iconName = currentInquiryStatus.value.icon;
+  return StatusIcons[iconName] || StatusIcons.Default;
+});
 
 const statusBadgeClass = computed(() => {
-  const status = props.inquiry.status?.inquiryStatus
+  const status = props.inquiry.status?.inquiryStatus;
   const map: Record<string, string> = {
-    active: 'status-open',
-    open: 'status-open',
-    closed: 'status-closed',
-    draft: 'status-draft',
-    waiting_approval: 'status-waiting',
-  }
-  return map[status || ''] || 'status-unknown'
-})
+    active: "status-open",
+    open: "status-open",
+    closed: "status-closed",
+    draft: "status-draft",
+    waiting_approval: "status-waiting",
+  };
+  return map[status || ""] || "status-unknown";
+});
 
 // Cover image
 const coverUrl = computed(() => {
-  if (!props.showCover) return ''
-  if (!props.inquiry.coverId || props.inquiry.coverId === 0) return ''
-  return getNextcloudPreviewUrl(props.inquiry.coverId)
-})
+  if (!props.showCover) return "";
+  if (!props.inquiry.coverId || props.inquiry.coverId === 0) return "";
+  return getNextcloudPreviewUrl(props.inquiry.coverId);
+});
 
-function getNextcloudPreviewUrl(fileId: number, x = 1200, y = 400, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`
+function getNextcloudPreviewUrl(
+  fileId: number,
+  x = 1200,
+  y = 400,
+  autoScale = true,
+) {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`;
 }
 
 // Expiry check
 const isExpired = computed(() => {
-  if (!props.inquiry.configuration?.expire) return false
-  const now = Date.now() / 1000
-  return props.inquiry.configuration.expire < now
-})
+  if (!props.inquiry.configuration?.expire) return false;
+  const now = Date.now() / 1000;
+  return props.inquiry.configuration.expire < now;
+});
 
 // Location and Category paths
 function getHierarchyPath(items, targetId) {
-  if (!items || !Array.isArray(items)) return ''
+  if (!items || !Array.isArray(items)) return "";
 
-  const itemMap = {}
+  const itemMap = {};
 
   items.forEach((item) => {
-    itemMap[item.id] = item
-  })
+    itemMap[item.id] = item;
+  });
 
   if (!itemMap[targetId]) {
-    return itemMap[1]?.name || ''
+    return itemMap[1]?.name || "";
   }
 
   function buildPath(item) {
     if (item.parentId === 0) {
-      return item.name
+      return item.name;
     }
-    const parent = itemMap[item.parentId]
+    const parent = itemMap[item.parentId];
     if (parent) {
-      return `${buildPath(parent)} → ${item.name}`
+      return `${buildPath(parent)} → ${item.name}`;
     }
-    return item.name
+    return item.name;
   }
 
-  return buildPath(itemMap[targetId])
+  return buildPath(itemMap[targetId]);
 }
 
 const locationPath = computed(() =>
-  getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId)
-)
+  getHierarchyPath(
+    sessionStore.appSettings?.locationTab,
+    props.inquiry.locationId,
+  ),
+);
 const categoryPath = computed(() =>
-  getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId)
-)
+  getHierarchyPath(
+    sessionStore.appSettings?.categoryTab,
+    props.inquiry.categoryId,
+  ),
+);
 
 const truncatedLocation = computed(() => {
-  if (!locationPath.value) return ''
+  if (!locationPath.value) return "";
   return locationPath.value.length > 30
     ? `${locationPath.value.substring(0, 30)}…`
-    : locationPath.value
-})
+    : locationPath.value;
+});
 
 const truncatedCategory = computed(() => {
-  if (!categoryPath.value) return ''
+  if (!categoryPath.value) return "";
   return categoryPath.value.length > 30
     ? `${categoryPath.value.substring(0, 30)}…`
-    : categoryPath.value
-})
+    : categoryPath.value;
+});
 
 // Date formatting
 const formattedDate = computed(() => {
-  if (!props.inquiry.status?.created) return ''
+  if (!props.inquiry.status?.created) return "";
 
   try {
-    const date = new Date(props.inquiry.status.created * 1000)
-    return date.toLocaleDateString('default', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
+    const date = new Date(props.inquiry.status.created * 1000);
+    return date.toLocaleDateString("default", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   } catch {
-    return ''
+    return "";
   }
-})
+});
 
 // Content
 const sanitizedContent = computed(() => {
   if (!props.inquiry.description) {
     return `<div class="no-content">
-              <p>${t('agora', 'No content available')}</p>
-            </div>`
+              <p>${t("agora", "No content available")}</p>
+            </div>`;
   }
 
-  const content = props.inquiry.descriptionSafe || props.inquiry.description
+  const content = props.inquiry.descriptionSafe || props.inquiry.description;
   return DOMPurify.sanitize(content, {
     ALLOWED_TAGS: [
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'p',
-      'br',
-      'strong',
-      'em',
-      'u',
-      's',
-      'ul',
-      'ol',
-      'li',
-      'blockquote',
-      'pre',
-      'code',
-      'img',
-      'figure',
-      'figcaption',
-      'table',
-      'thead',
-      'tbody',
-      'tr',
-      'th',
-      'td',
-      'a',
-      'span',
-      'div',
-      'hr',
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "p",
+      "br",
+      "strong",
+      "em",
+      "u",
+      "s",
+      "ul",
+      "ol",
+      "li",
+      "blockquote",
+      "pre",
+      "code",
+      "img",
+      "figure",
+      "figcaption",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
+      "a",
+      "span",
+      "div",
+      "hr",
     ],
     ALLOWED_ATTR: [
-      'href',
-      'target',
-      'rel',
-      'title',
-      'src',
-      'alt',
-      'width',
-      'height',
-      'loading',
-      'class',
-      'id',
-      'style',
+      "href",
+      "target",
+      "rel",
+      "title",
+      "src",
+      "alt",
+      "width",
+      "height",
+      "loading",
+      "class",
+      "id",
+      "style",
     ],
-  })
-})
+  });
+});
 </script>
 
 <style lang="scss" scoped>
@@ -599,7 +622,11 @@ const sanitizedContent = computed(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
     display: flex;
     align-items: flex-end;
     padding: 32px;
@@ -757,25 +784,41 @@ const sanitizedContent = computed(() => {
     letter-spacing: 0.3px;
 
     &.status-open {
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+      background: linear-gradient(
+        135deg,
+        rgba(34, 197, 94, 0.1),
+        rgba(34, 197, 94, 0.05)
+      );
       color: #16a34a;
       border: 1px solid rgba(34, 197, 94, 0.2);
     }
 
     &.status-closed {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+      background: linear-gradient(
+        135deg,
+        rgba(239, 68, 68, 0.1),
+        rgba(239, 68, 68, 0.05)
+      );
       color: #dc2626;
       border: 1px solid rgba(239, 68, 68, 0.2);
     }
 
     &.status-draft {
-      background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.05));
+      background: linear-gradient(
+        135deg,
+        rgba(148, 163, 184, 0.1),
+        rgba(148, 163, 184, 0.05)
+      );
       color: #64748b;
       border: 1px solid rgba(148, 163, 184, 0.2);
     }
 
     &.status-waiting {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+      background: linear-gradient(
+        135deg,
+        rgba(245, 158, 11, 0.1),
+        rgba(245, 158, 11, 0.05)
+      );
       color: #f59e0b;
       border: 1px solid rgba(245, 158, 11, 0.2);
     }
@@ -1057,7 +1100,7 @@ const sanitizedContent = computed(() => {
       text-align: right;
 
       &::before {
-        content: '— ';
+        content: "— ";
       }
     }
   }
@@ -1066,7 +1109,7 @@ const sanitizedContent = computed(() => {
     background: var(--color-background-dark);
     padding: 2px 6px;
     border-radius: 4px;
-    font-family: 'SF Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-family: "SF Mono", "Monaco", "Menlo", "Ubuntu Mono", monospace;
     font-size: 13px;
     color: var(--color-main-text);
     border: 1px solid var(--color-border);
@@ -1176,7 +1219,12 @@ const sanitizedContent = computed(() => {
   :deep(hr) {
     border: none;
     height: 1px;
-    background: linear-gradient(to right, transparent, var(--color-border), transparent);
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-border),
+      transparent
+    );
     margin: 32px 0;
   }
 
@@ -1203,7 +1251,11 @@ const sanitizedContent = computed(() => {
   align-items: center;
   gap: 12px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.04));
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.08),
+    rgba(239, 68, 68, 0.04)
+  );
   border-radius: 8px;
   border: 1px solid rgba(239, 68, 68, 0.2);
   margin-top: 32px;
@@ -1213,7 +1265,11 @@ const sanitizedContent = computed(() => {
   transition: all 0.2s ease;
 
   &:hover {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06));
+    background: linear-gradient(
+      135deg,
+      rgba(239, 68, 68, 0.12),
+      rgba(239, 68, 68, 0.06)
+    );
     box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
   }
 
@@ -1249,7 +1305,11 @@ const sanitizedContent = computed(() => {
   }
 
   .cover-overlay {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
   }
 
   .rich-content-wrapper {

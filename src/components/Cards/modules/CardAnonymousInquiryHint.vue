@@ -4,12 +4,12 @@
 -->
 
 <script setup lang="ts">
-import { CardDiv } from '../../Base/index.ts'
-import { t } from '@nextcloud/l10n'
-import { useInquiryStore } from '../../../stores/inquiry.ts'
+import { CardDiv } from "../../Base/index.ts";
+import { t } from "@nextcloud/l10n";
+import { useInquiryStore } from "../../../stores/inquiry.ts";
 
-const cardType = 'warning'
-const inquiryStore = useInquiryStore()
+const cardType = "warning";
+const inquiryStore = useInquiryStore();
 </script>
 
 <template>
@@ -19,11 +19,16 @@ const inquiryStore = useInquiryStore()
   >
     {{
       t(
-        'inquiries',
-        'This inquiry is an anonymous inquiry for everyone, including the owner. Deanonymizing is disabled for this inquiry.'
+        "inquiries",
+        "This inquiry is an anonymous inquiry for everyone, including the owner. Deanonymizing is disabled for this inquiry.",
       )
     }}
-    {{ t('agora', 'But be aware that your name is not stored in an encrypted or obfuscated way.') }}
+    {{
+      t(
+        "agora",
+        "But be aware that your name is not stored in an encrypted or obfuscated way.",
+      )
+    }}
   </CardDiv>
   <CardDiv
     v-else
@@ -31,14 +36,14 @@ const inquiryStore = useInquiryStore()
   >
     {{
       t(
-        'inquiries',
-        'This inquiry is an anonymous inquiry for everyone, except for the owner and delegated inquiry administration.'
+        "inquiries",
+        "This inquiry is an anonymous inquiry for everyone, except for the owner and delegated inquiry administration.",
       )
     }}
     {{
       t(
-        'inquiries',
-        'Anonymization of this inquiry can be removed at any time by the owner and delegated inquiry administration.'
+        "inquiries",
+        "Anonymization of this inquiry can be removed at any time by the owner and delegated inquiry administration.",
       )
     }}
   </CardDiv>

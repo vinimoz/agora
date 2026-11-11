@@ -2,22 +2,22 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import type { Item } from '../../Types/index.ts'
-import type { Option } from '../../Types/option.types.ts'
-import type { Inquiry } from '../../Types/inquiry.types.ts'
-import { useAppSettingsStore } from '../../stores/appSettings.ts'
-import { getFamilyUIConfig, getLayoutForFamily } from './InquiryOptionHelper'
+import type { Item } from "../../Types/index.ts";
+import type { Option } from "../../Types/option.types.ts";
+import type { Inquiry } from "../../Types/inquiry.types.ts";
+import { useAppSettingsStore } from "../../stores/appSettings.ts";
+import { getLayoutForFamily } from "./InquiryOptionHelper";
 
 // ---------------------------------------------------------------------------
 // Type guards
 // ---------------------------------------------------------------------------
 
 export function isOption(item: Item | Option | Inquiry): item is Option {
-  return 'targetId' in item
+  return "targetId" in item;
 }
 
 export function isInquiry(item: Item | Option | Inquiry): item is Inquiry {
-  return !('targetId' in item)
+  return !("targetId" in item);
 }
 
 // ---------------------------------------------------------------------------
@@ -26,42 +26,42 @@ export function isInquiry(item: Item | Option | Inquiry): item is Inquiry {
 
 export function optionToItem(opt: Option): Item {
   return {
-    kind: 'option',
+    kind: "option",
     id: opt.id,
     parentId: opt.parentId ?? 0,
     title: opt.title,
-    text: opt.text ?? '',
+    text: opt.text ?? "",
     type: opt.type,
-    family: opt.family ?? '',
+    family: opt.family ?? "",
     owner: opt.owner,
     coverId: null,
-    statusKey: opt.status?.optionStatus ?? 'draft',
+    statusKey: opt.status?.optionStatus ?? "draft",
     raw: opt,
-  }
+  };
 }
 
 export function inquiryToItem(inq: Inquiry): Item {
   return {
-    kind: 'inquiry',
+    kind: "inquiry",
     id: inq.id,
     parentId: inq.parentId ?? 0,
     title: inq.title,
-    text: inq.description ?? '',
+    text: inq.description ?? "",
     type: inq.type,
-    family: inq.family ?? '',
+    family: inq.family ?? "",
     owner: inq.owner,
     coverId: inq.coverId,
-    statusKey: inq.status?.inquiryStatus ?? 'draft',
+    statusKey: inq.status?.inquiryStatus ?? "draft",
     raw: inq,
-  }
+  };
 }
 
 export function toItem(obj: Option | Inquiry): Item {
-  return isOption(obj) ? optionToItem(obj) : inquiryToItem(obj)
+  return isOption(obj) ? optionToItem(obj) : inquiryToItem(obj);
 }
 
 export function toItems(list: (Option | Inquiry)[]): Item[] {
-  return list.map(toItem)
+  return list.map(toItem);
 }
 
 /**
@@ -73,24 +73,24 @@ export function toItems(list: (Option | Inquiry)[]): Item[] {
  *   3. familyKey itself                                   (fallback)
  */
 export function getLayoutKeyForFamily(familyKey: string | undefined): string {
-  if (!familyKey) return ''
+  if (!familyKey) return "";
 
   // 1. Live config from appSettings
   try {
-    const store = useAppSettingsStore()
+    const store = useAppSettingsStore();
     const layout = store?.optionFamilyTab?.find(
-      (f: { family_type?: string }) => f.family_type === familyKey
-    )?.ui?.layout
+      (f: { family_type?: string }) => f.family_type === familyKey,
+    )?.ui?.layout;
 
-    if (typeof layout === 'string' && layout.length > 0) {
-      return layout
+    if (typeof layout === "string" && layout.length > 0) {
+      return layout;
     }
   } catch {
     // store not available outside setup
   }
 
   // 2. Static map from the helper
-  return getLayoutForFamily(familyKey)
+  return getLayoutForFamily(familyKey);
 }
 
 // ---------------------------------------------------------------------------
@@ -98,19 +98,19 @@ export function getLayoutKeyForFamily(familyKey: string | undefined): string {
 // ---------------------------------------------------------------------------
 
 function unwrap(item: Item): Option | Inquiry {
-  if ('raw' in item && item.raw) {
-    return item.raw as Option | Inquiry
+  if ("raw" in item && item.raw) {
+    return item.raw as Option | Inquiry;
   }
-  return item as Option | Inquiry
+  return item as Option | Inquiry;
 }
 
 function getMiscFields(item: Item): Record<string, unknown> {
-  const raw = unwrap(item)
-  return (raw.miscFields as Record<string, unknown>) ?? {}
+  const raw = unwrap(item);
+  return (raw.miscFields as Record<string, unknown>) ?? {};
 }
 
 function getFamily(item: Item): string {
-  return unwrap(item).family ?? ''
+  return unwrap(item).family ?? "";
 }
 
 // ---------------------------------------------------------------------------
@@ -118,42 +118,43 @@ function getFamily(item: Item): string {
 // ---------------------------------------------------------------------------
 
 export function parseForceLayouts(
-  miscFields: Record<string, unknown> | null | undefined
+  miscFields: Record<string, unknown> | null | undefined,
 ): string[] {
-  if (!miscFields) return []
+  if (!miscFields) return [];
 
-  let forceLayouts: unknown = miscFields.force_layouts
-  if (!forceLayouts) return []
+  let forceLayouts: unknown = miscFields.force_layouts;
+  if (!forceLayouts) return [];
 
   if (
     forceLayouts &&
-    typeof forceLayouts === 'object' &&
+    typeof forceLayouts === "object" &&
     !Array.isArray(forceLayouts) &&
-    'value' in (forceLayouts as Record<string, unknown>)
+    "value" in (forceLayouts as Record<string, unknown>)
   ) {
-    forceLayouts = (forceLayouts as { value: unknown }).value
+    forceLayouts = (forceLayouts as { value: unknown }).value;
   }
 
-  if (typeof forceLayouts === 'string') {
-    if (!forceLayouts.trim()) return []
+  if (typeof forceLayouts === "string") {
+    if (!forceLayouts.trim()) return [];
     try {
-      const parsed = JSON.parse(forceLayouts)
-      if (Array.isArray(parsed)) return parsed.filter((v): v is string => typeof v === 'string')
+      const parsed = JSON.parse(forceLayouts);
+      if (Array.isArray(parsed))
+        return parsed.filter((v): v is string => typeof v === "string");
     } catch {
-      return [forceLayouts]
+      return [forceLayouts];
     }
-    return []
+    return [];
   }
 
   if (Array.isArray(forceLayouts)) {
-    return forceLayouts.filter((v): v is string => typeof v === 'string')
+    return forceLayouts.filter((v): v is string => typeof v === "string");
   }
 
-  return []
+  return [];
 }
 
 export function hasForceLayout(item: Item, layout: string): boolean {
-  return parseForceLayouts(getMiscFields(item)).includes(layout)
+  return parseForceLayouts(getMiscFields(item)).includes(layout);
 }
 
 // ---------------------------------------------------------------------------
@@ -164,87 +165,106 @@ export function hasForceLayout(item: Item, layout: string): boolean {
 //   Inquiry → include if force_layouts ∋ familyKey
 // ---------------------------------------------------------------------------
 
-export function getOptionsForFamily(options: Option[], familyKey: string | undefined): Option[] {
-  if (!familyKey) return []
+export function getOptionsForFamily(
+  options: Option[],
+  familyKey: string | undefined,
+): Option[] {
+  if (!familyKey) return [];
 
-  const layoutKey = getLayoutKeyForFamily(familyKey)
+  const layoutKey = getLayoutKeyForFamily(familyKey);
 
   return options.filter(
     (option) =>
       option.family === familyKey ||
       hasForceLayout(option, layoutKey) ||
-      hasForceLayout(option, familyKey)
-  )
+      hasForceLayout(option, familyKey),
+  );
 }
 
 export function getInquiriesForFamily(
   inquiries: Inquiry[],
-  familyKey: string | undefined
+  familyKey: string | undefined,
 ): Inquiry[] {
-  if (!familyKey) return []
+  if (!familyKey) return [];
 
-  const layoutKey = getLayoutKeyForFamily(familyKey)
+  const layoutKey = getLayoutKeyForFamily(familyKey);
 
   return inquiries.filter(
-    (inquiry) => hasForceLayout(inquiry, layoutKey) || hasForceLayout(inquiry, familyKey)
-  )
+    (inquiry) =>
+      hasForceLayout(inquiry, layoutKey) || hasForceLayout(inquiry, familyKey),
+  );
 }
 
-export function getItemsForFamily(items: Item[], familyKey: string | undefined): Item[] {
-  if (!familyKey) return []
+export function getItemsForFamily(
+  items: Item[],
+  familyKey: string | undefined,
+): Item[] {
+  if (!familyKey) return [];
 
-  const layoutKey = getLayoutKeyForFamily(familyKey)
+  const layoutKey = getLayoutKeyForFamily(familyKey);
 
   return items.filter((item) => {
-    if (item.kind === 'option') {
+    if (item.kind === "option") {
       return (
         getFamily(item) === familyKey ||
         hasForceLayout(item, layoutKey) ||
         hasForceLayout(item, familyKey)
-      )
+      );
     }
-    return hasForceLayout(item, layoutKey) || hasForceLayout(item, familyKey)
-  })
+    return hasForceLayout(item, layoutKey) || hasForceLayout(item, familyKey);
+  });
 }
 
 // ---------------------------------------------------------------------------
 // Generic helpers (work on raw Option/Inquiry; use item.raw for Item wrappers)
 // ---------------------------------------------------------------------------
 
-export function getItemsByForceLayout<T extends Item>(items: T[], layout: string): T[] {
-  return items.filter((item) => hasForceLayout(item, layout))
+export function getItemsByForceLayout<T extends Item>(
+  items: T[],
+  layout: string,
+): T[] {
+  return items.filter((item) => hasForceLayout(item, layout));
 }
 
-export function getItemsByFamily<T extends Item>(items: T[], familyKey: string): T[] {
-  return items.filter((item) => getFamily(item) === familyKey)
+export function getItemsByFamily<T extends Item>(
+  items: T[],
+  familyKey: string,
+): T[] {
+  return items.filter((item) => getFamily(item) === familyKey);
 }
 
 // ---------------------------------------------------------------------------
 // Mutators — operate on raw Option/Inquiry (miscFields lives on raw)
 // ---------------------------------------------------------------------------
 
-export function addForceLayout<T extends Option | Inquiry>(item: T, layout: string): T {
-  const miscFields = { ...(item.miscFields || {}) }
-  const currentLayouts = parseForceLayouts(miscFields)
+export function addForceLayout<T extends Option | Inquiry>(
+  item: T,
+  layout: string,
+): T {
+  const miscFields = { ...(item.miscFields || {}) };
+  const currentLayouts = parseForceLayouts(miscFields);
 
   if (!currentLayouts.includes(layout)) {
-    currentLayouts.push(layout)
-    miscFields.force_layouts = JSON.stringify(currentLayouts)
+    currentLayouts.push(layout);
+    miscFields.force_layouts = JSON.stringify(currentLayouts);
   }
 
-  return { ...item, miscFields }
+  return { ...item, miscFields };
 }
 
-export function removeForceLayout<T extends Option | Inquiry>(item: T, layout: string): T {
-  const miscFields = { ...(item.miscFields || {}) }
-  const currentLayouts = parseForceLayouts(miscFields)
-  const updatedLayouts = currentLayouts.filter((l) => l !== layout)
+export function removeForceLayout<T extends Option | Inquiry>(
+  item: T,
+  layout: string,
+): T {
+  const miscFields = { ...(item.miscFields || {}) };
+  const currentLayouts = parseForceLayouts(miscFields);
+  const updatedLayouts = currentLayouts.filter((l) => l !== layout);
 
   if (updatedLayouts.length === 0) {
-    delete miscFields.force_layouts
+    delete miscFields.force_layouts;
   } else {
-    miscFields.force_layouts = JSON.stringify(updatedLayouts)
+    miscFields.force_layouts = JSON.stringify(updatedLayouts);
   }
 
-  return { ...item, miscFields }
+  return { ...item, miscFields };
 }

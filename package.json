@@ -20,7 +20,7 @@
     "dev:win": "set NODE_ENV=development && vite --mode development build",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "lint": "eslint --ext .js,.ts,.vue src",
+    "lint": "ESLINT_USE_FLAT_CONFIG=true eslint src",
     "lint:fix": "eslint --ext .js,.ts,.vue src --fix",
     "stylelint": "stylelint src/**/*{.scss,.vue,.css}",
     "stylelint:fix": "stylelint src --fix",

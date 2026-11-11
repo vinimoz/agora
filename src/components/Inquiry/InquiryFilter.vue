@@ -4,45 +4,54 @@
 -->
 
 <script setup lang="ts">
-import { watch, computed, ref, onUnmounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { useSessionStore } from '../../stores/session.ts'
-import { FilterType, useInquiriesStore } from '../../stores/inquiries.ts'
-import { NcButton, NcSelect, NcTextField, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { watch, computed, ref, onUnmounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import { useSessionStore } from "../../stores/session.ts";
+import { FilterType, useInquiriesStore } from "../../stores/inquiries.ts";
+import {
+  NcButton,
+  NcSelect,
+  NcTextField,
+  NcCheckboxRadioSwitch,
+} from "@nextcloud/vue";
 
-const sessionStore = useSessionStore()
-const inquiriesStore = useInquiriesStore()
+const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore();
 
-const selectedType = ref<FilterType | 'all'>('all')
-const selectedInquiryStatus = ref<string>('all')
-const selectedCategory = ref<string>('all')
-const selectedLocation = ref<string>('all')
-const hasComments = ref<boolean | null>(null)
-const hasSupports = ref<boolean | null>(null)
-const mainInquiriesOnly = ref<boolean>(true)
-const searchQuery = ref<string>('')
+const selectedType = ref<FilterType | "all">("all");
+const selectedInquiryStatus = ref<string>("all");
+const selectedCategory = ref<string>("all");
+const selectedLocation = ref<string>("all");
+const hasComments = ref<boolean | null>(null);
+const hasSupports = ref<boolean | null>(null);
+const mainInquiriesOnly = ref<boolean>(true);
+const searchQuery = ref<string>("");
 
-const isFiltersOpen = ref(false)
+const isFiltersOpen = ref(false);
 
-function getValue<T>(v: T | { value: T } | null | undefined): T | null | undefined {
-  return v && typeof v === 'object' && 'value' in v ? (v as { value: T }).value : v
+function getValue<T>(
+  v: T | { value: T } | null | undefined,
+): T | null | undefined {
+  return v && typeof v === "object" && "value" in v
+    ? (v as { value: T }).value
+    : v;
 }
 
 interface Props {
-  familyType?: string
+  familyType?: string;
 }
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 watch(
   () => props.familyType,
   () => {
-    selectedType.value = 'all'
-    applyFilters()
-  }
-)
+    selectedType.value = "all";
+    applyFilters();
+  },
+);
 
 const filterOptions = computed(() => {
-  const baseTypeOptions = [{ value: 'all', label: t('agora', 'All types') }]
+  const baseTypeOptions = [{ value: "all", label: t("agora", "All types") }];
 
   const typeOptions = props.familyType
     ? [
@@ -60,58 +69,62 @@ const filterOptions = computed(() => {
           value: type.inquiry_type,
           label: type.label || type.inquiry_type,
         })) || []),
-      ]
+      ];
 
   return {
     types: typeOptions,
     categories: [
-      { value: 'all', label: t('agora', 'All categories') },
+      { value: "all", label: t("agora", "All categories") },
       ...(sessionStore.appSettings.categoryTab?.map((cat) => ({
         value: cat.id,
         label: cat.name,
       })) || []),
     ],
     locations: [
-      { value: 'all', label: t('agora', 'All locations') },
+      { value: "all", label: t("agora", "All locations") },
       ...(sessionStore.appSettings.locationTab?.map((loc) => ({
         value: loc.id,
         label: loc.name,
       })) || []),
     ],
     participation: [
-      { value: null, label: t('agora', 'Any comments') },
-      { value: true, label: t('agora', 'With comments') },
-      { value: false, label: t('agora', 'Without comments') },
+      { value: null, label: t("agora", "Any comments") },
+      { value: true, label: t("agora", "With comments") },
+      { value: false, label: t("agora", "Without comments") },
     ],
     support: [
-      { value: null, label: t('agora', 'Any supports') },
-      { value: true, label: t('agora', 'With supports') },
-      { value: false, label: t('agora', 'Without supports') },
+      { value: null, label: t("agora", "Any supports") },
+      { value: true, label: t("agora", "With supports") },
+      { value: false, label: t("agora", "Without supports") },
     ],
-  }
-})
+  };
+});
 
 const applyFilters = () => {
   if (!inquiriesStore) {
-    return
+    return;
   }
 
   inquiriesStore.setFilters({
     type:
-      getValue(selectedType.value) === 'all'
+      getValue(selectedType.value) === "all"
         ? undefined
         : (getValue(selectedType.value) as FilterType),
 
     inquiryStatus:
-      getValue(selectedInquiryStatus.value) === 'all'
+      getValue(selectedInquiryStatus.value) === "all"
         ? undefined
         : getValue(selectedInquiryStatus.value),
 
     categoryId:
-      getValue(selectedCategory.value) === 'all' ? undefined : getValue(selectedCategory.value),
+      getValue(selectedCategory.value) === "all"
+        ? undefined
+        : getValue(selectedCategory.value),
 
     locationId:
-      getValue(selectedLocation.value) === 'all' ? undefined : getValue(selectedLocation.value),
+      getValue(selectedLocation.value) === "all"
+        ? undefined
+        : getValue(selectedLocation.value),
 
     hasComments: getValue(hasComments.value),
     hasSupports: getValue(hasSupports.value),
@@ -120,34 +133,34 @@ const applyFilters = () => {
 
     search: searchQuery.value.trim() || undefined,
     familyType: props.familyType,
-  })
-}
+  });
+};
 
 const resetFilters = () => {
-  selectedType.value = 'all'
-  selectedCategory.value = 'all'
-  selectedLocation.value = 'all'
-  hasComments.value = null
-  hasSupports.value = null
-  mainInquiriesOnly.value = true
-  searchQuery.value = ''
-  inquiriesStore.resetFilters()
-}
+  selectedType.value = "all";
+  selectedCategory.value = "all";
+  selectedLocation.value = "all";
+  hasComments.value = null;
+  hasSupports.value = null;
+  mainInquiriesOnly.value = true;
+  searchQuery.value = "";
+  inquiriesStore.resetFilters();
+};
 
 const activeFiltersCount = computed(() => {
-  let count = 0
-  if (getValue(selectedType.value) !== 'all') count += 1
-  if (getValue(selectedCategory.value) !== 'all') count += 1
-  if (getValue(selectedLocation.value) !== 'all') count += 1
-  if (getValue(hasComments.value) !== null) count += 1
-  if (getValue(hasSupports.value) !== null) count += 1
-  if (searchQuery.value.trim()) count += 1
-  return count
-})
+  let count = 0;
+  if (getValue(selectedType.value) !== "all") count += 1;
+  if (getValue(selectedCategory.value) !== "all") count += 1;
+  if (getValue(selectedLocation.value) !== "all") count += 1;
+  if (getValue(hasComments.value) !== null) count += 1;
+  if (getValue(hasSupports.value) !== null) count += 1;
+  if (searchQuery.value.trim()) count += 1;
+  return count;
+});
 
 onUnmounted(() => {
-  inquiriesStore.resetFilters()
-})
+  inquiriesStore.resetFilters();
+});
 </script>
 
 <template>
@@ -176,13 +189,17 @@ onUnmounted(() => {
             <span
               class="toggle-icon"
               aria-hidden="true"
-            >{{ isFiltersOpen ? '▲' : '▼' }}</span>
+            >{{
+              isFiltersOpen ? "▲" : "▼"
+            }}</span>
           </template>
-          {{ t('agora', 'Filters') }}
+          {{ t("agora", "Filters") }}
           <span
             v-if="activeFiltersCount > 0"
             class="filter-count"
-          >{{ activeFiltersCount }}</span>
+          >{{
+            activeFiltersCount
+          }}</span>
         </NcButton>
 
         <NcButton
@@ -190,7 +207,7 @@ onUnmounted(() => {
           class="reset-btn"
           @click="resetFilters"
         >
-          {{ t('agora', 'Clear all') }}
+          {{ t("agora", "Clear all") }}
         </NcButton>
       </div>
     </div>
@@ -201,7 +218,7 @@ onUnmounted(() => {
         v-if="filterOptions.locations.length > 1"
         class="filter-field"
       >
-        <label class="filter-label">{{ t('agora', 'Location') }}</label>
+        <label class="filter-label">{{ t("agora", "Location") }}</label>
         <NcSelect
           v-model="selectedLocation"
           :options="filterOptions.locations"
@@ -219,7 +236,7 @@ onUnmounted(() => {
         v-if="filterOptions.categories.length > 1"
         class="filter-field"
       >
-        <label class="filter-label">{{ t('agora', 'Category') }}</label>
+        <label class="filter-label">{{ t("agora", "Category") }}</label>
         <NcSelect
           v-model="selectedCategory"
           :options="filterOptions.categories"
@@ -239,7 +256,7 @@ onUnmounted(() => {
           type="checkbox"
           @update:model-value="applyFilters"
         >
-          {{ t('agora', 'Main inquiries') }}
+          {{ t("agora", "Main inquiries") }}
         </NcCheckboxRadioSwitch>
       </div>
     </div>
@@ -250,7 +267,7 @@ onUnmounted(() => {
       class="filters-expanded"
     >
       <div class="filter-field">
-        <label class="filter-label">{{ t('agora', 'Type') }}</label>
+        <label class="filter-label">{{ t("agora", "Type") }}</label>
         <NcSelect
           v-model="selectedType"
           :options="filterOptions.types"
@@ -265,7 +282,7 @@ onUnmounted(() => {
       </div>
 
       <div class="filter-field">
-        <label class="filter-label">{{ t('agora', 'Comments') }}</label>
+        <label class="filter-label">{{ t("agora", "Comments") }}</label>
         <NcSelect
           v-model="hasComments"
           :options="filterOptions.participation"
@@ -280,7 +297,7 @@ onUnmounted(() => {
       </div>
 
       <div class="filter-field">
-        <label class="filter-label">{{ t('agora', 'Supports') }}</label>
+        <label class="filter-label">{{ t("agora", "Supports") }}</label>
         <NcSelect
           v-model="hasSupports"
           :options="filterOptions.support"
@@ -300,48 +317,66 @@ onUnmounted(() => {
       v-if="activeFiltersCount > 0"
       class="active-filters-summary"
     >
-      <span class="summary-label">{{ t('agora', 'Active filters') }}</span>
+      <span class="summary-label">{{ t("agora", "Active filters") }}</span>
 
       <span
         v-if="getValue(selectedType) !== 'all'"
         class="filter-tag"
       >
-        {{ filterOptions.types.find((t) => t.value === getValue(selectedType))?.label }}
+        {{
+          filterOptions.types.find((t) => t.value === getValue(selectedType))
+            ?.label
+        }}
       </span>
 
       <span
         v-if="getValue(selectedCategory) !== 'all'"
         class="filter-tag"
       >
-        {{ filterOptions.categories.find((c) => c.value === getValue(selectedCategory))?.label }}
+        {{
+          filterOptions.categories.find(
+            (c) => c.value === getValue(selectedCategory),
+          )?.label
+        }}
       </span>
 
       <span
         v-if="getValue(selectedLocation) !== 'all'"
         class="filter-tag"
       >
-        {{ filterOptions.locations.find((l) => l.value === getValue(selectedLocation))?.label }}
+        {{
+          filterOptions.locations.find(
+            (l) => l.value === getValue(selectedLocation),
+          )?.label
+        }}
       </span>
 
       <span
         v-if="getValue(hasComments) !== null"
         class="filter-tag"
       >
-        {{ filterOptions.participation.find((p) => p.value === getValue(hasComments))?.label }}
+        {{
+          filterOptions.participation.find(
+            (p) => p.value === getValue(hasComments),
+          )?.label
+        }}
       </span>
 
       <span
         v-if="getValue(hasSupports) !== null"
         class="filter-tag"
       >
-        {{ filterOptions.support.find((s) => s.value === getValue(hasSupports))?.label }}
+        {{
+          filterOptions.support.find((s) => s.value === getValue(hasSupports))
+            ?.label
+        }}
       </span>
 
       <span
         v-if="searchQuery"
         class="filter-tag"
       >
-        {{ t('agora', 'Search') }}: "{{ searchQuery }}"
+        {{ t("agora", "Search") }}: "{{ searchQuery }}"
       </span>
     </div>
   </div>

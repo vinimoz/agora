@@ -4,38 +4,38 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { computed, ref, watch } from "vue";
+import { t } from "@nextcloud/l10n";
 
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
-import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcRadioGroup from "@nextcloud/vue/components/NcRadioGroup";
+import NcNoteCard from "@nextcloud/vue/components/NcNoteCard";
+import NcPopover from "@nextcloud/vue/components/NcPopover";
 
-import { ConfigBox, RadioGroupDiv, InputDiv } from '../Base/index.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { ConfigBox, RadioGroupDiv, InputDiv } from "../Base/index.ts";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
 
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { showError, showSuccess } from "@nextcloud/dialogs";
 import {
   getAvailableInquiryTypesForCreation,
   getInquiryTypeOptions,
   getInquiryTypeData,
   type InquiryType,
-} from '../../helpers/modules/InquiryHelper.ts'
-import type { InquiryFamily } from '../../Types/inquiry.types.ts'
+} from "../../helpers/modules/InquiryHelper.ts";
+import type { InquiryFamily } from "../../Types/inquiry.types.ts";
 
 // Define props
 interface Props {
-  inquiryType?: InquiryType | null
-  family: string | null
-  responseType?: string | null
-  selectedMode?: string
-  availableGroups?: string[]
-  parentInquiryId?: string | number | null
-  defaultTitle?: string | null
+  inquiryType?: InquiryType | null;
+  family: string | null;
+  responseType?: string | null;
+  selectedMode?: string;
+  availableGroups?: string[];
+  parentInquiryId?: string | number | null;
+  defaultTitle?: string | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -46,267 +46,289 @@ const props = withDefaults(defineProps<Props>(), {
   availableGroups: () => [],
   parentInquiryId: null,
   defaultTitle: null,
-})
+});
 
 const emit = defineEmits<{
-  (e: 'close'): void
-  (e: 'added', inquiry: { id: number; title: string }): void
-  (e: 'update:selected-groups', groups: string[]): void
-}>()
+  (e: "close"): void;
+  (e: "added", inquiry: { id: number; title: string }): void;
+  (e: "update:selected-groups", groups: string[]): void;
+}>();
 
-const inquiryStore = useInquiryStore()
-const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore();
 
 // ----------------------------------------------------------------------------
 // Wizard state
 // ----------------------------------------------------------------------------
-type WizardStep = 'family' | 'type' | 'details'
+type WizardStep = "family" | "type" | "details";
 
-const hasPredefinedType = computed(() => !!(props.inquiryType || props.responseType))
-const showStepIndicator = computed(() => !hasPredefinedType.value)
+const hasPredefinedType = computed(
+  () => !!(props.inquiryType || props.responseType),
+);
+const showStepIndicator = computed(() => !hasPredefinedType.value);
 
-const selectedFamily = ref<string | null>(props.family ?? null)
-const localInquiryType = ref<string>(props.inquiryType?.inquiry_type ?? props.responseType ?? '')
+const selectedFamily = ref<string | null>(props.family ?? null);
+const localInquiryType = ref<string>(
+  props.inquiryType?.inquiry_type ?? props.responseType ?? "",
+);
 
 const currentStep = ref<WizardStep>(
-  hasPredefinedType.value ? 'details' : props.family ? 'type' : 'family'
-)
+  hasPredefinedType.value ? "details" : props.family ? "type" : "family",
+);
 
 // ----------------------------------------------------------------------------
 // Data sources
 // ----------------------------------------------------------------------------
-const inquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings.inquiryTypeTab || [],
+);
 
 const availableInquiryTypes = computed(() =>
-  getAvailableInquiryTypesForCreation(inquiryTypes.value)
-)
+  getAvailableInquiryTypesForCreation(inquiryTypes.value),
+);
 
 const availableFamilies = computed<InquiryFamily[]>(() => {
-  const families = sessionStore.appSettings.inquiryFamilyTab || []
-  const familiesWithTypes = new Set(availableInquiryTypes.value.map((t) => t.family))
-  return families.filter((f) => familiesWithTypes.has(f.family_type))
-})
+  const families = sessionStore.appSettings.inquiryFamilyTab || [];
+  const familiesWithTypes = new Set(
+    availableInquiryTypes.value.map((t) => t.family),
+  );
+  return families.filter((f) => familiesWithTypes.has(f.family_type));
+});
 
 const availableTypesForFamily = computed(() => {
-  if (!selectedFamily.value) return []
-  return availableInquiryTypes.value.filter((t) => t.family === selectedFamily.value)
-})
+  if (!selectedFamily.value) return [];
+  return availableInquiryTypes.value.filter(
+    (t) => t.family === selectedFamily.value,
+  );
+});
 
-const inquiryTypeOptions = computed(() => getInquiryTypeOptions(availableTypesForFamily.value))
+const inquiryTypeOptions = computed(() =>
+  getInquiryTypeOptions(availableTypesForFamily.value),
+);
 
 const selectedType = computed(() => {
   if (props.inquiryType) {
-    return props.inquiryType.inquiry_type
+    return props.inquiryType.inquiry_type;
   }
   if (props.responseType) {
-    return props.responseType
+    return props.responseType;
   }
-  return localInquiryType.value
-})
+  return localInquiryType.value;
+});
 
 const currentInquiryTypeData = computed(() =>
-  getInquiryTypeData(selectedType.value, inquiryTypes.value)
-)
+  getInquiryTypeData(selectedType.value, inquiryTypes.value),
+);
 
 const selectedFamilyData = computed<InquiryFamily | null>(() => {
-  if (!selectedFamily.value) return null
-  return availableFamilies.value.find((f) => f.family_type === selectedFamily.value) ?? null
-})
+  if (!selectedFamily.value) return null;
+  return (
+    availableFamilies.value.find(
+      (f) => f.family_type === selectedFamily.value,
+    ) ?? null
+  );
+});
 
 // ----------------------------------------------------------------------------
 // Navigation helpers
 // ----------------------------------------------------------------------------
 const canGoBack = computed(() => {
-  if (hasPredefinedType.value) return false
-  if (currentStep.value === 'details') return true
-  if (currentStep.value === 'type' && !props.family) return true
-  return false
-})
+  if (hasPredefinedType.value) return false;
+  if (currentStep.value === "details") return true;
+  if (currentStep.value === "type" && !props.family) return true;
+  return false;
+});
 
 const canProceed = computed(() => {
-  if (currentStep.value === 'family') return !!selectedFamily.value
-  if (currentStep.value === 'type') return !!localInquiryType.value
-  return false
-})
+  if (currentStep.value === "family") return !!selectedFamily.value;
+  if (currentStep.value === "type") return !!localInquiryType.value;
+  return false;
+});
 
-function onFamilySelect(family: string) {
-  if (selectedFamily.value !== family) {
-    localInquiryType.value = ''
+function onFamilySelect(familyS: string) {
+  if (selectedFamily.value !== familyS) {
+    localInquiryType.value = "";
   }
-  selectedFamily.value = family
+  selectedFamily.value = familyS;
 }
 
 function handleNext() {
-  if (currentStep.value === 'family') currentStep.value = 'type'
-  else if (currentStep.value === 'type') currentStep.value = 'details'
+  if (currentStep.value === "family") currentStep.value = "type";
+  else if (currentStep.value === "type") currentStep.value = "details";
 }
 
 function handleBack() {
-  if (currentStep.value === 'details') currentStep.value = 'type'
-  else if (currentStep.value === 'type') currentStep.value = 'family'
+  if (currentStep.value === "details") currentStep.value = "type";
+  else if (currentStep.value === "type") currentStep.value = "family";
 }
 
 function getFamilyIcon(family: InquiryFamily) {
-  return InquiryGeneralIcons[family.icon] || InquiryGeneralIcons.Activity
+  return InquiryGeneralIcons[family.icon] || InquiryGeneralIcons.Activity;
 }
 
-function stepStatus(step: WizardStep): 'upcoming' | 'active' | 'done' {
-  const order: WizardStep[] = ['family', 'type', 'details']
-  const currentIdx = order.indexOf(currentStep.value)
-  const stepIdx = order.indexOf(step)
-  if (stepIdx < currentIdx) return 'done'
-  if (stepIdx === currentIdx) return 'active'
-  return 'upcoming'
+function stepStatus(step: WizardStep): "upcoming" | "active" | "done" {
+  const order: WizardStep[] = ["family", "type", "details"];
+  const currentIdx = order.indexOf(currentStep.value);
+  const stepIdx = order.indexOf(step);
+  if (stepIdx < currentIdx) return "done";
+  if (stepIdx === currentIdx) return "active";
+  return "upcoming";
 }
 
 // ----------------------------------------------------------------------------
 // Existing state
 // ----------------------------------------------------------------------------
-const inquiryTitle = ref('')
-const inquiryId = ref<number | null>(null)
-const adding = ref(false)
-const visibilityType = ref<'user' | 'groups'>('user')
-const selectedGroup = ref<string | null>(null)
-const groupVisibilityMode = ref<'open' | 'restricted'>('restricted')
+const inquiryTitle = ref("");
+const inquiryId = ref<number | null>(null);
+const adding = ref(false);
+const visibilityType = ref<"user" | "groups">("user");
+const selectedGroup = ref<string | null>(null);
+const groupVisibilityMode = ref<"open" | "restricted">("restricted");
 
 const selectGroup = (group: string | null) => {
-  selectedGroup.value = group
-  emit('update:selected-groups', group ? [group] : [])
-}
+  selectedGroup.value = group;
+  emit("update:selected-groups", group ? [group] : []);
+};
 
 const updateLocalInquiryType = (newType: string) => {
-  localInquiryType.value = newType
-}
+  localInquiryType.value = newType;
+};
 
 // Keep local type in sync with props
 watch(
   () => props.inquiryType,
   (newType) => {
     if (newType && newType.inquiry_type) {
-      localInquiryType.value = newType.inquiry_type
+      localInquiryType.value = newType.inquiry_type;
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 watch(
   () => props.responseType,
   (newType) => {
     if (newType) {
-      localInquiryType.value = newType
+      localInquiryType.value = newType;
     }
-  }
-)
+  },
+);
 
 // Keep local family in sync with props
 watch(
   () => props.family,
   (newFamily) => {
     if (newFamily) {
-      selectedFamily.value = newFamily
-      if (currentStep.value === 'family') currentStep.value = 'type'
+      selectedFamily.value = newFamily;
+      if (currentStep.value === "family") currentStep.value = "type";
     }
-  }
-)
+  },
+);
 
 // Pre-fill title
 watch(
   () => props.defaultTitle,
   (newTitle) => {
     if (newTitle) {
-      inquiryTitle.value = newTitle
+      inquiryTitle.value = newTitle;
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
-const titleIsEmpty = computed(() => inquiryTitle.value.trim() === '')
-const disableAddButton = computed(() => titleIsEmpty.value || adding.value)
+const titleIsEmpty = computed(() => inquiryTitle.value.trim() === "");
+const disableAddButton = computed(() => titleIsEmpty.value || adding.value);
 
 interface InquiryData {
-  type: string
-  title: string
-  family: string
-  visibility?: 'private' | 'groups' | 'everyone'
-  parentId?: string | number | null
-  locationId?: number | string | null
-  categoryId?: number | string | null
-  ownedGroup?: string
-  description?: string
+  type: string;
+  title: string;
+  family: string;
+  visibility?: "private" | "groups" | "everyone";
+  parentId?: string | number | null;
+  locationId?: number | string | null;
+  categoryId?: number | string | null;
+  ownedGroup?: string;
+  description?: string;
 }
 
 async function addInquiry() {
   try {
-    adding.value = true
+    adding.value = true;
     const inquiryData: InquiryData = {
       type: selectedType.value,
       title: inquiryTitle.value.trim(),
       // Family from props (transform/response flow) or from the wizard step 1
-      family: props.family || selectedFamily.value || '',
-    }
+      family: props.family || selectedFamily.value || "",
+    };
 
     if (props.parentInquiryId) {
-      inquiryData.parentId = props.parentInquiryId
+      inquiryData.parentId = props.parentInquiryId;
     }
 
     if (inquiryStore.locationId) {
-      inquiryData.locationId = inquiryStore.locationId
+      inquiryData.locationId = inquiryStore.locationId;
     }
 
     if (inquiryStore.categoryId) {
-      inquiryData.categoryId = inquiryStore.categoryId
+      inquiryData.categoryId = inquiryStore.categoryId;
     }
 
     // Add groups if groups visibility is selected
-    if (visibilityType.value === 'groups' && selectedGroup.value) {
-      inquiryData.ownedGroup = selectedGroup.value
-      inquiryData.visibility = groupVisibilityMode.value === 'open' ? 'private' : 'groups'
+    if (visibilityType.value === "groups" && selectedGroup.value) {
+      inquiryData.ownedGroup = selectedGroup.value;
+      inquiryData.visibility =
+        groupVisibilityMode.value === "open" ? "private" : "groups";
     } else {
-      inquiryData.visibility = 'private'
+      inquiryData.visibility = "private";
     }
 
-    if (props.selectedMode === 'transform') {
-      inquiryData.description = inquiryStore.description
+    if (props.selectedMode === "transform") {
+      inquiryData.description = inquiryStore.description;
     }
 
-    const inquiry = await inquiryStore.add(inquiryData)
+    const inquiry = await inquiryStore.add(inquiryData);
 
     if (inquiry) {
-      inquiryId.value = inquiry.id
+      inquiryId.value = inquiry.id;
       showSuccess(
-        t('agora', '"{inquiryTitle}" has been added', {
+        t("agora", '"{inquiryTitle}" has been added', {
           inquiryTitle: inquiry.title,
-        })
-      )
-      emit('added', {
+        }),
+      );
+      emit("added", {
         id: inquiry.id,
         title: inquiry.title,
-      })
-      resetInquiry()
+      });
+      resetInquiry();
     }
   } catch {
     showError(
-      t('agora', 'Error while creating Inquiry "{inquiryTitle}"', {
+      t("agora", 'Error while creating Inquiry "{inquiryTitle}"', {
         inquiryTitle: inquiryTitle.value,
-      })
-    )
+      }),
+    );
   } finally {
-    adding.value = false
+    adding.value = false;
   }
 }
 
 function resetInquiry() {
-  inquiryId.value = null
-  inquiryTitle.value = ''
-  visibilityType.value = 'user'
-  selectedGroup.value = null
-  groupVisibilityMode.value = 'restricted'
-  emit('update:selected-groups', [])
+  inquiryId.value = null;
+  inquiryTitle.value = "";
+  visibilityType.value = "user";
+  selectedGroup.value = null;
+  groupVisibilityMode.value = "restricted";
+  emit("update:selected-groups", []);
 
   // Reset the wizard as well
-  selectedFamily.value = props.family ?? null
-  localInquiryType.value = props.inquiryType?.inquiry_type ?? props.responseType ?? ''
-  currentStep.value = hasPredefinedType.value ? 'details' : props.family ? 'type' : 'family'
+  selectedFamily.value = props.family ?? null;
+  localInquiryType.value =
+    props.inquiryType?.inquiry_type ?? props.responseType ?? "";
+  currentStep.value = hasPredefinedType.value
+    ? "details"
+    : props.family
+      ? "type"
+      : "family";
 }
 </script>
 
@@ -331,22 +353,26 @@ function resetInquiry() {
           class="wizard-step"
           :class="stepStatus('family')"
         >
-          <span class="step-number">{{ stepStatus('family') === 'done' ? '✓' : '1' }}</span>
-          <span class="step-label">{{ t('agora', 'Family') }}</span>
+          <span class="step-number">{{
+            stepStatus("family") === "done" ? "✓" : "1"
+          }}</span>
+          <span class="step-label">{{ t("agora", "Family") }}</span>
         </div>
         <div
           class="wizard-step"
           :class="stepStatus('type')"
         >
-          <span class="step-number">{{ stepStatus('type') === 'done' ? '✓' : '2' }}</span>
-          <span class="step-label">{{ t('agora', 'Type') }}</span>
+          <span class="step-number">{{
+            stepStatus("type") === "done" ? "✓" : "2"
+          }}</span>
+          <span class="step-label">{{ t("agora", "Type") }}</span>
         </div>
         <div
           class="wizard-step"
           :class="stepStatus('details')"
         >
           <span class="step-number">3</span>
-          <span class="step-label">{{ t('agora', 'Details') }}</span>
+          <span class="step-label">{{ t("agora", "Details") }}</span>
         </div>
       </div>
 
@@ -361,34 +387,36 @@ function resetInquiry() {
           <Component :is="InquiryGeneralIcons.Activity" />
         </template>
         <p class="step-description">
-          {{ t('agora', 'Select the family that best matches your inquiry.') }}
+          {{ t("agora", "Select the family that best matches your inquiry.") }}
         </p>
 
         <NcRadioGroup
           :model-value="selectedFamily"
           :label="t('agora', 'Inquiry family')"
-          :description="t('agora', 'A family groups related inquiry types together.')"
+          :description="
+            t('agora', 'A family groups related inquiry types together.')
+          "
           @update:model-value="onFamilySelect($event)"
         >
           <div
-            v-for="family in availableFamilies"
-            :key="family.family_type"
+            v-for="families in availableFamilies"
+            :key="families.family_type"
             class="family-item"
           >
             <NcCheckboxRadioSwitch
-              :value="family.family_type"
+              :value="families.family_type"
               type="radio"
               name="family-selection"
             >
               <span class="family-label">
-                <Component :is="getFamilyIcon(family)" />
-                {{ family.label }}
+                <Component :is="getFamilyIcon(families)" />
+                {{ families.label }}
               </span>
               <span
-                v-if="family.description"
-                class="family-description"
+                v-if="families.description"
+                class="families-description"
               >{{
-                family.description
+                families.description
               }}</span>
             </NcCheckboxRadioSwitch>
           </div>
@@ -408,13 +436,13 @@ function resetInquiry() {
         <p class="step-description">
           <template v-if="selectedFamilyData">
             {{
-              t('agora', 'Choose the inquiry type within "{family}".', {
+              t("agora", 'Choose the inquiry type within "{family}".', {
                 family: selectedFamilyData.label,
               })
             }}
           </template>
           <template v-else>
-            {{ t('agora', 'Select the type of inquiry you want to create.') }}
+            {{ t("agora", "Select the type of inquiry you want to create.") }}
           </template>
         </p>
         <RadioGroupDiv
@@ -445,11 +473,11 @@ function resetInquiry() {
               @update:model-value="visibilityType = $event"
             >
               <NcCheckboxRadioSwitch value="user">
-                {{ t('agora', 'Only me (personal inquiry)') }}
+                {{ t("agora", "Only me (personal inquiry)") }}
               </NcCheckboxRadioSwitch>
 
               <NcCheckboxRadioSwitch value="groups">
-                {{ t('agora', 'Open with this group') }}
+                {{ t("agora", "Open with this group") }}
               </NcCheckboxRadioSwitch>
             </NcRadioGroup>
 
@@ -459,14 +487,19 @@ function resetInquiry() {
               class="groups-selection"
             >
               <h4 class="groups-title">
-                {{ t('agora', 'Select group') }}
+                {{ t("agora", "Select group") }}
               </h4>
               <div class="groups-list">
                 <NcRadioGroup
                   :model-value="selectedGroup"
-                  :label="t('agora', 'Choose the group that will own this inquiry')"
+                  :label="
+                    t('agora', 'Choose the group that will own this inquiry')
+                  "
                   :description="
-                    t('agora', 'Choose which of your groups is responsible for this inquiry')
+                    t(
+                      'agora',
+                      'Choose which of your groups is responsible for this inquiry',
+                    )
                   "
                   @update:model-value="selectGroup($event)"
                 >
@@ -493,13 +526,15 @@ function resetInquiry() {
               >
                 <NcRadioGroup
                   :model-value="groupVisibilityMode"
-                  :label="t('agora', 'How should this group access the inquiry?')"
+                  :label="
+                    t('agora', 'How should this group access the inquiry?')
+                  "
                   @update:model-value="groupVisibilityMode = $event"
                 >
                   <div class="mode-option">
                     <NcCheckboxRadioSwitch value="open">
                       <span class="mode-label">
-                        {{ t('agora', 'Open, owned by the group') }}
+                        {{ t("agora", "Open, owned by the group") }}
                         <NcPopover
                           :triggers="['hover', 'focus']"
                           :delay="200"
@@ -511,14 +546,16 @@ function resetInquiry() {
                               class="mode-help-icon"
                               role="button"
                               tabindex="0"
-                              :aria-label="t('agora', 'More information about this option')"
+                              :aria-label="
+                                t('agora', 'More information about this option')
+                              "
                             >ⓘ</span>
                           </template>
                           <div class="tooltip-content">
                             {{
                               t(
-                                'agora',
-                                'Everyone can see and participate in this inquiry. The selected group is recorded as the owner (useful for reporting, moderation and follow-up).'
+                                "agora",
+                                "Everyone can see and participate in this inquiry. The selected group is recorded as the owner (useful for reporting, moderation and follow-up).",
                               )
                             }}
                           </div>
@@ -526,14 +563,18 @@ function resetInquiry() {
                       </span>
                     </NcCheckboxRadioSwitch>
                     <p class="mode-description">
-                      {{ t('agora', 'Access: open · Owner: {group}', { group: selectedGroup }) }}
+                      {{
+                        t("agora", "Access: open · Owner: {group}", {
+                          group: selectedGroup,
+                        })
+                      }}
                     </p>
                   </div>
 
                   <div class="mode-option">
                     <NcCheckboxRadioSwitch value="restricted">
                       <span class="mode-label">
-                        {{ t('agora', 'Restricted to group members') }}
+                        {{ t("agora", "Restricted to group members") }}
                         <NcPopover
                           :triggers="['hover', 'focus']"
                           :delay="200"
@@ -545,14 +586,16 @@ function resetInquiry() {
                               class="mode-help-icon"
                               role="button"
                               tabindex="0"
-                              :aria-label="t('agora', 'More information about this option')"
+                              :aria-label="
+                                t('agora', 'More information about this option')
+                              "
                             >ⓘ</span>
                           </template>
                           <div class="tooltip-content">
                             {{
                               t(
-                                'agora',
-                                'Only members of the selected group can see and participate in this inquiry. It will not be visible to other users.'
+                                "agora",
+                                "Only members of the selected group can see and participate in this inquiry. It will not be visible to other users.",
                               )
                             }}
                           </div>
@@ -560,7 +603,11 @@ function resetInquiry() {
                       </span>
                     </NcCheckboxRadioSwitch>
                     <p class="mode-description">
-                      {{ t('agora', 'Access: group · Owner: {group}', { group: selectedGroup }) }}
+                      {{
+                        t("agora", "Access: group · Owner: {group}", {
+                          group: selectedGroup,
+                        })
+                      }}
                     </p>
                   </div>
                 </NcRadioGroup>
@@ -572,16 +619,16 @@ function resetInquiry() {
                   <template v-if="groupVisibilityMode === 'open'">
                     {{
                       t(
-                        'agora',
-                        'The inquiry is public; the group is only the owner. Choose this if you want the group to be credited or responsible for the inquiry, but everyone can still take part.'
+                        "agora",
+                        "The inquiry is public; the group is only the owner. Choose this if you want the group to be credited or responsible for the inquiry, but everyone can still take part.",
                       )
                     }}
                   </template>
                   <template v-else>
                     {{
                       t(
-                        'agora',
-                        'The inquiry is private to the group. Choose this if only members of the selected group should see and take part in the inquiry.'
+                        "agora",
+                        "The inquiry is private to the group. Choose this if only members of the selected group should see and take part in the inquiry.",
                       )
                     }}
                   </template>
@@ -601,7 +648,9 @@ function resetInquiry() {
             focus
             type="text"
             :placeholder="t('agora', 'Enter title')"
-            :helper-text="t('agora', 'Choose a meaningful title for your inquiry')"
+            :helper-text="
+              t('agora', 'Choose a meaningful title for your inquiry')
+            "
             :label="t('agora', 'Enter title')"
             @update:model-value="inquiryTitle = $event"
             @submit="addInquiry"
@@ -628,7 +677,7 @@ function resetInquiry() {
               v-if="selectedFamilyData"
               class="type-family"
             >
-              {{ t('agora', 'Family:') }} {{ selectedFamilyData.label }}
+              {{ t("agora", "Family:") }} {{ selectedFamilyData.label }}
             </p>
           </div>
         </ConfigBox>
@@ -639,14 +688,14 @@ function resetInquiry() {
       <!-- ===================================================================== -->
       <div class="create-buttons">
         <NcButton @click="emit('close')">
-          {{ t('agora', 'Cancel') }}
+          {{ t("agora", "Cancel") }}
         </NcButton>
 
         <NcButton
           v-if="canGoBack"
           @click="handleBack"
         >
-          {{ t('agora', 'Back') }}
+          {{ t("agora", "Back") }}
         </NcButton>
 
         <NcButton
@@ -655,7 +704,7 @@ function resetInquiry() {
           variant="primary"
           @click="handleNext"
         >
-          {{ t('agora', 'Next') }}
+          {{ t("agora", "Next") }}
         </NcButton>
 
         <NcButton
@@ -664,7 +713,7 @@ function resetInquiry() {
           variant="primary"
           @click="addInquiry"
         >
-          {{ adding ? t('agora', 'Creating …') : t('agora', 'Create inquiry') }}
+          {{ adding ? t("agora", "Creating …") : t("agora", "Create inquiry") }}
         </NcButton>
       </div>
     </div>

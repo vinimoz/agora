@@ -26,7 +26,9 @@
               <span
                 v-if="option?.text"
                 class="option-text"
-              >{{ option.text }}</span>
+              >{{
+                option.text
+              }}</span>
             </div>
           </div>
         </div>
@@ -64,7 +66,7 @@
         class="loading-state"
       >
         <NcLoadingIcon :size="32" />
-        <span>{{ t('agora', 'Loading supports …') }}</span>
+        <span>{{ t("agora", "Loading supports …") }}</span>
       </div>
 
       <!-- Empty -->
@@ -76,7 +78,7 @@
           :is="InquiryOptionIcons.Inbox"
           :size="48"
         />
-        <p>{{ t('agora', 'No votes yet for this option.') }}</p>
+        <p>{{ t("agora", "No votes yet for this option.") }}</p>
       </div>
 
       <!-- List -->
@@ -101,7 +103,7 @@
               v-if="displayVote && isCurrentUser(support)"
               class="you-badge"
             >
-              {{ t('agora', 'You') }}
+              {{ t("agora", "You") }}
             </span>
           </div>
 
@@ -138,156 +140,169 @@
 
     <template #actions>
       <NcButton @click="$emit('close')">
-        {{ t('agora', 'Close') }}
+        {{ t("agora", "Close") }}
       </NcButton>
     </template>
   </NcModal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { Option } from '../../Types/index.ts'
-import { useSupportsStore } from '../../stores/supports'
-import { useSupportEngineStore } from '../../stores/supportEngine'
-import { useSessionStore } from '../../stores/session'
+import { ref, computed, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcLoadingIcon from "@nextcloud/vue/components/NcLoadingIcon";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import { Option } from "../../Types/index.ts";
+import { useSupportsStore } from "../../stores/supports";
+import { useSupportEngineStore } from "../../stores/supportEngine";
+import { useSessionStore } from "../../stores/session";
 import {
   getOptionTypeIconComponent,
   getOptionTypeLabel,
   getOptionTypeColor,
-} from '../../helpers/modules/InquiryOptionHelper'
-import type { Support } from '../../stores/supports'
+} from "../../helpers/modules/InquiryOptionHelper";
+import type { Support } from "../../stores/supports";
 
 const props = defineProps<{
-  optionId: number
-  inquiryId: number
-  displayVote?: boolean // highlight current user's vote
-}>()
+  optionId: number;
+  inquiryId: number;
+  displayVote?: boolean; // highlight current user's vote
+}>();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  close: []
-}>()
+  close: [];
+}>();
 
-const supportsStore = useSupportsStore()
-const engineStore = useSupportEngineStore()
-const sessionStore = useSessionStore()
+const supportsStore = useSupportsStore();
+const engineStore = useSupportEngineStore();
+const sessionStore = useSessionStore();
 
-const supports = ref<Support[]>([])
-const loading = ref(true)
-const option = ref<Option>(null)
+const supports = ref<Support[]>([]);
+const loading = ref(true);
+const option = ref<Option>(null);
 
-const currentUser = computed(() => sessionStore.user?.uid || '')
+const currentUser = computed(() => sessionStore.user?.uid || "");
 
 // Option type helpers
-const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+const allOptionTypes = computed(
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 const optionIcon = computed(() =>
-  getOptionTypeIconComponent(option.value?.type, allOptionTypes.value)
-)
+  getOptionTypeIconComponent(option.value?.type, allOptionTypes.value),
+);
 const optionTypeLabel = computed(() =>
-  getOptionTypeLabel(option.value?.type, allOptionTypes.value, t('agora', 'Option'))
-)
-const optionTypeColor = computed(() => getOptionTypeColor(option.value?.type, allOptionTypes.value))
+  getOptionTypeLabel(
+    option.value?.type,
+    allOptionTypes.value,
+    t("agora", "Option"),
+  ),
+);
+const optionTypeColor = computed(() =>
+  getOptionTypeColor(option.value?.type, allOptionTypes.value),
+);
 
 // Modal title
 const modalTitle = computed(() =>
-  t('agora', 'Votes for {option}', {
-    option: option.value?.title || t('agora', 'Option'),
-  })
-)
+  t("agora", "Votes for {option}", {
+    option: option.value?.title || t("agora", "Option"),
+  }),
+);
 
 // Summary by value
 const supportsByValue = computed(() => {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
   supports.value.forEach((s) => {
-    const key = String(s.value)
-    counts[key] = (counts[key] || 0) + 1
-  })
-  return counts
-})
+    const key = String(s.value);
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  return counts;
+});
 
 // Sorted supports (newest first)
-const sortedSupports = computed(() => [...supports.value].sort((a, b) => b.created - a.created))
+const sortedSupports = computed(() =>
+  [...supports.value].sort((a, b) => b.created - a.created),
+);
 
 // Helper: get icon for a support value
-function getValueIcon(value: Support['value']): string {
-  if (value === 1) return InquiryOptionIcons.ThumbUp
-  if (value === -1) return InquiryOptionIcons.ThumbDown
-  if (value === 0) return InquiryOptionIcons.Minus
-  return InquiryOptionIcons.Help
+function getValueIcon(value: Support["value"]): string {
+  if (value === 1) return InquiryOptionIcons.ThumbUp;
+  if (value === -1) return InquiryOptionIcons.ThumbDown;
+  if (value === 0) return InquiryOptionIcons.Minus;
+  return InquiryOptionIcons.Help;
 }
 
 // Helper: get label for a support value
-function getValueLabel(value: Support['value']): string {
-  if (value === 1) return t('agora', 'Yes')
-  if (value === -1) return t('agora', 'No')
-  if (value === 0) return t('agora', 'Abstain')
-  return String(value)
+function getValueLabel(value: Support["value"]): string {
+  if (value === 1) return t("agora", "Yes");
+  if (value === -1) return t("agora", "No");
+  if (value === 0) return t("agora", "Abstain");
+  return String(value);
 }
 
 // Helper: CSS class for value
-function getValueClass(value: Support['value']): string {
-  if (value === 1) return 'value-yes'
-  if (value === -1) return 'value-no'
-  if (value === 0) return 'value-abstain'
-  return ''
+function getValueClass(value: Support["value"]): string {
+  if (value === 1) return "value-yes";
+  if (value === -1) return "value-no";
+  if (value === 0) return "value-abstain";
+  return "";
 }
 
 // Check if support belongs to current user
 function isCurrentUser(support: Support): boolean {
-  return support.userId === currentUser.value
+  return support.userId === currentUser.value;
 }
 
 // Engine helpers
 function getEngineName(engineId?: number): string {
-  if (!engineId) return t('agora', 'Unknown')
-  const engine = engineStore.getEngineById(engineId)
-  return engine?.title || engine?.engine || t('agora', 'Voting method')
+  if (!engineId) return t("agora", "Unknown");
+  const engine = engineStore.getEngineById(engineId);
+  return engine?.title || engine?.engine || t("agora", "Voting method");
 }
 
 function getEngineIcon(engineId?: number): string {
-  if (!engineId) return InquiryOptionIcons.Help
+  if (!engineId) return InquiryOptionIcons.Help;
   // const engine = engineStore.getEngineById(engineId)
   // Map engine types to icons if needed
-  return InquiryOptionIcons.Settings
+  return InquiryOptionIcons.Settings;
 }
 
 function formatDate(timestamp: number): string {
   return new Date(timestamp * 1000).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 // Load option data
 async function loadOption() {
-  const { useOptionsStore } = await import('../../stores/options')
-  const optionsStore = useOptionsStore()
-  option.value = optionsStore.options.find((o) => o.id === props.optionId)
+  const { useOptionsStore } = await import("../../stores/options");
+  const optionsStore = useOptionsStore();
+  option.value = optionsStore.options.find((o) => o.id === props.optionId);
 }
 
 // Load supports
 async function loadSupports() {
-  loading.value = true
+  loading.value = true;
   try {
-    await supportsStore.loadSupports(props.inquiryId)
-    supports.value = supportsStore.getOptionSupports(props.inquiryId, props.optionId)
+    await supportsStore.loadSupports(props.inquiryId);
+    supports.value = supportsStore.getOptionSupports(
+      props.inquiryId,
+      props.optionId,
+    );
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 onMounted(async () => {
-  await Promise.all([loadOption(), loadSupports()])
-})
+  await Promise.all([loadOption(), loadSupports()]);
+});
 </script>
 
 <style scoped lang="scss">

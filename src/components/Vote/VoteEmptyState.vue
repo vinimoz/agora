@@ -26,76 +26,79 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { Plus, Info, Vote, Settings, Link } from 'lucide-vue-next'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { Plus, Info, Vote, Settings, Link } from "lucide-vue-next";
 
 const props = defineProps<{
-  canManageVote?: boolean
-  isReadonly?: boolean
-  showAddButton?: boolean
-  noEngine?: boolean
-  noItemsLinked?: boolean
-}>()
+  canManageVote?: boolean;
+  isReadonly?: boolean;
+  showAddButton?: boolean;
+  noEngine?: boolean;
+  noItemsLinked?: boolean;
+}>();
 
 const emit = defineEmits<{
-  configure: []
-  addItem: []
-  addToVote: []
-}>()
+  configure: [];
+  addItem: [];
+  addToVote: [];
+}>();
 
 const iconComponent = computed(() => {
-  if (props.noEngine) return Settings
-  if (props.noItemsLinked) return Link
-  if (props.showAddButton) return Vote
-  return Info
-})
+  if (props.noEngine) return Settings;
+  if (props.noItemsLinked) return Link;
+  if (props.showAddButton) return Vote;
+  return Info;
+});
 
-const iconSize = computed(() => (props.noEngine ? 48 : 64))
+const iconSize = computed(() => (props.noEngine ? 48 : 64));
 
 const title = computed(() => {
-  if (props.noEngine) return t('agora', 'No Voting Method Configured')
-  if (props.noItemsLinked) return t('agora', 'No Items Linked to Vote')
-  if (props.showAddButton) return t('agora', 'No items to vote on yet')
-  return t('agora', 'No voting data available')
-})
+  if (props.noEngine) return t("agora", "No Voting Method Configured");
+  if (props.noItemsLinked) return t("agora", "No Items Linked to Vote");
+  if (props.showAddButton) return t("agora", "No items to vote on yet");
+  return t("agora", "No voting data available");
+});
 
 const description = computed(() => {
   if (props.noEngine) {
-    return t('agora', 'A voting method needs to be configured before voting can begin.')
+    return t(
+      "agora",
+      "A voting method needs to be configured before voting can begin.",
+    );
   }
   if (props.noItemsLinked) {
     if (props.canManageVote && !props.isReadonly) {
       return t(
-        'agora',
-        'The voting method is configured but no items have been added to the vote yet. Click the button below to add items.'
-      )
+        "agora",
+        "The voting method is configured but no items have been added to the vote yet. Click the button below to add items.",
+      );
     }
     return t(
-      'agora',
-      'The voting method is configured but no items have been added to the vote yet.'
-    )
+      "agora",
+      "The voting method is configured but no items have been added to the vote yet.",
+    );
   }
   if (props.showAddButton) {
-    return t('agora', 'Add items to start the voting process')
+    return t("agora", "Add items to start the voting process");
   }
-  return t('agora', 'There are no voting items available at this time.')
-})
+  return t("agora", "There are no voting items available at this time.");
+});
 
 const showButton = computed(() => {
-  if (props.noEngine) return !!props.canManageVote && !props.isReadonly
-  if (props.noItemsLinked) return !!props.canManageVote && !props.isReadonly
-  if (props.showAddButton) return !!props.canManageVote && !props.isReadonly
-  return false
-})
+  if (props.noEngine) return !!props.canManageVote && !props.isReadonly;
+  if (props.noItemsLinked) return !!props.canManageVote && !props.isReadonly;
+  if (props.showAddButton) return !!props.canManageVote && !props.isReadonly;
+  return false;
+});
 
 const buttonText = computed(() => {
-  if (props.noEngine) return t('agora', 'Configure Voting Method')
-  if (props.noItemsLinked) return t('agora', 'Add Items to Vote')
-  if (props.showAddButton) return t('agora', 'Add Item')
-  return ''
-})
+  if (props.noEngine) return t("agora", "Configure Voting Method");
+  if (props.noItemsLinked) return t("agora", "Add Items to Vote");
+  if (props.showAddButton) return t("agora", "Add Item");
+  return "";
+});
 
 /**
  * Single branch per case: the previous implementation had an unreachable
@@ -107,13 +110,13 @@ const buttonText = computed(() => {
  */
 const handleClick = () => {
   if (props.noEngine) {
-    emit('configure')
+    emit("configure");
   } else if (props.noItemsLinked) {
-    emit('addToVote')
+    emit("addToVote");
   } else if (props.showAddButton) {
-    emit('addItem')
+    emit("addItem");
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

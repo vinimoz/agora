@@ -74,38 +74,40 @@
     class="inquiry-placeholder"
   >
     <span class="placeholder-icon">📄</span>
-    <span class="placeholder-text">{{ t('agora', 'Inquiry not available') }}</span>
+    <span class="placeholder-text">{{
+      t("agora", "Inquiry not available")
+    }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcListItem from '@nextcloud/vue/components/NcListItem'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcListItem from "@nextcloud/vue/components/NcListItem";
 
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import type { Inquiry } from '../../Types/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { DateTime } from 'luxon'
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import type { Inquiry } from "../../Types/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
+import { DateTime } from "luxon";
 
 interface Props {
-  inquiry: Inquiry
-  isActive?: boolean
+  inquiry: Inquiry;
+  isActive?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isActive: false,
-})
+});
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-}>()
+  click: [inquiry: Inquiry];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // Import icon components from utils/icons.ts
-const InquiryGeneralIconsComponents = InquiryGeneralIcons
+const InquiryGeneralIconsComponents = InquiryGeneralIcons;
 
 // ============================================================
 // LIST ITEM PROPERTIES - with null guards
@@ -113,162 +115,176 @@ const InquiryGeneralIconsComponents = InquiryGeneralIcons
 
 const listItemDetails = computed(() => {
   // Guard: if no inquiry, return empty string
-  if (!props.inquiry) return ''
+  if (!props.inquiry) return "";
 
-  const details = []
+  const details = [];
   if (props.inquiry.owner?.displayName || props.inquiry.ownedGroup) {
-    details.push(ownerDisplayName.value)
+    details.push(ownerDisplayName.value);
   }
   if (props.inquiry.status?.created) {
-    details.push(formattedCreationDate.value)
+    details.push(formattedCreationDate.value);
   }
-  return details.join(' • ')
-})
+  return details.join(" • ");
+});
 
 const isActiveListItem = computed(() => {
   // Guard: if no inquiry, return false
-  if (!props.inquiry) return false
-  return props.isActive || props.inquiry.currentUserStatus?.hasSupported || false
-})
+  if (!props.inquiry) return false;
+  return (
+    props.isActive || props.inquiry.currentUserStatus?.hasSupported || false
+  );
+});
 
 const isBold = computed(() => {
   // Guard: if no inquiry, return false
-  if (!props.inquiry) return false
-  return props.inquiry.status?.inquiryStatus === 'open' && !props.inquiry.currentUserStatus?.hasRead
-})
+  if (!props.inquiry) return false;
+  return (
+    props.inquiry.status?.inquiryStatus === "open" &&
+    !props.inquiry.currentUserStatus?.hasRead
+  );
+});
 
 const listItemAriaLabel = computed(() => {
   if (!props.inquiry) {
-    return t('agora', 'Inquiry not available')
+    return t("agora", "Inquiry not available");
   }
-  return t('agora', 'Inquiry: {title}. Created by {owner}', {
+  return t("agora", "Inquiry: {title}. Created by {owner}", {
     title: props.inquiry.title,
     owner: ownerDisplayName.value,
-  })
-})
+  });
+});
 
 // ============================================================
 // OWNER DISPLAY - with null guard
 // ============================================================
 
 const ownerDisplayName = computed(() => {
-  if (!props.inquiry) return ''
-  return props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
-})
+  if (!props.inquiry) return "";
+  return props.inquiry.ownedGroup || props.inquiry.owner?.displayName || "";
+});
 
 // ============================================================
 // TYPE ICON - with null guard
 // ============================================================
 
-const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
 
 const typeData = computed(() => {
-  if (!props.inquiry) return null
-  return getInquiryTypeData(props.inquiry.type, inquiryTypes.value)
-})
+  if (!props.inquiry) return null;
+  return getInquiryTypeData(props.inquiry.type, inquiryTypes.value);
+});
 
 const typeIconComponent = computed(() => {
   // Guard: if no inquiry, return default icon
-  if (!props.inquiry) return InquiryGeneralIconsComponents.FolderMultiple
+  if (!props.inquiry) return InquiryGeneralIconsComponents.FolderMultiple;
 
   if (typeData.value?.icon) {
-    const iconName = typeData.value.icon
-    if (typeof iconName === 'string' && InquiryGeneralIconsComponents[iconName]) {
-      return InquiryGeneralIconsComponents[iconName]
+    const iconName = typeData.value.icon;
+    if (
+      typeof iconName === "string" &&
+      InquiryGeneralIconsComponents[iconName]
+    ) {
+      return InquiryGeneralIconsComponents[iconName];
     }
-    if (typeof iconName === 'function' || typeof iconName === 'object') {
-      return iconName
+    if (typeof iconName === "function" || typeof iconName === "object") {
+      return iconName;
     }
   }
 
   const iconMap = {
-    survey: 'ClipboardList',
-    poll: 'CheckCircle',
-    question: 'Question',
-    discussion: 'MessageSquare',
-    news: 'Newspaper',
-    announcement: 'Megaphone',
-    meeting: 'Users',
-    document: 'Document',
-    proposal: 'Scale',
-    general: 'FolderMultiple',
-    draft: 'Empty',
-  }
+    survey: "ClipboardList",
+    poll: "CheckCircle",
+    question: "Question",
+    discussion: "MessageSquare",
+    news: "Newspaper",
+    announcement: "Megaphone",
+    meeting: "Users",
+    document: "Document",
+    proposal: "Scale",
+    general: "FolderMultiple",
+    draft: "Empty",
+  };
 
-  const iconName = iconMap[props.inquiry.type?.toLowerCase()] || 'FolderMultiple'
-  return InquiryGeneralIconsComponents[iconName] || InquiryGeneralIconsComponents.FolderMultiple
-})
+  const iconName =
+    iconMap[props.inquiry.type?.toLowerCase()] || "FolderMultiple";
+  return (
+    InquiryGeneralIconsComponents[iconName] ||
+    InquiryGeneralIconsComponents.FolderMultiple
+  );
+});
 
 // ============================================================
 // SHORT DESCRIPTION - with null guard
 // ============================================================
 
 const shortDescription = computed(() => {
-  if (!props.inquiry?.description) return ''
+  if (!props.inquiry?.description) return "";
 
-  const plainText = props.inquiry.description.replace(/<[^>]*>/g, '')
+  const plainText = props.inquiry.description.replace(/<[^>]*>/g, "");
 
   if (plainText.length > 100) {
-    return `${plainText.substring(0, 100)}…`
+    return `${plainText.substring(0, 100)}…`;
   }
 
-  return plainText
-})
+  return plainText;
+});
 
 // ============================================================
 // DATE FORMATTING - with null guard
 // ============================================================
 
 const formattedCreationDate = computed(() => {
-  if (!props.inquiry?.status?.created) return ''
+  if (!props.inquiry?.status?.created) return "";
   try {
-    return DateTime.fromMillis(props.inquiry.status.created * 1000).toLocaleString(
-      DateTime.DATE_MED
-    )
+    return DateTime.fromMillis(
+      props.inquiry.status.created * 1000,
+    ).toLocaleString(DateTime.DATE_MED);
   } catch {
-    return ''
+    return "";
   }
-})
+});
 
 // ============================================================
 // EXPIRY - with null guards
 // ============================================================
 
 const showExpiryBadge = computed(() => {
-  if (!props.inquiry?.configuration?.expire) return false
-  return props.inquiry.configuration.expire > 0
-})
+  if (!props.inquiry?.configuration?.expire) return false;
+  return props.inquiry.configuration.expire > 0;
+});
 
 const expiryText = computed(() => {
-  if (!props.inquiry?.configuration?.expire) return ''
+  if (!props.inquiry?.configuration?.expire) return "";
 
-  const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
-  const now = new Date()
-  const diff = expiryDate.getTime() - now.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const expiryDate = new Date(props.inquiry.configuration.expire * 1000);
+  const now = new Date();
+  const diff = expiryDate.getTime() - now.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
   if (days > 0) {
-    return t('agora', '{days}d', { days })
+    return t("agora", "{days}d", { days });
   }
   if (hours > 0) {
-    return t('agora', '{hours}h', { hours })
+    return t("agora", "{hours}h", { hours });
   }
-  return t('agora', 'Soon')
-})
+  return t("agora", "Soon");
+});
 
 const expiryBadgeClass = computed(() => {
-  if (!props.inquiry?.configuration?.expire) return ''
+  if (!props.inquiry?.configuration?.expire) return "";
 
-  const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
-  const now = new Date()
-  const diff = expiryDate.getTime() - now.getTime()
-  const hours = diff / (1000 * 60 * 60)
+  const expiryDate = new Date(props.inquiry.configuration.expire * 1000);
+  const now = new Date();
+  const diff = expiryDate.getTime() - now.getTime();
+  const hours = diff / (1000 * 60 * 60);
 
-  if (hours < 24) return 'expiry-soon'
-  if (hours < 72) return 'expiry-warning'
-  return 'expiry-normal'
-})
+  if (hours < 24) return "expiry-soon";
+  if (hours < 72) return "expiry-warning";
+  return "expiry-normal";
+});
 
 // ============================================================
 // HANDLERS - with null guard
@@ -277,7 +293,7 @@ const expiryBadgeClass = computed(() => {
 function handleClick() {
   // Only emit if we have a valid inquiry
   if (props.inquiry) {
-    emit('click', props.inquiry)
+    emit("click", props.inquiry);
   }
 }
 </script>
@@ -345,19 +361,31 @@ function handleClick() {
     }
 
     &.expiry-soon {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+      background: linear-gradient(
+        135deg,
+        rgba(239, 68, 68, 0.1),
+        rgba(239, 68, 68, 0.05)
+      );
       color: #ef4444;
       border: 1px solid rgba(239, 68, 68, 0.2);
     }
 
     &.expiry-warning {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+      background: linear-gradient(
+        135deg,
+        rgba(245, 158, 11, 0.1),
+        rgba(245, 158, 11, 0.05)
+      );
       color: #f59e0b;
       border: 1px solid rgba(245, 158, 11, 0.2);
     }
 
     &.expiry-normal {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+      background: linear-gradient(
+        135deg,
+        rgba(16, 185, 129, 0.1),
+        rgba(16, 185, 129, 0.05)
+      );
       color: #10b981;
       border: 1px solid rgba(16, 185, 129, 0.2);
     }

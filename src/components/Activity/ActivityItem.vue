@@ -4,63 +4,63 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
-import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
-import NcRichText from '@nextcloud/vue/components/NcRichText'
+import NcUserBubble from "@nextcloud/vue/components/NcUserBubble";
+import NcRichText from "@nextcloud/vue/components/NcRichText";
 
-import { GuestBubble, SimpleLink } from '../../helpers/index.ts'
+import { GuestBubble, SimpleLink } from "../../helpers/index.ts";
 
 const props = defineProps({
   activity: {
     type: Object,
     default: null,
   },
-})
+});
 
 const dateActivityRelative = computed(() => {
-  const date = new Date(props.activity.datetime)
-  const now = new Date()
-  const diffSeconds = (now.getTime() - date.getTime()) / 1000
+  const date = new Date(props.activity.datetime);
+  const now = new Date();
+  const diffSeconds = (now.getTime() - date.getTime()) / 1000;
 
   // Simple relative time formatter
   if (diffSeconds < 60) {
-    return 'just now'
+    return "just now";
   }
   if (diffSeconds < 3600) {
-    const minutes = Math.floor(diffSeconds / 60)
-    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
+    const minutes = Math.floor(diffSeconds / 60);
+    return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
   }
   if (diffSeconds < 86400) {
-    const hours = Math.floor(diffSeconds / 3600)
-    return `${hours} hour${hours > 1 ? 's' : ''} ago`
+    const hours = Math.floor(diffSeconds / 3600);
+    return `${hours} hour${hours > 1 ? "s" : ""} ago`;
   }
   if (diffSeconds < 604800) {
-    const days = Math.floor(diffSeconds / 86400)
-    return `${days} day${days > 1 ? 's' : ''} ago`
+    const days = Math.floor(diffSeconds / 86400);
+    return `${days} day${days > 1 ? "s" : ""} ago`;
   }
   // Fallback to locale date string
-  return date.toLocaleDateString()
-})
+  return date.toLocaleDateString();
+});
 
 const message = computed(() => {
-  const subject = props.activity.subject_rich[0]
-  const parameters = JSON.parse(JSON.stringify(props.activity.subject_rich[1]))
+  const subject = props.activity.subject_rich[0];
+  const parameters = JSON.parse(JSON.stringify(props.activity.subject_rich[1]));
   if (
     parameters.after &&
-    typeof parameters.after.id === 'string' &&
-    parameters.after.id.startsWith('dt:')
+    typeof parameters.after.id === "string" &&
+    parameters.after.id.startsWith("dt:")
   ) {
-    const dateTime = parameters.after.id.slice(3)
-    const date = new Date(dateTime)
-    parameters.after.name = date.toLocaleString()
+    const dateTime = parameters.after.id.slice(3);
+    const date = new Date(dateTime);
+    parameters.after.name = date.toLocaleString();
   }
 
   Object.keys(parameters).forEach(function (key) {
-    const { type } = parameters[key]
+    const { type } = parameters[key];
 
     switch (type) {
-      case 'highlight':
+      case "highlight":
         parameters[key] = parameters[key].link
           ? {
               component: SimpleLink,
@@ -69,47 +69,47 @@ const message = computed(() => {
                 name: parameters[key].name,
               },
             }
-          : `${parameters[key].name}`
-        break
-      case 'user':
+          : `${parameters[key].name}`;
+        break;
+      case "user":
         parameters[key] = {
           component: NcUserBubble,
           props: {
             user: parameters[key].id,
             displayName: parameters[key].name,
           },
-        }
-        break
-      case 'circle':
+        };
+        break;
+      case "circle":
         parameters[key] = {
           component: SimpleLink,
           props: {
             href: parameters[key].link,
             name: parameters[key].name,
           },
-        }
-        break
-      case 'addressbook-contact':
-      case 'email':
-      case 'guest':
+        };
+        break;
+      case "addressbook-contact":
+      case "email":
+      case "guest":
         parameters[key] = {
           component: GuestBubble,
           props: {
             user: parameters[key].id,
             displayName: parameters[key].name,
           },
-        }
-        break
+        };
+        break;
       default:
-        parameters[key] = `{${key}}`
+        parameters[key] = `{${key}}`;
     }
-  })
+  });
 
   return {
     subject,
     parameters,
-  }
-})
+  };
+});
 </script>
 
 <template>
@@ -136,7 +136,7 @@ const message = computed(() => {
   font-size: 0.8em;
   text-align: end;
   &::before {
-    content: ' ~ ';
+    content: " ~ ";
   }
 }
 

@@ -5,54 +5,54 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { showError } from '@nextcloud/dialogs'
-import { t, n } from '@nextcloud/l10n'
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { showError } from "@nextcloud/dialogs";
+import { t, n } from "@nextcloud/l10n";
 
-import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcAppContent from "@nextcloud/vue/components/NcAppContent";
+import NcEmptyContent from "@nextcloud/vue/components/NcEmptyContent";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
 
-import { HeaderBar, IntersectionObserver } from '../components/Base/index.ts'
-import { AgoraAppIcon } from '../components/AppIcons/index.ts'
-import InquiryItem from '../components/Inquiry/InquiryItem.vue'
-import InquiryFilter from '../components/Inquiry/InquiryFilter.vue'
-import { useInquiriesStore } from '../stores/inquiries.ts'
-import { FilterType } from '../Types/index.ts'
-import InquiryListSort from '../components/Inquiry/InquiryListSort.vue'
-import InquiryTimeline from '../components/InquiryGroup/InquiryTimeline.vue'
-import InquiryFeed from '../components/InquiryGroup/InquiryFeed.vue'
-import InquiryItemActions from '../components/Inquiry/InquiryItemActions.vue'
-import { usePreferencesStore } from '../stores/preferences.ts'
-import type { ViewMode } from '../stores/preferences.ts'
-import { useSessionStore } from '../stores/session.ts'
-import ActionToggleSidebar from '../components/Actions/modules/ActionToggleSidebar.vue'
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
-import LoadingOverlay from '../components/Base/modules/LoadingOverlay.vue'
-import { InquiryGeneralIcons } from '../utils/icons.ts'
-import InquiryReel from '../components/Inquiry/InquiryReel.vue'
-import LandingBreadcrumb from '../components/Experience/Landing/LandingBreadcrumb.vue'
-import { getInquiryTypeData } from '../helpers/modules/InquiryHelper.ts'
-import type { Inquiry } from '../Types/inquiry.types.ts'
+import { HeaderBar, IntersectionObserver } from "../components/Base/index.ts";
+import { AgoraAppIcon } from "../components/AppIcons/index.ts";
+import InquiryItem from "../components/Inquiry/InquiryItem.vue";
+import InquiryFilter from "../components/Inquiry/InquiryFilter.vue";
+import { useInquiriesStore } from "../stores/inquiries.ts";
+import { FilterType } from "../Types/index.ts";
+import InquiryListSort from "../components/Inquiry/InquiryListSort.vue";
+import InquiryTimeline from "../components/InquiryGroup/InquiryTimeline.vue";
+import InquiryFeed from "../components/InquiryGroup/InquiryFeed.vue";
+import InquiryItemActions from "../components/Inquiry/InquiryItemActions.vue";
+import { usePreferencesStore } from "../stores/preferences.ts";
+import type { ViewMode } from "../stores/preferences.ts";
+import { useSessionStore } from "../stores/session.ts";
+import ActionToggleSidebar from "../components/Actions/modules/ActionToggleSidebar.vue";
+import { useInquiryGroupsStore } from "../stores/inquiryGroups.ts";
+import LoadingOverlay from "../components/Base/modules/LoadingOverlay.vue";
+import { InquiryGeneralIcons } from "../utils/icons.ts";
+import InquiryReel from "../components/Inquiry/InquiryReel.vue";
+import LandingBreadcrumb from "../components/Experience/Landing/LandingBreadcrumb.vue";
+import { getInquiryTypeData } from "../helpers/modules/InquiryHelper.ts";
+import type { Inquiry } from "../Types/inquiry.types.ts";
 
 const props = withDefaults(
   defineProps<{
-    showFilterBar?: boolean | null
+    showFilterBar?: boolean | null;
   }>(),
-  { showFilterBar: null }
-)
+  { showFilterBar: null },
+);
 
-const showFilterBarResolved = computed(() =>
-  props.showFilterBar !== null ? props.showFilterBar : showFilterBar.value
-)
+const showFilterBar = computed(() =>
+  props.showFilterBar !== null ? props.showFilterBar : showFilterBar.value,
+);
 
-const inquiriesStore = useInquiriesStore()
-const inquiryGroupsStore = useInquiryGroupsStore()
-const preferencesStore = usePreferencesStore()
-const sessionStore = useSessionStore()
-const route = useRoute()
-const router = useRouter()
+const inquiriesStore = useInquiriesStore();
+const inquiryGroupsStore = useInquiryGroupsStore();
+const preferencesStore = usePreferencesStore();
+const sessionStore = useSessionStore();
+const route = useRoute();
+const router = useRouter();
 
 // ============================================================
 // LANDING MODE
@@ -61,182 +61,187 @@ const router = useRouter()
 // left sidebar for NavigationLanding. In landing mode we surface a small
 // breadcrumb above the title so the user can always jump back to Home.
 
-const isLandingMode = computed(() => route.meta?.landingMode === true)
+const isLandingMode = computed(() => route.meta?.landingMode === true);
 
 const landingLabel = computed(() => {
-  const typesParam = route.query.types
+  const typesParam = route.query.types;
   const types = typesParam
     ? Array.isArray(typesParam)
       ? typesParam.map(String)
-      : String(typesParam).split(',')
-    : []
+      : String(typesParam).split(",")
+    : [];
 
   if (types.length === 1) {
-    const typesTab = sessionStore.appSettings?.inquiryTypeTab || []
-    const data = getInquiryTypeData(types[0], typesTab as any)
-    if (data?.label) return data.label
+    const typesTab = sessionStore.appSettings?.inquiryTypeTab || [];
+    const data = getInquiryTypeData(types[0], typesTab as any);
+    if (data?.label) return data.label;
   }
 
-  const groupType = route.query.group_type as string | undefined
-  const type = route.params.type as string | undefined
+  const groupType = route.query.group_type as string | undefined;
+  const type = route.params.type as string | undefined;
 
   // Family + group-type entry (e.g. /explore/service?group_type=maintenance_board)
   if (groupType) {
-    const groupTypes = sessionStore.appSettings?.inquiryGroupTypeTab || []
-    const data = getInquiryTypeData(groupType, groupTypes as any)
-    return data?.label || groupType
+    const groupTypes = sessionStore.appSettings?.inquiryGroupTypeTab || [];
+    const data = getInquiryTypeData(groupType, groupTypes as any);
+    return data?.label || groupType;
   }
 
   // Type-driven entry (e.g. /explore/news, /explore/relevant)
   if (type) {
-    const types = sessionStore.appSettings?.inquiryTypeTab || []
-    const data = getInquiryTypeData(type, types as any)
-    return data?.label || type.charAt(0).toUpperCase() + type.slice(1)
+    const types = sessionStore.appSettings?.inquiryTypeTab || [];
+    const data = getInquiryTypeData(type, types as any);
+    return data?.label || type.charAt(0).toUpperCase() + type.slice(1);
   }
 
-  return t('agora', 'Explore')
-})
+  return t("agora", "Explore");
+});
 
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
   set: (value) => inquiriesStore.setFamilyType(value || null),
-})
+});
 
 // Main mode (create/view) and sub mode (table/list/reel)
-const mainMode = ref('view') // 'create' or 'view'
-const subMode = ref<ViewMode>('table-view') // 'table-view', 'list-view', or 'reel-view'
+const mainMode = ref("view"); // 'create' or 'view'
+const subMode = ref<ViewMode>("table-view"); // 'table-view', 'list-view', or 'reel-view'
 
 // Reel orientation
-const reelOrientation = ref<'vertical' | 'horizontal'>('vertical')
-const showReelArrows = ref(true)
+const reelOrientation = ref<"vertical" | "horizontal">("vertical");
+const showReelArrows = ref(true);
 
 // Computed properties for view modes
-const isGridView = computed(() => subMode.value === 'table-view')
-const isListView = computed(() => subMode.value === 'list-view')
-const isReelView = computed(() => subMode.value === 'reel-view')
+const isGridView = computed(() => subMode.value === "table-view");
+const isReelView = computed(() => subMode.value === "reel-view");
 
 // Handle main mode change
 function handleMainModeChange(mode: string) {
-  mainMode.value = mode
+  mainMode.value = mode;
 
-  if (mode === 'create') {
+  if (mode === "create") {
     router.push({
-      name: 'home',
+      name: "home",
       query: {
-        viewMode: 'create',
+        viewMode: "create",
       },
-    })
-  } else if (mode === 'group') {
+    });
+  } else if (mode === "group") {
     router.push({
-      name: 'home',
+      name: "home",
       params: {},
       query: {
         ...route.query,
       },
-    })
+    });
   } else {
     router.push({
       ...route,
       query: {
         ...route.query,
-        viewMode: 'view',
+        viewMode: "view",
       },
-    })
+    });
   }
 }
 
 // Handle sub mode change
 async function handleSubModeChange(mode: ViewMode) {
-  subMode.value = mode
+  subMode.value = mode;
   if (preferencesStore.user) {
-    await preferencesStore.setUserPreference('defaultViewInquiry', mode)
+    await preferencesStore.setUserPreference("defaultViewInquiry", mode);
   }
 }
 
 const title = computed(() => {
-  if (route.name === 'group') {
+  if (route.name === "group") {
     return (
       inquiryGroupsStore.currentInquiryGroup?.titleExt ||
       inquiryGroupsStore.currentInquiryGroup?.name ||
-      ''
-    )
+      ""
+    );
   }
-  return inquiriesStore.categories[route.params.type as FilterType].titleExt
-})
+  return inquiriesStore.categories[route.params.type as FilterType].titleExt;
+});
 
-const isFeedOrTimeline = computed(() => subMode.value === 'feed' || subMode.value === 'timeline')
+const isFeedOrTimeline = computed(
+  () => subMode.value === "feed" || subMode.value === "timeline",
+);
 
 const showMore = computed(
   () =>
-    inquiriesStore.chunkedList.length < inquiriesStore.inquiriesFilteredSorted.length &&
-    inquiriesStore.meta.status !== 'loading' &&
+    inquiriesStore.chunkedList.length <
+      inquiriesStore.inquiriesFilteredSorted.length &&
+    inquiriesStore.meta.status !== "loading" &&
     !isReelView.value &&
-    !isFeedOrTimeline.value
-)
+    !isFeedOrTimeline.value,
+);
 
 const countLoadedInquiries = computed(() =>
-  Math.min(inquiriesStore.chunkedList.length, inquiriesStore.inquiriesFilteredSorted.length)
-)
+  Math.min(
+    inquiriesStore.chunkedList.length,
+    inquiriesStore.inquiriesFilteredSorted.length,
+  ),
+);
 
 const infoLoaded = computed(() =>
   n(
-    'agora',
-    '{loadedInquiries} of {countInquiries} inquiry loaded.',
-    '{loadedInquiries} of {countInquiries} inquiries loaded.',
+    "agora",
+    "{loadedInquiries} of {countInquiries} inquiry loaded.",
+    "{loadedInquiries} of {countInquiries} inquiries loaded.",
     inquiriesStore.inquiriesFilteredSorted.length,
     {
       loadedInquiries: countLoadedInquiries.value,
       countInquiries: inquiriesStore.inquiriesFilteredSorted.length,
-    }
-  )
-)
+    },
+  ),
+);
 
 const description = computed(() => {
-  if (route.name === 'group') {
-    return inquiryGroupsStore.currentInquiryGroup?.description || ''
+  if (route.name === "group") {
+    return inquiryGroupsStore.currentInquiryGroup?.description || "";
   }
-  return inquiriesStore.categories[route.params.type as FilterType].description
-})
+  return inquiriesStore.categories[route.params.type as FilterType].description;
+});
 
 const emptyInquiryListnoInquiries = computed(
-  () => inquiriesStore.inquiriesFilteredSorted.length < 1
-)
+  () => inquiriesStore.inquiriesFilteredSorted.length < 1,
+);
 
 const loadingOverlayProps = {
-  name: t('agora', 'Loading overview'),
+  name: t("agora", "Loading overview"),
   loadingTexts: [
-    t('agora', 'Fetching inquiries'),
-    t('agora', 'Checking access'),
-    t('agora', 'Almost ready'),
-    t('agora', 'Do not go away'),
-    t('agora', 'Please be patient'),
+    t("agora", "Fetching inquiries"),
+    t("agora", "Checking access"),
+    t("agora", "Almost ready"),
+    t("agora", "Do not go away"),
+    t("agora", "Please be patient"),
   ],
-}
+};
 
 const emptyContentProps = computed(() => ({
-  name: t('agora', 'No inquiries found for this category'),
-  description: t('agora', 'Add one or change category!'),
-}))
+  name: t("agora", "No inquiries found for this category"),
+  description: t("agora", "Add one or change category!"),
+}));
 
 /**
  * Load more inquiries
  */
 async function loadMore() {
   try {
-    inquiriesStore.addChunk()
+    inquiriesStore.addChunk();
   } catch {
-    showError(t('agora', 'Error loading more inquiries'))
+    showError(t("agora", "Error loading more inquiries"));
   }
 }
 
 function openInquiry(inquiry: Inquiry) {
-  if (!inquiry?.id) return
+  if (!inquiry?.id) return;
   router.push({
-    name: 'inquiry',
+    name: "inquiry",
     params: { id: inquiry.id },
     // preserve the current sidebar context so the user can go back
     query: { ...route.query },
-  })
+  });
 }
 
 // ============================================================
@@ -252,59 +257,59 @@ function openInquiry(inquiry: Inquiry) {
 // for the next steps without touching the store.
 
 const APPLICABLE_SUB_MODES: ReadonlyArray<ViewMode> = [
-  'table-view',
-  'list-view',
-  'reel-view',
-  'feed',
-  'timeline',
-]
+  "table-view",
+  "list-view",
+  "reel-view",
+  "feed",
+  "timeline",
+];
 
 function applyRouteFilters() {
   // ---- family ----
-  const family = route.query.family as string | undefined
+  const family = route.query.family as string | undefined;
   if (family) {
-    inquiriesStore.setFamilyType(family)
+    inquiriesStore.setFamilyType(family);
   } else if (isLandingMode.value) {
-    inquiriesStore.setFamilyType('')
+    inquiriesStore.setFamilyType("");
   }
-  const typesParam = route.query.types
+  const typesParam = route.query.types;
   if (typesParam) {
     const types = Array.isArray(typesParam)
       ? typesParam.map(String)
-      : String(typesParam).split(',').filter(Boolean)
-    inquiriesStore.updateFilter('types', types)
+      : String(typesParam).split(",").filter(Boolean);
+    inquiriesStore.updateFilter("types", types);
   } else {
     // clear so the previous category doesn't leak into the next route
-    inquiriesStore.updateFilter('types', undefined)
+    inquiriesStore.updateFilter("types", undefined);
   }
 
   // ---- display ----
-  const display = route.query.display as ViewMode | undefined
+  const display = route.query.display as ViewMode | undefined;
   if (display && APPLICABLE_SUB_MODES.includes(display)) {
-    subMode.value = display
+    subMode.value = display;
   }
-  if (display === 'timeline') {
-    inquiriesStore.sort.by = 'expire'
-    inquiriesStore.sort.reverse = false
-  } else if (display === 'feed') {
+  if (display === "timeline") {
+    inquiriesStore.sort.by = "expire";
+    inquiriesStore.sort.reverse = false;
+  } else if (display === "feed") {
     // reset — otherwise a prior timeline visit leaves the sort in expire-asc
-    inquiriesStore.sort.by = 'created'
-    inquiriesStore.sort.reverse = true
+    inquiriesStore.sort.by = "created";
+    inquiriesStore.sort.reverse = true;
   }
 
-  const filterOverride = route.query.filter as FilterType | undefined
-  const typeParam = route.params.type as FilterType | undefined
+  const filterOverride = route.query.filter as FilterType | undefined;
+  const typeParam = route.params.type as FilterType | undefined;
 
-  let nextFilter: FilterType = 'relevant'
+  let nextFilter: FilterType = "relevant";
   if (filterOverride && inquiriesStore.categories[filterOverride]) {
-    nextFilter = filterOverride
+    nextFilter = filterOverride;
   } else if (typeParam && inquiriesStore.categories[typeParam]) {
-    nextFilter = typeParam
+    nextFilter = typeParam;
   }
 
   if (inquiriesStore.currentFilter !== nextFilter) {
-    inquiriesStore.currentFilter = nextFilter
-    inquiriesStore.resetChunks()
+    inquiriesStore.currentFilter = nextFilter;
+    inquiriesStore.resetChunks();
   }
 
   // ---- reserved params (parsed but not yet acted upon) ----
@@ -317,41 +322,41 @@ function applyRouteFilters() {
 // LIFECYCLE
 // ============================================================
 onMounted(() => {
-  inquiriesStore.load(false)
+  inquiriesStore.load(false);
 
   // Initialize main mode from the route
-  if (route.query.viewMode === 'create') {
-    mainMode.value = 'create'
-  } else if (route.query.viewMode === 'group') {
-    mainMode.value = 'group'
+  if (route.query.viewMode === "create") {
+    mainMode.value = "create";
+  } else if (route.query.viewMode === "group") {
+    mainMode.value = "group";
   } else {
-    mainMode.value = 'view'
+    mainMode.value = "view";
   }
 
   // Initialize subMode from the user preference, then let the route override it
   if (preferencesStore.user?.defaultViewInquiry) {
-    subMode.value = preferencesStore.user.defaultViewInquiry
+    subMode.value = preferencesStore.user.defaultViewInquiry;
   } else {
-    subMode.value = 'table-view'
+    subMode.value = "table-view";
   }
 
-  applyRouteFilters()
-})
+  applyRouteFilters();
+});
 
 // Re-apply whenever the query string changes (breadcrumb clicks, back/forward,
 // landing widget navigations, etc.)
 watch(
   () => route.fullPath,
   () => {
-    applyRouteFilters()
-  }
-)
+    applyRouteFilters();
+  },
+);
 
 watch(subMode, (newMode) => {
-  if (newMode === 'reel-view' && inquiriesStore.chunkedList.length === 0) {
-    inquiriesStore.addChunk()
+  if (newMode === "reel-view" && inquiriesStore.chunkedList.length === 0) {
+    inquiriesStore.addChunk();
   }
-})
+});
 </script>
 
 <template>
@@ -530,7 +535,8 @@ watch(subMode, (newMode) => {
 
             <ActionToggleSidebar
               v-if="
-                inquiryGroupsStore.currentInquiryGroup?.owner.id === sessionStore.currentUser.id
+                inquiryGroupsStore.currentInquiryGroup?.owner.id ===
+                  sessionStore.currentUser.id
               "
             />
           </div>
@@ -586,7 +592,10 @@ watch(subMode, (newMode) => {
 
       <!-- Table and List Views -->
       <TransitionGroup
-        v-if="!emptyInquiryListnoInquiries && (subMode === 'table-view' || subMode === 'list-view')"
+        v-if="
+          !emptyInquiryListnoInquiries &&
+            (subMode === 'table-view' || subMode === 'list-view')
+        "
         tag="div"
         name="list"
         :class="[
@@ -602,7 +611,10 @@ watch(subMode, (newMode) => {
         >
           <template #actions>
             <InquiryItemActions
-              v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
+              v-if="
+                inquiry.permissions.edit ||
+                  sessionStore.appPermissions.inquiryCreation
+              "
               :key="`actions-${inquiry.id}`"
               :inquiry="inquiry"
             />
@@ -621,12 +633,15 @@ watch(subMode, (newMode) => {
           @click="loadMore"
         >
           {{ infoLoaded }}
-          {{ t('agora', 'Click here to load more') }}
+          {{ t("agora", "Click here to load more") }}
         </div>
       </IntersectionObserver>
 
       <NcEmptyContent
-        v-if="emptyInquiryListnoInquiries && (subMode === 'table-view' || subMode === 'list-view')"
+        v-if="
+          emptyInquiryListnoInquiries &&
+            (subMode === 'table-view' || subMode === 'list-view')
+        "
         v-bind="emptyContentProps"
       >
         <template #icon>
@@ -916,9 +931,6 @@ watch(subMode, (newMode) => {
 
 @media (min-width: 1600px) {
   .inquiry-list__grid {
-    /* 1fr is minmax(auto, 1fr), so a wide card refuses to shrink and the
-			       grid overflows its column. minmax(0, 1fr) lets the columns share
-			    the width they actually have. */
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

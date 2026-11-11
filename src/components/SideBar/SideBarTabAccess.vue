@@ -3,169 +3,181 @@
 	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
-import NcButton from '@nextcloud/vue/components/NcButton'
+import { computed, onMounted, ref, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcTextField from "@nextcloud/vue/components/NcTextField";
+import NcDialog from "@nextcloud/vue/components/NcDialog";
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import { useParticipationStore } from '../../stores/participation.ts'
-import { useSharesStore } from '../../stores/shares.ts'
-import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useParticipationStore } from "../../stores/participation.ts";
+import { useSharesStore } from "../../stores/shares.ts";
+import { useInquiryStore } from "../../stores/inquiry.ts";
 
-import UserSearch from '../User/UserSearch.vue'
-import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from '../../Types/index.ts'
+import UserSearch from "../User/UserSearch.vue";
+import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from "../../Types/index.ts";
 
-import ShareList from '../Shares/SharesList.vue'
-import SharesListUnsent from '../Shares/SharesListUnsent.vue'
-import SharesListLocked from '../Shares/SharesListLocked.vue'
+import ShareList from "../Shares/SharesList.vue";
+import SharesListUnsent from "../Shares/SharesListUnsent.vue";
+import SharesListLocked from "../Shares/SharesListLocked.vue";
 
-import { ALLOWED_PARTICIPATION } from '../../Types/participation.types.ts'
+import { ALLOWED_PARTICIPATION } from "../../Types/participation.types.ts";
 import type {
   ParticipationPolicyType,
   ParticipationTargetType,
   LotteryMode,
   LotteryMethod,
-} from '../../Types/participation.types.ts'
+} from "../../Types/participation.types.ts";
 
 // ============================================================
 // TYPES
 // ============================================================
 type SearchItem = {
-  id?: string
-  uid?: string
-  userId?: string
-  groupId?: string
-  value?: string
-}
+  id?: string;
+  uid?: string;
+  userId?: string;
+  groupId?: string;
+  value?: string;
+};
 
 /** Local UI shape (kept separate from backend policyConfig shape). */
 interface ParticipationConfig {
-  selection_size: number
-  source_groups: string[]
-  method: LotteryMethod
-  user_ids: string[]
-  group_ids: string[]
-  mode: LotteryMode
+  selection_size: number;
+  source_groups: string[];
+  method: LotteryMethod;
+  user_ids: string[];
+  group_ids: string[];
+  mode: LotteryMode;
 }
 
 // ============================================================
 // STORES
 // ============================================================
-const participationStore = useParticipationStore()
-const sharesStore = useSharesStore()
-const inquiryStore = useInquiryStore()
+const participationStore = useParticipationStore();
+const sharesStore = useSharesStore();
+const inquiryStore = useInquiryStore();
 
-const targetType = computed((): ParticipationTargetType => 'inquiry')
-const targetId = computed(() => inquiryStore.id)
-const configuration = computed(() => inquiryStore.configuration)
+const targetType = computed((): ParticipationTargetType => "inquiry");
+const targetId = computed(() => inquiryStore.id);
+const configuration = computed(() => inquiryStore.configuration);
 
 // ============================================================
 // LOCAL STATE
 // ============================================================
 const lotteryStatus = ref<{
-  status: 'not_run' | 'running' | 'completed' | 'validated' | 'failed' | 'cancelled'
-  run?: any
-  is_validated: boolean
-  pool_size?: number
-  selections?: any[]
-} | null>(null)
+  status:
+    "not_run" | "running" | "completed" | "validated" | "failed" | "cancelled";
+  run?: any;
+  is_validated: boolean;
+  pool_size?: number;
+  selections?: any[];
+} | null>(null);
 
-const lotteryRunId = ref<string | null>(null)
-const isLotteryRunning = ref(false)
-const showLotteryResults = ref(false)
-const showPoolInfo = ref(false)
-const poolInfo = ref<Array<{ id: string; displayName: string }>>([])
-const showLotteryConfig = ref(false)
-const isLoadingLotteryStatus = ref(false)
-const lotteryStatusError = ref<string | null>(null)
+const lotteryRunId = ref<string | null>(null);
+const isLotteryRunning = ref(false);
+const showLotteryResults = ref(false);
+const showPoolInfo = ref(false);
+const poolInfo = ref<Array<{ id: string; displayName: string }>>([]);
+const showLotteryConfig = ref(false);
+const isLoadingLotteryStatus = ref(false);
+const lotteryStatusError = ref<string | null>(null);
 
-const showLotteryConfirm = ref(false)
-const pendingLotteryRun = ref<(() => Promise<void>) | null>(null)
-const confirmMessage = ref('')
-const confirmRequested = ref(0)
-const confirmAvailable = ref(0)
-const localSelectionSize = ref(10)
+const showLotteryConfirm = ref(false);
+const pendingLotteryRun = ref<(() => Promise<void>) | null>(null);
+const confirmMessage = ref("");
+const confirmRequested = ref(0);
+const confirmAvailable = ref(0);
+const localSelectionSize = ref(10);
 
-const isParticipationForced = computed(() => allowedParticipationOptions.value.length === 1)
+const isParticipationForced = computed(
+  () => allowedParticipationOptions.value.length === 1,
+);
 
 // ============================================================
 // VISIBILITY (unchanged)
 // ============================================================
 const visibilityType = computed({
-  get: () => configuration.value?.visibility || 'private',
+  get: () => configuration.value?.visibility || "private",
   set: (value: string) => {
     if (configuration.value) {
-      configuration.value.visibility = value
-      if (value !== 'groups') configuration.value.visibilityGroups = []
-      inquiryStore.write()
+      configuration.value.visibility = value;
+      if (value !== "groups") configuration.value.visibilityGroups = [];
+      inquiryStore.write();
     }
   },
-})
+});
 
 const allowedParticipationOptions = computed<ParticipationPolicyType[]>(
-  () => ALLOWED_PARTICIPATION[visibilityType.value] ?? ['none']
-)
+  () => ALLOWED_PARTICIPATION[visibilityType.value] ?? ["none"],
+);
 
 // Coerce incompatible current choice when visibility changes
 watch(visibilityType, (vis) => {
-  const allowed = ALLOWED_PARTICIPATION[vis] ?? ['none']
+  const allowed = ALLOWED_PARTICIPATION[vis] ?? ["none"];
   if (!allowed.includes(localParticipationType.value)) {
-    const next = allowed[0]
-    localParticipationType.value = next
-    saveParticipationPolicy(next, localParticipationConfig.value)
+    const next = allowed[0];
+    localParticipationType.value = next;
+    saveParticipationPolicy(next, localParticipationConfig.value);
   }
-})
+});
 
 const extractIds = (items: Array<string | SearchItem>): string[] =>
   !items || !Array.isArray(items)
     ? []
     : (items
         .map((it) =>
-          typeof it === 'string'
+          typeof it === "string"
             ? it
-            : it.id || it.userId || it.groupId || it.uid || it.value || null
+            : it.id || it.userId || it.groupId || it.uid || it.value || null,
         )
-        .filter(Boolean) as string[])
+        .filter(Boolean) as string[]);
 
 const visibilityGroups = computed({
   get: (): string[] => configuration.value?.visibilityGroups || [],
   set: (groups: string[] | any[]) => {
-    const normalized = extractIds(groups)
+    const normalized = extractIds(groups);
     if (configuration.value) {
-      configuration.value.visibilityGroups = normalized
-      inquiryStore.write()
+      configuration.value.visibilityGroups = normalized;
+      inquiryStore.write();
     }
   },
-})
+});
 
 const visibilityGroupsForDisplay = computed({
   get: () => {
-    const groups = configuration.value?.visibilityGroups || []
-    if (Array.isArray(groups) && groups.length > 0 && typeof groups[0] === 'string') {
-      return groups.map((id) => ({ id, groupId: id, displayName: id, type: 'group' }))
+    const groups = configuration.value?.visibilityGroups || [];
+    if (
+      Array.isArray(groups) &&
+      groups.length > 0 &&
+      typeof groups[0] === "string"
+    ) {
+      return groups.map((id) => ({
+        id,
+        groupId: id,
+        displayName: id,
+        type: "group",
+      }));
     }
-    return groups
+    return groups;
   },
   set: (selected: any[]) => {
-    visibilityGroups.value = extractIds(selected)
+    visibilityGroups.value = extractIds(selected);
   },
-})
+});
 
 // ============================================================
 // PARTICIPATION STATE
 // ============================================================
-const localParticipationType = ref<ParticipationPolicyType>('none')
+const localParticipationType = ref<ParticipationPolicyType>("none");
 const localParticipationConfig = ref<ParticipationConfig>({
   selection_size: 10,
   source_groups: [],
-  method: 'random',
-  mode: 'groups',
+  method: "random",
+  mode: "groups",
   user_ids: [],
   group_ids: [],
-})
+});
 
 // Map local UI shape ↔ backend policyConfig shape (backend expects `count`, not `selection_size`)
 const toBackendConfig = (c: ParticipationConfig): Record<string, unknown> => ({
@@ -175,355 +187,398 @@ const toBackendConfig = (c: ParticipationConfig): Record<string, unknown> => ({
   source_groups: c.source_groups,
   user_ids: c.user_ids,
   group_ids: c.group_ids,
-})
+});
 
-const fromBackendConfig = (raw: Record<string, unknown> | undefined): ParticipationConfig => {
-  const r = raw ?? {}
+const fromBackendConfig = (
+  raw: Record<string, unknown> | undefined,
+): ParticipationConfig => {
+  const r = raw ?? {};
   return {
     selection_size: Number(r.count ?? r.selection_size ?? 10),
     source_groups: (r.source_groups as string[]) ?? [],
-    method: ((r.method as string) ?? 'random') as LotteryMethod,
-    mode: ((r.mode as string) ?? 'groups') as LotteryMode,
+    method: ((r.method as string) ?? "random") as LotteryMethod,
+    mode: ((r.mode as string) ?? "groups") as LotteryMode,
     user_ids: (r.user_ids as string[]) ?? [],
     group_ids: (r.group_ids as string[]) ?? [],
-  }
-}
+  };
+};
 
 const participationType = computed({
   get: () => localParticipationType.value,
   set: (value: ParticipationPolicyType) => {
-    localParticipationType.value = value
-    showLotteryConfig.value = value === 'lottery'
-    if (value !== 'lottery') {
-      saveParticipationPolicy(value, localParticipationConfig.value)
+    localParticipationType.value = value;
+    showLotteryConfig.value = value === "lottery";
+    if (value !== "lottery") {
+      saveParticipationPolicy(value, localParticipationConfig.value);
     } else {
-      loadLotteryStatus()
+      loadLotteryStatus();
     }
   },
-})
+});
 
 const participationConfig = computed({
   get: (): ParticipationConfig => localParticipationConfig.value,
   set: (config: ParticipationConfig) => {
-    localParticipationConfig.value = config
-    if (localParticipationType.value !== 'lottery') {
-      saveParticipationPolicy(localParticipationType.value, config)
+    localParticipationConfig.value = config;
+    if (localParticipationType.value !== "lottery") {
+      saveParticipationPolicy(localParticipationType.value, config);
     }
   },
-})
+});
 
-const loading = computed(() => participationStore.loading)
-const isLotteryLocked = computed(() => lotteryStatus.value?.is_validated === true)
-const isLotteryCompleted = computed(
-  () =>
-    lotteryStatus.value?.status === 'completed' ||
-    lotteryStatus.value?.status === 'validated' ||
-    lotteryStatus.value?.status === 'cancelled'
-)
+const loading = computed(() => participationStore.loading);
+const isLotteryLocked = computed(
+  () => lotteryStatus.value?.is_validated === true,
+);
 
 // ============================================================
 // SAVE
 // ============================================================
 const saveParticipationPolicy = async (
   type: ParticipationPolicyType,
-  config: ParticipationConfig
+  config: ParticipationConfig,
 ) => {
-  if (!targetId.value) return
+  if (!targetId.value) return;
   try {
     await participationStore.setParticipation(
       targetType.value,
       targetId.value,
       type,
-      toBackendConfig(config)
-    )
+      toBackendConfig(config),
+    );
   } catch (error) {
-    console.error('Failed to save participation policy', { error, type, config })
+    console.error("Failed to save participation policy", {
+      error,
+      type,
+      config,
+    });
   }
-}
+};
 
 // ============================================================
 // OPTIONS — include 'none'
 // ============================================================
-const participationOptions: ParticipationPolicyType[] = [
-  'none',
-  'everyone',
-  'users',
-  'groups',
-  'lottery',
-]
 
 const participationOptionLabels: Record<ParticipationPolicyType, string> = {
-  none: t('agora', 'No participation'),
-  everyone: t('agora', 'Everyone'),
-  users: t('agora', 'Specific Users'),
-  groups: t('agora', 'Specific Groups'),
-  lottery: t('agora', '🎲 Lottery'),
-}
+  none: t("agora", "No participation"),
+  everyone: t("agora", "Everyone"),
+  users: t("agora", "Specific Users"),
+  groups: t("agora", "Specific Groups"),
+  lottery: t("agora", "🎲 Lottery"),
+};
 
-const visibilityOptions = ['everyone', 'participants', 'groups', 'private']
+const visibilityOptions = ["everyone", "participants", "groups", "private"];
 const visibilityOptionLabels: Record<string, string> = {
-  everyone: t('agora', 'Everyone'),
-  participants: t('agora', 'Participants Only'),
-  groups: t('agora', 'Specific Groups'),
-  private: t('agora', 'Private'),
-}
+  everyone: t("agora", "Everyone"),
+  participants: t("agora", "Participants Only"),
+  groups: t("agora", "Specific Groups"),
+  private: t("agora", "Private"),
+};
 
 // ============================================================
 // LOAD
 // ============================================================
 const loadAccessData = async () => {
-  if (!targetId.value) return
+  if (!targetId.value) return;
   try {
-    await participationStore.loadParticipation(targetType.value, targetId.value)
-    await sharesStore.load('inquiry')
+    await participationStore.loadParticipation(
+      targetType.value,
+      targetId.value,
+    );
+    await sharesStore.load("inquiry");
 
     // Trust the store's getter — it already normalizes null → 'none'
-    localParticipationType.value = participationStore.participationType
+    localParticipationType.value = participationStore.participationType;
     if (participationStore.participation) {
       localParticipationConfig.value = fromBackendConfig(
-        participationStore.participation.policyConfig
-      )
+        participationStore.participation.policyConfig,
+      );
     }
 
-    showLotteryConfig.value = participationStore.isLottery
+    showLotteryConfig.value = participationStore.isLottery;
     if (participationStore.isLottery) {
-      await loadLotteryStatus()
+      await loadLotteryStatus();
     }
   } catch (error) {
-    console.error('Failed to load access data:', error)
-    showError(t('agora', 'Failed to load access data'))
+    console.error("Failed to load access data:", error);
+    showError(t("agora", "Failed to load access data"));
   }
-}
+};
 
-onMounted(loadAccessData)
+onMounted(loadAccessData);
 
 watch(
   () => inquiryStore.id,
   (n, o) => {
-    if (n && n !== o) loadAccessData()
-  }
-)
+    if (n && n !== o) loadAccessData();
+  },
+);
 
 watch(localSelectionSize, (newVal) => {
-  if (!isLotteryLocked.value) handleLotteryConfigChange('selection_size', newVal)
-})
+  if (!isLotteryLocked.value)
+    handleLotteryConfigChange("selection_size", newVal);
+});
 
 watch(
   () => localParticipationConfig.value.selection_size,
   (newVal) => {
-    localSelectionSize.value = newVal
+    localSelectionSize.value = newVal;
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 // ── Lottery status / actions (unchanged except typed calls) ──
 const getStatusLabel = (status: string): string =>
   ({
-    not_run: t('agora', 'Not Run'),
-    running: t('agora', 'Running'),
-    completed: t('agora', 'Completed'),
-    validated: t('agora', 'Validated'),
-    failed: t('agora', 'Failed'),
-    cancelled: t('agora', 'Cancelled'),
-  })[status] ?? status
+    not_run: t("agora", "Not Run"),
+    running: t("agora", "Running"),
+    completed: t("agora", "Completed"),
+    validated: t("agora", "Validated"),
+    failed: t("agora", "Failed"),
+    cancelled: t("agora", "Cancelled"),
+  })[status] ?? status;
 
 const getSelectionStatusLabel = (status: string): string =>
   ({
-    pending: t('agora', 'Pending'),
-    accepted: t('agora', 'Accepted'),
-    declined: t('agora', 'Declined'),
-    expired: t('agora', 'Expired'),
-  })[status] ?? status
+    pending: t("agora", "Pending"),
+    accepted: t("agora", "Accepted"),
+    declined: t("agora", "Declined"),
+    expired: t("agora", "Expired"),
+  })[status] ?? status;
 
 const loadLotteryStatus = async () => {
-  if (!targetId.value || isLoadingLotteryStatus.value) return
-  isLoadingLotteryStatus.value = true
-  lotteryStatusError.value = null
+  if (!targetId.value || isLoadingLotteryStatus.value) return;
+  isLoadingLotteryStatus.value = true;
+  lotteryStatusError.value = null;
   try {
-    const status = await participationStore.getLotteryStatus(targetType.value, targetId.value)
+    const status = await participationStore.getLotteryStatus(
+      targetType.value,
+      targetId.value,
+    );
     lotteryStatus.value = {
-      status: status?.status || 'not_run',
+      status: status?.status || "not_run",
       is_validated: status?.is_validated || false,
       run: status?.run || null,
       pool_size: status?.pool_size || 0,
       selections: status?.selections || [],
-    }
-    if (status?.run) lotteryRunId.value = status.run.id
-    if (status?.status === 'not_run' || status?.status === 'running') {
-      poolInfo.value = await participationStore.getEligiblePool(targetType.value, targetId.value)
+    };
+    if (status?.run) lotteryRunId.value = status.run.id;
+    if (status?.status === "not_run" || status?.status === "running") {
+      poolInfo.value = await participationStore.getEligiblePool(
+        targetType.value,
+        targetId.value,
+      );
     }
   } catch (error: any) {
-    if (error?.code === 'ERR_CANCELED' || error?.message?.includes('canceled')) return
-    console.error('Failed to load lottery status:', error)
-    lotteryStatusError.value = error.message || 'Failed to load lottery status'
-    lotteryStatus.value = { status: 'not_run', is_validated: false }
+    if (error?.code === "ERR_CANCELED" || error?.message?.includes("canceled"))
+      return;
+    console.error("Failed to load lottery status:", error);
+    lotteryStatusError.value = error.message || "Failed to load lottery status";
+    lotteryStatus.value = { status: "not_run", is_validated: false };
   } finally {
-    isLoadingLotteryStatus.value = false
+    isLoadingLotteryStatus.value = false;
   }
-}
+};
 
 const confirmLottery = async () => {
-  showLotteryConfirm.value = false
+  showLotteryConfirm.value = false;
   if (pendingLotteryRun.value) {
-    await pendingLotteryRun.value()
-    pendingLotteryRun.value = null
+    await pendingLotteryRun.value();
+    pendingLotteryRun.value = null;
   }
-}
+};
 
 const executeLottery = async () => {
   try {
-    const result = await participationStore.runLottery(targetType.value, targetId.value)
-    await loadLotteryStatus()
+    const result = await participationStore.runLottery(
+      targetType.value,
+      targetId.value,
+    );
+    await loadLotteryStatus();
     showSuccess(
-      t('agora', 'Lottery completed successfully! {count} users selected.', {
+      t("agora", "Lottery completed successfully! {count} users selected.", {
         count: result.selection_count,
-      })
-    )
+      }),
+    );
   } catch (error: any) {
-    showError(t('agora', 'Failed to run lottery: {error}', { error: error.message }))
-    throw error
+    showError(
+      t("agora", "Failed to run lottery: {error}", { error: error.message }),
+    );
+    throw error;
   }
-}
+};
 
 const handleRunLottery = async () => {
   if (isLotteryLocked.value) {
-    showError(t('agora', 'Lottery is validated and cannot be re-run'))
-    return
+    showError(t("agora", "Lottery is validated and cannot be re-run"));
+    return;
   }
-  if (isLotteryRunning.value || !targetId.value) return
+  if (isLotteryRunning.value || !targetId.value) return;
   try {
-    isLotteryRunning.value = true
-    await saveParticipationPolicy('lottery', localParticipationConfig.value)
-    poolInfo.value = await participationStore.getEligiblePool(targetType.value, targetId.value)
+    isLotteryRunning.value = true;
+    await saveParticipationPolicy("lottery", localParticipationConfig.value);
+    poolInfo.value = await participationStore.getEligiblePool(
+      targetType.value,
+      targetId.value,
+    );
     if (poolInfo.value.length === 0) {
-      showError(t('agora', 'No eligible users found for lottery'))
-      return
+      showError(t("agora", "No eligible users found for lottery"));
+      return;
     }
-    const requested = localParticipationConfig.value.selection_size || 1
+    const requested = localParticipationConfig.value.selection_size || 1;
     if (poolInfo.value.length < requested) {
       confirmMessage.value = t(
-        'agora',
-        'Only {available} users are available, but you requested {requested}. Continue?',
-        { available: poolInfo.value.length, requested }
-      )
-      confirmRequested.value = requested
-      confirmAvailable.value = poolInfo.value.length
-      pendingLotteryRun.value = executeLottery
-      showLotteryConfirm.value = true
-      return
+        "agora",
+        "Only {available} users are available, but you requested {requested}. Continue?",
+        { available: poolInfo.value.length, requested },
+      );
+      confirmRequested.value = requested;
+      confirmAvailable.value = poolInfo.value.length;
+      pendingLotteryRun.value = executeLottery;
+      showLotteryConfirm.value = true;
+      return;
     }
-    await executeLottery()
+    await executeLottery();
   } catch (error: any) {
-    showError(t('agora', 'Failed to run lottery: {error}', { error: error.message }))
+    showError(
+      t("agora", "Failed to run lottery: {error}", { error: error.message }),
+    );
   } finally {
-    isLotteryRunning.value = false
+    isLotteryRunning.value = false;
   }
-}
+};
 
 const handleValidateLottery = async () => {
-  if (!targetId.value) return
+  if (!targetId.value) return;
   try {
-    await participationStore.validateLottery(targetType.value, targetId.value)
-    await loadLotteryStatus()
-    showSuccess(t('agora', 'Lottery validated successfully!'))
+    await participationStore.validateLottery(targetType.value, targetId.value);
+    await loadLotteryStatus();
+    showSuccess(t("agora", "Lottery validated successfully!"));
   } catch (error: any) {
-    showError(t('agora', 'Failed to validate lottery: {error}', { error: error.message }))
+    showError(
+      t("agora", "Failed to validate lottery: {error}", {
+        error: error.message,
+      }),
+    );
   }
-}
+};
 
 const handleCancelLottery = async () => {
-  if (!targetId.value) return
-  const reason = window.prompt(t('agora', 'Please provide a reason for cancellation:'))
-  if (reason === null) return
+  if (!targetId.value) return;
+  const reason = window.prompt(
+    t("agora", "Please provide a reason for cancellation:"),
+  );
+  if (reason === null) return;
   try {
-    await participationStore.cancelLottery(targetType.value, targetId.value, reason)
-    await loadLotteryStatus()
-    showSuccess(t('agora', 'Lottery cancelled successfully'))
+    await participationStore.cancelLottery(
+      targetType.value,
+      targetId.value,
+      reason,
+    );
+    await loadLotteryStatus();
+    showSuccess(t("agora", "Lottery cancelled successfully"));
   } catch (error: any) {
-    showError(t('agora', 'Failed to cancel lottery: {error}', { error: error.message }))
+    showError(
+      t("agora", "Failed to cancel lottery: {error}", { error: error.message }),
+    );
   }
-}
+};
 
 const resetLottery = async () => {
-  if (!targetId.value) return
+  if (!targetId.value) return;
   if (
     !confirm(
       t(
-        'agora',
-        'Are you sure you want to reset this lottery? This will remove all selections and allow a new lottery to be run.'
-      )
+        "agora",
+        "Are you sure you want to reset this lottery? This will remove all selections and allow a new lottery to be run.",
+      ),
     )
   )
-    return
+    return;
   try {
-    await participationStore.resetLottery(targetType.value, targetId.value)
-    await loadLotteryStatus()
-    showSuccess(t('agora', 'Lottery reset successfully'))
+    await participationStore.resetLottery(targetType.value, targetId.value);
+    await loadLotteryStatus();
+    showSuccess(t("agora", "Lottery reset successfully"));
   } catch (error: any) {
-    showError(t('agora', 'Failed to reset lottery: {error}', { error: error.message }))
+    showError(
+      t("agora", "Failed to reset lottery: {error}", { error: error.message }),
+    );
   }
-}
+};
 
 // ============================================================
 // PARTICIPATION HANDLERS
 // ============================================================
-const handleParticipationConfigChange = async (field: keyof ParticipationConfig, value: any) => {
+const handleParticipationConfigChange = async (
+  field: keyof ParticipationConfig,
+  value: any,
+) => {
   if (isLotteryLocked.value) {
-    showError(t('agora', 'Lottery is validated and cannot be changed'))
-    return
+    showError(t("agora", "Lottery is validated and cannot be changed"));
+    return;
   }
-  if (Array.isArray(value)) value = extractIds(value)
-  participationConfig.value = { ...localParticipationConfig.value, [field]: value }
-}
+  if (Array.isArray(value)) value = extractIds(value);
+  participationConfig.value = {
+    ...localParticipationConfig.value,
+    [field]: value,
+  };
+};
 
-const handleLotteryConfigChange = (field: keyof ParticipationConfig, value: any) => {
+const handleLotteryConfigChange = (
+  field: keyof ParticipationConfig,
+  value: any,
+) => {
   if (isLotteryLocked.value) {
-    showError(t('agora', 'Lottery is validated and cannot be changed'))
-    return
+    showError(t("agora", "Lottery is validated and cannot be changed"));
+    return;
   }
-  if (field === 'source_groups' && Array.isArray(value)) value = extractIds(value)
-  localParticipationConfig.value = { ...localParticipationConfig.value, [field]: value }
-}
+  if (field === "source_groups" && Array.isArray(value))
+    value = extractIds(value);
+  localParticipationConfig.value = {
+    ...localParticipationConfig.value,
+    [field]: value,
+  };
+};
 
 /** Clears the policy entirely (backend `'none'` = no row). */
 const resetParticipation = async () => {
-  if (!targetId.value) return
+  if (!targetId.value) return;
   try {
-    await participationStore.deleteParticipation(targetType.value, targetId.value)
-    localParticipationType.value = 'none'
+    await participationStore.deleteParticipation(
+      targetType.value,
+      targetId.value,
+    );
+    localParticipationType.value = "none";
     localParticipationConfig.value = {
       selection_size: 10,
       source_groups: [],
-      method: 'random',
-      mode: 'groups',
+      method: "random",
+      mode: "groups",
       user_ids: [],
       group_ids: [],
-    }
-    showLotteryConfig.value = false
-    lotteryStatus.value = null
-    showSuccess(t('agora', 'Participation disabled'))
+    };
+    showLotteryConfig.value = false;
+    lotteryStatus.value = null;
+    showSuccess(t("agora", "Participation disabled"));
   } catch (error: any) {
-    showError(t('agora', 'Failed to reset participation: {error}', { error: error.message }))
+    showError(
+      t("agora", "Failed to reset participation: {error}", {
+        error: error.message,
+      }),
+    );
   }
-}
-
-const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
-  if (!items || items.length === 0) return t('agora', 'None selected')
-  return t('agora', '{count} {type}{s} selected', {
-    count: items.length,
-    type: type === 'user' ? t('agora', 'user') : t('agora', 'group'),
-    s: items.length > 1 ? 's' : '',
-  })
-}
+};
 </script>
 
 <template>
   <div class="sidebar-participation">
     <!-- Header -->
     <div class="participation-header">
-      <h2>{{ t('agora', 'Access & Participation') }}</h2>
+      <h2>{{ t("agora", "Access & Participation") }}</h2>
       <p class="subtitle">
-        {{ t('agora', 'Manage who can view, participate, and share this inquiry') }}
+        {{
+          t("agora", "Manage who can view, participate, and share this inquiry")
+        }}
       </p>
     </div>
 
@@ -532,13 +587,15 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 			============================================================ -->
     <div class="participation-section">
       <div class="section-header">
-        <h3>{{ t('agora', 'Visibility') }}</h3>
+        <h3>{{ t("agora", "Visibility") }}</h3>
         <div class="section-badge">
-          <span class="badge">{{ visibilityOptionLabels[visibilityType] || visibilityType }}</span>
+          <span class="badge">{{
+            visibilityOptionLabels[visibilityType] || visibilityType
+          }}</span>
         </div>
       </div>
       <p class="section-desc">
-        {{ t('agora', 'Who can view this inquiry') }}
+        {{ t("agora", "Who can view this inquiry") }}
       </p>
 
       <NcSelect
@@ -555,7 +612,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Select Groups') }}</label>
+          <label>{{ t("agora", "Select Groups") }}</label>
           <UserSearch
             :model-value="visibilityGroupsForDisplay"
             :search-types="[SEARCH_TYPE_GROUPS]"
@@ -568,13 +625,19 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             v-if="visibilityGroups.length === 0"
             class="hint"
           >
-            {{ t('agora', 'No groups selected. Only you can view this inquiry.') }}
+            {{
+              t("agora", "No groups selected. Only you can view this inquiry.")
+            }}
           </span>
           <span
             v-else
             class="hint"
           >
-            {{ t('agora', '{count} groups selected', { count: visibilityGroups.length }) }}
+            {{
+              t("agora", "{count} groups selected", {
+                count: visibilityGroups.length,
+              })
+            }}
           </span>
         </div>
       </div>
@@ -585,7 +648,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 				============================================================ -->
     <div class="participation-section">
       <div class="section-header">
-        <h3>{{ t('agora', 'Participation') }}</h3>
+        <h3>{{ t("agora", "Participation") }}</h3>
         <div class="section-badge">
           <span class="badge">{{
             participationOptionLabels[participationType] || participationType
@@ -593,7 +656,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
         </div>
       </div>
       <p class="section-desc">
-        {{ t('agora', 'Who can participate (vote, comment, contribute)') }}
+        {{ t("agora", "Who can participate (vote, comment, contribute)") }}
       </p>
 
       <NcSelect
@@ -613,7 +676,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Select Users') }}</label>
+          <label>{{ t("agora", "Select Users") }}</label>
           <UserSearch
             :model-value="participationConfig.user_ids || []"
             :search-types="[SEARCH_TYPE_USERS]"
@@ -621,20 +684,24 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             :placeholder="t('agora', 'Type to search for users')"
             :aria-label="t('agora', 'Select users who can participate')"
             :disabled="isLotteryLocked"
-            @update:model-value="(val) => handleParticipationConfigChange('user_ids', val)"
+            @update:model-value="
+              (val) => handleParticipationConfigChange('user_ids', val)
+            "
           />
           <span
             v-if="!participationConfig.user_ids?.length"
             class="hint"
           >
-            {{ t('agora', 'No users selected. Only you can participate.') }}
+            {{ t("agora", "No users selected. Only you can participate.") }}
           </span>
           <span
             v-else
             class="hint"
           >
             {{
-              t('agora', '{count} users selected', { count: participationConfig.user_ids.length })
+              t("agora", "{count} users selected", {
+                count: participationConfig.user_ids.length,
+              })
             }}
           </span>
         </div>
@@ -646,7 +713,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Select Groups') }}</label>
+          <label>{{ t("agora", "Select Groups") }}</label>
           <UserSearch
             :model-value="participationConfig.group_ids || []"
             :search-types="[SEARCH_TYPE_GROUPS]"
@@ -654,20 +721,24 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             :placeholder="t('agora', 'Type to search for groups')"
             :aria-label="t('agora', 'Select groups that can participate')"
             :disabled="isLotteryLocked"
-            @update:model-value="(val) => handleParticipationConfigChange('group_ids', val)"
+            @update:model-value="
+              (val) => handleParticipationConfigChange('group_ids', val)
+            "
           />
           <span
             v-if="!participationConfig.group_ids?.length"
             class="hint"
           >
-            {{ t('agora', 'No groups selected. Only you can participate.') }}
+            {{ t("agora", "No groups selected. Only you can participate.") }}
           </span>
           <span
             v-else
             class="hint"
           >
             {{
-              t('agora', '{count} groups selected', { count: participationConfig.group_ids.length })
+              t("agora", "{count} groups selected", {
+                count: participationConfig.group_ids.length,
+              })
             }}
           </span>
         </div>
@@ -684,11 +755,16 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
           class="locked-notification"
         >
           <span class="lock-icon">🔒</span>
-          {{ t('agora', 'This lottery is validated and locked. Configuration cannot be changed.') }}
+          {{
+            t(
+              "agora",
+              "This lottery is validated and locked. Configuration cannot be changed.",
+            )
+          }}
         </div>
 
         <div class="config-group">
-          <label>{{ t('agora', 'Selection Size') }}</label>
+          <label>{{ t("agora", "Selection Size") }}</label>
           <NcTextField
             v-model="localSelectionSize"
             type="number"
@@ -700,7 +776,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
         </div>
 
         <div class="config-group">
-          <label>{{ t('agora', 'Source Groups') }}</label>
+          <label>{{ t("agora", "Source Groups") }}</label>
           <UserSearch
             :model-value="participationConfig.source_groups || []"
             :search-types="[SEARCH_TYPE_GROUPS]"
@@ -708,20 +784,22 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             :disabled="isLotteryLocked"
             :placeholder="t('agora', 'Type to search for groups')"
             :aria-label="t('agora', 'Select groups to include in lottery')"
-            @update:model-value="(val) => handleLotteryConfigChange('source_groups', val)"
+            @update:model-value="
+              (val) => handleLotteryConfigChange('source_groups', val)
+            "
           />
           <span
             v-if="!participationConfig.source_groups?.length"
             class="hint"
           >
-            {{ t('agora', 'No groups selected. All users eligible.') }}
+            {{ t("agora", "No groups selected. All users eligible.") }}
           </span>
           <span
             v-else
             class="hint"
           >
             {{
-              t('agora', '{count} groups selected as source', {
+              t("agora", "{count} groups selected as source", {
                 count: participationConfig.source_groups.length,
               })
             }}
@@ -729,16 +807,21 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
         </div>
 
         <div class="config-group">
-          <label>{{ t('agora', 'Selection Method') }}</label>
+          <label>{{ t("agora", "Selection Method") }}</label>
           <NcSelect
             :model-value="participationConfig.method || 'random'"
             :options="['random', 'weighted', 'stratified']"
             :label-outside="true"
             :input-label="t('agora', 'Selection Method')"
             :disabled="isLotteryLocked"
-            :option-label="(opt: string) => t('agora', opt.charAt(0).toUpperCase() + opt.slice(1))"
+            :option-label="
+              (opt: string) =>
+                t('agora', opt.charAt(0).toUpperCase() + opt.slice(1))
+            "
             :placeholder="t('agora', 'Select selection method')"
-            @update:model-value="(val: string) => handleLotteryConfigChange('method', val)"
+            @update:model-value="
+              (val: string) => handleLotteryConfigChange('method', val)
+            "
           />
         </div>
 
@@ -750,19 +833,19 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             class="status-loading"
           >
             <span class="spinner" />
-            {{ t('agora', 'Loading lottery status...') }}
+            {{ t("agora", "Loading lottery status...") }}
           </div>
 
           <!-- Error state 
-									<div v-else-if="lotteryStatusError" class="status-error">
-										<span class="error-message">⚠️ {{ t('agora', 'Error loading lottery status') }}</span>
-										<button 
-										      class="action-button run"
-										      @click="loadLotteryStatus"
-										      >
-										      {{ t('agora', 'Retry') }}
-										</button>
-									</div> -->
+											<div v-else-if="lotteryStatusError" class="status-error">
+											<span class="error-message">⚠️ {{ t('agora', 'Error loading lottery status') }}</span>
+											<button 
+											class="action-button run"
+											@click="loadLotteryStatus"
+											>
+											{{ t('agora', 'Retry') }}
+											</button>
+											</div> -->
 
           <!-- Normal state -->
           <div
@@ -770,7 +853,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             class="status-display"
           >
             <div class="status-info">
-              <span class="status-label">{{ t('agora', 'Status:') }}</span>
+              <span class="status-label">{{ t("agora", "Status:") }}</span>
               <span
                 class="status-value"
                 :class="lotteryStatus.status"
@@ -781,13 +864,17 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                 v-if="lotteryStatus.is_validated"
                 class="validation-badge"
               >
-                ✅ {{ t('agora', 'Validated') }}
+                ✅ {{ t("agora", "Validated") }}
               </span>
               <span
                 v-if="lotteryStatus.pool_size"
                 class="pool-size"
               >
-                {{ t('agora', 'Pool: {count} users', { count: lotteryStatus.pool_size }) }}
+                {{
+                  t("agora", "Pool: {count} users", {
+                    count: lotteryStatus.pool_size,
+                  })
+                }}
               </span>
             </div>
 
@@ -795,7 +882,9 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             <!-- Actions based on status -->
             <div class="lottery-actions">
               <!-- Run button for all non-validated states (except running) -->
-              <template v-if="!isLotteryLocked && lotteryStatus.status !== 'running'">
+              <template
+                v-if="!isLotteryLocked && lotteryStatus.status !== 'running'"
+              >
                 <button
                   class="action-button run"
                   :disabled="isLotteryRunning || loading.lottery"
@@ -805,7 +894,11 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                     v-if="isLotteryRunning"
                     class="spinner"
                   />
-                  {{ isLotteryRunning ? t('agora', 'Running...') : t('agora', 'Run Lottery') }}
+                  {{
+                    isLotteryRunning
+                      ? t("agora", "Running...")
+                      : t("agora", "Run Lottery")
+                  }}
                 </button>
 
                 <!-- Cancel button for failed or cancelled -->
@@ -814,7 +907,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                   class="action-button cancel"
                   @click="handleCancelLottery"
                 >
-                  {{ t('agora', 'Cancel') }}
+                  {{ t("agora", "Cancel") }}
                 </button>
 
                 <!-- View results button (if there's a previous run) -->
@@ -823,27 +916,34 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                   class="action-button view"
                   @click="showLotteryResults = !showLotteryResults"
                 >
-                  {{ showLotteryResults ? t('agora', 'Hide Results') : t('agora', 'View Results') }}
+                  {{
+                    showLotteryResults
+                      ? t("agora", "Hide Results")
+                      : t("agora", "View Results")
+                  }}
                 </button>
               </template>
 
               <!-- Validate button - only show for completed non-validated -->
               <div
-                v-if="lotteryStatus.status === 'completed' && !lotteryStatus.is_validated"
+                v-if="
+                  lotteryStatus.status === 'completed' &&
+                    !lotteryStatus.is_validated
+                "
                 class="validate-action"
               >
                 <button
                   class="action-button validate"
                   @click="handleValidateLottery"
                 >
-                  {{ t('agora', 'Validate Lottery') }}
+                  {{ t("agora", "Validate Lottery") }}
                 </button>
                 <!--	<button 
-																					class="action-button view"
-																					@click="showLotteryResults = !showLotteryResults"
-																					>
-																					{{ showLotteryResults ? t('agora', 'Hide Results') : t('agora', 'View Results') }}
-											</button> -->
+																		class="action-button view"
+																		@click="showLotteryResults = !showLotteryResults"
+																		>
+																		{{ showLotteryResults ? t('agora', 'Hide Results') : t('agora', 'View Results') }}
+																		</button> -->
               </div>
 
               <!-- Running state -->
@@ -852,7 +952,7 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                 class="running-info"
               >
                 <span class="spinner" />
-                {{ t('agora', 'Lottery in progress...') }}
+                {{ t("agora", "Lottery in progress...") }}
               </div>
 
               <!-- Validated state -->
@@ -860,18 +960,22 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                 v-if="lotteryStatus.is_validated"
                 class="validated-info"
               >
-                <span class="success-message">✅ {{ t('agora', 'Lottery validated and active') }}</span>
+                <span class="success-message">✅ {{ t("agora", "Lottery validated and active") }}</span>
                 <button
                   class="action-button view"
                   @click="showLotteryResults = !showLotteryResults"
                 >
-                  {{ showLotteryResults ? t('agora', 'Hide Results') : t('agora', 'View Results') }}
+                  {{
+                    showLotteryResults
+                      ? t("agora", "Hide Results")
+                      : t("agora", "View Results")
+                  }}
                 </button>
                 <button
                   class="action-button reset"
                   @click="resetLottery"
                 >
-                  {{ t('agora', 'Reset Lottery') }}
+                  {{ t("agora", "Reset Lottery") }}
                 </button>
               </div>
               <!-- Cancelled state - show re-run option -->
@@ -879,19 +983,25 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                 v-if="lotteryStatus.status === 'cancelled'"
                 class="cancelled-actions"
               >
-                <span class="info-message">ℹ️ {{ t('agora', 'Lottery was cancelled') }}</span>
+                <span class="info-message">ℹ️ {{ t("agora", "Lottery was cancelled") }}</span>
                 <button
                   class="action-button run"
-                  :disabled="isLotteryRunning || loading.lottery || isLotteryLocked"
+                  :disabled="
+                    isLotteryRunning || loading.lottery || isLotteryLocked
+                  "
                   @click="handleRunLottery"
                 >
-                  {{ t('agora', 'Run New Lottery') }}
+                  {{ t("agora", "Run New Lottery") }}
                 </button>
                 <button
                   class="action-button view"
                   @click="showLotteryResults = !showLotteryResults"
                 >
-                  {{ showLotteryResults ? t('agora', 'Hide Results') : t('agora', 'View Results') }}
+                  {{
+                    showLotteryResults
+                      ? t("agora", "Hide Results")
+                      : t("agora", "View Results")
+                  }}
                 </button>
               </div>
             </div>
@@ -905,27 +1015,41 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                 class="action-button info"
                 @click="showPoolInfo = !showPoolInfo"
               >
-                {{ showPoolInfo ? t('agora', 'Hide Pool Info') : t('agora', 'Show Pool Info') }}
+                {{
+                  showPoolInfo
+                    ? t("agora", "Hide Pool Info")
+                    : t("agora", "Show Pool Info")
+                }}
               </button>
               <div
                 v-if="showPoolInfo"
                 class="pool-details"
               >
                 <p>
-                  {{ t('agora', 'Available users: {count}', { count: poolInfo?.length || 0 }) }}
+                  {{
+                    t("agora", "Available users: {count}", {
+                      count: poolInfo?.length || 0,
+                    })
+                  }}
                 </p>
                 <p>
                   {{
-                    t('agora', 'Requested: {count}', {
+                    t("agora", "Requested: {count}", {
                       count: participationConfig.selection_size || 1,
                     })
                   }}
                 </p>
                 <p
-                  v-if="poolInfo && poolInfo.length < (participationConfig.selection_size || 1)"
+                  v-if="
+                    poolInfo &&
+                      poolInfo.length < (participationConfig.selection_size || 1)
+                  "
                   class="warning"
                 >
-                  ⚠️ {{ t('agora', 'Warning: Requested more users than available') }}
+                  ⚠️
+                  {{
+                    t("agora", "Warning: Requested more users than available")
+                  }}
                 </p>
               </div>
             </div>
@@ -936,12 +1060,14 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             v-if="showLotteryResults && lotteryStatus?.run"
             class="results-display"
           >
-            <h4>{{ t('agora', 'Lottery Results') }}</h4>
+            <h4>{{ t("agora", "Lottery Results") }}</h4>
             <div class="results-meta">
-              <span>{{ t('agora', 'Run ID:') }} {{ lotteryStatus.run.id }}</span>
-              <span>{{ t('agora', 'Status:') }} {{ getStatusLabel(lotteryStatus.run.status) }}</span>
-              <span>{{ t('agora', 'Selected:') }} {{ lotteryStatus.run.selection_count || 0 }}
-                {{ t('agora', 'users') }}</span>
+              <span>{{ t("agora", "Run ID:") }} {{ lotteryStatus.run.id }}</span>
+              <span>{{ t("agora", "Status:") }}
+                {{ getStatusLabel(lotteryStatus.run.status) }}</span>
+              <span>{{ t("agora", "Selected:") }}
+                {{ lotteryStatus.run.selection_count || 0 }}
+                {{ t("agora", "users") }}</span>
             </div>
             <div class="results-grid">
               <div
@@ -950,7 +1076,9 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                 class="result-item"
               >
                 <span class="rank">#{{ selection.rank }}</span>
-                <span class="user">{{ selection.selected_user_id || 'Unknown' }}</span>
+                <span class="user">{{
+                  selection.selected_user_id || "Unknown"
+                }}</span>
                 <span
                   class="status"
                   :class="selection.status"
@@ -961,7 +1089,9 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
                   v-if="selection.accepted_at"
                   class="accepted-date"
                 >
-                  {{ new Date(selection.accepted_at * 1000).toLocaleDateString() }}
+                  {{
+                    new Date(selection.accepted_at * 1000).toLocaleDateString()
+                  }}
                 </span>
               </div>
             </div>
@@ -975,27 +1105,27 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
             :disabled="isLotteryLocked"
             @click="resetParticipation"
           >
-            {{ t('agora', 'Reset to everyone') }}
+            {{ t("agora", "Reset to everyone") }}
           </button>
           <span class="hint">
-            {{ t('agora', 'Remove participation restrictions') }}
+            {{ t("agora", "Remove participation restrictions") }}
           </span>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-		ACCESS SECTION 
-		============================================================ -->
+					ACCESS SECTION 
+					============================================================ -->
     <div class="participation-section shares-section">
       <div class="section-header">
-        <h3>{{ t('agora', 'Access') }}</h3>
+        <h3>{{ t("agora", "Access") }}</h3>
         <div class="section-badge">
-          <span class="badge">{{ sharesStore.active.length }} {{ t('agora', 'shares') }}</span>
+          <span class="badge">{{ sharesStore.active.length }} {{ t("agora", "shares") }}</span>
         </div>
       </div>
       <p class="section-desc">
-        {{ t('agora', 'Manage individual and public shares for this inquiry') }}
+        {{ t("agora", "Manage individual and public shares for this inquiry") }}
       </p>
 
       <ShareList class="shares effective" />
@@ -1004,8 +1134,8 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
     </div>
 
     <!-- ============================================================
-			LOTTERY CONFIRMATION DIALOG
-			============================================================ -->
+						LOTTERY CONFIRMATION DIALOG
+						============================================================ -->
     <NcDialog
       v-if="showLotteryConfirm"
       :name="t('agora', 'Run lottery?')"
@@ -1015,14 +1145,14 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 
       <template #actions>
         <NcButton @click="showLotteryConfirm = false">
-          {{ t('agora', 'Cancel') }}
+          {{ t("agora", "Cancel") }}
         </NcButton>
 
         <NcButton
           type="primary"
           @click="confirmLottery"
         >
-          {{ t('agora', 'Continue') }}
+          {{ t("agora", "Continue") }}
         </NcButton>
       </template>
     </NcDialog>

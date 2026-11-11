@@ -65,7 +65,7 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Delete') }}
+            {{ t("agora", "Delete") }}
           </NcActionButton>
         </NcActions>
       </div>
@@ -106,7 +106,7 @@
         />
       </div>
       <div class="progress-stats">
-        <span class="progress-label">{{ t('agora', 'Progress') }}</span>
+        <span class="progress-label">{{ t("agora", "Progress") }}</span>
         <span class="progress-percentage">{{ Math.round(progressPercentage) }}%</span>
       </div>
     </div>
@@ -165,7 +165,7 @@
           :is="InquiryOptionIcons.MessageReplyText"
           :size="14"
         />
-        <span class="children-title">{{ t('agora', 'Responses') }}</span>
+        <span class="children-title">{{ t("agora", "Responses") }}</span>
       </div>
 
       <div class="children-list">
@@ -173,7 +173,7 @@
           v-if="childItemsTotal === 0"
           class="no-children"
         >
-          <span class="no-children-text">{{ t('agora', 'None') }}</span>
+          <span class="no-children-text">{{ t("agora", "None") }}</span>
         </div>
 
         <div
@@ -193,17 +193,22 @@
                 :is="getChildItemTypeIcon(childType)"
                 :size="inline ? 10 : 12"
               />
-              <span class="child-count">{{ childItemsByType[childType] || 0 }}</span>
+              <span class="child-count">{{
+                childItemsByType[childType] || 0
+              }}</span>
             </div>
 
             <!-- Tooltip showing child items of this type -->
             <div
-              v-if="activeTooltip === childType && childItemsByType[childType] > 0"
+              v-if="
+                activeTooltip === childType && childItemsByType[childType] > 0
+              "
               class="child-tooltip"
             >
               <div class="tooltip-header">
                 <strong>{{ getChildItemTypeLabel(childType) }}</strong>
-                <span class="tooltip-count">{{ childItemsByType[childType] }} {{ t('agora', 'items') }}</span>
+                <span class="tooltip-count">{{ childItemsByType[childType] }}
+                  {{ t("agora", "items") }}</span>
               </div>
               <div class="tooltip-children">
                 <div
@@ -222,7 +227,11 @@
                   v-if="childItemsByType[childType] > 3"
                   class="tooltip-more"
                 >
-                  {{ t('agora', 'and {count} more …', { count: childItemsByType[childType] - 3 }) }}
+                  {{
+                    t("agora", "and {count} more …", {
+                      count: childItemsByType[childType] - 3,
+                    })
+                  }}
                 </div>
               </div>
             </div>
@@ -246,7 +255,7 @@
             v-if="childItemsTotal === 0"
             class="no-children"
           >
-            <span class="no-children-text">{{ t('agora', 'None') }}</span>
+            <span class="no-children-text">{{ t("agora", "None") }}</span>
           </div>
 
           <div
@@ -266,17 +275,22 @@
                   :is="getChildItemTypeIcon(childType)"
                   :size="10"
                 />
-                <span class="child-count">{{ childItemsByType[childType] || 0 }}</span>
+                <span class="child-count">{{
+                  childItemsByType[childType] || 0
+                }}</span>
               </div>
 
               <!-- Tooltip showing child items of this type -->
               <div
-                v-if="activeTooltip === childType && childItemsByType[childType] > 0"
+                v-if="
+                  activeTooltip === childType && childItemsByType[childType] > 0
+                "
                 class="child-tooltip"
               >
                 <div class="tooltip-header">
                   <strong>{{ getChildItemTypeLabel(childType) }}</strong>
-                  <span class="tooltip-count">{{ childItemsByType[childType] }} {{ t('agora', 'items') }}</span>
+                  <span class="tooltip-count">{{ childItemsByType[childType] }}
+                    {{ t("agora", "items") }}</span>
                 </div>
                 <div class="tooltip-children">
                   <div
@@ -296,7 +310,9 @@
                     class="tooltip-more"
                   >
                     {{
-                      t('agora', 'and {count} more …', { count: childItemsByType[childType] - 3 })
+                      t("agora", "and {count} more …", {
+                        count: childItemsByType[childType] - 3,
+                      })
                     }}
                   </div>
                 </div>
@@ -364,7 +380,7 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Delete') }}
+            {{ t("agora", "Delete") }}
           </NcActionButton>
         </NcActions>
       </div>
@@ -382,7 +398,9 @@
           :display-name="ownerName"
           :size="18"
         />
-        <span class="owner-name">{{ ownerName || t('agora', 'Unknown owner') }}</span>
+        <span class="owner-name">{{
+          ownerName || t("agora", "Unknown owner")
+        }}</span>
       </div>
     </div>
   </div>
@@ -397,31 +415,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import { SupportFeature } from '../Base/index.ts'
-import { isImportedFromView as checkImported } from '../../helpers/modules/InquiryOptionHelper'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import { SupportFeature } from "../Base/index.ts";
+import { isImportedFromView as checkImported } from "../../helpers/modules/InquiryOptionHelper";
 
-import { useOptionsStore } from '../../stores/options'
-import { useSessionStore } from '../../stores/session'
-import { useInquiriesStore } from '../../stores/inquiries'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { createOptionContext, canEditOption, canDeleteOption } from '../../utils/permissions.ts'
+import { useOptionsStore } from "../../stores/options";
+import { useSessionStore } from "../../stores/session";
+import { useInquiriesStore } from "../../stores/inquiries";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import {
+  createOptionContext,
+  canEditOption,
+  canDeleteOption,
+} from "../../utils/permissions.ts";
 
 // ---- Unified types ----
-import type { Item } from '../../Types/index.ts'
+import type { Item } from "../../Types/index.ts";
 import {
   getItemTitle,
-  getItemStatus,
-  getItemType,
-  getItemFamily,
   getForceLayouts,
   removeLayoutFromItem,
-} from '../../helpers/modules/GenericItemHelper'
+} from "../../helpers/modules/GenericItemHelper";
 import {
   getOptionTypeLabel,
   getOptionTypeIconComponent,
@@ -430,212 +449,241 @@ import {
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments,
   usesTitle,
-} from '../../helpers/modules/InquiryOptionHelper'
-import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
+} from "../../helpers/modules/InquiryOptionHelper";
+import DeleteConfirmationDialog from "../Modals/DeleteConfirmationDialog.vue";
 
-export type TargetType = 'option' | 'inquiry'
+export type TargetType = "option" | "inquiry";
 
 const props = defineProps<{
-  item: Item
-  parentId: number
-  targetType: TargetType
-  compact?: boolean
-  inline?: boolean
-  official?: boolean
-  highlight?: boolean
-  showPoll?: boolean
-  showAction?: boolean
-  preventClick?: boolean
-  textMaxLength?: number
-  progressBar?: boolean
-  familyType?: string
-}>()
+  item: Item;
+  parentId: number;
+  targetType: TargetType;
+  compact?: boolean;
+  inline?: boolean;
+  official?: boolean;
+  highlight?: boolean;
+  showPoll?: boolean;
+  showAction?: boolean;
+  preventClick?: boolean;
+  textMaxLength?: number;
+  progressBar?: boolean;
+  familyType?: string;
+}>();
 
 const emit = defineEmits<{
-  click: [item: Item]
-  edit: [item: Item]
-  delete: [itemId: number]
-  supportChanged: [itemId: number, support: string]
-  comment: [item: Item]
-  viewChildren: [item: Item, childType: string]
-  removeFromView: [itemId: number, updatedForceLayouts: string[]]
-  updated: []
-}>()
+  click: [item: Item];
+  edit: [item: Item];
+  delete: [itemId: number];
+  supportChanged: [itemId: number, support: string];
+  comment: [item: Item];
+  viewChildren: [item: Item, childType: string];
+  removeFromView: [itemId: number, updatedForceLayouts: string[]];
+  updated: [];
+}>();
 
 // ---- Raw object still needed for helpers that predate unification ----
-const raw = computed(() => (props.item as any).raw ?? props.item)
+const raw = computed(() => (props.item as any).raw ?? props.item);
 
-const itemTitle = computed(() => props.item.title)
-const itemStatus = computed(() => props.item.statusKey)
-const itemType = computed(() => props.item.type)
-const itemFamily = computed(() => props.item.family)
-const itemText = computed(() => props.item.text)
+const itemTitle = computed(() => props.item.title);
+const itemType = computed(() => props.item.type);
+const itemText = computed(() => props.item.text);
 
 const itemCreatedAt = computed(() => {
-  const r = raw.value
-  if (!r) return Date.now()
-  if (r.created) return r.created
-  if (r.status?.created) return r.status.created
-  return Date.now()
-})
+  const r = raw.value;
+  if (!r) return Date.now();
+  if (r.created) return r.created;
+  if (r.status?.created) return r.status.created;
+  return Date.now();
+});
 
-const ownerId = computed(() => raw.value?.owner?.id ?? null)
-const ownerName = computed(() => raw.value?.owner?.displayName ?? null)
-const commentCount = computed(() => raw.value?.status?.countComments ?? 0)
+const ownerId = computed(() => raw.value?.owner?.id ?? null);
+const ownerName = computed(() => raw.value?.owner?.displayName ?? null);
+const commentCount = computed(() => raw.value?.status?.countComments ?? 0);
 
-const isImportedFromView = computed(() => checkImported(raw.value, props.familyType || ''))
+const isImportedFromView = computed(() =>
+  checkImported(raw.value, props.familyType || ""),
+);
 
-const sessionStore = useSessionStore()
-const optionsStore = useOptionsStore()
-const inquiriesStore = useInquiriesStore()
+const sessionStore = useSessionStore();
+const optionsStore = useOptionsStore();
+const inquiriesStore = useInquiriesStore();
 
 // ---- SupportFeature still wants the raw object ----
-const supportItem = computed(() => raw.value)
+const supportItem = computed(() => raw.value);
 
 const itemContext = computed(() => {
-  if (!props.item || !raw.value) return null
-  return createOptionContext(raw.value)
-})
+  if (!props.item || !raw.value) return null;
+  return createOptionContext(raw.value);
+});
 
-const canEdit = computed(() => (itemContext.value ? canEditOption(itemContext.value) : false))
-const canDelete = computed(() => (itemContext.value ? canDeleteOption(itemContext.value) : false))
-const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
+const canEdit = computed(() =>
+  itemContext.value ? canEditOption(itemContext.value) : false,
+);
+const canDelete = computed(() =>
+  itemContext.value ? canDeleteOption(itemContext.value) : false,
+);
+const canEditOrDelete = computed(() => canEdit.value || canDelete.value);
 
 // ---- Type lookups stay the same ----
 
-const allItemTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+const allItemTypes = computed(
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 
 const itemTypeLabel = computed(() =>
   getOptionTypeLabel(
     itemType.value,
     allItemTypes.value,
-    props.targetType === 'option' ? t('agora', 'Option') : t('agora', 'Inquiry')
-  )
-)
+    props.targetType === "option"
+      ? t("agora", "Option")
+      : t("agora", "Inquiry"),
+  ),
+);
 
-const itemIcon = computed(() => getOptionTypeIconComponent(itemType.value, allItemTypes.value))
+const itemIcon = computed(() =>
+  getOptionTypeIconComponent(itemType.value, allItemTypes.value),
+);
 
-const itemTypeColor = computed(() => getOptionTypeColor(itemType.value, allItemTypes.value))
+const itemTypeColor = computed(() =>
+  getOptionTypeColor(itemType.value, allItemTypes.value),
+);
 
 const showTitle = computed(() =>
-  props.targetType === 'inquiry' ? true : usesTitle(itemType.value, allItemTypes.value)
-)
+  props.targetType === "inquiry"
+    ? true
+    : usesTitle(itemType.value, allItemTypes.value),
+);
 
 const allowComment = computed(() =>
-  props.targetType === 'inquiry' ? true : allowsComments(itemType.value, allItemTypes.value)
-)
+  props.targetType === "inquiry"
+    ? true
+    : allowsComments(itemType.value, allItemTypes.value),
+);
 
 const hasSupportFeature = computed(() =>
-  props.targetType === 'inquiry'
+  props.targetType === "inquiry"
     ? false
-    : itemContext.value !== null && hasSupportFeatureHelper(itemType.value, allItemTypes.value)
-)
+    : itemContext.value !== null &&
+      hasSupportFeatureHelper(itemType.value, allItemTypes.value),
+);
 
 const allowedChildTypes = computed(() =>
-  props.targetType === 'inquiry' ? [] : getAllowedResponses(itemType.value, allItemTypes.value)
-)
+  props.targetType === "inquiry"
+    ? []
+    : getAllowedResponses(itemType.value, allItemTypes.value),
+);
 
-const hasChildItems = computed(() => allowedChildTypes.value.length > 0)
+const hasChildItems = computed(() => allowedChildTypes.value.length > 0);
 
 // ---- Child lookup: optionsStore only knows about options ----
 const childItems = computed(() => {
-  if (props.targetType !== 'option') return []
-  return optionsStore.options.filter((opt) => opt.parentId === props.item.id)
-})
+  if (props.targetType !== "option") return [];
+  return optionsStore.options.filter((opt) => opt.parentId === props.item.id);
+});
 
 const childItemsByType = computed(() => {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
   allowedChildTypes.value.forEach((type) => {
-    counts[type] = 0
-  })
+    counts[type] = 0;
+  });
   childItems.value.forEach((child) => {
-    if (counts[child.type] !== undefined) counts[child.type]++
-  })
-  return counts
-})
+    if (counts[child.type] !== undefined) counts[child.type]++;
+  });
+  return counts;
+});
 
 const childItemsTotal = computed(() =>
-  Object.values(childItemsByType.value).reduce((a, b) => a + b, 0)
-)
+  Object.values(childItemsByType.value).reduce((a, b) => a + b, 0),
+);
 
 const childItemTypes = computed(() =>
-  Object.keys(childItemsByType.value).filter((t) => childItemsByType.value[t] > 0)
-)
+  Object.keys(childItemsByType.value).filter(
+    (t) => childItemsByType.value[t] > 0,
+  ),
+);
 
-const getChildItemTypeIcon = (type: string) => getOptionTypeIconComponent(type, allItemTypes.value)
-const getChildItemTypeLabel = (type: string) => getOptionTypeLabel(type, allItemTypes.value, type)
+const getChildItemTypeIcon = (type: string) =>
+  getOptionTypeIconComponent(type, allItemTypes.value);
+const getChildItemTypeLabel = (type: string) =>
+  getOptionTypeLabel(type, allItemTypes.value, type);
 const getChildrenByType = (type: string) =>
-  childItems.value.filter((c) => c.type === type).slice(0, 3)
+  childItems.value.filter((c) => c.type === type).slice(0, 3);
 
 // ---- Delete / remove-from-view: unwrap for API calls ----
 const deleteItem = async () => {
   try {
-    if (props.targetType === 'option') {
-      await optionsStore.deleteOption(props.item.id)
+    if (props.targetType === "option") {
+      await optionsStore.deleteOption(props.item.id);
     } else {
-      await inquiriesStore.deleteInquiry(props.item.id)
+      await inquiriesStore.deleteInquiry(props.item.id);
     }
-    emit('delete', props.item.id)
-    emit('updated')
-    showSuccess(t('agora', 'Item deleted successfully'))
+    emit("delete", props.item.id);
+    emit("updated");
+    showSuccess(t("agora", "Item deleted successfully"));
   } catch (err) {
-    console.error(err)
-    showError(t('agora', 'Failed to delete item'))
+    console.error(err);
+    showError(t("agora", "Failed to delete item"));
   }
-}
+};
 
 const removeFromCurrentView = async () => {
   try {
-    const updated = removeLayoutFromItem(raw.value, props.familyType || '')
-    if (props.targetType === 'option') {
-      await optionsStore.updateOption({ ...raw.value, miscFields: updated.miscFields })
+    const updated = removeLayoutFromItem(raw.value, props.familyType || "");
+    if (props.targetType === "option") {
+      await optionsStore.updateOption({
+        ...raw.value,
+        miscFields: updated.miscFields,
+      });
     } else {
-      await inquiriesStore.updateInquiry({ id: props.item.id, miscFields: updated.miscFields })
+      await inquiriesStore.updateInquiry({
+        id: props.item.id,
+        miscFields: updated.miscFields,
+      });
     }
-    emit('removeFromView', props.item.id, getForceLayouts(updated))
-    showSuccess(t('agora', 'Item removed from view'))
+    emit("removeFromView", props.item.id, getForceLayouts(updated));
+    showSuccess(t("agora", "Item removed from view"));
   } catch (err) {
-    console.error(err)
-    showError(t('agora', 'Failed to remove item from view'))
+    console.error(err);
+    showError(t("agora", "Failed to remove item from view"));
   }
-}
+};
 
 // ---- Misc ----
-const activeTooltip = ref<string | null>(null)
+const activeTooltip = ref<string | null>(null);
 const showChildTooltip = (t: string) => {
-  activeTooltip.value = t
-}
+  activeTooltip.value = t;
+};
 const hideChildTooltip = () => {
-  activeTooltip.value = null
-}
-const showDeleteDialog = ref(false)
+  activeTooltip.value = null;
+};
+const showDeleteDialog = ref(false);
 
 const confirmDelete = () => {
-  showDeleteDialog.value = true
-}
+  showDeleteDialog.value = true;
+};
 const handleConfirmDelete = () => {
-  deleteItem()
-}
+  deleteItem();
+};
 const handleRemoveFromView = () => {
-  removeFromCurrentView()
-}
+  removeFromCurrentView();
+};
 
 const formatDate = (ts: number) => {
-  const d = ts ? new Date(ts * 1000) : new Date()
+  const d = ts ? new Date(ts * 1000) : new Date();
   return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(d)
-}
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
+};
 
 const truncateText = (text: string, max: number) =>
-  text && text.length > max ? `${text.substring(0, max)}…` : text
+  text && text.length > max ? `${text.substring(0, max)}…` : text;
 
 const handleCardClick = () => {
-  if (!props.preventClick) emit('click', props.item)
-}
+  if (!props.preventClick) emit("click", props.item);
+};
 </script>
 
 <style scoped lang="scss">
@@ -940,14 +988,15 @@ const handleCardClick = () => {
             animation: fadeIn 0.2s ease-out;
 
             &::after {
-              content: '';
+              content: "";
               position: absolute;
               top: 100%;
               left: 50%;
               transform: translateX(-50%);
               border-width: 6px;
               border-style: solid;
-              border-color: var(--color-main-background) transparent transparent transparent;
+              border-color: var(--color-main-background) transparent transparent
+                transparent;
             }
 
             .tooltip-header {
@@ -1027,7 +1076,7 @@ const handleCardClick = () => {
         position: relative;
 
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 0;
           left: 0;
@@ -1327,14 +1376,15 @@ const handleCardClick = () => {
       font-size: 11px;
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 100%;
         left: 50%;
         transform: translateX(-50%);
         border-width: 5px;
         border-style: solid;
-        border-color: var(--color-main-background) transparent transparent transparent;
+        border-color: var(--color-main-background) transparent transparent
+          transparent;
       }
 
       .tooltip-header {

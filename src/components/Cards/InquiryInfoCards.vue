@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 import {
   CardClosedInquiry,
   CardLimitedInquiries,
@@ -12,47 +12,51 @@ import {
   CardRegister,
   CardSendConfirmations,
   CardUnpublishedInquiry,
-} from './index.ts'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { useOptionsStore } from '../../stores/options.ts'
-import { useSharesStore } from '../../stores/shares.ts'
-import { useSessionStore } from '../../stores/session.ts'
+} from "./index.ts";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { useOptionsStore } from "../../stores/options.ts";
+import { useSharesStore } from "../../stores/shares.ts";
+import { useSessionStore } from "../../stores/session.ts";
 
-const inquiryStore = useInquiryStore()
-const optionsStore = useOptionsStore()
-const sharesStore = useSharesStore()
-const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore();
+const optionsStore = useOptionsStore();
+const sharesStore = useSharesStore();
+const sessionStore = useSessionStore();
 
 const showUnpublishedInquiryCard = computed(
   () =>
-    inquiryStore.configuration.visibility === 'private' &&
+    inquiryStore.configuration.visibility === "private" &&
     !sharesStore.hasShares &&
     inquiryStore.permissions.edit &&
-    optionsStore.options.length
-)
+    optionsStore.options.length,
+);
 /* const showAddSuggestionsCard = computed(
   () =>
     inquiryStore.permissions.addOptions && inquiryStore.isSuggestionOpen && !inquiryStore.isClosed
 ) */
-const showClosedCard = computed(() => inquiryStore.isClosed && !showSendConfirmationsCard.value)
+const showClosedCard = computed(
+  () => inquiryStore.isClosed && !showSendConfirmationsCard.value,
+);
 const showSendConfirmationsCard = computed(
-  () => inquiryStore.permissions.edit && inquiryStore.isClosed
-)
+  () => inquiryStore.permissions.edit && inquiryStore.isClosed,
+);
 const showLimitCard = computed(
   () =>
     inquiryStore.permissions.inquiry &&
     !inquiryStore.isClosed &&
     (inquiryStore.configuration.maxInquiriesPerOption ||
-      inquiryStore.configuration.maxInquiriesPerUser)
-)
+      inquiryStore.configuration.maxInquiriesPerUser),
+);
 const showRegisterCard = computed(
   () =>
-    sessionStore.route.name === 'publicInquiry' &&
-    ['public', 'email', 'contact'].includes(inquiryStore.currentUserStatus.userRole) &&
+    sessionStore.route.name === "publicInquiry" &&
+    ["public", "email", "contact"].includes(
+      inquiryStore.currentUserStatus.userRole,
+    ) &&
     !inquiryStore.isClosed &&
     !inquiryStore.currentUserStatus.isLocked &&
-    !!inquiryStore.id
-)
+    !!inquiryStore.id,
+);
 </script>
 
 <template>

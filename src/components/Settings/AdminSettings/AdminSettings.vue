@@ -4,31 +4,31 @@
 -->
 
 <script setup>
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcAppSettingsDialog from "@nextcloud/vue/components/NcAppSettingsDialog";
 
-import AdminFamiliesManager from './AdminFamiliesManager.vue'
-import AdminTypesManager from './AdminTypesManager.vue'
-import AdminOptionFamiliesManager from './AdminOptionFamiliesManager.vue'
-import AdminOptionTypesManager from './AdminOptionTypesManager.vue'
-import AdminInquiryGroupTypesManager from './AdminInquiryGroupTypesManager.vue'
-import TypeSettingsModal from './TypeSettingsModal.vue'
+import AdminFamiliesManager from "./AdminFamiliesManager.vue";
+import AdminTypesManager from "./AdminTypesManager.vue";
+import AdminOptionFamiliesManager from "./AdminOptionFamiliesManager.vue";
+import AdminOptionTypesManager from "./AdminOptionTypesManager.vue";
+import AdminInquiryGroupTypesManager from "./AdminInquiryGroupTypesManager.vue";
+import TypeSettingsModal from "./TypeSettingsModal.vue";
 
 // ============================================================
 // STATE
 // ============================================================
 const domains = [
-  { id: 'inquiry', label: t('agora', 'Inquiry Families') },
-  { id: 'option', label: t('agora', 'Option Families') },
-]
+  { id: "inquiry", label: t("agora", "Inquiry Families") },
+  { id: "option", label: t("agora", "Option Families") },
+];
 
-const activeDomainId = ref('inquiry') // 'inquiry' | 'option'
-const selectedFamily = ref(null) // family object when drilled in
-const activeSubTab = ref('types') // 'types' | 'group-types'
-const selectedType = ref(null)
-const settingsModalOpen = ref(false)
+const activeDomainId = ref("inquiry"); // 'inquiry' | 'option'
+const selectedFamily = ref(null); // family object when drilled in
+const activeSubTab = ref("types"); // 'types' | 'group-types'
+const selectedType = ref(null);
+const settingsModalOpen = ref(false);
 
 // ============================================================
 // COMPUTED
@@ -36,58 +36,62 @@ const settingsModalOpen = ref(false)
 
 /** Sub-tabs available once a family is selected */
 const subTabs = computed(() => {
-  if (activeDomainId.value === 'inquiry') {
+  if (activeDomainId.value === "inquiry") {
     return [
-      { id: 'types', label: t('agora', 'Inquiry Types') },
-      { id: 'group-types', label: t('agora', 'Inquiry Group Types') },
-    ]
+      { id: "types", label: t("agora", "Inquiry Types") },
+      { id: "group-types", label: t("agora", "Inquiry Group Types") },
+    ];
   }
-  return [{ id: 'types', label: t('agora', 'Option Types') }]
-})
+  return [{ id: "types", label: t("agora", "Option Types") }];
+});
 
 /** Which component renders right now */
 const currentComponent = computed(() => {
   // Level 1 — no family selected → show family list
   if (!selectedFamily.value) {
-    return activeDomainId.value === 'inquiry' ? AdminFamiliesManager : AdminOptionFamiliesManager
+    return activeDomainId.value === "inquiry"
+      ? AdminFamiliesManager
+      : AdminOptionFamiliesManager;
   }
 
   // Level 2 — family selected → show sub-manager
-  if (activeDomainId.value === 'inquiry') {
-    return activeSubTab.value === 'group-types' ? AdminInquiryGroupTypesManager : AdminTypesManager
+  if (activeDomainId.value === "inquiry") {
+    return activeSubTab.value === "group-types"
+      ? AdminInquiryGroupTypesManager
+      : AdminTypesManager;
   }
-  return AdminOptionTypesManager
-})
+  return AdminOptionTypesManager;
+});
 
 // ============================================================
 // HANDLERS
 // ============================================================
 const switchDomain = (id) => {
-  if (activeDomainId.value === id) return
-  activeDomainId.value = id
-  selectedFamily.value = null
-  activeSubTab.value = 'types'
-}
+  if (activeDomainId.value === id) return;
+  activeDomainId.value = id;
+  selectedFamily.value = null;
+  activeSubTab.value = "types";
+};
 
 const handleFamilySelected = (family) => {
-  selectedFamily.value = family
-  activeSubTab.value = 'types' // always default to first sub-tab
-}
+  selectedFamily.value = family;
+  activeSubTab.value = "types"; // always default to first sub-tab
+};
 
 const goBackToFamilies = () => {
-  selectedFamily.value = null
-  activeSubTab.value = 'types'
-}
+  selectedFamily.value = null;
+  activeSubTab.value = "types";
+};
 
 const handleTypeSelected = (type) => {
-  selectedType.value = type
-  settingsModalOpen.value = true
-}
+  selectedType.value = type;
+  settingsModalOpen.value = true;
+};
 
 const handleSettingsModalClose = () => {
-  settingsModalOpen.value = false
-  selectedType.value = null
-}
+  settingsModalOpen.value = false;
+  selectedType.value = null;
+};
 </script>
 
 <template>
@@ -116,7 +120,7 @@ const handleSettingsModalClose = () => {
     <template v-if="selectedFamily">
       <div class="family-header">
         <NcButton @click="goBackToFamilies">
-          ← {{ t('agora', 'Back to families') }}
+          ← {{ t("agora", "Back to families") }}
         </NcButton>
         <div class="family-title">
           <h2>{{ selectedFamily.label || selectedFamily.family_type }}</h2>
@@ -162,7 +166,9 @@ const handleSettingsModalClose = () => {
     <NcAppSettingsDialog
       v-model:open="settingsModalOpen"
       :show-navigation="false"
-      :name="t('agora', 'Settings - {type}', { type: selectedType?.label || '' })"
+      :name="
+        t('agora', 'Settings - {type}', { type: selectedType?.label || '' })
+      "
       class="large-modal"
       @close="handleSettingsModalClose"
     >

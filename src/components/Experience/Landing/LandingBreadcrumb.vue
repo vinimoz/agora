@@ -16,7 +16,7 @@
         :is="Icons.Home"
         :size="14"
       />
-      <span>{{ t('agora', 'Home') }}</span>
+      <span>{{ t("agora", "Home") }}</span>
     </button>
 
     <template v-if="label">
@@ -30,22 +30,22 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
+import { useRouter } from "vue-router";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
 
 defineProps<{
   /**
    * Human-readable label of the current landing section.
    * Leave empty to show only the Home button.
    */
-  label?: string
-}>()
+  label?: string;
+}>();
 
-const router = useRouter()
+const router = useRouter();
 
 function goHome() {
-  router.push({ name: 'home' })
+  router.push({ name: "home" });
 }
 </script>
 

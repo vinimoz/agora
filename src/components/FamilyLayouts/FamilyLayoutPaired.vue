@@ -38,7 +38,9 @@
       <!-- Question at the top -->
       <div class="debate-question">
         <h2>{{ debateQuestion }}</h2>
-        <span class="debate-phase">{{ debatePhase || t('agora', 'Active') }}</span>
+        <span class="debate-phase">{{
+          debatePhase || t("agora", "Active")
+        }}</span>
       </div>
 
       <!-- Debate Axis with columns -->
@@ -60,8 +62,10 @@
               :size="20"
               class="for-icon"
             />
-            <h3>{{ getOptionTypeLabel('position_for') }}</h3>
-            <span class="column-count">{{ getOptionsByType('position_for').length }}</span>
+            <h3>{{ getOptionTypeLabel("position_for") }}</h3>
+            <span class="column-count">{{
+              getOptionsByType("position_for").length
+            }}</span>
           </div>
 
           <div class="column-content">
@@ -93,7 +97,7 @@
                 :is="InquiryOptionIcons.Plus"
                 :size="16"
               />
-              {{ t('agora', 'Add position') }}
+              {{ t("agora", "Add position") }}
             </button>
           </div>
         </div>
@@ -118,10 +122,12 @@
             </div>
             <div class="balance-stats">
               <span class="for-stats">{{
-                t('agora', '{count} for', { count: debateBalance.forCount })
+                t("agora", "{count} for", { count: debateBalance.forCount })
               }}</span>
               <span class="against-stats">{{
-                t('agora', '{count} against', { count: debateBalance.againstCount })
+                t("agora", "{count} against", {
+                  count: debateBalance.againstCount,
+                })
               }}</span>
             </div>
           </div>
@@ -161,7 +167,7 @@
                 :is="InquiryOptionIcons.Link"
                 :size="14"
               />
-              <span>{{ t('agora', 'Paired options') }}</span>
+              <span>{{ t("agora", "Paired options") }}</span>
             </div>
             <div class="paired-info-content">
               <div
@@ -169,13 +175,17 @@
                 :key="pair.left + pair.right"
                 class="pair-item"
               >
-                <span class="pair-left">{{ getOptionTypeLabel(pair.left) }}</span>
+                <span class="pair-left">{{
+                  getOptionTypeLabel(pair.left)
+                }}</span>
                 <component
                   :is="InquiryOptionIcons.SwapHorizontal"
                   :size="12"
                   class="pair-icon"
                 />
-                <span class="pair-right">{{ getOptionTypeLabel(pair.right) }}</span>
+                <span class="pair-right">{{
+                  getOptionTypeLabel(pair.right)
+                }}</span>
               </div>
             </div>
           </div>
@@ -198,8 +208,10 @@
               :size="20"
               class="against-icon"
             />
-            <h3>{{ getOptionTypeLabel('position_against') }}</h3>
-            <span class="column-count">{{ getOptionsByType('position_against').length }}</span>
+            <h3>{{ getOptionTypeLabel("position_against") }}</h3>
+            <span class="column-count">{{
+              getOptionsByType("position_against").length
+            }}</span>
           </div>
 
           <div class="column-content">
@@ -231,7 +243,7 @@
                 :is="InquiryOptionIcons.Plus"
                 :size="16"
               />
-              {{ t('agora', 'Add position') }}
+              {{ t("agora", "Add position") }}
             </button>
           </div>
         </div>
@@ -247,7 +259,7 @@
             :is="InquiryOptionIcons.Options"
             :size="16"
           />
-          <h4>{{ t('agora', 'Neutral options') }}</h4>
+          <h4>{{ t("agora", "Neutral options") }}</h4>
           <span class="unpaired-count">{{ unpairedOptions.length }}</span>
         </div>
         <div class="unpaired-grid">
@@ -290,12 +302,19 @@
             </button>
             <div class="expanded-title">
               <component
-                :is="getOptionTypeIconComponent(selectedOption.type, allFamilyOptionTypes)"
+                :is="
+                  getOptionTypeIconComponent(
+                    selectedOption.type,
+                    allFamilyOptionTypes,
+                  )
+                "
                 :size="16"
               />
               <h4>{{ getOptionLabel(selectedOption) }}</h4>
             </div>
-            <span class="expanded-type">{{ getOptionTypeLabel(selectedOption.type) }}</span>
+            <span class="expanded-type">{{
+              getOptionTypeLabel(selectedOption.type)
+            }}</span>
           </div>
 
           <div class="expanded-body">
@@ -321,8 +340,10 @@
                   :is="InquiryOptionIcons.MessageReplyText"
                   :size="14"
                 />
-                <span>{{ t('agora', 'Arguments & responses') }}</span>
-                <span class="child-count">{{ getChildrenCount(selectedOption.id) }}</span>
+                <span>{{ t("agora", "Arguments & responses") }}</span>
+                <span class="child-count">{{
+                  getChildrenCount(selectedOption.id)
+                }}</span>
               </div>
               <div class="child-grid">
                 <div
@@ -356,7 +377,7 @@
                     :size="14"
                   />
                 </template>
-                {{ t('agora', 'Add argument') }}
+                {{ t("agora", "Add argument") }}
               </NcButton>
             </div>
           </div>
@@ -379,7 +400,7 @@
               :is="InquiryOptionIcons.List"
               :size="18"
             />
-            <h4>{{ t('agora', 'Debate Tree') }}</h4>
+            <h4>{{ t("agora", "Debate Tree") }}</h4>
           </div>
 
           <div class="nav-tree">
@@ -410,7 +431,7 @@
                 {{
                   selectedOption
                     ? getOptionLabel(selectedOption)
-                    : t('agora', 'Select an option to inspect')
+                    : t("agora", "Select an option to inspect")
                 }}
               </h4>
             </div>
@@ -424,7 +445,12 @@
               <!-- Type badge -->
               <div class="option-type-badge">
                 <component
-                  :is="getOptionTypeIconComponent(selectedOption.type, allFamilyOptionTypes)"
+                  :is="
+                    getOptionTypeIconComponent(
+                      selectedOption.type,
+                      allFamilyOptionTypes,
+                    )
+                  "
                   :size="14"
                 />
                 <span>{{ getOptionTypeLabel(selectedOption.type) }}</span>
@@ -486,7 +512,7 @@
                       :size="14"
                     />
                   </template>
-                  {{ t('agora', 'Add argument') }}
+                  {{ t("agora", "Add argument") }}
                 </NcButton>
               </div>
             </template>
@@ -499,7 +525,7 @@
                 :is="InquiryOptionIcons.ArrowRight"
                 :size="32"
               />
-              <p>{{ t('agora', 'Click an item in the debate tree') }}</p>
+              <p>{{ t("agora", "Click an item in the debate tree") }}</p>
             </div>
           </div>
         </div>
@@ -515,8 +541,8 @@
     >
       <div class="map-container">
         <div class="map-header">
-          <h3>{{ t('agora', 'Argument Map') }}</h3>
-          <p>{{ t('agora', 'Hover for details, click to navigate') }}</p>
+          <h3>{{ t("agora", "Argument Map") }}</h3>
+          <p>{{ t("agora", "Hover for details, click to navigate") }}</p>
         </div>
 
         <div class="map-canvas">
@@ -537,19 +563,27 @@
                     'for-node': option.type === 'position_for',
                     'against-node': option.type === 'position_against',
                     'neutral-node':
-                      option.type !== 'position_for' && option.type !== 'position_against',
+                      option.type !== 'position_for' &&
+                      option.type !== 'position_against',
                     selected: selectedOptionId === option.id,
                   }"
                   @click="selectOption(option)"
                 >
                   <div class="node-content">
                     <component
-                      :is="getOptionTypeIconComponent(option.type, allFamilyOptionTypes)"
+                      :is="
+                        getOptionTypeIconComponent(
+                          option.type,
+                          allFamilyOptionTypes,
+                        )
+                      "
                       :size="16"
                       class="node-icon"
                     />
                     <span class="node-label">{{ getOptionLabel(option) }}</span>
-                    <span class="node-type">{{ getOptionTypeLabel(option.type) }}</span>
+                    <span class="node-type">{{
+                      getOptionTypeLabel(option.type)
+                    }}</span>
                     <span
                       v-if="getChildrenCount(option.id) > 0"
                       class="node-badge"
@@ -596,14 +630,20 @@
                       class="map-grandchildren"
                     >
                       <div
-                        v-for="grandchild in getChildrenForOption(child.id).slice(0, 3)"
+                        v-for="grandchild in getChildrenForOption(
+                          child.id,
+                        ).slice(0, 3)"
                         :key="grandchild.id"
                         class="map-node grandchild-node"
-                        :class="{ selected: selectedOptionId === grandchild.id }"
+                        :class="{
+                          selected: selectedOptionId === grandchild.id,
+                        }"
                         @click.stop="selectOption(grandchild)"
                       >
                         <div class="node-content tiny">
-                          <span class="node-label">{{ getOptionLabel(grandchild) }}</span>
+                          <span class="node-label">{{
+                            getOptionLabel(grandchild)
+                          }}</span>
                         </div>
                       </div>
                       <div
@@ -627,9 +667,9 @@
                 :is="InquiryOptionIcons.Graph"
                 :size="48"
               />
-              <p>{{ t('agora', 'No options to display') }}</p>
+              <p>{{ t("agora", "No options to display") }}</p>
               <span class="map-hint">{{
-                t('agora', 'Add an option to start building the argument map')
+                t("agora", "Add an option to start building the argument map")
               }}</span>
             </div>
           </div>
@@ -638,23 +678,23 @@
         <div class="map-legend">
           <div class="legend-item">
             <span class="legend-color position-for" />
-            <span>{{ getOptionTypeLabel('position_for') }}</span>
+            <span>{{ getOptionTypeLabel("position_for") }}</span>
           </div>
           <div class="legend-item">
             <span class="legend-color position-against" />
-            <span>{{ getOptionTypeLabel('position_against') }}</span>
+            <span>{{ getOptionTypeLabel("position_against") }}</span>
           </div>
           <div class="legend-item">
             <span class="legend-color neutral" />
-            <span>{{ t('agora', 'Other options') }}</span>
+            <span>{{ t("agora", "Other options") }}</span>
           </div>
           <div class="legend-item">
             <span class="legend-color child" />
-            <span>{{ t('agora', 'Arguments / Children') }}</span>
+            <span>{{ t("agora", "Arguments / Children") }}</span>
           </div>
           <div class="legend-item">
             <span class="legend-color selected" />
-            <span>{{ t('agora', 'Selected') }}</span>
+            <span>{{ t("agora", "Selected") }}</span>
           </div>
         </div>
       </div>
@@ -663,83 +703,89 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import ItemCard from './ItemCard.vue'
-import DebateHeader from './DebateHeader.vue'
-import DebateToolbar from './DebateToolbar.vue'
-import DebateTreeNode from './DebateTreeNode.vue'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import ItemCard from "./ItemCard.vue";
+import DebateHeader from "./DebateHeader.vue";
+import DebateToolbar from "./DebateToolbar.vue";
+import DebateTreeNode from "./DebateTreeNode.vue";
 import {
   getOptionTypeIconComponent,
   getOptionTypeLabel,
   detectPairedOptionTypes,
   getRootOptionTypesForFamily,
   getOptionTypesForFamily,
-} from '../../helpers/modules/InquiryOptionHelper'
-import type { InquiryOptionType, Option, OptionFamily } from '../../Types/index.ts'
-import type { Item } from '../../Types/index.ts'
-import { getItemsForFamily } from '../../helpers/modules/itemHelpers'
+} from "../../helpers/modules/InquiryOptionHelper";
+import type {
+  InquiryOptionType,
+  Option,
+  OptionFamily,
+} from "../../Types/index.ts";
+import type { Item } from "../../Types/index.ts";
+import { getItemsForFamily } from "../../helpers/modules/itemHelpers";
 
 // ============================================
 // Props
 // ============================================
 
 const props = defineProps<{
-  items: Item[]
-  parentId: number
-  targetType: 'option' | 'inquiry'
-  optionTypes: InquiryOptionType[]
-  familyOptionTypes?: InquiryOptionType[]
-  family?: OptionFamily | null
-  familyKey?: string
-  isReadonly?: boolean
-  appSettings?: Record<string, unknown>
+  items: Item[];
+  parentId: number;
+  targetType: "option" | "inquiry";
+  optionTypes: InquiryOptionType[];
+  familyOptionTypes?: InquiryOptionType[];
+  family?: OptionFamily | null;
+  familyKey?: string;
+  isReadonly?: boolean;
+  appSettings?: Record<string, unknown>;
   // keep these debate-specific props
-  debateQuestion?: string
-  debateStatus?: string
-  debatePhase?: string
-}>()
+  debateQuestion?: string;
+  debateStatus?: string;
+  debatePhase?: string;
+}>();
 
 // ============================================
 const emit = defineEmits<{
-  addOption: [optionType: string, parentId?: number]
-  openDetail: [item: Item]
-}>()
+  addOption: [optionType: string, parentId?: number];
+  openDetail: [item: Item];
+}>();
 
 // ============================================
 // State
 // ============================================
 
-const currentView = ref<'canvas' | 'explore' | 'map'>('canvas')
-const cardDisplayMode = ref<'normal' | 'compact' | 'list'>('normal')
-const selectedOptionId = ref<number | null>(null)
-const expandedOptionId = ref<number | null>(null)
+const currentView = ref<"canvas" | "explore" | "map">("canvas");
+const cardDisplayMode = ref<"normal" | "compact" | "list">("normal");
+const selectedOptionId = ref<number | null>(null);
+const expandedOptionId = ref<number | null>(null);
 
 // Navigation history
-const navigationHistory = ref<Array<number>>([])
-const showBackButton = computed(() => navigationHistory.value.length > 0)
+const navigationHistory = ref<Array<number>>([]);
+const showBackButton = computed(() => navigationHistory.value.length > 0);
 
 // ============================================
 // Get ALL option types for this family (for icon lookups, child creation)
 // ============================================
 
-const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+const familyKey = computed(
+  () => props.familyKey ?? props.family?.family_type ?? "",
+);
 
 const familyOptions = computed(() => {
-  const key = familyKey.value
-  let list = key ? getItemsForFamily(props.items, key) : props.items
-  if (!list.length && props.items.length) list = props.items
-  return list
-})
+  const key = familyKey.value;
+  let list = key ? getItemsForFamily(props.items, key) : props.items;
+  if (!list.length && props.items.length) list = props.items;
+  return list;
+});
 
 const allFamilyOptionTypes = computed(() =>
   getOptionTypesForFamily(
-    props.familyKey || props.family?.family_type || 'debate',
-    props.familyOptionTypes
-  )
-)
+    props.familyKey || props.family?.family_type || "debate",
+    props.familyOptionTypes,
+  ),
+);
 
 // ============================================
 // Root Option Types - computed from familyOptionTypes
@@ -748,25 +794,37 @@ const allFamilyOptionTypes = computed(() =>
 const rootOptionTypes = computed(() =>
   getRootOptionTypesForFamily(
     allFamilyOptionTypes.value,
-    props.familyKey ?? props.family?.family_type
-  )
-)
+    props.familyKey ?? props.family?.family_type,
+  ),
+);
 
 // ============================================
 // Views Configuration
 // ============================================
 
 const availableViews = [
-  { key: 'canvas', label: t('agora', 'Debate'), icon: InquiryOptionIcons.Scale },
-  { key: 'explore', label: t('agora', 'Explore'), icon: InquiryOptionIcons.Columns },
-  { key: 'map', label: t('agora', 'Map'), icon: InquiryOptionIcons.Graph },
-] as const
+  {
+    key: "canvas",
+    label: t("agora", "Debate"),
+    icon: InquiryOptionIcons.Scale,
+  },
+  {
+    key: "explore",
+    label: t("agora", "Explore"),
+    icon: InquiryOptionIcons.Columns,
+  },
+  { key: "map", label: t("agora", "Map"), icon: InquiryOptionIcons.Graph },
+] as const;
 
 const displayModes = [
-  { key: 'normal', label: t('agora', 'Normal'), icon: InquiryOptionIcons.Grid },
-  { key: 'compact', label: t('agora', 'Compact'), icon: InquiryOptionIcons.Collapse },
-  { key: 'list', label: t('agora', 'List'), icon: InquiryOptionIcons.List },
-] as const
+  { key: "normal", label: t("agora", "Normal"), icon: InquiryOptionIcons.Grid },
+  {
+    key: "compact",
+    label: t("agora", "Compact"),
+    icon: InquiryOptionIcons.Collapse,
+  },
+  { key: "list", label: t("agora", "List"), icon: InquiryOptionIcons.List },
+] as const;
 
 // ============================================
 // Computed - Core Data
@@ -774,35 +832,44 @@ const displayModes = [
 
 // Detect paired option types
 const detectedPairs = computed(() =>
-  detectPairedOptionTypes(props.optionTypes, props.familyKey ?? props.family?.family_type)
-)
+  detectPairedOptionTypes(
+    props.optionTypes,
+    props.familyKey ?? props.family?.family_type,
+  ),
+);
 
-const hasDetectedPairs = computed(() => detectedPairs.value.length > 0)
+const hasDetectedPairs = computed(() => detectedPairs.value.length > 0);
 
 // Check if FOR and AGAINST positions exist
-const hasForPositions = computed(() => getOptionsByType('position_for').length > 0)
-const hasAgainstPositions = computed(() => getOptionsByType('position_against').length > 0)
+const hasForPositions = computed(
+  () => getOptionsByType("position_for").length > 0,
+);
+const hasAgainstPositions = computed(
+  () => getOptionsByType("position_against").length > 0,
+);
 
 // Check if user can add positions
 const canAddForPosition = computed(() =>
-  rootOptionTypes.value.some((t) => t.option_type === 'position_for')
-)
+  rootOptionTypes.value.some((t) => t.option_type === "position_for"),
+);
 
 const canAddAgainstPosition = computed(() =>
-  rootOptionTypes.value.some((t) => t.option_type === 'position_against')
-)
+  rootOptionTypes.value.some((t) => t.option_type === "position_against"),
+);
 
 // Root options (parentId === 0 or undefined)
 const rootOptions = computed(() =>
-  familyOptions.value.filter((opt) => !opt.parentId || opt.parentId === 0)
-)
+  familyOptions.value.filter((opt) => !opt.parentId || opt.parentId === 0),
+);
 
 // Unpaired options (everything else)
 const unpairedOptions = computed(() =>
-  rootOptions.value.filter((opt) => opt.type !== 'position_for' && opt.type !== 'position_against')
-)
+  rootOptions.value.filter(
+    (opt) => opt.type !== "position_for" && opt.type !== "position_against",
+  ),
+);
 
-const hasUnpairedOptions = computed(() => unpairedOptions.value.length > 0)
+const hasUnpairedOptions = computed(() => unpairedOptions.value.length > 0);
 
 // ============================================
 // Debate Metrics
@@ -811,118 +878,135 @@ const hasUnpairedOptions = computed(() => unpairedOptions.value.length > 0)
 // The bar counts positions written on each side, not supporters, so the
 // labels show those counts rather than a percentage.
 const debateBalance = computed(() => {
-  const forPositions = getOptionsByType('position_for')
-  const againstPositions = getOptionsByType('position_against')
-  const total = forPositions.length + againstPositions.length || 1
+  const forPositions = getOptionsByType("position_for");
+  const againstPositions = getOptionsByType("position_against");
+  const total = forPositions.length + againstPositions.length || 1;
 
   return {
     for: Math.round((forPositions.length / total) * 100),
     against: Math.round((againstPositions.length / total) * 100),
     forCount: forPositions.length,
     againstCount: againstPositions.length,
-  }
-})
+  };
+});
 
 const debateMetrics = computed(() => {
-  const allChildren = familyOptions.value.filter((opt) => opt.parentId && opt.parentId > 0)
-  const objections = familyOptions.value.filter((opt) => opt.type === 'objection')
+  const allChildren = familyOptions.value.filter(
+    (opt) => opt.parentId && opt.parentId > 0,
+  );
+  const objections = familyOptions.value.filter(
+    (opt) => opt.type === "objection",
+  );
 
   return {
     participants: new Set(familyOptions.value.map((opt) => opt.owner?.id)).size,
     arguments: allChildren.length,
     objections: objections.length,
-  }
-})
+  };
+});
 
 // ============================================
 // Option Tree for Explore View
 // ============================================
 
 interface OptionNode extends Option {
-  depth: number
-  children: OptionNode[]
+  depth: number;
+  children: OptionNode[];
 }
 
-const buildOptionTree = (parentId: number | null = null, depth: number = 0): OptionNode[] => {
+const buildOptionTree = (
+  parentId: number | null = null,
+  depth: number = 0,
+): OptionNode[] => {
   // Find children of the current parent
   const children = familyOptions.value.filter((opt) => {
     // Normalize parentId to number for comparison
-    const optParentId = typeof opt.parentId === 'string' ? parseInt(opt.parentId, 10) : opt.parentId
+    const optParentId =
+      typeof opt.parentId === "string"
+        ? parseInt(opt.parentId, 10)
+        : opt.parentId;
 
     if (parentId === null) {
       // Root level: include options with no parent (null, undefined, 0, or '0')
-      return optParentId === null || optParentId === undefined || optParentId === 0
+      return (
+        optParentId === null || optParentId === undefined || optParentId === 0
+      );
     }
     // Child level: exact match
-    return optParentId === parentId
-  })
+    return optParentId === parentId;
+  });
 
   return children.map((opt) => ({
     ...opt,
     depth,
     children: buildOptionTree(opt.id, depth + 1),
-  }))
-}
+  }));
+};
 
-const optionTree = computed(() => buildOptionTree(null))
+const optionTree = computed(() => buildOptionTree(null));
 
 // ============================================
 // Helper Functions
 // ============================================
 
 const getOptionsByType = (type: string): Item[] =>
-  familyOptions.value.filter((i) => i.type === type)
+  familyOptions.value.filter((i) => i.type === type);
 
 const getOptionLabel = (item: Item | null): string => {
-  if (!item) return ''
-  return item.title || getOptionTypeLabel(item.type, allFamilyOptionTypes.value)
-}
+  if (!item) return "";
+  return (
+    item.title || getOptionTypeLabel(item.type, allFamilyOptionTypes.value)
+  );
+};
 
 const getChildrenForOption = (optionId: number): Item[] => {
-  const item = familyOptions.value.find((i) => i.id === optionId)
-  if (!item) return []
+  const item = familyOptions.value.find((i) => i.id === optionId);
+  if (!item) return [];
 
-  const typeDef = props.optionTypes.find((t) => t.option_type === item.type)
-  if (!typeDef) return []
+  const typeDef = props.optionTypes.find((t) => t.option_type === item.type);
+  if (!typeDef) return [];
 
-  let allowedChildTypes: string[] = []
-  if (typeof typeDef.allowed_response === 'string') {
+  let allowedChildTypes: string[] = [];
+  if (typeof typeDef.allowed_response === "string") {
     try {
-      const parsed = JSON.parse(typeDef.allowed_response)
-      if (Array.isArray(parsed)) allowedChildTypes = parsed
+      const parsed = JSON.parse(typeDef.allowed_response);
+      if (Array.isArray(parsed)) allowedChildTypes = parsed;
     } catch {
       /* ignore */
     }
   } else if (Array.isArray(typeDef.allowed_response)) {
-    allowedChildTypes = typeDef.allowed_response
+    allowedChildTypes = typeDef.allowed_response;
   }
 
-  if (allowedChildTypes.length === 0) return []
+  if (allowedChildTypes.length === 0) return [];
 
   return familyOptions.value.filter(
-    (i) => i.parentId === optionId && allowedChildTypes.includes(i.type)
-  )
-}
+    (i) => i.parentId === optionId && allowedChildTypes.includes(i.type),
+  );
+};
 
 const selectedOption = computed<Item | null>(() => {
-  if (!selectedOptionId.value) return null
-  return familyOptions.value.find((i) => i.id === selectedOptionId.value) || null
-})
+  if (!selectedOptionId.value) return null;
+  return (
+    familyOptions.value.find((i) => i.id === selectedOptionId.value) || null
+  );
+});
 
-const getChildrenCount = (optionId: number): number => getChildrenForOption(optionId).length
+const getChildrenCount = (optionId: number): number =>
+  getChildrenForOption(optionId).length;
 
 const groupedChildren = computed(() => {
-  if (!selectedOptionId.value) return {}
-  const children = getChildrenForOption(selectedOptionId.value)
-  const groups: Record<string, Option[]> = {}
+  if (!selectedOptionId.value) return {};
+  const children = getChildrenForOption(selectedOptionId.value);
+  const groups: Record<string, Option[]> = {};
   for (const child of children) {
     if (!groups[child.type]) {
-      groups[child.type] = []
+      groups[child.type] = [];
     }
-    groups[child.type].push(child)
+    groups[child.type].push(child);
   }
-  return groups
-})
+  return groups;
+});
 
 // ============================================
 // Navigation Methods
@@ -931,90 +1015,90 @@ const selectOption = (option: Option) => {
   if (selectedOptionId.value === option.id) {
     // If already selected, toggle expanded view
     if (expandedOptionId.value === option.id) {
-      closeExpandedView()
+      closeExpandedView();
     } else {
-      expandedOptionId.value = option.id
+      expandedOptionId.value = option.id;
     }
-    return
+    return;
   }
 
   if (selectedOptionId.value) {
-    navigationHistory.value.push(selectedOptionId.value)
+    navigationHistory.value.push(selectedOptionId.value);
   }
-  selectedOptionId.value = option.id
-  expandedOptionId.value = option.id
-}
+  selectedOptionId.value = option.id;
+  expandedOptionId.value = option.id;
+};
 
 const closeExpandedView = () => {
-  expandedOptionId.value = null
-}
+  expandedOptionId.value = null;
+};
 
 const goBack = () => {
-  const last = navigationHistory.value.pop()
+  const last = navigationHistory.value.pop();
   if (last) {
-    selectedOptionId.value = last
-    expandedOptionId.value = last
+    selectedOptionId.value = last;
+    expandedOptionId.value = last;
   }
-}
+};
 
 const openDetail = (option: Option) => {
-  emit('openDetail', option)
-}
+  emit("openDetail", option);
+};
 
 // ============================================
 // Action Methods
 // ============================================
 
 const canAddChild = (option: Option) => {
-  const typeDef = props.optionTypes.find((t) => t.option_type === option.type)
-  if (!typeDef) return false
+  const typeDef = props.optionTypes.find((t) => t.option_type === option.type);
+  if (!typeDef) return false;
 
-  let allowedResponses: string[] = []
-  if (typeof typeDef.allowed_response === 'string') {
+  let allowedResponses: string[] = [];
+  if (typeof typeDef.allowed_response === "string") {
     try {
-      const parsed = JSON.parse(typeDef.allowed_response)
+      const parsed = JSON.parse(typeDef.allowed_response);
       if (Array.isArray(parsed)) {
-        allowedResponses = parsed
+        allowedResponses = parsed;
       }
     } catch {
       // ignore
     }
   } else if (Array.isArray(typeDef.allowed_response)) {
-    allowedResponses = typeDef.allowed_response
+    allowedResponses = typeDef.allowed_response;
   }
-  return allowedResponses.length > 0
-}
+  return allowedResponses.length > 0;
+};
 
 const openAddOptionDialog = (type: string, parentId?: number) => {
-  emit('addOption', type, parentId)
-}
+  emit("addOption", type, parentId);
+};
 
 const addResponse = (option: Option) => {
-  const typeDef = props.optionTypes.find((t) => t.option_type === option.type)
-  if (!typeDef) return
+  const typeDef = props.optionTypes.find((t) => t.option_type === option.type);
+  if (!typeDef) return;
 
-  let allowedResponses: string[] = []
-  if (typeof typeDef.allowed_response === 'string') {
+  let allowedResponses: string[] = [];
+  if (typeof typeDef.allowed_response === "string") {
     try {
-      const parsed = JSON.parse(typeDef.allowed_response)
+      const parsed = JSON.parse(typeDef.allowed_response);
       if (Array.isArray(parsed)) {
-        allowedResponses = parsed
+        allowedResponses = parsed;
       }
     } catch {
       // ignore
     }
   } else if (Array.isArray(typeDef.allowed_response)) {
-    allowedResponses = typeDef.allowed_response
+    allowedResponses = typeDef.allowed_response;
   }
 
-  const childType = allowedResponses[0] || ''
+  const childType = allowedResponses[0] || "";
   if (childType) {
     // Emit to parent
-    emit('addOption', childType, option.id)
+    emit("addOption", childType, option.id);
   }
-}
+};
 
-console.log(' ITEMS IN PAIRED ', props.items)
+console.log(" ITEMS IN PAIRED ", props.items);
 </script>
 
 <style scoped lang="scss">
@@ -1791,7 +1875,7 @@ $neutral-color: #6c757d;
               pointer-events: none;
 
               &::after {
-                content: '';
+                content: "";
                 position: absolute;
                 top: 100%;
                 left: 50%;

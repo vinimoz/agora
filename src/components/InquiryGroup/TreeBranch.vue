@@ -69,7 +69,9 @@
         </div>
         <div class="node-meta">
           <span class="node-type-label">{{ getTypeLabel(node.type) }}</span>
-          <span class="node-author">{{ node.owner?.displayName || node.ownedGroup }}</span>
+          <span class="node-author">{{
+            node.owner?.displayName || node.ownedGroup
+          }}</span>
           <span class="node-date">{{ formatTime(node.status?.created) }}</span>
         </div>
       </div>
@@ -85,7 +87,7 @@
         :key="child.id"
         :node="child"
         :depth="depth + 1"
-        :expanded="isChildExpanded(child.id)"
+        :expanded="isChildExpanded()"
         :selected-id="selectedId"
         @toggle="emit('toggle', $event)"
         @select="emit('select', $event)"
@@ -95,72 +97,70 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { Inquiry } from '../../Types'
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { Inquiry } from "../../Types";
 
 const props = defineProps<{
-  node: Inquiry & { children: Inquiry[] }
-  depth: number
-  expanded: boolean
-  selectedId: number | null
-}>()
+  node: Inquiry & { children: Inquiry[] };
+  depth: number;
+  expanded: boolean;
+  selectedId: number | null;
+}>();
 
 const emit = defineEmits<{
-  toggle: [id: number]
-  select: [node: Inquiry]
-}>()
+  toggle: [id: number];
+  select: [node: Inquiry];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 function getTypeIcon(type: string) {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const data = getInquiryTypeData(type, types)
-  return data?.icon || Icons.FolderMultiple
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const data = getInquiryTypeData(type, types);
+  return data?.icon || Icons.FolderMultiple;
 }
 
 function getTypeLabel(type: string): string {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const data = getInquiryTypeData(type, types)
-  return data?.label || type || 'Unknown'
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const data = getInquiryTypeData(type, types);
+  return data?.label || type || "Unknown";
 }
 
 function getTypeClass(type: string): string {
-  return `type-${type?.toLowerCase() || 'default'}`
+  return `type-${type?.toLowerCase() || "default"}`;
 }
 
-function isChildExpanded(id: number): boolean {
+function isChildExpanded(): boolean {
   // Children expansion state is managed by parent via expandedNodes Set
-  return false // This will be overridden by the parent's expanded state
+  return false; // This will be overridden by the parent's expanded state
 }
 
 function truncateText(text: string, max: number): string {
-  if (!text) return ''
-  if (text.length <= max) return text
-  return `${text.substring(0, max)}…`
+  if (!text) return "";
+  if (text.length <= max) return text;
+  return `${text.substring(0, max)}…`;
 }
 
 function stripHtml(html: string): string {
-  if (!html) return ''
-  const div = document.createElement('div')
-  div.innerHTML = html
-  return div.textContent || div.innerText || ''
+  if (!html) return "";
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
 }
 
 function formatTime(timestamp?: number): string {
-  if (!timestamp) return ''
+  if (!timestamp) return "";
   try {
-    return new Date(timestamp * 1000).toLocaleDateString()
+    return new Date(timestamp * 1000).toLocaleDateString();
   } catch {
-    return ''
+    return "";
   }
 }
 
 function handleClick() {
-  emit('select', props.node)
+  emit("select", props.node);
 }
 </script>
 

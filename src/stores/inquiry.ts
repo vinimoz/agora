@@ -2,88 +2,77 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { defineStore } from 'pinia'
-import domPurify from 'dompurify'
-import { marked } from 'marked'
-import { gfmHeadingId } from 'marked-gfm-heading-id'
-import { t } from '@nextcloud/l10n'
-import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { AxiosError } from '@nextcloud/axios'
-import { Logger } from '../helpers/index.ts'
-import { PublicAPI, InquiriesAPI } from '../Api/index.ts'
+import { defineStore } from "pinia";
+import domPurify from "dompurify";
+import { marked } from "marked";
+import { gfmHeadingId } from "marked-gfm-heading-id";
+import { t } from "@nextcloud/l10n";
+import { showError } from "@nextcloud/dialogs";
+import { emit } from "@nextcloud/event-bus";
+import { AxiosError } from "@nextcloud/axios";
+import { Logger } from "../helpers/index.ts";
+import { PublicAPI, InquiriesAPI } from "../Api/index.ts";
 import {
-  Chunking,
   createDefault,
   Event,
-  StatusResults,
   User,
   UserType,
-  SupportResult,
-  SupportEngine,
-} from '../Types/index.ts'
+} from "../Types/index.ts";
 
-import { useInquiriesStore } from './inquiries.ts'
-import { useSessionStore } from './session.ts'
-import { useOptionsStore } from './options.ts'
-import { useSubscriptionStore } from './subscription.ts'
-import { useSharesStore } from './shares.ts'
-import { useSupportsStore } from './supports.ts'
-import { useCommentsStore } from './comments.ts'
-import { useSupportEngineStore } from './supportEngine.ts'
-import { useAttachmentsStore } from './attachments.ts'
-import { useAppSettingsStore } from '../stores/appSettings.ts'
-import { useSupportResultStore } from './supportResult.ts'
+import { useInquiriesStore } from "./inquiries.ts";
+import { useSessionStore } from "./session.ts";
+import { useOptionsStore } from "./options.ts";
+import { useSubscriptionStore } from "./subscription.ts";
+import { useSharesStore } from "./shares.ts";
+import { useSupportsStore } from "./supports.ts";
+import { useCommentsStore } from "./comments.ts";
+import { useSupportEngineStore } from "./supportEngine.ts";
+import { useAttachmentsStore } from "./attachments.ts";
+import { useAppSettingsStore } from "../stores/appSettings.ts";
+import { useSupportResultStore } from "./supportResult.ts";
 
 import type {
   Inquiry,
-  InquiryStatus,
-  InquiryConfiguration,
-  InquiryPermissions,
-  CurrentUserStatus,
-  InquiryMeta,
   VisibilityType,
-  PublicationStatus,
   ModerationWorkflowStatus,
   InquiryWorkflowStatus,
-  SortParticipants,
-} from '@/Types'
+} from "@/Types";
 
 const markedPrefix = {
-  prefix: 'desc-',
-}
+  prefix: "desc-",
+};
 
-export const useInquiryStore = defineStore('inquiry', {
+export const useInquiryStore = defineStore("inquiry", {
   state: (): Inquiry => ({
     id: 0,
-    type: 'proposal',
-    family: '',
+    type: "proposal",
+    family: "",
     coverId: 0,
-    title: '',
-    description: '',
-    descriptionSafe: '',
+    title: "",
+    description: "",
+    descriptionSafe: "",
     parentId: null,
     locationId: 0,
     categoryId: 0,
     owner: createDefault<User>(),
-    ownedGroup: '',
+    ownedGroup: "",
     inquiryGroups: [],
     childs: [],
     miscFields: {},
     configuration: {
-      visibility: 'private',
+      visibility: "private",
       autoReminder: false,
       expire: 0,
       forceConfidentialComments: false,
       allowComment: null,
-      supportFeature: 'none',
+      supportFeature: "none",
       supportEngine: [],
       visibilityGroups: [],
       visibilityUsers: [],
     },
     status: {
-      moderationStatus: 'draft',
-      inquiryStatus: 'draft',
+      moderationStatus: "draft",
+      inquiryStatus: "draft",
       lastInteraction: 0,
       created: 0,
       isAnonymous: false,
@@ -96,7 +85,7 @@ export const useInquiryStore = defineStore('inquiry', {
       countParticipants: 0,
       countComments: 0,
       countSupports: 0,
-      publicationStatus: 'draft',
+      publicationStatus: "draft",
       trendingScore: 0,
     },
     currentUserStatus: {
@@ -108,9 +97,9 @@ export const useInquiryStore = defineStore('inquiry', {
       isLocked: false,
       isLoggedIn: false,
       isOwner: false,
-      shareToken: '',
-      userId: '',
-      userRole: '' as UserType,
+      shareToken: "",
+      userId: "",
+      userRole: "" as UserType,
       countInquiries: 0,
       orphanedInquiries: 0,
     },
@@ -136,13 +125,13 @@ export const useInquiryStore = defineStore('inquiry', {
       clone: false,
     },
     revealParticipants: false,
-    sortParticipants: 'alphabetical',
+    sortParticipants: "alphabetical",
     meta: {
       chunking: {
         size: 0,
         loaded: 0,
       },
-      status: 'loaded',
+      status: "loaded",
     },
   }),
 
@@ -172,30 +161,30 @@ export const useInquiryStore = defineStore('inquiry', {
         revealParticipants: this.revealParticipants,
         sortParticipants: this.sortParticipants,
         meta: this.meta,
-      }
+      };
     },
 
     isConfirmationAllowed(state): boolean {
-      return state.permissions.confirmOptions || !this.isClosed
+      return state.permissions.confirmOptions || !this.isClosed;
     },
 
     isOptionCloneAllowed(state): boolean {
-      return !this.isClosed && state.permissions.edit
+      return !this.isClosed && state.permissions.edit;
     },
 
     // In the getters section, replace the isClosed getter with:y
 
     isClosed(state): boolean {
-      const now = Math.floor(Date.now() / 1000)
-      const expire = state.configuration?.expire ?? 0
-      return state.status.isExpired || (expire > 0 && expire < now)
+      const now = Math.floor(Date.now() / 1000);
+      const expire = state.configuration?.expire ?? 0;
+      return state.status.isExpired || (expire > 0 && expire < now);
     },
 
     isGroupRestricted(state): boolean {
       return (
-        state.configuration.visibility === 'groups' &&
+        state.configuration.visibility === "groups" &&
         (state.configuration.visibilityGroups?.length ?? 0) > 0
-      )
+      );
     },
 
     /**
@@ -205,244 +194,261 @@ export const useInquiryStore = defineStore('inquiry', {
      */
 
     isCurrentUserInAnyVisibilityGroup(): boolean {
-      const groups = this.configuration.visibilityGroups ?? []
-      if (groups.length === 0) return true
-      const userGroups = useSessionStore().currentUser?.groups ?? []
-      return groups.some((g) => userGroups.includes(g))
+      const groups = this.configuration.visibilityGroups ?? [];
+      if (groups.length === 0) return true;
+      const userGroups = useSessionStore().currentUser?.groups ?? [];
+      return groups.some((g) => userGroups.includes(g));
     },
 
     descriptionMarkDown(state): string {
-      marked.use(gfmHeadingId(markedPrefix))
-      return domPurify.sanitize(marked.parse(state.description).toString())
+      marked.use(gfmHeadingId(markedPrefix));
+      return domPurify.sanitize(marked.parse(state.description).toString());
     },
   },
 
   actions: {
     syncToCollectionStore(): void {
-      if (this.id === 0) return
-      const inquiriesStore = useInquiriesStore()
-      inquiriesStore.addInquiryToStore(this.inquiryData)
+      if (this.id === 0) return;
+      const inquiriesStore = useInquiriesStore();
+      inquiriesStore.addInquiryToStore(this.inquiryData);
     },
 
     syncDeletionToCollectionStore(): void {
-      if (this.id === 0) return
-      const inquiriesStore = useInquiriesStore()
-      inquiriesStore.inquiries = inquiriesStore.inquiries.filter((i) => i.id !== this.id)
+      if (this.id === 0) return;
+      const inquiriesStore = useInquiriesStore();
+      inquiriesStore.inquiries = inquiriesStore.inquiries.filter(
+        (i) => i.id !== this.id,
+      );
     },
 
     reset(): void {
-      this.$reset()
+      this.$reset();
     },
 
     updateCommentCount(count: number): void {
       if (this.status) {
-        this.status.countComments = count
+        this.status.countComments = count;
       }
     },
 
     async resetInquiry(): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
-      const sharesStore = useSharesStore()
-      const commentsStore = useCommentsStore()
-      const optionsStore = useOptionsStore()
-      const supportsStore = useSupportsStore()
-      const subscriptionStore = useSubscriptionStore()
+      const inquiriesStore = useInquiriesStore();
+      const sharesStore = useSharesStore();
+      const commentsStore = useCommentsStore();
+      const optionsStore = useOptionsStore();
+      const supportsStore = useSupportsStore();
+      const subscriptionStore = useSubscriptionStore();
 
-      this.$reset()
-      inquiriesStore.$reset()
-      optionsStore.$reset()
-      sharesStore.$reset()
-      commentsStore.$reset()
-      supportsStore.$reset()
-      subscriptionStore.$reset()
+      this.$reset();
+      inquiriesStore.$reset();
+      optionsStore.$reset();
+      sharesStore.$reset();
+      commentsStore.$reset();
+      supportsStore.$reset();
+      subscriptionStore.$reset();
     },
 
     async submitInquiry(
-      action: 'submit_for_accepted' | 'submit_for_rejected' | 'submit_for_moderate'
+      action:
+        "submit_for_accepted" | "submit_for_rejected" | "submit_for_moderate",
     ): Promise<void> {
-      const appSettingsStore = useAppSettingsStore()
+      const appSettingsStore = useAppSettingsStore();
       try {
         // Optimistic local update
-        if (action === 'submit_for_accepted') {
-          this.status.moderationStatus = 'accepted'
-          this.status.publicationStatus = 'published'
-          const firstKey = appSettingsStore.getFirstStatusKeyByInquiryType(this.type)
-          this.status.inquiryStatus = (firstKey ?? 'draft') as InquiryWorkflowStatus
-          this.configuration.visibility = 'everyone'
-        } else if (action === 'submit_for_rejected') {
-          this.status.moderationStatus = 'rejected'
-          this.status.publicationStatus = 'draft'
-          this.status.inquiryStatus = 'rejected'
-          this.configuration.visibility = 'private'
-        } else if (action === 'submit_for_moderate') {
-          this.status.moderationStatus = 'pending'
-          this.status.publicationStatus = 'pending'
-          this.status.inquiryStatus = 'waiting_approval'
-          this.configuration.visibility = 'private'
+        if (action === "submit_for_accepted") {
+          this.status.moderationStatus = "accepted";
+          this.status.publicationStatus = "published";
+          const firstKey = appSettingsStore.getFirstStatusKeyByInquiryType(
+            this.type,
+          );
+          this.status.inquiryStatus = (firstKey ??
+            "draft") as InquiryWorkflowStatus;
+          this.configuration.visibility = "everyone";
+        } else if (action === "submit_for_rejected") {
+          this.status.moderationStatus = "rejected";
+          this.status.publicationStatus = "draft";
+          this.status.inquiryStatus = "rejected";
+          this.configuration.visibility = "private";
+        } else if (action === "submit_for_moderate") {
+          this.status.moderationStatus = "pending";
+          this.status.publicationStatus = "pending";
+          this.status.inquiryStatus = "waiting_approval";
+          this.configuration.visibility = "private";
         }
 
-        const response = await InquiriesAPI.submitInquiry(this.id, action)
+        const response = await InquiriesAPI.submitInquiry(this.id, action);
 
         // Reconcile with server truth if returned
         if (response?.data?.inquiry) {
-          this.$patch(response.data.inquiry)
+          this.$patch(response.data.inquiry);
         } else if (!response || !response.data) {
-          this.$reset()
+          this.$reset();
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error submitting inquiry', { error, action })
-        throw error
+        Logger.error("Error submitting inquiry", { error, action });
+        throw error;
       }
     },
 
     async loadByToken(token: string): Promise<void> {
-      this.meta.status = 'loading'
-      const sharesStore = useSharesStore()
-      const commentsStore = useCommentsStore()
-      const attachmentsStore = useAttachmentsStore()
-      const subscriptionStore = useSubscriptionStore()
+      this.meta.status = "loading";
+      const sharesStore = useSharesStore();
+      const commentsStore = useCommentsStore();
+      const attachmentsStore = useAttachmentsStore();
+      const subscriptionStore = useSubscriptionStore();
 
       try {
-        const response = await PublicAPI.getInquiry(token)
-        this.$patch(response.data.inquiry)
+        const response = await PublicAPI.getInquiry(token);
+        this.$patch(response.data.inquiry);
 
-        sharesStore.shares = response.data.shares ?? []
-        commentsStore.comments = response.data.comments ?? []
-        subscriptionStore.subscribed = response.data.subscribed ?? false
-        attachmentsStore.attachments = response.data.attachments ?? []
+        sharesStore.shares = response.data.shares ?? [];
+        commentsStore.comments = response.data.comments ?? [];
+        subscriptionStore.subscribed = response.data.subscribed ?? false;
+        attachmentsStore.attachments = response.data.attachments ?? [];
 
-        this.meta.status = 'loaded'
+        this.meta.status = "loaded";
       } catch (error) {
-        this.meta.status = 'error'
-        Logger.error('Error loading public inquiry', { error, token })
-        throw error
+        this.meta.status = "error";
+        Logger.error("Error loading public inquiry", { error, token });
+        throw error;
       }
     },
 
     async load(inquiryId: number | null = null): Promise<unknown> {
-      const sessionStore = useSessionStore()
-      const optionsStore = useOptionsStore()
-      const inquiriesStore = useInquiriesStore()
-      const sharesStore = useSharesStore()
-      const commentsStore = useCommentsStore()
-      const attachmentsStore = useAttachmentsStore()
-      const subscriptionStore = useSubscriptionStore()
-      const supportEngineStore = useSupportEngineStore()
-      const supportsStore = useSupportsStore()
-      const supportResultStore = useSupportResultStore()
+      const sessionStore = useSessionStore();
+      const optionsStore = useOptionsStore();
+      const inquiriesStore = useInquiriesStore();
+      const sharesStore = useSharesStore();
+      const commentsStore = useCommentsStore();
+      const attachmentsStore = useAttachmentsStore();
+      const subscriptionStore = useSubscriptionStore();
+      const supportEngineStore = useSupportEngineStore();
+      const supportsStore = useSupportsStore();
+      const supportResultStore = useSupportResultStore();
 
-      this.meta.status = 'loading'
+      this.meta.status = "loading";
 
       try {
         const response = await (() => {
-          if (sessionStore.route.name === 'publicInquiry') {
-            return PublicAPI.getInquiry(sessionStore.route.params.token)
+          if (sessionStore.route.name === "publicInquiry") {
+            return PublicAPI.getInquiry(sessionStore.route.params.token);
           }
-          if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'page') {
-            console.log(' TOOOOOOOO LATE ', inquiryId)
-            return InquiriesAPI.getFullInquiry(inquiryId ?? sessionStore.currentInquiryId)
+          if (
+            sessionStore.route.name === "inquiry" ||
+            sessionStore.route.name === "page"
+          ) {
+            console.log(" TOOOOOOOO LATE ", inquiryId);
+            return InquiriesAPI.getFullInquiry(
+              inquiryId ?? sessionStore.currentInquiryId,
+            );
           }
-          return Promise.resolve(null)
-        })()
+          return Promise.resolve(null);
+        })();
 
         if (!response) {
-          this.$reset()
-          return
+          this.$reset();
+          return;
         }
-        const inquiry = response.data.inquiry
-        this.$patch(inquiry)
+        const inquiry = response.data.inquiry;
+        this.$patch(inquiry);
 
-        optionsStore.options = response.data.options
-        supportsStore.supports = response.data.supports
-        sharesStore.shares = response.data.shares
-        commentsStore.comments = response.data.comments
-        subscriptionStore.subscribed = response.data.subscribed
-        attachmentsStore.attachments = response.data.attachments
-        supportResultStore.setResults(response.data.supportResult || [])
-        await supportEngineStore.initializeFromInquiry(this.id, response.data.supportEngine)
-        this.configuration.supportEngine = response.data.supportEngine
+        optionsStore.options = response.data.options;
+        supportsStore.supports = response.data.supports;
+        sharesStore.shares = response.data.shares;
+        commentsStore.comments = response.data.comments;
+        subscriptionStore.subscribed = response.data.subscribed;
+        attachmentsStore.attachments = response.data.attachments;
+        supportResultStore.setResults(response.data.supportResult || []);
+        await supportEngineStore.initializeFromInquiry(
+          this.id,
+          response.data.supportEngine,
+        );
+        this.configuration.supportEngine = response.data.supportEngine;
         // this.status.supportResult = response.data.supportResult
-        inquiriesStore.setFamilyType(this.family)
+        inquiriesStore.setFamilyType(this.family);
 
-        if (sessionStore.currentUser?.id && inquiry.owner?.id === sessionStore.currentUser.id) {
-          sessionStore.currentUser.isOwner = true
+        if (
+          sessionStore.currentUser?.id &&
+          inquiry.owner?.id === sessionStore.currentUser.id
+        ) {
+          sessionStore.currentUser.isOwner = true;
         } else {
-          sessionStore.currentUser.isOwner = false
+          sessionStore.currentUser.isOwner = false;
         }
 
-        this.meta.status = 'loaded'
-        return response
+        this.meta.status = "loaded";
+        return response;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        this.meta.status = 'error'
-        Logger.error('Error loading inquiry', { error })
-        throw error
+        this.meta.status = "error";
+        Logger.error("Error loading inquiry", { error });
+        throw error;
       }
     },
 
     async add(payload: {
-      title?: string
-      type?: string
-      family: string
-      ownedGroup?: string
-      visibility?: VisibilityType
-      description?: string
-      parentId?: number
-      locationId?: number
-      categoryId?: number
-      owner?: User
+      title?: string;
+      type?: string;
+      family: string;
+      ownedGroup?: string;
+      visibility?: VisibilityType;
+      description?: string;
+      parentId?: number;
+      locationId?: number;
+      categoryId?: number;
+      owner?: User;
     }): Promise<Inquiry | undefined> {
-      const inquiriesStore = useInquiriesStore()
+      const inquiriesStore = useInquiriesStore();
 
       try {
         const response = await InquiriesAPI.addInquiry({
-          title: payload.title ?? '',
-          type: payload.type ?? 'proposal',
+          title: payload.title ?? "",
+          type: payload.type ?? "proposal",
           family: payload.family,
           parentId: payload.parentId,
           locationId: payload.locationId,
-          visibility: payload.visibility ?? 'private',
+          visibility: payload.visibility ?? "private",
           categoryId: payload.categoryId,
           description: payload.description,
           owner: payload.owner,
           ownedGroup: payload.ownedGroup,
-        })
+        });
 
-        const newInquiry = response.data.inquiry
+        const newInquiry = response.data.inquiry;
         if (newInquiry) {
-          inquiriesStore.addInquiryToStore(newInquiry)
+          inquiriesStore.addInquiryToStore(newInquiry);
         }
-        return newInquiry
+        return newInquiry;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') return
-        Logger.error('Error adding inquiry:', {
+        if ((error as AxiosError)?.code === "ERR_CANCELED") return;
+        Logger.error("Error adding inquiry:", {
           error,
           payload,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async update(payload: {
-      id?: number
-      title?: string
-      type?: string
-      description?: string
-      parentId?: number | null
-      locationId?: number | null
-      categoryId?: number | null
+      id?: number;
+      title?: string;
+      type?: string;
+      description?: string;
+      parentId?: number | null;
+      locationId?: number | null;
+      categoryId?: number | null;
     }): Promise<Inquiry | void> {
-      const inquiriesStore = useInquiriesStore()
+      const inquiriesStore = useInquiriesStore();
 
       const debouncedUpdate = this.$debounce(async () => {
         try {
-          const inquiryId = payload.id ?? this.id
+          const inquiryId = payload.id ?? this.id;
 
           const response = await InquiriesAPI.updateInquiry(inquiryId, {
             title: payload.title,
@@ -451,194 +457,211 @@ export const useInquiryStore = defineStore('inquiry', {
             parentId: payload.parentId ?? undefined,
             locationId: payload.locationId ?? undefined,
             categoryId: payload.categoryId ?? undefined,
-          })
-          const updatedInquiry = response.data.inquiry
+          });
+          const updatedInquiry = response.data.inquiry;
           if (updatedInquiry) {
-            const index = inquiriesStore.inquiries.findIndex((inq) => inq.id === updatedInquiry.id)
+            const index = inquiriesStore.inquiries.findIndex(
+              (inq) => inq.id === updatedInquiry.id,
+            );
             if (index !== -1) {
-              inquiriesStore.inquiries[index] = updatedInquiry
-              inquiriesStore.inquiries = [...inquiriesStore.inquiries]
+              inquiriesStore.inquiries[index] = updatedInquiry;
+              inquiriesStore.inquiries = [...inquiriesStore.inquiries];
             }
           }
-          return updatedInquiry
+          return updatedInquiry;
         } catch (error) {
-          if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-            return
+          if ((error as AxiosError)?.code === "ERR_CANCELED") {
+            return;
           }
-          Logger.error('Error updating inquiry', {
+          Logger.error("Error updating inquiry", {
             error,
             state: this.$state,
-          })
-          throw error
+          });
+          throw error;
         }
-      }, 500)
+      }, 500);
 
-      return debouncedUpdate()
+      return debouncedUpdate();
     },
 
-    async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {
+    async updateMiscField(
+      key: string,
+      value: { key: string; value: string },
+    ): Promise<void> {
       try {
-        await InquiriesAPI.updateMiscField(this.id, value)
-        this.miscFields[key] = value
-        this.syncToCollectionStore()
+        await InquiriesAPI.updateMiscField(this.id, value);
+        this.miscFields[key] = value;
+        this.syncToCollectionStore();
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error updating misc field:', {
+        Logger.error("Error updating misc field:", {
           error,
           key,
           value,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async setInquiryStatus(status: InquiryWorkflowStatus): Promise<void> {
       try {
-        const response = await InquiriesAPI.updateInquiryStatus(this.id, status)
-        this.status.inquiryStatus = status
+        const response = await InquiriesAPI.updateInquiryStatus(
+          this.id,
+          status,
+        );
+        this.status.inquiryStatus = status;
         if (response?.data?.inquiry) {
-          this.$patch(response.data.inquiry)
-          this.syncToCollectionStore()
+          this.$patch(response.data.inquiry);
+          this.syncToCollectionStore();
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') return
-        Logger.error('Error setting inquiry status:', {
+        if ((error as AxiosError)?.code === "ERR_CANCELED") return;
+        Logger.error("Error setting inquiry status:", {
           error,
           status,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async setModerationStatus(status: ModerationWorkflowStatus): Promise<void> {
       try {
-        await InquiriesAPI.updateModerationStatus(this.id, status)
-        this.status.moderationStatus = status
-        this.syncToCollectionStore()
+        await InquiriesAPI.updateModerationStatus(this.id, status);
+        this.status.moderationStatus = status;
+        this.syncToCollectionStore();
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error setting moderation status:', {
+        Logger.error("Error setting moderation status:", {
           error,
           status,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async lockAnonymous(): Promise<void> {
       try {
-        const response = await InquiriesAPI.lockAnonymous(this.id)
+        const response = await InquiriesAPI.lockAnonymous(this.id);
         if (response?.data?.inquiry) {
-          this.$patch(response.data.inquiry)
-          this.syncToCollectionStore()
+          this.$patch(response.data.inquiry);
+          this.syncToCollectionStore();
         } else {
-          this.status.isAnonymous = true
+          this.status.isAnonymous = true;
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') return
-        Logger.error('Error locking inquiry to anonymous:', {
+        if ((error as AxiosError)?.code === "ERR_CANCELED") return;
+        Logger.error("Error locking inquiry to anonymous:", {
           error,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async write(): Promise<void> {
       const debouncedWrite = this.$debounce(async () => {
-        if (this.title === '') {
-          showError(t('agora', 'Title must not be empty!'))
-          return
+        if (this.title === "") {
+          showError(t("agora", "Title must not be empty!"));
+          return;
         }
         try {
-          const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
-          this.$patch(response.data.inquiry)
-          this.syncToCollectionStore()
+          const response = await InquiriesAPI.updateInquiryConfig(
+            this.id,
+            this.configuration,
+          );
+          this.$patch(response.data.inquiry);
+          this.syncToCollectionStore();
           emit(Event.UpdateInquiry, {
-            store: 'inquiry',
-            message: t('agora', 'Inquiry updated'),
-          })
+            store: "inquiry",
+            message: t("agora", "Inquiry updated"),
+          });
         } catch (error) {
-          if ((error as AxiosError)?.code === 'ERR_CANCELED') return
-          Logger.error('Error updating inquiry:', {
+          if ((error as AxiosError)?.code === "ERR_CANCELED") return;
+          Logger.error("Error updating inquiry:", {
             error,
             inquiry: this.$state,
-          })
-          showError(t('agora', 'Error writing inquiry'))
-          throw error
+          });
+          showError(t("agora", "Error writing inquiry"));
+          throw error;
         }
-      }, 500)
+      }, 500);
 
-      await debouncedWrite()
+      await debouncedWrite();
     },
 
     async close(): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
+      const inquiriesStore = useInquiriesStore();
       try {
-        const response = await InquiriesAPI.closeInquiry(this.id)
-        const updated = response.data.inquiry
-        this.$patch(updated)
-        const index = inquiriesStore.inquiries.findIndex((i) => i.id === updated.id)
+        const response = await InquiriesAPI.closeInquiry(this.id);
+        const updated = response.data.inquiry;
+        this.$patch(updated);
+        const index = inquiriesStore.inquiries.findIndex(
+          (i) => i.id === updated.id,
+        );
         if (index !== -1) {
-          inquiriesStore.inquiries[index] = updated
-          inquiriesStore.inquiries = [...inquiriesStore.inquiries]
+          inquiriesStore.inquiries[index] = updated;
+          inquiriesStore.inquiries = [...inquiriesStore.inquiries];
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') return
-        Logger.error('Error closing inquiry', { error, inquiryId: this.id })
-        throw error
+        if ((error as AxiosError)?.code === "ERR_CANCELED") return;
+        Logger.error("Error closing inquiry", { error, inquiryId: this.id });
+        throw error;
       }
     },
 
     async reopen(): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
+      const inquiriesStore = useInquiriesStore();
       try {
-        const response = await InquiriesAPI.reopenInquiry(this.id)
-        const updated = response.data.inquiry
-        this.$patch(updated)
+        const response = await InquiriesAPI.reopenInquiry(this.id);
+        const updated = response.data.inquiry;
+        this.$patch(updated);
 
-        const index = inquiriesStore.inquiries.findIndex((i) => i.id === updated.id)
+        const index = inquiriesStore.inquiries.findIndex(
+          (i) => i.id === updated.id,
+        );
         if (index !== -1) {
-          inquiriesStore.inquiries[index] = updated
-          inquiriesStore.inquiries = [...inquiriesStore.inquiries]
+          inquiriesStore.inquiries[index] = updated;
+          inquiriesStore.inquiries = [...inquiriesStore.inquiries];
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') return
-        Logger.error('Error reopening inquiry', { error, inquiryId: this.id })
-        throw error
+        if ((error as AxiosError)?.code === "ERR_CANCELED") return;
+        Logger.error("Error reopening inquiry", { error, inquiryId: this.id });
+        throw error;
       }
     },
 
     async toggleArchive(inquiryId: number): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
+      const inquiriesStore = useInquiriesStore();
 
       try {
-        const response = await InquiriesAPI.toggleArchive(inquiryId)
-        const updatedInquiry = response.data.inquiry
+        const response = await InquiriesAPI.toggleArchive(inquiryId);
+        const updatedInquiry = response.data.inquiry;
 
         if (updatedInquiry && this.id === inquiryId) {
-          this.$patch(updatedInquiry)
+          this.$patch(updatedInquiry);
 
-          const index = inquiriesStore.inquiries.findIndex((inq) => inq.id === updatedInquiry.id)
+          const index = inquiriesStore.inquiries.findIndex(
+            (inq) => inq.id === updatedInquiry.id,
+          );
           if (index !== -1) {
-            inquiriesStore.inquiries[index] = updatedInquiry
-            inquiriesStore.inquiries = [...inquiriesStore.inquiries]
+            inquiriesStore.inquiries[index] = updatedInquiry;
+            inquiriesStore.inquiries = [...inquiriesStore.inquiries];
           }
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error archiving/restoring', { error, inquiryId })
-        throw error
+        Logger.error("Error archiving/restoring", { error, inquiryId });
+        throw error;
       }
     },
   },
-})
+});

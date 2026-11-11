@@ -4,46 +4,47 @@
 -->
 
 <script setup>
-import { ref } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { ref } from "vue";
+import { t } from "@nextcloud/l10n";
 
-import AdminTypeRights from './AdminTypeRights.vue'
-import AdminTypeStatus from './AdminTypeStatus.vue'
-import { InquiryGeneralIcons } from '../../../utils/icons.ts'
-import { useAppSettingsStore } from '../../../stores/appSettings.js'
+import AdminTypeRights from "./AdminTypeRights.vue";
+import AdminTypeStatus from "./AdminTypeStatus.vue";
+import { InquiryGeneralIcons } from "../../../utils/icons.ts";
+import { useAppSettingsStore } from "../../../stores/appSettings.js";
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 
-defineEmits(['close'])
+defineEmits(["close"]);
 
 const props = defineProps({
   selectedType: {
     type: Object,
     required: true,
   },
-})
+});
 
-const activeSettingsTab = ref('user-rights')
+const activeSettingsTab = ref("user-rights");
 
-const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default
+const getIconComponent = (iconName) =>
+  InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default;
 
 const settingsTabs = [
   {
-    id: 'user-rights',
-    label: t('agora', 'Inquiry features'),
+    id: "user-rights",
+    label: t("agora", "Inquiry features"),
     component: AdminTypeRights,
   },
   {
-    id: 'status',
-    label: t('agora', 'Inquiry status'),
+    id: "status",
+    label: t("agora", "Inquiry status"),
     component: AdminTypeStatus,
   },
-]
+];
 
 const updateTypeRights = (typeKey, rights) => {
-  appSettingsStore.inquiryTypeRights[typeKey] = rights
-  appSettingsStore.write()
-}
+  appSettingsStore.inquiryTypeRights[typeKey] = rights;
+  appSettingsStore.write();
+};
 </script>
 
 <template>
@@ -67,7 +68,7 @@ const updateTypeRights = (typeKey, rights) => {
         class="close-button"
         @click="$emit('close')"
       >
-        {{ t('agora', 'Close') }}
+        {{ t("agora", "Close") }}
       </button>
     </div>
 

@@ -4,631 +4,655 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { getAvailableFields } from '../../helpers/modules/InquiryHelper.ts'
-import { StatusIcons } from '../../utils/icons.ts'
-import { t } from '@nextcloud/l10n'
-import { createInquiryContext, getEditPermissions } from '../../utils/permissions.ts'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
-import UserSearch from '../User/UserSearch.vue'
-import EngineSelectorModal from '../Modals/EngineSelectorModal.vue'
-import { ENGINE_DEFINITIONS } from '../../Types/votingType'
-import type { SupportTemplate } from '../../Types/votingType'
-import type { SupportEngine } from '../../Types/index'
+import { computed, onMounted, ref } from "vue";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { getAvailableFields } from "../../helpers/modules/InquiryHelper.ts";
+import { StatusIcons } from "../../utils/icons.ts";
+import { t } from "@nextcloud/l10n";
+import {
+  createInquiryContext,
+  getEditPermissions,
+} from "../../utils/permissions.ts";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcInputField from "@nextcloud/vue/components/NcInputField";
+import NcDateTimePickerNative from "@nextcloud/vue/components/NcDateTimePickerNative";
+import UserSearch from "../User/UserSearch.vue";
+import EngineSelectorModal from "../Modals/EngineSelectorModal.vue";
+import { ENGINE_DEFINITIONS } from "../../Types/votingType";
+import type { SupportTemplate } from "../../Types/votingType";
+import type { SupportEngine, User } from "../../Types/index";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = withDefaults(
   defineProps<{
-    isReadonly?: boolean
+    isReadonly?: boolean;
   }>(),
   {
     isReadonly: true,
-  }
-)
+  },
+);
 
 // Stores
-const inquiryStore = useInquiryStore()
-const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore();
 
 // Get current language from session
-const currentLanguage = computed(() => sessionStore.language || 'en')
+const currentLanguage = computed(() => sessionStore.language || "en");
 const permissionContext = computed(() =>
-  createInquiryContext(inquiryStore, sessionStore.appSettings)
-)
+  createInquiryContext(inquiryStore, sessionStore.appSettings),
+);
 
 const userCanConfigureSupport = computed(
-  () => getEditPermissions(permissionContext.value).canSupport
-)
+  () => getEditPermissions(permissionContext.value).canSupport,
+);
 
 const userCanConfigureComments = computed(
-  () => getEditPermissions(permissionContext.value).canComment
-)
+  () => getEditPermissions(permissionContext.value).canComment,
+);
 
 const inquiryTypeConfig = computed(() => {
   if (!inquiryStore.type || !sessionStore.appSettings.inquiryTypeTab) {
-    return null
+    return null;
   }
 
   return sessionStore.appSettings.inquiryTypeTab.find(
-    (type: string) => type.inquiry_type === inquiryStore.type
-  )
-})
+    (type: string) => type.inquiry_type === inquiryStore.type,
+  );
+});
 
 const existingEngineForModal = computed<SupportEngine | null>(() => {
-  const engineId = getSupportFeatureValue.value
-  if (!engineId) return null
-  const config = getSupportEngineConfig.value
+  const engineId = getSupportFeatureValue.value;
+  if (!engineId) return null;
+  const config = getSupportEngineConfig.value;
   return {
     id: 0, // not used in deliberative mode
     inquiry_id: 0, // not used
     engine: engineId,
     config: config || {},
-    title: '',
-    description: '',
-    purpose: '',
-    status: 'active',
-    target_type: 'inquiry',
+    title: "",
+    description: "",
+    purpose: "",
+    status: "active",
+    target_type: "inquiry",
     target_ids: [],
-    created: '',
-    updated: '',
-  } as SupportEngine
-})
+    created: "",
+    updated: "",
+  } as SupportEngine;
+});
 
 // Extract language string from multi-language object
-const extractLangString = (obj: unknown, lang: string = 'en'): string => {
-  if (typeof obj === 'string') return obj
-  if (!obj || typeof obj !== 'object') return String(obj)
+const extractLangString = (obj: unknown, lang: string = "en"): string => {
+  if (typeof obj === "string") return obj;
+  if (!obj || typeof obj !== "object") return String(obj);
 
   // Try current language, then English, then first available
-  if (obj[lang]) return obj[lang]
-  if (obj.en) return obj.en
-  const firstKey = Object.keys(obj).find((k) => obj[k])
-  return firstKey ? obj[firstKey] : ''
-}
+  if (obj[lang]) return obj[lang];
+  if (obj.en) return obj.en;
+  const firstKey = Object.keys(obj).find((k) => obj[k]);
+  return firstKey ? obj[firstKey] : "";
+};
 
 const availableEngines = computed(() =>
   Object.values(ENGINE_DEFINITIONS)
     .filter((engine) => {
       if (!engine.supportFeature) {
-        return false
+        return false;
       }
-      return true
+      return true;
     })
-    .sort((a, b) => a.label.localeCompare(b.label))
-)
+    .sort((a, b) => a.label.localeCompare(b.label)),
+);
 
 // Reactive state
-const isLoading = ref(true)
-const error = ref<string | null>(null)
-const isSaving = ref(false)
-const saveTimeouts = ref<Record<string, NodeJS.Timeout>>({})
-const selectedUsers = ref<Record<string, User | undefined>>({})
-const showEngineModal = ref(false) // new state for modal visibility
+const isLoading = ref(true);
+const error = ref<string | null>(null);
+const isSaving = ref(false);
+const saveTimeouts = ref<Record<string, ReturnType<typeof setTimeout>>>({});
+const selectedUsers = ref<Record<string, User | undefined>>({});
+const showEngineModal = ref(false); // new state for modal visibility
 
 // Reactive state for checkbox values
-const localCheckboxes = ref<Record<string, boolean>>({})
+const localCheckboxes = ref<Record<string, boolean>>({});
 
-type MiscValue = string | boolean | number | null | undefined | Date | string[] | object
+type MiscValue =
+  string | boolean | number | null | undefined | Date | string[] | object;
 
 interface Field {
-  key: string
-  type: string
-  label: string
-  required?: boolean
-  default?: MiscValue
-  description?: string
-  allowed_values?: string[]
+  key: string;
+  type: string;
+  label: string;
+  required?: boolean;
+  default?: MiscValue;
+  description?: string;
+  allowed_values?: string[];
 }
 
 const supportTemplate = computed<SupportTemplate | null>(() => {
-  const raw = inquiryStore.miscFields.support_template
-  if (typeof raw === 'string' && raw) {
+  const raw = inquiryStore.miscFields.support_template;
+  if (typeof raw === "string" && raw) {
     try {
-      return JSON.parse(raw) as SupportTemplate
+      return JSON.parse(raw) as SupportTemplate;
     } catch {
-      return null
+      return null;
     }
   }
-  if (raw && typeof raw === 'object') return raw as SupportTemplate
-  return null
-})
+  if (raw && typeof raw === "object") return raw as SupportTemplate;
+  return null;
+});
 
 // Get current support feature value (engine ID)
 const getSupportFeatureValue = computed(() => {
   if (inquiryStore.configuration.supportFeature !== null) {
-    return inquiryStore.configuration.supportFeature
+    return inquiryStore.configuration.supportFeature;
   }
-  return getDefaultFromTemplate('supportFeature') || 'none'
-})
+  return getDefaultFromTemplate("supportFeature") || "none";
+});
 
 // Get current support engine configuration (e.g., grades, allowed_reactions)
 const getSupportEngineConfig = computed(() => {
-  if (!supportTemplate.value) return {}
-  const { config } = supportTemplate.value
-  return config
-})
+  if (!supportTemplate.value) return {};
+  const { config } = supportTemplate.value;
+  return config;
+});
 
 // Get current allow comment value
 const getAllowCommentValue = computed(() => {
   if (inquiryStore.configuration.allowComment !== null) {
-    return inquiryStore.configuration.allowComment
+    return inquiryStore.configuration.allowComment;
   }
-  return getDefaultFromTemplate('allowComment') || false
-})
+  return getDefaultFromTemplate("allowComment") || false;
+});
 
 // Get fields using your working helper function
 const dynamicFields = computed(() => {
   try {
     if (!inquiryStore.type) {
-      return []
+      return [];
     }
 
     const fields = getAvailableFields(
       inquiryStore.type,
       sessionStore.appSettings.inquiryTypeTab || [],
-      inquiryStore.type
-    )
+      inquiryStore.type,
+    );
 
-    return Array.isArray(fields) ? fields : []
+    return Array.isArray(fields) ? fields : [];
   } catch (e) {
-    console.error('Error getting fields:', e)
-    return []
+    console.error("Error getting fields:", e);
+    return [];
   }
-})
+});
 
 const getMiscValue = (key: string) => {
   try {
-    if (!inquiryStore.miscFields || typeof inquiryStore.miscFields !== 'object' || !key) {
-      return null
+    if (
+      !inquiryStore.miscFields ||
+      typeof inquiryStore.miscFields !== "object" ||
+      !key
+    ) {
+      return null;
     }
 
     if (!inquiryStore.miscFields[key]) {
-      return null
+      return null;
     }
 
-    const value = inquiryStore.miscFields[key]
+    const value = inquiryStore.miscFields[key];
 
     // Handle string values that might be JSON strings with quotes
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       // Remove surrounding quotes if they exist
-      let cleanedValue = value
+      let cleanedValue = value;
       if (value.startsWith('"') && value.endsWith('"')) {
-        cleanedValue = value.slice(1, -1)
+        cleanedValue = value.slice(1, -1);
       }
 
-      return parseMiscValue(cleanedValue, key)
+      return parseMiscValue(cleanedValue, key);
     }
 
-    return parseMiscValue(value)
+    return parseMiscValue(value);
   } catch (e) {
-    console.warn(`Error getting misc value for ${key}:`, e)
-    return null
+    console.warn(`Error getting misc value for ${key}:`, e);
+    return null;
   }
-}
+};
 
 // Parse misc value for display
 const parseMiscValue = (value: MiscValue) => {
-  if (value === null || value === undefined || value === '') return null
+  if (value === null || value === undefined || value === "") return null;
 
   try {
-    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
-      return JSON.parse(value)
+    if (
+      typeof value === "string" &&
+      (value.startsWith("{") || value.startsWith("["))
+    ) {
+      return JSON.parse(value);
     }
 
     // Handle boolean strings
-    if (value === 'true') return true
-    if (value === 'false') return false
+    if (value === "true") return true;
+    if (value === "false") return false;
 
-    return value
+    return value;
   } catch {
-    return value
+    return value;
   }
-}
+};
 
 // Format value for display
 const getDisplayValue = (value: MiscValue, field: Field) => {
-  if (value === null || value === undefined || value === '') {
-    return t('Not set')
+  if (value === null || value === undefined || value === "") {
+    return t("Not set");
   }
 
   try {
-    const fieldType = field.type || 'string'
+    const fieldType = field.type || "string";
 
     switch (fieldType) {
-      case 'boolean':
-        return value ? t('Yes') : t('No')
-      case 'datetime':
-        return new Date(value).toLocaleString()
-      case 'json': {
-        const parsed = typeof value === 'string' ? JSON.parse(value) : value
-        return typeof parsed === 'object' ? JSON.stringify(parsed, null, 2) : String(value)
+      case "boolean":
+        return value ? t("Yes") : t("No");
+      case "datetime":
+        return new Date(value).toLocaleString();
+      case "json": {
+        const parsed = typeof value === "string" ? JSON.parse(value) : value;
+        return typeof parsed === "object"
+          ? JSON.stringify(parsed, null, 2)
+          : String(value);
       }
-      case 'integer':
-        return String(value)
-      case 'enum': {
+      case "integer":
+        return String(value);
+      case "enum": {
         // Handle case where value is already an object with label (stored as full option)
-        if (typeof value === 'object' && value !== null && 'label' in value) {
-          const label = (value as string).label
-          if (typeof label === 'string') return label
-          return extractLangString(label, currentLanguage.value)
+        if (typeof value === "object" && value !== null && "label" in value) {
+          const label = (value as string).label;
+          if (typeof label === "string") return label;
+          return extractLangString(label, currentLanguage.value);
         }
 
         // Look up the label from allowed_values
-        const allowedValues = field.allowed_values || []
+        const allowedValues = field.allowed_values || [];
 
         // Extract value key if value is an object with 'value' property
         const valueKey =
-          typeof value === 'object' && value !== null && 'value' in value
+          typeof value === "object" && value !== null && "value" in value
             ? (value as string).value
-            : value
+            : value;
 
         // Find matching option
-        const option = allowedValues.find((opt: { key: string; value: string }) => {
-          if (typeof opt === 'string') return opt === valueKey
-          return opt.value === valueKey
-        })
+        const option = allowedValues.find(
+          (opt: { key: string; value: string }) => {
+            if (typeof opt === "string") return opt === valueKey;
+            return opt.value === valueKey;
+          },
+        );
 
         if (!option) {
           // Fallback: capitalize raw value (or value key if extracted from object)
-          const displayVal = String(valueKey)
-          return displayVal.charAt(0).toUpperCase() + displayVal.slice(1)
+          const displayVal = String(valueKey);
+          return displayVal.charAt(0).toUpperCase() + displayVal.slice(1);
         }
 
         // Handle string option
-        if (typeof option === 'string') {
-          return option.charAt(0).toUpperCase() + option.slice(1)
+        if (typeof option === "string") {
+          return option.charAt(0).toUpperCase() + option.slice(1);
         }
 
         // Handle localized label
-        const label = option.label
-        if (typeof label === 'string') return label
+        const label = option.label;
+        if (typeof label === "string") return label;
 
         // Extract from multi-language object
-        return extractLangString(label, currentLanguage.value)
+        return extractLangString(label, currentLanguage.value);
       }
-      case 'users':
-      case 'groups':
-        return Array.isArray(value) ? value.join(', ') : String(value)
+      case "users":
+      case "groups":
+        return Array.isArray(value) ? value.join(", ") : String(value);
       default:
-        return String(value)
+        return String(value);
     }
   } catch {
-    return String(value)
+    return String(value);
   }
-}
+};
 
 // Get the current model value for NcSelect enum
 const getEnumModelValue = (field: Field) => {
-  const value = getMiscValue(field.key) || field.default
-  const options = field.allowed_values || []
+  const value = getMiscValue(field.key) || field.default;
+  const options = field.allowed_values || [];
 
   // Extract value key if stored value is an object with 'value' property
   const valueKey =
-    typeof value === 'object' && value !== null && 'value' in value
+    typeof value === "object" && value !== null && "value" in value
       ? (value as string).value
-      : value
+      : value;
 
   // Find matching option object for NcSelect
   return (
     options.find((opt: { key: string; value: string }) => {
-      if (typeof opt === 'string') return opt === valueKey
-      return opt.value === valueKey
+      if (typeof opt === "string") return opt === valueKey;
+      return opt.value === valueKey;
     }) || value
-  )
-}
+  );
+};
 
 // Get display label for an enum option
 const getEnumLabel = (option: string): string => {
-  if (typeof option === 'string') {
-    return option.charAt(0).toUpperCase() + option.slice(1)
+  if (typeof option === "string") {
+    return option.charAt(0).toUpperCase() + option.slice(1);
   }
   if (option?.label) {
-    if (typeof option.label === 'string') return option.label
-    return extractLangString(option.label, currentLanguage.value)
+    if (typeof option.label === "string") return option.label;
+    return extractLangString(option.label, currentLanguage.value);
   }
-  return String(option?.value || option)
-}
+  return String(option?.value || option);
+};
 
 // Check if field should be displayed (has value or has default)
 const shouldDisplayField = (field: Field, value: MiscValue) => {
   // Always show fields that have defaults defined, even if value is empty
   if (field.default !== undefined && field.default !== null) {
-    return true
+    return true;
   }
 
-  if (value === null || value === undefined || value === '') {
-    return false
+  if (value === null || value === undefined || value === "") {
+    return false;
   }
 
   if (Array.isArray(value) && value.length === 0) {
-    return false
+    return false;
   }
 
-  if (typeof value === 'object' && Object.keys(value).length === 0) {
-    return false
+  if (typeof value === "object" && Object.keys(value).length === 0) {
+    return false;
   }
 
-  return true
-}
+  return true;
+};
 
 // Get fields that should be displayed (for readonly mode)
 const displayFields = computed(() => {
-  const fields = [...dynamicFields.value]
+  const fields = [...dynamicFields.value];
 
   // Add support feature field if user can configure it
   if (userCanConfigureSupport.value) {
     fields.unshift({
-      key: 'supportFeature',
-      type: 'enum',
-      label: t('agora', 'Support feature'),
+      key: "supportFeature",
+      type: "enum",
+      label: t("agora", "Support feature"),
       value: getSupportFeatureValue.value,
       displayValue: getSupportFeatureLabel(getSupportFeatureValue.value),
       hasValue: true,
-    } as unknown)
+    } as unknown);
   }
 
   // Add allow comment field if user can configure it
   if (userCanConfigureComments.value) {
     fields.unshift({
-      key: 'allowComment',
-      type: 'boolean',
-      label: t('agora', 'Allow comments'),
+      key: "allowComment",
+      type: "boolean",
+      label: t("agora", "Allow comments"),
       value: getAllowCommentValue.value,
-      displayValue: getAllowCommentValue.value ? t('Yes') : t('No'),
+      displayValue: getAllowCommentValue.value ? t("Yes") : t("No"),
       hasValue: true,
-    } as unknown)
+    } as unknown);
   }
 
   return fields
     .map((field) => {
       // Skip if it's one of our special fields that we already processed
-      if (field.key === 'supportFeature' || field.key === 'allowComment') {
-        return field
+      if (field.key === "supportFeature" || field.key === "allowComment") {
+        return field;
       }
 
-      const value = getMiscValue(field.key)
+      const value = getMiscValue(field.key);
       return {
         ...field,
         value,
         displayValue: getDisplayValue(value, field),
-        hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value),
-      }
+        hasValue:
+          field.type === "boolean" ? true : shouldDisplayField(field, value),
+      };
     })
-    .filter((field) => field.hasValue)
-})
+    .filter((field) => field.hasValue);
+});
 
 // Helper to get label for support feature
 const getSupportFeatureLabel = (engineId: string): string => {
-  const engine = ENGINE_DEFINITIONS[engineId]
-  return engine?.label || engineId
-}
+  const engine = ENGINE_DEFINITIONS[engineId];
+  return engine?.label || engineId;
+};
 
 // Load misc data
 const loadMiscData = () => {
   try {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
 
-    initializeMiscFields()
-    initializeLocalCheckboxes()
+    initializeMiscFields();
+    initializeLocalCheckboxes();
 
     // Initialize selected users from existing data
     dynamicFields.value.forEach((field) => {
-      if (field.type === 'users' || field.type === 'groups') {
-        const existingValue = getMiscValue(field.key)
+      if (field.type === "users" || field.type === "groups") {
+        const existingValue = getMiscValue(field.key);
         if (existingValue) {
           // Create a minimal user object for display
           selectedUsers.value[field.key] = {
             id: existingValue,
             displayName: existingValue,
-          } as User
+          } as User;
         }
       }
-    })
+    });
   } catch (e) {
-    console.error('Error loading misc data:', e)
-    error.value = t('Error loading settings data')
+    console.error("Error loading misc data:", e);
+    error.value = t("Error loading settings data");
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const getSafeStringValue = (value: unknown): string => {
   if (value === null || value === undefined) {
-    return ''
+    return "";
   }
-  if (typeof value === 'object') {
+  if (typeof value === "object") {
     try {
-      return JSON.stringify(value)
+      return JSON.stringify(value);
     } catch {
-      return ''
+      return "";
     }
   }
-  return String(value)
-}
+  return String(value);
+};
 
 // Save individual field to database
 const saveFieldToDatabase = async (fieldKey: string, value: Field) => {
   try {
-    isSaving.value = true
+    isSaving.value = true;
 
     // Convert value to string for the API
-    let stringValue: string
+    let stringValue: string;
     if (value === null || value === undefined) {
-      stringValue = ''
-    } else if (typeof value === 'object') {
-      stringValue = JSON.stringify(value)
-    } else if (typeof value === 'boolean') {
-      stringValue = value ? 'true' : 'false'
+      stringValue = "";
+    } else if (typeof value === "object") {
+      stringValue = JSON.stringify(value);
+    } else if (typeof value === "boolean") {
+      stringValue = value ? "true" : "false";
     } else {
-      stringValue = String(value)
+      stringValue = String(value);
     }
 
     // Save to database using the API method with object parameter
-    await inquiryStore.updateMiscField(fieldKey, stringValue)
+    await inquiryStore.updateMiscField(fieldKey, stringValue);
   } catch (e) {
-    console.error(`Error saving field ${fieldKey}:`, e)
+    console.error(`Error saving field ${fieldKey}:`, e);
   } finally {
-    isSaving.value = false
+    isSaving.value = false;
   }
-}
+};
 
 // Get default values from template
 const getDefaultFromTemplate = (field: string) => {
   if (!inquiryTypeConfig.value) {
-    return null
+    return null;
   }
 
   switch (field) {
-    case 'supportFeature':
-      return inquiryTypeConfig.value.support_feature || 'none'
-    case 'allowComment': {
-      const value = inquiryTypeConfig.value.allow_comment
-      if (typeof value === 'number') {
-        return value === 1
+    case "supportFeature":
+      return inquiryTypeConfig.value.support_feature || "none";
+    case "allowComment": {
+      const value = inquiryTypeConfig.value.allow_comment;
+      if (typeof value === "number") {
+        return value === 1;
       }
-      return value || false
+      return value || false;
     }
     default:
-      return null
+      return null;
   }
-}
+};
 /// //////////////////////////////////////// SUPPORT ///////////////////////////////////////////
 
 const handleApplySupportEngine = async (saveData: {
-  engine: string
-  config: Record<string, unknown>
-  status?: 'draft' | 'active' | 'closed'
-  title?: string
-  description?: string
-  purpose?: string
+  engine: string;
+  config: Record<string, unknown>;
+  status?: "draft" | "active" | "closed";
+  title?: string;
+  description?: string;
+  purpose?: string;
 }) => {
   try {
-    isSaving.value = true
+    isSaving.value = true;
 
     // Make sure we're assigning a string, not the entire object
-    const engineId = saveData.engine // Extract the string
-    inquiryStore.configuration.supportFeature = engineId // Now this is a string
+    const engineId = saveData.engine; // Extract the string
+    inquiryStore.configuration.supportFeature = engineId; // Now this is a string
 
     await inquiryStore.updateMiscField(
-      'support_template',
+      "support_template",
       JSON.stringify({
         engine: engineId,
         ...saveData.config,
-      })
-    )
+      }),
+    );
 
-    await inquiryStore.write()
+    await inquiryStore.write();
   } catch (e) {
-    console.error('Error saving support configuration:', e)
+    console.error("Error saving support configuration:", e);
   } finally {
-    isSaving.value = false
-    showEngineModal.value = false
+    isSaving.value = false;
+    showEngineModal.value = false;
   }
-}
+};
 
 // Ensure miscFields has all dynamic fields with proper defaults - UPDATED
 const initializeMiscFields = () => {
   dynamicFields.value.forEach((field) => {
     if (inquiryStore.miscFields[field.key] === undefined) {
       // Set default value if field doesn't exist in miscFields
-      let defaultValue = field.default
+      let defaultValue = field.default;
 
       // Convert default values to proper string format for the store
       if (defaultValue === null || defaultValue === undefined) {
-        defaultValue = ''
-      } else if (typeof defaultValue === 'boolean') {
-        defaultValue = defaultValue ? 'true' : 'false'
-      } else if (typeof defaultValue === 'object') {
-        defaultValue = JSON.stringify(defaultValue)
+        defaultValue = "";
+      } else if (typeof defaultValue === "boolean") {
+        defaultValue = defaultValue ? "true" : "false";
+      } else if (typeof defaultValue === "object") {
+        defaultValue = JSON.stringify(defaultValue);
       } else {
-        defaultValue = String(defaultValue)
+        defaultValue = String(defaultValue);
       }
 
-      inquiryStore.miscFields[field.key] = defaultValue
+      inquiryStore.miscFields[field.key] = defaultValue;
     }
-  })
-}
+  });
+};
 
 const initializeLocalCheckboxes = () => {
   dynamicFields.value.forEach((field) => {
-    if (field.type === 'boolean') {
-      const raw = getMiscValue(field.key)
-      localCheckboxes.value[field.key] = raw === true || raw === 'true'
+    if (field.type === "boolean") {
+      const raw = getMiscValue(field.key);
+      localCheckboxes.value[field.key] = raw === true || raw === "true";
     }
-  })
-}
+  });
+};
 
 // Update the updateFieldValue method to handle user objects
-const updateFieldValue = (fieldKey: string, value: string, fieldType: string) => {
+const updateFieldValue = (
+  fieldKey: string,
+  value: string,
+  fieldType: string,
+) => {
   // Clear any existing timeout for this field
   if (saveTimeouts.value[fieldKey]) {
-    clearTimeout(saveTimeouts.value[fieldKey])
+    clearTimeout(saveTimeouts.value[fieldKey]);
   }
   // Handle user objects specifically
-  let processedValue = value
-  if ((fieldType === 'users' || fieldType === 'groups') && value && typeof value === 'object') {
+  let processedValue = value;
+  if (
+    (fieldType === "users" || fieldType === "groups") &&
+    value &&
+    typeof value === "object"
+  ) {
     // Convert user object to the format you want to store
     // This depends on what your backend expects
-    processedValue = value.id || value.displayName || value
+    processedValue = value.id || value.displayName || value;
   }
 
   // Different save strategies based on field type
   if (
-    fieldType === 'boolean' ||
-    fieldType === 'enum' ||
-    fieldType === 'datetime' ||
-    fieldType === 'users' ||
-    fieldType === 'groups'
+    fieldType === "boolean" ||
+    fieldType === "enum" ||
+    fieldType === "datetime" ||
+    fieldType === "users" ||
+    fieldType === "groups"
   ) {
     // Save immediately for checkboxes, selects, date pickers, and user selections
-    saveFieldToDatabase(fieldKey, processedValue)
+    saveFieldToDatabase(fieldKey, processedValue);
   } else {
     // Debounce input fields (text, number, json, etc.)
     saveTimeouts.value[fieldKey] = setTimeout(() => {
-      saveFieldToDatabase(fieldKey, processedValue)
-    }, 1000) // 1 second debounce
+      saveFieldToDatabase(fieldKey, processedValue);
+    }, 1000); // 1 second debounce
   }
-}
+};
 
 const handleUserSelected = (fieldKey: string, user: User) => {
-  selectedUsers.value[fieldKey] = user
+  selectedUsers.value[fieldKey] = user;
   // Store the user ID (or whatever identifier you need)
-  updateFieldValue(fieldKey, user?.id || '', 'users')
-}
+  updateFieldValue(fieldKey, user?.id || "", "users");
+};
 
 // Helper function to format date for datetime picker
 const getFormattedDate = (key: string) => {
-  const value = getMiscValue(key)
+  const value = getMiscValue(key);
 
-  if (!value) return null
+  if (!value) return null;
 
   // Try manual construction
   try {
-    const year = parseInt(value.substring(0, 4))
-    const month = parseInt(value.substring(5, 7)) - 1 // Months are 0-indexed
-    const day = parseInt(value.substring(8, 10))
-    const hours = parseInt(value.substring(11, 13))
-    const minutes = parseInt(value.substring(14, 16))
+    const year = parseInt(value.substring(0, 4));
+    const month = parseInt(value.substring(5, 7)) - 1; // Months are 0-indexed
+    const day = parseInt(value.substring(8, 10));
+    const hours = parseInt(value.substring(11, 13));
+    const minutes = parseInt(value.substring(14, 16));
 
-    const manualDate = new Date(year, month, day, hours, minutes)
+    const manualDate = new Date(year, month, day, hours, minutes);
 
-    return manualDate
+    return manualDate;
   } catch (e) {
-    console.error('Manual date construction failed:', e)
-    return null
+    console.error("Manual date construction failed:", e);
+    return null;
   }
-}
+};
 
-const getCheckboxValue = (key: string) => localCheckboxes.value[key] || false
+const getCheckboxValue = (key: string) => localCheckboxes.value[key] || false;
 
 onMounted(() => {
-  loadMiscData()
-})
+  loadMiscData();
+});
 </script>
 
 <template>
@@ -640,7 +664,7 @@ onMounted(() => {
         class="loading-state"
       >
         <div class="icon-loading" />
-        <p>{{ t('Loading settings...') }}</p>
+        <p>{{ t("Loading settings...") }}</p>
       </div>
 
       <!-- Error state -->
@@ -666,7 +690,7 @@ onMounted(() => {
             :is="StatusIcons.Info"
             class="no-data-icon"
           />
-          <p>{{ t('No additional settings configured.') }}</p>
+          <p>{{ t("No additional settings configured.") }}</p>
         </div>
 
         <!-- Readonly mode -->
@@ -706,7 +730,7 @@ onMounted(() => {
             class="saving-indicator"
           >
             <div class="icon-loading-small" />
-            <span>{{ t('agora', 'Saving …') }}</span>
+            <span>{{ t("agora", "Saving …") }}</span>
           </div>
 
           <div class="edit-fields">
@@ -716,7 +740,7 @@ onMounted(() => {
               class="edit-field-item"
             >
               <label class="edit-field-label">
-                {{ t('agora', 'Support feature') }}
+                {{ t("agora", "Support feature") }}
               </label>
               <div class="edit-field-input">
                 <button
@@ -732,7 +756,7 @@ onMounted(() => {
                 </button>
               </div>
               <div class="field-description">
-                {{ t('agora', 'Choose the voting method for this inquiry') }}
+                {{ t("agora", "Choose the voting method for this inquiry") }}
               </div>
             </div>
 
@@ -751,20 +775,23 @@ onMounted(() => {
                     :disabled="isSaving"
                     class="simple-checkbox"
                     @change="
-                      (e) => handleAllowCommentChange((e.target as HTMLInputElement).checked)
+                      (e) =>
+                        handleAllowCommentChange(
+                          (e.target as HTMLInputElement).checked,
+                        )
                     "
                   >
                   <label
                     :for="'checkbox-allowComment'"
                     class="checkbox-label"
                   >
-                    {{ t('agora', 'Allow comments') }}
-                    <span class="optional-label">({{ t('agora', 'optional') }})</span>
+                    {{ t("agora", "Allow comments") }}
+                    <span class="optional-label">({{ t("agora", "optional") }})</span>
                   </label>
                 </div>
               </div>
               <div class="field-description">
-                {{ t('agora', 'Allow users to add comments to their votes') }}
+                {{ t("agora", "Allow users to add comments to their votes") }}
               </div>
             </div>
 
@@ -791,7 +818,7 @@ onMounted(() => {
                         updateFieldValue(
                           field.key,
                           (e.target as HTMLInputElement).checked,
-                          'boolean'
+                          'boolean',
                         )
                     "
                   >
@@ -803,7 +830,7 @@ onMounted(() => {
                     <span
                       v-if="!field.required"
                       class="optional-label"
-                    >({{ t('agora', 'optional') }})</span>
+                    >({{ t("agora", "optional") }})</span>
                   </label>
                 </div>
               </div>
@@ -822,7 +849,7 @@ onMounted(() => {
                   <span
                     v-else
                     class="optional-label"
-                  >({{ t('agora', 'optional') }})</span>
+                  >({{ t("agora", "optional") }})</span>
                 </label>
 
                 <div class="edit-field-input">
@@ -832,7 +859,8 @@ onMounted(() => {
                     :model-value="getEnumModelValue(field) || ''"
                     :options="field.allowed_values || []"
                     :reduce="
-                      (option: unknown) => (typeof option === 'string' ? option : option.value)
+                      (option: unknown) =>
+                        typeof option === 'string' ? option : option.value
                     "
                     :get-option-label="getEnumLabel"
                     :clearable="!field.required"
@@ -840,7 +868,9 @@ onMounted(() => {
                     :input-label="field.label"
                     :disabled="isSaving"
                     :placeholder="t('Select an option')"
-                    @update:model-value="(val: string) => updateFieldValue(field.key, val, 'enum')"
+                    @update:model-value="
+                      (val: string) => updateFieldValue(field.key, val, 'enum')
+                    "
                   />
 
                   <!-- Integer field -->
@@ -852,7 +882,11 @@ onMounted(() => {
                     :disabled="isSaving"
                     @update:model-value="
                       (val: string) =>
-                        updateFieldValue(field.key, val ? parseInt(val) : null, 'integer')
+                        updateFieldValue(
+                          field.key,
+                          val ? parseInt(val) : null,
+                          'integer',
+                        )
                     "
                   />
 
@@ -864,19 +898,24 @@ onMounted(() => {
                     :label="field.label"
                     :disabled="isSaving"
                     @update:model-value="
-                      (val: string) => updateFieldValue(field.key, val, 'datetime')
+                      (val: string) =>
+                        updateFieldValue(field.key, val, 'datetime')
                     "
                   />
 
                   <!-- Users/Groups field -->
                   <UserSearch
-                    v-else-if="field.type === 'users' || field.type === 'groups'"
+                    v-else-if="
+                      field.type === 'users' || field.type === 'groups'
+                    "
                     :model-value="selectedUsers[field.key]"
                     :search-types="field.type === 'users' ? [99] : [1]"
                     :placeholder="t('Type to search for users')"
                     :aria-label="field.label"
                     :close-on-select="true"
-                    @update:model-value="(user) => handleUserSelected(field.key, user)"
+                    @update:model-value="
+                      (user) => handleUserSelected(field.key, user)
+                    "
                   />
 
                   <!-- JSON field -->
@@ -893,10 +932,10 @@ onMounted(() => {
                       @update:model-value="
                         (val: string) => {
                           try {
-                            const parsed = val ? JSON.parse(val) : null
-                            updateFieldValue(field.key, parsed, 'json')
+                            const parsed = val ? JSON.parse(val) : null;
+                            updateFieldValue(field.key, parsed, 'json');
                           } catch {
-                            updateFieldValue(field.key, val, 'json')
+                            updateFieldValue(field.key, val, 'json');
                           }
                         }
                       "
@@ -911,7 +950,8 @@ onMounted(() => {
                     :label="field.label"
                     :disabled="isSaving"
                     @update:model-value="
-                      (val: string) => updateFieldValue(field.key, val, 'string')
+                      (val: string) =>
+                        updateFieldValue(field.key, val, 'string')
                     "
                   />
                 </div>

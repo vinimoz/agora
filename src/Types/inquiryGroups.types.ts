@@ -2,33 +2,40 @@
  * SPDX-FileCopyrightText: 2025 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import type { User, UserType } from './user.types'
-import type { SupportResult, SupportEngine } from './support.types'
+import type { User, UserType } from "./user.types";
+import type { SupportResult, SupportEngine } from "./support.types";
 
 // Import unified types from experience.types.ts
 import type {
   DisplayZone,
-  ExperienceArchitecture,
   ExperienceKey,
   DisplayType,
   ToolKey,
-} from './experience.types'
+} from "./experience.types";
 
 // Re-export for convenience
-export type { DisplayZone, ExperienceKey, DisplayType, ToolKey }
+export type { DisplayZone, ExperienceKey, DisplayType, ToolKey };
 
 // ===== SHARED TYPES =====
-export type VisibilityInquiryGroupType = 'private' | 'groups' | 'users' | 'everyone'
+export type VisibilityInquiryGroupType =
+  "private" | "groups" | "users" | "everyone";
 
 export type InquiryGroupWorkflowStatus =
-  'draft' | 'active' | 'archived' | 'closed' | 'completed' | 'suspended' | 'canceled'
+  | "draft"
+  | "active"
+  | "archived"
+  | "closed"
+  | "completed"
+  | "suspended"
+  | "canceled";
 
+// ===== STATUS =====
 export interface InquiryGroupStatus {
-  groupStatus: InquiryGroupWorkflowStatus
-  created: number
-  deleted: number
-  updated: number
-  supportResult: SupportResult[]
+  groupStatus: InquiryGroupWorkflowStatus;
+  created: number;
+  deleted: number;
+  updated: number;
+  supportResult: SupportResult[];
 }
 // ============================================================
 // INQUIRY GROUP UI CONFIGURATION
@@ -40,130 +47,124 @@ export interface InquiryGroupStatus {
  */
 export interface InquiryGroupUIConfig {
   /** Active experience key */
-  experience?: ExperienceKey
+  experience?: ExperienceKey;
   /** Default experience (if different from active) */
-  defaultExperience?: ExperienceKey
+  defaultExperience?: ExperienceKey;
   /** Default display mode for this experience */
-  defaultDisplay?: DisplayType
+  defaultDisplay?: DisplayType;
   /** Layout configuration */
   layout?: {
-    type: 'grid' | 'flex' | 'sidebar' | 'split' | 'full'
-    columns?: number
-    rows?: number
-    responsive?: boolean
-  }
+    type: "grid" | "flex" | "sidebar" | "split" | "full";
+    columns?: number;
+    rows?: number;
+    responsive?: boolean;
+  };
   /** Map of zone names to DisplayZone (camelCase) */
-  displayArchitecture?: Record<string, DisplayZone>
+  displayArchitecture?: Record<string, DisplayZone>;
   /** Enabled features */
-  features?: string[]
+  features?: string[];
   /** Context definition */
-  context?: { type: 'group' | 'inquiry'; selection: 'selected' | 'current' | 'all' }
+  context?: {
+    type: "group" | "inquiry";
+    selection: "selected" | "current" | "all";
+  };
   /** Theme or styling overrides */
   styles?: {
-    primaryColor?: string
-    accentColor?: string
-    borderRadius?: string
-  }
-  [key: string]: unknown
+    primaryColor?: string;
+    accentColor?: string;
+    borderRadius?: string;
+  };
+  [key: string]: unknown;
 }
 
 //  ============= PERMISSION ==========
 export type InquiryGroupPermissions = {
-  view: boolean
-  edit: boolean
-  delete: boolean
-  addInquiries: boolean
-  reorderInquiries: boolean
-  changeOwner: boolean
-  archive: boolean
-  clone: boolean
-}
+  view: boolean;
+  edit: boolean;
+  delete: boolean;
+  addInquiries: boolean;
+  reorderInquiries: boolean;
+  changeOwner: boolean;
+  archive: boolean;
+  clone: boolean;
+};
 
 // ===== CONFIGURATION =====
 export interface InquiryGroupConfiguration {
-  visibility: VisibilityInquiryGroupType
-  visibilityGroups: string[]
-  visibilityUsers: string[]
-  expire: number | null
-  supportEngine: SupportEngine[]
-  description: string
-  protected: boolean
-  titleExt: string | null
-  ui: InquiryGroupUIConfig
-}
-
-// ===== STATUS =====
-export interface InquiryGroupStatus {
-  groupStatus: InquiryGroupWorkflowStatus
-  created: number
-  deleted: number
-  updated: number
-  supportResult: SupportResult[]
+  visibility: VisibilityInquiryGroupType;
+  visibilityGroups: string[];
+  visibilityUsers: string[];
+  expire: number | null;
+  supportEngine: SupportEngine[];
+  description: string;
+  protected: boolean;
+  titleExt: string | null;
+  ui: InquiryGroupUIConfig;
 }
 
 // ===== INQUIRY GROUP TYPE =====
 export interface InquiryGroupType {
-  id: number | string
-  type: string
-  group_type?: string // Backward compatibility
-  label: string
-  family: string
-  icon?: string
-  description?: string
-  allowed_inquiry_types?: string | string[]
-  allowed_response?: string | string[]
-  ui: string[] | InquiryGroupUIConfig
-  features?: string[]
-  rules?: Record<string, any>
-  actions?: Array<{ key: string; label: string; icon?: string }>
-  is_root: boolean
-  sort_order: number
+  id: number | string;
+  type: string;
+  group_type?: string; 
+  label: string;
+  family: string;
+  icon?: string;
+  description?: string;
+  allowed_inquiry_types?: string | string[];
+  allowed_response?: string | string[];
+  ui: string[] | InquiryGroupUIConfig;
+  features?: string[];
+  rules?: Record<string, unknown>;
+  actions?: Array<{ key: string; label: string; icon?: string }>;
+  is_root: boolean;
+  sort_order: number;
   fields?: Array<{
-    key: string
-    label: string
-    type: string
-    required?: boolean
-    default?: any
-    allowed_values?: any[]
-    rules?: any[]
-  }>
-  created?: number | string
+    key: string;
+    label: string;
+    type: string;
+    required?: boolean;
+    default?: unknown;
+    allowed_values?: unknown[];
+    rules?: unknown[];
+  }>;
+  created?: number | string;
 }
 
 // ===== INQUIRY GROUP =====
 export interface InquiryGroup {
-  id: number
-  parentId: number | null
-  created: number
-  deleted: number
-  updated?: number
-  description: string | null
-  owner: User
-  type: string
-  trendingScore?: number
-  configuration: InquiryGroupConfiguration
-  status: InquiryGroupStatus
-  title: string
-  titleExt: string | null
-  ownedGroup: string | null
-  order: number
-  expire: number | null
-  metadata: string | null
-  coverId: number | null
-  protected: boolean
-  inquiryIds: number[]
-  childs: number[]
-  slug: string
-  miscFields: Record<string, string>
-  inquiryGroupType?: InquiryGroupType
-  permissions?: InquiryGroupPermissions
+  id: number;
+  parentId: number | null;
+  created: number;
+  deleted: number;
+  updated?: number;
+  description: string | null;
+  owner: User;
+  type: string;
+  trendingScore?: number;
+  configuration: InquiryGroupConfiguration;
+  status: InquiryGroupStatus;
+  title: string;
+  titleExt: string | null;
+  ownedGroup: string | null;
+  order: number;
+  expire: number | null;
+  metadata: string | null;
+  coverId: number | null;
+  protected: boolean;
+  inquiryIds: number[];
+  childs: number[];
+  slug: string;
+  miscFields: Record<string, string>;
+  inquiryGroupType?: InquiryGroupType;
+  permissions?: InquiryGroupPermissions;
 }
 
 export type CurrentUserInquiryGroupStatus = {
-  isOwner: boolean
-  isLoggedIn: boolean
-  userId: string
-  userRole: UserType
-  canEdit: boolean
-  isProtected: boolean
-}
+  isOwner: boolean;
+  isLoggedIn: boolean;
+  userId: string;
+  userRole: UserType;
+  canEdit: boolean;
+  isProtected: boolean;
+};

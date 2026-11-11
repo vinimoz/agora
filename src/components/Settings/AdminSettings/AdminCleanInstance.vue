@@ -4,19 +4,19 @@
 -->
 
 <script setup>
-import { ref } from 'vue'
-import { Logger } from '../../../helpers/index.ts'
-import { t } from '@nextcloud/l10n'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+import { ref } from "vue";
+import { Logger } from "../../../helpers/index.ts";
+import { t } from "@nextcloud/l10n";
+import { showSuccess, showError } from "@nextcloud/dialogs";
 
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import { AdminAPI } from '../../../Api/index.ts'
+import { AdminAPI } from "../../../Api/index.ts";
 
 const cleanInstance = ref({
-  text: t('agora', 'Clean instance'),
+  text: t("agora", "Clean instance"),
   disabled: false,
-})
+});
 
 /**
  * Start Clean Instance job
@@ -26,42 +26,42 @@ async function runCleanInstanceJob() {
   try {
     // Show warning confirmation before proceeding
     const confirmMessage = t(
-      'agora',
-      'Warning: this will permanently destroy all data in the instance. This action cannot be undone. Are you absolutely sure?'
-    )
+      "agora",
+      "Warning: this will permanently destroy all data in the instance. This action cannot be undone. Are you absolutely sure?",
+    );
 
     if (!confirm(confirmMessage)) {
-      return
+      return;
     }
 
     // Second confirmation for safety
     const secondConfirmMessage = t(
-      'agora',
-      'Final warning: all polls, votes, comments, and settings will be permanently deleted. Type "DELETE" to confirm:'
-    )
+      "agora",
+      'Final warning: all polls, votes, comments, and settings will be permanently deleted. Type "DELETE" to confirm:',
+    );
 
-    const userInput = prompt(secondConfirmMessage)
-    if (userInput !== 'DELETE') {
-      showError(t('agora', 'Clean instance cancelled'))
-      return
+    const userInput = prompt(secondConfirmMessage);
+    if (userInput !== "DELETE") {
+      showError(t("agora", "Clean instance cancelled"));
+      return;
     }
 
-    cleanInstance.value.disabled = true
-    cleanInstance.value.text = t('agora', 'Cleaning instance …')
+    cleanInstance.value.disabled = true;
+    cleanInstance.value.text = t("agora", "Cleaning instance …");
 
-    await AdminAPI.cleanInstance()
+    await AdminAPI.cleanInstance();
 
-    cleanInstance.value.text = t('agora', 'Instance cleaned')
-    showSuccess(t('agora', 'All data has been successfully destroyed'))
+    cleanInstance.value.text = t("agora", "Instance cleaned");
+    showSuccess(t("agora", "All data has been successfully destroyed"));
   } catch (error) {
-    cleanInstance.value.text = t('agora', 'Clean instance failed')
+    cleanInstance.value.text = t("agora", "Clean instance failed");
     showError(
-      t('agora', 'Failed to clean instance: {message}', {
-        message: error.message || t('agora', 'Unknown error'),
-      })
-    )
-    Logger.error('Error on executing clean instance job', { error })
-    cleanInstance.value.disabled = false
+      t("agora", "Failed to clean instance: {message}", {
+        message: error.message || t("agora", "Unknown error"),
+      }),
+    );
+    Logger.error("Error on executing clean instance job", { error });
+    cleanInstance.value.disabled = false;
   }
 }
 </script>
@@ -70,24 +70,29 @@ async function runCleanInstanceJob() {
   <div class="user_settings clean-instance-section">
     <div class="job_hints danger-warning">
       <p class="warning-title">
-        ⚠️ {{ t('agora', 'Danger zone - data destruction') }} ⚠️
+        ⚠️ {{ t("agora", "Danger zone - data destruction") }} ⚠️
       </p>
       <p>
         {{
           t(
-            'agora',
-            'This action will permanently destroy all data including polls, votes, comments, and settings.'
+            "agora",
+            "This action will permanently destroy all data including polls, votes, comments, and settings.",
           )
         }}
       </p>
       <p class="warning-highlight">
-        {{ t('agora', 'This operation cannot be undone. All data will be lost forever.') }}
+        {{
+          t(
+            "agora",
+            "This operation cannot be undone. All data will be lost forever.",
+          )
+        }}
       </p>
       <p>
         {{
           t(
-            'agora',
-            'Only use this if you are absolutely sure you want to reset the entire instance to an empty state.'
+            "agora",
+            "Only use this if you are absolutely sure you want to reset the entire instance to an empty state.",
           )
         }}
       </p>

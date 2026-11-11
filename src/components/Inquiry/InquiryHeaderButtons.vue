@@ -4,26 +4,19 @@
 -->
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { ActionToggleSidebar } from '../Actions/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import Collapsible from '../Base/modules/Collapsible.vue'
-const route = useRoute()
-const inquiryStore = useInquiryStore()
-const sessionStore = useSessionStore()
+import {  onBeforeUnmount } from "vue";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { ActionToggleSidebar } from "../Actions/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import Collapsible from "../Base/modules/Collapsible.vue";
 
-const collapsibleProps = computed<CollapsibleProps>(() => ({
-  noCollapse: !inquiryStore.configuration?.collapseDescription || isShortDescription.value,
-  initialState: inquiryStore.currentUserStatus?.countInquiries === 0 ? 'max' : 'min',
-}))
+const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore();
+
 
 onBeforeUnmount(() => {
-  inquiryStore.$reset()
-})
+  inquiryStore.$reset();
+});
 </script>
 
 <template>
@@ -36,7 +29,8 @@ onBeforeUnmount(() => {
     <ActionToggleSidebar
       v-if="
         inquiryStore.permissions.edit ||
-          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.inquiryComment
+          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]
+            ?.inquiryComment
       "
     />
   </div>

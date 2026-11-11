@@ -214,7 +214,9 @@
               class="counter-icon"
               :size="14"
             />
-            <span class="counter-value">{{ inquiry.status.countComments }}</span>
+            <span class="counter-value">{{
+              inquiry.status.countComments
+            }}</span>
           </div>
           <div
             v-if="showParticipants && inquiry.status?.countParticipants"
@@ -225,7 +227,9 @@
               class="counter-icon"
               :size="14"
             />
-            <span class="counter-value">{{ inquiry.status.countParticipants }}</span>
+            <span class="counter-value">{{
+              inquiry.status.countParticipants
+            }}</span>
           </div>
         </div>
       </div>
@@ -252,47 +256,48 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
 
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import type { Inquiry } from '../../Types/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
-import { SupportFeature } from '../Base/index.ts'
-import { createInquiryContext } from '../../utils/permissions.ts'
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import type { Inquiry } from "../../Types/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
+import { SupportFeature } from "../Base/index.ts";
+import { createInquiryContext } from "../../utils/permissions.ts";
 
 interface Props {
-  inquiry: Inquiry
-  inquiries?: Inquiry[]
-  isActive?: boolean
-  dense?: boolean
-  compact?: boolean
-  interactive?: boolean
-  horizontal?: boolean
+  inquiry: Inquiry;
+  inquiries?: Inquiry[];
+  isActive?: boolean;
+  dense?: boolean;
+  compact?: boolean;
+  interactive?: boolean;
+  horizontal?: boolean;
 
   // Display feature toggles
-  showIcon?: boolean
-  showCover?: boolean
-  showMeta?: boolean
-  showStats?: boolean
-  showAuthor?: boolean
-  showDescription?: boolean
-  showExpiry?: boolean
-  showType?: boolean
-  showStatus?: boolean
-  showComments?: boolean
-  showSupport?: boolean
-  showParticipants?: boolean
+  showIcon?: boolean;
+  showCover?: boolean;
+  showMeta?: boolean;
+  showStats?: boolean;
+  showAuthor?: boolean;
+  showDescription?: boolean;
+  showExpiry?: boolean;
+  showType?: boolean;
+  showStatus?: boolean;
+  showComments?: boolean;
+  showSupport?: boolean;
+  showParticipants?: boolean;
 
   // Open behavior
-  openMode?: 'page' | 'modal' | 'popup' | 'none'
+  openMode?: "page" | "modal" | "popup" | "none";
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isActive: false,
   dense: false,
+  inquiries: null,
   compact: false,
   interactive: true,
   horizontal: false,
@@ -308,284 +313,307 @@ const props = withDefaults(defineProps<Props>(), {
   showComments: true,
   showSupport: true,
   showParticipants: true,
-  openMode: 'page',
-})
+  openMode: "page",
+});
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-  support: [inquiryId: number]
-  comments: [inquiryId: number]
-}>()
+  click: [inquiry: Inquiry];
+  support: [inquiryId: number];
+  comments: [inquiryId: number];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // Card classes
 const cardClasses = computed(() => ({
-  'is-active': props.isActive,
-  'is-dense': props.dense,
-  'is-compact': props.compact,
-  'is-interactive': props.interactive,
-  'has-cover': props.showCover && !!coverUrl.value,
-  'is-horizontal': props.horizontal,
-}))
+  "is-active": props.isActive,
+  "is-dense": props.dense,
+  "is-compact": props.compact,
+  "is-interactive": props.interactive,
+  "has-cover": props.showCover && !!coverUrl.value,
+  "is-horizontal": props.horizontal,
+}));
 
 // Get inquiry types
-const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
 
 // Context for permissions
-const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
+const context = computed(() =>
+  createInquiryContext(props.inquiry, sessionStore.appSettings),
+);
 
 // Get type data
-const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
+const typeData = computed(() =>
+  getInquiryTypeData(props.inquiry.type, inquiryTypes.value),
+);
 
-const typeLabel = computed(() => typeData.value?.label || props.inquiry.type)
+const typeLabel = computed(() => typeData.value?.label || props.inquiry.type);
 
 // Type icon
 const typeIconComponent = computed(() => {
   if (typeData.value?.icon) {
-    const iconName = typeData.value.icon
-    if (typeof iconName === 'string' && InquiryGeneralIcons[iconName]) {
-      return InquiryGeneralIcons[iconName]
+    const iconName = typeData.value.icon;
+    if (typeof iconName === "string" && InquiryGeneralIcons[iconName]) {
+      return InquiryGeneralIcons[iconName];
     }
-    if (typeof iconName === 'function' || typeof iconName === 'object') {
-      return iconName
+    if (typeof iconName === "function" || typeof iconName === "object") {
+      return iconName;
     }
   }
 
   const iconMap = {
-    survey: 'ClipboardList',
-    poll: 'CheckCircle',
-    question: 'Question',
-    discussion: 'MessageSquare',
-    news: 'Newspaper',
-    announcement: 'Megaphone',
-    meeting: 'Users',
-    document: 'Document',
-    proposal: 'Scale',
-    general: 'FolderMultiple',
-    draft: 'Empty',
-  }
+    survey: "ClipboardList",
+    poll: "CheckCircle",
+    question: "Question",
+    discussion: "MessageSquare",
+    news: "Newspaper",
+    announcement: "Megaphone",
+    meeting: "Users",
+    document: "Document",
+    proposal: "Scale",
+    general: "FolderMultiple",
+    draft: "Empty",
+  };
 
-  const iconName = iconMap[props.inquiry.type?.toLowerCase()] || 'FolderMultiple'
-  return InquiryGeneralIcons[iconName] || InquiryGeneralIcons.FolderMultiple
-})
+  const iconName =
+    iconMap[props.inquiry.type?.toLowerCase()] || "FolderMultiple";
+  return InquiryGeneralIcons[iconName] || InquiryGeneralIcons.FolderMultiple;
+});
 
 // Get current status
 const currentInquiryStatus = computed(() => {
-  if (!props.inquiry.status?.inquiryStatus) return null
+  if (!props.inquiry.status?.inquiryStatus) return null;
 
   const specialStatuses = {
     draft: {
-      statusKey: 'draft',
-      label: t('agora', 'Draft'),
-      icon: 'draft',
+      statusKey: "draft",
+      label: t("agora", "Draft"),
+      icon: "draft",
       inquiryType: props.inquiry.type,
       order: 0,
     },
     waiting_approval: {
-      statusKey: 'waiting_approval',
-      label: t('agora', 'Pending approval'),
-      icon: 'waitingapproval',
+      statusKey: "waiting_approval",
+      label: t("agora", "Pending approval"),
+      icon: "waitingapproval",
       inquiryType: props.inquiry.type,
       order: 1,
     },
-  }
+  };
 
-  const currentStatus = props.inquiry.status.inquiryStatus
+  const currentStatus = props.inquiry.status.inquiryStatus;
   if (specialStatuses[currentStatus]) {
-    return specialStatuses[currentStatus]
+    return specialStatuses[currentStatus];
   }
 
   const statusesFromSettings =
     sessionStore.appSettings?.inquiryStatusTab?.filter(
-      (status) => status.inquiryType === props.inquiry.type
-    ) || []
+      (status) => status.inquiryType === props.inquiry.type,
+    ) || [];
 
   return (
     statusesFromSettings.find((status) => status.statusKey === currentStatus) ||
     specialStatuses.draft
-  )
-})
+  );
+});
 
 const statusText = computed(() =>
-  currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : ''
-)
+  currentInquiryStatus.value?.label
+    ? t("agora", currentInquiryStatus.value.label)
+    : "",
+);
 
 const statusIconComponent = computed(() => {
-  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
-  const iconName = currentInquiryStatus.value.icon
-  return StatusIcons[iconName] || StatusIcons.Default
-})
+  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default;
+  const iconName = currentInquiryStatus.value.icon;
+  return StatusIcons[iconName] || StatusIcons.Default;
+});
 
 const statusBadgeClass = computed(() => {
-  const status = props.inquiry.status?.inquiryStatus
+  const status = props.inquiry.status?.inquiryStatus;
   const map: Record<string, string> = {
-    active: 'status-open',
-    open: 'status-open',
-    closed: 'status-closed',
-    draft: 'status-draft',
-    waiting_approval: 'status-waiting',
-  }
-  return map[status || ''] || 'status-unknown'
-})
+    active: "status-open",
+    open: "status-open",
+    closed: "status-closed",
+    draft: "status-draft",
+    waiting_approval: "status-waiting",
+  };
+  return map[status || ""] || "status-unknown";
+});
 
 // Cover image
 const coverUrl = computed(() => {
-  if (!props.showCover) return ''
-  if (!props.inquiry.coverId || props.inquiry.coverId === 0) return ''
-  return getNextcloudPreviewUrl(props.inquiry.coverId)
-})
+  if (!props.showCover) return "";
+  if (!props.inquiry.coverId || props.inquiry.coverId === 0) return "";
+  return getNextcloudPreviewUrl(props.inquiry.coverId);
+});
 
-function getNextcloudPreviewUrl(fileId: number, x = 400, y = 200, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`
+function getNextcloudPreviewUrl(
+  fileId: number,
+  x = 400,
+  y = 200,
+  autoScale = true,
+) {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`;
 }
 
 // Short Description
 const shortDescription = computed(() => {
-  if (!props.inquiry.description) return ''
+  if (!props.inquiry.description) return "";
 
-  const plainText = props.inquiry.description.replace(/<[^>]*>/g, '')
-  const maxLen = props.compact ? 60 : 100
+  const plainText = props.inquiry.description.replace(/<[^>]*>/g, "");
+  const maxLen = props.compact ? 60 : 100;
 
   if (plainText.length > maxLen) {
-    return `${plainText.substring(0, maxLen)}…`
+    return `${plainText.substring(0, maxLen)}…`;
   }
 
-  return plainText
-})
+  return plainText;
+});
 
 // Get hierarchy path for location and category display
 function getHierarchyPath(items, targetId) {
-  if (!items || !Array.isArray(items)) return ''
+  if (!items || !Array.isArray(items)) return "";
 
-  const itemMap = {}
+  const itemMap = {};
 
   items.forEach((item) => {
-    itemMap[item.id] = item
-  })
+    itemMap[item.id] = item;
+  });
 
   if (!itemMap[targetId]) {
-    return itemMap[1]?.name || ''
+    return itemMap[1]?.name || "";
   }
 
   function buildPath(item) {
     if (item.parentId === 0) {
-      return item.name
+      return item.name;
     }
-    const parent = itemMap[item.parentId]
+    const parent = itemMap[item.parentId];
     if (parent) {
-      return `${buildPath(parent)} → ${item.name}`
+      return `${buildPath(parent)} → ${item.name}`;
     }
-    return item.name
+    return item.name;
   }
 
-  return buildPath(itemMap[targetId])
+  return buildPath(itemMap[targetId]);
 }
 
 // Location and Category paths
 const locationPath = computed(() =>
-  getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId)
-)
+  getHierarchyPath(
+    sessionStore.appSettings?.locationTab,
+    props.inquiry.locationId,
+  ),
+);
 const categoryPath = computed(() =>
-  getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId)
-)
+  getHierarchyPath(
+    sessionStore.appSettings?.categoryTab,
+    props.inquiry.categoryId,
+  ),
+);
 
 const truncatedLocation = computed(() => {
-  if (!locationPath.value) return ''
-  const maxLen = props.compact ? 12 : 15
+  if (!locationPath.value) return "";
+  const maxLen = props.compact ? 12 : 15;
   return locationPath.value.length > maxLen
     ? `${locationPath.value.substring(0, maxLen)}…`
-    : locationPath.value
-})
+    : locationPath.value;
+});
 
 const truncatedCategory = computed(() => {
-  if (!categoryPath.value) return ''
-  const maxLen = props.compact ? 12 : 15
+  if (!categoryPath.value) return "";
+  const maxLen = props.compact ? 12 : 15;
   return categoryPath.value.length > maxLen
     ? `${categoryPath.value.substring(0, maxLen)}…`
-    : categoryPath.value
-})
+    : categoryPath.value;
+});
 
 // Truncated text
 const truncatedAuthorName = computed(() => {
-  const name = props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
-  const maxLen = props.compact ? 15 : 20
-  return name.length > maxLen ? `${name.substring(0, maxLen)}…` : name
-})
+  const name =
+    props.inquiry.ownedGroup || props.inquiry.owner?.displayName || "";
+  const maxLen = props.compact ? 15 : 20;
+  return name.length > maxLen ? `${name.substring(0, maxLen)}…` : name;
+});
 
 // Time formatting
 const formattedTime = computed(() => {
-  if (!props.inquiry.status?.created) return ''
+  if (!props.inquiry.status?.created) return "";
 
-  const created = new Date(props.inquiry.status.created * 1000)
-  const now = new Date()
-  const diff = now.getTime() - created.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor(diff / (1000 * 60 * 60))
-  const minutes = Math.floor(diff / (1000 * 60))
+  const created = new Date(props.inquiry.status.created * 1000);
+  const now = new Date();
+  const diff = now.getTime() - created.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor(diff / (1000 * 60));
 
   if (days > 30) {
-    return created.toLocaleDateString()
+    return created.toLocaleDateString();
   }
   if (days > 0) {
-    return t('agora', '{days}d ago', { days })
+    return t("agora", "{days}d ago", { days });
   }
   if (hours > 0) {
-    return t('agora', '{hours}h ago', { hours })
+    return t("agora", "{hours}h ago", { hours });
   }
   if (minutes > 0) {
-    return t('agora', '{minutes}m ago', { minutes })
+    return t("agora", "{minutes}m ago", { minutes });
   }
-  return t('agora', 'Just now')
-})
+  return t("agora", "Just now");
+});
 
 // Expiry
 const showExpiryBadge = computed(
-  () => !!props.inquiry.configuration?.expire && props.inquiry.configuration.expire > 0
-)
+  () =>
+    !!props.inquiry.configuration?.expire &&
+    props.inquiry.configuration.expire > 0,
+);
 
 const expiryText = computed(() => {
-  if (!props.inquiry.configuration?.expire) return ''
+  if (!props.inquiry.configuration?.expire) return "";
 
-  const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
-  const now = new Date()
-  const diff = expiryDate.getTime() - now.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const expiryDate = new Date(props.inquiry.configuration.expire * 1000);
+  const now = new Date();
+  const diff = expiryDate.getTime() - now.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
   if (days > 0) {
-    return t('agora', '{days} days left', { days })
+    return t("agora", "{days} days left", { days });
   }
   if (hours > 0) {
-    return t('agora', '{hours} hours left', { hours })
+    return t("agora", "{hours} hours left", { hours });
   }
-  return t('agora', 'Expiring soon')
-})
+  return t("agora", "Expiring soon");
+});
 
 const expiryBadgeClass = computed(() => {
-  if (!props.inquiry.configuration?.expire) return ''
+  if (!props.inquiry.configuration?.expire) return "";
 
-  const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
-  const now = new Date()
-  const diff = expiryDate.getTime() - now.getTime()
-  const hours = diff / (1000 * 60 * 60)
+  const expiryDate = new Date(props.inquiry.configuration.expire * 1000);
+  const now = new Date();
+  const diff = expiryDate.getTime() - now.getTime();
+  const hours = diff / (1000 * 60 * 60);
 
-  if (hours < 24) return 'expiry-soon'
-  if (hours < 72) return 'expiry-warning'
-  return 'expiry-normal'
-})
+  if (hours < 24) return "expiry-soon";
+  if (hours < 72) return "expiry-warning";
+  return "expiry-normal";
+});
 
 // Handlers
 function handleClick() {
   if (props.interactive) {
-    emit('click', props.inquiry)
+    emit("click", props.inquiry);
   }
 }
 
 function handleCommentsClick(e: Event) {
-  e.stopPropagation()
-  emit('comments', props.inquiry.id)
+  e.stopPropagation();
+  emit("comments", props.inquiry.id);
 }
 </script>
 
@@ -900,25 +928,41 @@ function handleCommentsClick(e: Event) {
   letter-spacing: 0.3px;
 
   &.status-open {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+    background: linear-gradient(
+      135deg,
+      rgba(34, 197, 94, 0.1),
+      rgba(34, 197, 94, 0.05)
+    );
     color: #16a34a;
     border: 1px solid rgba(34, 197, 94, 0.2);
   }
 
   &.status-closed {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    background: linear-gradient(
+      135deg,
+      rgba(239, 68, 68, 0.1),
+      rgba(239, 68, 68, 0.05)
+    );
     color: #dc2626;
     border: 1px solid rgba(239, 68, 68, 0.2);
   }
 
   &.status-draft {
-    background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.05));
+    background: linear-gradient(
+      135deg,
+      rgba(148, 163, 184, 0.1),
+      rgba(148, 163, 184, 0.05)
+    );
     color: #64748b;
     border: 1px solid rgba(148, 163, 184, 0.2);
   }
 
   &.status-waiting {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+    background: linear-gradient(
+      135deg,
+      rgba(245, 158, 11, 0.1),
+      rgba(245, 158, 11, 0.05)
+    );
     color: #f59e0b;
     border: 1px solid rgba(245, 158, 11, 0.2);
   }
@@ -1107,19 +1151,31 @@ function handleCommentsClick(e: Event) {
 
     &.expiry {
       &.expiry-soon {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0.1),
+          rgba(239, 68, 68, 0.05)
+        );
         color: #ef4444;
         border: 1px solid rgba(239, 68, 68, 0.2);
       }
 
       &.expiry-warning {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+        background: linear-gradient(
+          135deg,
+          rgba(245, 158, 11, 0.1),
+          rgba(245, 158, 11, 0.05)
+        );
         color: #f59e0b;
         border: 1px solid rgba(245, 158, 11, 0.2);
       }
 
       &.expiry-normal {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.1),
+          rgba(16, 185, 129, 0.05)
+        );
         color: #10b981;
         border: 1px solid rgba(16, 185, 129, 0.2);
       }

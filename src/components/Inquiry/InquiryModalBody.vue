@@ -1,12 +1,12 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <div class="inquiry-modal-body">
     <!-- Viewer (default) -->
     <InquirySummary
-      v-if="mode === 'view'"
-      :inquiry="inquiry"
+      v-if="props.mode === 'view'"
+      :inquiry="props.inquiry"
       :show-meta="true"
       :show-stats="true"
       :show-author="true"
@@ -27,15 +27,14 @@ AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import InquirySummary from '../InquiryGroup/InquirySummary.vue'
-import InquiryEditViewForm from './InquiryEditViewForm.vue'
-import type { Inquiry } from '../../Types/index.ts'
+import InquirySummary from "../InquiryGroup/InquirySummary.vue";
+import InquiryEditViewForm from "./InquiryEditViewForm.vue";
+import type { Inquiry } from "../../Types/index.ts";
 
 const props = defineProps<{
-  inquiry: Inquiry | null
-  mode: 'view' | 'edit'
-}>()
+  inquiry: Inquiry | null;
+  mode: "view" | "edit";
+}>();
 
 // (nothing else — we deliberately don't touch useInquiryStore here)
 </script>

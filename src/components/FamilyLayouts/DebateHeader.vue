@@ -17,7 +17,7 @@
               :size="16"
             />
           </template>
-          {{ t('agora', 'Back to debates') }}
+          {{ t("agora", "Back to debates") }}
         </NcButton>
       </div>
       <div class="header-right">
@@ -43,7 +43,7 @@
             :size="16"
           />
           <span>{{ metrics.participants || 0 }}</span>
-          <span class="metric-label">{{ t('agora', 'participants') }}</span>
+          <span class="metric-label">{{ t("agora", "participants") }}</span>
         </div>
         <div class="metric-divider" />
         <div class="metric">
@@ -52,7 +52,7 @@
             :size="16"
           />
           <span>{{ metrics.arguments || 0 }}</span>
-          <span class="metric-label">{{ t('agora', 'arguments') }}</span>
+          <span class="metric-label">{{ t("agora", "arguments") }}</span>
         </div>
         <div class="metric-divider" />
         <div class="metric">
@@ -61,7 +61,7 @@
             :size="16"
           />
           <span>{{ metrics.objections || 0 }}</span>
-          <span class="metric-label">{{ t('agora', 'objections') }}</span>
+          <span class="metric-label">{{ t("agora", "objections") }}</span>
         </div>
       </div>
 
@@ -77,8 +77,8 @@
           />
         </div>
         <div class="balance-labels">
-          <span class="for-label">{{ t('agora', 'For') }} {{ balance.for || 50 }}%</span>
-          <span class="against-label">{{ t('agora', 'Against') }} {{ balance.against || 50 }}%</span>
+          <span class="for-label">{{ t("agora", "For") }} {{ balance.for || 50 }}%</span>
+          <span class="against-label">{{ t("agora", "Against") }} {{ balance.against || 50 }}%</span>
         </div>
       </div>
     </div>
@@ -86,38 +86,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { InquiryGeneralIcons, InquiryOptionIcons } from "../../utils/icons.ts";
 
 // ============================================
 // Props
 // ============================================
 
 const props = defineProps<{
-  question: string
-  status?: string
+  question: string;
+  status?: string;
   // eslint-disable-next-line
-  phase?: string
+  phase?: string;
   metrics: {
-    participants: number
-    arguments: number
-    objections: number
-  }
+    participants: number;
+    arguments: number;
+    objections: number;
+  };
   balance: {
-    for: number
-    against: number
-  }
-}>()
+    for: number;
+    against: number;
+  };
+}>();
 
 // ============================================
 // Emits
 // ============================================
 
 defineEmits<{
-  back: []
-}>()
+  back: [];
+}>();
 
 // ============================================
 // Computed
@@ -125,23 +125,23 @@ defineEmits<{
 
 const statusClass = computed(() => {
   const statusMap: Record<string, string> = {
-    open: 'status-open',
-    closed: 'status-closed',
-    draft: 'status-draft',
-    active: 'status-active',
-  }
-  return statusMap[props.status || ''] || 'status-open'
-})
+    open: "status-open",
+    closed: "status-closed",
+    draft: "status-draft",
+    active: "status-active",
+  };
+  return statusMap[props.status || ""] || "status-open";
+});
 
 const statusLabel = computed(() => {
   const labelMap: Record<string, string> = {
-    open: t('agora', 'Open'),
-    closed: t('agora', 'Closed'),
-    draft: t('agora', 'Draft'),
-    active: t('agora', 'Active'),
-  }
-  return labelMap[props.status || ''] || t('agora', 'Open')
-})
+    open: t("agora", "Open"),
+    closed: t("agora", "Closed"),
+    draft: t("agora", "Draft"),
+    active: t("agora", "Active"),
+  };
+  return labelMap[props.status || ""] || t("agora", "Open");
+});
 </script>
 
 <style scoped lang="scss">

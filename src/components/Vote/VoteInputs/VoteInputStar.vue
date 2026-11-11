@@ -7,7 +7,9 @@
         v-for="n in maxStars"
         :key="n"
         :size="24"
-        :class="{ filled: hoverValue >= n || (currentValue >= n && hoverValue === null) }"
+        :class="{
+          filled: hoverValue >= n || (currentValue >= n && hoverValue === null),
+        }"
         @click="setStar(n)"
         @mouseenter="hoverValue = n"
         @mouseleave="hoverValue = null"
@@ -16,7 +18,9 @@
     <span
       v-if="currentValue"
       class="current-rating"
-    > {{ currentValue }} / {{ maxStars }} </span>
+    >
+      {{ currentValue }} / {{ maxStars }}
+    </span>
     <NcButton
       v-if="currentValue"
       type="tertiary"
@@ -29,35 +33,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { Star, X } from 'lucide-vue-next'
-import type { Option, Inquiry } from '../../../Types/index'
+import { ref, computed } from "vue";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { Star, X } from "lucide-vue-next";
+import type { Option, Inquiry } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Option | Inquiry
-  currentStar?: number | null
-}>()
+  engineConfig: Record<string, unknown>;
+  item: Option | Inquiry;
+  currentStar?: number | null;
+}>();
 
 const emit = defineEmits<{
-  'update:star': [itemId: number, star: number | null]
-}>()
+  "update:star": [itemId: number, star: number | null];
+}>();
 
-const maxStars = computed(() => (props.engineConfig.max as number) || 5)
-const hoverValue = ref<number | null>(null)
-const currentValue = computed(() => props.currentStar ?? null)
+const maxStars = computed(() => (props.engineConfig.max as number) || 5);
+const hoverValue = ref<number | null>(null);
+const currentValue = computed(() => props.currentStar ?? null);
 
 function setStar(value: number) {
   if (currentValue.value === value) {
-    emit('update:star', props.item.id, null)
+    emit("update:star", props.item.id, null);
   } else {
-    emit('update:star', props.item.id, value)
+    emit("update:star", props.item.id, value);
   }
 }
 
 function clearStar() {
-  emit('update:star', props.item.id, null)
+  emit("update:star", props.item.id, null);
 }
 </script>
 

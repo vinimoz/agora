@@ -4,15 +4,15 @@
 -->
 
 <script setup>
-import { t } from '@nextcloud/l10n'
+import { t } from "@nextcloud/l10n";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
 
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import CardDiv from '../../Base/modules/CardDiv.vue'
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import CardDiv from "../../Base/modules/CardDiv.vue";
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const appSettingsStore = useAppSettingsStore()
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{ t('agora', 'Enable unrestricted owners globally') }}
+      {{ t("agora", "Enable unrestricted owners globally") }}
     </NcCheckboxRadioSwitch>
     <div
       v-if="!appSettingsStore.unrestrictedOwner"
@@ -43,19 +43,24 @@ const appSettingsStore = useAppSettingsStore()
     </div>
     <CardDiv type="info">
       <p>
-        {{ t('agora', 'Effects on restricted owners') }}
+        {{ t("agora", "Effects on restricted owners") }}
       </p>
       <ul>
         <li>
           {{
             t(
-              'agora',
-              'Anonymizing a inquiry of a restricted owner means that this inquiry is anonymous for everyone, including the owner.'
+              "agora",
+              "Anonymizing a inquiry of a restricted owner means that this inquiry is anonymous for everyone, including the owner.",
             )
           }}
         </li>
         <li>
-          {{ t('agora', 'Deleting and changing inquiries of participants is not possible') }}
+          {{
+            t(
+              "agora",
+              "Deleting and changing inquiries of participants is not possible",
+            )
+          }}
         </li>
       </ul>
     </CardDiv>

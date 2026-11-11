@@ -4,189 +4,207 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { useInquiryGroupStore } from '../../stores/inquiryGroup.ts'
-import { useInquiriesStore } from '../../stores/inquiries'
-import { useSessionStore } from '../../stores/session'
-import type { Inquiry } from '../../Types/index.ts'
-import { useRoute } from 'vue-router'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { ref, computed, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { useInquiryGroupStore } from "../../stores/inquiryGroup.ts";
+import { useInquiriesStore } from "../../stores/inquiries";
+import { useSessionStore } from "../../stores/session";
+import type { Inquiry } from "../../Types/index.ts";
+import { useRoute } from "vue-router";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
 
-import { getInquiryGroupTypeData, getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
+import {
+  getInquiryGroupTypeData,
+  getInquiryTypeData,
+} from "../../helpers/modules/InquiryHelper.ts";
 
 // Store declarations
-const sessionStore = useSessionStore()
-const inquiryGroupStore = useInquiryGroupStore()
-const inquiriesStore = useInquiriesStore()
-const route = useRoute()
+const sessionStore = useSessionStore();
+const inquiryGroupStore = useInquiryGroupStore();
+const inquiriesStore = useInquiriesStore();
+const route = useRoute();
 
 // State
-const dragItem = ref<Inquiry | null>(null)
-const dragOverDropZone = ref(false)
+const dragItem = ref<Inquiry | null>(null);
+const dragOverDropZone = ref(false);
 
 const groupTypeData = computed(() => {
-  if (!inquiryGroupStore.type || !sessionStore.appSettings.inquiryGroupTypeTab) {
+  if (
+    !inquiryGroupStore.type ||
+    !sessionStore.appSettings.inquiryGroupTypeTab
+  ) {
     return {
       icon: InquiryGeneralIcons.Question,
-      label: inquiryGroupStore.type || t('agora', 'Unknown'),
-      description: '',
-    }
+      label: inquiryGroupStore.type || t("agora", "Unknown"),
+      description: "",
+    };
   }
 
   return getInquiryGroupTypeData(
     inquiryGroupStore.type,
-    sessionStore.appSettings.inquiryGroupTypeTab
-  )
-})
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  );
+});
 
 const getInquiryTypeInfo = (inquiryType: string) => {
   if (!inquiryType || !sessionStore.appSettings.inquiryTypeTab) {
     return {
       icon: InquiryGeneralIcons.Question,
-      label: inquiryType || t('agora', 'Unknown'),
-      description: '',
-    }
+      label: inquiryType || t("agora", "Unknown"),
+      description: "",
+    };
   }
-  return getInquiryTypeData(inquiryType, sessionStore.appSettings.inquiryTypeTab)
-}
+  return getInquiryTypeData(
+    inquiryType,
+    sessionStore.appSettings.inquiryTypeTab,
+  );
+};
 
 const groupInquiries = computed(() => {
-  if (!inquiryGroupStore.inquiryIds || !inquiryGroupStore.inquiryIds.length) return []
+  if (!inquiryGroupStore.inquiryIds || !inquiryGroupStore.inquiryIds.length)
+    return [];
 
   return inquiryGroupStore.inquiryIds
     .map((id) => inquiriesStore.byId[id])
     .filter(Boolean)
     .sort((a, b) => {
       // Sort by order if available, otherwise by creation date
-      const orderA = a.order || a.created
-      const orderB = b.order || b.created
-      return orderA - orderB
-    })
-})
+      const orderA = a.order || a.created;
+      const orderB = b.order || b.created;
+      return orderA - orderB;
+    });
+});
 
 const allInquiries = computed(() =>
   Object.values(inquiriesStore.byId).filter(
-    (inquiry) => inquiry && !inquiryGroupStore.inquiryIds.includes(inquiry.id)
-  )
-)
+    (inquiry) => inquiry && !inquiryGroupStore.inquiryIds.includes(inquiry.id),
+  ),
+);
 
 const allowedInquiryTypes = computed(() => {
-  if (!inquiryGroupStore.type || !sessionStore.appSettings.inquiryGroupTab) return []
+  if (!inquiryGroupStore.type || !sessionStore.appSettings.inquiryGroupTab)
+    return [];
 
   // Fixed: Changed from sessionStore.appSettings.inquiryGroupTab[inquiryGroupStore.type]
-  const groupTypeConfig = sessionStore.appSettings.inquiryGroupTab[inquiryGroupStore.type]
-  return groupTypeConfig?.allowed_inquiry_types || []
-})
+  const groupTypeConfig =
+    sessionStore.appSettings.inquiryGroupTab[inquiryGroupStore.type];
+  return groupTypeConfig?.allowed_inquiry_types || [];
+});
 
 const filteredAvailableInquiries = computed(() =>
   allInquiries.value.filter((inquiry) => {
     // If no allowed types are specified, show all inquiries
-    if (!allowedInquiryTypes.value.length) return true
+    if (!allowedInquiryTypes.value.length) return true;
 
     // Check if inquiry type is in allowed list
-    return allowedInquiryTypes.value.includes(inquiry.type)
-  })
-)
+    return allowedInquiryTypes.value.includes(inquiry.type);
+  }),
+);
 
-const displayedGroupInquiries = computed(() => groupInquiries.value)
+const displayedGroupInquiries = computed(() => groupInquiries.value);
 
-const displayedAvailableInquiries = computed(() => filteredAvailableInquiries.value)
+const displayedAvailableInquiries = computed(
+  () => filteredAvailableInquiries.value,
+);
 
 // Improved inquiry count formatting
 const formattedInquiryCount = computed(() => {
-  const count = groupInquiries.value.length
-  if (count === 0) return '0'
-  if (count < 1000) return count.toString()
-  if (count < 1000000) return `${(count / 1000).toFixed(1)}K`
-  return `${(count / 1000000).toFixed(1)}M`
-})
+  const count = groupInquiries.value.length;
+  if (count === 0) return "0";
+  if (count < 1000) return count.toString();
+  if (count < 1000000) return `${(count / 1000).toFixed(1)}K`;
+  return `${(count / 1000000).toFixed(1)}M`;
+});
 
 // Drag and Drop handlers
 const onDragStart = (inquiry: Inquiry, event: DragEvent) => {
-  dragItem.value = inquiry
-  event.dataTransfer?.setData('text/plain', inquiry.id.toString())
-  event.dataTransfer!.effectAllowed = 'move'
-}
+  dragItem.value = inquiry;
+  event.dataTransfer?.setData("text/plain", inquiry.id.toString());
+  event.dataTransfer!.effectAllowed = "move";
+};
 
 const onDragOver = (event: DragEvent, isDropZone: boolean = false) => {
-  event.preventDefault()
+  event.preventDefault();
   if (isDropZone) {
-    dragOverDropZone.value = true
+    dragOverDropZone.value = true;
   }
-}
+};
 
 const onDragLeave = (isDropZone: boolean = false) => {
   if (isDropZone) {
-    dragOverDropZone.value = false
+    dragOverDropZone.value = false;
   }
-}
+};
 
 const onDropToGroup = async (event: DragEvent) => {
-  event.preventDefault()
-  dragOverDropZone.value = false
+  event.preventDefault();
+  dragOverDropZone.value = false;
 
-  if (!dragItem.value || groupInquiries.value.some((i) => i.id === dragItem.value!.id)) {
-    return
+  if (
+    !dragItem.value ||
+    groupInquiries.value.some((i) => i.id === dragItem.value!.id)
+  ) {
+    return;
   }
 
   try {
-    await inquiryGroupStore.addInquiry(dragItem.value.id)
-    showSuccess(t('agora', 'Inquiry added to group'))
-    dragItem.value = null
+    await inquiryGroupStore.addInquiry(dragItem.value.id);
+    showSuccess(t("agora", "Inquiry added to group"));
+    dragItem.value = null;
   } catch (error) {
-    showError(t('agora', 'Failed to add inquiry to group'))
-    console.error('Error adding inquiry to group:', error)
+    showError(t("agora", "Failed to add inquiry to group"));
+    console.error("Error adding inquiry to group:", error);
   }
-}
+};
 
 const onDropToAvailable = async (inquiry: Inquiry, event: DragEvent) => {
-  event.preventDefault()
+  event.preventDefault();
 
   if (!dragItem.value || dragItem.value.id === inquiry.id) {
-    return
+    return;
   }
 
   // Remove from group
   try {
-    await inquiryGroupStore.removeInquiry(dragItem.value.id)
-    showSuccess(t('agora', 'Inquiry removed from group'))
-    dragItem.value = null
+    await inquiryGroupStore.removeInquiry(dragItem.value.id);
+    showSuccess(t("agora", "Inquiry removed from group"));
+    dragItem.value = null;
   } catch (error) {
-    showError(t('agora', 'Failed to remove inquiry from group'))
-    console.error('Error removing inquiry from group:', error)
+    showError(t("agora", "Failed to remove inquiry from group"));
+    console.error("Error removing inquiry from group:", error);
   }
-}
+};
 
 const addInquiryToGroup = async (inquiry: Inquiry) => {
   try {
-    await inquiryGroupStore.addInquiry(inquiry.id)
-    showSuccess(t('agora', 'Inquiry added to group'))
+    await inquiryGroupStore.addInquiry(inquiry.id);
+    showSuccess(t("agora", "Inquiry added to group"));
   } catch (error) {
-    showError(t('agora', 'Failed to add inquiry to group'))
-    console.error('Error adding inquiry to group:', error)
+    showError(t("agora", "Failed to add inquiry to group"));
+    console.error("Error adding inquiry to group:", error);
   }
-}
+};
 
 const removeInquiryFromGroup = async (inquiry: Inquiry) => {
   try {
-    await inquiryGroupStore.removeInquiry(inquiry.id)
-    showSuccess(t('agora', 'Inquiry removed from group'))
+    await inquiryGroupStore.removeInquiry(inquiry.id);
+    showSuccess(t("agora", "Inquiry removed from group"));
   } catch (error) {
-    showError(t('agora', 'Failed to remove inquiry from group'))
-    console.error('Error removing inquiry from group:', error)
+    showError(t("agora", "Failed to remove inquiry from group"));
+    console.error("Error removing inquiry from group:", error);
   }
-}
+};
 
 // Format helpers
-const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDateString()
+const formatDate = (timestamp: number) =>
+  new Date(timestamp * 1000).toLocaleDateString();
 
 onMounted(() => {
-  const id = route.params.id
-  inquiryGroupStore.load(id)
-})
+  const id = route.params.id;
+  inquiryGroupStore.load(id);
+});
 </script>
 
 <template>
@@ -202,12 +220,12 @@ onMounted(() => {
           />
         </div>
         <div class="group-header-content">
-          <h2>{{ t('agora', groupTypeData.label) }}</h2>
+          <h2>{{ t("agora", groupTypeData.label) }}</h2>
           <p
             v-if="groupTypeData.description"
             class="group-description"
           >
-            {{ t('agora', groupTypeData.description) }}
+            {{ t("agora", groupTypeData.description) }}
           </p>
         </div>
       </div>
@@ -218,7 +236,7 @@ onMounted(() => {
             <component :is="InquiryGeneralIcons.ClipboardList" />
           </div>
           <div class="info-content">
-            <span class="info-label">{{ t('agora', 'Title') }}</span>
+            <span class="info-label">{{ t("agora", "Title") }}</span>
             <span class="info-value">{{ inquiryGroupStore.title }}</span>
           </div>
         </div>
@@ -228,7 +246,7 @@ onMounted(() => {
             <component :is="InquiryGeneralIcons.IdCard" />
           </div>
           <div class="info-content">
-            <span class="info-label">{{ t('agora', 'Second title') }}</span>
+            <span class="info-label">{{ t("agora", "Second title") }}</span>
             <span class="info-value">{{ inquiryGroupStore.titleExt }}</span>
           </div>
         </div>
@@ -238,8 +256,10 @@ onMounted(() => {
             <component :is="InquiryGeneralIcons.Calendar" />
           </div>
           <div class="info-content">
-            <span class="info-label">{{ t('agora', 'Created') }}</span>
-            <span class="info-value">{{ formatDate(inquiryGroupStore.created) }}</span>
+            <span class="info-label">{{ t("agora", "Created") }}</span>
+            <span class="info-value">{{
+              formatDate(inquiryGroupStore.created)
+            }}</span>
           </div>
         </div>
 
@@ -248,7 +268,7 @@ onMounted(() => {
             <component :is="InquiryGeneralIcons.Link" />
           </div>
           <div class="info-content">
-            <span class="info-label">{{ t('agora', 'Inquiries') }}</span>
+            <span class="info-label">{{ t("agora", "Inquiries") }}</span>
             <span class="info-value">
               {{ formattedInquiryCount }}
               <span
@@ -267,9 +287,9 @@ onMounted(() => {
     <div class="inquiries-management-section">
       <div class="section-header">
         <div class="section-title-container">
-          <h2>{{ t('agora', 'Inquiry management') }}</h2>
+          <h2>{{ t("agora", "Inquiry management") }}</h2>
           <p class="section-subtitle">
-            {{ t('agora', 'LIST OF INQUIRIES IN THE GROUP') }}
+            {{ t("agora", "LIST OF INQUIRIES IN THE GROUP") }}
           </p>
         </div>
       </div>
@@ -282,10 +302,10 @@ onMounted(() => {
           </div>
           <div>
             <h3 class="section-subtitle">
-              {{ t('agora', 'ATTACHED INQUIRIES') }}
+              {{ t("agora", "ATTACHED INQUIRIES") }}
             </h3>
             <p class="section-description">
-              {{ t('agora', 'Drag to remove or click "remove"') }}
+              {{ t("agora", 'Drag to remove or click "remove"') }}
             </p>
           </div>
         </div>
@@ -314,7 +334,7 @@ onMounted(() => {
               </div>
               <div class="inquiry-meta">
                 <span class="inquiry-type-badge">
-                  {{ t('agora', getInquiryTypeInfo(inquiry.type).label) }}
+                  {{ t("agora", getInquiryTypeInfo(inquiry.type).label) }}
                 </span>
                 <span class="inquiry-date">
                   <component
@@ -339,7 +359,7 @@ onMounted(() => {
                 <template #icon>
                   <component :is="InquiryGeneralIcons.Delete" />
                 </template>
-                {{ t('agora', 'Remove') }}
+                {{ t("agora", "Remove") }}
               </NcButton>
             </div>
           </div>
@@ -352,8 +372,15 @@ onMounted(() => {
               <component :is="InquiryGeneralIcons.Empty" />
             </div>
             <div class="empty-text">
-              <h4>{{ t('agora', 'No inquiries in this group') }}</h4>
-              <p>{{ t('agora', 'Add inquiries by dragging them from the list below') }}</p>
+              <h4>{{ t("agora", "No inquiries in this group") }}</h4>
+              <p>
+                {{
+                  t(
+                    "agora",
+                    "Add inquiries by dragging them from the list below",
+                  )
+                }}
+              </p>
             </div>
           </div>
         </div>
@@ -372,13 +399,13 @@ onMounted(() => {
             <component :is="InquiryGeneralIcons.ArrowDown" />
           </div>
           <div class="drop-main-text">
-            {{ t('agora', 'DROP INQUIRIES HERE') }}
+            {{ t("agora", "DROP INQUIRIES HERE") }}
           </div>
           <div class="drop-subtitle">
-            {{ t('agora', 'Drop zone to add to group') }}
+            {{ t("agora", "Drop zone to add to group") }}
           </div>
           <div class="drop-hint">
-            {{ t('agora', 'Drag an inquiry from the list below') }}
+            {{ t("agora", "Drag an inquiry from the list below") }}
           </div>
         </div>
       </div>
@@ -391,10 +418,10 @@ onMounted(() => {
           </div>
           <div>
             <h3 class="section-subtitle">
-              {{ t('agora', 'AVAILABLE INQUIRIES') }}
+              {{ t("agora", "AVAILABLE INQUIRIES") }}
             </h3>
             <p class="section-description">
-              {{ t('agora', '(draggable items)') }}
+              {{ t("agora", "(draggable items)") }}
             </p>
           </div>
         </div>
@@ -421,7 +448,7 @@ onMounted(() => {
               </div>
               <div class="inquiry-meta">
                 <span class="inquiry-type-badge">
-                  {{ t('agora', getInquiryTypeInfo(inquiry.type).label) }}
+                  {{ t("agora", getInquiryTypeInfo(inquiry.type).label) }}
                 </span>
                 <span class="inquiry-date">
                   <component
@@ -447,7 +474,7 @@ onMounted(() => {
                   :is="InquiryGeneralIcons.Plus"
                   :title="t('agora', 'Add')"
                 />
-                {{ t('agora', 'Add') }}
+                {{ t("agora", "Add") }}
               </NcButton>
             </div>
           </div>
@@ -460,8 +487,15 @@ onMounted(() => {
               <component :is="InquiryGeneralIcons.File" />
             </div>
             <div class="empty-text">
-              <h4>{{ t('agora', 'No inquiries available') }}</h4>
-              <p>{{ t('agora', 'All inquiries are already in this group or no types allowed') }}</p>
+              <h4>{{ t("agora", "No inquiries available") }}</h4>
+              <p>
+                {{
+                  t(
+                    "agora",
+                    "All inquiries are already in this group or no types allowed",
+                  )
+                }}
+              </p>
             </div>
           </div>
 
@@ -476,7 +510,7 @@ onMounted(() => {
               🔍
             </div>
             <div class="filter-content">
-              <strong>{{ t('agora', 'Filtered by allowed types:') }}</strong>
+              <strong>{{ t("agora", "Filtered by allowed types:") }}</strong>
               <div class="allowed-types">
                 <span
                   v-for="type in allowedInquiryTypes"
@@ -488,7 +522,7 @@ onMounted(() => {
                     class="type-icon"
                     :size="12"
                   />
-                  {{ t('agora', getInquiryTypeInfo(type).label) }}
+                  {{ t("agora", getInquiryTypeInfo(type).label) }}
                 </span>
               </div>
             </div>
@@ -552,7 +586,11 @@ onMounted(() => {
         font-weight: 700;
         margin-bottom: 8px;
         color: var(--color-main-text);
-        background: linear-gradient(135deg, var(--color-primary-element), var(--color-primary));
+        background: linear-gradient(
+          135deg,
+          var(--color-primary-element),
+          var(--color-primary)
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -707,12 +745,20 @@ onMounted(() => {
         font-size: 24px;
 
         &.success {
-          background: linear-gradient(135deg, var(--color-success), var(--color-success-hover));
+          background: linear-gradient(
+            135deg,
+            var(--color-success),
+            var(--color-success-hover)
+          );
           color: white;
         }
 
         &.warning {
-          background: linear-gradient(135deg, var(--color-warning), var(--color-warning-hover));
+          background: linear-gradient(
+            135deg,
+            var(--color-warning),
+            var(--color-warning-hover)
+          );
           color: white;
         }
       }
@@ -831,7 +877,7 @@ onMounted(() => {
       margin-bottom: 8px;
 
       .inquiry-id {
-        font-family: 'Monaco', 'Consolas', monospace;
+        font-family: "Monaco", "Consolas", monospace;
         font-size: 13px;
         color: var(--color-text-lighter);
         background: var(--color-background-darker);
@@ -919,7 +965,11 @@ onMounted(() => {
 .drop-zone-section {
   margin: 32px 0;
   padding: 60px 40px;
-  background: linear-gradient(135deg, var(--color-main-background), var(--color-background-dark));
+  background: linear-gradient(
+    135deg,
+    var(--color-main-background),
+    var(--color-background-dark)
+  );
   border: 3px dashed var(--color-border);
   border-radius: 24px;
   text-align: center;
@@ -929,13 +979,17 @@ onMounted(() => {
   overflow: hidden;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, transparent 0%, var(--color-primary-light) 100%);
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      var(--color-primary-light) 100%
+    );
     opacity: 0;
     transition: opacity 0.4s;
   }
@@ -1048,7 +1102,11 @@ onMounted(() => {
 .filter-notice {
   margin-top: 24px;
   padding: 20px;
-  background: linear-gradient(135deg, var(--color-warning-light), var(--color-background-dark));
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-light),
+    var(--color-background-dark)
+  );
   border: 2px solid var(--color-warning);
   border-radius: 16px;
   display: flex;

@@ -6,52 +6,52 @@
 // ============================================================
 // EXISTING IMPORTS
 // ============================================================
-import { computed, onUnmounted, ref, watch, nextTick } from 'vue'
-import { emit, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-import InquiryHeaderButtons from '../components/Inquiry/InquiryHeaderButtons.vue'
-import InquiryGroupEditViewForm from '../components/InquiryGroup/InquiryGroupEditViewForm.vue'
-import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
-import { useInquiryGroupStore } from '../stores/inquiryGroup.ts'
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
-import { useSessionStore } from '../stores/session.ts'
-import Collapsible from '../components/Base/modules/Collapsible.vue'
-import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vue'
-import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
+import { computed, onUnmounted, ref, watch, nextTick } from "vue";
+import { emit, unsubscribe } from "@nextcloud/event-bus";
+import { t } from "@nextcloud/l10n";
+import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import NcAppContent from "@nextcloud/vue/components/NcAppContent";
+import InquiryHeaderButtons from "../components/Inquiry/InquiryHeaderButtons.vue";
+import InquiryGroupEditViewForm from "../components/InquiryGroup/InquiryGroupEditViewForm.vue";
+import InquiryGroupCreateDlg from "../components/Create/InquiryGroupCreateDlg.vue";
+import { useInquiryGroupStore } from "../stores/inquiryGroup.ts";
+import { useInquiryGroupsStore } from "../stores/inquiryGroups.ts";
+import { useSessionStore } from "../stores/session.ts";
+import Collapsible from "../components/Base/modules/Collapsible.vue";
+import type { CollapsibleProps } from "../components/Base/modules/Collapsible.vue";
+import InquiryInfoCards from "../components/Cards/InquiryInfoCards.vue";
 
 // ============================================================
 // NEW IMPORTS - Experience System
 // ============================================================
-import ExperienceRenderer from '../components/Experience/ExperienceRenderer.vue'
-import ExperienceSwitcher from '../components/Experience/ExperienceSwitcher.vue'
-import { useGroupExperience } from '../composables/useGroupExperience'
-import type { ExperienceKey, DisplayMode } from '../composables/useExperience'
-import type { Inquiry } from '../Types/index.ts'
-import type { Option } from '../Types/option.types.ts'
-import { useInquiriesStore } from '../stores/inquiries.ts'
+import ExperienceRenderer from "../components/Experience/ExperienceRenderer.vue";
+import ExperienceSwitcher from "../components/Experience/ExperienceSwitcher.vue";
+import { useGroupExperience } from "../composables/useGroupExperience";
+import type { ExperienceKey } from "../composables/useExperience";
+import type { Inquiry } from "../Types/index.ts";
+import type { Option } from "../Types/option.types.ts";
+import { useInquiriesStore } from "../stores/inquiries.ts";
 
 // ============================================================
 // EXISTING STORE INITIALIZATION
 // ============================================================
-const forceRenderKey = ref(0)
-const route = useRoute()
-const router = useRouter()
-const inquiryGroupStore = useInquiryGroupStore()
-const inquiryGroupsStore = useInquiryGroupsStore()
-const inquiriesStore = useInquiriesStore()
-const sessionStore = useSessionStore()
-const isAppLoaded = ref(false)
+const forceRenderKey = ref(0);
+const route = useRoute();
+const router = useRouter();
+const inquiryGroupStore = useInquiryGroupStore();
+const inquiryGroupsStore = useInquiryGroupsStore();
+const inquiriesStore = useInquiriesStore();
+const sessionStore = useSessionStore();
+const isAppLoaded = ref(false);
 
-const createGroupDlgToggle = ref(false)
-const selectedInquiryGroupTypeForCreation = ref('')
+const createGroupDlgToggle = ref(false);
+const selectedInquiryGroupTypeForCreation = ref("");
 
 // ============================================================
 // EXPERIENCE STATE
 // ============================================================
-const currentGroup = computed(() => inquiryGroupStore.groupData || null)
+const currentGroup = computed(() => inquiryGroupStore.groupData || null);
 const {
   experience,
   displayMode,
@@ -60,140 +60,142 @@ const {
   hasCustomArchitecture,
   availableExperiences,
   switchExperience,
-  switchDisplay,
-} = useGroupExperience(currentGroup)
+} = useGroupExperience(currentGroup);
 
 // ============================================================
 // EXISTING COMPUTED
 // ============================================================
 const availableGroups = computed(() => {
-  const groups = sessionStore.currentUser.groups || {}
-  if (typeof groups === 'object' && !Array.isArray(groups)) {
-    return Object.keys(groups)
+  const groups = sessionStore.currentUser.groups || {};
+  if (typeof groups === "object" && !Array.isArray(groups)) {
+    return Object.keys(groups);
   }
-  return groups
-})
+  return groups;
+});
 
 // ============================================================
 // GROUP INQUIRIES
 // ============================================================
 
 const groupInquiries = computed(() => {
-  if (!inquiryGroupStore.inquiryIds) return []
+  if (!inquiryGroupStore.inquiryIds) return [];
   return inquiryGroupStore.inquiryIds
     .map((id) => inquiriesStore.inquiries.find((i) => i.id === id))
-    .filter(Boolean)
-})
+    .filter(Boolean);
+});
 
 const groupOptions = computed(() => {
-  const options: Option[] = []
+  const options: Option[] = [];
   groupInquiries.value.forEach((inquiry) => {
     if (inquiry.options) {
-      options.push(...inquiry.options)
+      options.push(...inquiry.options);
     }
-  })
-  return options
-})
+  });
+  return options;
+});
 
 // ============================================================
 // EXISTING FUNCTIONS
 // ============================================================
 async function loadInquiry(id: string) {
   try {
-    await inquiryGroupStore.load(id)
-    const result = inquiryGroupsStore.inquiryGroups.filter((i) => i.parentId === Number(id))
-    inquiryGroupStore.childs = result
-    await nextTick()
-    forceRenderKey.value += 1
+    await inquiryGroupStore.load(id);
+    const result = inquiryGroupsStore.inquiryGroups.filter(
+      (i) => i.parentId === Number(id),
+    );
+    inquiryGroupStore.childs = result;
+    await nextTick();
+    forceRenderKey.value += 1;
   } catch {
-    showError(t('agora', 'Failed to load inquiry group'))
+    showError(t("agora", "Failed to load inquiry group"));
   } finally {
-    isAppLoaded.value = true
+    isAppLoaded.value = true;
   }
 }
 
 watch(
   () => route.params.id,
   async (newId) => {
-    isAppLoaded.value = false
-    await loadInquiry(newId as string)
+    isAppLoaded.value = false;
+    await loadInquiry(newId as string);
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 onBeforeRouteUpdate(async (to, from, next) => {
   if (to.params.id) {
-    inquiryGroupStore.reset()
+    inquiryGroupStore.reset();
   }
-  next()
-  emit('transitions-off', 500)
-})
+  next();
+  emit("transitions-off", 500);
+});
 
 onUnmounted(() => {
-  inquiryGroupStore.reset()
-  unsubscribe('load-inquiry', () => {})
-})
+  inquiryGroupStore.reset();
+  unsubscribe("load-inquiry", () => {});
+});
 
 const collapsibleProps = computed<CollapsibleProps>(() => ({
-  noCollapse: !inquiryGroupStore.configuration?.collapseDescription || isShortDescription.value,
-  initialState: inquiryGroupStore.currentUserStatus?.countInquiries === 0 ? 'max' : 'min',
-}))
+  noCollapse:
+    !inquiryGroupStore.configuration?.collapseDescription ||
+    isShortDescription.value,
+  initialState:
+    inquiryGroupStore.currentUserStatus?.countInquiries === 0 ? "max" : "min",
+}));
 
 // ============================================================
 // isShortDescription computed
 // ============================================================
 const isShortDescription = computed(() => {
-  const desc = inquiryGroupStore.description || ''
-  return desc.length < 200
-})
+  const desc = inquiryGroupStore.description || "";
+  return desc.length < 200;
+});
 
 // ============================================================
 // EXISTING FUNCTIONS
 // ============================================================
 const handleCloseDialog = () => {
-  createGroupDlgToggle.value = false
-  selectedInquiryGroupTypeForCreation.value = ''
-}
+  createGroupDlgToggle.value = false;
+  selectedInquiryGroupTypeForCreation.value = "";
+};
 
 const inquiryAdded = (inquiry) => {
-  showSuccess(t('agora', 'Inquiry group {title} added', { title: inquiry.title }))
-  createGroupDlgToggle.value = false
-  selectedInquiryGroupTypeForCreation.value = ''
+  showSuccess(
+    t("agora", "Inquiry group {title} added", { title: inquiry.title }),
+  );
+  createGroupDlgToggle.value = false;
+  selectedInquiryGroupTypeForCreation.value = "";
   router.push({
-    name: 'group',
+    name: "group",
     params: { id: inquiry.id },
-  })
-}
+  });
+};
 
 // ============================================================
 // EXPERIENCE HANDLERS
 // ============================================================
 function handleExperienceChange(key: ExperienceKey) {
-  switchExperience(key)
-}
-
-function handleDisplayChange(mode: DisplayMode) {
-  switchDisplay(mode)
+  switchExperience(key);
 }
 
 function handleViewInquiry(inquiry: Inquiry) {
   router.push({
-    name: 'inquiry',
+    name: "inquiry",
     params: { id: inquiry.id },
-  })
+  });
 }
 
 function handleViewOption(option: Option) {
   router.push({
-    name: 'option',
+    name: "option",
     params: { id: option.id },
-  })
+  });
 }
 
 function handleCreateInquiry() {
   // Open create dialog
-  createGroupDlgToggle.value = true
-  selectedInquiryGroupTypeForCreation.value = 'inquiry'
+  createGroupDlgToggle.value = true;
+  selectedInquiryGroupTypeForCreation.value = "inquiry";
 }
 </script>
 

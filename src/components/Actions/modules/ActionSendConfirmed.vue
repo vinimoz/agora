@@ -4,56 +4,58 @@
 -->
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import { ref } from 'vue'
-import { t, n } from '@nextcloud/l10n'
+import { useRoute } from "vue-router";
+import { ref } from "vue";
+import { t, n } from "@nextcloud/l10n";
 
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import EmailCheckIcon from 'vue-material-design-icons/EmailCheck.vue' // view-comfy-outline
+import EmailCheckIcon from "vue-material-design-icons/EmailCheck.vue"; // view-comfy-outline
 
-import { InquiriesAPI } from '../../../Api/index.ts'
-import { Logger } from '../../../helpers/index.ts'
-import { Confirmations } from '../../../Api/modules/inquiries.ts'
+import { InquiriesAPI } from "../../../Api/index.ts";
+import { Logger } from "../../../helpers/index.ts";
+import { Confirmations } from "../../../Api/modules/inquiries.ts";
 
-const route = useRoute()
-const showModal = ref(false)
-const sendButtonCaption = ref(t('agora', 'Send confirmation mails'))
+const route = useRoute();
+const showModal = ref(false);
+const sendButtonCaption = ref(t("agora", "Send confirmation mails"));
 
 const confirmations = ref<Confirmations>({
   sentMails: [],
   abortedMails: [],
   countSentMails: 0,
   countAbortedMails: 0,
-})
-const disableButton = ref(false)
-const sentStatus = ref('')
-const emit = defineEmits(['success', 'error'])
+});
+const disableButton = ref(false);
+const sentStatus = ref("");
+const emit = defineEmits(["success", "error"]);
 
 /**
  *
  */
 async function clickAction() {
-  if (sentStatus.value === 'success') {
-    showModal.value = true
-    return
+  if (sentStatus.value === "success") {
+    showModal.value = true;
+    return;
   }
 
   try {
-    disableButton.value = true
-    const result = await InquiriesAPI.sendConfirmation(parseInt(route.params.id as string))
-    confirmations.value = result.data.confirmations
-    showModal.value = true
-    sendButtonCaption.value = t('agora', 'See result')
-    sentStatus.value = 'success'
-    emit('success')
+    disableButton.value = true;
+    const result = await InquiriesAPI.sendConfirmation(
+      parseInt(route.params.id as string),
+    );
+    confirmations.value = result.data.confirmations;
+    showModal.value = true;
+    sendButtonCaption.value = t("agora", "See result");
+    sentStatus.value = "success";
+    emit("success");
   } catch (error) {
-    Logger.error('Error on sending confirmation mails', { error })
-    sentStatus.value = 'error'
-    emit('error')
+    Logger.error("Error on sending confirmation mails", { error });
+    sentStatus.value = "error";
+    emit("error");
   } finally {
-    disableButton.value = false
+    disableButton.value = false;
   }
 }
 </script>
@@ -86,10 +88,10 @@ async function clickAction() {
           <h2>
             {{
               n(
-                'agora',
-                '%n confirmation has been sent',
-                '%n confirmations have been sent',
-                confirmations.countSentMails
+                "agora",
+                "%n confirmation has been sent",
+                "%n confirmations have been sent",
+                confirmations.countSentMails,
               )
             }}
           </h2>
@@ -109,10 +111,10 @@ async function clickAction() {
           <h2>
             {{
               n(
-                'agora',
-                '%n confirmation could not be sent',
-                '%n confirmations could not be sent:',
-                confirmations.countAbortedMails
+                "agora",
+                "%n confirmation could not be sent",
+                "%n confirmations could not be sent:",
+                confirmations.countAbortedMails,
               )
             }}
           </h2>
@@ -122,9 +124,9 @@ async function clickAction() {
               :key="item.displayName"
             >
               {{ item.displayName }} ({{
-                item.reason === 'InvalidMail'
-                  ? t('agora', 'No valid email address')
-                  : t('agora', 'Unknown error')
+                item.reason === "InvalidMail"
+                  ? t("agora", "No valid email address")
+                  : t("agora", "Unknown error")
               }})
             </li>
           </ul>

@@ -4,14 +4,14 @@
  */
 
 // ─── Domain types ────────────────────────────────────────────
-export * from './user.types'
-export * from './inquiry.types'
-export * from './option.types'
-export * from './support.types'
-export * from './appSettings.types'
-export * from './comments.types'
-export * from './activity.types'
-export * from './share.types'
+export * from "./user.types";
+export * from "./inquiry.types";
+export * from "./option.types";
+export * from "./support.types";
+export * from "./appSettings.types";
+export * from "./comments.types";
+export * from "./activity.types";
+export * from "./share.types";
 
 // ─── Group types ─────────────────────────────────────────────
 export type {
@@ -24,7 +24,7 @@ export type {
   InquiryGroupPermissions,
   CurrentUserInquiryGroupStatus,
   VisibilityInquiryGroupType,
-} from './inquiryGroups.types'
+} from "./inquiryGroups.types";
 
 // ─── Voting / engine types ───────────────────────────────────
 export type {
@@ -60,7 +60,7 @@ export type {
   EngineDefinition,
   EngineInfo,
   ConfigSchemaField,
-} from './votingType'
+} from "./votingType";
 
 export {
   ENGINE_DEFINITIONS,
@@ -68,75 +68,79 @@ export {
   initializeEngineConfig,
   isValidSupportFeature,
   isValidPhase,
-} from './votingType'
+} from "./votingType";
 
 // ─── Experience types ────────────────────────────────────────
-export * from './experience.types'
+export * from "./experience.types";
 
 // ─── Utilities ───────────────────────────────────────────────
 export function createDefault<T>(): T {
-  return {} as T
+  return {} as T;
 }
 
 // ============================================================================
 
 export type KanbanStatusField =
-  'publicationStatus' | 'moderationStatus' | 'inquiryStatus' | 'optionStatus' | 'workflowStatus'
+  | "publicationStatus"
+  | "moderationStatus"
+  | "inquiryStatus"
+  | "optionStatus"
+  | "workflowStatus";
 
-export type KanbanMode = 'organization' | 'status'
+export type KanbanMode = "organization" | "status";
 
 export type KanbanColumn = {
-  value: string
-  label: string
-  color?: string
-}
+  value: string;
+  label: string;
+  color?: string;
+};
 
 export type KanbanPermissions = {
   /** Can the user see the board at all */
-  view: boolean
+  view: boolean;
   /** Can the user drag cards */
-  move: boolean
+  move: boolean;
   /** Can the user change the underlying status (vs. visual only) */
-  changeStatus: boolean
-}
+  changeStatus: boolean;
+};
 
 export type KanbanFilters = {
-  types?: string[]
-  families?: string[]
-}
+  types?: string[];
+  families?: string[];
+};
 
 export type KanbanDefinition = {
   /** Which status field drives the columns (belongs to the board, not the family) */
-  statusField: KanbanStatusField
+  statusField: KanbanStatusField;
   /** Explicit column override; when omitted, derived from the status field */
-  columns?: KanbanColumn[]
+  columns?: KanbanColumn[];
   /** organization = visual only, status = drag updates the status */
-  mode: KanbanMode
-  permissions?: Partial<KanbanPermissions>
-  filters?: KanbanFilters
-}
+  mode: KanbanMode;
+  permissions?: Partial<KanbanPermissions>;
+  filters?: KanbanFilters;
+};
 
 /** A status entry as stored on a family (InquiryFamily / OptionFamily) */
 export type FamilyStatus = {
-  value: string
-  label: string
-  color?: string
-}
+  value: string;
+  label: string;
+  color?: string;
+};
 
-export type MiscUpdateMap = Record<string, unknown>
+export type MiscUpdateMap = Record<string, unknown>;
 
 export enum Event {
-  TransitionsOff = 'agora:transitions:off',
-  TransitionsOn = 'agora:transitions:on',
-  UpdateInquiry = 'agora:inquiry:update',
-  LoadInquiry = 'agora:inquiry:load',
-  SidebarChangeTab = 'agora:sidebar:changeTab',
-  SidebarToggle = 'agora:sidebar:toggle',
-  ChangeShares = 'agora:change:shares',
-  UpdateOptions = 'agora:options:update',
-  AddDate = 'agora:options:add-date',
-  UpdateComments = 'agora:comments:update',
-  UpdateSupports = 'agora:supports:update',
-  UpdateActivity = 'agora:activity:update',
-  ShowSettings = 'agora:settings:show',
+  TransitionsOff = "agora:transitions:off",
+  TransitionsOn = "agora:transitions:on",
+  UpdateInquiry = "agora:inquiry:update",
+  LoadInquiry = "agora:inquiry:load",
+  SidebarChangeTab = "agora:sidebar:changeTab",
+  SidebarToggle = "agora:sidebar:toggle",
+  ChangeShares = "agora:change:shares",
+  UpdateOptions = "agora:options:update",
+  AddDate = "agora:options:add-date",
+  UpdateComments = "agora:comments:update",
+  UpdateSupports = "agora:supports:update",
+  UpdateActivity = "agora:activity:update",
+  ShowSettings = "agora:settings:show",
 }

@@ -3,15 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
-import { toRaw } from 'vue'
-import type { InquiryType, InquiryOptionType, Option, OptionFamily } from '../../Types/index.ts'
-import { useAppSettingsStore } from '../../stores/appSettings.ts'
-import { t } from '@nextcloud/l10n'
-import type { Component } from 'vue'
-import type { useOptionsStore } from '@/stores/options'
+import { InquiryGeneralIcons, InquiryOptionIcons } from "../../utils/icons.ts";
+import { toRaw } from "vue";
+import type {
+  InquiryType,
+  InquiryOptionType,
+  Option,
+  OptionFamily,
+} from "../../Types/index.ts";
+import { useAppSettingsStore } from "../../stores/appSettings.ts";
+import { t } from "@nextcloud/l10n";
+import type { Component } from "vue";
+import type { useOptionsStore } from "@/stores/options";
 
-type OptionsStore = ReturnType<typeof useOptionsStore>
+type OptionsStore = ReturnType<typeof useOptionsStore>;
 
 export {
   getItemTitle,
@@ -24,7 +29,6 @@ export {
   removeLayoutFromItem,
   hasLayout,
   filterItemsByLayout,
-  formatDateToISO,
   setTimelineDates,
   getTimelineStartDate,
   getTimelineEndDate,
@@ -41,33 +45,38 @@ export {
   searchItemsByTitle,
   filterItemsByStatus,
   filterItemsByType,
-} from './GenericItemHelper'
+} from "./GenericItemHelper";
 
-export const isImportedFromView = (option: Option, familyKey: string): boolean =>
-  !(option.family === familyKey)
+export const isImportedFromView = (
+  option: Option,
+  familyKey: string,
+): boolean => !(option.family === familyKey);
 
 /**
  * Get option item data
  * @param item
  * @param fallbackLabel
  */
-export function getOptionItemData(item: InquiryOptionType | null, fallbackLabel: string = '') {
+export function getOptionItemData(
+  item: InquiryOptionType | null,
+  fallbackLabel: string = "",
+) {
   if (!item) {
     return {
       icon: InquiryGeneralIcons.File,
       label: fallbackLabel,
-      description: '',
-    }
+      description: "",
+    };
   }
 
   // Get icon component directly from InquiryGeneralIcons
-  const iconName = item?.icon || 'File'
+  const iconName = item?.icon || "File";
 
   return {
     icon: InquiryOptionIcons[iconName] || InquiryGeneralIcons.Activity,
     label: item.label || fallbackLabel,
-    description: item.description || '',
-  }
+    description: item.description || "",
+  };
 }
 
 /**
@@ -78,29 +87,29 @@ export function getOptionItemData(item: InquiryOptionType | null, fallbackLabel:
 export function getRandomColorForFamily(familyKey: string): string {
   // Predefined nice colors that work well in UI
   const niceColors = [
-    '#4A86E8', // Blue
-    '#6AA84F', // Green
-    '#F1C232', // Yellow
-    '#CC0000', // Red
-    '#E69138', // Orange
-    '#A64D79', // Purple
-    '#45818E', // Teal
-    '#674EA7', // Violet
-    '#3D85C6', // Sky Blue
-    '#5B9B46', // Forest Green
-    '#B45F06', // Brown
-    '#AA00FF', // Magenta
-  ]
+    "#4A86E8", // Blue
+    "#6AA84F", // Green
+    "#F1C232", // Yellow
+    "#CC0000", // Red
+    "#E69138", // Orange
+    "#A64D79", // Purple
+    "#45818E", // Teal
+    "#674EA7", // Violet
+    "#3D85C6", // Sky Blue
+    "#5B9B46", // Forest Green
+    "#B45F06", // Brown
+    "#AA00FF", // Magenta
+  ];
 
   // Simple hash function to get consistent index
-  let hash = 0
+  let hash = 0;
   for (let i = 0; i < familyKey.length; i++) {
-    hash = familyKey.charCodeAt(i) + ((hash << 5) - hash)
+    hash = familyKey.charCodeAt(i) + ((hash << 5) - hash);
   }
 
   // Get index from hash
-  const index = Math.abs(hash) % niceColors.length
-  return niceColors[index]
+  const index = Math.abs(hash) % niceColors.length;
+  return niceColors[index];
 }
 
 /**
@@ -110,24 +119,24 @@ export function getRandomColorForFamily(familyKey: string): string {
 export function getFamilyColor(familyKey: string): string {
   // First check if we have a predefined color for common families
   const predefinedColors: Record<string, string> = {
-    debate: '#4A86E8', // Blue
-    structure: '#3D85C6', // Sky Blue
-    consensus: '#6AA84F', // Green
-    decision: '#CC0000', // Red
-    proposal: '#E69138', // Orange
-    workflow: '#A64D79', // Purple
-    process: '#45818E', // Teal
-    vote: '#4A818E', // Teal
-    default: '#999999', // Gray
-  }
+    debate: "#4A86E8", // Blue
+    structure: "#3D85C6", // Sky Blue
+    consensus: "#6AA84F", // Green
+    decision: "#CC0000", // Red
+    proposal: "#E69138", // Orange
+    workflow: "#A64D79", // Purple
+    process: "#45818E", // Teal
+    vote: "#4A818E", // Teal
+    default: "#999999", // Gray
+  };
 
   // Check predefined first
   if (predefinedColors[familyKey]) {
-    return predefinedColors[familyKey]
+    return predefinedColors[familyKey];
   }
 
   // Fallback to random but consistent color
-  return getRandomColorForFamily(familyKey)
+  return getRandomColorForFamily(familyKey);
 }
 
 /**
@@ -137,53 +146,56 @@ export function getFamilyColor(familyKey: string): string {
  */
 export function getAllowedOptionTypes(
   inquiryTypeConfig: InquiryType | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): InquiryOptionType[] {
   // Return empty array if inquiryTypeConfig is undefined
   if (!inquiryTypeConfig) {
-    return []
+    return [];
   }
 
   // Convert Proxy Vue en "raw" pour éviter les problèmes avec Array.isArray
-  const rawAllowed = toRaw(inquiryTypeConfig.allowed_option_type)
+  const rawAllowed = toRaw(inquiryTypeConfig.allowed_option_type);
 
-  let allowedOptionTypeKeys: string[] = []
+  let allowedOptionTypeKeys: string[] = [];
 
-  if (typeof rawAllowed === 'string') {
+  if (typeof rawAllowed === "string") {
     try {
-      const parsed = JSON.parse(rawAllowed)
+      const parsed = JSON.parse(rawAllowed);
       if (Array.isArray(parsed)) {
-        allowedOptionTypeKeys = parsed.filter((v) => typeof v === 'string')
+        allowedOptionTypeKeys = parsed.filter((v) => typeof v === "string");
       }
     } catch (e) {
-      console.error('Failed to parse allowed_option_type JSON:', e)
+      console.error("Failed to parse allowed_option_type JSON:", e);
     }
   } else if (Array.isArray(rawAllowed)) {
-    allowedOptionTypeKeys = rawAllowed.filter((v) => typeof v === 'string')
+    allowedOptionTypeKeys = rawAllowed.filter((v) => typeof v === "string");
   }
 
   // Ensure we have a proper array of option types
-  const rawOptionTypes = toRaw(optionTypes)
+  const rawOptionTypes = toRaw(optionTypes);
 
-  let allOptionTypes: InquiryOptionType[] = []
+  let allOptionTypes: InquiryOptionType[] = [];
 
   if (Array.isArray(rawOptionTypes)) {
-    allOptionTypes = rawOptionTypes
-  } else if (rawOptionTypes && typeof rawOptionTypes === 'object') {
-    allOptionTypes = Object.values(rawOptionTypes)
+    allOptionTypes = rawOptionTypes;
+  } else if (rawOptionTypes && typeof rawOptionTypes === "object") {
+    allOptionTypes = Object.values(rawOptionTypes);
   }
 
   // Filtrer selon allowedOptionTypeKeys - check BOTH property names!
   const result = allOptionTypes.filter((opt) => {
-    if (!opt) return false
+    if (!opt) return false;
 
     // Get the option type value - could be in option_type or optionType
-    const optionTypeValue = opt.option_type
+    const optionTypeValue = opt.option_type;
 
-    return typeof optionTypeValue === 'string' && allowedOptionTypeKeys.includes(optionTypeValue)
-  })
+    return (
+      typeof optionTypeValue === "string" &&
+      allowedOptionTypeKeys.includes(optionTypeValue)
+    );
+  });
 
-  return result
+  return result;
 }
 
 /**
@@ -193,17 +205,20 @@ export function getAllowedOptionTypes(
  */
 export function getSupportFeatureType(
   optionTypeKey: string | null | undefined,
-  optionTypes: InquiryOptionType[]
-): 'ternary' | 'binary' | 'simple' | 'none' {
-  if (!optionTypeKey) return 'none'
+  optionTypes: InquiryOptionType[],
+): "ternary" | "binary" | "simple" | "none" {
+  if (!optionTypeKey) return "none";
 
-  const hasSupport = hasSupportFeature(optionTypeKey, optionTypes)
-  if (!hasSupport) return 'none'
+  const hasSupport = hasSupportFeature(optionTypeKey, optionTypes);
+  if (!hasSupport) return "none";
 
-  const label = getSupportFeatureLabel(optionTypeKey, optionTypes).toLowerCase()
-  if (label.includes('ternary')) return 'ternary'
-  if (label.includes('binary')) return 'binary'
-  return 'simple'
+  const label = getSupportFeatureLabel(
+    optionTypeKey,
+    optionTypes,
+  ).toLowerCase();
+  if (label.includes("ternary")) return "ternary";
+  if (label.includes("binary")) return "binary";
+  return "simple";
 }
 
 /**
@@ -211,13 +226,13 @@ export function getSupportFeatureType(
  * @param optionTypes - All option types
  */
 export function getAllFamilyKeys(optionTypes: InquiryOptionType[]): string[] {
-  const families = new Set<string>()
+  const families = new Set<string>();
   optionTypes.forEach((opt) => {
     if (opt.family) {
-      families.add(opt.family)
+      families.add(opt.family);
     }
-  })
-  return Array.from(families)
+  });
+  return Array.from(families);
 }
 
 /**
@@ -227,16 +242,16 @@ export function getAllFamilyKeys(optionTypes: InquiryOptionType[]): string[] {
  */
 export function getOptionsCountByFamily(
   options: Option[],
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): Record<string, number> {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
 
   options.forEach((option) => {
-    const family = getOptionTypeFamily(option.type, optionTypes)
-    counts[family] = (counts[family] || 0) + 1
-  })
+    const family = getOptionTypeFamily(option.type, optionTypes);
+    counts[family] = (counts[family] || 0) + 1;
+  });
 
-  return counts
+  return counts;
 }
 
 /**
@@ -244,21 +259,21 @@ export function getOptionsCountByFamily(
  * @param optionTypes
  */
 export function groupOptionTypesByFamily(
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): Record<string, InquiryOptionType[]> {
-  const grouped: Record<string, InquiryOptionType[]> = {}
+  const grouped: Record<string, InquiryOptionType[]> = {};
 
   optionTypes.forEach((optionType) => {
-    const family = optionType.family || 'default'
+    const family = optionType.family || "default";
 
     if (!grouped[family]) {
-      grouped[family] = []
+      grouped[family] = [];
     }
 
-    grouped[family].push(optionType)
-  })
+    grouped[family].push(optionType);
+  });
 
-  return grouped
+  return grouped;
 }
 
 /**
@@ -269,31 +284,34 @@ export function groupOptionTypesByFamily(
 export function getFamilyIconName(familyKey: string): string {
   try {
     // Try to get the store - this only works in setup context
-    const appSettingsStore = useAppSettingsStore()
+    const appSettingsStore = useAppSettingsStore();
 
     // Check if optionFamilyTab exists and is an array
-    if (appSettingsStore?.optionFamilyTab && Array.isArray(appSettingsStore.optionFamilyTab)) {
+    if (
+      appSettingsStore?.optionFamilyTab &&
+      Array.isArray(appSettingsStore.optionFamilyTab)
+    ) {
       // Find the family config by family_type
       const familyConfig = appSettingsStore.optionFamilyTab.find(
-        (item: FamilyConfig) => item?.family_type === familyKey
-      )
+        (item: FamilyConfig) => item?.family_type === familyKey,
+      );
       if (familyConfig?.icon) {
-        return familyConfig.icon
+        return familyConfig.icon;
       }
     }
 
     // If not found in appSettings, try fallback data
-    const fallbackData = getFamilyFallbackData()
-    const fallback = fallbackData[familyKey] || fallbackData.default
+    const fallbackData = getFamilyFallbackData();
+    const fallback = fallbackData[familyKey] || fallbackData.default;
     if (fallback?.icon) {
-      return fallback.icon
+      return fallback.icon;
     }
 
-    return 'File'
+    return "File";
   } catch (error) {
     // Store not available (called outside setup), return default
-    console.error('Error getting family icon:', error)
-    return 'File'
+    console.error("Error getting family icon:", error);
+    return "File";
   }
 }
 
@@ -302,9 +320,13 @@ export function getFamilyIconName(familyKey: string): string {
  * @param familyKey - The family key
  */
 export function getFamilyIconComponent(familyKey: string): Component {
-  const iconName = getFamilyIconName(familyKey)
+  const iconName = getFamilyIconName(familyKey);
 
-  return InquiryOptionIcons[iconName] || InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
+  return (
+    InquiryOptionIcons[iconName] ||
+    InquiryGeneralIcons[iconName] ||
+    InquiryGeneralIcons.File
+  );
 }
 
 /**
@@ -314,29 +336,29 @@ export function getFamilyIconComponent(familyKey: string): Component {
  */
 export function getFamilyUIConfig(
   familyKey: string,
-  familyData?: OptionFamily
+  familyData?: OptionFamily,
 ): Record<string, unknown> {
   const defaultUIConfig: Record<string, unknown> = {
     layout: getLayoutForFamily(familyKey),
-  }
+  };
 
   // Try to get from familyData first
   if (familyData?.ui) {
-    return { ...defaultUIConfig, ...familyData.ui }
+    return { ...defaultUIConfig, ...familyData.ui };
   }
 
   // Try to get from appSettings
   try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedUI = appSettingsStore?.optionFamilyTab?.[familyKey]?.ui
+    const appSettingsStore = useAppSettingsStore();
+    const storedUI = appSettingsStore?.optionFamilyTab?.[familyKey]?.ui;
     if (storedUI) {
-      return { ...defaultUIConfig, ...storedUI }
+      return { ...defaultUIConfig, ...storedUI };
     }
   } catch {
     // Store not available
   }
 
-  return defaultUIConfig
+  return defaultUIConfig;
 }
 
 /**
@@ -346,23 +368,23 @@ export function getFamilyUIConfig(
  */
 export function getFamilyRules(
   familyKey: string,
-  familyData?: OptionFamily
+  familyData?: OptionFamily,
 ): Record<string, unknown> {
   if (familyData?.rules) {
-    return familyData.rules
+    return familyData.rules;
   }
 
   try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedRules = appSettingsStore?.optionFamilyTab?.[familyKey]?.rules
+    const appSettingsStore = useAppSettingsStore();
+    const storedRules = appSettingsStore?.optionFamilyTab?.[familyKey]?.rules;
     if (storedRules) {
-      return storedRules
+      return storedRules;
     }
   } catch {
     // Store not available
   }
 
-  return {}
+  return {};
 }
 
 /**
@@ -370,22 +392,26 @@ export function getFamilyRules(
  * @param familyKey
  * @param familyData
  */
-export function getFamilyFeatures(familyKey: string, familyData?: OptionFamily): string[] {
+export function getFamilyFeatures(
+  familyKey: string,
+  familyData?: OptionFamily,
+): string[] {
   if (familyData?.features) {
-    return familyData.features
+    return familyData.features;
   }
 
   try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedFeatures = appSettingsStore?.optionFamilyTab?.[familyKey]?.features
+    const appSettingsStore = useAppSettingsStore();
+    const storedFeatures =
+      appSettingsStore?.optionFamilyTab?.[familyKey]?.features;
     if (storedFeatures) {
-      return storedFeatures
+      return storedFeatures;
     }
   } catch {
     // Store not available
   }
 
-  return []
+  return [];
 }
 
 /**
@@ -395,23 +421,24 @@ export function getFamilyFeatures(familyKey: string, familyData?: OptionFamily):
  */
 export function getFamilyActions(
   familyKey: string,
-  familyData?: OptionFamily
+  familyData?: OptionFamily,
 ): Array<{ key: string; label: string; icon?: string }> {
   if (familyData?.actions) {
-    return familyData.actions
+    return familyData.actions;
   }
 
   try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedActions = appSettingsStore?.optionFamilyTab?.[familyKey]?.actions
+    const appSettingsStore = useAppSettingsStore();
+    const storedActions =
+      appSettingsStore?.optionFamilyTab?.[familyKey]?.actions;
     if (storedActions) {
-      return storedActions
+      return storedActions;
     }
   } catch {
     // Store not available
   }
 
-  return []
+  return [];
 }
 
 /**
@@ -423,108 +450,118 @@ export function getFamilyActions(
 export function getFamiliesWithOptionTypes(
   inquiryTypeKey: string,
   inquiryTypes: InquiryType[] | Record<string, InquiryType>,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): Array<{
-  key: string
-  name: string
-  label: string
-  description: string
-  icon: string
-  ui: Record<string, unknown>
-  rules: Record<string, unknown>
-  features: string[]
-  actions: Array<{ key: string; label: string; icon?: string }>
-  optionTypes: InquiryOptionType[]
+  key: string;
+  name: string;
+  label: string;
+  description: string;
+  icon: string;
+  ui: Record<string, unknown>;
+  rules: Record<string, unknown>;
+  features: string[];
+  actions: Array<{ key: string; label: string; icon?: string }>;
+  optionTypes: InquiryOptionType[];
 }> {
   // Get the inquiry type config - handle both array and object
-  let inquiryTypeConfig: InquiryType | undefined
+  let inquiryTypeConfig: InquiryType | undefined;
 
   if (Array.isArray(inquiryTypes)) {
-    inquiryTypeConfig = inquiryTypes.find((t) => t?.inquiry_type === inquiryTypeKey)
+    inquiryTypeConfig = inquiryTypes.find(
+      (t) => t?.inquiry_type === inquiryTypeKey,
+    );
   } else {
-    inquiryTypeConfig = inquiryTypes[inquiryTypeKey]
+    inquiryTypeConfig = inquiryTypes[inquiryTypeKey];
   }
 
   if (!inquiryTypeConfig) {
-    console.warn(`No configuration found for inquiry type "${inquiryTypeKey}"`)
-    return []
+    console.warn(`No configuration found for inquiry type "${inquiryTypeKey}"`);
+    return [];
   }
 
   // Get allowed option types
-  const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeConfig, optionTypes)
+  const allowedOptionTypes = getAllowedOptionTypes(
+    inquiryTypeConfig,
+    optionTypes,
+  );
 
   // Group by family
-  const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes)
+  const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes);
 
   // Get app settings store (try-catch in case called outside setup)
-  let appSettingsStore: unknown = null
+  let appSettingsStore: unknown = null;
   try {
-    appSettingsStore = useAppSettingsStore()
+    appSettingsStore = useAppSettingsStore();
   } catch {
     // Store not available
   }
 
   // Get fallback data as backup
-  const fallbackData = getFamilyFallbackData()
+  const fallbackData = getFamilyFallbackData();
 
   // Convert to array format
-  return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
-    // PRIORITY 1: Get from appSettings.optionFamilyTab if available
-    let familyConfig = null
-    if (appSettingsStore?.optionFamilyTab) {
-      // Find the family config by family_type
-      familyConfig = appSettingsStore.optionFamilyTab.find(
-        (item: unknown) => item.family_type === familyKey
-      )
-    }
+  return Object.entries(groupedByFamily).map(
+    ([familyKey, familyOptionTypes]) => {
+      // PRIORITY 1: Get from appSettings.optionFamilyTab if available
+      let familyConfig = null;
+      if (appSettingsStore?.optionFamilyTab) {
+        // Find the family config by family_type
+        familyConfig = appSettingsStore.optionFamilyTab.find(
+          (item: unknown) => item.family_type === familyKey,
+        );
+      }
 
-    // PRIORITY 2: Get from fallback data
-    const fallback = fallbackData[familyKey] || fallbackData.default || {}
+      // PRIORITY 2: Get from fallback data
+      const fallback = fallbackData[familyKey] || fallbackData.default || {};
 
-    // Try to get icon from first option type in this family (lowest priority)
-    const firstOptionType = familyOptionTypes[0]
+      // Try to get icon from first option type in this family (lowest priority)
+      const firstOptionType = familyOptionTypes[0];
 
-    // Determine icon in priority order:
-    // 1. From app settings config
-    // 2. From fallback data
-    // 3. From first option type
-    // 4. Default 'File'
-    const iconName = familyConfig?.icon || fallback.icon || firstOptionType?.icon || 'File'
+      // Determine icon in priority order:
+      // 1. From app settings config
+      // 2. From fallback data
+      // 3. From first option type
+      // 4. Default 'File'
+      const iconName =
+        familyConfig?.icon || fallback.icon || firstOptionType?.icon || "File";
 
-    // Format label if not provided
-    const formattedLabel = familyKey
-      .split('_')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ')
+      // Format label if not provided
+      const formattedLabel = familyKey
+        .split("_")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+        )
+        .join(" ");
 
-    // Build family data with priority: appSettings > fallback > defaults
-    const familyData: OptionFamily = {
-      key: familyKey,
-      name: familyConfig?.label || fallback.name || formattedLabel,
-      label: familyConfig?.label || fallback.label || formattedLabel,
-      description: familyConfig?.description || fallback.description || '',
-      icon: iconName,
-      // Use app settings data if available, otherwise fallback
-      ui: familyConfig?.ui || fallback.ui,
-      rules: familyConfig?.rules || fallback.rules,
-      features: familyConfig?.features || fallback.features,
-      actions: familyConfig?.actions || fallback.actions,
-    }
+      // Build family data with priority: appSettings > fallback > defaults
+      const familyData: OptionFamily = {
+        key: familyKey,
+        name: familyConfig?.label || fallback.name || formattedLabel,
+        label: familyConfig?.label || fallback.label || formattedLabel,
+        description: familyConfig?.description || fallback.description || "",
+        icon: iconName,
+        // Use app settings data if available, otherwise fallback
+        ui: familyConfig?.ui || fallback.ui,
+        rules: familyConfig?.rules || fallback.rules,
+        features: familyConfig?.features || fallback.features,
+        actions: familyConfig?.actions || fallback.actions,
+      };
 
-    return {
-      key: familyKey,
-      name: familyData.name,
-      label: familyData.label,
-      description: familyData.description,
-      icon: iconName,
-      // Use the dedicated getter functions (they already check appSettings)
-      ui: getFamilyUIConfig(familyKey, familyData),
-      rules: getFamilyRules(familyKey, familyData),
-      features: getFamilyFeatures(familyKey, familyData),
-      actions: getFamilyActions(familyKey, familyData),
-      optionTypes: familyOptionTypes,
-    }
-  })
+      return {
+        key: familyKey,
+        name: familyData.name,
+        label: familyData.label,
+        description: familyData.description,
+        icon: iconName,
+        // Use the dedicated getter functions (they already check appSettings)
+        ui: getFamilyUIConfig(familyKey, familyData),
+        rules: getFamilyRules(familyKey, familyData),
+        features: getFamilyFeatures(familyKey, familyData),
+        actions: getFamilyActions(familyKey, familyData),
+        optionTypes: familyOptionTypes,
+      };
+    },
+  );
 }
 
 /**
@@ -533,33 +570,52 @@ export function getFamiliesWithOptionTypes(
 export function getFamilyFallbackData(): Record<string, OptionFamily> {
   return {
     debate: {
-      name: 'Debate',
-      label: t('agora', 'Debate'),
-      description: t('agora', 'Debate positions, arguments, and alternatives'),
-      icon: 'Discussion',
+      name: "Debate",
+      label: t("agora", "Debate"),
+      description: t("agora", "Debate positions, arguments, and alternatives"),
+      icon: "Discussion",
       ui: {
-        layout: 'paired',
+        layout: "paired",
         show_metrics: true,
-        thread_visualization: 'tree',
+        thread_visualization: "tree",
       },
       rules: {
         require_initial_position: true,
         max_thread_depth: 10,
       },
-      features: ['argument_rating', 'thread_collapsing', 'consensus_indicators'],
+      features: [
+        "argument_rating",
+        "thread_collapsing",
+        "consensus_indicators",
+      ],
       actions: [
-        { key: 'export_thread', label: t('agora', 'Export Debate Thread'), icon: 'Download' },
-        { key: 'generate_summary', label: t('agora', 'Generate Summary'), icon: 'Summarize' },
-        { key: 'visualize_network', label: t('agora', 'View Argument Network'), icon: 'Graph' },
+        {
+          key: "export_thread",
+          label: t("agora", "Export Debate Thread"),
+          icon: "Download",
+        },
+        {
+          key: "generate_summary",
+          label: t("agora", "Generate Summary"),
+          icon: "Summarize",
+        },
+        {
+          key: "visualize_network",
+          label: t("agora", "View Argument Network"),
+          icon: "Graph",
+        },
       ],
     },
     structure: {
-      name: 'Structure',
-      label: t('agora', 'Structure'),
-      description: t('agora', 'Structured documents with chapters and articles'),
-      icon: 'Settings',
+      name: "Structure",
+      label: t("agora", "Structure"),
+      description: t(
+        "agora",
+        "Structured documents with chapters and articles",
+      ),
+      icon: "Settings",
       ui: {
-        layout: 'tree',
+        layout: "tree",
         show_toc: true,
         collapsible_sections: true,
         breadcrumb_navigation: true,
@@ -569,22 +625,38 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         require_numeric_notation: true,
         allow_cross_references: true,
       },
-      features: ['version_control', 'change_tracking', 'commentary'],
+      features: ["version_control", "change_tracking", "commentary"],
       actions: [
-        { key: 'import_document', label: t('agora', 'Import Document'), icon: 'Upload' },
-        { key: 'export_pdf', label: t('agora', 'Export as PDF'), icon: 'FilePdf' },
-        { key: 'export_markdown', label: t('agora', 'Export as Markdown'), icon: 'Markdown' },
-        { key: 'print_view', label: t('agora', 'Print View'), icon: 'Printer' },
-        { key: 'compare_versions', label: t('agora', 'Compare Versions'), icon: 'Diff' },
+        {
+          key: "import_document",
+          label: t("agora", "Import Document"),
+          icon: "Upload",
+        },
+        {
+          key: "export_pdf",
+          label: t("agora", "Export as PDF"),
+          icon: "FilePdf",
+        },
+        {
+          key: "export_markdown",
+          label: t("agora", "Export as Markdown"),
+          icon: "Markdown",
+        },
+        { key: "print_view", label: t("agora", "Print View"), icon: "Printer" },
+        {
+          key: "compare_versions",
+          label: t("agora", "Compare Versions"),
+          icon: "Diff",
+        },
       ],
     },
     consensus: {
-      name: 'Consensus',
-      label: t('agora', 'Consensus'),
-      description: t('agora', 'Consultation questions and consensus building'),
-      icon: 'ThumbUp',
+      name: "Consensus",
+      label: t("agora", "Consensus"),
+      description: t("agora", "Consultation questions and consensus building"),
+      icon: "ThumbUp",
       ui: {
-        layout: 'consensus_flow',
+        layout: "consensus_flow",
         show_consensus_meter: true,
         highlight_objections: true,
         visualize_progress: true,
@@ -593,29 +665,41 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         consensus_threshold: 0.8,
         require_objection_response: true,
       },
-      features: ['consensus_tracking', 'objection_management', 'poll_integration'],
+      features: [
+        "consensus_tracking",
+        "objection_management",
+        "poll_integration",
+      ],
       actions: [
         {
-          key: 'export_consensus_report',
-          label: t('agora', 'Export Consensus Report'),
-          icon: 'Report',
+          key: "export_consensus_report",
+          label: t("agora", "Export Consensus Report"),
+          icon: "Report",
         },
-        { key: 'generate_minutes', label: t('agora', 'Generate Minutes'), icon: 'Minutes' },
-        { key: 'visualize_consensus', label: t('agora', 'View Consensus Map'), icon: 'Map' },
         {
-          key: 'schedule_facilitation',
-          label: t('agora', 'Schedule Facilitation'),
-          icon: 'Calendar',
+          key: "generate_minutes",
+          label: t("agora", "Generate Minutes"),
+          icon: "Minutes",
+        },
+        {
+          key: "visualize_consensus",
+          label: t("agora", "View Consensus Map"),
+          icon: "Map",
+        },
+        {
+          key: "schedule_facilitation",
+          label: t("agora", "Schedule Facilitation"),
+          icon: "Calendar",
         },
       ],
     },
     decision: {
-      name: 'Decision',
-      label: t('agora', 'Decision'),
-      description: t('agora', 'Official decisions and results'),
-      icon: 'Checkmark',
+      name: "Decision",
+      label: t("agora", "Decision"),
+      description: t("agora", "Official decisions and results"),
+      icon: "Checkmark",
       ui: {
-        layout: 'cards',
+        layout: "cards",
         show_metadata: true,
         highlight_authority: true,
         timeline_view: true,
@@ -624,56 +708,80 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         require_official_endorsement: true,
         min_approval_count: 1,
       },
-      features: ['legal_binding', 'appeal_mechanism', 'implementation_tracking'],
+      features: [
+        "legal_binding",
+        "appeal_mechanism",
+        "implementation_tracking",
+      ],
       actions: [
         {
-          key: 'generate_legal_document',
-          label: t('agora', 'Generate Legal Document'),
-          icon: 'Gavel',
+          key: "generate_legal_document",
+          label: t("agora", "Generate Legal Document"),
+          icon: "Gavel",
         },
-        { key: 'export_decision', label: t('agora', 'Export Decision'), icon: 'FileExport' },
-        { key: 'notify_stakeholders', label: t('agora', 'Notify Stakeholders'), icon: 'Bell' },
         {
-          key: 'track_implementation',
-          label: t('agora', 'Track Implementation'),
-          icon: 'ProgressCheck',
+          key: "export_decision",
+          label: t("agora", "Export Decision"),
+          icon: "FileExport",
+        },
+        {
+          key: "notify_stakeholders",
+          label: t("agora", "Notify Stakeholders"),
+          icon: "Bell",
+        },
+        {
+          key: "track_implementation",
+          label: t("agora", "Track Implementation"),
+          icon: "ProgressCheck",
         },
       ],
     },
     proposal: {
-      name: 'Proposal',
-      label: t('agora', 'Proposal'),
-      description: t('agora', 'Initial proposals and suggestions'),
-      icon: 'Lightbulb',
+      name: "Proposal",
+      label: t("agora", "Proposal"),
+      description: t("agora", "Initial proposals and suggestions"),
+      icon: "Lightbulb",
       ui: {
-        layout: 'cards',
+        layout: "cards",
         show_support_meter: true,
         highlight_impact: true,
-        proposal_template: 'standard',
+        proposal_template: "standard",
       },
       rules: {
         requires_impact_assessment: true,
         min_support_threshold: 5,
       },
-      features: ['budget_estimation', 'impact_analysis', 'community_feedback'],
+      features: ["budget_estimation", "impact_analysis", "community_feedback"],
       actions: [
-        { key: 'duplicate_proposal', label: t('agora', 'Duplicate Proposal'), icon: 'ContentCopy' },
-        { key: 'merge_proposals', label: t('agora', 'Merge with Similar'), icon: 'CallMerge' },
-        { key: 'export_proposal', label: t('agora', 'Export Proposal'), icon: 'FileExport' },
         {
-          key: 'request_review',
-          label: t('agora', 'Request Expert Review'),
-          icon: 'AccountReview',
+          key: "duplicate_proposal",
+          label: t("agora", "Duplicate Proposal"),
+          icon: "ContentCopy",
+        },
+        {
+          key: "merge_proposals",
+          label: t("agora", "Merge with Similar"),
+          icon: "CallMerge",
+        },
+        {
+          key: "export_proposal",
+          label: t("agora", "Export Proposal"),
+          icon: "FileExport",
+        },
+        {
+          key: "request_review",
+          label: t("agora", "Request Expert Review"),
+          icon: "AccountReview",
         },
       ],
     },
     workflow: {
-      name: 'Workflow',
-      label: t('agora', 'Workflow'),
-      description: t('agora', 'Project and decision workflow management'),
-      icon: 'BarChart2',
+      name: "Workflow",
+      label: t("agora", "Workflow"),
+      description: t("agora", "Project and decision workflow management"),
+      icon: "BarChart2",
       ui: {
-        layout: 'kanban',
+        layout: "kanban",
         show_swimlanes: true,
         wip_limits: true,
         cycle_time_visualization: true,
@@ -682,21 +790,37 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         require_status_transitions: true,
         enforce_wip_limits: true,
       },
-      features: ['automated_transitions', 'blocker_detection', 'sla_tracking'],
+      features: ["automated_transitions", "blocker_detection", "sla_tracking"],
       actions: [
-        { key: 'export_board', label: t('agora', 'Export Board'), icon: 'FileExport' },
-        { key: 'generate_flow_report', label: t('agora', 'Flow Report'), icon: 'ChartLine' },
-        { key: 'configure_workflow', label: t('agora', 'Configure Workflow'), icon: 'Cog' },
-        { key: 'bulk_transition', label: t('agora', 'Bulk Transition'), icon: 'ArrowRightBold' },
+        {
+          key: "export_board",
+          label: t("agora", "Export Board"),
+          icon: "FileExport",
+        },
+        {
+          key: "generate_flow_report",
+          label: t("agora", "Flow Report"),
+          icon: "ChartLine",
+        },
+        {
+          key: "configure_workflow",
+          label: t("agora", "Configure Workflow"),
+          icon: "Cog",
+        },
+        {
+          key: "bulk_transition",
+          label: t("agora", "Bulk Transition"),
+          icon: "ArrowRightBold",
+        },
       ],
     },
     process: {
-      name: 'Process',
-      label: t('agora', 'Process'),
-      description: t('agora', 'Timeline and procedural events'),
-      icon: 'Timeline',
+      name: "Process",
+      label: t("agora", "Process"),
+      description: t("agora", "Timeline and procedural events"),
+      icon: "Timeline",
       ui: {
-        layout: 'timeline',
+        layout: "timeline",
         show_gantt: true,
         milestone_highlight: true,
         dependency_lines: true,
@@ -705,31 +829,43 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
         chronological_order: true,
         require_dates: true,
       },
-      features: ['gantt_chart', 'critical_path', 'resource_allocation'],
+      features: ["gantt_chart", "critical_path", "resource_allocation"],
       actions: [
-        { key: 'export_gantt', label: t('agora', 'Export Gantt'), icon: 'FileExport' },
-        { key: 'print_timeline', label: t('agora', 'Print Timeline'), icon: 'Printer' },
-        { key: 'adjust_schedule', label: t('agora', 'Adjust Schedule'), icon: 'CalendarClock' },
         {
-          key: 'identify_bottlenecks',
-          label: t('agora', 'Identify Bottlenecks'),
-          icon: 'AlertCircle',
+          key: "export_gantt",
+          label: t("agora", "Export Gantt"),
+          icon: "FileExport",
+        },
+        {
+          key: "print_timeline",
+          label: t("agora", "Print Timeline"),
+          icon: "Printer",
+        },
+        {
+          key: "adjust_schedule",
+          label: t("agora", "Adjust Schedule"),
+          icon: "CalendarClock",
+        },
+        {
+          key: "identify_bottlenecks",
+          label: t("agora", "Identify Bottlenecks"),
+          icon: "AlertCircle",
         },
       ],
     },
     default: {
-      name: 'Options',
-      label: t('agora', 'Options'),
-      description: t('agora', 'Various option types'),
-      icon: 'File',
+      name: "Options",
+      label: t("agora", "Options"),
+      description: t("agora", "Various option types"),
+      icon: "File",
       ui: {
-        layout: 'cards',
+        layout: "cards",
       },
       rules: {},
       features: [],
       actions: [],
     },
-  }
+  };
 }
 
 /**
@@ -739,9 +875,11 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
  */
 export function getOptionTypesForFamily(
   familyKey: string,
-  allowedOptionTypes: InquiryOptionType[]
+  allowedOptionTypes: InquiryOptionType[],
 ): InquiryOptionType[] {
-  return allowedOptionTypes.filter((optionType) => optionType.family === familyKey)
+  return allowedOptionTypes.filter(
+    (optionType) => optionType.family === familyKey,
+  );
 }
 
 /**
@@ -754,7 +892,7 @@ export function getOptionTypeOptions(optionTypes: InquiryOptionType[]) {
     label: type.label,
     description: type.description,
     icon: type.icon,
-  }))
+  }));
 }
 
 /**
@@ -764,14 +902,15 @@ export function getOptionTypeOptions(optionTypes: InquiryOptionType[]) {
  */
 export function findOptionType(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): InquiryOptionType | null {
-  if (!optionType || !optionTypes?.length) return null
+  if (!optionType || !optionTypes?.length) return null;
 
   return (
-    optionTypes.find((opt) => opt.option_type === optionType || opt.optionType === optionType) ||
-    null
-  )
+    optionTypes.find(
+      (opt) => opt.option_type === optionType || opt.optionType === optionType,
+    ) || null
+  );
 }
 
 /**
@@ -783,24 +922,24 @@ export function findOptionType(
 export function getOptionTypeLabel(
   optionType: string | null | undefined,
   optionTypes?: InquiryOptionType[],
-  fallback: string = 'Option'
+  fallback: string = "Option",
 ): string {
-  if (!optionType) return fallback
+  if (!optionType) return fallback;
 
-  let types = optionTypes ?? []
+  let types = optionTypes ?? [];
 
   // Callers that have no option type list at hand fall back to the stored
   // catalogue, otherwise the raw key would be rendered instead of its label.
   if (!types.length) {
     try {
-      types = useAppSettingsStore()?.inquiryOptionTypeTab ?? []
+      types = useAppSettingsStore()?.inquiryOptionTypeTab ?? [];
     } catch {
       // Store not available
     }
   }
 
-  const found = findOptionType(optionType, types)
-  return found?.label || optionType || fallback
+  const found = findOptionType(optionType, types);
+  return found?.label || optionType || fallback;
 }
 
 /**
@@ -810,14 +949,14 @@ export function getOptionTypeLabel(
  */
 export function getOptionTypeIconComponent(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): Component {
-  if (!optionType) return InquiryOptionIcons.File
+  if (!optionType) return InquiryOptionIcons.File;
 
-  const found = findOptionType(optionType, optionTypes)
-  const iconName = found?.icon || 'File'
+  const found = findOptionType(optionType, optionTypes);
+  const iconName = found?.icon || "File";
 
-  return InquiryOptionIcons[iconName] || InquiryOptionIcons.File
+  return InquiryOptionIcons[iconName] || InquiryOptionIcons.File;
 }
 
 /**
@@ -827,11 +966,11 @@ export function getOptionTypeIconComponent(
  */
 export function getOptionTypeIconName(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): string {
-  if (!optionType) return 'File'
-  const found = findOptionType(optionType, optionTypes)
-  return found?.icon || 'File'
+  if (!optionType) return "File";
+  const found = findOptionType(optionType, optionTypes);
+  return found?.icon || "File";
 }
 
 /**
@@ -841,11 +980,11 @@ export function getOptionTypeIconName(
  */
 export function getOptionTypeDescription(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): string {
-  if (!optionType) return ''
-  const found = findOptionType(optionType, optionTypes)
-  return found?.description || found?.text || ''
+  if (!optionType) return "";
+  const found = findOptionType(optionType, optionTypes);
+  return found?.description || found?.text || "";
 }
 
 /**
@@ -855,11 +994,11 @@ export function getOptionTypeDescription(
  */
 export function getOptionTypeFamily(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): string {
-  if (!optionType) return 'default'
-  const found = findOptionType(optionType, optionTypes)
-  return found?.family || 'default'
+  if (!optionType) return "default";
+  const found = findOptionType(optionType, optionTypes);
+  return found?.family || "default";
 }
 
 /**
@@ -869,10 +1008,10 @@ export function getOptionTypeFamily(
  */
 export function getOptionTypeColor(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): string {
-  const family = getOptionTypeFamily(optionType, optionTypes)
-  return getFamilyColor(family)
+  const family = getOptionTypeFamily(optionType, optionTypes);
+  return getFamilyColor(family);
 }
 
 /**
@@ -882,28 +1021,28 @@ export function getOptionTypeColor(
  */
 export function getAllowedResponses(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): string[] {
-  if (!optionType) return []
+  if (!optionType) return [];
 
-  const found = findOptionType(optionType, optionTypes)
-  if (!found) return []
-  let responses: string[] = []
+  const found = findOptionType(optionType, optionTypes);
+  if (!found) return [];
+  let responses: string[] = [];
 
-  if (typeof found.allowed_response === 'string') {
+  if (typeof found.allowed_response === "string") {
     try {
-      const parsed = JSON.parse(found.allowed_response)
+      const parsed = JSON.parse(found.allowed_response);
       if (Array.isArray(parsed)) {
-        responses = parsed.filter((v) => typeof v === 'string')
+        responses = parsed.filter((v) => typeof v === "string");
       }
     } catch (e) {
-      console.error('Failed to parse allowed_response JSON:', e)
+      console.error("Failed to parse allowed_response JSON:", e);
     }
   } else if (Array.isArray(found.allowed_response)) {
-    responses = found.allowed_response.filter((v) => typeof v === 'string')
+    responses = found.allowed_response.filter((v) => typeof v === "string");
   }
 
-  return responses
+  return responses;
 }
 
 /**
@@ -913,25 +1052,25 @@ export function getAllowedResponses(
  */
 export function getAvailableResponseTypes(
   optionType: string | null | undefined,
-  allOptionTypes: InquiryOptionType[]
+  allOptionTypes: InquiryOptionType[],
 ): Array<{
-  option_type: string
-  label: string
-  icon: string
-  description?: string
+  option_type: string;
+  label: string;
+  icon: string;
+  description?: string;
 }> {
-  const allowedKeys = getAllowedResponses(optionType, allOptionTypes)
+  const allowedKeys = getAllowedResponses(optionType, allOptionTypes);
   return allowedKeys
     .map((key) => {
-      const found = findOptionType(key, allOptionTypes)
+      const found = findOptionType(key, allOptionTypes);
       return {
         option_type: key,
         label: found?.label || key,
-        icon: found?.icon || 'File',
-        description: found?.description || found?.text || '',
-      }
+        icon: found?.icon || "File",
+        description: found?.description || found?.text || "",
+      };
     })
-    .sort((a, b) => a.label.localeCompare(b.label))
+    .sort((a, b) => a.label.localeCompare(b.label));
 }
 
 /**
@@ -941,22 +1080,22 @@ export function getAvailableResponseTypes(
  */
 export function getOptionTypeFields(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): unknown[] {
-  if (!optionType) return []
+  if (!optionType) return [];
 
-  const found = findOptionType(optionType, optionTypes)
-  if (!found?.fields) return []
+  const found = findOptionType(optionType, optionTypes);
+  if (!found?.fields) return [];
 
-  if (typeof found.fields === 'string') {
+  if (typeof found.fields === "string") {
     try {
-      return JSON.parse(found.fields)
+      return JSON.parse(found.fields);
     } catch {
-      return []
+      return [];
     }
   }
 
-  return found.fields || []
+  return found.fields || [];
 }
 
 /**
@@ -966,12 +1105,12 @@ export function getOptionTypeFields(
  */
 export function hasSupportFeature(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): boolean {
-  if (!optionType) return false
-  const found = findOptionType(optionType, optionTypes)
-  const feature = found?.support_feature
-  return feature && feature !== 'none'
+  if (!optionType) return false;
+  const found = findOptionType(optionType, optionTypes);
+  const feature = found?.support_feature;
+  return feature && feature !== "none";
 }
 
 /**
@@ -981,16 +1120,17 @@ export function hasSupportFeature(
  */
 export function getSupportFeatureLabel(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): string {
-  if (!optionType) return ''
-  const found = findOptionType(optionType, optionTypes)
-  const feature = found?.support_feature
+  if (!optionType) return "";
+  const found = findOptionType(optionType, optionTypes);
+  const feature = found?.support_feature;
 
-  if (feature === 'ternary') return t('agora', 'Ternary support (for/against/neutral)')
-  if (feature === 'binary') return t('agora', 'Binary support (like/dislike)')
-  if (feature && feature !== 'none') return t('agora', 'Support enabled')
-  return ''
+  if (feature === "ternary")
+    return t("agora", "Ternary support (for/against/neutral)");
+  if (feature === "binary") return t("agora", "Binary support (like/dislike)");
+  if (feature && feature !== "none") return t("agora", "Support enabled");
+  return "";
 }
 
 /**
@@ -1000,11 +1140,11 @@ export function getSupportFeatureLabel(
  */
 export function allowsComments(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): boolean {
-  if (!optionType) return false
-  const found = findOptionType(optionType, optionTypes)
-  return found?.allow_comment || false
+  if (!optionType) return false;
+  const found = findOptionType(optionType, optionTypes);
+  return found?.allow_comment || false;
 }
 
 /**
@@ -1014,11 +1154,11 @@ export function allowsComments(
  */
 export function usesTitle(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): boolean {
-  if (!optionType) return true
-  const found = findOptionType(optionType, optionTypes)
-  return found?.use_title !== false
+  if (!optionType) return true;
+  const found = findOptionType(optionType, optionTypes);
+  return found?.use_title !== false;
 }
 
 // Add these functions to InquiryOptionHelper.ts
@@ -1032,35 +1172,35 @@ export function usesTitle(
 export function getAllowedLayouts(
   optionType: string | null | undefined,
   optionTypes: InquiryOptionType[],
-  familyKey?: string
+  familyKey?: string,
 ): string[] {
-  if (!optionType) return ['cards'] // Default fallback
+  if (!optionType) return ["cards"]; // Default fallback
 
   // Get family if not provided
-  const family = familyKey || getOptionTypeFamily(optionType, optionTypes)
+  const family = familyKey || getOptionTypeFamily(optionType, optionTypes);
 
   // Get family UI config
-  const uiConfig = getFamilyUIConfig(family)
+  const uiConfig = getFamilyUIConfig(family);
 
   // Check if family has allowed_layouts in its UI config
   if (uiConfig?.allowed_layouts && Array.isArray(uiConfig.allowed_layouts)) {
-    return uiConfig.allowed_layouts
+    return uiConfig.allowed_layouts;
   }
 
   // Fallback to default layouts based on family
   const defaultLayouts: Record<string, string[]> = {
-    debate: ['paired', 'cards', 'list'],
-    structure: ['tree', 'cards', 'list'],
-    consensus: ['consensus_flow', 'cards', 'list'],
-    decision: ['cards', 'list', 'results'],
-    proposal: ['cards', 'list', 'results'],
-    workflow: ['kanban', 'cards', 'list', 'timeline'],
-    process: ['timeline', 'cards', 'list', 'kanban'],
-    vote: ['timeline', 'cards', 'list', 'kanban'],
-    default: ['cards', 'list'],
-  }
+    debate: ["paired", "cards", "list"],
+    structure: ["tree", "cards", "list"],
+    consensus: ["consensus_flow", "cards", "list"],
+    decision: ["cards", "list", "results"],
+    proposal: ["cards", "list", "results"],
+    workflow: ["kanban", "cards", "list", "timeline"],
+    process: ["timeline", "cards", "list", "kanban"],
+    vote: ["timeline", "cards", "list", "kanban"],
+    default: ["cards", "list"],
+  };
 
-  return defaultLayouts[family] || defaultLayouts.default
+  return defaultLayouts[family] || defaultLayouts.default;
 }
 
 /**
@@ -1072,31 +1212,31 @@ export function getAllowedLayouts(
 export function getDefaultLayout(
   optionType: string | null | undefined,
   optionTypes: InquiryOptionType[],
-  familyKey?: string
+  familyKey?: string,
 ): string {
-  if (!optionType) return 'cards'
+  if (!optionType) return "cards";
 
-  const family = familyKey || getOptionTypeFamily(optionType, optionTypes)
-  const uiConfig = getFamilyUIConfig(family)
+  const family = familyKey || getOptionTypeFamily(optionType, optionTypes);
+  const uiConfig = getFamilyUIConfig(family);
 
   // Check if family has default_layout in its UI config
   if (uiConfig?.default_layout) {
-    return uiConfig.default_layout
+    return uiConfig.default_layout;
   }
 
   // Fallback to family-based default
   const defaultLayoutMap: Record<string, string> = {
-    debate: 'paired',
-    structure: 'tree',
-    consensus: 'consensus_flow',
-    decision: 'cards',
-    proposal: 'cards',
-    workflow: 'kanban',
-    process: 'timeline',
-    vote: 'vote',
-  }
+    debate: "paired",
+    structure: "tree",
+    consensus: "consensus_flow",
+    decision: "cards",
+    proposal: "cards",
+    workflow: "kanban",
+    process: "timeline",
+    vote: "vote",
+  };
 
-  return defaultLayoutMap[family] || 'cards'
+  return defaultLayoutMap[family] || "cards";
 }
 
 /**
@@ -1108,16 +1248,19 @@ export function getDefaultLayout(
 export function shouldShowInLayout(
   option: Option,
   layout: string,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): boolean {
   // First check if option has force_layouts in miscFields
-  if (option.miscFields?.force_layouts && Array.isArray(option.miscFields.force_layouts)) {
-    return option.miscFields.force_layouts.includes(layout)
+  if (
+    option.miscFields?.force_layouts &&
+    Array.isArray(option.miscFields.force_layouts)
+  ) {
+    return option.miscFields.force_layouts.includes(layout);
   }
 
   // Otherwise check based on option type's family allowed layouts
-  const allowedLayouts = getAllowedLayouts(option.type, optionTypes)
-  return allowedLayouts.includes(layout)
+  const allowedLayouts = getAllowedLayouts(option.type, optionTypes);
+  return allowedLayouts.includes(layout);
 }
 
 /**
@@ -1126,18 +1269,18 @@ export function shouldShowInLayout(
  */
 export const getLayoutForFamily = (familyKey: string): string => {
   const layoutMap: Record<string, string> = {
-    debate: 'paired',
-    structure: 'tree',
-    consensus: 'consensus_flow',
-    decision: 'cards',
-    proposal: 'cards',
-    workflow: 'kanban',
-    process: 'timeline',
-    vote: 'vote',
-  }
+    debate: "paired",
+    structure: "tree",
+    consensus: "consensus_flow",
+    decision: "cards",
+    proposal: "cards",
+    workflow: "kanban",
+    process: "timeline",
+    vote: "vote",
+  };
 
-  return layoutMap[familyKey] || 'cards'
-}
+  return layoutMap[familyKey] || "cards";
+};
 
 /**
  * Check if an option type belongs to a specific family
@@ -1148,11 +1291,11 @@ export const getLayoutForFamily = (familyKey: string): string => {
 export function isOptionTypeInFamily(
   optionType: string | null | undefined,
   familyKey: string,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): boolean {
-  if (!optionType) return false
-  const typeFamily = getOptionTypeFamily(optionType, optionTypes)
-  return typeFamily === familyKey
+  if (!optionType) return false;
+  const typeFamily = getOptionTypeFamily(optionType, optionTypes);
+  return typeFamily === familyKey;
 }
 
 /**
@@ -1162,31 +1305,31 @@ export function isOptionTypeInFamily(
  */
 export function getAllowedLayoutsForType(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): string[] {
-  if (!optionType) return ['cards']
+  if (!optionType) return ["cards"];
 
-  const family = getOptionTypeFamily(optionType, optionTypes)
-  const uiConfig = getFamilyUIConfig(family)
+  const family = getOptionTypeFamily(optionType, optionTypes);
+  const uiConfig = getFamilyUIConfig(family);
 
   // Check if family has allowed_layouts in its UI config
   if (uiConfig?.allowed_layouts && Array.isArray(uiConfig.allowed_layouts)) {
-    return uiConfig.allowed_layouts
+    return uiConfig.allowed_layouts;
   }
 
   // Fallback to default layouts based on family
   const defaultLayouts: Record<string, string[]> = {
-    debate: ['paired', 'cards', 'list'],
-    structure: ['tree', 'cards', 'list'],
-    consensus: ['consensus_flow', 'cards', 'list'],
-    decision: ['cards', 'list', 'results'],
-    proposal: ['cards', 'list', 'results'],
-    workflow: ['kanban', 'cards', 'list', 'timeline'],
-    process: ['timeline', 'cards', 'list', 'kanban'],
-    default: ['cards', 'list'],
-  }
+    debate: ["paired", "cards", "list"],
+    structure: ["tree", "cards", "list"],
+    consensus: ["consensus_flow", "cards", "list"],
+    decision: ["cards", "list", "results"],
+    proposal: ["cards", "list", "results"],
+    workflow: ["kanban", "cards", "list", "timeline"],
+    process: ["timeline", "cards", "list", "kanban"],
+    default: ["cards", "list"],
+  };
 
-  return defaultLayouts[family] || defaultLayouts.default
+  return defaultLayouts[family] || defaultLayouts.default;
 }
 
 /**
@@ -1201,20 +1344,20 @@ export function getAvailableForeignOptionsForLayout(
   allOptions: Option[],
   layout: string,
   familyKey: string | undefined,
-  optionTypes: InquiryOptionType[]
+  optionTypes: InquiryOptionType[],
 ): Option[] {
   return allOptions.filter((option) => {
     // Skip options that already belong to this family (if familyKey is provided)
     if (familyKey) {
-      const optionFamily = getOptionTypeFamily(option.type, optionTypes)
+      const optionFamily = getOptionTypeFamily(option.type, optionTypes);
       if (optionFamily === familyKey) {
-        return false
+        return false;
       }
     }
 
     // Check if they can be shown in this layout
-    return canShowInLayout(option, layout, optionTypes)
-  })
+    return canShowInLayout(option, layout, optionTypes);
+  });
 }
 
 /**
@@ -1229,18 +1372,18 @@ export function getAvailableForeignOptionsForLayout(
 export function shouldShowInTimeline(
   option: Option,
   optionTypes: InquiryOptionType[],
-  targetFamily?: string
+  targetFamily?: string,
 ): boolean {
   // Get the option's family
-  const optionFamily = getOptionTypeFamily(option.type, optionTypes)
+  const optionFamily = getOptionTypeFamily(option.type, optionTypes);
 
   // If target family is specified and option belongs to it, include it
   if (targetFamily && optionFamily === targetFamily) {
-    return true
+    return true;
   }
 
   // Otherwise check if it has timeline dates
-  return hasTimelineDates(option)
+  return hasTimelineDates(option);
 }
 
 /**
@@ -1252,9 +1395,11 @@ export function shouldShowInTimeline(
 export function filterOptionsForTimeline(
   options: Option[],
   optionTypes: InquiryOptionType[],
-  targetFamily?: string
+  targetFamily?: string,
 ): Option[] {
-  return options.filter((option) => shouldShowInTimeline(option, optionTypes, targetFamily))
+  return options.filter((option) =>
+    shouldShowInTimeline(option, optionTypes, targetFamily),
+  );
 }
 
 /**
@@ -1263,19 +1408,19 @@ export function filterOptionsForTimeline(
  * @param layout - The layout to add
  */
 export function addLayoutToOption(option: Option, layout: string): Option {
-  const miscFields = { ...(option.miscFields || {}) }
-  const currentLayouts = getForceLayouts(option)
+  const miscFields = { ...(option.miscFields || {}) };
+  const currentLayouts = getForceLayouts(option);
 
   if (!currentLayouts.includes(layout)) {
-    currentLayouts.push(layout)
+    currentLayouts.push(layout);
     // Store as JSON string for consistency
-    miscFields.force_layouts = JSON.stringify(currentLayouts)
+    miscFields.force_layouts = JSON.stringify(currentLayouts);
   }
 
   return {
     ...option,
     miscFields,
-  }
+  };
 }
 
 /**
@@ -1284,20 +1429,20 @@ export function addLayoutToOption(option: Option, layout: string): Option {
  * @param layout - The layout to remove
  */
 export function removeLayoutFromOption(option: Option, layout: string): Option {
-  const miscFields = { ...(option.miscFields || {}) }
-  const currentLayouts = getForceLayouts(option)
-  const updatedLayouts = currentLayouts.filter((l) => l !== layout)
+  const miscFields = { ...(option.miscFields || {}) };
+  const currentLayouts = getForceLayouts(option);
+  const updatedLayouts = currentLayouts.filter((l) => l !== layout);
 
   if (updatedLayouts.length === 0) {
-    delete miscFields.force_layouts
+    delete miscFields.force_layouts;
   } else {
-    miscFields.force_layouts = JSON.stringify(updatedLayouts)
+    miscFields.force_layouts = JSON.stringify(updatedLayouts);
   }
 
   return {
     ...option,
     miscFields,
-  }
+  };
 }
 
 /**
@@ -1306,16 +1451,16 @@ export function removeLayoutFromOption(option: Option, layout: string): Option {
  */
 export function getDefaultLayoutForFamily(familyKey: string): string {
   const layoutMap: Record<string, string> = {
-    debate: 'paired',
-    structure: 'tree',
-    consensus: 'consensus_flow',
-    decision: 'cards',
-    proposal: 'cards',
-    workflow: 'kanban',
-    process: 'timeline',
-    vote: 'cards',
-  }
-  return layoutMap[familyKey] || 'cards'
+    debate: "paired",
+    structure: "tree",
+    consensus: "consensus_flow",
+    decision: "cards",
+    proposal: "cards",
+    workflow: "kanban",
+    process: "timeline",
+    vote: "cards",
+  };
+  return layoutMap[familyKey] || "cards";
 }
 
 /**
@@ -1324,17 +1469,17 @@ export function getDefaultLayoutForFamily(familyKey: string): string {
  */
 export function getAllowedLayoutsForFamily(familyKey: string): string[] {
   const layoutsMap: Record<string, string[]> = {
-    debate: ['paired', 'cards', 'list'],
-    structure: ['tree', 'cards', 'list'],
-    consensus: ['consensus_flow', 'cards', 'list'],
-    decision: ['cards', 'list', 'results'],
-    proposal: ['cards', 'list', 'results'],
-    workflow: ['kanban', 'cards', 'list', 'timeline'],
-    process: ['timeline', 'cards', 'list', 'kanban'],
-    vote: ['cards', 'list', 'results'],
-    default: ['cards', 'list'],
-  }
-  return layoutsMap[familyKey] || layoutsMap.default
+    debate: ["paired", "cards", "list"],
+    structure: ["tree", "cards", "list"],
+    consensus: ["consensus_flow", "cards", "list"],
+    decision: ["cards", "list", "results"],
+    proposal: ["cards", "list", "results"],
+    workflow: ["kanban", "cards", "list", "timeline"],
+    process: ["timeline", "cards", "list", "kanban"],
+    vote: ["cards", "list", "results"],
+    default: ["cards", "list"],
+  };
+  return layoutsMap[familyKey] || layoutsMap.default;
 }
 
 /**
@@ -1346,8 +1491,8 @@ export function getAllowedLayoutsForFamily(familyKey: string): string[] {
  */
 export function canShowInLayout(option: Option, layout: string): boolean {
   // Simply check if the layout is in force_layouts
-  const forceLayouts = getForceLayouts(option)
-  return forceLayouts.includes(layout)
+  const forceLayouts = getForceLayouts(option);
+  return forceLayouts.includes(layout);
 }
 
 /**
@@ -1366,47 +1511,47 @@ export function filterOptionsByLayout(
   options: Option[],
   layout: string,
   optionTypes: InquiryOptionType[],
-  targetFamily?: string
+  targetFamily?: string,
 ): Option[] {
   return options.filter((option) => {
-    const optionFamily = getOptionTypeFamily(option.type, optionTypes)
-    const forceLayouts = getForceLayouts(option)
-    const hasForceLayout = forceLayouts.includes(layout)
+    const optionFamily = getOptionTypeFamily(option.type, optionTypes);
+    const forceLayouts = getForceLayouts(option);
+    const hasForceLayout = forceLayouts.includes(layout);
 
     // Check if option belongs to target family
-    const isTargetFamily = targetFamily ? optionFamily === targetFamily : false
+    const isTargetFamily = targetFamily ? optionFamily === targetFamily : false;
 
     // Include if:
     // 1. It's in the target family, OR
     // 2. It has this layout in force_layouts
-    const shouldInclude = isTargetFamily || hasForceLayout
+    const shouldInclude = isTargetFamily || hasForceLayout;
 
-    return shouldInclude
-  })
+    return shouldInclude;
+  });
 }
 
 /**
  * Format a date to YYYY-MM-DD string
  * @param date - Date object or string
  */
-function formatDateToISO(date: Date | string | null): string | null {
-  if (!date) return null
+export function formatDateToISO(date: Date | string | null): string | null {
+  if (!date) return null;
 
-  let dateObj: Date
+  let dateObj: Date;
 
   if (date instanceof Date) {
-    dateObj = date
-  } else if (typeof date === 'string') {
-    dateObj = new Date(date)
-    if (isNaN(dateObj.getTime())) return null
+    dateObj = date;
+  } else if (typeof date === "string") {
+    dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) return null;
   } else {
-    return null
+    return null;
   }
 
-  const year = dateObj.getFullYear()
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0')
-  const day = String(dateObj.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -1420,16 +1565,16 @@ export async function updateTimelineDates(
   option: Option,
   startDate: Date | string | null,
   endDate: Date | string | null | undefined,
-  optionsStore: OptionsStore
+  optionsStore: OptionsStore,
 ): Promise<void> {
   try {
     // Update dates while preserving existing force_layouts
-    const updatedOption = setTimelineDates(option, startDate, endDate)
+    const updatedOption = setTimelineDates(option, startDate, endDate);
 
-    await optionsStore.updateOption({ option: updatedOption })
+    await optionsStore.updateOption({ option: updatedOption });
   } catch (error) {
-    console.error('Failed to update timeline dates:', error)
-    throw error
+    console.error("Failed to update timeline dates:", error);
+    throw error;
   }
 }
 
@@ -1448,26 +1593,26 @@ export async function setTimelineDatesForOption(
   optionId: number,
   startDate: Date | string | null,
   endDate: Date | string | null | undefined,
-  optionsStore: OptionsStore
+  optionsStore: OptionsStore,
 ): Promise<void> {
   try {
     // First get the current option
-    const currentOption = optionsStore.getOptionById(optionId)
+    const currentOption = optionsStore.getOptionById(optionId);
     if (!currentOption) {
-      throw new Error('Option not found')
+      throw new Error("Option not found");
     }
 
     // Update the dates using the helper
-    const updatedOption = setTimelineDates(currentOption, startDate, endDate)
+    const updatedOption = setTimelineDates(currentOption, startDate, endDate);
 
     // Also add 'timeline' to force_layouts if not already present
-    const finalOption = addLayoutToOption(updatedOption, 'timeline')
+    const finalOption = addLayoutToOption(updatedOption, "timeline");
 
     // Update the option
-    await optionsStore.updateOption({ option: finalOption })
+    await optionsStore.updateOption({ option: finalOption });
   } catch (error) {
-    console.error('Failed to set timeline dates:', error)
-    throw error
+    console.error("Failed to set timeline dates:", error);
+    throw error;
   }
 }
 
@@ -1478,26 +1623,26 @@ export async function setTimelineDatesForOption(
  */
 export async function clearTimelineDates(
   option: Option,
-  optionsStore: OptionsStore
+  optionsStore: OptionsStore,
 ): Promise<void> {
   try {
-    const miscFields = { ...(option.miscFields || {}) }
+    const miscFields = { ...(option.miscFields || {}) };
 
     // Remove date fields
-    delete miscFields.start_date
-    delete miscFields.end_date
-    delete miscFields.voting_start
-    delete miscFields.support_start
+    delete miscFields.start_date;
+    delete miscFields.end_date;
+    delete miscFields.voting_start;
+    delete miscFields.support_start;
 
     const updatedOption = {
       ...option,
       miscFields,
-    }
+    };
 
-    await optionsStore.updateOption({ option: updatedOption })
+    await optionsStore.updateOption({ option: updatedOption });
   } catch (error) {
-    console.error('Failed to clear timeline dates:', error)
-    throw error
+    console.error("Failed to clear timeline dates:", error);
+    throw error;
   }
 }
 
@@ -1513,24 +1658,24 @@ export async function clearTimelineDates(
  */
 export function detectPairedOptionTypes(
   optionTypes: InquiryOptionType[],
-  family?: string
+  family?: string,
 ): Array<{ left: string; right: string; label: string }> {
-  const pairs: Array<{ left: string; right: string; label: string }> = []
+  const pairs: Array<{ left: string; right: string; label: string }> = [];
 
   // Strategy 1: Based on naming conventions
-  const namingPairs = detectPairsByNaming(optionTypes, family)
-  pairs.push(...namingPairs)
+  const namingPairs = detectPairsByNaming(optionTypes, family);
+  pairs.push(...namingPairs);
 
   // Strategy 2: Based on allowed_response relationships
-  const responsePairs = detectPairsByResponses(optionTypes, family)
-  pairs.push(...responsePairs)
+  const responsePairs = detectPairsByResponses(optionTypes, family);
+  pairs.push(...responsePairs);
 
   // Strategy 3: Based on family-specific patterns
-  const familyPairs = detectPairsByFamily(optionTypes, family)
-  pairs.push(...familyPairs)
+  const familyPairs = detectPairsByFamily(optionTypes, family);
+  pairs.push(...familyPairs);
 
   // Remove duplicates
-  return deduplicatePairs(pairs)
+  return deduplicatePairs(pairs);
 }
 
 /**
@@ -1541,60 +1686,62 @@ export function detectPairedOptionTypes(
  */
 function detectPairsByNaming(
   optionTypes: InquiryOptionType[],
-  family?: string
+  family?: string,
 ): Array<{ left: string; right: string; label: string }> {
-  const pairs: Array<{ left: string; right: string; label: string }> = []
-  const processed = new Set<string>()
+  const pairs: Array<{ left: string; right: string; label: string }> = [];
+  const processed = new Set<string>();
 
   // Common prefixes that indicate pairs
-  const pairPrefixes = ['position_', 'argument_', 'vote_', 'poll_']
+  const pairPrefixes = ["position_", "argument_", "vote_", "poll_"];
 
   // Common suffixes that indicate opposites
   const opposites: Record<string, string> = {
-    for: 'against',
-    yes: 'no',
-    pro: 'contra',
-    support: 'oppose',
-    agree: 'disagree',
-    approve: 'reject',
-    accept: 'decline',
-  }
+    for: "against",
+    yes: "no",
+    pro: "contra",
+    support: "oppose",
+    agree: "disagree",
+    approve: "reject",
+    accept: "decline",
+  };
 
   for (const type of optionTypes) {
     // eslint-disable-next-line
-    if (family && type.family !== family) continue
+    if (family && type.family !== family) continue;
     // eslint-disable-next-line
-    if (processed.has(type.option_type)) continue
+    if (processed.has(type.option_type)) continue;
 
-    const typeName = type.option_type
+    const typeName = type.option_type;
 
     // Check each prefix
     for (const prefix of pairPrefixes) {
       if (typeName.startsWith(prefix)) {
-        const suffix = typeName.replace(prefix, '')
+        const suffix = typeName.replace(prefix, "");
 
         // Check if suffix has an opposite
         for (const [key, value] of Object.entries(opposites)) {
           if (suffix === key) {
-            const pairedName = prefix + value
-            const pairedType = optionTypes.find((t) => t.option_type === pairedName)
+            const pairedName = prefix + value;
+            const pairedType = optionTypes.find(
+              (t) => t.option_type === pairedName,
+            );
             if (pairedType) {
               pairs.push({
                 left: typeName,
                 right: pairedName,
-                label: type.family || 'Options',
-              })
-              processed.add(typeName)
-              processed.add(pairedName)
+                label: type.family || "Options",
+              });
+              processed.add(typeName);
+              processed.add(pairedName);
             }
           }
         }
-        break
+        break;
       }
     }
   }
 
-  return pairs
+  return pairs;
 }
 
 /**
@@ -1605,36 +1752,41 @@ function detectPairsByNaming(
  */
 function detectPairsByResponses(
   optionTypes: InquiryOptionType[],
-  family?: string
+  family?: string,
 ): Array<{ left: string; right: string; label: string }> {
-  const pairs: Array<{ left: string; right: string; label: string }> = []
-  const processed = new Set<string>()
+  const pairs: Array<{ left: string; right: string; label: string }> = [];
+  const processed = new Set<string>();
 
   for (const type of optionTypes) {
     // eslint-disable-next-line
-    if (family && type.family !== family) continue
+    if (family && type.family !== family) continue;
     // eslint-disable-next-line
-    if (processed.has(type.option_type)) continue
+    if (processed.has(type.option_type)) continue;
 
-    const allowed = type.allowed_response || []
+    const allowed = type.allowed_response || [];
     for (const responseType of allowed) {
       // Check if the response type also has this type in its allowed_response
-      const responseTypeDef = optionTypes.find((t) => t.option_type === responseType)
-      if (responseTypeDef && responseTypeDef.allowed_response?.includes(type.option_type)) {
+      const responseTypeDef = optionTypes.find(
+        (t) => t.option_type === responseType,
+      );
+      if (
+        responseTypeDef &&
+        responseTypeDef.allowed_response?.includes(type.option_type)
+      ) {
         // This is a mutual relationship - they're paired
         pairs.push({
           left: type.option_type,
           right: responseType,
-          label: type.family || 'Options',
-        })
-        processed.add(type.option_type)
-        processed.add(responseType)
-        break
+          label: type.family || "Options",
+        });
+        processed.add(type.option_type);
+        processed.add(responseType);
+        break;
       }
     }
   }
 
-  return pairs
+  return pairs;
 }
 
 /**
@@ -1644,57 +1796,62 @@ function detectPairsByResponses(
  */
 function detectPairsByFamily(
   optionTypes: InquiryOptionType[],
-  family?: string
+  family?: string,
 ): Array<{ left: string; right: string; label: string }> {
-  const pairs: Array<{ left: string; right: string; label: string }> = []
+  const pairs: Array<{ left: string; right: string; label: string }> = [];
 
-  const familyPatterns: Record<string, Array<{ left: string; right: string }>> = {
+  const familyPatterns: Record<
+    string,
+    Array<{ left: string; right: string }>
+  > = {
     debate: [
-      { left: 'position_for', right: 'position_against' },
-      { left: 'argument_for', right: 'argument_against' },
+      { left: "position_for", right: "position_against" },
+      { left: "argument_for", right: "argument_against" },
     ],
-    vote: [{ left: 'candidate', right: 'official_result' }],
-    proposal: [{ left: 'proposal', right: 'amendment' }],
+    vote: [{ left: "candidate", right: "official_result" }],
+    proposal: [{ left: "proposal", right: "amendment" }],
     structure: [
-      { left: 'chapter', right: 'section' },
-      { left: 'section', right: 'article' },
-      { left: 'article', right: 'amendment' },
+      { left: "chapter", right: "section" },
+      { left: "section", right: "article" },
+      { left: "article", right: "amendment" },
     ],
-    workflow: [{ left: 'workflow_item', right: 'workflow_blocker' }],
-    decision: [{ left: 'proposal', right: 'official_result' }],
+    workflow: [{ left: "workflow_item", right: "workflow_blocker" }],
+    decision: [{ left: "proposal", right: "official_result" }],
     process: [
-      { left: 'process_phase', right: 'process_event' },
-      { left: 'process_event', right: 'milestone' },
+      { left: "process_phase", right: "process_event" },
+      { left: "process_event", right: "milestone" },
     ],
-    official: [{ left: 'official', right: 'official_summary' }],
-    administrative: [{ left: 'admin_request', right: 'official' }],
-    service: [{ left: 'service_request', right: 'official' }],
-    oversight: [{ left: 'investigation_request', right: 'official' }],
-    legislative: [{ left: 'law_proposal', right: 'amendment' }],
-    collective: [{ left: 'consultation_question', right: 'poll_option' }],
+    official: [{ left: "official", right: "official_summary" }],
+    administrative: [{ left: "admin_request", right: "official" }],
+    service: [{ left: "service_request", right: "official" }],
+    oversight: [{ left: "investigation_request", right: "official" }],
+    legislative: [{ left: "law_proposal", right: "amendment" }],
+    collective: [{ left: "consultation_question", right: "poll_option" }],
     consensus: [
-      { left: 'consultation_question', right: 'objection' },
-      { left: 'objection', right: 'exception' },
+      { left: "consultation_question", right: "objection" },
+      { left: "objection", right: "exception" },
     ],
-  }
+  };
 
   // Use family-specific patterns if provided
-  const patterns = family ? familyPatterns[family] || [] : []
+  const patterns = family ? familyPatterns[family] || [] : [];
 
   for (const pattern of patterns) {
-    const leftExists = optionTypes.some((t) => t.option_type === pattern.left)
-    const rightExists = optionTypes.some((t) => t.option_type === pattern.right)
+    const leftExists = optionTypes.some((t) => t.option_type === pattern.left);
+    const rightExists = optionTypes.some(
+      (t) => t.option_type === pattern.right,
+    );
 
     if (leftExists && rightExists) {
       pairs.push({
         left: pattern.left,
         right: pattern.right,
-        label: family || 'Options',
-      })
+        label: family || "Options",
+      });
     }
   }
 
-  return pairs
+  return pairs;
 }
 
 /**
@@ -1702,20 +1859,20 @@ function detectPairsByFamily(
  * @param pairs
  */
 function deduplicatePairs(
-  pairs: Array<{ left: string; right: string; label: string }>
+  pairs: Array<{ left: string; right: string; label: string }>,
 ): Array<{ left: string; right: string; label: string }> {
-  const seen = new Set<string>()
-  const result: Array<{ left: string; right: string; label: string }> = []
+  const seen = new Set<string>();
+  const result: Array<{ left: string; right: string; label: string }> = [];
 
   for (const pair of pairs) {
-    const key = [pair.left, pair.right].sort().join('|')
+    const key = [pair.left, pair.right].sort().join("|");
     if (!seen.has(key)) {
-      seen.add(key)
-      result.push(pair)
+      seen.add(key);
+      result.push(pair);
     }
   }
 
-  return result
+  return result;
 }
 
 /**
@@ -1725,27 +1882,29 @@ function deduplicatePairs(
  */
 export function getRootOptionTypesForFamily(
   optionTypes: InquiryOptionType[],
-  family?: string
+  family?: string,
 ): InquiryOptionType[] {
-  const types = family ? optionTypes.filter((t) => t.family === family) : optionTypes
+  const types = family
+    ? optionTypes.filter((t) => t.family === family)
+    : optionTypes;
 
-  const pairedTypes = new Set<string>()
-  const pairs = detectPairedOptionTypes(optionTypes, family)
+  const pairedTypes = new Set<string>();
+  const pairs = detectPairedOptionTypes(optionTypes, family);
 
   for (const pair of pairs) {
-    pairedTypes.add(pair.left)
-    pairedTypes.add(pair.right)
+    pairedTypes.add(pair.left);
+    pairedTypes.add(pair.right);
   }
 
   return types.filter((type) => {
     // Root if it's part of a pair OR not a child of anything
-    if (pairedTypes.has(type.option_type)) return true
+    if (pairedTypes.has(type.option_type)) return true;
 
     const isChildOfSomething = optionTypes.some(
-      (parent) => parent.allowed_response?.includes(type.option_type) ?? false
-    )
-    return !isChildOfSomething
-  })
+      (parent) => parent.allowed_response?.includes(type.option_type) ?? false,
+    );
+    return !isChildOfSomething;
+  });
 }
 
 /**
@@ -1759,15 +1918,16 @@ export function getFamilyOptionsByTarget(
   options: Option[],
   optionTypes: InquiryOptionType[], // To be fixed ignored
   familyKey: string,
-  targetId: number
+  targetId: number,
 ): Option[] {
   // Prefer the option's own `family` field when it's set, otherwise derive
   // it from the option type definition.
   return options.filter((option) => {
-    if (option.targetId !== targetId) return false
-    const optionFamily = option.family || getOptionTypeFamily(option.type, optionTypes)
-    return optionFamily === familyKey
-  })
+    if (option.targetId !== targetId) return false;
+    const optionFamily =
+      option.family || getOptionTypeFamily(option.type, optionTypes);
+    return optionFamily === familyKey;
+  });
 }
 
 /**
@@ -1782,10 +1942,15 @@ export function getFamilyRootOptionsByTarget(
   options: Option[],
   optionTypes: InquiryOptionType[],
   familyKey: string,
-  targetId: number
+  targetId: number,
 ): Option[] {
-  const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
-  return familyOptions.filter((opt) => !opt.parentId || opt.parentId === 0)
+  const familyOptions = getFamilyOptionsByTarget(
+    options,
+    optionTypes,
+    familyKey,
+    targetId,
+  );
+  return familyOptions.filter((opt) => !opt.parentId || opt.parentId === 0);
 }
 
 /**
@@ -1802,10 +1967,15 @@ export function getFamilyChildOptionsByTarget(
   optionTypes: InquiryOptionType[],
   familyKey: string,
   targetId: number,
-  parentId: number
+  parentId: number,
 ): Option[] {
-  const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
-  return familyOptions.filter((opt) => opt.parentId === parentId)
+  const familyOptions = getFamilyOptionsByTarget(
+    options,
+    optionTypes,
+    familyKey,
+    targetId,
+  );
+  return familyOptions.filter((opt) => opt.parentId === parentId);
 }
 
 /**
@@ -1818,19 +1988,19 @@ export function getFamilyChildOptionsByTarget(
 export function getOptionsCountByFamilyAndTarget(
   options: Option[],
   optionTypes: InquiryOptionType[],
-  targetId: number
+  targetId: number,
 ): Record<string, number> {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
 
   // Filter options by targetId first
-  const targetOptions = options.filter((opt) => opt.targetId === targetId)
+  const targetOptions = options.filter((opt) => opt.targetId === targetId);
 
   targetOptions.forEach((option) => {
-    const family = getOptionTypeFamily(option.type, optionTypes)
-    counts[family] = (counts[family] || 0) + 1
-  })
+    const family = getOptionTypeFamily(option.type, optionTypes);
+    counts[family] = (counts[family] || 0) + 1;
+  });
 
-  return counts
+  return counts;
 }
 
 /**
@@ -1845,8 +2015,8 @@ export function isOptionInFamilyAndTarget(
   option: Option,
   optionTypes: InquiryOptionType[],
   familyKey: string,
-  targetId: number
+  targetId: number,
 ): boolean {
-  const optionFamily = getOptionTypeFamily(option.type, optionTypes)
-  return optionFamily === familyKey && option.targetId === targetId
+  const optionFamily = getOptionTypeFamily(option.type, optionTypes);
+  return optionFamily === familyKey && option.targetId === targetId;
 }

@@ -3,196 +3,202 @@
 	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { showError } from '@nextcloud/dialogs'
-import { Inquiry } from '../../Types/index.ts'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import InquiryItem from './InquiryItem.vue'
-import { useSessionStore } from '../../stores/session.ts'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import { useCommentsStore } from '../../stores/comments'
-import { usePreferencesStore } from '../..//stores/preferences.ts'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { t } from "@nextcloud/l10n";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { showError } from "@nextcloud/dialogs";
+import { Inquiry } from "../../Types/index.ts";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import InquiryItem from "./InquiryItem.vue";
+import { useSessionStore } from "../../stores/session.ts";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import { useCommentsStore } from "../../stores/comments";
+import { usePreferencesStore } from "../..//stores/preferences.ts";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
 
 const props = defineProps({
   isLoadedParent: {
     type: Boolean,
     required: true,
   },
-})
+});
 
 const inquiryParent = ref({
   id: null,
-  title: '',
-  type: '',
+  title: "",
+  type: "",
   parentId: 0,
   created: null,
   lastInteraction: null,
-  owner: '',
+  owner: "",
   inquiryGroups: [],
   participatedCount: 0,
   commentCount: 0,
   supportCount: 0,
   coverId: null,
-  inquiryStatus: 'active',
-})
+  inquiryStatus: "active",
+});
 
-const inquiryStore = useInquiryStore()
-const commentsStore = useCommentsStore()
-const preferencesStore = usePreferencesStore()
-const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore();
+const commentsStore = useCommentsStore();
+const preferencesStore = usePreferencesStore();
+const sessionStore = useSessionStore();
 
-const isLoadedLocal = ref(false)
-const isMobile = ref(window.innerWidth < 768)
+const isLoadedLocal = ref(false);
+const isMobile = ref(window.innerWidth < 768);
 
 // Sub mode (table/list) for children display
-const subMode = ref('table-view')
+const subMode = ref("table-view");
 
 // Handle sub mode change for children
 function handleSubModeChange(mode: string) {
-  subMode.value = mode
+  subMode.value = mode;
   // Optionally save to user preferences
   if (preferencesStore.user) {
-    preferencesStore.user.defaultViewInquiry = mode
+    preferencesStore.user.defaultViewInquiry = mode;
   }
 }
 
-const isGridView = computed(() => subMode.value === 'table-view')
+const isGridView = computed(() => subMode.value === "table-view");
 
 // Computed for inquiry types from app settings
-const inquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings.inquiryTypeTab || [],
+);
 
 // Group children by their inquiry type with official preference order
 const childrenByType = computed(() => {
-  const grouped: Record<string, Inquiry[]> = {}
+  const grouped: Record<string, Inquiry[]> = {};
 
   // Get official preference types first, then others
-  const officialTypes = inquiryTypes.value.filter((type) => type.official).map((type) => type.label)
-  const otherTypes = inquiryTypes.value.filter((type) => !type.official).map((type) => type.label)
-  const orderedTypes = [...officialTypes, ...otherTypes]
+  const officialTypes = inquiryTypes.value
+    .filter((type) => type.official)
+    .map((type) => type.label);
+  const otherTypes = inquiryTypes.value
+    .filter((type) => !type.official)
+    .map((type) => type.label);
+  const orderedTypes = [...officialTypes, ...otherTypes];
 
   // Initialize all groups
   orderedTypes.forEach((typeLabel) => {
-    grouped[typeLabel] = []
-  })
+    grouped[typeLabel] = [];
+  });
 
   // Group children by type
   inquiryStore.childs.forEach((child) => {
     const typeLabel = getInquiryTypeData(
       child.type,
       sessionStore.appSettings.inquiryTypeTab || [],
-      child.type
-    ).label
+      child.type,
+    ).label;
 
     if (!grouped[typeLabel]) {
-      grouped[typeLabel] = []
+      grouped[typeLabel] = [];
     }
-    grouped[typeLabel].push(child)
-  })
+    grouped[typeLabel].push(child);
+  });
 
   // Filter out empty groups and maintain order
-  const result: Record<string, Inquiry[]> = {}
+  const result: Record<string, Inquiry[]> = {};
   orderedTypes.forEach((typeLabel) => {
     if (grouped[typeLabel] && grouped[typeLabel].length > 0) {
-      result[typeLabel] = grouped[typeLabel]
+      result[typeLabel] = grouped[typeLabel];
     }
-  })
+  });
 
   // Add any remaining types not in the ordered list
   Object.keys(grouped).forEach((typeLabel) => {
     if (!result[typeLabel] && grouped[typeLabel].length > 0) {
-      result[typeLabel] = grouped[typeLabel]
+      result[typeLabel] = grouped[typeLabel];
     }
-  })
+  });
 
-  return result
-})
+  return result;
+});
 
 // Get ordered child types for display
-const childTypes = computed(() => Object.keys(childrenByType.value))
+const childTypes = computed(() => Object.keys(childrenByType.value));
 
-const emit = defineEmits(['editParent', 'routeChild'])
+const emit = defineEmits(["editParent", "routeChild"]);
 
 const editParent = () => {
-  emit('editParent')
-}
+  emit("editParent");
+};
 
 const routeChild = (inquiryId: number) => {
-  emit('routeChild', inquiryId)
-}
+  emit("routeChild", inquiryId);
+};
 
 onMounted(async () => {
   if (props.isLoadedParent) {
     try {
-      isLoadedLocal.value = false
-      await loadInquiryData()
+      isLoadedLocal.value = false;
+      await loadInquiryData();
     } catch {
-      showError(t('agora', 'Failed to load inquiry'))
+      showError(t("agora", "Failed to load inquiry"));
     } finally {
-      inquiryParent.value.id = inquiryStore.id
-      inquiryParent.value.parentId = inquiryStore.parentId
-      inquiryParent.value.title = inquiryStore.title
-      inquiryParent.value.type = inquiryStore.type
-      inquiryParent.value.owner = inquiryStore.owner
-      inquiryParent.value.moderationStatus = inquiryStore.moderationStatus
-      inquiryParent.value.status = inquiryStore.status
-      inquiryParent.value.configuration = inquiryStore.configuration
-      inquiryParent.value.currentUserStatus = inquiryStore.currentUserStatus
-      inquiryParent.value.commentCount = commentsStore.comments.length
-      inquiryParent.value.supportCount = inquiryStore.status.countSupports
-      inquiryParent.value.inquiryGroups = inquiryStore.inquiryGroups
-      inquiryParent.value.coverId = inquiryStore.coverId
-      inquiryParent.value.inquiryStatus = inquiryStore.inquiryStatus
+      inquiryParent.value.id = inquiryStore.id;
+      inquiryParent.value.parentId = inquiryStore.parentId;
+      inquiryParent.value.title = inquiryStore.title;
+      inquiryParent.value.type = inquiryStore.type;
+      inquiryParent.value.owner = inquiryStore.owner;
+      inquiryParent.value.moderationStatus = inquiryStore.moderationStatus;
+      inquiryParent.value.status = inquiryStore.status;
+      inquiryParent.value.configuration = inquiryStore.configuration;
+      inquiryParent.value.currentUserStatus = inquiryStore.currentUserStatus;
+      inquiryParent.value.commentCount = commentsStore.comments.length;
+      inquiryParent.value.supportCount = inquiryStore.status.countSupports;
+      inquiryParent.value.inquiryGroups = inquiryStore.inquiryGroups;
+      inquiryParent.value.coverId = inquiryStore.coverId;
+      inquiryParent.value.inquiryStatus = inquiryStore.inquiryStatus;
 
-      isLoadedLocal.value = true
+      isLoadedLocal.value = true;
     }
   }
 
   // Initialize subMode from app settings
   if (preferencesStore.user.defaultViewInquiry) {
-    subMode.value = preferencesStore.user.defaultViewInquiry
+    subMode.value = preferencesStore.user.defaultViewInquiry;
   } else {
-    subMode.value = 'table-view'
+    subMode.value = "table-view";
   }
 
-  window.addEventListener('resize', handleResize)
-})
+  window.addEventListener("resize", handleResize);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
+  window.removeEventListener("resize", handleResize);
+});
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth < 768
-}
+  isMobile.value = window.innerWidth < 768;
+};
 
 // Transform owner data for display and ensure all required fields
 function transformOwner(obj) {
-  if (obj.owner && typeof obj.owner === 'string') {
+  if (obj.owner && typeof obj.owner === "string") {
     obj.owner = {
       id: obj.owner,
       displayName: obj.owner,
-    }
+    };
   }
 
   // Ensure coverId and inquiryStatus are present
-  if (!Object.prototype.hasOwnProperty.call(obj, 'coverId')) {
-    obj.coverId = null
+  if (!Object.prototype.hasOwnProperty.call(obj, "coverId")) {
+    obj.coverId = null;
   }
 
-  if (!Object.prototype.hasOwnProperty.call(obj, 'inquiryStatus')) {
-    obj.inquiryStatus = 'active'
+  if (!Object.prototype.hasOwnProperty.call(obj, "inquiryStatus")) {
+    obj.inquiryStatus = "active";
   }
-  return obj
+  return obj;
 }
 
 const loadInquiryData = async () => {
   // Transform all children owners and ensure required fields
-  inquiryStore.childs = inquiryStore.childs.map(transformOwner)
-  return true
-}
+  inquiryStore.childs = inquiryStore.childs.map(transformOwner);
+  return true;
+};
 </script>
 
 <template>
@@ -201,7 +207,7 @@ const loadInquiryData = async () => {
     class="loading-container"
   >
     <div class="loading-spinner" />
-    <p>{{ t('agora', 'Loading inquiry') }}</p>
+    <p>{{ t("agora", "Loading inquiry") }}</p>
   </div>
 
   <div
@@ -216,7 +222,7 @@ const loadInquiryData = async () => {
       >
         <div class="section-header">
           <h2 class="section-title">
-            {{ t('agora', 'Main inquiry') }}
+            {{ t("agora", "Main inquiry") }}
           </h2>
         </div>
         <div class="parent-inquiry-wrapper">
@@ -235,7 +241,7 @@ const loadInquiryData = async () => {
     <!-- Children Header with View Mode Controls -->
     <div class="children-header">
       <h2 class="children-title">
-        {{ t('agora', 'Child inquiries') }}
+        {{ t("agora", "Child inquiries") }}
       </h2>
 
       <!-- View Mode Switcher for Children -->
@@ -257,7 +263,7 @@ const loadInquiryData = async () => {
                 size="16"
               />
             </template>
-            {{ !isMobile ? t('agora', 'Grid') : '' }}
+            {{ !isMobile ? t("agora", "Grid") : "" }}
           </NcCheckboxRadioSwitch>
 
           <NcCheckboxRadioSwitch
@@ -276,7 +282,7 @@ const loadInquiryData = async () => {
                 size="16"
               />
             </template>
-            {{ !isMobile ? t('agora', 'List') : '' }}
+            {{ !isMobile ? t("agora", "List") : "" }}
           </NcCheckboxRadioSwitch>
         </div>
       </div>
@@ -303,7 +309,12 @@ const loadInquiryData = async () => {
         </div>
 
         <!-- Children displayed in grid or list based on subMode -->
-        <div :class="['children-container', isGridView ? 'children-grid' : 'children-list']">
+        <div
+          :class="[
+            'children-container',
+            isGridView ? 'children-grid' : 'children-list',
+          ]"
+        >
           <InquiryItem
             v-for="child in childrenByType[type]"
             :key="child.id"

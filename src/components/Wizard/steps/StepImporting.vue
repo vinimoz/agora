@@ -4,20 +4,25 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { NcLoadingIcon } from '@nextcloud/vue'
+import { t } from "@nextcloud/l10n";
+import { NcLoadingIcon } from "@nextcloud/vue";
 </script>
 
 <template>
   <div class="importing-step">
     <div class="importing-content">
       <NcLoadingIcon :size="80" />
-      <h2>{{ t('agora', 'Importing template') }}</h2>
+      <h2>{{ t("agora", "Importing template") }}</h2>
       <p class="importing-message">
-        {{ t('agora', 'Please wait while the template is being imported …') }}
+        {{ t("agora", "Please wait while the template is being imported …") }}
       </p>
       <p class="importing-submessage">
-        {{ t('agora', 'This may take a few moments depending on the template size.') }}
+        {{
+          t(
+            "agora",
+            "This may take a few moments depending on the template size.",
+          )
+        }}
       </p>
     </div>
   </div>

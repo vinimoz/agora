@@ -2,23 +2,23 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { AxiosResponse } from '@nextcloud/axios'
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import type { SupportResultData, Support } from '@/Types'
+import { AxiosResponse } from "@nextcloud/axios";
+import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
+import type { SupportResultData, Support } from "@/Types";
 
 export interface SupportValue {
-  value?: number | string | boolean
-  values?: Record<string, unknown>
-  ranking?: Record<number, number>
-  scores?: Record<number, number>
-  reaction?: string
-  selected?: number[]
+  value?: number | string | boolean;
+  values?: Record<string, unknown>;
+  ranking?: Record<number, number>;
+  scores?: Record<number, number>;
+  reaction?: string;
+  selected?: number[];
 }
 
 export interface AddSupportOptions {
-  value: number | string | SupportValue
-  weight?: number
-  engineId?: number
+  value: number | string | SupportValue;
+  weight?: number;
+  engineId?: number;
 }
 
 const supports = {
@@ -33,14 +33,19 @@ const supports = {
     inquiryId: number,
     userId: string,
     optionId: number,
-    data: AddSupportOptions
-  ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null }>> {
+    data: AddSupportOptions,
+  ): Promise<
+    AxiosResponse<{ support: Support; result: SupportResultData | null }>
+  > {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,
       data, // Send in request body
-      cancelToken: cancelTokenHandlerObject[this.addSupport.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.addSupport.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -54,15 +59,19 @@ const supports = {
     inquiryId: number,
     userId: string,
     optionId: number,
-    data: AddSupportOptions
-  ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null }>> {
+    data: AddSupportOptions,
+  ): Promise<
+    AxiosResponse<{ support: Support; result: SupportResultData | null }>
+  > {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,
       data, // Send in request body
       cancelToken:
-        cancelTokenHandlerObject[this.updateSupport.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.updateSupport.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -76,45 +85,57 @@ const supports = {
     inquiryId: number,
     userId: string,
     optionId: number,
-    engineId?: number
-  ): Promise<AxiosResponse<{ success: boolean; result: SupportResultData | null }>> {
+    engineId?: number,
+  ): Promise<
+    AxiosResponse<{ success: boolean; result: SupportResultData | null }>
+  > {
     const url = engineId
       ? `inquiry/support/${inquiryId}/${userId}/${optionId}/${engineId}`
-      : `inquiry/support/${inquiryId}/${userId}/${optionId}`
+      : `inquiry/support/${inquiryId}/${userId}/${optionId}`;
 
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url,
       cancelToken:
-        cancelTokenHandlerObject[this.removeSupport.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.removeSupport.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
    * Remove all supports for an inquiry
    * @param inquiryId The inquiry ID
    */
-  removeAllSupport(inquiryId: number): Promise<AxiosResponse<{ success: boolean; count: number }>> {
+  removeAllSupport(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ success: boolean; count: number }>> {
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url: `inquiry/support/inquiry/${inquiryId}/all`,
       cancelToken:
-        cancelTokenHandlerObject[this.removeAllSupport.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.removeAllSupport.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
    * Get all supports for an inquiry
    * @param inquiryId The inquiry ID
    */
-  getByInquiryId(inquiryId: number): Promise<AxiosResponse<{ supports: Support[] }>> {
+  getByInquiryId(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ supports: Support[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/support/inquiry/${inquiryId}`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getByInquiryId.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getByInquiryId.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -123,12 +144,14 @@ const supports = {
    */
   getByUserId(userId: string): Promise<AxiosResponse<{ supports: Support[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/support/user/${userId}`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getByUserId.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getByUserId.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -136,14 +159,16 @@ const supports = {
    */
   getSupportStats(): Promise<AxiosResponse<{ [type: string]: number }>> {
     return httpInstance.request({
-      method: 'GET',
-      url: 'inquiry/support/stats/grouped',
+      method: "GET",
+      url: "inquiry/support/stats/grouped",
       cancelToken:
-        cancelTokenHandlerObject[this.getSupportStats.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getSupportStats.name
+        ].handleRequestCancellation().token,
+    });
   },
-}
+};
 
-const cancelTokenHandlerObject = createCancelTokenHandler(supports)
+const cancelTokenHandlerObject = createCancelTokenHandler(supports);
 
-export default supports
+export default supports;

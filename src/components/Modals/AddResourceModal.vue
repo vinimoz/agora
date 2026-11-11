@@ -4,172 +4,181 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { ref, onMounted, watch, computed } from 'vue'
-import { NcButton, NcSelect, NcModal, NcTextField, NcNoteCard } from '@nextcloud/vue'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { useInquiryLinksStore } from '../../stores/inquiryLinks'
-import { useAttachmentsStore } from '../../stores/attachments'
-import { useInquiryStore } from '../../stores/inquiry'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { Inquiry } from '../../Types/index.ts'
+import { t } from "@nextcloud/l10n";
+import { ref, onMounted, watch, computed } from "vue";
+import {
+  NcButton,
+  NcSelect,
+  NcModal,
+  NcTextField,
+  NcNoteCard,
+} from "@nextcloud/vue";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { useInquiryLinksStore } from "../../stores/inquiryLinks";
+import { useAttachmentsStore } from "../../stores/attachments";
+import { useInquiryStore } from "../../stores/inquiry";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
+import { Inquiry } from "../../Types/index.ts";
 
 // Define interfaces for resource types
 interface ResourceType {
-  id: 'files' | 'forms' | 'deck' | 'cospend' | 'collectives' | 'polls'
-  name: string
-  icon: string
-  description: string
+  id: "files" | "forms" | "deck" | "cospend" | "collectives" | "polls";
+  name: string;
+  icon: string;
+  description: string;
 }
 
 interface SelectOption {
-  id: string
-  label: string
-  name: string
-  description: string
-  data: string
+  id: string;
+  label: string;
+  name: string;
+  description: string;
+  data: string;
 }
 
 // Props
 const props = defineProps<{
-  open: boolean
-  availableApps?: string[]
-  inquiry?: Inquiry
-}>()
+  open: boolean;
+  availableApps?: string[];
+  inquiry?: Inquiry;
+}>();
 
 const emit = defineEmits<{
-  'update:open': [value: boolean]
-}>()
+  "update:open": [value: boolean];
+}>();
 
-const inquiryLinksStore = useInquiryLinksStore()
-const attachmentsStore = useAttachmentsStore()
-const inquiryStore = useInquiryStore()
+const inquiryLinksStore = useInquiryLinksStore();
+const attachmentsStore = useAttachmentsStore();
+const inquiryStore = useInquiryStore();
 
 // State
-const isCreating = ref(false)
-const selectedResource = ref<SelectOption | null>(null)
-const selectedResourceType = ref<'files' | 'forms' | 'deck' | 'cospend' | 'collectives' | 'polls'>(
-  'files'
-)
-const resources = ref<unknown[]>([])
-const isLoading = ref(false)
-const fileInput = ref<HTMLInputElement | null>(null)
-const selectedFiles = ref<File[]>([])
+const isCreating = ref(false);
+const selectedResource = ref<SelectOption | null>(null);
+const selectedResourceType = ref<
+  "files" | "forms" | "deck" | "cospend" | "collectives" | "polls"
+>("files");
+const resources = ref<unknown[]>([]);
+const isLoading = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
+const selectedFiles = ref<File[]>([]);
 
 // Determine which inquiry to use
 const currentInquiry = computed(() => {
   // If currentInquiry has an inquiry, use it
   if (inquiryStore.id) {
-    return inquiryStore
+    return inquiryStore;
   }
 
   // Otherwise, try to find the inquiry by ID in the store or use minimal data
   if (props.inquiry) {
-    return props.inquiry
+    return props.inquiry;
   }
 
-  return null
-})
+  return null;
+});
 
 // Form data
-const resourceTitle = ref(currentInquiry.value.title ? `${currentInquiry.value.title}` : '')
-const resourceDescription = ref(currentInquiry.value.description || '')
+const resourceTitle = ref(
+  currentInquiry.value.title ? `${currentInquiry.value.title}` : "",
+);
+const resourceDescription = ref(currentInquiry.value.description || "");
 
 // Resource types configuration
 const resourceTypes: ResourceType[] = [
   {
-    id: 'files',
-    name: t('agora', 'Files'),
+    id: "files",
+    name: t("agora", "Files"),
     icon: InquiryGeneralIcons.Document,
-    description: t('agora', 'Upload and share files'),
+    description: t("agora", "Upload and share files"),
   },
   {
-    id: 'forms',
-    name: t('agora', 'Forms'),
+    id: "forms",
+    name: t("agora", "Forms"),
     icon: InquiryGeneralIcons.Form,
-    description: t('agora', 'Create surveys and collect responses'),
+    description: t("agora", "Create surveys and collect responses"),
   },
   {
-    id: 'polls',
-    name: t('agora', 'Polls'),
+    id: "polls",
+    name: t("agora", "Polls"),
     icon: InquiryGeneralIcons.Poll,
-    description: t('agora', 'Create simple polls and votes'),
+    description: t("agora", "Create simple polls and votes"),
   },
   {
-    id: 'deck',
-    name: t('agora', 'Deck cards'),
+    id: "deck",
+    name: t("agora", "Deck cards"),
     icon: InquiryGeneralIcons.Deck,
-    description: t('agora', 'Create task cards in deck'),
+    description: t("agora", "Create task cards in deck"),
   },
   {
-    id: 'cospend',
-    name: t('agora', 'Cospend expenses'),
+    id: "cospend",
+    name: t("agora", "Cospend expenses"),
     icon: InquiryGeneralIcons.Money,
-    description: t('agora', 'Track shared expenses'),
+    description: t("agora", "Track shared expenses"),
   },
   {
-    id: 'collectives',
-    name: t('agora', 'Collectives'),
+    id: "collectives",
+    name: t("agora", "Collectives"),
     icon: InquiryGeneralIcons.Collectives,
-    description: t('agora', 'Link to collective pages'),
+    description: t("agora", "Link to collective pages"),
   },
-]
+];
 
 // Filter resource types based on available apps
 const availableResourceTypes = computed(() => {
   if (!props.availableApps || props.availableApps.length === 0) {
-    return resourceTypes
+    return resourceTypes;
   }
 
   return resourceTypes.filter((type) => {
     // Files are always available
-    if (type.id === 'files') return true
+    if (type.id === "files") return true;
 
     // Check if app is available
     const appMapping: Record<string, string> = {
-      forms: 'forms',
-      polls: 'polls',
-      deck: 'deck',
-      cospend: 'cospend',
-      collectives: 'collectives',
-    }
+      forms: "forms",
+      polls: "polls",
+      deck: "deck",
+      cospend: "cospend",
+      collectives: "collectives",
+    };
 
-    const appId = appMapping[type.id]
-    return appId ? props.availableApps?.includes(appId) : true
-  })
-})
+    const appId = appMapping[type.id];
+    return appId ? props.availableApps?.includes(appId) : true;
+  });
+});
 
 // Computed
 const resourceOptions = computed((): SelectOption[] =>
   resources.value.map((resource) => {
-    let label = ''
-    let description = ''
+    let label = "";
+    let description = "";
 
     switch (selectedResourceType.value) {
-      case 'polls':
+      case "polls":
         // Structure Polls: { title, description } directement dans l'objet
-        label = resource.configuration.title || 'Unnamed Poll'
-        description = resource.configuration.description || t('agora', 'No description')
-        break
+        label = resource.configuration.title || "Unnamed Poll";
+        description =
+          resource.configuration.description || t("agora", "No description");
+        break;
 
-      case 'deck':
-        label = resource.title || 'Unnamed Board'
-        description = resource.description || t('agora', 'No description')
-        break
+      case "deck":
+        label = resource.title || "Unnamed Board";
+        description = resource.description || t("agora", "No description");
+        break;
 
-      case 'cospend':
-        label = resource.name || resource.title || 'Unnamed Project'
-        description = resource.description || t('agora', 'No description')
-        break
+      case "cospend":
+        label = resource.name || resource.title || "Unnamed Project";
+        description = resource.description || t("agora", "No description");
+        break;
 
-      case 'forms':
-        label = resource.title || resource.name || resource.filename
-        description = resource.description || t('agora', 'No description')
-        break
+      case "forms":
+        label = resource.title || resource.name || resource.filename;
+        description = resource.description || t("agora", "No description");
+        break;
 
       default:
-        label = resource.title || resource.name || resource.filename
-        description = resource.description || t('agora', 'No description')
+        label = resource.title || resource.name || resource.filename;
+        description = resource.description || t("agora", "No description");
     }
 
     return {
@@ -178,83 +187,93 @@ const resourceOptions = computed((): SelectOption[] =>
       name: label,
       description,
       data: resource,
-    }
-  })
-)
+    };
+  }),
+);
 
 const currentResourceType = computed(() =>
-  availableResourceTypes.value.find((type) => type.id === selectedResourceType.value)
-)
+  availableResourceTypes.value.find(
+    (type) => type.id === selectedResourceType.value,
+  ),
+);
 
-const hasResources = computed(() => resources.value.length > 0)
+const hasResources = computed(() => resources.value.length > 0);
 const canCreateResource = computed(() => {
-  if (selectedResourceType.value === 'files') {
-    return selectedFiles.value.length > 0
+  if (selectedResourceType.value === "files") {
+    return selectedFiles.value.length > 0;
   }
-  return resourceTitle.value.trim().length > 0
-})
+  return resourceTitle.value.trim().length > 0;
+});
 const canLinkResource = computed(
-  () => selectedResource.value !== null && selectedResource.value !== ''
-)
-const canSubmit = computed(() => canCreateResource.value || canLinkResource.value)
-const isFileType = computed(() => selectedResourceType.value === 'files')
+  () => selectedResource.value !== null && selectedResource.value !== "",
+);
+const canSubmit = computed(
+  () => canCreateResource.value || canLinkResource.value,
+);
+const isFileType = computed(() => selectedResourceType.value === "files");
 
 // Helper functions
-const getResourceName = (type: ResourceType | undefined): string => type?.name || 'resource'
+const getResourceName = (type: ResourceType | undefined): string =>
+  type?.name || "resource";
 
 const getResourceNameLower = (type: ResourceType | undefined): string =>
-  type?.name?.toLowerCase() || 'resource'
+  type?.name?.toLowerCase() || "resource";
 
 // Lifecycle
 onMounted(async () => {
   if (props.open) {
-    await loadResources()
+    await loadResources();
   }
-})
+});
 
 // Watch for modal open
 watch(
   () => props.open,
   async (isOpen) => {
     if (isOpen) {
-      await loadResources()
+      await loadResources();
       // Reset form when opening
-      selectedResource.value = null
-      selectedFiles.value = []
-      resourceTitle.value = currentInquiry.value.title ? `${currentInquiry.value.title}` : ''
-      resourceDescription.value = currentInquiry.value.description || ''
+      selectedResource.value = null;
+      selectedFiles.value = [];
+      resourceTitle.value = currentInquiry.value.title
+        ? `${currentInquiry.value.title}`
+        : "";
+      resourceDescription.value = currentInquiry.value.description || "";
     }
-  }
-)
+  },
+);
 
 // Watch for resource type changes
 watch(selectedResourceType, async () => {
-  await loadResources()
-  selectedResource.value = null
-  selectedFiles.value = []
-})
+  await loadResources();
+  selectedResource.value = null;
+  selectedFiles.value = [];
+});
 
 // Load existing resources for all different one
 const loadResources = async () => {
   try {
-    isLoading.value = true
-    resources.value = []
+    isLoading.value = true;
+    resources.value = [];
 
-    const resourceType = currentResourceType.value
-    if (!resourceType) return
+    const resourceType = currentResourceType.value;
+    if (!resourceType) return;
 
     switch (resourceType.id) {
-      case 'forms':
-        if (inquiryLinksStore.getOwnedForms && inquiryLinksStore.getSharedForms) {
+      case "forms":
+        if (
+          inquiryLinksStore.getOwnedForms &&
+          inquiryLinksStore.getSharedForms
+        ) {
           const [ownedResources, sharedResources] = await Promise.all([
             inquiryLinksStore.getOwnedForms().catch(() => []),
             inquiryLinksStore.getSharedForms().catch(() => []),
-          ])
-          resources.value = [...ownedResources, ...sharedResources]
+          ]);
+          resources.value = [...ownedResources, ...sharedResources];
         }
-        break
+        break;
 
-      case 'files':
+      case "files":
         // For files, load existing attachments
         resources.value = attachmentsStore.attachments
           .filter((att) => att.fileId !== currentInquiry.value.coverId)
@@ -264,116 +283,126 @@ const loadResources = async () => {
             name: att.name,
             size: att.size,
             url: att.url,
-          }))
-        break
+          }));
+        break;
 
-      case 'polls':
+      case "polls":
         // Load polls if the method exists
         if (inquiryLinksStore.getOwnedPolls) {
           const [ownedPolls] = await Promise.all([
             inquiryLinksStore.getOwnedPolls().catch(() => []),
-          ])
-          resources.value = [...ownedPolls]
+          ]);
+          resources.value = [...ownedPolls];
         }
-        break
+        break;
 
-      case 'deck':
+      case "deck":
         // Load Deck boards if the method exists
         if (inquiryLinksStore.getOwnedDeckBoards) {
-          const deckBoards = await inquiryLinksStore.getOwnedDeckBoards().catch(() => [])
-          resources.value = deckBoards
+          const deckBoards = await inquiryLinksStore
+            .getOwnedDeckBoards()
+            .catch(() => []);
+          resources.value = deckBoards;
         }
-        break
+        break;
 
-      case 'cospend':
+      case "cospend":
         // Load Cospend projects if the method exists
         if (inquiryLinksStore.getOwnedCospendProjects) {
-          const cospendProjects = await inquiryLinksStore.getOwnedCospendProjects().catch(() => [])
-          resources.value = cospendProjects
+          const cospendProjects = await inquiryLinksStore
+            .getOwnedCospendProjects()
+            .catch(() => []);
+          resources.value = cospendProjects;
         }
-        break
+        break;
 
-      case 'collectives':
+      case "collectives":
         // Load Collectives if the method exists
         if (inquiryLinksStore.getOwnedCollectives) {
-          const collectives = await inquiryLinksStore.getOwnedCollectives().catch(() => [])
-          resources.value = collectives || []
+          const collectives = await inquiryLinksStore
+            .getOwnedCollectives()
+            .catch(() => []);
+          resources.value = collectives || [];
         }
-        break
+        break;
 
       default:
-        break
+        break;
     }
   } catch (error) {
-    console.error(error)
-    showError(t('agora', 'Failed to load resources'))
-    resources.value = []
+    console.error(error);
+    showError(t("agora", "Failed to load resources"));
+    resources.value = [];
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 // File handling methods
 const triggerFileInput = () => {
   if (fileInput.value) {
-    fileInput.value.click()
+    fileInput.value.click();
   }
-}
+};
 
 const handleFileSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const files = target.files
-  if (!files) return
+  const target = event.target as HTMLInputElement;
+  const files = target.files;
+  if (!files) return;
 
-  selectedFiles.value = Array.from(files)
-  target.value = ''
+  selectedFiles.value = Array.from(files);
+  target.value = "";
   // Clear resource selection when files are selected
-  selectedResource.value = null
-}
+  selectedResource.value = null;
+};
 
 const removeSelectedFile = (index: number) => {
-  selectedFiles.value.splice(index, 1)
-}
+  selectedFiles.value.splice(index, 1);
+};
 
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes'
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
-  const unitIndex = Math.floor(Math.log(bytes) / Math.log(k))
-  return `${parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(2))} ${sizes[unitIndex]}`
-}
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const unitIndex = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(2))} ${sizes[unitIndex]}`;
+};
 
 const createNewResource = async () => {
   if (!canCreateResource.value) {
-    showError(t('agora', 'Title is required'))
-    return
+    showError(t("agora", "Title is required"));
+    return;
   }
 
   try {
-    isCreating.value = true
-    const resourceType = currentResourceType.value
-    if (!resourceType) throw new Error('No resource type selected')
+    isCreating.value = true;
+    const resourceType = currentResourceType.value;
+    if (!resourceType) throw new Error("No resource type selected");
 
     // Remove unused variable declaration
     // let newResource
 
     switch (resourceType.id) {
-      case 'forms':
+      case "forms":
         // Use the new createForm method that handles both creation and linking
         await inquiryLinksStore.createForm(currentInquiry.value.id, {
           title: resourceTitle.value,
           description: resourceDescription.value,
-        })
-        break
+        });
+        break;
 
-      case 'files':
+      case "files":
         // Upload files and update attachments store
         if (selectedFiles.value.length === 0) {
-          throw new Error('No files selected')
+          throw new Error("No files selected");
         }
 
         for (const file of selectedFiles.value) {
-          const response = await attachmentsStore.upload(currentInquiry.value.id, file, false)
+          const response = await attachmentsStore.upload(
+            currentInquiry.value.id,
+            file,
+            false,
+          );
 
           // Update attachments store reactively
           attachmentsStore.attachments.push({
@@ -382,169 +411,192 @@ const createNewResource = async () => {
             size: response.size,
             url: response.url,
             fileId: response.id,
-          })
+          });
         }
-        break
+        break;
 
-      case 'polls':
+      case "polls":
         // Use the new createPoll method
         await inquiryLinksStore.createPoll(currentInquiry.value.id, {
           title: resourceTitle.value,
           description: resourceDescription.value,
-        })
-        break
+        });
+        break;
 
-      case 'deck':
+      case "deck":
         await inquiryLinksStore.createDeckBoard(currentInquiry.value.id, {
           title: resourceTitle.value,
           description: resourceDescription.value,
-        })
-        break
+        });
+        break;
 
-      case 'cospend':
+      case "cospend":
         // Use the new createCospendProject method
         await inquiryLinksStore.createCospendProject(currentInquiry.value.id, {
           title: resourceTitle.value,
           description: resourceDescription.value,
-        })
-        break
+        });
+        break;
 
-      case 'collectives':
+      case "collectives":
         // Use the new createCollective method
         await inquiryLinksStore.createCollective(currentInquiry.value.id, {
           title: resourceTitle.value,
           description: resourceDescription.value,
-        })
-        break
+        });
+        break;
 
       default:
-        throw new Error(`Unknown resource type: ${resourceType.id}`)
+        throw new Error(`Unknown resource type: ${resourceType.id}`);
     }
 
     const successMessage =
-      resourceType.id === 'files'
-        ? t('agora', 'Files uploaded successfully')
-        : t('agora', '{resource} created and linked successfully', { resource: resourceType.name })
+      resourceType.id === "files"
+        ? t("agora", "Files uploaded successfully")
+        : t("agora", "{resource} created and linked successfully", {
+            resource: resourceType.name,
+          });
 
-    showSuccess(successMessage)
-    closeModal()
+    showSuccess(successMessage);
+    closeModal();
   } catch (error) {
-    console.error(error)
+    console.error(error);
     showError(
-      t('agora', 'Failed to create {resource}', {
-        resource: currentResourceType.value?.name || 'resource',
-      })
-    )
+      t("agora", "Failed to create {resource}", {
+        resource: currentResourceType.value?.name || "resource",
+      }),
+    );
   } finally {
-    isCreating.value = false
+    isCreating.value = false;
   }
-}
+};
 
 const linkExistingResource = async () => {
   if (!canLinkResource.value) {
-    showError(t('agora', 'Please select a resource'))
-    return
+    showError(t("agora", "Please select a resource"));
+    return;
   }
 
   try {
-    isCreating.value = true
-    const resourceType = currentResourceType.value
-    if (!resourceType) throw new Error('No resource type selected')
+    isCreating.value = true;
+    const resourceType = currentResourceType.value;
+    if (!resourceType) throw new Error("No resource type selected");
 
     // Get the selected resource ID from the selected object
-    const resourceData = selectedResource.value?.data
-    const resourceId = selectedResource.value?.id || selectedResource.value
+    const resourceData = selectedResource.value?.data;
+    const resourceId = selectedResource.value?.id || selectedResource.value;
 
-    const title = resourceData.title || resourceData.name
+    const title = resourceData.title || resourceData.name;
     switch (resourceType.id) {
-      case 'forms': {
-        const formHash = resourceData.hash || resourceData.configuration?.hash
-        await inquiryLinksStore.linkForm(currentInquiry.value.id, resourceId, formHash, title)
-        break
+      case "forms": {
+        const formHash = resourceData.hash || resourceData.configuration?.hash;
+        await inquiryLinksStore.linkForm(
+          currentInquiry.value.id,
+          resourceId,
+          formHash,
+          title,
+        );
+        break;
       }
-      case 'polls': {
+      case "polls": {
         await inquiryLinksStore.linkPoll(
           currentInquiry.value.id,
           resourceId,
-          resourceData.configuration.title
-        )
-        break
+          resourceData.configuration.title,
+        );
+        break;
       }
-      case 'deck': {
-        await inquiryLinksStore.linkDeckBoard(currentInquiry.value.id, resourceId, title)
-        break
+      case "deck": {
+        await inquiryLinksStore.linkDeckBoard(
+          currentInquiry.value.id,
+          resourceId,
+          title,
+        );
+        break;
       }
-      case 'cospend': {
-        await inquiryLinksStore.linkCospendProject(currentInquiry.value.id, resourceId, title)
-        break
+      case "cospend": {
+        await inquiryLinksStore.linkCospendProject(
+          currentInquiry.value.id,
+          resourceId,
+          title,
+        );
+        break;
       }
-      case 'collectives': {
-        const collectiveTitle = resourceData.title || resourceData.name
-        await inquiryLinksStore.linkCollective(currentInquiry.value.id, resourceId, collectiveTitle)
-        break
+      case "collectives": {
+        const collectiveTitle = resourceData.title || resourceData.name;
+        await inquiryLinksStore.linkCollective(
+          currentInquiry.value.id,
+          resourceId,
+          collectiveTitle,
+        );
+        break;
       }
       default: {
         // Fallback for other types
         await inquiryLinksStore.create({
           inquiryId: currentInquiry.value.id,
           targetApp: resourceType.id,
-          targetType: resourceType.id === 'forms' ? 'form' : resourceType.id,
+          targetType: resourceType.id === "forms" ? "form" : resourceType.id,
           targetId: resourceId,
-          url: '',
+          url: "",
           sortOrder: 0,
-        })
+        });
       }
     }
 
-    showSuccess(t('agora', '{resource} linked successfully', { resource: resourceType.name }))
-    closeModal()
+    showSuccess(
+      t("agora", "{resource} linked successfully", {
+        resource: resourceType.name,
+      }),
+    );
+    closeModal();
   } catch (error) {
-    console.error(error)
+    console.error(error);
     showError(
-      t('agora', 'Failed to link {resource}', {
-        resource: currentResourceType.value?.name || 'resource',
-      })
-    )
+      t("agora", "Failed to link {resource}", {
+        resource: currentResourceType.value?.name || "resource",
+      }),
+    );
   } finally {
-    isCreating.value = false
+    isCreating.value = false;
   }
-}
+};
 
 const closeModal = () => {
-  emit('update:open', false)
-  isCreating.value = false
-  selectedResource.value = null
-  selectedResourceType.value = 'files'
-  selectedFiles.value = []
-}
+  emit("update:open", false);
+  isCreating.value = false;
+  selectedResource.value = null;
+  selectedResourceType.value = "files";
+  selectedFiles.value = [];
+};
 
 const handleSubmit = () => {
   if (canLinkResource.value) {
-    linkExistingResource()
+    linkExistingResource();
   } else if (canCreateResource.value) {
-    createNewResource()
+    createNewResource();
   }
-}
+};
 
 // Handle select change
 const handleSelectChange = (selected: SelectOption | null) => {
   if (selected) {
-    selectedResource.value = selected
+    selectedResource.value = selected;
     // Clear creation fields when selecting an existing resource
-    resourceTitle.value = ''
-    resourceDescription.value = ''
-    selectedFiles.value = []
+    resourceTitle.value = "";
+    resourceDescription.value = "";
+    selectedFiles.value = [];
   } else {
-    selectedResource.value = null
+    selectedResource.value = null;
   }
-}
+};
 
 // Handle title input - clear selection when user starts typing
 const handleTitleInput = () => {
   if (selectedResource.value) {
-    selectedResource.value = null
+    selectedResource.value = null;
   }
-}
+};
 </script>
 
 <template>
@@ -556,9 +608,14 @@ const handleTitleInput = () => {
   >
     <div class="modal-content">
       <div class="modal-header">
-        <h2>{{ t('agora', 'Add resource to inquiry') }}</h2>
+        <h2>{{ t("agora", "Add resource to inquiry") }}</h2>
         <p class="modal-description">
-          {{ t('agora', 'Link an existing resource or create a new one for this inquiry') }}
+          {{
+            t(
+              "agora",
+              "Link an existing resource or create a new one for this inquiry",
+            )
+          }}
         </p>
       </div>
 
@@ -566,7 +623,7 @@ const handleTitleInput = () => {
         <!-- Resource Type Selection -->
         <div class="resource-type-section">
           <h3 class="section-title">
-            {{ t('agora', 'Resource type') }}
+            {{ t("agora", "Resource type") }}
           </h3>
           <div class="resource-type-grid">
             <div
@@ -605,7 +662,11 @@ const handleTitleInput = () => {
               class="section-icon"
             />
             <h3>
-              {{ t('agora', 'Link Existing {resource}', { resource: currentResourceType?.name }) }}
+              {{
+                t("agora", "Link Existing {resource}", {
+                  resource: currentResourceType?.name,
+                })
+              }}
             </h3>
           </div>
 
@@ -615,9 +676,13 @@ const handleTitleInput = () => {
             class="info-card"
           >
             {{
-              t('agora', 'No {resource} found. You can create a new one instead.', {
-                resource: getResourceNameLower(currentResourceType),
-              })
+              t(
+                "agora",
+                "No {resource} found. You can create a new one instead.",
+                {
+                  resource: getResourceNameLower(currentResourceType),
+                },
+              )
             }}
           </NcNoteCard>
 
@@ -627,7 +692,7 @@ const handleTitleInput = () => {
           >
             <div class="loading-spinner" />
             <span>{{
-              t('agora', 'Loading your {resource} …', {
+              t("agora", "Loading your {resource} …", {
                 resource: getResourceNameLower(currentResourceType),
               })
             }}</span>
@@ -638,7 +703,7 @@ const handleTitleInput = () => {
             class="select-wrapper"
           >
             <label class="select-label">{{
-              t('agora', 'Choose a {resource} to link', {
+              t("agora", "Choose a {resource} to link", {
                 resource: getResourceNameLower(currentResourceType),
               })
             }}</label>
@@ -678,7 +743,7 @@ const handleTitleInput = () => {
             </NcSelect>
             <p class="select-hint">
               {{
-                t('agora', 'Select a {resource} you own or have access to', {
+                t("agora", "Select a {resource} you own or have access to", {
                   resource: getResourceNameLower(currentResourceType),
                 })
               }}
@@ -691,7 +756,7 @@ const handleTitleInput = () => {
           v-if="!isFileType && hasResources"
           class="separator"
         >
-          <span class="separator-text">{{ t('agora', 'OR') }}</span>
+          <span class="separator-text">{{ t("agora", "OR") }}</span>
         </div>
 
         <!-- Create New Resource Section -->
@@ -703,9 +768,9 @@ const handleTitleInput = () => {
               class="section-icon"
             />
             <h3>
-              <span v-if="isFileType">{{ t('agora', 'Upload files') }}</span>
+              <span v-if="isFileType">{{ t("agora", "Upload files") }}</span>
               <span v-else>{{
-                t('agora', 'Create New {resource}', {
+                t("agora", "Create New {resource}", {
                   resource: getResourceName(currentResourceType),
                 })
               }}</span>
@@ -737,7 +802,7 @@ const handleTitleInput = () => {
                     :size="20"
                   />
                 </template>
-                {{ t('agora', 'Select files') }}
+                {{ t("agora", "Select files") }}
               </NcButton>
 
               <!-- Selected Files List -->
@@ -746,7 +811,7 @@ const handleTitleInput = () => {
                 class="selected-files"
               >
                 <h4 class="files-title">
-                  {{ t('agora', 'Selected files') }}
+                  {{ t("agora", "Selected files") }}
                 </h4>
                 <div class="file-list">
                   <div
@@ -761,7 +826,9 @@ const handleTitleInput = () => {
                         class="file-icon"
                       />
                       <span class="file-name">{{ file.name }}</span>
-                      <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                      <span class="file-size">{{
+                        formatFileSize(file.size)
+                      }}</span>
                     </div>
                     <NcButton
                       type="error"
@@ -785,7 +852,9 @@ const handleTitleInput = () => {
               <NcTextField
                 v-model="resourceTitle"
                 :label="
-                  t('agora', '{resource} Title', { resource: getResourceName(currentResourceType) })
+                  t('agora', '{resource} Title', {
+                    resource: getResourceName(currentResourceType),
+                  })
                 "
                 :placeholder="
                   t('agora', 'Enter {resource} title', {
@@ -808,11 +877,18 @@ const handleTitleInput = () => {
               />
 
               <NcNoteCard
-                v-if="currentInquiry.expires && selectedResourceType === 'forms'"
+                v-if="
+                  currentInquiry.expires && selectedResourceType === 'forms'
+                "
                 type="info"
                 class="info-card"
               >
-                {{ t('agora', 'This form will inherit the inquiry expiration date.') }}
+                {{
+                  t(
+                    "agora",
+                    "This form will inherit the inquiry expiration date.",
+                  )
+                }}
               </NcNoteCard>
             </div>
           </div>
@@ -826,7 +902,7 @@ const handleTitleInput = () => {
           class="cancel-button"
           @click="closeModal"
         >
-          {{ t('agora', 'Cancel') }}
+          {{ t("agora", "Cancel") }}
         </NcButton>
         <NcButton
           type="primary"
@@ -842,17 +918,25 @@ const handleTitleInput = () => {
             />
           </template>
           <span v-if="isCreating">
-            {{ isFileType ? t('agora', 'Uploading …') : t('agora', 'Creating …') }}
+            {{
+              isFileType ? t("agora", "Uploading …") : t("agora", "Creating …")
+            }}
           </span>
           <span v-else-if="canLinkResource">
-            {{ t('agora', 'Link {resource}', { resource: getResourceName(currentResourceType) }) }}
+            {{
+              t("agora", "Link {resource}", {
+                resource: getResourceName(currentResourceType),
+              })
+            }}
           </span>
           <span v-else-if="isFileType">
-            {{ t('agora', 'Upload files') }}
+            {{ t("agora", "Upload files") }}
           </span>
           <span v-else>
             {{
-              t('agora', 'Create {resource}', { resource: getResourceName(currentResourceType) })
+              t("agora", "Create {resource}", {
+                resource: getResourceName(currentResourceType),
+              })
             }}
           </span>
         </NcButton>
@@ -1003,7 +1087,7 @@ const handleTitleInput = () => {
 
 .separator::before,
 .separator::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid var(--color-border);
 }

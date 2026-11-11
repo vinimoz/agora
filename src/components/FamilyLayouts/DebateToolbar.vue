@@ -62,8 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
 
 // ============================================
 // Props
@@ -71,34 +71,34 @@ import { InquiryGeneralIcons } from '../../utils/icons.ts'
 
 // eslint-disable-next-line
 const props = defineProps<{
-  modelValue: string
-  displayMode: string
-  availableViews: Array<{ key: string; label: string; icon: string }>
-  displayModes: Array<{ key: string; label: string; icon: string }>
-  hasBack?: boolean
-}>()
+  modelValue: string;
+  displayMode: string;
+  availableViews: Array<{ key: string; label: string; icon: string }>;
+  displayModes: Array<{ key: string; label: string; icon: string }>;
+  hasBack?: boolean;
+}>();
 
 // ============================================
 // Emits
 // ============================================
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
-  'update:displayMode': [value: string]
-  back: []
-}>()
+  "update:modelValue": [value: string];
+  "update:displayMode": [value: string];
+  back: [];
+}>();
 
 // ============================================
 // Methods
 // ============================================
 
 const updateView = (key: string) => {
-  emit('update:modelValue', key)
-}
+  emit("update:modelValue", key);
+};
 
 const updateDisplayMode = (key: string) => {
-  emit('update:displayMode', key)
-}
+  emit("update:displayMode", key);
+};
 </script>
 
 <style scoped lang="scss">

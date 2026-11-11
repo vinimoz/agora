@@ -4,40 +4,40 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import UserItem from '../User/UserItem.vue'
-import { useSessionStore } from '../../stores/session.ts'
-import { useCommentsStore } from '../../stores/comments.ts'
-import { useInquiryStore } from '../../stores/inquiry.ts'
+import { ref, computed } from "vue";
+import { showError } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
+import NcRichContenteditable from "@nextcloud/vue/components/NcRichContenteditable";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import UserItem from "../User/UserItem.vue";
+import { useSessionStore } from "../../stores/session.ts";
+import { useCommentsStore } from "../../stores/comments.ts";
+import { useInquiryStore } from "../../stores/inquiry.ts";
 
 interface Props {
-  inquiryId?: number
-  optionId?: number
-  inputLabel?: string
-  placeholder?: string
+  inquiryId?: number;
+  optionId?: number;
+  inputLabel?: string;
+  placeholder?: string;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const commentsStore = useCommentsStore()
-const sessionStore = useSessionStore()
-const inquiryStore = useInquiryStore()
+const commentsStore = useCommentsStore();
+const sessionStore = useSessionStore();
+const inquiryStore = useInquiryStore();
 
-const comment = ref('')
-const confidential = ref(false)
-const isSubmitting = ref(false)
-const editor = ref<InstanceType<typeof NcRichContenteditable> | null>(null)
+const comment = ref("");
+const confidential = ref(false);
+const isSubmitting = ref(false);
+const editor = ref<InstanceType<typeof NcRichContenteditable> | null>(null);
 
 // Determine which inquiry to use
 const currentInquiry = computed(() => {
   // If inquiryStore has an inquiry, use it
   if (inquiryStore.id) {
-    return inquiryStore
+    return inquiryStore;
   }
 
   // Otherwise, try to find the inquiry by ID in the store or use minimal data
@@ -52,55 +52,58 @@ const currentInquiry = computed(() => {
         id: sessionStore.currentUser.id,
         displayName: sessionStore.currentUser.displayName,
       },
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 // Load comments if we have an inquiryId from props
-if (props.inquiryId && (!inquiryStore.inquiry?.id || inquiryStore.inquiry.id !== props.inquiryId)) {
+if (
+  props.inquiryId &&
+  (!inquiryStore.inquiry?.id || inquiryStore.inquiry.id !== props.inquiryId)
+) {
   // You might want to load the inquiry from the store or API here
   // For now, we'll just load comments
-  commentsStore.load(props.inquiryId)
+  commentsStore.load(props.inquiryId);
 }
 
 // Confidential text based on inquiry owner
 const confidentialText = computed(() => {
-  if (!currentInquiry.value) return t('agora', 'Only visible to me')
+  if (!currentInquiry.value) return t("agora", "Only visible to me");
 
-  const owner = currentInquiry.value.owner
+  const owner = currentInquiry.value.owner;
   if (!owner || owner.id === sessionStore.currentUser.id) {
-    return t('agora', 'Only visible to me')
+    return t("agora", "Only visible to me");
   }
 
   if (!inquiryStore.permissions.edit) {
-    return t('agora', 'Visible only to the organizer')
+    return t("agora", "Visible only to the organizer");
   }
 
-  return t('agora', 'Only visible to {displayName}', {
-    displayName: owner.displayName || t('agora', 'The owner'),
-  })
-})
+  return t("agora", "Only visible to {displayName}", {
+    displayName: owner.displayName || t("agora", "The owner"),
+  });
+});
 
 // Check if confidential comments are forced
 const isConfidentialForced = computed(() => {
-  if (!currentInquiry.value) return false
-  return currentInquiry.value.configuration?.forceConfidentialComments || false
-})
+  if (!currentInquiry.value) return false;
+  return currentInquiry.value.configuration?.forceConfidentialComments || false;
+});
 
 /**
  * Write a comment
  */
 async function writeComment() {
   if (!comment.value || !currentInquiry.value || isSubmitting.value) {
-    return
+    return;
   }
 
-  isSubmitting.value = true
+  isSubmitting.value = true;
 
   try {
-    const inquiryId = currentInquiry.value.id
+    const inquiryId = currentInquiry.value.id;
 
     await commentsStore.add(
       {
@@ -108,37 +111,37 @@ async function writeComment() {
         confidential: confidential.value || isConfidentialForced.value,
         optionId: props.optionId,
       },
-      inquiryId
-    )
+      inquiryId,
+    );
 
-    comment.value = ''
-    confidential.value = false
+    comment.value = "";
+    confidential.value = false;
 
     // Reload comments to show the new one
     if (props.optionId) {
-      commentsStore.load(inquiryId, props.optionId)
-    } else commentsStore.load(inquiryId)
+      commentsStore.load(inquiryId, props.optionId);
+    } else commentsStore.load(inquiryId);
   } catch (error) {
-    console.error('Error saving comment:', error)
-    showError(t('agora', 'Error while saving comment'))
+    console.error("Error saving comment:", error);
+    showError(t("agora", "Error while saving comment"));
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
 }
 
 // Handle keyboard submit (Ctrl+Enter or Cmd+Enter)
 function handleKeydown(event: KeyboardEvent) {
-  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-    event.preventDefault()
-    writeComment()
+  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+    event.preventDefault();
+    writeComment();
   }
 }
 
 function focus() {
-  editor.value?.focus()
+  editor.value?.focus();
 }
 
-defineExpose({ focus })
+defineExpose({ focus });
 </script>
 
 <template>
@@ -170,7 +173,7 @@ defineExpose({ focus })
           :loading="isSubmitting"
           @click="writeComment"
         >
-          {{ t('agora', 'Send') }}
+          {{ t("agora", "Send") }}
         </NcButton>
       </div>
 

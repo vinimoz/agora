@@ -8,7 +8,7 @@
       v-if="fields.length === 0"
       class="no-fields"
     >
-      <p>{{ t('agora', 'No additional fields for this option type') }}</p>
+      <p>{{ t("agora", "No additional fields for this option type") }}</p>
     </div>
 
     <div
@@ -20,7 +20,10 @@
           v-for="field in fields"
           :key="field.key"
           class="field-card"
-          :class="{ 'inline-field': field.key === 'priority' || field.key === 'due_date' }"
+          :class="{
+            'inline-field':
+              field.key === 'priority' || field.key === 'due_date',
+          }"
         >
           <div class="field-header">
             <span
@@ -78,7 +81,9 @@
             :placeholder="field.placeholder || ''"
             :required="field.required"
             full-width
-            @update:model-value="(val) => updateValue(field.key, val, field.type)"
+            @update:model-value="
+              (val) => updateValue(field.key, val, field.type)
+            "
           />
 
           <SearchSelect
@@ -108,7 +113,9 @@
             :rows="3"
             :required="field.required"
             full-width
-            @update:model-value="(val) => updateValue(field.key, val, field.type)"
+            @update:model-value="
+              (val) => updateValue(field.key, val, field.type)
+            "
           />
 
           <!-- Boolean (switch) -->
@@ -122,7 +129,9 @@
               :checked="getBooleanValue(field.key)"
               @update:checked="(val) => updateValue(field.key, val, field.type)"
             />
-            <label :for="`field-${field.key}`">{{ field.label || field.key }}</label>
+            <label :for="`field-${field.key}`">{{
+              field.label || field.key
+            }}</label>
           </div>
 
           <NcTextField
@@ -134,7 +143,9 @@
             :placeholder="field.placeholder || ''"
             :required="field.required"
             full-width
-            @update:model-value="(val) => updateNumberValue(field.key, val, field.type)"
+            @update:model-value="
+              (val) => updateNumberValue(field.key, val, field.type)
+            "
           />
 
           <!-- JSON -->
@@ -149,10 +160,10 @@
               @update:model-value="
                 (val) => {
                   try {
-                    const parsed = val ? JSON.parse(val) : null
-                    updateValue(field.key, parsed, field.type)
+                    const parsed = val ? JSON.parse(val) : null;
+                    updateValue(field.key, parsed, field.type);
                   } catch {
-                    updateValue(field.key, val, field.type)
+                    updateValue(field.key, val, field.type);
                   }
                 }
               "
@@ -174,7 +185,9 @@
             :label-outside="true"
             :input-label="getFieldLabel(field)"
             full-width
-            @update:model-value="(val) => updateValue(field.key, val?.value || '', field.type)"
+            @update:model-value="
+              (val) => updateValue(field.key, val?.value || '', field.type)
+            "
           />
 
           <!-- Datetime -->
@@ -188,7 +201,9 @@
               :label="getFieldLabel(field)"
               :clearable="!field.required"
               full-width
-              @update:model-value="(val) => handleDateTimeUpdate(field.key, val)"
+              @update:model-value="
+                (val) => handleDateTimeUpdate(field.key, val)
+              "
             />
           </div>
 
@@ -237,7 +252,13 @@
               :required="field.required"
               full-width
               @update:model-value="
-                (val) => handleHierarchicalUpdate(val, 'location', updateValue, field.key)
+                (val) =>
+                  handleHierarchicalUpdate(
+                    val,
+                    'location',
+                    updateValue,
+                    field.key,
+                  )
               "
             />
           </div>
@@ -255,7 +276,13 @@
               :required="field.required"
               full-width
               @update:model-value="
-                (val) => handleHierarchicalUpdate(val, 'category', updateValue, field.key)
+                (val) =>
+                  handleHierarchicalUpdate(
+                    val,
+                    'category',
+                    updateValue,
+                    field.key,
+                  )
               "
             />
           </div>
@@ -286,21 +313,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcTextArea from '@nextcloud/vue/components/NcTextArea'
-import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
-import UserSearch from '../User/UserSearch.vue'
-import SearchSelect from '../Base/modules/SearchSelect.vue'
-import type { Component } from 'vue'
-import { User } from '../../Types/index.ts'
-import { Location, Category } from '../../stores/appSettings.ts'
-import { useSessionStore } from '../../stores/session'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcRichContenteditable from "@nextcloud/vue/components/NcRichContenteditable";
+import NcTextField from "@nextcloud/vue/components/NcTextField";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcTextArea from "@nextcloud/vue/components/NcTextArea";
+import NcDateTimePickerNative from "@nextcloud/vue/components/NcDateTimePickerNative";
+import UserSearch from "../User/UserSearch.vue";
+import SearchSelect from "../Base/modules/SearchSelect.vue";
+import type { Component } from "vue";
+import { User } from "../../Types/index.ts";
+import { Location, Category } from "../../stores/appSettings.ts";
+import { useSessionStore } from "../../stores/session";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
 import {
   useMiscFields,
   type MiscField,
@@ -309,36 +336,36 @@ import {
   formatMiscValueForDisplay,
   getFieldLabel as getFieldLabelHelper,
   handleHierarchicalUpdate as baseHandleHierarchicalUpdate,
-} from '../../helpers/modules/MiscFieldsHelper'
+} from "../../helpers/modules/MiscFieldsHelper";
 
 // Props
 const props = defineProps<{
-  fields: MiscField[]
-  initialValues?: Record<string, MiscValue>
-  editable?: boolean
-  optionId?: number | null
+  fields: MiscField[];
+  initialValues?: Record<string, MiscValue>;
+  editable?: boolean;
+  optionId?: number | null;
   // inquiryId?: number
-  locationItems?: Location[]
-  categoryItems?: Category[]
-  users?: Record<string, { displayName: string }>
+  locationItems?: Location[];
+  categoryItems?: Category[];
+  users?: Record<string, { displayName: string }>;
   // options?: Option[]
   // inquiries?: Inquiry[]
-}>()
+}>();
 
 // Emits
 const emit = defineEmits<{
-  update: [values: Record<string, unknown>]
-}>()
+  update: [values: Record<string, unknown>];
+}>();
 
 // Stores
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // State for user/group selections
-const selectedUsers = ref<Record<string, User>>({})
-const selectedGroups = ref<Record<string, User>>({})
+const selectedUsers = ref<Record<string, User>>({});
+const selectedGroups = ref<Record<string, User>>({});
 
 // Create a ref for initial values to track changes
-const initialValuesRef = ref(props.initialValues || {})
+const initialValuesRef = ref(props.initialValues || {});
 
 // Initialize misc fields handler
 const miscFields = useMiscFields(
@@ -346,302 +373,320 @@ const miscFields = useMiscFields(
   props.optionId ? ({ id: props.optionId } as number) : null,
   initialValuesRef,
   {
-    saveImmediateTypes: ['boolean', 'enum', 'datetime', 'users', 'groups', 'location', 'category'],
+    saveImmediateTypes: [
+      "boolean",
+      "enum",
+      "datetime",
+      "users",
+      "groups",
+      "location",
+      "category",
+    ],
     locationItems: computed(
-      () => props.locationItems || sessionStore.appSettings.locationTab || []
+      () => props.locationItems || sessionStore.appSettings.locationTab || [],
     ),
     categoryItems: computed(
-      () => props.categoryItems || sessionStore.appSettings.categoryTab || []
+      () => props.categoryItems || sessionStore.appSettings.categoryTab || [],
     ),
-  }
-)
+  },
+);
 
 // Computed for hierarchical options
 const locationOptions = computed(() =>
   getHierarchicalOptions(
     props.locationItems || sessionStore.appSettings.locationTab || [],
-    t('Select location')
-  )
-)
+    t("Select location"),
+  ),
+);
 
 const categoryOptions = computed(() =>
   getHierarchicalOptions(
     props.categoryItems || sessionStore.appSettings.categoryTab || [],
-    t('Select category')
-  )
-)
+    t("Select category"),
+  ),
+);
 
 // Helper methods
-const getFieldLabel = (field: MiscField): string => getFieldLabelHelper(field)
+const getFieldLabel = (field: MiscField): string => getFieldLabelHelper(field);
 
 const getSafeStringValue = (key: string): string => {
-  const value = miscFields.getValue(key)
+  const value = miscFields.getValue(key);
   if (value === null || value === undefined) {
-    return ''
+    return "";
   }
-  if (typeof value === 'object') {
-    return JSON.stringify(value)
+  if (typeof value === "object") {
+    return JSON.stringify(value);
   }
-  return String(value)
-}
+  return String(value);
+};
 
 const getSafeSelectValue = (key: string): unknown => {
-  const value = miscFields.getValue(key)
-  if (value === null || value === undefined || value === '') {
-    return null
+  const value = miscFields.getValue(key);
+  if (value === null || value === undefined || value === "") {
+    return null;
   }
-  return value
-}
+  return value;
+};
 
 const getSafeNumberString = (key: string): string => {
-  const value = miscFields.getValue(key)
-  if (value === null || value === undefined || value === '') {
-    return ''
+  const value = miscFields.getValue(key);
+  if (value === null || value === undefined || value === "") {
+    return "";
   }
   // If it's a number, convert to string
-  if (typeof value === 'number') {
-    return String(value)
+  if (typeof value === "number") {
+    return String(value);
   }
   // If it's a string that can be parsed as number
-  const num = parseFloat(String(value))
+  const num = parseFloat(String(value));
   if (!isNaN(num)) {
-    return String(num)
+    return String(num);
   }
-  return ''
-}
+  return "";
+};
 
 const updateNumberValue = (key: string, value: unknown, type: string) => {
-  let parsedValue: number | null = null
+  let parsedValue: number | null = null;
 
-  if (value !== null && value !== undefined && value !== '') {
-    parsedValue = type === 'integer' ? parseInt(value, 10) : parseFloat(value)
+  if (value !== null && value !== undefined && value !== "") {
+    parsedValue = type === "integer" ? parseInt(value, 10) : parseFloat(value);
     if (isNaN(parsedValue)) {
-      parsedValue = null
+      parsedValue = null;
     }
   }
 
-  miscFields.updateValue(key, parsedValue, type)
-  emit('update', miscFields.values.value)
-}
+  miscFields.updateValue(key, parsedValue, type);
+  emit("update", miscFields.values.value);
+};
 
-const getValue = (key: string) => miscFields.getValue(key)
+const getValue = (key: string) => miscFields.getValue(key);
 
 const getBooleanValue = (key: string): boolean => {
-  const value = getValue(key)
+  const value = getValue(key);
   // Handle different boolean representations
-  if (typeof value === 'boolean') return value
-  if (value === 'true') return true
-  if (value === 'false') return false
-  if (value === 1) return true
-  if (value === 0) return false
-  return false
-}
+  if (typeof value === "boolean") return value;
+  if (value === "true") return true;
+  if (value === "false") return false;
+  if (value === 1) return true;
+  if (value === 0) return false;
+  return false;
+};
 
 const updateValue = (key: string, value: unknown, type: string) => {
-  miscFields.updateValue(key, value, type)
+  miscFields.updateValue(key, value, type);
   // Emit the updated values
-  emit('update', miscFields.values.value)
-}
+  emit("update", miscFields.values.value);
+};
 
 const getJsonString = (key: string): string => {
-  const value = miscFields.getValue(key)
-  if (value === undefined || value === null) return ''
-  if (typeof value === 'object') {
+  const value = miscFields.getValue(key);
+  if (value === undefined || value === null) return "";
+  if (typeof value === "object") {
     try {
-      return JSON.stringify(value, null, 2)
+      return JSON.stringify(value, null, 2);
     } catch {
-      return String(value)
+      return String(value);
     }
   }
-  return String(value)
-}
+  return String(value);
+};
 
 // Enum methods
 const getSelectedEnumValue = (field: MiscField) => {
-  const value = miscFields.getValue(field.key)
-  if (!value && value !== 0) return null
-  const options = getEnumOptions(field)
-  return options.find((opt) => opt.value === String(value)) || null
-}
+  const value = miscFields.getValue(field.key);
+  if (!value && value !== 0) return null;
+  const options = getEnumOptions(field);
+  return options.find((opt) => opt.value === String(value)) || null;
+};
 
 const getEnumOptions = (field: MiscField) => {
-  if (!field.allowed_values) return []
+  if (!field.allowed_values) return [];
   return field.allowed_values.map((val) => ({
     value: val,
-    label: val.charAt(0).toUpperCase() + val.slice(1).replace(/_/g, ' '),
-  }))
-}
+    label: val.charAt(0).toUpperCase() + val.slice(1).replace(/_/g, " "),
+  }));
+};
 
 // Location/Category methods
 const getSelectedLocationOption = (key: string) => {
-  const value = miscFields.getValue(key)
-  if (!value && value !== 0) return null
-  return locationOptions.value.find((opt) => String(opt.value) === String(value)) || null
-}
+  const value = miscFields.getValue(key);
+  if (!value && value !== 0) return null;
+  return (
+    locationOptions.value.find((opt) => String(opt.value) === String(value)) ||
+    null
+  );
+};
 
 const getSelectedCategoryOption = (key: string) => {
-  const value = miscFields.getValue(key)
-  if (!value && value !== 0) return null
-  return categoryOptions.value.find((opt) => String(opt.value) === String(value)) || null
-}
+  const value = miscFields.getValue(key);
+  if (!value && value !== 0) return null;
+  return (
+    categoryOptions.value.find((opt) => String(opt.value) === String(value)) ||
+    null
+  );
+};
 
 // DateTime methods - Fixed to handle both string and Date
 const getDateTimeValue = (key: string): Date | null => {
-  const value = miscFields.getValue(key)
-  if (!value) return null
+  const value = miscFields.getValue(key);
+  if (!value) return null;
 
   // If it's already a Date object
   if (value instanceof Date && !isNaN(value.getTime())) {
-    return value // Return the Date object directly
+    return value; // Return the Date object directly
   }
 
   // If it's a string
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     try {
       // Try to parse as ISO string
-      const date = new Date(value)
+      const date = new Date(value);
       if (!isNaN(date.getTime())) {
-        return date // Return Date object
+        return date; // Return Date object
       }
     } catch {
       // If parsing fails, try to extract from format "YYYY-MM-DD HH:MM" or "YYYY-MM-DD"
-      const match = value.match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/)
+      const match = value.match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/,
+      );
       if (match) {
-        const [, year, month, day, hours = '00', minutes = '00'] = match
+        const [, year, month, day, hours = "00", minutes = "00"] = match;
         // Create Date object (month is 0-indexed in Date constructor)
         const date = new Date(
           parseInt(year),
           parseInt(month) - 1,
           parseInt(day),
           parseInt(hours),
-          parseInt(minutes)
-        )
+          parseInt(minutes),
+        );
         if (!isNaN(date.getTime())) {
-          return date
+          return date;
         }
       }
     }
   }
 
   // Handle numbers (timestamps)
-  if (typeof value === 'number' && !isNaN(value)) {
-    const date = new Date(value)
+  if (typeof value === "number" && !isNaN(value)) {
+    const date = new Date(value);
     if (!isNaN(date.getTime())) {
-      return date
+      return date;
     }
   }
 
-  return null
-}
+  return null;
+};
 
 const handleDateTimeUpdate = (fieldKey: string, value: string | null) => {
-  let storageValue: string | null = null
+  let storageValue: string | null = null;
   if (value) {
     // Convert from datetime-local format to storage format
-    const date = new Date(value)
+    const date = new Date(value);
     if (!isNaN(date.getTime())) {
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      storageValue = `${year}-${month}-${day} ${hours}:${minutes}`
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      storageValue = `${year}-${month}-${day} ${hours}:${minutes}`;
     }
   }
-  miscFields.updateValue(fieldKey, storageValue, 'datetime')
-  emit('update', miscFields.values.value)
-}
+  miscFields.updateValue(fieldKey, storageValue, "datetime");
+  emit("update", miscFields.values.value);
+};
 
 // User/Group methods
 const getUserObjectForField = (fieldKey: string): User => {
-  const value = miscFields.getValue(fieldKey)
-  if (!value) return null
+  const value = miscFields.getValue(fieldKey);
+  if (!value) return null;
 
   if (selectedUsers.value[fieldKey]?.id === value) {
-    return selectedUsers.value[fieldKey]
+    return selectedUsers.value[fieldKey];
   }
 
   return {
     id: String(value),
     displayName: String(value),
-    userRole: 'member',
-  }
-}
+    userRole: "member",
+  };
+};
 
 const handleUserSelected = (fieldKey: string, user: User) => {
-  const valueToStore = user?.id || ''
-  selectedUsers.value[fieldKey] = user
-  miscFields.updateValue(fieldKey, valueToStore, 'users')
-  emit('update', miscFields.values.value)
-}
+  const valueToStore = user?.id || "";
+  selectedUsers.value[fieldKey] = user;
+  miscFields.updateValue(fieldKey, valueToStore, "users");
+  emit("update", miscFields.values.value);
+};
 
 const getGroupObjectForField = (fieldKey: string): unknown => {
-  const value = miscFields.getValue(fieldKey)
-  if (!value) return null
+  const value = miscFields.getValue(fieldKey);
+  if (!value) return null;
 
   if (selectedGroups.value[fieldKey]?.id === value) {
-    return selectedGroups.value[fieldKey]
+    return selectedGroups.value[fieldKey];
   }
 
   return {
     id: String(value),
     displayName: String(value),
-    userRole: 'group',
-  }
-}
+    userRole: "group",
+  };
+};
 
 const handleGroupSelected = (fieldKey: string, group: User) => {
-  const valueToStore = group?.id || ''
-  selectedGroups.value[fieldKey] = group
-  miscFields.updateValue(fieldKey, valueToStore, 'groups')
-  emit('update', miscFields.values.value)
-}
+  const valueToStore = group?.id || "";
+  selectedGroups.value[fieldKey] = group;
+  miscFields.updateValue(fieldKey, valueToStore, "groups");
+  emit("update", miscFields.values.value);
+};
 
 // Hierarchical update
 const handleHierarchicalUpdate = (
   val: unknown,
   fieldType: string,
   updateCallback: unknown,
-  fieldKey: string
+  fieldKey: string,
 ) => {
-  baseHandleHierarchicalUpdate(val, fieldType, updateCallback, fieldKey)
-  emit('update', miscFields.values.value)
-}
+  baseHandleHierarchicalUpdate(val, fieldType, updateCallback, fieldKey);
+  emit("update", miscFields.values.value);
+};
 
 // Format display value for view mode
 const formatDisplayValue = (field: MiscField): string => {
-  const value = miscFields.getValue(field.key)
+  const value = miscFields.getValue(field.key);
 
-  if (value === undefined || value === null || value === '') {
-    return '—'
+  if (value === undefined || value === null || value === "") {
+    return "—";
   }
 
   const context = {
-    locationItems: props.locationItems || sessionStore.appSettings.locationTab || [],
-    categoryItems: props.categoryItems || sessionStore.appSettings.categoryTab || [],
+    locationItems:
+      props.locationItems || sessionStore.appSettings.locationTab || [],
+    categoryItems:
+      props.categoryItems || sessionStore.appSettings.categoryTab || [],
     users: props.users || sessionStore.appSettings.users || {},
-  }
+  };
 
-  return formatMiscValueForDisplay(value, field, context)
-}
+  return formatMiscValueForDisplay(value, field, context);
+};
 
 // Get CSS class for value
 const getValueClass = (key: string, type: string): string => {
-  const value = miscFields.getValue(key)
-  if (type === 'boolean') {
-    return value ? 'value-true' : 'value-false'
+  const value = miscFields.getValue(key);
+  if (type === "boolean") {
+    return value ? "value-true" : "value-false";
   }
-  if (type === 'datetime') {
-    return 'value-datetime'
+  if (type === "datetime") {
+    return "value-datetime";
   }
-  if (type === 'json') {
-    return 'value-json'
+  if (type === "json") {
+    return "value-json";
   }
-  if (type === 'number' || type === 'integer') {
-    return 'value-number'
+  if (type === "number" || type === "integer") {
+    return "value-number";
   }
-  return ''
-}
+  return "";
+};
 
 // Get icon for field type
 const getFieldIcon = (type: string): Component => {
@@ -658,42 +703,44 @@ const getFieldIcon = (type: string): Component => {
     category: InquiryOptionIcons.ViewDashboard,
     option: InquiryOptionIcons.MessageText,
     inquiry: InquiryOptionIcons.Forum,
-  }
-  return icons[type] || InquiryOptionIcons.Text
-}
+  };
+  return icons[type] || InquiryOptionIcons.Text;
+};
 
 // Get color for field icon
 const getFieldColor = (field: MiscField): string => {
   const colors = {
-    text: 'var(--color-primary-element)',
-    number: 'var(--color-success)',
-    integer: 'var(--color-success)',
-    boolean: 'var(--color-warning)',
-    datetime: 'var(--color-info)',
-    json: 'var(--color-error)',
-    users: 'var(--color-primary-element)',
-    groups: 'var(--color-primary-element)',
-    location: 'var(--color-success)',
-    category: 'var(--color-warning)',
-    option: 'var(--color-primary-element)',
-    inquiry: 'var(--color-primary-element)',
-  }
-  return colors[field.type as keyof typeof colors] || 'var(--color-text-lighter)'
-}
+    text: "var(--color-primary-element)",
+    number: "var(--color-success)",
+    integer: "var(--color-success)",
+    boolean: "var(--color-warning)",
+    datetime: "var(--color-info)",
+    json: "var(--color-error)",
+    users: "var(--color-primary-element)",
+    groups: "var(--color-primary-element)",
+    location: "var(--color-success)",
+    category: "var(--color-warning)",
+    option: "var(--color-primary-element)",
+    inquiry: "var(--color-primary-element)",
+  };
+  return (
+    colors[field.type as keyof typeof colors] || "var(--color-text-lighter)"
+  );
+};
 
 // Initialize on mount
 onMounted(() => {
-  miscFields.reinitialize()
+  miscFields.reinitialize();
   // Emit initial values
   setTimeout(() => {
-    emit('update', miscFields.values.value)
-  }, 0)
-})
+    emit("update", miscFields.values.value);
+  }, 0);
+});
 
 // Cleanup
 onUnmounted(() => {
-  miscFields.clearTimeouts()
-})
+  miscFields.clearTimeouts();
+});
 </script>
 
 <style scoped lang="scss">
@@ -767,7 +814,7 @@ onUnmounted(() => {
             font-weight: 500;
 
             &::before {
-              content: '✓ ';
+              content: "✓ ";
             }
           }
 
@@ -775,7 +822,7 @@ onUnmounted(() => {
             color: var(--color-error);
 
             &::before {
-              content: '✗ ';
+              content: "✗ ";
             }
           }
 

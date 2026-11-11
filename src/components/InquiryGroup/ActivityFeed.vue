@@ -11,13 +11,13 @@
           :is="Icons.Bell"
           :size="20"
         />
-        <h3>{{ t('agora', 'Activity') }}</h3>
+        <h3>{{ t("agora", "Activity") }}</h3>
       </div>
       <button
         class="mark-all-btn"
         @click="markAllRead"
       >
-        {{ t('agora', 'Mark all read') }}
+        {{ t("agora", "Mark all read") }}
       </button>
     </div>
 
@@ -44,7 +44,9 @@
             <span
               v-if="activity.target"
               class="activity-target"
-            >{{ activity.target }}</span>
+            >{{
+              activity.target
+            }}</span>
           </div>
           <div class="activity-time">
             {{ formatTime(activity.timestamp) }}
@@ -60,80 +62,83 @@
           :is="Icons.BellOff"
           :size="32"
         />
-        <p>{{ t('agora', 'No recent activity') }}</p>
+        <p>{{ t("agora", "No recent activity") }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { useActivityStore } from '../../stores/activity'
-import { useSessionStore } from '../../stores/session'
+import { ref, computed, onMounted, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { useActivityStore } from "../../stores/activity";
+import { useSessionStore } from "../../stores/session";
+import { showError } from "@nextcloud/dialogs";
+
 
 // Local set to track which activity IDs have been marked as read
-const readStatus = ref<Set<number>>(new Set())
+const readStatus = ref<Set<number>>(new Set());
 
-const activityStore = useActivityStore()
-const sessionStore = useSessionStore()
+const activityStore = useActivityStore();
+const sessionStore = useSessionStore();
 
 // Computed feed items from store, mapped to the component's internal shape
 const feedActivities = computed(() => {
-  const activities = activityStore.getActivitiesForInquiry
+  const activities = activityStore.getActivitiesForInquiry;
   return activities.map((activity) => {
     // Map the store's activity type to the icon types used in the component
-    let type = activity.type
-    if (type.includes('comment')) type = 'comment'
-    else if (type.includes('create') || type.includes('add')) type = 'create'
-    else if (type.includes('update') || type.includes('change')) type = 'update'
-    else if (type.includes('close')) type = 'close'
-    else if (type.includes('support')) type = 'support'
-    else type = 'update' // fallback
+    let type = activity.type;
+    if (type.includes("comment")) type = "comment";
+    else if (type.includes("create") || type.includes("add")) type = "create";
+    else if (type.includes("update") || type.includes("change"))
+      type = "update";
+    else if (type.includes("close")) type = "close";
+    else if (type.includes("support")) type = "support";
+    else type = "update"; // fallback
 
     // Convert ISO datetime to Unix timestamp (seconds)
-    let timestamp = 0
+    let timestamp = 0;
     try {
-      timestamp = Math.floor(new Date(activity.datetime).getTime() / 1000)
+      timestamp = Math.floor(new Date(activity.datetime).getTime() / 1000);
     } catch {
-      timestamp = Math.floor(Date.now() / 1000)
+      timestamp = Math.floor(Date.now() / 1000);
     }
 
     return {
       id: activity.activity_id,
       type,
       user: activity.user,
-      action: activity.subject || activity.message || '',
-      target: '', // The store doesn't provide a separate target; can be extended later
+      action: activity.subject || activity.message || "",
+      target: "", // The store doesn't provide a separate target; can be extended later
       inquiryId: activity.object_id,
       timestamp,
       read: readStatus.value.has(activity.activity_id),
-    }
-  })
-})
+    };
+  });
+});
 
 // Load activities when the component mounts and when the current inquiry changes
 async function loadActivities() {
   try {
-    await activityStore.load()
+    await activityStore.load();
   } catch (error) {
-    // Silent fail – the store already handles cancellation and resets
+  showError(error)
   }
 }
 
 onMounted(() => {
-  loadActivities()
-})
+  loadActivities();
+});
 
 watch(
   () => sessionStore.currentInquiryId,
   () => {
-    loadActivities()
+    loadActivities();
     // Note: readStatus persists across inquiries; activity IDs are globally unique,
     // so it's safe to keep them.
-  }
-)
+  },
+);
 
 function getActivityIcon(activity: any) {
   const icons: Record<string, any> = {
@@ -142,30 +147,32 @@ function getActivityIcon(activity: any) {
     create: Icons.Plus,
     update: Icons.Edit,
     close: Icons.CheckCircle,
-  }
-  return icons[activity.type] || Icons.Bell
+  };
+  return icons[activity.type] || Icons.Bell;
 }
 
 function formatTime(timestamp: number): string {
   try {
-    const now = Date.now() / 1000
-    const diff = now - timestamp
-    if (diff < 60) return t('agora', 'Just now')
-    if (diff < 3600) return t('agora', '{m}m ago', { m: Math.floor(diff / 60) })
-    if (diff < 86400) return t('agora', '{h}h ago', { h: Math.floor(diff / 3600) })
-    return t('agora', '{d}d ago', { d: Math.floor(diff / 86400) })
+    const now = Date.now() / 1000;
+    const diff = now - timestamp;
+    if (diff < 60) return t("agora", "Just now");
+    if (diff < 3600)
+      return t("agora", "{m}m ago", { m: Math.floor(diff / 60) });
+    if (diff < 86400)
+      return t("agora", "{h}h ago", { h: Math.floor(diff / 3600) });
+    return t("agora", "{d}d ago", { d: Math.floor(diff / 86400) });
   } catch {
-    return ''
+    return "";
   }
 }
 
 function markAllRead() {
   // Add all current activity IDs to the read set
   feedActivities.value.forEach((activity) => {
-    readStatus.value.add(activity.id)
-  })
+    readStatus.value.add(activity.id);
+  });
   // Trigger reactivity by reassigning the set
-  readStatus.value = new Set(readStatus.value)
+  readStatus.value = new Set(readStatus.value);
 }
 </script>
 

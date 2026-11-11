@@ -25,7 +25,7 @@
           :is="NavigationIcons.Archive"
           :size="12"
         />
-        <span>{{ t('agora', 'Archived') }}</span>
+        <span>{{ t("agora", "Archived") }}</span>
       </div>
     </div>
 
@@ -66,14 +66,16 @@
             class="view-group-button"
             @click.stop="emit('open')"
           >
-            {{ t('agora', 'View group') }}
+            {{ t("agora", "View group") }}
             <template #icon>
               <svg
                 width="16"
                 height="16"
                 viewBox="0 0 24 24"
               >
-                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                <path
+                  d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"
+                />
               </svg>
             </template>
           </NcButton>
@@ -84,11 +86,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Component } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { NavigationIcons } from '../../utils/icons'
-import type { InquiryGroup } from '../../Types/inquiryGroups.types'
+import { computed, type Component } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { NavigationIcons } from "../../utils/icons";
+import type { InquiryGroup } from "../../Types/inquiryGroups.types";
 
 /**
  * InquiryGroupVignette
@@ -103,33 +105,33 @@ import type { InquiryGroup } from '../../Types/inquiryGroups.types'
  */
 const props = withDefaults(
   defineProps<{
-    group: InquiryGroup
+    group: InquiryGroup;
     /** Pre-resolved cover URL. Empty or undefined hides the cover. */
-    coverUrl?: string
+    coverUrl?: string;
     /** Icon component rendered at the top of the content block. */
-    typeIcon: Component
+    typeIcon: Component;
     /** Number of child groups. Renders a second stat badge when > 0. */
-    childCount?: number
+    childCount?: number;
     /** Archived variant: adds the overlay and tints the icon. */
-    isArchived?: boolean
+    isArchived?: boolean;
     /** Max characters for the description (default 100). */
-    descriptionLimit?: number
+    descriptionLimit?: number;
   }>(),
   {
-    coverUrl: '',
+    coverUrl: "",
     childCount: 0,
     isArchived: false,
     descriptionLimit: 100,
-  }
-)
+  },
+);
 
-const emit = defineEmits<{ open: [] }>()
+const emit = defineEmits<{ open: [] }>();
 
 const truncatedDescription = computed(() => {
-  const desc = props.group.description || ''
-  if (desc.length <= props.descriptionLimit) return desc
-  return `${desc.slice(0, props.descriptionLimit)}…`
-})
+  const desc = props.group.description || "";
+  if (desc.length <= props.descriptionLimit) return desc;
+  return `${desc.slice(0, props.descriptionLimit)}…`;
+});
 </script>
 
 <style lang="scss" scoped>

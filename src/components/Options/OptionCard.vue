@@ -64,7 +64,7 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Edit') }}
+            {{ t("agora", "Edit") }}
           </NcActionButton>
 
           <!-- Delete action -->
@@ -79,7 +79,7 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Delete') }}
+            {{ t("agora", "Delete") }}
           </NcActionButton>
         </NcActions>
       </div>
@@ -120,7 +120,7 @@
         />
       </div>
       <div class="progress-stats">
-        <span class="progress-label">{{ t('agora', 'Progress') }}</span>
+        <span class="progress-label">{{ t("agora", "Progress") }}</span>
         <span class="progress-percentage">{{ Math.round(progressPercentage) }}%</span>
       </div>
     </div>
@@ -165,7 +165,9 @@
             :size="compact ? 14 : 16"
             class="feature-icon"
           />
-          <span class="feature-count">{{ option.status.countComments || 0 }}</span>
+          <span class="feature-count">{{
+            option.status.countComments || 0
+          }}</span>
         </div>
       </div>
     </div>
@@ -180,7 +182,7 @@
           :is="InquiryOptionIcons.MessageReplyText"
           :size="14"
         />
-        <span class="responses-title">{{ t('agora', 'Responses') }}</span>
+        <span class="responses-title">{{ t("agora", "Responses") }}</span>
       </div>
 
       <div class="responses-list">
@@ -188,7 +190,7 @@
           v-if="childCountsTotal === 0"
           class="no-responses"
         >
-          <span class="no-responses-text">{{ t('agora', 'None') }}</span>
+          <span class="no-responses-text">{{ t("agora", "None") }}</span>
         </div>
 
         <div
@@ -208,17 +210,22 @@
                 :is="getOptionTypeIcon(responseType)"
                 :size="inline ? 10 : 12"
               />
-              <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
+              <span class="response-count">{{
+                childCounts[responseType] || 0
+              }}</span>
             </div>
 
             <!-- Tooltip showing child options of this type -->
             <div
-              v-if="activeTooltip === responseType && childCounts[responseType] > 0"
+              v-if="
+                activeTooltip === responseType && childCounts[responseType] > 0
+              "
               class="child-tooltip"
             >
               <div class="tooltip-header">
                 <strong>{{ getOptionTypeLabelLocal(responseType) }}</strong>
-                <span class="tooltip-count">{{ childCounts[responseType] }} {{ t('agora', 'items') }}</span>
+                <span class="tooltip-count">{{ childCounts[responseType] }}
+                  {{ t("agora", "items") }}</span>
               </div>
               <div class="tooltip-children">
                 <div
@@ -231,13 +238,19 @@
                     :is="getOptionTypeIcon(child.type)"
                     :size="10"
                   />
-                  <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
+                  <span class="child-title">{{
+                    child.title || child.text?.substring(0, 30)
+                  }}</span>
                 </div>
                 <div
                   v-if="childCounts[responseType] > 3"
                   class="tooltip-more"
                 >
-                  {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
+                  {{
+                    t("agora", "and {count} more …", {
+                      count: childCounts[responseType] - 3,
+                    })
+                  }}
                 </div>
               </div>
             </div>
@@ -260,7 +273,7 @@
             v-if="childCountsTotal === 0"
             class="no-responses"
           >
-            <span class="no-responses-text">{{ t('agora', 'None') }}</span>
+            <span class="no-responses-text">{{ t("agora", "None") }}</span>
           </div>
 
           <div
@@ -280,17 +293,23 @@
                   :is="getOptionTypeIcon(responseType)"
                   :size="10"
                 />
-                <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
+                <span class="response-count">{{
+                  childCounts[responseType] || 0
+                }}</span>
               </div>
 
               <!-- Tooltip showing child options of this type -->
               <div
-                v-if="activeTooltip === responseType && childCounts[responseType] > 0"
+                v-if="
+                  activeTooltip === responseType &&
+                    childCounts[responseType] > 0
+                "
                 class="child-tooltip"
               >
                 <div class="tooltip-header">
                   <strong>{{ getOptionTypeLabelLocal(responseType) }}</strong>
-                  <span class="tooltip-count">{{ childCounts[responseType] }} {{ t('agora', 'items') }}</span>
+                  <span class="tooltip-count">{{ childCounts[responseType] }}
+                    {{ t("agora", "items") }}</span>
                 </div>
                 <div class="tooltip-children">
                   <div
@@ -311,7 +330,11 @@
                     v-if="childCounts[responseType] > 3"
                     class="tooltip-more"
                   >
-                    {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
+                    {{
+                      t("agora", "and {count} more …", {
+                        count: childCounts[responseType] - 3,
+                      })
+                    }}
                   </div>
                 </div>
               </div>
@@ -348,7 +371,9 @@
             :size="14"
             class="feature-icon"
           />
-          <span class="feature-count">{{ option.status.countComments || 0 }}</span>
+          <span class="feature-count">{{
+            option.status.countComments || 0
+          }}</span>
         </div>
       </div>
 
@@ -378,7 +403,7 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Edit') }}
+            {{ t("agora", "Edit") }}
           </NcActionButton>
 
           <!-- Delete action -->
@@ -393,12 +418,16 @@
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Delete') }}
+            {{ t("agora", "Delete") }}
             <template
               v-if="hasChildren"
               #subtitle
             >
-              {{ t('agora', 'Will also delete {count} children', { count: childrenCount }) }}
+              {{
+                t("agora", "Will also delete {count} children", {
+                  count: childrenCount,
+                })
+              }}
             </template>
           </NcActionButton>
         </NcActions>
@@ -418,7 +447,7 @@
           :size="18"
         />
         <span class="owner-name">{{
-          option.owner?.displayName || t('agora', 'Unknown owner')
+          option.owner?.displayName || t("agora", "Unknown owner")
         }}</span>
       </div>
     </div>
@@ -437,21 +466,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import { SupportFeature } from '../Base/index.ts'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import { SupportFeature } from "../Base/index.ts";
 
-import { useOptionsStore } from '../../stores/options'
-import { useSessionStore } from '../../stores/session'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { createOptionContext, canEditOption, canDeleteOption } from '../../utils/permissions.ts'
+import { useOptionsStore } from "../../stores/options";
+import { useSessionStore } from "../../stores/session";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import {
+  createOptionContext,
+  canEditOption,
+  canDeleteOption,
+} from "../../utils/permissions.ts";
 
 // Types
-import type { Option } from '../../Types/index.ts'
+import type { Option } from "../../Types/index.ts";
 import {
   getOptionTypeLabel,
   getOptionTypeIconComponent,
@@ -460,257 +493,276 @@ import {
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments,
   usesTitle,
-} from '../../helpers/modules/InquiryOptionHelper'
+} from "../../helpers/modules/InquiryOptionHelper";
 
-import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
+import DeleteConfirmationDialog from "../Modals/DeleteConfirmationDialog.vue";
 
 // Props
 const props = defineProps<{
   option: Option & {
     currentUserStatus?: {
-      hasSupported: boolean
-      supportValue: number | null
-    }
-  }
+      hasSupported: boolean;
+      supportValue: number | null;
+    };
+  };
   // eslint-disable-next-line vue/no-unused-properties
-  inquiryId: number
-  compact?: boolean
-  inline?: boolean
-  official?: boolean
-  highlight?: boolean
-  showPoll?: boolean
-  showAction?: boolean
-  preventClick?: boolean
-  textMaxLength?: number
-  progressBar?: boolean
-  familyType?: string
-}>()
+  inquiryId: number;
+  compact?: boolean;
+  inline?: boolean;
+  official?: boolean;
+  highlight?: boolean;
+  showPoll?: boolean;
+  showAction?: boolean;
+  preventClick?: boolean;
+  textMaxLength?: number;
+  progressBar?: boolean;
+  familyType?: string;
+}>();
 
 // Emits
 const emit = defineEmits<{
-  click: [option: Option]
-  edit: [option: Option]
-  delete: [optionId: number]
-  updated: [option: Option]
-  supportChanged: [optionId: number, support: string]
-  comment: [option: Option]
-  viewResponses: [option: Option, responseType: string]
-  removeFromView: [optionId: number, updatedForceLayouts: string[]]
-}>()
+  click: [option: Option];
+  edit: [option: Option];
+  delete: [optionId: number];
+  updated: [option: Option];
+  supportChanged: [optionId: number, support: string];
+  comment: [option: Option];
+  viewResponses: [option: Option, responseType: string];
+  removeFromView: [optionId: number, updatedForceLayouts: string[]];
+}>();
 
 // Defaults
-const textMaxLength = props.textMaxLength || 200
+const textMaxLength = props.textMaxLength || 200;
 
 // Stores
-const optionsStore = useOptionsStore()
-const sessionStore = useSessionStore()
+const optionsStore = useOptionsStore();
+const sessionStore = useSessionStore();
 
-const showDeleteDialog = ref(false)
+const showDeleteDialog = ref(false);
 
 const confirmDelete = () => {
-  showDeleteDialog.value = true
-}
+  showDeleteDialog.value = true;
+};
 
 const handleRemoveFromView = () => {
-  removeFromCurrentView()
-}
+  removeFromCurrentView();
+};
 
 // Create context once as computed
 const optionContext = computed(() => {
-  if (!props.option) return null
-  return createOptionContext(props.option)
-})
+  if (!props.option) return null;
+  return createOptionContext(props.option);
+});
 
 // Permission checks as computed properties
 const canEdit = computed(() => {
-  if (!props.option || optionContext.value === null) return false
-  return canEditOption(optionContext.value)
-})
+  if (!props.option || optionContext.value === null) return false;
+  return canEditOption(optionContext.value);
+});
 const canDelete = computed(() => {
-  if (!props.option || optionContext.value === null) return false
-  return canDeleteOption(optionContext.value)
-})
+  if (!props.option || optionContext.value === null) return false;
+  return canDeleteOption(optionContext.value);
+});
 
-const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
+const canEditOrDelete = computed(() => canEdit.value || canDelete.value);
 
 // Get option types from session store
-const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+const allOptionTypes = computed(
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 
 // Add null checks
 const optionTypeLabel = computed(() => {
   if (!props.option?.type || !allOptionTypes.value) {
-    return t('agora', 'Option')
+    return t("agora", "Option");
   }
-  return getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
-})
+  return getOptionTypeLabel(
+    props.option.type,
+    allOptionTypes.value,
+    t("agora", "Option"),
+  );
+});
 
 const optionIcon = computed(() => {
   if (!props.option?.type || !allOptionTypes.value) {
-    return InquiryOptionIcons.Default // Make sure this exists
+    return InquiryOptionIcons.Default; // Make sure this exists
   }
-  return getOptionTypeIconComponent(props.option.type, allOptionTypes.value)
-})
+  return getOptionTypeIconComponent(props.option.type, allOptionTypes.value);
+});
 
 const optionTypeColor = computed(() => {
   if (!props.option?.type || !allOptionTypes.value) {
-    return 'var(--color-text-light)'
+    return "var(--color-text-light)";
   }
-  return getOptionTypeColor(props.option.type, allOptionTypes.value)
-})
+  return getOptionTypeColor(props.option.type, allOptionTypes.value);
+});
 
-const showTitle = computed(() => usesTitle(props.option.type, allOptionTypes.value))
+const showTitle = computed(() =>
+  usesTitle(props.option.type, allOptionTypes.value),
+);
 
-const allowComment = computed(() => allowsComments(props.option.type, allOptionTypes.value))
+const allowComment = computed(() =>
+  allowsComments(props.option.type, allOptionTypes.value),
+);
 
 const hasSupportFeature = computed(() =>
-  hasSupportFeatureHelper(props.option.type, allOptionTypes.value)
-)
+  hasSupportFeatureHelper(props.option.type, allOptionTypes.value),
+);
 
 // Get allowed responses from option type data
 const allowedResponses = computed(() =>
-  getAllowedResponses(props.option.type, allOptionTypes.value)
-)
+  getAllowedResponses(props.option.type, allOptionTypes.value),
+);
 
-const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
+const getOptionTypeIcon = (type: string) =>
+  getOptionTypeIconComponent(type, allOptionTypes.value);
 
 // Renamed to avoid conflict with imported getOptionTypeLabel
 const getOptionTypeLabelLocal = (type: string) =>
-  getOptionTypeLabel(type, allOptionTypes.value, type)
+  getOptionTypeLabel(type, allOptionTypes.value, type);
 
-const useTitle = computed(() => usesTitle(props.option.type, allOptionTypes.value))
+const useTitle = computed(() =>
+  usesTitle(props.option.type, allOptionTypes.value),
+);
 
 const progressPercentage = computed(() => {
-  if (!props.progressBar) return 0
+  if (!props.progressBar) return 0;
 
   if (props.option.status?.supportCount !== undefined) {
     // Assuming there's a total target or max value
-    const maxSupport = props.option.maxSupport || 100 // Define your max value
-    return Math.min(100, (props.option.status.supportCount / maxSupport) * 100)
+    const maxSupport = props.option.maxSupport || 100; // Define your max value
+    return Math.min(100, (props.option.status.supportCount / maxSupport) * 100);
   }
 
   // Default fallback
-  return 50
-})
+  return 50;
+});
 
-const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
+const hasAllowedResponses = computed(() => allowedResponses.value.length > 0);
 
 // Get child options
 const childOptions = computed(() => {
-  if (!props.option?.id) return []
-  return optionsStore.options.filter((opt) => opt.parentId === props.option.id)
-})
+  if (!props.option?.id) return [];
+  return optionsStore.options.filter((opt) => opt.parentId === props.option.id);
+});
 
 const childCounts = computed(() => {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
 
-  if (!props.option.id) return counts
+  if (!props.option.id) return counts;
 
-  const children = childOptions.value
+  const children = childOptions.value;
 
   // Initialize counts for allowed responses
   allowedResponses.value.forEach((type: string) => {
-    counts[type] = 0
-  })
+    counts[type] = 0;
+  });
 
   // Count children by type
   children.forEach((child) => {
     if (counts[child.type] !== undefined) {
-      counts[child.type] = counts[child.type] + 1
+      counts[child.type] = counts[child.type] + 1;
     }
-  })
+  });
 
-  return counts
-})
+  return counts;
+});
 
 const childCountsTotal = computed(() =>
-  Object.values(childCounts.value).reduce((sum, count) => sum + count, 0)
-)
+  Object.values(childCounts.value).reduce((sum, count) => sum + count, 0),
+);
 
 // Tooltip state
-const activeTooltip = ref<string | null>(null)
+const activeTooltip = ref<string | null>(null);
 
 const showChildTooltip = (type: string) => {
-  activeTooltip.value = type
-}
+  activeTooltip.value = type;
+};
 
 const hideChildTooltip = () => {
-  activeTooltip.value = null
-}
+  activeTooltip.value = null;
+};
 
 const getChildrenByType = (type: string) =>
-  childOptions.value.filter((child) => child.type === type).slice(0, 3) // Show only first 3
+  childOptions.value.filter((child) => child.type === type).slice(0, 3); // Show only first 3
 
 // Helper methods
 const formatDate = (timestamp: number) => {
-  let date = new Date()
-  if (timestamp) date = new Date(timestamp * 1000)
+  let date = new Date();
+  if (timestamp) date = new Date(timestamp * 1000);
   return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date)
-}
-const isImportedFromView = computed(() => props.option.family !== props.familyType)
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+};
+const isImportedFromView = computed(
+  () => props.option.family !== props.familyType,
+);
 
 const truncateText = (text: string, maxLength: number) => {
-  if (!text) return ''
-  if (text.length <= maxLength) return text
-  return `${text.substring(0, maxLength)}...`
-}
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return `${text.substring(0, maxLength)}...`;
+};
 
 const handleCardClick = () => {
   if (!props.preventClick) {
-    emit('click', props.option)
+    emit("click", props.option);
   }
-}
+};
 
 const handleEdit = () => {
-  emit('edit', props.option)
-}
+  emit("edit", props.option);
+};
 
 // Computed
 const hasChildren = computed(() =>
-  optionsStore.options.some((opt) => opt.parentId === props.option.id)
-)
+  optionsStore.options.some((opt) => opt.parentId === props.option.id),
+);
 
 const childrenCount = computed(
-  () => optionsStore.options.filter((opt) => opt.parentId === props.option.id).length
-)
+  () =>
+    optionsStore.options.filter((opt) => opt.parentId === props.option.id)
+      .length,
+);
 
 const handleConfirmDelete = async () => {
-  showDeleteDialog.value = false
-  await deleteOption()
-}
+  showDeleteDialog.value = false;
+  await deleteOption();
+};
 
 const deleteOption = async () => {
   try {
-    await optionsStore.deleteOption(props.option.id)
-    emit('delete', props.option.id)
-    showSuccess(t('agora', 'Option deleted successfully'))
+    await optionsStore.deleteOption(props.option.id);
+    emit("delete", props.option.id);
+    showSuccess(t("agora", "Option deleted successfully"));
   } catch (err) {
-    console.error('Error deleting option:', err)
-    showError(t('agora', 'Failed to delete option'))
+    console.error("Error deleting option:", err);
+    showError(t("agora", "Failed to delete option"));
   }
-}
+};
 
 const removeFromCurrentView = async () => {
   try {
-    let currentLayouts = props.option.miscFields?.force_layouts || []
+    let currentLayouts = props.option.miscFields?.force_layouts || [];
 
-    if (typeof currentLayouts === 'string') {
+    if (typeof currentLayouts === "string") {
       try {
-        currentLayouts = JSON.parse(currentLayouts)
+        currentLayouts = JSON.parse(currentLayouts);
       } catch {
-        currentLayouts = []
+        currentLayouts = [];
       }
     }
 
     if (!Array.isArray(currentLayouts)) {
-      currentLayouts = []
+      currentLayouts = [];
     }
 
-    const updatedLayouts = currentLayouts.filter((layout: string) => layout !== props.familyType)
+    const updatedLayouts = currentLayouts.filter(
+      (layout: string) => layout !== props.familyType,
+    );
 
     await optionsStore.updateOption({
       ...props.option,
@@ -718,15 +770,15 @@ const removeFromCurrentView = async () => {
         ...props.option.miscFields,
         force_layouts: updatedLayouts,
       },
-    })
+    });
 
-    emit('removeFromView', props.option.id, updatedLayouts)
-    showSuccess(t('agora', 'Option removed from view'))
+    emit("removeFromView", props.option.id, updatedLayouts);
+    showSuccess(t("agora", "Option removed from view"));
   } catch (err) {
-    console.error('Error removing option from view:', err)
-    showError(t('agora', 'Failed to remove option from view'))
+    console.error("Error removing option from view:", err);
+    showError(t("agora", "Failed to remove option from view"));
   }
-}
+};
 </script>
 <style scoped lang="scss">
 .option-card {
@@ -1037,14 +1089,15 @@ const removeFromCurrentView = async () => {
             animation: fadeIn 0.2s ease-out;
 
             &::after {
-              content: '';
+              content: "";
               position: absolute;
               top: 100%;
               left: 50%;
               transform: translateX(-50%);
               border-width: 6px;
               border-style: solid;
-              border-color: var(--color-main-background) transparent transparent transparent;
+              border-color: var(--color-main-background) transparent transparent
+                transparent;
             }
 
             .tooltip-header {
@@ -1124,7 +1177,7 @@ const removeFromCurrentView = async () => {
         position: relative;
 
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 0;
           left: 0;
@@ -1461,14 +1514,15 @@ const removeFromCurrentView = async () => {
       font-size: 11px;
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 100%;
         left: 50%;
         transform: translateX(-50%);
         border-width: 5px;
         border-style: solid;
-        border-color: var(--color-main-background) transparent transparent transparent;
+        border-color: var(--color-main-background) transparent transparent
+          transparent;
       }
 
       .tooltip-header {

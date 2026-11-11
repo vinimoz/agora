@@ -11,7 +11,8 @@
 // @see Complete Vocabulary Definition - Single Source of Truth
 // ============================================================
 
-import type { ScopeFilter } from '../../Types/experience.types'
+import type { ScopeFilter } from "../../Types/experience.types";
+import type { FilterableItem } from "../../Types/filter.types";
 
 /**
  * Apply filters to a data array
@@ -19,18 +20,23 @@ import type { ScopeFilter } from '../../Types/experience.types'
  * @param filter - Filter criteria
  * @see Complete Vocabulary Definition - Section 13: Filter
  */
-export function applyFilters<T extends Record<string, any>>(data: T[], filter?: ScopeFilter): T[] {
-  if (!filter) return data
+export function applyFilters<T extends Record<string, FilterableItem>>(
+  data: T[],
+  filter?: ScopeFilter,
+): T[] {
+  if (!filter) return data;
 
   return data.filter((item) => {
     // ============================================================
     // INQUIRY TYPE FILTER - for inquiries
     // ============================================================
     if (filter.inquiry_type) {
-      const types = Array.isArray(filter.inquiry_type) ? filter.inquiry_type : [filter.inquiry_type]
-      const itemType = item.inquiryType || item.type
+      const types = Array.isArray(filter.inquiry_type)
+        ? filter.inquiry_type
+        : [filter.inquiry_type];
+      const itemType = item.inquiryType || item.type;
       if (!types.includes(itemType)) {
-        return false
+        return false;
       }
     }
 
@@ -38,10 +44,12 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // GROUP TYPE FILTER - for inquiry_groups
     // ============================================================
     if (filter.group_type) {
-      const types = Array.isArray(filter.group_type) ? filter.group_type : [filter.group_type]
-      const itemType = item.groupType || item.type
+      const types = Array.isArray(filter.group_type)
+        ? filter.group_type
+        : [filter.group_type];
+      const itemType = item.groupType || item.type;
       if (!types.includes(itemType)) {
-        return false
+        return false;
       }
     }
 
@@ -49,10 +57,10 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // GENERIC TYPE FILTER (for backward compatibility)
     // ============================================================
     if (filter.type) {
-      const types = Array.isArray(filter.type) ? filter.type : [filter.type]
-      const itemType = item.type || item.inquiryType || item.groupType
+      const types = Array.isArray(filter.type) ? filter.type : [filter.type];
+      const itemType = item.type || item.inquiryType || item.groupType;
       if (!types.includes(itemType)) {
-        return false
+        return false;
       }
     }
 
@@ -60,13 +68,19 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // STATUS FILTER
     // ============================================================
     if (filter.status) {
-      const statuses = Array.isArray(filter.status) ? filter.status : [filter.status]
+      const statuses = Array.isArray(filter.status)
+        ? filter.status
+        : [filter.status];
       // Handle nested status (e.g., inquiry.status.inquiryStatus)
-      const itemStatus = item.status?.inquiryStatus || item.status || item.statusKey
-      if (!statuses.includes(itemStatus)) {
-        return false
+      const rawStatus = item.status as unknown;
+      const itemStatus =
+      item.status?.inquiryStatus ||
+        (typeof rawStatus === "string" ? rawStatus : undefined) ||
+        item.statusKey;
+      if (typeof itemStatus !== "string" || !statuses.includes(itemStatus)) {
+        return false;
+       }
       }
-    }
 
     // ============================================================
     // FAMILY FILTER (generic capability)
@@ -82,10 +96,12 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // branch is kept so custom zones can use it without a code change
     // here.
     if (filter.family) {
-      const families = Array.isArray(filter.family) ? filter.family : [filter.family]
-      const itemFamily = item.family || item.optionFamily
+      const families = Array.isArray(filter.family)
+        ? filter.family
+        : [filter.family];
+      const itemFamily = item.family || item.optionFamily;
       if (!families.includes(itemFamily)) {
-        return false
+        return false;
       }
     }
 
@@ -93,12 +109,12 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // DATE FILTER
     // ============================================================
     if (filter.date) {
-      const itemDate = item.created || item.createdAt || item.timestamp
+      const itemDate = item.created || item.createdAt || item.timestamp;
       if (filter.date.from && itemDate < filter.date.from) {
-        return false
+        return false;
       }
       if (filter.date.to && itemDate > filter.date.to) {
-        return false
+        return false;
       }
     }
 
@@ -106,12 +122,12 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // DATE RANGE FILTER (alternative using from/to)
     // ============================================================
     if (filter.from || filter.to) {
-      const itemDate = item.created || item.createdAt || item.timestamp
+      const itemDate = item.created || item.createdAt || item.timestamp;
       if (filter.from && itemDate < filter.from) {
-        return false
+        return false;
       }
       if (filter.to && itemDate > filter.to) {
-        return false
+        return false;
       }
     }
 
@@ -120,69 +136,69 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // For marketplace, user selections, categories, locations, etc.
     // ============================================================
     if (filter.selection) {
-      const selection = filter.selection
+      const selection = filter.selection;
 
       // Filter by userId
       if (selection.userId) {
-        const itemUserId = item.owner?.id || item.userId
+        const itemUserId = item.owner?.id || item.userId;
         if (itemUserId !== selection.userId) {
-          return false
+          return false;
         }
       }
 
       // Filter by groupId
       if (selection.groupId) {
-        const itemGroupId = item.groupId || item.inquiryGroupId
+        const itemGroupId = item.groupId || item.inquiryGroupId;
         if (itemGroupId !== selection.groupId) {
-          return false
+          return false;
         }
       }
 
       // Filter by category
       if (selection.category) {
-        const itemCategory = item.category || item.miscFields?.category
+        const itemCategory = item.category || item.miscFields?.category;
         if (itemCategory !== selection.category) {
-          return false
+          return false;
         }
       }
 
       // Filter by location
       if (selection.location) {
-        const itemLocation = item.location || item.miscFields?.location
+        const itemLocation = item.location || item.miscFields?.location;
         // Allow template variables like '{user_selected_location}'
-        const locationValue = selection.location
-        if (locationValue.startsWith('{') && locationValue.endsWith('}')) {
+        const locationValue = selection.location;
+        if (locationValue.startsWith("{") && locationValue.endsWith("}")) {
           // This is a template variable - skip validation at this level
           // The parent component will replace it with the actual value
         } else if (itemLocation !== locationValue) {
-          return false
+          return false;
         }
       }
 
       // Filter by tags
       if (selection.tags && selection.tags.length > 0) {
-        const itemTags = item.tags || item.miscFields?.tags || []
+        const itemTags = item.tags || item.miscFields?.tags || [];
         const hasMatchingTag = selection.tags.some((tag) => {
           // Skip template variables
-          if (tag.startsWith('{') && tag.endsWith('}')) return true
-          return itemTags.includes(tag)
-        })
+          if (tag.startsWith("{") && tag.endsWith("}")) return true;
+          return itemTags.includes(tag);
+        });
         if (!hasMatchingTag) {
-          return false
+          return false;
         }
       }
 
       // Custom selection filters
       if (selection.custom) {
         for (const [key, value] of Object.entries(selection.custom)) {
-          const itemValue = item.miscFields?.[key] || item[key]
+          const itemValue = item.miscFields?.[key] || item[key];
           if (Array.isArray(value)) {
             if (!value.includes(itemValue)) {
-              return false
+              return false;
             }
           } else if (value !== undefined && value !== null) {
             if (itemValue !== value) {
-              return false
+              return false;
             }
           }
         }
@@ -193,29 +209,29 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
     // CUSTOM FILTERS (via miscFields)
     // ============================================================
     const reservedKeys = [
-      'inquiry_type',
-      'group_type',
-      'type',
-      'status',
-      'family',
-      'date',
-      'selection',
-      'from',
-      'to',
-    ]
+      "inquiry_type",
+      "group_type",
+      "type",
+      "status",
+      "family",
+      "date",
+      "selection",
+      "from",
+      "to",
+    ];
 
     for (const key of Object.keys(filter)) {
-      if (reservedKeys.includes(key)) continue
-      const filterValue = filter[key]
-      const itemValue = item.miscFields?.[key] ?? item[key]
+      if (reservedKeys.includes(key)) continue;
+      const filterValue = filter[key];
+      const itemValue = item.miscFields?.[key] ?? item[key];
       if (Array.isArray(filterValue)) {
-        if (!filterValue.includes(itemValue)) return false
+        if (!filterValue.includes(itemValue)) return false;
       } else if (filterValue !== undefined && filterValue !== null) {
-        if (itemValue !== filterValue) return false
+        if (itemValue !== filterValue) return false;
       }
     }
-    return true
-  })
+    return true;
+  });
 }
 
 /**
@@ -223,45 +239,56 @@ export function applyFilters<T extends Record<string, any>>(data: T[], filter?: 
  * @param data - Array of items to sort
  * @param sort - Sorting criteria
  */
-export function applySort<T extends Record<string, any>>(
+export function applySort<T extends Record<string, FilterableItem>>(
   data: T[],
-  sort?: { field: string; direction: 'asc' | 'desc' }
+  sort?: { field: string; direction: "asc" | "desc" },
 ): T[] {
-  if (!sort) return data
+  if (!sort) return data;
 
   return [...data].sort((a, b) => {
-    let aVal = a[sort.field]
-    let bVal = b[sort.field]
+      let aVal: unknown = (a as Record<string, unknown>)[sort.field];
+      let bVal: unknown = (b as Record<string, unknown>)[sort.field];
 
     // Handle nested properties (e.g., status.created)
-    if (sort.field.includes('.')) {
-      const parts = sort.field.split('.')
-      aVal = parts.reduce((obj, key) => obj?.[key], a)
-      bVal = parts.reduce((obj, key) => obj?.[key], b)
+    if (sort.field.includes(".")) {
+      const parts = sort.field.split(".");
+    const read = (obj: unknown): unknown =>
+        parts.reduce<unknown>(
+          (o, k) =>
+           typeof o === "object" && o !== null
+              ? (o as Record<string, unknown>)[k]
+              : undefined,
+          obj,
+        );
+      aVal = read(a);
+      bVal = read(b);
+    
     }
 
     // Handle null/undefined values
-    if (aVal == null && bVal == null) return 0
-    if (aVal == null) return sort.direction === 'asc' ? -1 : 1
-    if (bVal == null) return sort.direction === 'asc' ? 1 : -1
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return sort.direction === "asc" ? -1 : 1;
+    if (bVal == null) return sort.direction === "asc" ? 1 : -1;
 
     // Numeric comparison
-    if (typeof aVal === 'number' && typeof bVal === 'number') {
-      return sort.direction === 'asc' ? aVal - bVal : bVal - aVal
+    if (typeof aVal === "number" && typeof bVal === "number") {
+      return sort.direction === "asc" ? aVal - bVal : bVal - aVal;
     }
 
     // Date comparison
     if (aVal instanceof Date && bVal instanceof Date) {
-      return sort.direction === 'asc'
+      return sort.direction === "asc"
         ? aVal.getTime() - bVal.getTime()
-        : bVal.getTime() - aVal.getTime()
+        : bVal.getTime() - aVal.getTime();
     }
 
     // String comparison
-    const aStr = String(aVal || '').toLowerCase()
-    const bStr = String(bVal || '').toLowerCase()
-    return sort.direction === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr)
-  })
+    const aStr = String(aVal || "").toLowerCase();
+    const bStr = String(bVal || "").toLowerCase();
+    return sort.direction === "asc"
+      ? aStr.localeCompare(bStr)
+      : bStr.localeCompare(aStr);
+  });
 }
 
 /**
@@ -269,13 +296,16 @@ export function applySort<T extends Record<string, any>>(
  * @param data - Array of items to paginate
  * @param pagination - Pagination criteria
  */
-export function applyPagination<T>(data: T[], pagination?: { limit: number; offset: number }): T[] {
-  if (!pagination) return data
-  if (pagination.limit <= 0) return []
+export function applyPagination<T>(
+  data: T[],
+  pagination?: { limit: number; offset: number },
+): T[] {
+  if (!pagination) return data;
+  if (pagination.limit <= 0) return [];
 
-  const start = pagination.offset || 0
-  const end = start + pagination.limit
-  return data.slice(start, end)
+  const start = pagination.offset || 0;
+  const end = start + pagination.limit;
+  return data.slice(start, end);
 }
 
 /**
@@ -290,26 +320,26 @@ export function applyPagination<T>(data: T[], pagination?: { limit: number; offs
  *
  * @see Complete Vocabulary Definition - Section 10-12: Matrix CONTENT × SOURCE
  */
-export function processScopeData<T extends Record<string, any>>(
+export function processScopeData<T extends Record<string, FilterableItem>>(
   data: T[],
   options: {
-    filter?: ScopeFilter
-    sort?: { field: string; direction: 'asc' | 'desc' }
-    pagination?: { limit: number; offset: number }
-  }
+    filter?: ScopeFilter;
+    sort?: { field: string; direction: "asc" | "desc" };
+    pagination?: { limit: number; offset: number };
+  },
 ): T[] {
-  let result = data
+  let result = data;
 
   // Apply filters first
-  result = applyFilters(result, options.filter)
+  result = applyFilters(result, options.filter);
 
   // Then sort
-  result = applySort(result, options.sort)
+  result = applySort(result, options.sort);
 
   // Finally paginate
-  result = applyPagination(result, options.pagination)
+  result = applyPagination(result, options.pagination);
 
-  return result
+  return result;
 }
 
 /**
@@ -322,21 +352,21 @@ export function processScopeData<T extends Record<string, any>>(
  *
  * @see Complete Vocabulary Definition - Section 16: ValidatedUIDefinition
  */
-export function processZoneData<T extends Record<string, any>>(
+export function processZoneData<T extends Record<string, FilterableItem>>(
   data: T[],
   zone: {
     scope?: {
-      source?: string
-      filter?: ScopeFilter
-      sort?: { field: string; direction: 'asc' | 'desc' }
-      pagination?: { limit: number; offset: number }
-    }
-    filter?: ScopeFilter
-  }
+      source?: string;
+      filter?: ScopeFilter;
+      sort?: { field: string; direction: "asc" | "desc" };
+      pagination?: { limit: number; offset: number };
+    };
+    filter?: ScopeFilter;
+  },
 ): T[] {
   return processScopeData(data, {
     filter: zone.scope?.filter,
     sort: zone.scope?.sort,
     pagination: zone.scope?.pagination,
-  })
+  });
 }

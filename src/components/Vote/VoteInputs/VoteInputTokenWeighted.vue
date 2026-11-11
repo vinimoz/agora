@@ -28,51 +28,53 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { X } from 'lucide-vue-next'
-import type { Item } from '../../../Types/index'
+import { ref, computed, watch } from "vue";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { X } from "lucide-vue-next";
+import type { Item } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Item
-  currentWeight?: number | null
-}>()
+  engineConfig: Record<string, unknown>;
+  item: Item;
+  currentWeight?: number | null;
+}>();
 
 const emit = defineEmits<{
-  'update:token_weight': [itemId: number, weight: number | null]
-}>()
+  "update:token_weight": [itemId: number, weight: number | null];
+}>();
 
-const maxWeight = computed(() => (props.engineConfig.max_weight as number) || 100)
-const step = computed(() => (props.engineConfig.step as number) || 1)
-const currentValue = computed(() => props.currentWeight ?? null)
-const displayValue = ref(currentValue.value ?? 0)
+const maxWeight = computed(
+  () => (props.engineConfig.max_weight as number) || 100,
+);
+const step = computed(() => (props.engineConfig.step as number) || 1);
+const currentValue = computed(() => props.currentWeight ?? null);
+const displayValue = ref(currentValue.value ?? 0);
 
 watch(currentValue, (newValue) => {
-  displayValue.value = newValue ?? 0
-})
+  displayValue.value = newValue ?? 0;
+});
 
 function getProgress(value: number): number {
-  return (value / maxWeight.value) * 100
+  return (value / maxWeight.value) * 100;
 }
 
 function handleSliderInput(event: Event) {
-  const target = event.target as HTMLInputElement
-  displayValue.value = parseInt(target.value, 10)
+  const target = event.target as HTMLInputElement;
+  displayValue.value = parseInt(target.value, 10);
 }
 
 function handleSliderChange(event: Event) {
-  const target = event.target as HTMLInputElement
-  const value = parseInt(target.value, 10)
+  const target = event.target as HTMLInputElement;
+  const value = parseInt(target.value, 10);
   if (value === 0) {
-    emit('update:token_weight', props.item.id, null)
+    emit("update:token_weight", props.item.id, null);
   } else {
-    emit('update:token_weight', props.item.id, value)
+    emit("update:token_weight", props.item.id, value);
   }
 }
 
 function clearWeight() {
-  emit('update:token_weight', props.item.id, null)
+  emit("update:token_weight", props.item.id, null);
 }
 </script>
 

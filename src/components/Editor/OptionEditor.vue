@@ -61,13 +61,13 @@
           @change="setHeading"
         >
           <option value="paragraph">
-            {{ t('agora', 'Normal text') }}
+            {{ t("agora", "Normal text") }}
           </option>
           <option value="h1">
-            {{ t('agora', 'Heading 1') }}
+            {{ t("agora", "Heading 1") }}
           </option>
           <option value="h2">
-            {{ t('agora', 'Heading 2') }}
+            {{ t("agora", "Heading 2") }}
           </option>
         </select>
 
@@ -190,23 +190,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
-import { useEditor, EditorContent } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
-import Link from '@tiptap/extension-link'
-import Image from '@tiptap/extension-image'
-import TextAlign from '@tiptap/extension-text-align'
-import mammoth from 'mammoth'
-import { useAttachmentsStore } from '../../stores/attachments'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { ref, onMounted, onUnmounted, watch, nextTick } from "vue";
+import { useEditor, EditorContent } from "@tiptap/vue-3";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import TextAlign from "@tiptap/extension-text-align";
+import mammoth from "mammoth";
+import { useAttachmentsStore } from "../../stores/attachments";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
 
 // Nextcloud components
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcButton from "@nextcloud/vue/components/NcButton";
 
 // Stores
-const attachmentsStore = useAttachmentsStore()
+const attachmentsStore = useAttachmentsStore();
 
 const props = defineProps({
   readonly: {
@@ -219,37 +219,37 @@ const props = defineProps({
   },
   modelValue: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 
 // Refs
-const imageFileInput = ref(null)
-const wordFileInput = ref(null)
-const editorContainer = ref(null)
+const imageFileInput = ref(null);
+const wordFileInput = ref(null);
+const editorContainer = ref(null);
 
 // Image URL function
 function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`;
 }
 
 // Image handling
 const triggerImageUpload = () => {
-  imageFileInput.value?.click()
-}
+  imageFileInput.value?.click();
+};
 
 const handleImageUpload = async (event) => {
-  const file = event.target.files[0]
-  if (!file) return
+  const file = event.target.files[0];
+  if (!file) return;
 
   try {
-    const response = await attachmentsStore.upload(props.optionId, file)
+    const response = await attachmentsStore.upload(props.optionId, file);
 
     // Use preview URL with original image dimensions
-    const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true)
+    const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true);
 
     if (editor.value) {
       // Insert the image with original size and centered by default
@@ -257,19 +257,19 @@ const handleImageUpload = async (event) => {
         .chain()
         .focus()
         .insertContent(
-          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`
+          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`,
         )
-        .run()
+        .run();
 
-      showSuccess(t('agora', 'Image inserted'))
+      showSuccess(t("agora", "Image inserted"));
     }
   } catch (error) {
-    console.error('Image upload failed:', error)
-    showError(t('agora', 'Image upload failed'))
+    console.error("Image upload failed:", error);
+    showError(t("agora", "Image upload failed"));
   } finally {
-    event.target.value = ''
+    event.target.value = "";
   }
-}
+};
 
 // Custom image extension with alignment support
 const CustomImage = Image.extend({
@@ -277,20 +277,20 @@ const CustomImage = Image.extend({
     return {
       ...this.parent?.(),
       align: {
-        default: 'center',
-        parseHTML: (element) => element.getAttribute('data-align') || 'center',
+        default: "center",
+        parseHTML: (element) => element.getAttribute("data-align") || "center",
         renderHTML: (attributes) => ({
-          'data-align': attributes.align,
+          "data-align": attributes.align,
           class: `editor-image image-align-${attributes.align}`,
         }),
       },
-    }
+    };
   },
-})
+});
 
 const editor = useEditor({
   editable: !props.readonly,
-  content: props.modelValue || '<p></p>',
+  content: props.modelValue || "<p></p>",
 
   extensions: [
     StarterKit.configure({
@@ -304,91 +304,94 @@ const editor = useEditor({
     Link.configure({
       openOnClick: false,
       HTMLAttributes: {
-        class: 'editor-link',
+        class: "editor-link",
       },
     }),
     CustomImage.configure({
       HTMLAttributes: {
-        class: 'editor-image',
+        class: "editor-image",
       },
       inline: false,
       allowBase64: true,
     }),
     TextAlign.configure({
-      types: ['heading', 'paragraph'],
+      types: ["heading", "paragraph"],
     }),
   ],
 
   editorProps: {
     attributes: {
-      class: 'tiptap-editor-content',
-      style: 'height:100%; width: 100%',
-      spellcheck: 'true',
+      class: "tiptap-editor-content",
+      style: "height:100%; width: 100%",
+      spellcheck: "true",
     },
 
     handlePaste: (view, event) => {
-      const items = Array.from(event.clipboardData?.items || [])
-      const imageItem = items.find((item) => item.type.startsWith('image'))
+      const items = Array.from(event.clipboardData?.items || []);
+      const imageItem = items.find((item) => item.type.startsWith("image"));
 
       if (imageItem) {
-        const file = imageItem.getAsFile()
+        const file = imageItem.getAsFile();
         if (file) {
-          handlePastedImage(file)
-          return true
+          handlePastedImage(file);
+          return true;
         }
       }
-      return false
+      return false;
     },
     handleDrop: (view, event) => {
-      const files = Array.from(event.dataTransfer?.files || [])
-      const imageFile = files.find((file) => file.type.startsWith('image'))
+      const files = Array.from(event.dataTransfer?.files || []);
+      const imageFile = files.find((file) => file.type.startsWith("image"));
 
       if (imageFile) {
-        handlePastedImage(imageFile)
-        return true
+        handlePastedImage(imageFile);
+        return true;
       }
-      return false
+      return false;
     },
   },
 
   onUpdate: ({ editor }) => {
-    const currentHtml = editor.getHTML()
+    const currentHtml = editor.getHTML();
     if (currentHtml !== props.modelValue) {
-      emit('update:modelValue', currentHtml)
+      emit("update:modelValue", currentHtml);
     }
   },
-})
+});
 
 const handlePastedImage = async (file) => {
   try {
-    const response = await attachmentsStore.upload(props.optionId, file, false)
+    const response = await attachmentsStore.upload(props.optionId, file, false);
 
-    const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true)
+    const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true);
 
     const attachment = {
       id: response.id,
       name: response.name ?? file.name,
       size: response.size ?? file.size,
       url: imageUrl,
-    }
+    };
 
     if (editor.value) {
       editor.value
         .chain()
         .focus()
         .insertContent(
-          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`
+          `<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`,
         )
-        .run()
+        .run();
 
-      attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
-      showSuccess(t('agora', 'Image inserted'))
+      attachmentsStore.attachments = [
+        ...attachmentsStore.attachments,
+        attachment,
+      ];
+      showSuccess(t("agora", "Image inserted"));
     }
   } catch (error) {
-    console.error('Pasted image upload failed:', error)
-    showError(t('agora', 'Failed to insert image'))
+    console.error("Pasted image upload failed:", error);
+    showError(t("agora", "Failed to insert image"));
   }
-}
+};
 
 // Sync model changes to editor
 watch(
@@ -396,93 +399,98 @@ watch(
   (newVal) => {
     if (editor.value && newVal !== editor.value.getHTML()) {
       nextTick(() => {
-        editor.value.commands.setContent(newVal || '<p></p>')
-      })
+        editor.value.commands.setContent(newVal || "<p></p>");
+      });
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 // Handle heading selection
-const selectedHeading = ref('paragraph')
+const selectedHeading = ref("paragraph");
 
 // Watch for heading changes with safety checks
 watch(
   () => {
-    if (!editor.value) return null
-    return editor.value.getAttributes('heading')
+    if (!editor.value) return null;
+    return editor.value.getAttributes("heading");
   },
   (attrs) => {
     if (attrs && attrs.level) {
-      selectedHeading.value = `h${attrs.level}`
+      selectedHeading.value = `h${attrs.level}`;
     } else {
-      selectedHeading.value = 'paragraph'
+      selectedHeading.value = "paragraph";
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 const setHeading = () => {
-  if (!editor.value) return
+  if (!editor.value) return;
 
-  if (selectedHeading.value === 'paragraph') {
-    editor.value.chain().focus().setParagraph().run()
+  if (selectedHeading.value === "paragraph") {
+    editor.value.chain().focus().setParagraph().run();
   } else {
-    const level = parseInt(selectedHeading.value.replace('h', ''))
-    editor.value.chain().focus().toggleHeading({ level }).run()
+    const level = parseInt(selectedHeading.value.replace("h", ""));
+    editor.value.chain().focus().toggleHeading({ level }).run();
   }
-}
+};
 
 // Link handling
 const setLink = () => {
-  const previousUrl = editor.value.getAttributes('link').href
-  const url = window.prompt(t('agora', 'URL'), previousUrl)
+  const previousUrl = editor.value.getAttributes("link").href;
+  const url = window.prompt(t("agora", "URL"), previousUrl);
 
-  if (url === null) return
-  if (url === '') {
-    editor.value.chain().focus().extendMarkRange('link').unsetLink().run()
-    return
+  if (url === null) return;
+  if (url === "") {
+    editor.value.chain().focus().extendMarkRange("link").unsetLink().run();
+    return;
   }
 
-  editor.value.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-}
+  editor.value
+    .chain()
+    .focus()
+    .extendMarkRange("link")
+    .setLink({ href: url })
+    .run();
+};
 
 // Word document import
 const importWord = () => {
-  wordFileInput.value?.click()
-}
+  wordFileInput.value?.click();
+};
 
 const handleWordImport = async (event) => {
-  const file = event.target.files[0]
-  if (!file) return
+  const file = event.target.files[0];
+  if (!file) return;
   try {
-    const arrayBuffer = await file.arrayBuffer()
-    const { value: html } = await mammoth.convertToHtml({ arrayBuffer })
-    editor.value.commands.setContent(html)
-    emit('update:modelValue', html)
-    showSuccess(t('agora', 'Word document imported'))
+    const arrayBuffer = await file.arrayBuffer();
+    const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
+    editor.value.commands.setContent(html);
+    emit("update:modelValue", html);
+    showSuccess(t("agora", "Word document imported"));
   } catch (error) {
-    console.error('Error importing Word document:', error)
-    showError(t('agora', 'Failed to import word document'))
+    console.error("Error importing Word document:", error);
+    showError(t("agora", "Failed to import word document"));
   } finally {
-    event.target.value = ''
+    event.target.value = "";
   }
-}
+};
 
 // Lifecycle hooks
 onMounted(() => {
   nextTick(() => {
     if (editor.value && props.modelValue) {
-      editor.value.commands.setContent(props.modelValue)
+      editor.value.commands.setContent(props.modelValue);
     }
-  })
-})
+  });
+});
 
 onUnmounted(() => {
   if (editor.value) {
-    editor.value.destroy()
+    editor.value.destroy();
   }
-})
+});
 </script>
 
 <style scoped>
@@ -583,7 +591,7 @@ onUnmounted(() => {
   padding: 2px;
 }
 
-:deep(img[src*='agora']) {
+:deep(img[src*="agora"]) {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;

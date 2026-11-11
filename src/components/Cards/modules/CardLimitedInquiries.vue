@@ -4,62 +4,67 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { CardDiv } from '../../Base/index.ts'
-import ActionDeleteOrphanedInquiries from '../../Actions/modules/ActionDeleteOrphanedInquiries.vue'
-import { t, n } from '@nextcloud/l10n'
-import { useInquiryStore } from '../../../stores/inquiry.ts'
-import { useOptionsStore } from '../../../stores/options.ts'
+import { computed } from "vue";
+import { CardDiv } from "../../Base/index.ts";
+import ActionDeleteOrphanedInquiries from "../../Actions/modules/ActionDeleteOrphanedInquiries.vue";
+import { t, n } from "@nextcloud/l10n";
+import { useInquiryStore } from "../../../stores/inquiry.ts";
+import { useOptionsStore } from "../../../stores/options.ts";
 
-const inquiryStore = useInquiryStore()
-const optionsStore = useOptionsStore()
+const inquiryStore = useInquiryStore();
+const optionsStore = useOptionsStore();
 
 const orphanedInquiriesText = computed(() =>
   n(
-    'inquiries',
-    '%n orphaned inquiry reduces your inquiry quota.',
-    '%n orphaned inquiries reduce your inquiry quota.',
-    inquiryStore.currentUserStatus.orphanedInquiries
-  )
-)
+    "inquiries",
+    "%n orphaned inquiry reduces your inquiry quota.",
+    "%n orphaned inquiries reduce your inquiry quota.",
+    inquiryStore.currentUserStatus.orphanedInquiries,
+  ),
+);
 
 const inquiriesLeft = computed(() =>
-  inquiryStore.configuration.maxInquiriesPerUser - inquiryStore.currentUserStatus.yesInquiries > 0
-    ? inquiryStore.configuration.maxInquiriesPerUser - inquiryStore.currentUserStatus.yesInquiries
-    : 0
-)
+  inquiryStore.configuration.maxInquiriesPerUser -
+    inquiryStore.currentUserStatus.yesInquiries >
+  0
+    ? inquiryStore.configuration.maxInquiriesPerUser -
+      inquiryStore.currentUserStatus.yesInquiries
+    : 0,
+);
 
 const optionsAvailableText = computed(() => {
   if (optionsStore.countOptionsLeft === 0) {
-    return t('agora', 'No more voting options are available')
+    return t("agora", "No more voting options are available");
   }
 
   return n(
-    'inquiries',
-    '%n voting option is available.',
-    '%n voting options are available.',
-    optionsStore.countOptionsLeft
-  )
-})
+    "inquiries",
+    "%n voting option is available.",
+    "%n voting options are available.",
+    optionsStore.countOptionsLeft,
+  );
+});
 
 const inquiriesLeftText = computed(() => {
   if (!inquiriesLeft.value) {
-    return t('agora', 'You have no inquiries left')
+    return t("agora", "You have no inquiries left");
   }
   return n(
-    'inquiries',
-    'You have %n inquiry left out of {maxInquiries}.',
-    'You have %n inquiries left out of {maxInquiries}.',
+    "inquiries",
+    "You have %n inquiry left out of {maxInquiries}.",
+    "You have %n inquiries left out of {maxInquiries}.",
     inquiriesLeft.value,
     {
       maxInquiries: inquiryStore.configuration.maxInquiriesPerUser,
-    }
-  )
-})
+    },
+  );
+});
 
 const cardType = computed(() =>
-  inquiryStore.configuration.maxInquiriesPerUser && inquiriesLeft.value < 1 ? 'error' : 'info'
-)
+  inquiryStore.configuration.maxInquiriesPerUser && inquiriesLeft.value < 1
+    ? "error"
+    : "info",
+);
 </script>
 
 <template>
@@ -96,6 +101,6 @@ const cardType = computed(() =>
 
 <style lang="scss" scoped>
 span::after {
-  content: ' ';
+  content: " ";
 }
 </style>

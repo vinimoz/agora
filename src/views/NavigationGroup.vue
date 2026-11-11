@@ -3,121 +3,138 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { t } from '@nextcloud/l10n'
-import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-import NcAppNavigationList from '@nextcloud/vue/components/NcAppNavigationList'
-import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
-import NcAppNavigationSpacer from '@nextcloud/vue/components/NcAppNavigationSpacer'
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
-import { NavigationIcons, InquiryGeneralIcons } from '../utils/icons.ts'
-import { useSessionStore } from '../stores/session.ts'
-import { useInquiriesStore } from '../stores/inquiries.ts'
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
-import type { InquiryGroupType, InquiryGroup } from '../Types/inquiryGroups.types.ts'
-import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
-import { createInquiryGroupContext, canEdit } from '../utils/permissions.ts'
+import { computed, ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { t } from "@nextcloud/l10n";
+import NcAppNavigation from "@nextcloud/vue/components/NcAppNavigation";
+import NcAppNavigationList from "@nextcloud/vue/components/NcAppNavigationList";
+import NcAppNavigationItem from "@nextcloud/vue/components/NcAppNavigationItem";
+import NcAppNavigationSpacer from "@nextcloud/vue/components/NcAppNavigationSpacer";
+import NcCounterBubble from "@nextcloud/vue/components/NcCounterBubble";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import InquiryGroupCreateDlg from "../components/Create/InquiryGroupCreateDlg.vue";
+import { NavigationIcons, InquiryGeneralIcons } from "../utils/icons.ts";
+import { useSessionStore } from "../stores/session.ts";
+import { useInquiriesStore } from "../stores/inquiries.ts";
+import { useInquiryGroupsStore } from "../stores/inquiryGroups.ts";
+import type {
+  InquiryGroupType,
+  InquiryGroup,
+} from "../Types/inquiryGroups.types.ts";
+import { getInquiryGroupTypeData } from "../helpers/modules/InquiryHelper.ts";
+import { createInquiryGroupContext, canEdit } from "../utils/permissions.ts";
 
 const props = defineProps<{
-  slug?: string
-}>()
+  slug?: string;
+}>();
 
-const route = useRoute()
-const router = useRouter()
-const sessionStore = useSessionStore()
-const inquiriesStore = useInquiriesStore()
-const inquiryGroupsStore = useInquiryGroupsStore()
+const route = useRoute();
+const router = useRouter();
+const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore();
+const inquiryGroupsStore = useInquiryGroupsStore();
 
 // -----------------------------------------------------------
 // Dialog state
 // -----------------------------------------------------------
-const createGroupDlgToggle = ref(false)
-const selectedInquiryGroupTypeForCreation = ref<InquiryGroupType | null>(null)
-const selectedParentId = ref<number | null>(null)
+const createGroupDlgToggle = ref(false);
+const selectedInquiryGroupTypeForCreation = ref<InquiryGroupType | null>(null);
+const selectedParentId = ref<number | null>(null);
 
 // -----------------------------------------------------------
 // Current space (resolved from prop or route)
 // -----------------------------------------------------------
 function isEmptySlug(s: unknown): boolean {
-  return !s || s === '' || s === 'undefined' || s === 'null' || s === '0'
+  return !s || s === "" || s === "undefined" || s === "null" || s === "0";
 }
 
 const currentGroup = computed<InquiryGroup | null>(() => {
-  const slug = props.slug ?? (route.params.slug as string | undefined)
+  const slug = props.slug ?? (route.params.slug as string | undefined);
   if (!isEmptySlug(slug)) {
-    return inquiryGroupsStore.bySlug(slug) || null
+    return inquiryGroupsStore.bySlug(slug) || null;
   }
 
-  const id = route.params.id as string | undefined
+  const id = route.params.id as string | undefined;
   if (id) {
-    return inquiryGroupsStore.inquiryGroups.find((g) => g.id === Number(id)) || null
+    return (
+      inquiryGroupsStore.inquiryGroups.find((g) => g.id === Number(id)) || null
+    );
   }
 
-  const fromSlug = route.query.from as string | undefined
+  const fromSlug = route.query.from as string | undefined;
   if (!isEmptySlug(fromSlug)) {
-    return inquiryGroupsStore.bySlug(fromSlug) || null
+    return inquiryGroupsStore.bySlug(fromSlug) || null;
   }
 
-  return null
-})
+  return null;
+});
 
-const activeFamily = computed<string | null>(() => (route.query.family as string) || null)
+const activeFamily = computed<string | null>(
+  () => (route.query.family as string) || null,
+);
 
 const familyLabel = computed(() => {
-  const fam = activeFamily.value
-  if (!fam) return t('agora', 'Spaces')
+  const fam = activeFamily.value;
+  if (!fam) return t("agora", "Spaces");
   const family = (sessionStore.appSettings?.inquiryFamilyTab || []).find(
-    (f: { family_type?: string; type?: string }) => (f.family_type || f.type) === fam
-  )
-  return family?.label ? t('agora', family.label) : fam
-})
+    (f: { family_type?: string; type?: string }) =>
+      (f.family_type || f.type) === fam,
+  );
+  return family?.label ? t("agora", family.label) : fam;
+});
 
 // -----------------------------------------------------------
 // Family root types (used when browsing a family without slug)
 // -----------------------------------------------------------
 const familyRootTypes = computed<InquiryGroupType[]>(() => {
-  const fam = activeFamily.value
-  if (!fam) return []
+  const fam = activeFamily.value;
+  if (!fam) return [];
   return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
     .filter(
       (gt: InquiryGroupType & { family?: string; family_type?: string }) =>
-        gt.is_root === true && (gt.family === fam || gt.family_type === fam)
+        gt.is_root === true && (gt.family === fam || gt.family_type === fam),
     )
-    .sort((a: InquiryGroupType, b: InquiryGroupType) => (a.sort_order || 0) - (b.sort_order || 0))
-})
+    .sort(
+      (a: InquiryGroupType, b: InquiryGroupType) =>
+        (a.sort_order || 0) - (b.sort_order || 0),
+    );
+});
 
 // -----------------------------------------------------------
 // Subgroups of the current space
 // -----------------------------------------------------------
 const subgroups = computed<InquiryGroup[]>(() => {
-  if (!currentGroup.value) return []
+  if (!currentGroup.value) return [];
   return inquiryGroupsStore.inquiryGroups
-    .filter((g) => g.parentId === currentGroup.value!.id && g.status?.groupStatus !== 'archived')
-    .sort((a, b) => a.title.localeCompare(b.title))
-})
+    .filter(
+      (g) =>
+        g.parentId === currentGroup.value!.id &&
+        g.status?.groupStatus !== "archived",
+    )
+    .sort((a, b) => a.title.localeCompare(b.title));
+});
 
 // -----------------------------------------------------------
 // Inquiries belonging to the current space
 // -----------------------------------------------------------
 const groupInquiries = computed(() => {
-  if (!currentGroup.value?.inquiryIds) return []
+  if (!currentGroup.value?.inquiryIds) return [];
   return currentGroup.value.inquiryIds
     .map((id) => inquiriesStore.inquiries.find((i) => i.id === id))
-    .filter(Boolean)
-})
+    .filter(Boolean);
+});
 
 // -----------------------------------------------------------
 // Archived subgroups (space archives)
 // -----------------------------------------------------------
 const archivedSubgroups = computed<InquiryGroup[]>(() => {
-  if (!currentGroup.value) return []
+  if (!currentGroup.value) return [];
   return inquiryGroupsStore.inquiryGroups.filter(
-    (g) => g.parentId === currentGroup.value!.id && g.status?.groupStatus === 'archived'
-  )
-})
+    (g) =>
+      g.parentId === currentGroup.value!.id &&
+      g.status?.groupStatus === "archived",
+  );
+});
 
 // -----------------------------------------------------------
 // Portal view (no slug, no family query): all root spaces
@@ -125,8 +142,11 @@ const archivedSubgroups = computed<InquiryGroup[]>(() => {
 const allRootTypes = computed<InquiryGroupType[]>(() => {
   return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
     .filter((gt: InquiryGroupType) => gt.is_root === true)
-    .sort((a: InquiryGroupType, b: InquiryGroupType) => (a.sort_order || 0) - (b.sort_order || 0))
-})
+    .sort(
+      (a: InquiryGroupType, b: InquiryGroupType) =>
+        (a.sort_order || 0) - (b.sort_order || 0),
+    );
+});
 
 // -----------------------------------------------------------
 // Groups of a given type (used in family browser nav)
@@ -136,43 +156,55 @@ function groupsOfType(typeKey: string): InquiryGroup[] {
     .filter(
       (g) =>
         g.type === typeKey &&
-        (g.parentId === null || g.parentId === 0 || (g.parentId as unknown) === undefined) &&
-        g.status?.groupStatus !== 'archived'
+        (g.parentId === null ||
+          g.parentId === 0 ||
+          (g.parentId as unknown) === undefined) &&
+        g.status?.groupStatus !== "archived",
     )
-    .sort((a, b) => a.title.localeCompare(b.title))
+    .sort((a, b) => a.title.localeCompare(b.title));
 }
 
 // -----------------------------------------------------------
 // Permissions on the current space
 // -----------------------------------------------------------
 const canEditCurrent = computed<boolean>(() => {
-  if (!currentGroup.value) return !!sessionStore.currentUser.isAdmin
-  if (sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor) {
-    return true
+  if (!currentGroup.value) return !!sessionStore.currentUser.isAdmin;
+  if (
+    sessionStore.currentUser.isAdmin ||
+    sessionStore.currentUser.isGroupEditor
+  ) {
+    return true;
   }
-  const ctx = createInquiryGroupContext(currentGroup.value)
-  return ctx ? canEdit(ctx) : false
-})
+  const ctx = createInquiryGroupContext(currentGroup.value);
+  return ctx ? canEdit(ctx) : false;
+});
 
-const canCreateSubgroup = computed(() => canEditCurrent.value)
-const hasArchivedSubgroups = computed(() => archivedSubgroups.value.length > 0)
+const canCreateSubgroup = computed(() => canEditCurrent.value);
+const hasArchivedSubgroups = computed(() => archivedSubgroups.value.length > 0);
 
 // -----------------------------------------------------------
 // Icon helpers
 // -----------------------------------------------------------
 function getGroupTypeIcon(type: string) {
-  const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return typeData?.icon || 'Folder'
+  const typeData = getInquiryGroupTypeData(
+    type,
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  );
+  return typeData?.icon || "Folder";
 }
 
 const currentGroupIcon = computed(() => {
-  if (!currentGroup.value) return NavigationIcons.Home
-  return getGroupTypeIcon(currentGroup.value.type)
-})
+  if (!currentGroup.value) return NavigationIcons.Home;
+  return getGroupTypeIcon(currentGroup.value.type);
+});
 
 function findTypeDescriptor(typeKey: string): InquiryGroupType | null {
-  const types = sessionStore.appSettings?.inquiryGroupTypeTab || []
-  return types.find((tt: InquiryGroupType) => (tt.type || tt.group_type) === typeKey) || null
+  const types = sessionStore.appSettings?.inquiryGroupTypeTab || [];
+  return (
+    types.find(
+      (tt: InquiryGroupType) => (tt.type || tt.group_type) === typeKey,
+    ) || null
+  );
 }
 
 // -----------------------------------------------------------
@@ -180,27 +212,32 @@ function findTypeDescriptor(typeKey: string): InquiryGroupType | null {
 // -----------------------------------------------------------
 function goToGroup(group: InquiryGroup) {
   if (group.slug) {
-    router.push({ name: 'group-list', params: { slug: group.slug }, query: { ...route.query } })
+    router.push({
+      name: "group-list",
+      params: { slug: group.slug },
+      query: { ...route.query },
+    });
   } else if (group.id) {
-    router.push({ name: 'group', params: { id: String(group.id) }, query: { ...route.query } })
+    router.push({
+      name: "group",
+      params: { id: String(group.id) },
+      query: { ...route.query },
+    });
   }
 }
 
 function goToType(type: InquiryGroupType) {
-  const key = type.type || type.group_type || ''
-  const existing = groupsOfType(key)
+  const key = type.type || type.group_type || "";
+  const existing = groupsOfType(key);
   if (existing.length > 0) {
-    goToGroup(existing[0])
-    return
+    goToGroup(existing[0]);
+    return;
   }
-  if (sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor) {
-    openCreateType(type)
-  }
-}
-
-function openSettings() {
-  if (currentGroup.value) {
-    router.push({ name: 'group', params: { id: String(currentGroup.value.id) } })
+  if (
+    sessionStore.currentUser.isAdmin ||
+    sessionStore.currentUser.isGroupEditor
+  ) {
+    openCreateType(type);
   }
 }
 
@@ -208,44 +245,46 @@ function openSettings() {
 // Create actions
 // -----------------------------------------------------------
 function openCreateInquiry() {
-  createGroupDlgToggle.value = true
-  selectedParentId.value = currentGroup.value?.id ?? null
-  selectedInquiryGroupTypeForCreation.value = null
+  createGroupDlgToggle.value = true;
+  selectedParentId.value = currentGroup.value?.id ?? null;
+  selectedInquiryGroupTypeForCreation.value = null;
 }
 
 function openCreateSubgroup() {
-  if (!currentGroup.value) return
-  createGroupDlgToggle.value = true
-  selectedParentId.value = currentGroup.value.id
-  selectedInquiryGroupTypeForCreation.value = findTypeDescriptor(currentGroup.value.type)
+  if (!currentGroup.value) return;
+  createGroupDlgToggle.value = true;
+  selectedParentId.value = currentGroup.value.id;
+  selectedInquiryGroupTypeForCreation.value = findTypeDescriptor(
+    currentGroup.value.type,
+  );
 }
 
 function openCreateRootSpace() {
-  createGroupDlgToggle.value = true
-  selectedParentId.value = null
-  selectedInquiryGroupTypeForCreation.value = null
+  createGroupDlgToggle.value = true;
+  selectedParentId.value = null;
+  selectedInquiryGroupTypeForCreation.value = null;
 }
 
 function openCreateType(type: InquiryGroupType) {
-  createGroupDlgToggle.value = true
-  selectedParentId.value = null
-  selectedInquiryGroupTypeForCreation.value = type
+  createGroupDlgToggle.value = true;
+  selectedParentId.value = null;
+  selectedInquiryGroupTypeForCreation.value = type;
 }
 
 function handleCloseDialog() {
-  createGroupDlgToggle.value = false
-  selectedInquiryGroupTypeForCreation.value = null
-  selectedParentId.value = null
+  createGroupDlgToggle.value = false;
+  selectedInquiryGroupTypeForCreation.value = null;
+  selectedParentId.value = null;
 }
 
 function inquiryGroupAdded(payload: { id: number; slug?: string }) {
-  createGroupDlgToggle.value = false
-  selectedInquiryGroupTypeForCreation.value = null
-  selectedParentId.value = null
+  createGroupDlgToggle.value = false;
+  selectedInquiryGroupTypeForCreation.value = null;
+  selectedParentId.value = null;
   if (payload.slug) {
-    router.push({ name: 'group-list', params: { slug: payload.slug } })
+    router.push({ name: "group-list", params: { slug: payload.slug } });
   } else {
-    router.push({ name: 'group', params: { id: String(payload.id) } })
+    router.push({ name: "group", params: { id: String(payload.id) } });
   }
 }
 
@@ -253,18 +292,18 @@ function inquiryGroupAdded(payload: { id: number; slug?: string }) {
 // Dialog: available groups for visibility picker
 // -----------------------------------------------------------
 const availableGroups = computed(() => {
-  const groups = sessionStore.currentUser.groups || {}
-  if (typeof groups === 'object' && !Array.isArray(groups)) {
-    return Object.keys(groups)
+  const groups = sessionStore.currentUser.groups || {};
+  if (typeof groups === "object" && !Array.isArray(groups)) {
+    return Object.keys(groups);
   }
-  return groups
-})
+  return groups;
+});
 
 onMounted(() => {
   if (!inquiryGroupsStore.inquiryGroups?.length) {
-    inquiryGroupsStore.fetchAllGroups?.()
+    inquiryGroupsStore.fetchAllGroups?.();
   }
-})
+});
 </script>
 
 <template>
@@ -299,11 +338,15 @@ onMounted(() => {
 
         <NcAppNavigationList>
           <h3 class="navigation-caption">
-            {{ t('agora', 'Navigation') }}
+            {{ t("agora", "Navigation") }}
           </h3>
 
           <NcAppNavigationItem
-            :name="activeFamily ? t('agora', 'Back to family') : t('agora', 'Back to spaces')"
+            :name="
+              activeFamily
+                ? t('agora', 'Back to family')
+                : t('agora', 'Back to spaces')
+            "
             :to="
               activeFamily
                 ? {
@@ -322,7 +365,9 @@ onMounted(() => {
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
-                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                <path
+                  d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                />
               </svg>
             </template>
           </NcAppNavigationItem>
@@ -378,7 +423,11 @@ onMounted(() => {
                 v-for="sub in subgroups"
                 :key="sub.id"
                 :name="sub.title"
-                :to="{ name: 'group-list', params: { slug: sub.slug }, query: { ...route.query } }"
+                :to="{
+                  name: 'group-list',
+                  params: { slug: sub.slug },
+                  query: { ...route.query },
+                }"
                 class="navigation-subitem"
               >
                 <template #icon>
@@ -426,7 +475,10 @@ onMounted(() => {
             :name="t('agora', 'Space archives')"
             :to="{
               name: 'group-archived',
-              query: { family: activeFamily ?? undefined, from: currentGroup?.slug },
+              query: {
+                family: activeFamily ?? undefined,
+                from: currentGroup?.slug,
+              },
             }"
             class="navigation-item"
           >
@@ -449,7 +501,7 @@ onMounted(() => {
 
         <NcAppNavigationList v-if="canEditCurrent">
           <h3 class="navigation-caption">
-            {{ t('agora', 'Actions') }}
+            {{ t("agora", "Actions") }}
           </h3>
 
           <NcAppNavigationItem
@@ -467,7 +519,7 @@ onMounted(() => {
                 <template #icon>
                   <component :is="NavigationIcons.Plus" />
                 </template>
-                {{ t('agora', 'New inquiry') }}
+                {{ t("agora", "New inquiry") }}
               </NcActionButton>
               <NcActionButton
                 v-if="canCreateSubgroup"
@@ -476,7 +528,7 @@ onMounted(() => {
                 <template #icon>
                   <component :is="NavigationIcons.Folder" />
                 </template>
-                {{ t('agora', 'New subgroup') }}
+                {{ t("agora", "New subgroup") }}
               </NcActionButton>
             </template>
           </NcAppNavigationItem>
@@ -496,14 +548,16 @@ onMounted(() => {
 
         <NcAppNavigationList>
           <h3 class="navigation-caption">
-            {{ t('agora', 'Group types') }}
+            {{ t("agora", "Group types") }}
           </h3>
 
           <NcAppNavigationItem
             v-for="type in familyRootTypes"
             :key="type.type || type.group_type"
             :name="t('agora', type.label)"
-            :allow-collapse="groupsOfType(type.type || type.group_type || '').length > 0"
+            :allow-collapse="
+              groupsOfType(type.type || type.group_type || '').length > 0
+            "
             :open="false"
             class="navigation-item"
             @click="goToType(type)"
@@ -593,14 +647,16 @@ onMounted(() => {
       <template v-else>
         <NcAppNavigationList>
           <h3 class="navigation-caption">
-            {{ t('agora', 'My spaces') }}
+            {{ t("agora", "My spaces") }}
           </h3>
 
           <NcAppNavigationItem
             v-for="type in allRootTypes"
             :key="type.type || type.group_type"
             :name="t('agora', type.label)"
-            :allow-collapse="groupsOfType(type.type || type.group_type || '').length > 0"
+            :allow-collapse="
+              groupsOfType(type.type || type.group_type || '').length > 0
+            "
             :open="false"
             class="navigation-item"
             @click="goToType(type)"
@@ -648,7 +704,7 @@ onMounted(() => {
 
         <NcAppNavigationList>
           <h3 class="navigation-caption">
-            {{ t('agora', 'Actions') }}
+            {{ t("agora", "Actions") }}
           </h3>
 
           <NcAppNavigationItem

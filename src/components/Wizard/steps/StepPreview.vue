@@ -4,19 +4,25 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-import { NcButton, NcTextField, NcTextArea, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
-import { useTemplateWizardStore } from '../../../stores/templateWizard'
+import { ref, computed, watch, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import axios from "@nextcloud/axios";
+import { generateOcsUrl } from "@nextcloud/router";
+import {
+  NcButton,
+  NcTextField,
+  NcTextArea,
+  NcNoteCard,
+  NcLoadingIcon,
+} from "@nextcloud/vue";
+import { useTemplateWizardStore } from "../../../stores/templateWizard";
 
-const wizardStore = useTemplateWizardStore()
+const wizardStore = useTemplateWizardStore();
 
-const editableData = computed(() => wizardStore.editableData)
-const duplicateAnalysis = ref<unknown>(null)
-const isAnalyzing = ref(false)
-const analysisError = ref<string | null>(null)
+const editableData = computed(() => wizardStore.editableData);
+const duplicateAnalysis = ref<unknown>(null);
+const isAnalyzing = ref(false);
+const analysisError = ref<string | null>(null);
 
 // Section state management
 const expandedSections = ref<Record<string, boolean>>({
@@ -27,241 +33,257 @@ const expandedSections = ref<Record<string, boolean>>({
   inquiry_group_types: false,
   categories: false,
   locations: false,
-})
+});
 
-const editingItem = ref<{ section: string; index: number } | null>(null)
-const editingItemData = ref<unknown>(null)
+const editingItem = ref<{ section: string; index: number } | null>(null);
+const editingItemData = ref<unknown>(null);
 
 interface Section {
-  key: string
-  label: string
-  icon: string
-  count: number
-  itemLabelKey: string
-  itemTypeKey: string
+  key: string;
+  label: string;
+  icon: string;
+  count: number;
+  itemLabelKey: string;
+  itemTypeKey: string;
 }
 
 const sections = computed((): Section[] => {
-  if (!editableData.value) return []
+  if (!editableData.value) return [];
 
   return [
     {
-      key: 'inquiry_families',
-      label: t('agora', 'Inquiry families'),
-      icon: '📁',
+      key: "inquiry_families",
+      label: t("agora", "Inquiry families"),
+      icon: "📁",
       count: editableData.value.inquiry_families?.length || 0,
-      itemLabelKey: 'label',
-      itemTypeKey: 'family_type',
+      itemLabelKey: "label",
+      itemTypeKey: "family_type",
     },
     {
-      key: 'inquiry_types',
-      label: t('agora', 'Inquiry types'),
-      icon: '📋',
+      key: "inquiry_types",
+      label: t("agora", "Inquiry types"),
+      icon: "📋",
       count: editableData.value.inquiry_types?.length || 0,
-      itemLabelKey: 'label',
-      itemTypeKey: 'inquiry_type',
+      itemLabelKey: "label",
+      itemTypeKey: "inquiry_type",
     },
     {
-      key: 'inquiry_statuses',
-      label: t('agora', 'Inquiry statuses'),
-      icon: '📊',
+      key: "inquiry_statuses",
+      label: t("agora", "Inquiry statuses"),
+      icon: "📊",
       count: editableData.value.inquiry_statuses?.length || 0,
-      itemLabelKey: 'label',
-      itemTypeKey: 'status_key',
+      itemLabelKey: "label",
+      itemTypeKey: "status_key",
     },
     {
-      key: 'option_types',
-      label: t('agora', 'Option types'),
-      icon: '🎯',
+      key: "option_types",
+      label: t("agora", "Option types"),
+      icon: "🎯",
       count: editableData.value.option_types?.length || 0,
-      itemLabelKey: 'label',
-      itemTypeKey: 'option_type',
+      itemLabelKey: "label",
+      itemTypeKey: "option_type",
     },
     {
-      key: 'inquiry_group_types',
-      label: t('agora', 'Inquiry group types'),
-      icon: '👥',
+      key: "inquiry_group_types",
+      label: t("agora", "Inquiry group types"),
+      icon: "👥",
       count: editableData.value.inquiry_group_types?.length || 0,
-      itemLabelKey: 'label',
-      itemTypeKey: 'group_type',
+      itemLabelKey: "label",
+      itemTypeKey: "group_type",
     },
     {
-      key: 'categories',
-      label: t('agora', 'Categories'),
-      icon: '🏷️',
+      key: "categories",
+      label: t("agora", "Categories"),
+      icon: "🏷️",
       count: editableData.value.categories?.length || 0,
-      itemLabelKey: 'name',
-      itemTypeKey: 'category_id',
+      itemLabelKey: "name",
+      itemTypeKey: "category_id",
     },
     {
-      key: 'locations',
-      label: t('agora', 'Locations'),
-      icon: '📍',
+      key: "locations",
+      label: t("agora", "Locations"),
+      icon: "📍",
       count: editableData.value.locations?.length || 0,
-      itemLabelKey: 'name',
-      itemTypeKey: 'location_id',
+      itemLabelKey: "name",
+      itemTypeKey: "location_id",
     },
-  ].filter((section) => section.count > 0)
-})
+  ].filter((section) => section.count > 0);
+});
 
 const toggleSection = (key: string) => {
-  expandedSections.value[key] = !expandedSections.value[key]
-}
+  expandedSections.value[key] = !expandedSections.value[key];
+};
 
 const startEdit = (section: string, index: number) => {
-  const item = editableData.value?.[section]?.[index]
+  const item = editableData.value?.[section]?.[index];
   if (item) {
-    editingItem.value = { section, index }
-    editingItemData.value = JSON.parse(JSON.stringify(item))
+    editingItem.value = { section, index };
+    editingItemData.value = JSON.parse(JSON.stringify(item));
   }
-}
+};
 
 const cancelEdit = () => {
-  editingItem.value = null
-  editingItemData.value = null
-}
+  editingItem.value = null;
+  editingItemData.value = null;
+};
 
 const saveEdit = () => {
   if (editingItem.value && editingItemData.value) {
     wizardStore.updateEditableItem(
       editingItem.value.section,
       editingItem.value.index,
-      editingItemData.value
-    )
-    editingItem.value = null
-    editingItemData.value = null
+      editingItemData.value,
+    );
+    editingItem.value = null;
+    editingItemData.value = null;
   }
-}
+};
 
 const removeItem = (section: string, index: number) => {
-  if (confirm(t('agora', 'Are you sure you want to remove this item?'))) {
-    wizardStore.removeEditableItem(section, index)
+  if (confirm(t("agora", "Are you sure you want to remove this item?"))) {
+    wizardStore.removeEditableItem(section, index);
   }
-}
+};
 
 const isEditing = (section: string, index: number) =>
-  editingItem.value?.section === section && editingItem.value?.index === index
+  editingItem.value?.section === section && editingItem.value?.index === index;
 
 // Helper to get editable label value (handles multi-language objects)
 const getEditableLabelValue = (section: Section): string => {
   if (!editingItemData.value) {
-    console.warn('[TemplateWizard] getEditableLabelValue: editingItemData is null')
-    return ''
+    console.warn(
+      "[TemplateWizard] getEditableLabelValue: editingItemData is null",
+    );
+    return "";
   }
 
-  const labelKey = section.itemLabelKey
-  const labelValue = editingItemData.value[labelKey]
+  const labelKey = section.itemLabelKey;
+  const labelValue = editingItemData.value[labelKey];
 
   // Handle null/undefined
   if (labelValue === null || labelValue === undefined) {
-    console.warn('[TemplateWizard] Label value is null/undefined for key:', labelKey)
-    return ''
+    console.warn(
+      "[TemplateWizard] Label value is null/undefined for key:",
+      labelKey,
+    );
+    return "";
   }
 
   // Handle multi-language objects (shouldn't happen after extraction, but handle as fallback)
-  if (typeof labelValue === 'object' && !Array.isArray(labelValue)) {
-    const lang = wizardStore.selectedLanguage || 'en'
+  if (typeof labelValue === "object" && !Array.isArray(labelValue)) {
+    const lang = wizardStore.selectedLanguage || "en";
     const extracted =
       labelValue[lang] ||
       labelValue.en ||
-      Object.values(labelValue).find((v) => typeof v === 'string' && v !== '') ||
-      ''
-    return String(extracted)
+      Object.values(labelValue).find(
+        (v) => typeof v === "string" && v !== "",
+      ) ||
+      "";
+    return String(extracted);
   }
 
   // Handle plain string (expected case after extraction)
-  return String(labelValue)
-}
+  return String(labelValue);
+};
 
 // Helper to set editable label value
 const setEditableLabelValue = (section: Section, newValue: string) => {
-  if (!editingItemData.value) return
+  if (!editingItemData.value) return;
 
-  const labelKey = section.itemLabelKey
+  const labelKey = section.itemLabelKey;
 
   // After extraction, values should be plain strings, so just set directly
-  editingItemData.value[labelKey] = newValue
-}
+  editingItemData.value[labelKey] = newValue;
+};
 
 const getItemLabel = (item: unknown, section: Section) => {
-  const labelValue = item[section.itemLabelKey]
+  const labelValue = item[section.itemLabelKey];
 
   // Handle multi-language objects (e.g., {en: "...", fr: "...", de: "...", gsw: "..."})
-  if (labelValue && typeof labelValue === 'object' && !Array.isArray(labelValue)) {
-    const lang = wizardStore.selectedLanguage || 'en'
+  if (
+    labelValue &&
+    typeof labelValue === "object" &&
+    !Array.isArray(labelValue)
+  ) {
+    const lang = wizardStore.selectedLanguage || "en";
     return (
       labelValue[lang] ||
       labelValue.en ||
       labelValue[Object.keys(labelValue)[0]] ||
       item[section.itemTypeKey] ||
-      t('agora', 'Unnamed')
-    )
+      t("agora", "Unnamed")
+    );
   }
 
   // Handle plain string values
-  return labelValue || item[section.itemTypeKey] || t('agora', 'Unnamed')
-}
+  return labelValue || item[section.itemTypeKey] || t("agora", "Unnamed");
+};
 
-const getItemType = (item: unknown, section: Section) => item[section.itemTypeKey] || ''
+const getItemType = (item: unknown, section: Section) =>
+  item[section.itemTypeKey] || "";
 
 const totalItems = computed(() => {
-  if (!editableData.value) return 0
-  return sections.value.reduce((sum, section) => sum + section.count, 0)
-})
+  if (!editableData.value) return 0;
+  return sections.value.reduce((sum, section) => sum + section.count, 0);
+});
 
 // Fetch duplicate analysis when component mounts
 onMounted(async () => {
-  await analyzeDuplicates()
-})
+  await analyzeDuplicates();
+});
 
 // Analyze template for duplicates
 const analyzeDuplicates = async () => {
-  if (!editableData.value) return
+  if (!editableData.value) return;
 
-  isAnalyzing.value = true
-  analysisError.value = null
+  isAnalyzing.value = true;
+  analysisError.value = null;
 
   try {
-    const url = generateOcsUrl('/apps/agora/api/v1.0/templates/analyze')
+    const url = generateOcsUrl("/apps/agora/api/v1.0/templates/analyze");
     const response = await axios.post(url, {
       templateData: editableData.value,
       language: wizardStore.selectedLanguage,
-    })
+    });
 
     if (response.data?.ocs?.data) {
-      duplicateAnalysis.value = response.data.ocs.data
+      duplicateAnalysis.value = response.data.ocs.data;
     }
   } catch (error) {
-    console.error('Failed to analyze template:', error)
-    analysisError.value = error instanceof Error ? error.message : 'Failed to analyze template'
+    console.error("Failed to analyze template:", error);
+    analysisError.value =
+      error instanceof Error ? error.message : "Failed to analyze template";
   } finally {
-    isAnalyzing.value = false
+    isAnalyzing.value = false;
   }
-}
+};
 
 // Get status indicator for a section
 const getSectionStatus = (sectionKey: string) => {
   if (!duplicateAnalysis.value?.analysis?.[sectionKey]) {
-    return { new: 0, existing: 0, total: 0 }
+    return { new: 0, existing: 0, total: 0 };
   }
 
-  const data = duplicateAnalysis.value.analysis[sectionKey]
-  const newCount = data.new?.length || 0
-  const existingCount = data.existing?.length || 0
+  const data = duplicateAnalysis.value.analysis[sectionKey];
+  const newCount = data.new?.length || 0;
+  const existingCount = data.existing?.length || 0;
 
   return {
     new: newCount,
     existing: existingCount,
     total: newCount + existingCount,
-  }
-}
+  };
+};
 
 // Get item status (new or existing)
-const getItemStatus = (sectionKey: string, itemType: string): 'new' | 'existing' | 'unknown' => {
-  if (!duplicateAnalysis.value?.analysis?.[sectionKey]) return 'unknown'
-  if (!itemType) return 'unknown'
+const getItemStatus = (
+  sectionKey: string,
+  itemType: string,
+): "new" | "existing" | "unknown" => {
+  if (!duplicateAnalysis.value?.analysis?.[sectionKey]) return "unknown";
+  if (!itemType) return "unknown";
 
-  const data = duplicateAnalysis.value.analysis[sectionKey]
+  const data = duplicateAnalysis.value.analysis[sectionKey];
 
   // Check if item exists in new or existing lists
   // The backend returns items with a 'type' property that matches the item's type key value
@@ -270,15 +292,15 @@ const getItemStatus = (sectionKey: string, itemType: string): 'new' | 'existing'
     item.type === itemType ||
     item.identifier === itemType ||
     item.key === itemType ||
-    item.id === itemType
+    item.id === itemType;
 
-  const isNew = data.new?.some(matchItem)
-  const isExisting = data.existing?.some(matchItem)
+  const isNew = data.new?.some(matchItem);
+  const isExisting = data.existing?.some(matchItem);
 
-  if (isNew) return 'new'
-  if (isExisting) return 'existing'
-  return 'unknown'
-}
+  if (isNew) return "new";
+  if (isExisting) return "existing";
+  return "unknown";
+};
 
 // Watch for editable data changes to initialize editing
 watch(
@@ -287,21 +309,21 @@ watch(
     if (editableData.value) {
       // Expand first section by default
       if (sections.value.length > 0) {
-        expandedSections.value[sections.value[0].key] = true
+        expandedSections.value[sections.value[0].key] = true;
       }
       // Re-analyze when data changes
-      analyzeDuplicates()
+      analyzeDuplicates();
     }
-  }
-)
+  },
+);
 </script>
 
 <template>
   <div class="preview-step">
     <div class="preview-header">
-      <h2>{{ t('agora', 'Preview & customize template') }}</h2>
+      <h2>{{ t("agora", "Preview & customize template") }}</h2>
       <p class="subtitle">
-        {{ t('agora', 'Review and customize the template before import') }}
+        {{ t("agora", "Review and customize the template before import") }}
       </p>
     </div>
 
@@ -309,7 +331,7 @@ watch(
       v-if="!editableData"
       class="loading-state"
     >
-      <p>{{ t('agora', 'Preparing template data …') }}</p>
+      <p>{{ t("agora", "Preparing template data …") }}</p>
     </div>
 
     <div
@@ -322,7 +344,7 @@ watch(
         class="analysis-loading"
       >
         <NcLoadingIcon :size="32" />
-        <p>{{ t('agora', 'Analyzing template for duplicates …') }}</p>
+        <p>{{ t("agora", "Analyzing template for duplicates …") }}</p>
       </div>
 
       <!-- Analysis Error -->
@@ -331,35 +353,41 @@ watch(
         type="error"
         class="analysis-error"
       >
-        {{ t('agora', 'Failed to analyze template:') }} {{ analysisError }}
+        {{ t("agora", "Failed to analyze template:") }} {{ analysisError }}
       </NcNoteCard>
 
       <!-- Summary Card with Duplicate Analysis -->
       <div class="summary-card">
-        <h3>{{ t('agora', 'Import preview') }}</h3>
+        <h3>{{ t("agora", "Import preview") }}</h3>
         <div
           v-if="duplicateAnalysis"
           class="summary-stats"
         >
           <div class="stat-item">
             <span class="stat-icon">✨</span>
-            <span class="stat-value stat-new">{{ duplicateAnalysis.totals.new }}</span>
-            <span class="stat-label">{{ t('agora', 'New items') }}</span>
+            <span class="stat-value stat-new">{{
+              duplicateAnalysis.totals.new
+            }}</span>
+            <span class="stat-label">{{ t("agora", "New items") }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-icon">📋</span>
-            <span class="stat-value stat-existing">{{ duplicateAnalysis.totals.existing }}</span>
-            <span class="stat-label">{{ t('agora', 'Existing (skipped)') }}</span>
+            <span class="stat-value stat-existing">{{
+              duplicateAnalysis.totals.existing
+            }}</span>
+            <span class="stat-label">{{
+              t("agora", "Existing (skipped)")
+            }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-icon">📦</span>
             <span class="stat-value">{{ totalItems }}</span>
-            <span class="stat-label">{{ t('agora', 'Total items') }}</span>
+            <span class="stat-label">{{ t("agora", "Total items") }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-icon">🌐</span>
             <span class="stat-value">{{ wizardStore.selectedLanguage }}</span>
-            <span class="stat-label">{{ t('agora', 'Language') }}</span>
+            <span class="stat-label">{{ t("agora", "Language") }}</span>
           </div>
         </div>
         <div
@@ -369,12 +397,12 @@ watch(
           <div class="stat-item">
             <span class="stat-icon">📦</span>
             <span class="stat-value">{{ totalItems }}</span>
-            <span class="stat-label">{{ t('agora', 'Total items') }}</span>
+            <span class="stat-label">{{ t("agora", "Total items") }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-icon">🌐</span>
             <span class="stat-value">{{ wizardStore.selectedLanguage }}</span>
-            <span class="stat-label">{{ t('agora', 'Language') }}</span>
+            <span class="stat-label">{{ t("agora", "Language") }}</span>
           </div>
         </div>
       </div>
@@ -387,9 +415,9 @@ watch(
       >
         {{
           t(
-            'agora',
-            '{count} items already exist in the database and will be skipped during import.',
-            { count: duplicateAnalysis.totals.existing }
+            "agora",
+            "{count} items already exist in the database and will be skipped during import.",
+            { count: duplicateAnalysis.totals.existing },
           )
         }}
       </NcNoteCard>
@@ -428,7 +456,7 @@ watch(
               </span>
             </div>
             <span class="expand-icon">
-              {{ expandedSections[section.key] ? '▼' : '▶' }}
+              {{ expandedSections[section.key] ? "▼" : "▶" }}
             </span>
           </div>
 
@@ -454,20 +482,32 @@ watch(
                     <span
                       v-if="
                         duplicateAnalysis &&
-                          getItemStatus(section.key, getItemType(item, section)) !== 'unknown'
+                          getItemStatus(
+                            section.key,
+                            getItemType(item, section),
+                          ) !== 'unknown'
                       "
                       class="item-status-badge"
                       :class="{
                         'badge-new':
-                          getItemStatus(section.key, getItemType(item, section)) === 'new',
+                          getItemStatus(
+                            section.key,
+                            getItemType(item, section),
+                          ) === 'new',
                         'badge-existing':
-                          getItemStatus(section.key, getItemType(item, section)) === 'existing',
+                          getItemStatus(
+                            section.key,
+                            getItemType(item, section),
+                          ) === 'existing',
                       }"
                     >
                       {{
-                        getItemStatus(section.key, getItemType(item, section)) === 'new'
-                          ? '✨ New'
-                          : '📋 Exists'
+                        getItemStatus(
+                          section.key,
+                          getItemType(item, section),
+                        ) === "new"
+                          ? "✨ New"
+                          : "📋 Exists"
                       }}
                     </span>
                   </div>
@@ -486,13 +526,13 @@ watch(
                     type="tertiary"
                     @click="startEdit(section.key, index)"
                   >
-                    {{ t('agora', 'Edit') }}
+                    {{ t("agora", "Edit") }}
                   </NcButton>
                   <NcButton
                     type="error"
                     @click="removeItem(section.key, index)"
                   >
-                    {{ t('agora', 'Remove') }}
+                    {{ t("agora", "Remove") }}
                   </NcButton>
                 </div>
               </div>
@@ -529,13 +569,13 @@ watch(
                     type="primary"
                     @click="saveEdit"
                   >
-                    {{ t('agora', 'Save') }}
+                    {{ t("agora", "Save") }}
                   </NcButton>
                   <NcButton
                     type="tertiary"
                     @click="cancelEdit"
                   >
-                    {{ t('agora', 'Cancel') }}
+                    {{ t("agora", "Cancel") }}
                   </NcButton>
                 </div>
               </div>

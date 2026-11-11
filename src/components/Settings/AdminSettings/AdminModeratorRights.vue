@@ -4,19 +4,19 @@
 -->
 
 <script setup>
-import { t } from '@nextcloud/l10n'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import { t } from "@nextcloud/l10n";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
 
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 </script>
 
 <template>
   <div class="rights-management">
-    <h2>{{ t('agora', 'Moderator rights') }}</h2>
+    <h2>{{ t("agora", "Moderator rights") }}</h2>
     <p class="description">
-      {{ t('agora', 'Define permissions for users with moderator role') }}
+      {{ t("agora", "Define permissions for users with moderator role") }}
     </p>
 
     <div class="rights-list">
@@ -26,10 +26,10 @@ const appSettingsStore = useAppSettingsStore()
           type="switch"
           @update:model-value="appSettingsStore.write()"
         >
-          {{ t('agora', 'Modify inquiries') }}
+          {{ t("agora", "Modify inquiries") }}
         </NcCheckboxRadioSwitch>
         <p class="right-description">
-          {{ t('agora', 'Allow moderators to modify existing inquiries') }}
+          {{ t("agora", "Allow moderators to modify existing inquiries") }}
         </p>
       </div>
 
@@ -39,10 +39,10 @@ const appSettingsStore = useAppSettingsStore()
           type="switch"
           @update:model-value="appSettingsStore.write()"
         >
-          {{ t('agora', 'Delete inquiries') }}
+          {{ t("agora", "Delete inquiries") }}
         </NcCheckboxRadioSwitch>
         <p class="right-description">
-          {{ t('agora', 'Allow moderators to delete inquiries') }}
+          {{ t("agora", "Allow moderators to delete inquiries") }}
         </p>
       </div>
 
@@ -52,10 +52,10 @@ const appSettingsStore = useAppSettingsStore()
           type="switch"
           @update:model-value="appSettingsStore.write()"
         >
-          {{ t('agora', 'Archive inquiries') }}
+          {{ t("agora", "Archive inquiries") }}
         </NcCheckboxRadioSwitch>
         <p class="right-description">
-          {{ t('agora', 'Allow moderators to archive inquiries') }}
+          {{ t("agora", "Allow moderators to archive inquiries") }}
         </p>
       </div>
     </div>

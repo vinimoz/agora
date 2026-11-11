@@ -4,19 +4,19 @@
 -->
 
 <script setup lang="ts">
-import { CardDiv } from '../../Base/index.ts'
-import { t } from '@nextcloud/l10n'
-import { useInquiryStore } from '../../../stores/inquiry.ts'
+import { CardDiv } from "../../Base/index.ts";
+import { t } from "@nextcloud/l10n";
+import { useInquiryStore } from "../../../stores/inquiry.ts";
 
-const inquiryStore = useInquiryStore()
-const cardType = 'warning'
+const inquiryStore = useInquiryStore();
+const cardType = "warning";
 </script>
 
 <template>
   <CardDiv :type="cardType">
-    {{ t('agora', 'This inquiry is closed') }}
+    {{ t("agora", "This inquiry is closed") }}
     <span v-if="!inquiryStore.permissions.edit">
-      {{ t('agora', 'No further action is possible') }}
+      {{ t("agora", "No further action is possible") }}
     </span>
   </CardDiv>
 </template>

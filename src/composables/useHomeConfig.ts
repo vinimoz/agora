@@ -3,14 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed } from 'vue'
-import { useSessionStore } from '../stores/session'
-import { getHomeTemplate } from './homeDefaults'
-import { ORGANIZATION_TYPES, type OrganizationType } from '../Types/experience.types'
-import type { HomeConfig } from '../Types/appSettings.types.ts'
+import { computed } from "vue";
+import { useSessionStore } from "../stores/session";
+import { getHomeTemplate } from "./homeDefaults";
+import {
+  ORGANIZATION_TYPES,
+  type OrganizationType,
+} from "../Types/experience.types";
+import type { HomeConfig } from "../Types/appSettings.types.ts";
 
 export function useHomeConfig() {
-  const session = useSessionStore()
+  const session = useSessionStore();
 
   /**
    * Active organization type, sourced from session.appSettings.organization.type.
@@ -18,15 +21,20 @@ export function useHomeConfig() {
    * before the DB-backed home config lands) or when the value is invalid.
    */
   const organizationType = computed<OrganizationType>(() => {
-    const candidate = session.appSettings?.organization?.type
-    if (candidate && (ORGANIZATION_TYPES as readonly string[]).includes(candidate)) {
-      return candidate as OrganizationType
+    const candidate = session.appSettings?.organization?.type;
+    if (
+      candidate &&
+      (ORGANIZATION_TYPES as readonly string[]).includes(candidate)
+    ) {
+      return candidate as OrganizationType;
     }
-    return 'university'
-  })
+    return "university";
+  });
 
   /** The selected template — useful for admin previews ("what would a university see?") */
-  const template = computed<HomeConfig>(() => getHomeTemplate(organizationType.value))
+  const template = computed<HomeConfig>(() =>
+    getHomeTemplate(organizationType.value),
+  );
 
   /**
    * Final merged config, resolution order:
@@ -39,9 +47,9 @@ export function useHomeConfig() {
    * to the municipality template.
    */
   const config = computed<HomeConfig>(() => {
-    const override = session.appSettings?.home
-    const tpl = template.value
-    if (!override) return tpl
+    const override = session.appSettings?.home;
+    const tpl = template.value;
+    if (!override) return tpl;
 
     return {
       sections: override.sections ?? tpl.sections,
@@ -69,8 +77,8 @@ export function useHomeConfig() {
         },
       },
       sectionLabels: { ...tpl.sectionLabels, ...override.sectionLabels },
-    }
-  })
+    };
+  });
 
-  return { config, template, organizationType }
+  return { config, template, organizationType };
 }

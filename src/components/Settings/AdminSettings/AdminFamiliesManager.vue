@@ -4,153 +4,162 @@
 -->
 
 <script setup>
-import { computed, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import { InquiryGeneralIcons } from '../../../utils/icons.ts'
-import { showError } from '@nextcloud/dialogs'
+import { computed, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcInputField from "@nextcloud/vue/components/NcInputField";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import { InquiryGeneralIcons } from "../../../utils/icons.ts";
+import { showError } from "@nextcloud/dialogs";
 
-const emit = defineEmits(['familySelected'])
-const appSettingsStore = useAppSettingsStore()
-const editingFamily = ref(null)
+const emit = defineEmits(["familySelected"]);
+const appSettingsStore = useAppSettingsStore();
+const editingFamily = ref(null);
 const newFamily = ref({
-  family_type: '',
-  label: '',
-  description: '',
+  family_type: "",
+  label: "",
+  description: "",
   icon: null,
   sort_order: 0,
-})
+});
 
 // Calculate types + group types count for each family
 const familiesWithStats = computed(() =>
   appSettingsStore.inquiryFamilyTab.map((family) => {
     const typesCount = appSettingsStore.inquiryTypeTab.filter(
-      (type) => type.family === family.family_type
-    ).length
+      (type) => type.family === family.family_type,
+    ).length;
 
     const groupTypesCount = (appSettingsStore.inquiryGroupTypeTab ?? []).filter(
-      (groupType) => groupType.family === family.family_type
-    ).length
+      (groupType) => groupType.family === family.family_type,
+    ).length;
 
     return {
       ...family,
       typesCount,
       groupTypesCount,
-    }
-  })
-)
+    };
+  }),
+);
 
 // Helper to find icon object by id
 const findIconById = (iconId) => {
-  if (!iconId) return null
-  return availableIcons.value.find((icon) => icon.id === iconId) || null
-}
+  if (!iconId) return null;
+  return availableIcons.value.find((icon) => icon.id === iconId) || null;
+};
 
 const startEditing = (family) => {
   editingFamily.value = {
     ...family,
     icon: findIconById(family.icon), // Convert string icon to object for NcSelect
-  }
-}
+  };
+};
 
 // Get statuses for the selected inquiry type
 const availableIcons = computed(() =>
   Object.keys(InquiryGeneralIcons)
-    .filter((key) => key !== 'default')
+    .filter((key) => key !== "default")
     .map((iconId) => ({
       id: iconId,
-      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    }))
-)
+      label: t("agora", iconId.replace(/([A-Z])/g, " $1").trim()),
+    })),
+);
 
-const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default
+const getIconComponent = (iconName) =>
+  InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default;
 
 const extractIconId = (icon) => {
-  if (!icon) return ''
-  if (typeof icon === 'string') return icon
-  if (typeof icon === 'object') return icon.id || ''
-  return String(icon)
-}
+  if (!icon) return "";
+  if (typeof icon === "string") return icon;
+  if (typeof icon === "object") return icon.id || "";
+  return String(icon);
+};
 
 const addFamily = async () => {
   if (!newFamily.value.family_type) {
-    showError(t('agora', 'Inquiry family type is mandatory'), { timeout: 2000 })
-    return
+    showError(t("agora", "Inquiry family type is mandatory"), {
+      timeout: 2000,
+    });
+    return;
   }
 
   await appSettingsStore.addFamily({
     ...newFamily.value,
     icon: extractIconId(newFamily.value.icon),
     created: Date.now(),
-  })
+  });
 
   // Reset form
   newFamily.value = {
-    family_type: '',
-    label: '',
-    description: '',
-    icon: '',
+    family_type: "",
+    label: "",
+    description: "",
+    icon: "",
     sort_order: appSettingsStore.inquiryFamilyTab.length,
-  }
-}
+  };
+};
 
 const updateFamily = async (family) => {
   await appSettingsStore.updateFamily(family.id, {
     ...family,
     icon: extractIconId(family.icon),
-  })
-  editingFamily.value = null
-}
+  });
+  editingFamily.value = null;
+};
 
 const deleteFamily = async (family) => {
   // Guard: block deletion while still in use
   if (family.typesCount > 0 || family.groupTypesCount > 0) {
-    const parts = []
+    const parts = [];
     if (family.typesCount > 0) {
-      parts.push(t('agora', '{count} inquiry type(s)', { count: family.typesCount }))
+      parts.push(
+        t("agora", "{count} inquiry type(s)", { count: family.typesCount }),
+      );
     }
     if (family.groupTypesCount > 0) {
-      parts.push(t('agora', '{count} inquiry group(s)', { count: family.groupTypesCount }))
+      parts.push(
+        t("agora", "{count} inquiry group(s)", {
+          count: family.groupTypesCount,
+        }),
+      );
     }
     showError(
       t(
-        'agora',
-        'Cannot delete this family because it is still in use: {details}. Please remove or reassign them first.',
-        { details: parts.join(', ') }
+        "agora",
+        "Cannot delete this family because it is still in use: {details}. Please remove or reassign them first.",
+        { details: parts.join(", ") },
       ),
-      { timeout: 6000 }
-    )
-    return
+      { timeout: 6000 },
+    );
+    return;
   }
 
-  if (confirm(t('agora', 'Are you sure you want to delete this family?'))) {
-    await appSettingsStore.deleteFamily(family.id)
+  if (confirm(t("agora", "Are you sure you want to delete this family?"))) {
+    await appSettingsStore.deleteFamily(family.id);
   }
-}
+};
 
 const selectFamily = (family) => {
-  emit('familySelected', family)
-}
+  emit("familySelected", family);
+};
 </script>
 
 <template>
   <div class="families-manager">
-    <h2>{{ t('agora', 'Inquiry families management') }}</h2>
+    <h2>{{ t("agora", "Inquiry families management") }}</h2>
     <p class="description">
       {{
         t(
-          'agora',
-          'Manage inquiry families to organize different types of inquiries. Each family can contain multiple inquiry types.'
+          "agora",
+          "Manage inquiry families to organize different types of inquiries. Each family can contain multiple inquiry types.",
         )
       }}
     </p>
 
     <!-- Families List -->
     <div class="families-list">
-      <h3>{{ t('agora', 'Existing families') }}</h3>
+      <h3>{{ t("agora", "Existing families") }}</h3>
       <div
         v-for="family in familiesWithStats"
         :key="family.id"
@@ -177,20 +186,24 @@ const selectFamily = (family) => {
             </p>
             <div class="family-stats">
               <span class="types-count">
-                {{ t('agora', '{count} types', { count: family.typesCount }) }}
+                {{ t("agora", "{count} types", { count: family.typesCount }) }}
               </span>
               <span class="group-types-count">
-                {{ t('agora', '{count} group types', { count: family.groupTypesCount }) }}
+                {{
+                  t("agora", "{count} group types", {
+                    count: family.groupTypesCount,
+                  })
+                }}
               </span>
             </div>
           </div>
         </div>
         <div class="family-actions">
           <NcButton @click.stop="startEditing(family)">
-            {{ t('agora', 'Edit') }}
+            {{ t("agora", "Edit") }}
           </NcButton>
           <NcButton @click.stop="deleteFamily(family)">
-            {{ t('agora', 'Delete') }}
+            {{ t("agora", "Delete") }}
           </NcButton>
         </div>
       </div>
@@ -198,7 +211,7 @@ const selectFamily = (family) => {
 
     <!-- Add New Family Form -->
     <div class="add-family-form">
-      <h3>{{ t('agora', 'Add new family') }}</h3>
+      <h3>{{ t("agora", "Add new family") }}</h3>
       <div class="form-grid">
         <div class="form-row">
           <NcInputField
@@ -251,7 +264,7 @@ const selectFamily = (family) => {
             :disabled="!newFamily.family_type || !newFamily.label"
             @click="addFamily"
           >
-            {{ t('agora', 'Add family') }}
+            {{ t("agora", "Add family") }}
           </NcButton>
         </div>
       </div>
@@ -263,7 +276,7 @@ const selectFamily = (family) => {
       class="modal-overlay"
     >
       <div class="modal-content large-modal">
-        <h3>{{ t('agora', 'Edit family') }}</h3>
+        <h3>{{ t("agora", "Edit family") }}</h3>
         <div class="form-grid">
           <div class="form-row">
             <NcInputField
@@ -299,13 +312,13 @@ const selectFamily = (family) => {
           />
           <div class="modal-actions">
             <NcButton @click="editingFamily = null">
-              {{ t('agora', 'Cancel') }}
+              {{ t("agora", "Cancel") }}
             </NcButton>
             <NcButton
               type="primary"
               @click="updateFamily(editingFamily)"
             >
-              {{ t('agora', 'Save changes') }}
+              {{ t("agora", "Save changes") }}
             </NcButton>
           </div>
         </div>

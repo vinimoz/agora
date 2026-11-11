@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <section
@@ -57,7 +57,9 @@ AGPL-3.0-or-later */
         <span
           v-if="showStats && groupCount(family.family_type) > 0"
           class="family-chip__count"
-          :title="t('agora', '{n} groups', { n: groupCount(family.family_type) })"
+          :title="
+            t('agora', '{n} groups', { n: groupCount(family.family_type) })
+          "
         >
           {{ groupCount(family.family_type) }}
         </span>
@@ -70,7 +72,9 @@ AGPL-3.0-or-later */
     <div
       v-else-if="variant === 'stacked'"
       class="my-spaces__grid my-spaces__grid--stacked"
-      :style="{ gridTemplateColumns: `repeat(auto-fit, minmax(${minColumnWidth}px, 1fr))` }"
+      :style="{
+        gridTemplateColumns: `repeat(auto-fit, minmax(${minColumnWidth}px, 1fr))`,
+      }"
     >
       <FamilyGroupTypesWidget
         v-for="family in familiesWithTypes"
@@ -103,107 +107,107 @@ AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
-import { useSessionStore } from '../../../stores/session.ts'
-import { useInquiryGroupsStore } from '../../../stores/inquiryGroups.ts'
-import FamilyGroupTypesWidget from './FamilyGroupTypesWidget.vue'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
+import { useSessionStore } from "../../../stores/session.ts";
+import { useInquiryGroupsStore } from "../../../stores/inquiryGroups.ts";
+import FamilyGroupTypesWidget from "./FamilyGroupTypesWidget.vue";
 
 const props = withDefaults(
   defineProps<{
-    variant?: 'chips' | 'stacked' | 'compact'
-    families?: string[]
-    limitPerFamily?: number
-    showCtaPerFamily?: boolean
-    minColumnWidth?: number
-    title?: string
-    subtitle?: string
-    showDescription?: boolean
-    showStats?: boolean
+    variant?: "chips" | "stacked" | "compact";
+    families?: string[];
+    limitPerFamily?: number;
+    showCtaPerFamily?: boolean;
+    minColumnWidth?: number;
+    title?: string;
+    subtitle?: string;
+    showDescription?: boolean;
+    showStats?: boolean;
   }>(),
   {
-    variant: 'stacked',
+    variant: "stacked",
     families: () => [],
     limitPerFamily: 0,
     showCtaPerFamily: false,
     minColumnWidth: 320,
-    title: '',
-    subtitle: '',
+    title: "",
+    subtitle: "",
     showDescription: true,
     showStats: true,
-  }
-)
+  },
+);
 
 const emit = defineEmits<{
-  select: [payload: { family: string; key: string }]
-  all: [payload: { family: string }]
-  selectFamily: [family: string]
-}>()
+  select: [payload: { family: string; key: string }];
+  all: [payload: { family: string }];
+  selectFamily: [family: string];
+}>();
 
-const sessionStore = useSessionStore()
-const groupsStore = useInquiryGroupsStore()
+const sessionStore = useSessionStore();
+const groupsStore = useInquiryGroupsStore();
 
-const resolvedTitle = computed(() => props.title || t('agora', 'My spaces'))
-const resolvedSubtitle = computed(() => props.subtitle || '')
+const resolvedTitle = computed(() => props.title || t("agora", "My spaces"));
+const resolvedSubtitle = computed(() => props.subtitle || "");
 
 const familiesWithTypes = computed(() => {
-  const allFamilies = sessionStore.appSettings?.inquiryFamilyTab || []
-  const allTypes = sessionStore.appSettings?.inquiryGroupTypeTab || []
+  const allFamilies = sessionStore.appSettings?.inquiryFamilyTab || [];
+  const allTypes = sessionStore.appSettings?.inquiryGroupTypeTab || [];
 
   const familiesWithRootTypes = new Set(
-    allTypes.filter((t: any) => t.is_root === true).map((t: any) => t.family)
-  )
+    allTypes.filter((t: any) => t.is_root === true).map((t: any) => t.family),
+  );
 
   return allFamilies.filter((f: any) => {
     if (props.families.length > 0 && !props.families.includes(f.family_type)) {
-      return false
+      return false;
     }
-    return familiesWithRootTypes.has(f.family_type)
-  })
-})
+    return familiesWithRootTypes.has(f.family_type);
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Chip presentation helpers
 // ---------------------------------------------------------------------------
 function familyIcon(family: any) {
-  const name = family?.icon as string | undefined
-  return (name && (Icons as any)[name]) || Icons.FolderMultiple
+  const name = family?.icon as string | undefined;
+  return (name && (Icons as any)[name]) || Icons.FolderMultiple;
 }
 
 function familyLabel(family: any): string {
-  return family?.label || family?.family_type || ''
+  return family?.label || family?.family_type || "";
 }
 
 function familyDescription(family: any): string {
-  return family?.description || ''
+  return family?.description || "";
 }
 
 // ---------------------------------------------------------------------------
 // Live non-archived group counts per family
 // ---------------------------------------------------------------------------
 const typeToFamily = computed<Record<string, string>>(() => {
-  const allTypes = sessionStore.appSettings?.inquiryGroupTypeTab || []
-  const map: Record<string, string> = {}
+  const allTypes = sessionStore.appSettings?.inquiryGroupTypeTab || [];
+  const map: Record<string, string> = {};
   for (const ty of allTypes) {
-    const key = ty.group_type || ty.type
-    if (key && ty.family) map[key] = ty.family
+    const key = ty.group_type || ty.type;
+    if (key && ty.family) map[key] = ty.family;
   }
-  return map
-})
+  return map;
+});
 
 const groupCountsByFamily = computed<Record<string, number>>(() => {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
   for (const g of groupsStore.inquiryGroups || []) {
-    if (g.status?.groupStatus === 'archived') continue
-    const fam = typeToFamily.value[g.type]
-    if (fam) counts[fam] = (counts[fam] || 0) + 1
+    if (g.status?.groupStatus === "archived") continue;
+    const fam = typeToFamily.value[g.type];
+    if (fam) counts[fam] = (counts[fam] || 0) + 1;
   }
-  return counts
-})
+  return counts;
+});
 
 function groupCount(familyKey: string): number {
-  return groupCountsByFamily.value[familyKey] || 0
+  return groupCountsByFamily.value[familyKey] || 0;
 }
 </script>
 

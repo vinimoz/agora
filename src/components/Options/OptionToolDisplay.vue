@@ -55,7 +55,9 @@
           <h4 class="family-title">
             {{ getFamilyLabel(family) }}
           </h4>
-          <span class="family-count">{{ getOptionsForFamily(family).length }}</span>
+          <span class="family-count">{{
+            getOptionsForFamily(family).length
+          }}</span>
         </div>
         <div class="family-content">
           <component
@@ -131,7 +133,7 @@
         :is="Icons.Layers"
         :size="32"
       />
-      <p>{{ t('agora', 'No options available') }}</p>
+      <p>{{ t("agora", "No options available") }}</p>
     </div>
   </div>
 </template>
@@ -149,64 +151,66 @@
  *
  * @see La séparation est maintenant claire.txt - Section 15: Tools des Options
  */
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
 
 // Import ONLY Option-family tool components
 // These tools are exclusive to Options (family debate, consensus, structure)
-import FamilyLayoutConsensusFlow from '../FamilyLayouts/FamilyLayoutConsensusFlow.vue'
-import FamilyLayoutPaired from '../FamilyLayouts/FamilyLayoutPaired.vue'
-import FamilyLayoutTree from '../FamilyLayouts/FamilyLayoutTree.vue'
+import FamilyLayoutConsensusFlow from "../FamilyLayouts/FamilyLayoutConsensusFlow.vue";
+import FamilyLayoutPaired from "../FamilyLayouts/FamilyLayoutPaired.vue";
+import FamilyLayoutTree from "../FamilyLayouts/FamilyLayoutTree.vue";
 
 // NOTE: FamilyLayoutKanban, FamilyLayoutTimeline, FamilyLayoutVote are NOT imported here
 // because they can be used for both Options AND Inquiries.
 // They are handled directly in ExperienceRenderer for 'inquiries' content.
 
-import type { Option } from '../../Types'
-import { useSessionStore } from '../../stores/session'
+import type { Option } from "../../Types";
+import { useSessionStore } from "../../stores/session";
 
 const props = defineProps<{
   /** Options to display (filtered by family) */
-  options?: Option[]
+  options?: Option[];
   /** ID of the parent Inquiry */
-  inquiryId?: number
+  inquiryId?: number;
   /** Specific family to display (single tool) */
-  specificFamily?: string
+  specificFamily?: string;
   /** List of families to display (multiple tools) */
-  families?: string[]
-}>()
+  families?: string[];
+}>();
 
 const emit = defineEmits<{
   /** Emitted when user clicks on an Option to view details */
-  viewOption: [option: Option]
+  viewOption: [option: Option];
   /** Emitted when user clicks on an Inquiry to view details */
-  viewInquiry: [inquiryId: number]
+  viewInquiry: [inquiryId: number];
   /** Emitted when user wants to add a new Option */
-  addOption: [optionType: string, parentId?: number]
+  addOption: [optionType: string, parentId?: number];
   /** Emitted when user wants to open an Option detail */
-  openDetail: [option: Option]
+  openDetail: [option: Option];
   /** Emitted when an Option's status changes */
-  optionStatusChange: [optionId: number, status: string]
+  optionStatusChange: [optionId: number, status: string];
   /** Emitted when a resolution is proposed for an Option */
-  proposeOptionResolution: [optionId: number]
+  proposeOptionResolution: [optionId: number];
   /** Emitted when an Option is resolved */
-  resolveOption: [optionId: number]
+  resolveOption: [optionId: number];
   /** Emitted when an Option is reopened */
-  reopenOption: [optionId: number]
+  reopenOption: [optionId: number];
   /** Emitted to continue discussion on an Inquiry */
-  continueDiscussion: []
+  continueDiscussion: [];
   /** Emitted to propose a resolution for an Inquiry */
-  proposeResolution: []
+  proposeResolution: [];
   /** Emitted to reopen an Inquiry */
-  reopenInquiry: []
+  reopenInquiry: [];
   /** Emitted for generic actions */
-  action: [actionKey: string]
+  action: [actionKey: string];
   /** Emitted when an Item's family changes */
-  itemFamilyChanged: [payload: { itemId: number; familyKey: string; action: string }]
-}>()
+  itemFamilyChanged: [
+    payload: { itemId: number; familyKey: string; action: string },
+  ];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // ============================================================
 // FAMILY TOOL COMPONENT MAPPING
@@ -226,7 +230,7 @@ const familyToolMap: Record<string, any> = {
   consensus: FamilyLayoutConsensusFlow,
   debate: FamilyLayoutPaired,
   structure: FamilyLayoutTree,
-}
+};
 
 // ============================================================
 // FAMILY ICON MAPPING
@@ -238,19 +242,19 @@ const familyIconMap: Record<string, any> = {
   kanban: Icons.Board,
   timeline: Icons.Clock,
   vote: Icons.CheckCircle,
-}
+};
 
 // ============================================================
 // FAMILY LABELS
 // ============================================================
 const familyLabelMap: Record<string, string> = {
-  consensus: t('agora', 'Consensus'),
-  debate: t('agora', 'Debate'),
-  structure: t('agora', 'Structure'),
-  kanban: t('agora', 'Kanban'),
-  timeline: t('agora', 'Timeline'),
-  vote: t('agora', 'Vote'),
-}
+  consensus: t("agora", "Consensus"),
+  debate: t("agora", "Debate"),
+  structure: t("agora", "Structure"),
+  kanban: t("agora", "Kanban"),
+  timeline: t("agora", "Timeline"),
+  vote: t("agora", "Vote"),
+};
 
 // ============================================================
 // HELPERS
@@ -261,8 +265,8 @@ const familyLabelMap: Record<string, string> = {
  * @param family
  */
 function getFamilyData(family: string) {
-  const familyTab = sessionStore.appSettings?.optionFamilyTab || []
-  return familyTab.find((f) => f.key === family) || null
+  const familyTab = sessionStore.appSettings?.optionFamilyTab || [];
+  return familyTab.find((f) => f.key === family) || null;
 }
 
 /**
@@ -271,7 +275,7 @@ function getFamilyData(family: string) {
  * @param family
  */
 function getFamilyToolComponent(family: string) {
-  return familyToolMap[family] || FamilyLayoutTree
+  return familyToolMap[family] || FamilyLayoutTree;
 }
 
 /**
@@ -279,7 +283,7 @@ function getFamilyToolComponent(family: string) {
  * @param family
  */
 function getFamilyIcon(family: string) {
-  return familyIconMap[family] || Icons.Layers
+  return familyIconMap[family] || Icons.Layers;
 }
 
 /**
@@ -287,7 +291,7 @@ function getFamilyIcon(family: string) {
  * @param family
  */
 function getFamilyLabel(family: string) {
-  return familyLabelMap[family] || family
+  return familyLabelMap[family] || family;
 }
 
 // ============================================================
@@ -299,90 +303,94 @@ function getFamilyLabel(family: string) {
  * Used when no specific family is requested
  */
 const optionsByFamily = computed(() => {
-  const groups: Record<string, Option[]> = {}
+  const groups: Record<string, Option[]> = {};
 
-  if (!props.options) return groups
+  if (!props.options) return groups;
 
   props.options.forEach((option) => {
-    const family = option.family || 'default'
-    if (!groups[family]) groups[family] = []
-    groups[family].push(option)
-  })
+    const family = option.family || "default";
+    if (!groups[family]) groups[family] = [];
+    groups[family].push(option);
+  });
 
-  return groups
-})
+  return groups;
+});
 
 /**
  * Get options for a specific family
  * @param family
  */
 function getOptionsForFamily(family: string): Option[] {
-  if (!props.options) return []
-  return props.options.filter((o) => (o.family || 'default') === family)
+  if (!props.options) return [];
+  return props.options.filter((o) => (o.family || "default") === family);
 }
 
 /**
  * Filtered options for single family mode
  */
 const filteredOptions = computed(() => {
-  if (!props.specificFamily || !props.options) return []
-  return getOptionsForFamily(props.specificFamily)
-})
+  if (!props.specificFamily || !props.options) return [];
+  return getOptionsForFamily(props.specificFamily);
+});
 
 // ============================================================
 // EVENT HANDLERS
 // ============================================================
 
 function handleViewOption(option: Option) {
-  emit('viewOption', option)
+  emit("viewOption", option);
 }
 
 function handleViewInquiry(inquiryId: number) {
-  emit('viewInquiry', inquiryId)
+  emit("viewInquiry", inquiryId);
 }
 
 function handleAddOption(optionType: string, parentId?: number) {
-  emit('addOption', optionType, parentId)
+  emit("addOption", optionType, parentId);
 }
 
 function handleOpenDetail(option: Option) {
-  emit('openDetail', option)
+  emit("openDetail", option);
 }
 
 function handleOptionStatusChange(optionId: number, status: string) {
-  emit('optionStatusChange', optionId, status)
+  emit("optionStatusChange", optionId, status);
 }
 
 function handleProposeOptionResolution(optionId: number) {
-  emit('proposeOptionResolution', optionId)
+  emit("proposeOptionResolution", optionId);
 }
 
 function handleResolveOption(optionId: number) {
-  emit('resolveOption', optionId)
+  emit("resolveOption", optionId);
 }
 
 function handleReopenOption(optionId: number) {
-  emit('reopenOption', optionId)
+  emit("reopenOption", optionId);
 }
 
 function handleContinueDiscussion() {
-  emit('continueDiscussion')
+  emit("continueDiscussion");
 }
 
 function handleProposeResolution() {
-  emit('proposeResolution')
+  emit("proposeResolution");
 }
 
 function handleReopenInquiry() {
-  emit('reopenInquiry')
+  emit("reopenInquiry");
 }
 
 function handleAction(actionKey: string) {
-  emit('action', actionKey)
+  emit("action", actionKey);
 }
 
-function handleItemFamilyChanged(payload: { itemId: number; familyKey: string; action: string }) {
-  emit('itemFamilyChanged', payload)
+function handleItemFamilyChanged(payload: {
+  itemId: number;
+  familyKey: string;
+  action: string;
+}) {
+  emit("itemFamilyChanged", payload);
 }
 </script>
 

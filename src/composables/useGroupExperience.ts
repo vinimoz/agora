@@ -3,28 +3,31 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, type Ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { EXPERIENCE_DEFINITIONS } from './useExperience'
+import { computed, type Ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { EXPERIENCE_DEFINITIONS } from "./useExperience";
 import type {
   ExperienceKey,
   DisplayType,
   ToolKey,
   LayoutTypeValue,
   DisplayZone,
-} from '../Types/experience.types'
-import type { InquiryGroup, InquiryGroupUIConfig } from '../Types/inquiryGroups.types'
-import { getExperienceArchitecture } from './experienceArchitecture'
+} from "../Types/experience.types";
+import type {
+  InquiryGroup,
+  InquiryGroupUIConfig,
+} from "../Types/inquiryGroups.types";
+import { getExperienceArchitecture } from "./experienceArchitecture";
 
 // Landing-page only — never offered as a group experience.
-const NON_GROUP_EXPERIENCES: ExperienceKey[] = ['home']
+const NON_GROUP_EXPERIENCES: ExperienceKey[] = ["home"];
 
 // Experiences that should always be reachable, regardless of group type
-const ALWAYS_AVAILABLE: ExperienceKey[] = ['classic']
+const ALWAYS_AVAILABLE: ExperienceKey[] = ["classic"];
 
 export function useGroupExperience(group: Ref<InquiryGroup | null>) {
-  const route = useRoute()
-  const router = useRouter()
+  const route = useRoute();
+  const router = useRouter();
 
   // ----------------------------------------------------------
   // UI CONFIG – reactive, with fallback to group-type template
@@ -37,32 +40,34 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   // their feature list instead of being passed through as-is.
   // ----------------------------------------------------------
   const uiConfig = computed<InquiryGroupUIConfig | null>(() => {
-    const own = normalizeUi(group.value?.configuration?.ui)
+    const own = normalizeUi(group.value?.configuration?.ui);
     if (own && !Array.isArray(own)) {
-      return own as InquiryGroupUIConfig
+      return own as InquiryGroupUIConfig;
     }
 
-    const templateUi = normalizeUi(group.value?.inquiryGroupType?.ui)
+    const templateUi = normalizeUi(group.value?.inquiryGroupType?.ui);
 
     if (Array.isArray(templateUi)) {
       // legacy shape: array of feature keys
-      return { features: templateUi } as InquiryGroupUIConfig
+      return { features: templateUi } as InquiryGroupUIConfig;
     }
 
-    if (templateUi && typeof templateUi === 'object') {
-      return templateUi as InquiryGroupUIConfig
+    if (templateUi && typeof templateUi === "object") {
+      return templateUi as InquiryGroupUIConfig;
     }
 
-    return null
-  })
+    return null;
+  });
 
-  function resolveDefaultExperience(ui: InquiryGroupUIConfig | null): ExperienceKey {
+  function resolveDefaultExperience(
+    ui: InquiryGroupUIConfig | null,
+  ): ExperienceKey {
     const candidate =
       (ui?.defaultExperience as ExperienceKey | undefined) ??
-      (ui?.experience as ExperienceKey | undefined)
+      (ui?.experience as ExperienceKey | undefined);
 
-    if (candidate && EXPERIENCE_DEFINITIONS[candidate]) return candidate
-    return 'dashboard'
+    if (candidate && EXPERIENCE_DEFINITIONS[candidate]) return candidate;
+    return "dashboard";
   }
 
   // ----------------------------------------------------------
@@ -70,44 +75,50 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   // ----------------------------------------------------------
   const experience = computed<ExperienceKey>({
     get: () => {
-      const urlExp = route.query.experience as ExperienceKey | undefined
-      if (urlExp && EXPERIENCE_DEFINITIONS[urlExp]) return urlExp
-      return resolveDefaultExperience(uiConfig.value)
+      const urlExp = route.query.experience as ExperienceKey | undefined;
+      if (urlExp && EXPERIENCE_DEFINITIONS[urlExp]) return urlExp;
+      return resolveDefaultExperience(uiConfig.value);
     },
     set: (val) => {
       const query: Record<string, string> = {
         ...Object.fromEntries(
-          Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
+          Object.entries(route.query).filter(
+            ([, v]) => typeof v === "string",
+          ) as [string, string][],
         ),
         experience: val,
-      }
-      router.push({ query })
+      };
+      router.push({ query });
     },
-  })
+  });
 
-  const defaultExperience = computed<ExperienceKey>(() => resolveDefaultExperience(uiConfig.value))
+  const defaultExperience = computed<ExperienceKey>(() =>
+    resolveDefaultExperience(uiConfig.value),
+  );
 
   // ----------------------------------------------------------
   // DISPLAY MODE
   // ----------------------------------------------------------
   const displayMode = computed<DisplayType>({
     get: () => {
-      const urlDisplay = route.query.display as DisplayType | undefined
-      if (urlDisplay) return urlDisplay
+      const urlDisplay = route.query.display as DisplayType | undefined;
+      if (urlDisplay) return urlDisplay;
 
-      const def = EXPERIENCE_DEFINITIONS[experience.value]
-      return def?.defaultDisplay ?? 'cards'
+      const def = EXPERIENCE_DEFINITIONS[experience.value];
+      return def?.defaultDisplay ?? "cards";
     },
     set: (val) => {
       const query: Record<string, string> = {
         ...Object.fromEntries(
-          Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
+          Object.entries(route.query).filter(
+            ([, v]) => typeof v === "string",
+          ) as [string, string][],
         ),
         display: val,
-      }
-      router.push({ query })
+      };
+      router.push({ query });
     },
-  })
+  });
 
   // ----------------------------------------------------------
   // ARCHITECTURE
@@ -115,199 +126,223 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   const hasCustomArchitecture = computed(
     () =>
       !!uiConfig.value?.displayArchitecture &&
-      Object.keys(uiConfig.value.displayArchitecture).length > 0
-  )
+      Object.keys(uiConfig.value.displayArchitecture).length > 0,
+  );
 
   const displayArchitecture = computed<Record<string, DisplayZone> | null>(
-    () => uiConfig.value?.displayArchitecture ?? null
-  )
+    () => uiConfig.value?.displayArchitecture ?? null,
+  );
 
-  function computeRequiredDimensions(zones: Record<string, DisplayZone> | undefined | null): {
-    columns: number
-    rows: number
+  function computeRequiredDimensions(
+    zones: Record<string, DisplayZone> | undefined | null,
+  ): {
+    columns: number;
+    rows: number;
   } {
     if (!zones || Object.keys(zones).length === 0) {
-      return { columns: 0, rows: 0 }
+      return { columns: 0, rows: 0 };
     }
-    let maxCol = 0
-    let maxRow = 0
+    let maxCol = 0;
+    let maxRow = 0;
     for (const zone of Object.values(zones)) {
-      if (!zone?.position) continue
-      const endCol = (zone.position.column || 1) + (zone.position.columnSpan || 1) - 1
-      const endRow = (zone.position.row || 1) + (zone.position.rowSpan || 1) - 1
-      if (endCol > maxCol) maxCol = endCol
-      if (endRow > maxRow) maxRow = endRow
+      if (!zone?.position) continue;
+      const endCol =
+        (zone.position.column || 1) + (zone.position.columnSpan || 1) - 1;
+      const endRow =
+        (zone.position.row || 1) + (zone.position.rowSpan || 1) - 1;
+      if (endCol > maxCol) maxCol = endCol;
+      if (endRow > maxRow) maxRow = endRow;
     }
-    return { columns: maxCol, rows: maxRow }
+    return { columns: maxCol, rows: maxRow };
   }
 
   const layoutConfig = computed(() => {
-    const ui = uiConfig.value
-    const arch = getExperienceArchitecture(experience.value)
+    const ui = uiConfig.value;
+    const arch = getExperienceArchitecture(experience.value);
 
-    const customZones = ui?.displayArchitecture
+    const customZones = ui?.displayArchitecture;
     const required =
       customZones && Object.keys(customZones).length > 0
         ? computeRequiredDimensions(customZones)
-        : computeRequiredDimensions(arch?.displayArchitecture)
+        : computeRequiredDimensions(arch?.displayArchitecture);
 
     // 1) UI layout explicit
     if (ui?.layout) {
       return {
-        type: (ui.layout.type ?? 'full') as LayoutTypeValue,
-        columns: Math.max(ui.layout.columns ?? 0, required.columns) || ui.layout.columns,
+        type: (ui.layout.type ?? "full") as LayoutTypeValue,
+        columns:
+          Math.max(ui.layout.columns ?? 0, required.columns) ||
+          ui.layout.columns,
         rows: Math.max(ui.layout.rows ?? 0, required.rows) || ui.layout.rows,
         responsive: ui.layout.responsive !== false,
-      }
+      };
     }
 
     // 2) Experience architecture
     if (arch?.layout) {
       return {
         type: arch.layout.type,
-        columns: Math.max(arch.layout.columns ?? 0, required.columns) || arch.layout.columns,
-        rows: Math.max(arch.layout.rows ?? 0, required.rows) || arch.layout.rows,
+        columns:
+          Math.max(arch.layout.columns ?? 0, required.columns) ||
+          arch.layout.columns,
+        rows:
+          Math.max(arch.layout.rows ?? 0, required.rows) || arch.layout.rows,
         responsive: arch.layout.responsive !== false,
-      }
+      };
     }
 
     // 3) Fallback
-    const def = EXPERIENCE_DEFINITIONS[experience.value]
+    const def = EXPERIENCE_DEFINITIONS[experience.value];
     return {
-      type: (def?.layout ?? 'full') as LayoutTypeValue,
+      type: (def?.layout ?? "full") as LayoutTypeValue,
       columns: required.columns || undefined,
       rows: required.rows || undefined,
       responsive: true,
-    }
-  })
+    };
+  });
 
   const contextConfig = computed(
-    () => uiConfig.value?.context ?? { type: 'group', selection: 'selected' }
-  )
+    () => uiConfig.value?.context ?? { type: "group", selection: "selected" },
+  );
 
-  const features = computed<string[]>(() => uiConfig.value?.features ?? [])
+  const features = computed<string[]>(() => uiConfig.value?.features ?? []);
 
-  function normalizeUi(raw: any): InquiryGroupUIConfig | null {
-    if (!raw) return null
-    if (Array.isArray(raw)) return { features: raw } as InquiryGroupUIConfig
+  function normalizeUi(raw: unknown): InquiryGroupUIConfig | null {
+    if (!raw) return null;
+    if (Array.isArray(raw)) {
+      return { features: raw as string[] } as InquiryGroupUIConfig;
+    }
+    if (typeof raw !== "object") return null;
 
-    const out: any = { ...raw }
+    const input = raw as Record<string, unknown>;
+    const out: Record<string, unknown> = { ...input };
 
     // display_architecture → displayArchitecture
-    if (raw.display_architecture && !raw.displayArchitecture) {
-      out.displayArchitecture = raw.display_architecture
+    if (input.display_architecture && !input.displayArchitecture) {
+      out.displayArchitecture = input.display_architecture;
     }
 
     // Normalize each zone
-    for (const key of Object.keys(out.displayArchitecture ?? {})) {
-      const zone = out.displayArchitecture[key]
-      if (zone.interaction?.on_click) {
+    const arch = out.displayArchitecture as
+      Record<string, Record<string, unknown>> | undefined;
+    for (const zone of Object.values(arch ?? {})) {
+      const interaction = zone.interaction as
+        { on_click?: { action: unknown; target: unknown } } | undefined;
+      if (interaction?.on_click) {
         zone.interaction = {
-          action: zone.interaction.on_click.action,
-          target: zone.interaction.on_click.target,
-        }
+          action: interaction.on_click.action,
+          target: interaction.on_click.target,
+        };
       }
-      // columnSpan → columnSpan (already camelCase in your data?)
-      if (zone.position?.columnSpan === undefined && zone.position?.column_span) {
-        zone.position.columnSpan = zone.position.column_span
+      const position = zone.position as
+        { columnSpan?: number; column_span?: number } | undefined;
+      if (
+        position &&
+        position.columnSpan === undefined &&
+        position.column_span !== undefined
+      ) {
+        position.columnSpan = position.column_span;
       }
     }
 
-    return out as InquiryGroupUIConfig
+    return out as InquiryGroupUIConfig;
   }
-
   // ----------------------------------------------------------
   // TOOLS
   // ----------------------------------------------------------
   /* const allowedTools = computed<ToolKey[]>(() => {
-	  const architecture = uiConfig.value?.displayArchitecture
-	  if (!architecture) return []
+     const architecture = uiConfig.value?.displayArchitecture
+     if (!architecture) return []
 
-		  const seen = new Set<ToolKey>()
-		  for (const zone of Object.values(architecture)) {
-			  if (zone.display?.type === 'tool' && zone.display.tool) {
-				  seen.add(zone.display.tool)
-			  }
-		  }
-		  return [...seen]
-  })
-*/
+     const seen = new Set<ToolKey>()
+     for (const zone of Object.values(architecture)) {
+     if (zone.display?.type === 'tool' && zone.display.tool) {
+     seen.add(zone.display.tool)
+     }
+     }
+     return [...seen]
+     })
+     */
 
   const allowedTools = computed<ToolKey[]>(() => {
-    const architecture = uiConfig.value?.displayArchitecture
+    const architecture = uiConfig.value?.displayArchitecture;
 
     // 1. Try to extract from custom architecture
     if (architecture) {
-      const seen = new Set<ToolKey>()
+      const seen = new Set<ToolKey>();
       for (const zone of Object.values(architecture)) {
-        if (zone.display?.type === 'tool' && zone.display.tool) {
-          seen.add(zone.display.tool)
+        if (zone.display?.type === "tool" && zone.display.tool) {
+          seen.add(zone.display.tool);
         }
       }
-      if (seen.size > 0) return [...seen]
+      if (seen.size > 0) return [...seen];
     }
 
     // 2. Fallback to the Experience Definition's allowed tools
-    const def = EXPERIENCE_DEFINITIONS[experience.value]
-    return def?.allowedTools ?? []
-  })
+    const def = EXPERIENCE_DEFINITIONS[experience.value];
+    return def?.allowedTools ?? [];
+  });
   // ----------------------------------------------------------
   // EXPERIENCE AVAILABILITY
   // ----------------------------------------------------------
 
   const availableExperiences = computed<ExperienceKey[]>(() => {
-    const groupType = group.value?.type
-    const allKeys = (Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]).filter(
-      (key) => !NON_GROUP_EXPERIENCES.includes(key)
-    )
+    const groupType = group.value?.type;
+    const allKeys = (
+      Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
+    ).filter((key) => !NON_GROUP_EXPERIENCES.includes(key));
 
     // No group context yet → show everything (except home)
-    if (!groupType) return allKeys
+    if (!groupType) return allKeys;
 
     const matched = allKeys.filter((key) => {
-      const def = EXPERIENCE_DEFINITIONS[key]
-      return def
-    })
+      const def = EXPERIENCE_DEFINITIONS[key];
+      return def;
+    });
 
     // Always keep the escape hatches
     for (const key of ALWAYS_AVAILABLE) {
-      if (!matched.includes(key)) matched.push(key)
+      if (!matched.includes(key)) matched.push(key);
     }
 
     // If the group type matched nothing meaningful (only escape hatches),
     // fall back to showing every experience. Better a superset than a dead end.
-    const meaningful = matched.filter((k) => !ALWAYS_AVAILABLE.includes(k))
-    return meaningful.length > 0 ? matched : allKeys
-  })
+    const meaningful = matched.filter((k) => !ALWAYS_AVAILABLE.includes(k));
+    return meaningful.length > 0 ? matched : allKeys;
+  });
 
   const defaultDisplay = computed<DisplayType>(() => {
-    const def = EXPERIENCE_DEFINITIONS[experience.value]
-    return def?.defaultDisplay ?? 'cards'
-  })
+    const def = EXPERIENCE_DEFINITIONS[experience.value];
+    return def?.defaultDisplay ?? "cards";
+  });
 
   // ----------------------------------------------------------
   // ZONE HELPERS
   // ----------------------------------------------------------
-  function getZonesByContent(contentType: string): Array<{ key: string; zone: DisplayZone }> {
-    const architecture = displayArchitecture.value
-    if (!architecture) return []
+  function getZonesByContent(
+    contentType: string,
+  ): Array<{ key: string; zone: DisplayZone }> {
+    const architecture = displayArchitecture.value;
+    if (!architecture) return [];
 
     return Object.entries(architecture)
       .filter(([, zone]) => zone.content === contentType)
-      .map(([key, zone]) => ({ key, zone }))
+      .map(([key, zone]) => ({ key, zone }));
   }
 
   function getZone(zoneKey: string): DisplayZone | null {
-    return displayArchitecture.value?.[zoneKey] ?? null
+    return displayArchitecture.value?.[zoneKey] ?? null;
   }
 
   function hasFeature(featureName: string): boolean {
-    return features.value.includes(featureName)
+    return features.value.includes(featureName);
   }
 
   const definition = computed(
-    () => EXPERIENCE_DEFINITIONS[experience.value] || EXPERIENCE_DEFINITIONS.dashboard
-  )
+    () =>
+      EXPERIENCE_DEFINITIONS[experience.value] ||
+      EXPERIENCE_DEFINITIONS.dashboard,
+  );
 
   // ----------------------------------------------------------
   // ACTIONS
@@ -315,47 +350,52 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   function buildQuery(extra: Record<string, string>): Record<string, string> {
     return {
       ...Object.fromEntries(
-        Object.entries(route.query).filter(([, v]) => typeof v === 'string') as [string, string][]
+        Object.entries(route.query).filter(
+          ([, v]) => typeof v === "string",
+        ) as [string, string][],
       ),
       ...extra,
-    }
+    };
   }
 
   function switchExperience(key: ExperienceKey) {
-    experience.value = key
-    const def = EXPERIENCE_DEFINITIONS[key]
-    const extra: Record<string, string> = { experience: key }
-    if (def) extra.display = def.defaultDisplay
-    router.push({ query: buildQuery(extra) })
+    experience.value = key;
+    const def = EXPERIENCE_DEFINITIONS[key];
+    const extra: Record<string, string> = { experience: key };
+    if (def) extra.display = def.defaultDisplay;
+    router.push({ query: buildQuery(extra) });
   }
 
   function switchDisplay(mode: DisplayType) {
-    displayMode.value = mode
-    router.push({ query: buildQuery({ display: mode }) })
+    displayMode.value = mode;
+    router.push({ query: buildQuery({ display: mode }) });
   }
 
   // ----------------------------------------------------------
   // COMPUTED COLLECTIONS
   // ----------------------------------------------------------
   const allZones = computed(() => {
-    const architecture = displayArchitecture.value
-    if (!architecture) return []
+    const architecture = displayArchitecture.value;
+    if (!architecture) return [];
     return Object.entries(architecture).map(([key, zone]) => ({
       key,
       ...zone,
-    }))
-  })
+    }));
+  });
 
   function getZonesByPosition(
     row: number,
-    column: number
+    column: number,
   ): Array<{ key: string; zone: DisplayZone }> {
-    const architecture = displayArchitecture.value
-    if (!architecture) return []
+    const architecture = displayArchitecture.value;
+    if (!architecture) return [];
 
     return Object.entries(architecture)
-      .filter(([, zone]) => zone.position?.row === row && zone.position?.column === column)
-      .map(([key, zone]) => ({ key, zone }))
+      .filter(
+        ([, zone]) =>
+          zone.position?.row === row && zone.position?.column === column,
+      )
+      .map(([key, zone]) => ({ key, zone }));
   }
 
   // ----------------------------------------------------------
@@ -364,18 +404,19 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   watch(
     () => group.value?.type,
     (newType) => {
-      if (!newType) return
+      if (!newType) return;
 
-      const available = availableExperiences.value
-      if (available.includes(experience.value)) return
+      const available = availableExperiences.value;
+      if (available.includes(experience.value)) return;
 
-      const fallback = defaultExperience.value
-      const next = fallback && available.includes(fallback) ? fallback : available[0]
+      const fallback = defaultExperience.value;
+      const next =
+        fallback && available.includes(fallback) ? fallback : available[0];
 
-      if (next && next !== experience.value) switchExperience(next)
+      if (next && next !== experience.value) switchExperience(next);
     },
-    { immediate: true }
-  )
+    { immediate: true },
+  );
 
   return {
     // State
@@ -405,5 +446,5 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
     getZone,
     getZonesByPosition,
     hasFeature,
-  }
+  };
 }

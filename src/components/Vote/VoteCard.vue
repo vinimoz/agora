@@ -30,7 +30,9 @@
 
         <div class="header-meta">
           <span class="item-type-label">{{ itemTypeLabel }}</span>
-          <span class="timestamp">{{ formatDate(raw?.status?.created ?? 0) }}</span>
+          <span class="timestamp">{{
+            formatDate(raw?.status?.created ?? 0)
+          }}</span>
         </div>
       </div>
     </div>
@@ -62,9 +64,11 @@
             :size="14"
             class="stat-icon"
           />
-          <span class="vote-count">{{ translateGrade(majorityJudgment.median) }}</span>
+          <span class="vote-count">{{
+            translateGrade(majorityJudgment.median)
+          }}</span>
           <span class="percentage">{{
-            n('agora', '%n voter', '%n voters', majorityJudgment.total)
+            n("agora", "%n voter", "%n voters", majorityJudgment.total)
           }}</span>
         </div>
         <div
@@ -96,7 +100,9 @@
 
       <!-- Majority judgment: one segment per grade, in the configured order -->
       <div
-        v-if="(!canVote || hasUserVoted) && !hideResults && majorityJudgment?.total"
+        v-if="
+          (!canVote || hasUserVoted) && !hideResults && majorityJudgment?.total
+        "
         class="grade-distribution"
       >
         <div class="grade-bar">
@@ -118,7 +124,9 @@
           >
             <span
               class="grade-dot"
-              :style="{ opacity: 1 - index / majorityJudgment.distribution.length }"
+              :style="{
+                opacity: 1 - index / majorityJudgment.distribution.length,
+              }"
             />
             {{ translateGrade(grade) }} {{ count }}
           </li>
@@ -127,7 +135,9 @@
 
       <!-- Progress bar for voting mode -->
       <div
-        v-else-if="(!canVote || hasUserVoted) && !hideResults && !majorityJudgment"
+        v-else-if="
+          (!canVote || hasUserVoted) && !hideResults && !majorityJudgment
+        "
         class="progress-bar-container"
       >
         <div class="progress-bar">
@@ -180,7 +190,9 @@
         :aria-controls="commentZoneId"
         @click="toggleComment"
       >
-        {{ showComment ? t('agora', 'Hide comment') : t('agora', 'Add comment') }}
+        {{
+          showComment ? t("agora", "Hide comment") : t("agora", "Add comment")
+        }}
       </NcButton>
       <div
         v-show="showComment"
@@ -191,7 +203,11 @@
           ref="commentAdd"
           :item-id="item.id"
           :input-label="t('agora', 'Comment on {item}', { item: item.title })"
-          :placeholder="openedByGrade ? t('agora', 'Under which conditions? Why?') : undefined"
+          :placeholder="
+            openedByGrade
+              ? t('agora', 'Under which conditions? Why?')
+              : undefined
+          "
         />
       </div>
       <ul
@@ -229,7 +245,9 @@
           :display-name="raw.owner.displayName"
           :size="20"
         />
-        <span class="owner-name">{{ raw.owner?.displayName || t('agora', 'Unknown owner') }}</span>
+        <span class="owner-name">{{
+          raw.owner?.displayName || t("agora", "Unknown owner")
+        }}</span>
       </div>
     </div>
 
@@ -239,283 +257,297 @@
       class="voted-badge"
     >
       <CheckCircle :size="16" />
-      <span>{{ t('agora', 'Voted') }}</span>
+      <span>{{ t("agora", "Voted") }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
-import { n, t } from '@nextcloud/l10n'
-import { CheckCircle } from 'lucide-vue-next'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import VoteInput from './VoteInput.vue'
-import CommentAdd from '../Comments/CommentAdd.vue'
-import { useSessionStore } from '../../stores/session'
-import { useInquiryStore } from '../../stores/inquiry'
-import { useCommentsStore } from '../../stores/comments'
-import { showError } from '@nextcloud/dialogs'
-import DeleteIcon from 'vue-material-design-icons/Delete.vue'
-import type { Comment } from '../../Types/comments.types'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { computed, nextTick, ref } from "vue";
+import { n, t } from "@nextcloud/l10n";
+import { CheckCircle } from "lucide-vue-next";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import VoteInput from "./VoteInput.vue";
+import CommentAdd from "../Comments/CommentAdd.vue";
+import { useSessionStore } from "../../stores/session";
+import { useInquiryStore } from "../../stores/inquiry";
+import { useCommentsStore } from "../../stores/comments";
+import { showError } from "@nextcloud/dialogs";
+import DeleteIcon from "vue-material-design-icons/Delete.vue";
+import type { Comment } from "../../Types/comments.types";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
 import {
   getItemTypeLabel,
   getItemTypeIconComponent,
   getItemTypeColor,
-} from '../../helpers/modules/InquiryHelper'
+} from "../../helpers/modules/InquiryHelper";
 import {
   allowsComments,
   hasSupportFeature as hasSupportFeatureHelper,
-} from '../../helpers/modules/InquiryOptionHelper'
+} from "../../helpers/modules/InquiryOptionHelper";
 
-import { translateGrade } from '../../Types/votingType'
-import type { MajorityJudgmentSummary } from '../../composables/useVoteContext'
+import { translateGrade } from "../../Types/votingType";
+import type { MajorityJudgmentSummary } from "../../composables/useVoteContext";
 
-import type { Item, Option, SupportData, SupportValue } from '../../Types/index'
+import type {
+  Item,
+  SupportData,
+  SupportValue,
+} from "../../Types/index";
 
 const props = defineProps<{
-  item: Item
-  compact?: boolean
-  effectiveEngineId: string
-  engineConfig: Record<string, unknown>
-  canVote: boolean
-  hasUserVoted: boolean
-  hasUserVotedFor: (itemId: number) => boolean
-  voteCount: number
-  percentage: number
-  isSelected?: boolean
-  currentRank?: number | null
-  currentGrade?: string | null
-  currentScore?: number | null
-  currentStar?: number | null
-  currentReaction?: string[] | null
-  currentQuadraticVotes?: number | null
-  currentTokenWeight?: number | null
-  getUserVoteValueForItem: (itemId: number) => SupportValue | null
-  totalItems?: number
-  hideResults?: boolean
-  majorityJudgment?: MajorityJudgmentSummary | null
-}>()
+  item: Item;
+  compact?: boolean;
+  effectiveEngineId: string;
+  engineConfig: Record<string, unknown>;
+  canVote: boolean;
+  hasUserVoted: boolean;
+  hasUserVotedFor: (itemId: number) => boolean;
+  voteCount: number;
+  percentage: number;
+  isSelected?: boolean;
+  currentRank?: number | null;
+  currentGrade?: string | null;
+  currentScore?: number | null;
+  currentStar?: number | null;
+  currentReaction?: string[] | null;
+  currentQuadraticVotes?: number | null;
+  currentTokenWeight?: number | null;
+  getUserVoteValueForItem: (itemId: number) => SupportValue | null;
+  totalItems?: number;
+  hideResults?: boolean;
+  majorityJudgment?: MajorityJudgmentSummary | null;
+}>();
 
-console.log(' PRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ITEM ', props.item)
+console.log(" PRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ITEM ", props.item);
 
-const raw = computed(() => (props.item as any).raw ?? props.item)
+const raw = computed(() => (props.item as any).raw ?? props.item);
 
 const emit = defineEmits<{
-  vote: [item: Item, value: SupportValue]
-  approvalToggle: [itemId: number]
-  changeRank: [itemId: number, rank: number | null]
-  changeGrade: [itemId: number, grade: string | null]
-  'update:score': [itemId: number, score: number | null]
-  'update:star': [itemId: number, star: number | null]
-  'update:reaction': [itemId: number, reaction: string[] | null]
-  'update:quadratic': [itemId: number, votes: number | null]
-  'update:token_weight': [itemId: number, weight: number | null]
-  openSupportsModal: [itemId: number]
-}>()
+  vote: [item: Item, value: SupportValue];
+  approvalToggle: [itemId: number];
+  changeRank: [itemId: number, rank: number | null];
+  changeGrade: [itemId: number, grade: string | null];
+  "update:score": [itemId: number, score: number | null];
+  "update:star": [itemId: number, star: number | null];
+  "update:reaction": [itemId: number, reaction: string[] | null];
+  "update:quadratic": [itemId: number, votes: number | null];
+  "update:token_weight": [itemId: number, weight: number | null];
+  openSupportsModal: [itemId: number];
+}>();
 
-const sessionStore = useSessionStore()
-const inquiryStore = useInquiryStore()
-const commentsStore = useCommentsStore()
+const sessionStore = useSessionStore();
+const inquiryStore = useInquiryStore();
+const commentsStore = useCommentsStore();
 
 // The user's own comments on this option; others' stay out of the ballot
 const ownComments = computed(() =>
   commentsStore
     .getOptionComments(inquiryStore.id, raw.value.id)
-    .filter((comment) => comment.user?.id === sessionStore.currentUser.id && !comment.deleted)
-)
+    .filter(
+      (comment) =>
+        comment.user?.id === sessionStore.currentUser.id && !comment.deleted,
+    ),
+);
 
 async function deleteComment(comment: Comment) {
   try {
-    await commentsStore.delete({ comment })
+    await commentsStore.delete({ comment });
   } catch {
-    showError(t('agora', 'Error while deleting the comment'))
+    showError(t("agora", "Error while deleting the comment"));
   }
 }
 
 const allItemTypes = computed(() => {
-  if (props.item.kind === 'option') {
-    return sessionStore.appSettings?.inquiryOptionTypeTab || []
+  if (props.item.kind === "option") {
+    return sessionStore.appSettings?.inquiryOptionTypeTab || [];
   }
-  return sessionStore.appSettings?.inquiryItemTypeTab || []
-})
+  return sessionStore.appSettings?.inquiryItemTypeTab || [];
+});
 
 const itemTypeLabel = computed(() => {
   if (!props.item?.type || !allItemTypes.value) {
-    return t('agora', 'Item')
+    return t("agora", "Item");
   }
-  return getItemTypeLabel(props.item.type, allItemTypes.value, t('agora', 'Item'))
-})
+  return getItemTypeLabel(
+    props.item.type,
+    allItemTypes.value,
+    t("agora", "Item"),
+  );
+});
 
 const isMultiEngine = computed(() => {
   const multiTypes = [
-    'reaction',
-    'approval',
-    'approval_delib',
-    'ranking',
-    'condorcet',
-    'borda',
-    'quadratic',
-    'token_weighted',
-    'phased_voting',
-  ]
-  return multiTypes.includes(props.effectiveEngineId)
-})
+    "reaction",
+    "approval",
+    "approval_delib",
+    "ranking",
+    "condorcet",
+    "borda",
+    "quadratic",
+    "token_weighted",
+    "phased_voting",
+  ];
+  return multiTypes.includes(props.effectiveEngineId);
+});
 
 const canRemoveVote = computed(() => {
-  const value = props.getUserVoteValueForItem?.(props.item.id)
-  return value !== null && value !== undefined
-})
+  const value = props.getUserVoteValueForItem?.(props.item.id);
+  return value !== null && value !== undefined;
+});
 
 function handleRemoveVote() {
-  const engine = props.effectiveEngineId
-  const id = props.item.id
+  const engine = props.effectiveEngineId;
+  const id = props.item.id;
 
-  if (['binary', 'ternary', 'score', 'star'].includes(engine)) {
-    emit('update:score', id, null)
-    return
+  if (["binary", "ternary", "score", "star"].includes(engine)) {
+    emit("update:score", id, null);
+    return;
   }
-  if (engine === 'majority_judgment') {
-    emit('changeGrade', id, null)
-    return
+  if (engine === "majority_judgment") {
+    emit("changeGrade", id, null);
+    return;
   }
-  if (engine === 'reaction') {
-    emit('update:reaction', id, null)
-    return
+  if (engine === "reaction") {
+    emit("update:reaction", id, null);
+    return;
   }
-  if (['ranking', 'condorcet', 'borda'].includes(engine)) {
-    emit('changeRank', id, null)
-    return
+  if (["ranking", "condorcet", "borda"].includes(engine)) {
+    emit("changeRank", id, null);
+    return;
   }
-  if (engine === 'quadratic') {
-    emit('update:quadratic', id, null)
-    return
+  if (engine === "quadratic") {
+    emit("update:quadratic", id, null);
+    return;
   }
-  if (engine === 'token_weighted') {
-    emit('update:token_weight', id, null)
-    return
+  if (engine === "token_weighted") {
+    emit("update:token_weight", id, null);
+    return;
   }
-  if (['approval', 'phased_voting'].includes(engine)) {
+  if (["approval", "phased_voting"].includes(engine)) {
     // Toggling twice removes the selection for approval/phased
-    if (props.isSelected) emit('approvalToggle', id)
-    return
+    if (props.isSelected) emit("approvalToggle", id);
+    return;
   }
-  console.warn(`[VoteCard] handleRemoveVote: unsupported engine ${engine}`)
+  console.warn(`[VoteCard] handleRemoveVote: unsupported engine ${engine}`);
 }
 
 const itemIcon = computed(() => {
   if (!props.item?.type || !allItemTypes.value) {
-    return InquiryOptionIcons.Default
+    return InquiryOptionIcons.Default;
   }
-  return getItemTypeIconComponent(props.item.type, allItemTypes.value)
-})
+  return getItemTypeIconComponent(props.item.type, allItemTypes.value);
+});
 
 const itemTypeColor = computed(() => {
   if (!props.item?.type || !allItemTypes.value) {
-    return 'var(--color-text-light)'
+    return "var(--color-text-light)";
   }
-  return getItemTypeColor(props.item.type, allItemTypes.value)
-})
+  return getItemTypeColor(props.item.type, allItemTypes.value);
+});
 
-const allowComment = computed(() => allowsComments(props.item.type, allItemTypes.value))
+const allowComment = computed(() =>
+  allowsComments(props.item.type, allItemTypes.value),
+);
 
 // PublicController::addComment drops itemId, so no per-item comment on a public link.
 const canComment = computed(
   () =>
     !!raw.value.permissions?.comment &&
     inquiryStore.permissions.comment &&
-    sessionStore.route.name !== 'publicInquiry'
-)
-const showComment = ref(false)
-const commentMounted = ref(false)
-const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null)
-const commentZoneId = computed(() => `item-comment-${props.item.id}`)
+    sessionStore.route.name !== "publicInquiry",
+);
+const showComment = ref(false);
+const commentMounted = ref(false);
+const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null);
+const commentZoneId = computed(() => `item-comment-${props.item.id}`);
 const commentGrades = computed(
-  () => (props.engineConfig.comment_grades as string[] | undefined) ?? []
-)
+  () => (props.engineConfig.comment_grades as string[] | undefined) ?? [],
+);
 const openedByGrade = computed(
-  () => !!props.currentGrade && commentGrades.value.includes(props.currentGrade)
-)
+  () =>
+    !!props.currentGrade && commentGrades.value.includes(props.currentGrade),
+);
 
 async function toggleComment() {
-  showComment.value = !showComment.value
+  showComment.value = !showComment.value;
   if (showComment.value) {
-    commentMounted.value = true
-    await nextTick()
-    commentAdd.value?.focus()
+    commentMounted.value = true;
+    await nextTick();
+    commentAdd.value?.focus();
   }
 }
 
 const hasSupportFeature = computed(() =>
-  hasSupportFeatureHelper(props.item.type, allItemTypes.value)
-)
+  hasSupportFeatureHelper(props.item.type, allItemTypes.value),
+);
 
 const formatDate = (timestamp: number) => {
-  if (!timestamp) return ''
-  const date = new Date(timestamp * 1000)
+  if (!timestamp) return "";
+  const date = new Date(timestamp * 1000);
   return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date)
-}
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+};
 
 const userVoteForItem = computed(() => {
-  const value = props.getUserVoteValueForItem?.(props.item.id)
-  if (!value) return undefined
-  return { value, itemId: props.item.id } as SupportData
-})
+  const value = props.getUserVoteValueForItem?.(props.item.id);
+  if (!value) return undefined;
+  return { value, itemId: props.item.id } as SupportData;
+});
 
-console.log(' IUSE VOTER VALUE FOR TIEM', userVoteForItem.value)
+console.log(" IUSE VOTER VALUE FOR TIEM", userVoteForItem.value);
 
 function openSupportsModal() {
-  emit('openSupportsModal', props.item.id)
+  emit("openSupportsModal", props.item.id);
 }
 
 function handleVote(value: SupportValue) {
-  emit('vote', props.item, value)
+  emit("vote", props.item, value);
 }
 function handleApprovalToggle() {
-  emit('approvalToggle', props.item.id)
+  emit("approvalToggle", props.item.id);
 }
 function handleRankChange(rank: number | null) {
-  emit('changeRank', props.item.id, rank)
+  emit("changeRank", props.item.id, rank);
 }
 function handleGradeChange(grade: string | null) {
-  emit('changeGrade', props.item.id, grade)
+  emit("changeGrade", props.item.id, grade);
   if (grade && canComment.value && commentGrades.value.includes(grade)) {
-    commentMounted.value = true
-    showComment.value = true
+    commentMounted.value = true;
+    showComment.value = true;
   }
 }
 function handleUpdateScore(itemId: number, score: number | null) {
-  emit('update:score', itemId, score)
+  emit("update:score", itemId, score);
 }
 function handleUpdateStar(itemId: number, star: number | null) {
-  emit('update:star', itemId, star)
+  emit("update:star", itemId, star);
 }
 function handleUpdateReaction(itemId: number, reaction: string[] | null) {
-  emit('update:reaction', itemId, reaction)
+  emit("update:reaction", itemId, reaction);
 }
 function handleUpdateQuadratic(itemId: number, votes: number | null) {
-  emit('update:quadratic', itemId, votes)
+  emit("update:quadratic", itemId, votes);
 }
 function handleUpdateTokenWeight(itemId: number, weight: number | null) {
-  emit('update:token_weight', itemId, weight)
+  emit("update:token_weight", itemId, weight);
 }
 
 function handleCardClick(event: MouseEvent) {
-  const target = event.target as HTMLElement
+  const target = event.target as HTMLElement;
   if (
-    target.closest('.vote-input-container') ||
-    target.closest('.voted-badge') ||
-    target.closest('.support-stats') ||
-    target.closest('.item-comment')
+    target.closest(".vote-input-container") ||
+    target.closest(".voted-badge") ||
+    target.closest(".support-stats") ||
+    target.closest(".item-comment")
   )
-    return
-  emit('openSupportsModal', props.item.id)
+    return;
+  emit("openSupportsModal", props.item.id);
 }
 </script>
 
@@ -539,7 +571,11 @@ function handleCardClick(event: MouseEvent) {
   }
 
   &.user-voted {
-    background: linear-gradient(135deg, rgba(66, 184, 131, 0.05) 0%, transparent 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(66, 184, 131, 0.05) 0%,
+      transparent 100%
+    );
     border-color: #42b883;
   }
 
@@ -729,7 +765,7 @@ function handleCardClick(event: MouseEvent) {
           position: relative;
 
           &::after {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             left: 0;

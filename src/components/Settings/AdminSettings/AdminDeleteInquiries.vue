@@ -4,14 +4,14 @@
 -->
 
 <script setup>
-import { InputDiv } from '../../Base/index.ts'
-import { t } from '@nextcloud/l10n'
+import { InputDiv } from "../../Base/index.ts";
+import { t } from "@nextcloud/l10n";
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
 
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const appSettingsStore = useAppSettingsStore()
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{ t('agora', 'Enable the automatic deletion of archived inquiries') }}
+      {{ t("agora", "Enable the automatic deletion of archived inquiries") }}
     </NcCheckboxRadioSwitch>
     <InputDiv
       v-if="appSettingsStore.autoDelete"
@@ -30,7 +30,12 @@ const appSettingsStore = useAppSettingsStore()
       type="number"
       inputmode="numeric"
       use-num-modifiers
-      :label="t('agora', 'Days after which archived inquiries should be finally deleted')"
+      :label="
+        t(
+          'agora',
+          'Days after which archived inquiries should be finally deleted',
+        )
+      "
       @change="appSettingsStore.write()"
     />
   </div>

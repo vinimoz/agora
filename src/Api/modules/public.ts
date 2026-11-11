@@ -2,10 +2,10 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { AxiosResponse } from '@nextcloud/axios'
-import { Session } from '../../stores/session.js'
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { SentResults } from './shares.js'
+import { AxiosResponse } from "@nextcloud/axios";
+import { Session } from "../../stores/session.js";
+import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
+import { SentResults } from "./shares.js";
 import type {
   Option,
   Inquiry,
@@ -13,44 +13,55 @@ import type {
   Support,
   Share,
   SupportResultData,
-} from '../../Types/index.js'
+} from "../../Types/index.js";
 
 const publicInquiry = {
   getInquiry(shareToken: string): Promise<
     AxiosResponse<{
-      inquiry: Inquiry
-      options: Option[]
-      inquiries: Inquiry[]
-      comments: Comment[]
-      supports: Support[]
-      shares: Share[]
-      subscribed: boolean
+      inquiry: Inquiry;
+      options: Option[];
+      inquiries: Inquiry[];
+      comments: Comment[];
+      supports: Support[];
+      shares: Share[];
+      subscribed: boolean;
     }>
   > {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `/s/${shareToken}/inquiry`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getInquiry.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   getSession(shareToken: string): Promise<AxiosResponse<Session>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `/s/${shareToken}/session`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getSession.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getSession.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getOptions(shareToken: string): Promise<AxiosResponse<{ options: Option[] }>> {
+  getOptions(
+    shareToken: string,
+  ): Promise<AxiosResponse<{ options: Option[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `/s/${shareToken}/options`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getOptions.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getOptions.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   addSupport(
@@ -58,14 +69,19 @@ const publicInquiry = {
     inquiryId: number,
     userId: string,
     optionId: number,
-    data: { value: unknown; weight?: number; engineId?: number }
-  ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null }>> {
+    data: { value: unknown; weight?: number; engineId?: number },
+  ): Promise<
+    AxiosResponse<{ support: Support; result: SupportResultData | null }>
+  > {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}`,
       data,
-      cancelToken: cancelTokenHandlerObject[this.addSupport.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.addSupport.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   updateSupport(
@@ -73,15 +89,19 @@ const publicInquiry = {
     inquiryId: number,
     userId: string,
     optionId: number,
-    data: { value: unknown; weight?: number; engineId?: number }
-  ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null }>> {
+    data: { value: unknown; weight?: number; engineId?: number },
+  ): Promise<
+    AxiosResponse<{ support: Support; result: SupportResultData | null }>
+  > {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}`,
       data,
       cancelToken:
-        cancelTokenHandlerObject[this.updateSupport.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.updateSupport.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   removeSupport(
@@ -89,92 +109,117 @@ const publicInquiry = {
     inquiryId: number,
     userId: string,
     optionId: number,
-    engineId?: number
-  ): Promise<AxiosResponse<{ success: boolean; result: SupportResultData | null }>> {
+    engineId?: number,
+  ): Promise<
+    AxiosResponse<{ success: boolean; result: SupportResultData | null }>
+  > {
     const url = engineId
       ? `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}/${engineId}`
-      : `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}`
+      : `s/${shareToken}/inquiry/support/${inquiryId}/${userId}/${optionId}`;
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url,
       cancelToken:
-        cancelTokenHandlerObject[this.removeSupport.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.removeSupport.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getSupports(shareToken: string): Promise<AxiosResponse<{ supports: Support[] }>> {
+  getSupports(
+    shareToken: string,
+  ): Promise<AxiosResponse<{ supports: Support[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `s/${shareToken}/supports`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getSupports.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getSupports.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   addOption(
     shareToken: string,
     option: Option,
     sequence: unknown | null,
-    inquiry?: Inquiry
+    inquiry?: Inquiry,
   ): Promise<
     AxiosResponse<{
-      option: Option
+      option: Option;
     }>
   > {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `/s/${shareToken}/option`,
       data: { option, sequence, inquiry },
-      cancelToken: cancelTokenHandlerObject[this.addOption.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.addOption.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  deleteOption(shareToken: string, optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+  deleteOption(
+    shareToken: string,
+    optionId: number,
+  ): Promise<AxiosResponse<{ option: Option }>> {
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url: `s/${shareToken}/option/${optionId}`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.deleteOption.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.deleteOption.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  restoreOption(shareToken: string, optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+  restoreOption(
+    shareToken: string,
+    optionId: number,
+  ): Promise<AxiosResponse<{ option: Option }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `s/${shareToken}/option/${optionId}/restore`,
       params: { time: +new Date() },
 
       cancelToken:
-        cancelTokenHandlerObject[this.restoreOption.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.restoreOption.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getInquiries(shareToken: string): Promise<AxiosResponse<{ inquiries: Inquiry[] }>> {
+  getInquiries(
+    shareToken: string,
+  ): Promise<AxiosResponse<{ inquiries: Inquiry[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `/s/${shareToken}/inquiries`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getInquiries.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getInquiries.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   supportInquiry(
     shareToken: string,
     inquiryId: number,
     optionId: number,
-    value: number
+    value: number,
   ): Promise<
     AxiosResponse<{
-      inquiry: Inquiry
-      options: Option[]
-      inquiries: Inquiry[]
+      inquiry: Inquiry;
+      options: Option[];
+      inquiries: Inquiry[];
     }>
   > {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `s/${shareToken}/inquiry`,
       data: {
         optionId,
@@ -182,171 +227,209 @@ const publicInquiry = {
         value,
       },
       cancelToken:
-        cancelTokenHandlerObject[this.supportInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.supportInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   resetInquiries(
-    shareToken: string
-  ): Promise<AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[] }>> {
+    shareToken: string,
+  ): Promise<
+    AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[] }>
+  > {
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url: `s/${shareToken}/user`,
       cancelToken:
-        cancelTokenHandlerObject[this.resetInquiries.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.resetInquiries.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   removeOrphanedInquiries(
-    shareToken: string
-  ): Promise<AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[] }>> {
+    shareToken: string,
+  ): Promise<
+    AxiosResponse<{ inquiry: Inquiry; options: Option[]; inquiries: Inquiry[] }>
+  > {
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url: `s/${shareToken}/inquiries/orphaned`,
       cancelToken:
-        cancelTokenHandlerObject[this.removeOrphanedInquiries.name].handleRequestCancellation()
-          .token,
-    })
+        cancelTokenHandlerObject[
+          this.removeOrphanedInquiries.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getComments(shareToken: string): Promise<AxiosResponse<{ comments: Comment[] }>> {
+  getComments(
+    shareToken: string,
+  ): Promise<AxiosResponse<{ comments: Comment[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `/s/${shareToken}/comments`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getComments.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getComments.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   addComment(
     shareToken: string,
     message: string,
-    confidential: boolean = false
+    confidential: boolean = false,
   ): Promise<AxiosResponse<{ comment: Comment }>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `s/${shareToken}/comment`,
       data: { message, confidential },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.addComment.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.addComment.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   deleteComment(
     shareToken: string,
-    commentId: number
+    commentId: number,
   ): Promise<AxiosResponse<{ comment: Comment }>> {
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url: `s/${shareToken}/comment/${commentId}`,
       params: { time: +new Date() },
 
       cancelToken:
-        cancelTokenHandlerObject[this.deleteComment.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.deleteComment.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   restoreComment(
     shareToken: string,
-    commentId: number
+    commentId: number,
   ): Promise<AxiosResponse<{ comment: Comment }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `s/${shareToken}/comment/${commentId}/restore`,
       params: { time: +new Date() },
 
       cancelToken:
-        cancelTokenHandlerObject[this.restoreComment.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.restoreComment.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   getShare(shareToken: string): Promise<AxiosResponse<{ share: Share }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `s/${shareToken}/share`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getShare.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[this.getShare.name].handleRequestCancellation()
+          .token,
+    });
   },
 
   setEmailAddress(
     shareToken: string,
-    emailAddress: string
+    emailAddress: string,
   ): Promise<AxiosResponse<{ share: Share }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `s/${shareToken}/email/${emailAddress}`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.setEmailAddress.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.setEmailAddress.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  deleteEmailAddress(shareToken: string): Promise<AxiosResponse<{ share: Share }>> {
+  deleteEmailAddress(
+    shareToken: string,
+  ): Promise<AxiosResponse<{ share: Share }>> {
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url: `s/${shareToken}/email`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.deleteEmailAddress.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.deleteEmailAddress.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   setDisplayName(
     shareToken: string,
-    displayName: string
+    displayName: string,
   ): Promise<AxiosResponse<{ share: Share }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `s/${shareToken}/name/${displayName}`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.setDisplayName.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.setDisplayName.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   resendInvitation(
-    shareToken: string
+    shareToken: string,
   ): Promise<AxiosResponse<{ share: Share; sentResult: SentResults }>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `s/${shareToken}/resend`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.resendInvitation.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.resendInvitation.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getSubscription(shareToken: string): Promise<AxiosResponse<{ subscribed: boolean }>> {
+  getSubscription(
+    shareToken: string,
+  ): Promise<AxiosResponse<{ subscribed: boolean }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `s/${shareToken}/subscription`,
       cancelToken:
-        cancelTokenHandlerObject[this.getSubscription.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getSubscription.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   setSubscription(
     shareToken: string,
-    subscription: boolean
+    subscription: boolean,
   ): Promise<AxiosResponse<{ subscribed: boolean }>> {
     return httpInstance.request({
-      method: 'PUT',
-      url: `s/${shareToken}${subscription ? '/subscribe' : '/unsubscribe'}`,
+      method: "PUT",
+      url: `s/${shareToken}${subscription ? "/subscribe" : "/unsubscribe"}`,
       cancelToken:
-        cancelTokenHandlerObject[this.setSubscription.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.setSubscription.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   register(
     shareToken: string,
     displayName: string,
     emailAddress: string,
-    timeZone: undefined = undefined
+    timeZone: undefined = undefined,
   ): Promise<AxiosResponse<{ share: Share }>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `s/${shareToken}/register`,
       data: {
         displayName,
@@ -354,11 +437,13 @@ const publicInquiry = {
         timeZone,
       },
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.register.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[this.register.name].handleRequestCancellation()
+          .token,
+    });
   },
-}
+};
 
-const cancelTokenHandlerObject = createCancelTokenHandler(publicInquiry)
+const cancelTokenHandlerObject = createCancelTokenHandler(publicInquiry);
 
-export default publicInquiry
+export default publicInquiry;

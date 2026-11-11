@@ -41,93 +41,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { Inquiry } from '../../Types'
-import InquiryItem from '../Inquiry/InquiryItem.vue'
+import { ref } from "vue";
+import type { Inquiry } from "../../Types";
+import InquiryItem from "../Inquiry/InquiryItem.vue";
 
 const props = defineProps<{
-  inquiries: Inquiry[]
-  compact?: boolean
-  columns?: number
-  activeId?: number | null
-  interactionAction?: string
-  mode?: 'cards' | 'list'
-  showIcon?: boolean
-  showCover?: boolean
-  showMeta?: boolean
-  showStats?: boolean
-  showAuthor?: boolean
-  showDescription?: boolean
-  showExpiry?: boolean
-  showType?: boolean
-  showComment?: boolean
-  showStatus?: boolean
-  showSupport?: boolean
-  showParticipants?: boolean
-}>()
+  inquiries: Inquiry[];
+  compact?: boolean;
+  columns?: number;
+  activeId?: number | null;
+  interactionAction?: string;
+  mode?: "cards" | "list";
+  showIcon?: boolean;
+  showCover?: boolean;
+  showMeta?: boolean;
+  showStats?: boolean;
+  showAuthor?: boolean;
+  showDescription?: boolean;
+  showExpiry?: boolean;
+  showType?: boolean;
+  showComment?: boolean;
+  showStatus?: boolean;
+  showSupport?: boolean;
+  showParticipants?: boolean;
+}>();
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-}>()
+  click: [inquiry: Inquiry];
+}>();
 
-const sessionStore = useSessionStore()
-const gridRef = ref<HTMLElement | null>(null)
-
-console.log(' MODE PROPS ', props.mode)
-function getCoverUrl(inquiry: Inquiry): string | null {
-  if (!inquiry.coverId) return null
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${inquiry.coverId}&x=400&y=300`
-}
-
-function getTypeLabel(type: string): string {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const data = getInquiryTypeData(type, types)
-  return data?.label || type || ''
-}
-
-function getTypeClass(type: string): string {
-  return `type-${type?.toLowerCase() || 'default'}`
-}
+const gridRef = ref<HTMLElement | null>(null);
 
 function isFeatured(inquiry: Inquiry): boolean {
-  return inquiry.miscFields?.featured === true || false
+  return inquiry.miscFields?.featured === true || false;
 }
 
-function getSize(inquiry: Inquiry): 'large' | 'small' | 'normal' {
-  if (inquiry.miscFields?.size) return inquiry.miscFields.size
-  return 'normal'
+function getSize(inquiry: Inquiry): "large" | "small" | "normal" {
+  if (inquiry.miscFields?.size) return inquiry.miscFields.size;
+  return "normal";
 }
 
 function getItemStyle(index: number): Record<string, string> {
-  const styles: Record<string, string> = {}
+  const styles: Record<string, string> = {};
   if (props.columns) {
-    const col = index % props.columns
-    styles['grid-column'] = `${col + 1}`
+    const col = index % props.columns;
+    styles["grid-column"] = `${col + 1}`;
   }
-  return styles
-}
-
-function truncateText(text: string, max: number): string {
-  if (!text) return ''
-  if (text.length <= max) return text
-  return `${text.substring(0, max)}…`
-}
-
-function stripHtml(html: string): string {
-  if (!html) return ''
-  const div = document.createElement('div')
-  div.innerHTML = html
-  return div.textContent || div.innerText || ''
+  return styles;
 }
 
 function handleClick(inquiry: Inquiry) {
-  emit('click', inquiry)
+  emit("click", inquiry);
 }
 </script>
 

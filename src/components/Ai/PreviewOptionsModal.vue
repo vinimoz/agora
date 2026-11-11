@@ -14,9 +14,9 @@
         <div class="header-icon success">
           <CheckCircle :size="32" />
         </div>
-        <h3>{{ t('agora', 'Generated Options') }}</h3>
+        <h3>{{ t("agora", "Generated Options") }}</h3>
         <p class="modal-description">
-          {{ t('agora', 'Select the options you want to create.') }}
+          {{ t("agora", "Select the options you want to create.") }}
         </p>
         <div class="selection-controls">
           <NcButton
@@ -24,17 +24,18 @@
             size="small"
             @click="selectAll"
           >
-            {{ t('agora', 'Select All') }}
+            {{ t("agora", "Select All") }}
           </NcButton>
           <NcButton
             type="secondary"
             size="small"
             @click="deselectAll"
           >
-            {{ t('agora', 'Deselect All') }}
+            {{ t("agora", "Deselect All") }}
           </NcButton>
           <span class="selection-count">
-            {{ selectedCount }} / {{ options.length }} {{ t('agora', 'selected') }}
+            {{ selectedCount }} / {{ options.length }}
+            {{ t("agora", "selected") }}
           </span>
         </div>
       </div>
@@ -48,14 +49,16 @@
             :size="40"
             appearance="auto"
           />
-          <p>{{ t('agora', 'Generating options...') }}</p>
+          <p>{{ t("agora", "Generating options...") }}</p>
         </div>
         <div
           v-else-if="options.length === 0"
           class="empty-state"
         >
           <AlertCircle :size="40" />
-          <p>{{ t('agora', 'No options were generated. Please try again.') }}</p>
+          <p>
+            {{ t("agora", "No options were generated. Please try again.") }}
+          </p>
         </div>
         <div
           v-else
@@ -96,7 +99,9 @@
                   v-for="pro in option.pros"
                   :key="pro"
                   class="tag pro"
-                > 👍 {{ pro }} </span>
+                >
+                  👍 {{ pro }}
+                </span>
               </div>
             </div>
           </div>
@@ -108,7 +113,7 @@
           type="secondary"
           @click="handleClose"
         >
-          {{ t('agora', 'Cancel') }}
+          {{ t("agora", "Cancel") }}
         </NcButton>
         <NcButton
           type="secondary"
@@ -116,7 +121,7 @@
           @click="handleRegenerate"
         >
           <RefreshCw :size="16" />
-          {{ t('agora', 'Regenerate') }}
+          {{ t("agora", "Regenerate") }}
         </NcButton>
         <NcButton
           type="primary"
@@ -124,7 +129,7 @@
           @click="handleImport"
         >
           <Plus :size="16" />
-          {{ t('agora', 'Create {count} options', { count: selectedCount }) }}
+          {{ t("agora", "Create {count} options", { count: selectedCount }) }}
         </NcButton>
       </div>
     </div>
@@ -132,64 +137,74 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import { CheckCircle, AlertCircle, RefreshCw, Plus } from 'lucide-vue-next'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcLoadingIcon from "@nextcloud/vue/components/NcLoadingIcon";
+import { CheckCircle, AlertCircle, RefreshCw, Plus } from "lucide-vue-next";
 
 interface Option {
-  text: string
-  title?: string
-  description?: string
-  pros?: string[]
-  cons?: string[]
-  tags?: string[]
-  selected: boolean
+  text: string;
+  title?: string;
+  description?: string;
+  pros?: string[];
+  cons?: string[];
+  tags?: string[];
+  selected: boolean;
 }
 
 const props = defineProps<{
-  show: boolean
-  options: Option[]
-  loading: boolean
-}>()
+  show: boolean;
+  options: Option[];
+  loading: boolean;
+}>();
 
 const emit = defineEmits<{
-  close: []
-  regenerate: []
-  import: [options: Option[]]
-}>()
+  close: [];
+  regenerate: [];
+  import: [options: Option[]];
+   update: [options: Option];
+  'update:options': [options: Option[]];
+}>();
 
-const selectedCount = computed(() => props.options.filter((opt) => opt.selected).length)
+const selectedCount = computed(
+  () => props.options.filter((opt) => opt.selected).length,
+);
 
 const toggleOption = (index: number) => {
-  props.options[index].selected = !props.options[index].selected
-}
+  const updatedOptions = props.options.map((option, i) =>
+    i === index
+      ? { ...option, selected: !option.selected }
+      : option
+  );
+
+  emit('update:options', updatedOptions);
+};
 
 const selectAll = () => {
-  props.options.forEach((opt) => (opt.selected = true))
-}
+  props.options.forEach((opt) => (opt.selected = true));
+};
 
 const deselectAll = () => {
-  props.options.forEach((opt) => (opt.selected = false))
-}
+  props.options.forEach((opt) => (opt.selected = false));
+};
 
 const handleClose = () => {
-  emit('close')
-}
+  emit("close");
+};
 
 const handleRegenerate = () => {
-  emit('regenerate')
-}
+  emit("regenerate");
+};
 
 const handleImport = () => {
-  const selected = props.options.filter((opt) => opt.selected)
+  const selected = props.options.filter((opt) => opt.selected);
   if (selected.length > 0) {
-    emit('import', selected)
+    emit("import", selected);
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -215,7 +230,11 @@ const handleImport = () => {
       justify-content: center;
       width: 64px;
       height: 64px;
-      background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-light) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--color-success) 0%,
+        var(--color-success-light) 100%
+      );
       border-radius: 32px;
       margin-bottom: 16px;
       color: white;

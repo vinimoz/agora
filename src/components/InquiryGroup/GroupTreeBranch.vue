@@ -74,13 +74,13 @@
             v-if="node.status.groupStatus === 'archived'"
             class="status-badge archived"
           >
-            {{ t('agora', 'Archived') }}
+            {{ t("agora", "Archived") }}
           </span>
           <span
             v-if="node.status.groupStatus === 'draft'"
             class="status-badge draft"
           >
-            {{ t('agora', 'Draft') }}
+            {{ t("agora", "Draft") }}
           </span>
         </div>
         <div
@@ -90,8 +90,12 @@
           {{ truncateText(node.description, 80) }}
         </div>
         <div class="node-meta">
-          <span class="node-type-label">{{ getGroupTypeLabel(node.type) }}</span>
-          <span class="node-owner">{{ node.owner?.displayName || node.ownedGroup }}</span>
+          <span class="node-type-label">{{
+            getGroupTypeLabel(node.type)
+          }}</span>
+          <span class="node-owner">{{
+            node.owner?.displayName || node.ownedGroup
+          }}</span>
           <span class="node-date">{{ formatTime(node.created) }}</span>
         </div>
       </div>
@@ -107,7 +111,7 @@
         :key="child.id"
         :node="child"
         :depth="depth + 1"
-        :expanded="isChildExpanded(child.id)"
+        :expanded="isChildExpanded()"
         :selected-id="selectedId"
         @toggle="emit('toggle', $event)"
         @select="emit('select', $event)"
@@ -117,69 +121,68 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { InquiryGroup } from '../../Types/inquiryGroups.types'
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryGroupTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { InquiryGroup } from "../../Types/inquiryGroups.types";
 
 interface TreeNode extends InquiryGroup {
-  children: TreeNode[]
+  children: TreeNode[];
 }
 
 const props = defineProps<{
-  node: TreeNode
-  depth: number
-  expanded: boolean
-  selectedId: number | null
-}>()
+  node: TreeNode;
+  depth: number;
+  expanded: boolean;
+  selectedId: number | null;
+}>();
 
 const emit = defineEmits<{
-  toggle: [id: number]
-  select: [node: InquiryGroup]
-}>()
+  toggle: [id: number];
+  select: [node: InquiryGroup];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 function getGroupTypeIcon(type: string) {
-  const types = sessionStore.appSettings?.inquiryGroupTypeTab || []
-  const data = getInquiryGroupTypeData(type, types)
-  return data?.icon || Icons.Folder
+  const types = sessionStore.appSettings?.inquiryGroupTypeTab || [];
+  const data = getInquiryGroupTypeData(type, types);
+  return data?.icon || Icons.Folder;
 }
 
 function getGroupTypeLabel(type: string): string {
-  const types = sessionStore.appSettings?.inquiryGroupTypeTab || []
-  const data = getInquiryGroupTypeData(type, types)
-  return data?.label || type || 'Unknown'
+  const types = sessionStore.appSettings?.inquiryGroupTypeTab || [];
+  const data = getInquiryGroupTypeData(type, types);
+  return data?.label || type || "Unknown";
 }
 
 function getTypeClass(type: string): string {
-  return `type-${type?.toLowerCase() || 'default'}`
+  return `type-${type?.toLowerCase() || "default"}`;
 }
 
-function isChildExpanded(id: number): boolean {
+function isChildExpanded(): boolean {
   // Children expansion state is managed by parent via expandedNodes Set
-  return false
+  return false;
 }
 
 function truncateText(text: string, max: number): string {
-  if (!text) return ''
-  if (text.length <= max) return text
-  return `${text.substring(0, max)}…`
+  if (!text) return "";
+  if (text.length <= max) return text;
+  return `${text.substring(0, max)}…`;
 }
 
 function formatTime(timestamp?: number): string {
-  if (!timestamp) return ''
+  if (!timestamp) return "";
   try {
-    return new Date(timestamp * 1000).toLocaleDateString()
+    return new Date(timestamp * 1000).toLocaleDateString();
   } catch {
-    return ''
+    return "";
   }
 }
 
 function handleClick() {
-  emit('select', props.node)
+  emit("select", props.node);
 }
 </script>
 

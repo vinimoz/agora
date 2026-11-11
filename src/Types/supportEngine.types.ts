@@ -3,45 +3,45 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { Phase } from './votingType'
-import type { SupportEngine } from './support.types'
+import type { Phase } from "./votingType";
+import type { SupportEngine } from "./support.types";
 
 export interface CreateEngineRequest {
-  engine: string
-  purpose: string
-  title: string
-  description: string
-  inquiry_group_id: number
-  inquiry_id: number
-  status: 'draft' | 'active' | 'closed'
-  config: Record<string, unknown>
-  target_type: 'inquiry' | 'option'
-  target_ids: number[]
+  engine: string;
+  purpose: string;
+  title: string;
+  description: string;
+  inquiry_group_id: number;
+  inquiry_id: number;
+  status: "draft" | "active" | "closed";
+  config: Record<string, unknown>;
+  target_type: "inquiry" | "option";
+  target_ids: number[];
   metadata?: {
-    phase?: Phase
-    started_at?: number
-    ended_at?: number
-    quorum?: number
-    participation_threshold?: number
-  }
+    phase?: Phase;
+    started_at?: number;
+    ended_at?: number;
+    quorum?: number;
+    participation_threshold?: number;
+  };
 }
 
 export interface UpdateEngineConfigRequest {
-  config: Record<string, unknown>
+  config: Record<string, unknown>;
 }
 
 export interface UpdateEngineStatusRequest {
-  status: 'draft' | 'active' | 'closed'
+  status: "draft" | "active" | "closed";
 }
 
 export interface UpdateEngineTargetsRequest {
-  target_ids: number[]
+  target_ids: number[];
 }
 
 export interface EngineResponse {
-  engine: SupportEngine
+  engine: SupportEngine;
 }
 
 export interface EnginesResponse {
-  engines: SupportEngine[]
+  engines: SupportEngine[];
 }

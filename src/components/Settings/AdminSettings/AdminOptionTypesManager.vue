@@ -4,171 +4,178 @@
 -->
 
 <script setup>
-import { computed, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcInputField from '@nextcloud/vue/components/NcInputField'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import { computed, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcInputField from "@nextcloud/vue/components/NcInputField";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcLoadingIcon from "@nextcloud/vue/components/NcLoadingIcon";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import { InquiryOptionIcons } from "../../../utils/icons.ts";
 
 const props = defineProps({
   selectedFamily: { type: Object, default: null },
-})
+});
 
-const emit = defineEmits(['typeSelected'])
-const appSettingsStore = useAppSettingsStore()
+const emit = defineEmits(["typeSelected"]);
+const appSettingsStore = useAppSettingsStore();
 
 // ============================================================
 // FAMILY — fixed by parent (AdminSettings)
 // ============================================================
-const familyKey = computed(() => props.selectedFamily?.family_type ?? '')
-const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value)
+const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
+const familyLabel = computed(
+  () => props.selectedFamily?.label ?? familyKey.value,
+);
 
 // ============================================================
 // STATE
 // ============================================================
-const searchQuery = ref('')
-const editingType = ref(null)
-const savingType = ref(false)
-const editTab = ref('basic') // basic | fields | responses | statuses
-const expandedTypeId = ref(null)
+const searchQuery = ref("");
+const editingType = ref(null);
+const savingType = ref(false);
+const editTab = ref("basic"); // basic | fields | responses | statuses
+const expandedTypeId = ref(null);
 
-const newType = ref(emptyType())
-const newField = ref(emptyField())
-const newStatus = ref({ status_key: '', label: '' })
-const newAllowedResponse = ref('')
+const newType = ref(emptyType());
+const newField = ref(emptyField());
+const newStatus = ref({ status_key: "", label: "" });
+const newAllowedResponse = ref("");
 
 function emptyType() {
   return {
-    option_type: '',
+    option_type: "",
     family: familyKey.value,
     icon: null,
-    label: '',
-    description: '',
+    label: "",
+    description: "",
     fields: [],
     allowed_response: [],
     allow_comment: true,
-    support_feature: 'none',
+    support_feature: "none",
     statuses: [],
     use_title: false,
-  }
+  };
 }
 
 function emptyField() {
   return {
-    key: '',
-    label: '',
-    type: 'string',
+    key: "",
+    label: "",
+    type: "string",
     required: false,
     default: null,
-  }
+  };
 }
 
 const FIELD_TYPES = [
-  'string',
-  'text',
-  'textarea',
-  'rich_text',
-  'integer',
-  'boolean',
-  'datetime',
-  'date',
-  'enum',
-  'array',
-  'json',
-  'users',
-  'groups',
-  'files',
-  'location',
-  'inquiry',
-]
+  "string",
+  "text",
+  "textarea",
+  "rich_text",
+  "integer",
+  "boolean",
+  "datetime",
+  "date",
+  "enum",
+  "array",
+  "json",
+  "users",
+  "groups",
+  "files",
+  "location",
+  "inquiry",
+];
 
 const SUPPORT_FEATURES = [
-  'none',
-  'binary',
-  'ternary',
-  'score',
-  'reaction',
-  'majority_judgment',
-  'approval',
-  'ranking',
-  'borda',
-  'condorcet',
-  'quadratic',
-  'token_weighted',
-]
+  "none",
+  "binary",
+  "ternary",
+  "score",
+  "reaction",
+  "majority_judgment",
+  "approval",
+  "ranking",
+  "borda",
+  "condorcet",
+  "quadratic",
+  "token_weighted",
+];
 
-const fieldTypeOptions = computed(() => FIELD_TYPES.map((ft) => ({ id: ft, label: ft })))
+const fieldTypeOptions = computed(() =>
+  FIELD_TYPES.map((ft) => ({ id: ft, label: ft })),
+);
 
-const supportFeatureOptions = computed(() => SUPPORT_FEATURES.map((s) => ({ id: s, label: s })))
+const supportFeatureOptions = computed(() =>
+  SUPPORT_FEATURES.map((s) => ({ id: s, label: s })),
+);
 
 // ============================================================
 // COMPUTED
 // ============================================================
 const availableIcons = computed(() =>
   Object.keys(InquiryOptionIcons)
-    .filter((key) => key !== 'default')
+    .filter((key) => key !== "default")
     .map((iconId) => ({
       id: iconId,
-      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
-    }))
-)
+      label: t("agora", iconId.replace(/([A-Z])/g, " $1").trim()),
+    })),
+);
 
 const getIconComponent = (iconName) => {
-  const id = typeof iconName === 'object' ? iconName?.id : iconName
-  return InquiryOptionIcons[id] || InquiryOptionIcons.default
-}
+  const id = typeof iconName === "object" ? iconName?.id : iconName;
+  return InquiryOptionIcons[id] || InquiryOptionIcons.default;
+};
 
 const findIconById = (iconId) => {
-  if (!iconId) return null
-  if (typeof iconId === 'object') return iconId
-  return availableIcons.value.find((i) => i.id === iconId) || null
-}
+  if (!iconId) return null;
+  if (typeof iconId === "object") return iconId;
+  return availableIcons.value.find((i) => i.id === iconId) || null;
+};
 
 const extractIconId = (icon) => {
-  if (!icon) return ''
-  if (typeof icon === 'string') return icon
-  if (typeof icon === 'object') return icon.id || ''
-  return String(icon)
-}
+  if (!icon) return "";
+  if (typeof icon === "string") return icon;
+  if (typeof icon === "object") return icon.id || "";
+  return String(icon);
+};
 
 const normalizeArray = (value) => {
-  if (Array.isArray(value)) return value
-  if (typeof value === 'string' && value) {
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string" && value) {
     try {
-      const parsed = JSON.parse(value)
-      return Array.isArray(parsed) ? parsed : []
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return []
+      return [];
     }
   }
-  return []
-}
+  return [];
+};
 
 // API returns 0/1 for booleans — NcCheckboxRadioSwitch requires real Boolean
-const toBool = (value) => value === true || value === 1 || value === '1' || value === 'true'
+const toBool = (value) =>
+  value === true || value === 1 || value === "1" || value === "true";
 
-const allTypes = computed(() => appSettingsStore.optionTypeTab ?? [])
+const allTypes = computed(() => appSettingsStore.optionTypeTab ?? []);
 
 const filteredTypes = computed(() => {
   // Family is fixed by parent — filter automatically
   let list = familyKey.value
     ? allTypes.value.filter((type) => type.family === familyKey.value)
-    : allTypes.value
+    : allTypes.value;
 
   if (searchQuery.value.trim()) {
-    const q = searchQuery.value.toLowerCase()
+    const q = searchQuery.value.toLowerCase();
     list = list.filter(
       (type) =>
         type.option_type?.toLowerCase().includes(q) ||
         type.label?.toLowerCase().includes(q) ||
         type.description?.toLowerCase().includes(q) ||
-        type.family?.toLowerCase().includes(q)
-    )
+        type.family?.toLowerCase().includes(q),
+    );
   }
 
   return list.map((type) => ({
@@ -176,61 +183,65 @@ const filteredTypes = computed(() => {
     fields: normalizeArray(type.fields),
     allowed_response: normalizeArray(type.allowed_response),
     statuses: normalizeArray(type.statuses),
-  }))
-})
+  }));
+});
 
 // ============================================================
 // VALIDATION
 // ============================================================
 const validateType = (type, isEdit = false) => {
   if (!type.option_type?.trim()) {
-    showError(t('agora', 'Option type key is mandatory'))
-    return false
+    showError(t("agora", "Option type key is mandatory"));
+    return false;
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(type.option_type)) {
     showError(
       t(
-        'agora',
-        'Option type key must be alphanumeric (underscores allowed), starting with a letter'
-      )
-    )
-    return false
+        "agora",
+        "Option type key must be alphanumeric (underscores allowed), starting with a letter",
+      ),
+    );
+    return false;
   }
   if (!type.label?.trim()) {
-    showError(t('agora', 'Label is mandatory'))
-    return false
+    showError(t("agora", "Label is mandatory"));
+    return false;
   }
   if (!isEdit) {
-    const exists = allTypes.value.some((existing) => existing.option_type === type.option_type)
+    const exists = allTypes.value.some(
+      (existing) => existing.option_type === type.option_type,
+    );
     if (exists) {
-      showError(t('agora', 'An option type with this key already exists'))
-      return false
+      showError(t("agora", "An option type with this key already exists"));
+      return false;
     }
   }
-  return true
-}
+  return true;
+};
 
 // ============================================================
 // CRUD
 // ============================================================
 const addType = async () => {
-  if (!validateType(newType.value, false)) return
-  savingType.value = true
+  if (!validateType(newType.value, false)) return;
+  savingType.value = true;
   try {
     await appSettingsStore.addOptionType({
       ...newType.value,
       family: familyKey.value,
       icon: extractIconId(newType.value.icon),
       created: Date.now(),
-    })
-    showSuccess(t('agora', 'Option type added'))
-    newType.value = emptyType()
+    });
+    showSuccess(t("agora", "Option type added"));
+    newType.value = emptyType();
   } catch (e) {
-    showError(t('agora', 'Failed to add option type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to add option type: {msg}", { msg: e?.message ?? "" }),
+    );
   } finally {
-    savingType.value = false
+    savingType.value = false;
   }
-}
+};
 
 const startEditing = (type) => {
   editingType.value = {
@@ -241,18 +252,18 @@ const startEditing = (type) => {
     statuses: normalizeArray(type.statuses),
     allow_comment: toBool(type.allow_comment),
     use_title: toBool(type.use_title),
-  }
-  editTab.value = 'basic'
-}
+  };
+  editTab.value = "basic";
+};
 
 const cancelEditing = () => {
-  editingType.value = null
-  editTab.value = 'basic'
-}
+  editingType.value = null;
+  editTab.value = "basic";
+};
 
 const updateType = async (type) => {
-  if (!type || !validateType(type, true)) return
-  savingType.value = true
+  if (!type || !validateType(type, true)) return;
+  savingType.value = true;
   try {
     await appSettingsStore.updateOptionType(type.id, {
       ...type,
@@ -260,104 +271,124 @@ const updateType = async (type) => {
       icon: extractIconId(type.icon),
       allow_comment: type.allow_comment ? 1 : 0,
       use_title: type.use_title ? 1 : 0,
-    })
-    showSuccess(t('agora', 'Option type updated'))
-    editingType.value = null
+    });
+    showSuccess(t("agora", "Option type updated"));
+    editingType.value = null;
   } catch (e) {
-    showError(t('agora', 'Failed to update option type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to update option type: {msg}", {
+        msg: e?.message ?? "",
+      }),
+    );
   } finally {
-    savingType.value = false
+    savingType.value = false;
   }
-}
+};
 
 const deleteType = async (type) => {
   if (
     !confirm(
-      t('agora', 'Are you sure you want to delete the option type "{label}"?', {
+      t("agora", 'Are you sure you want to delete the option type "{label}"?', {
         label: type.label || type.option_type,
-      })
+      }),
     )
   ) {
-    return
+    return;
   }
   try {
-    await appSettingsStore.deleteOptionType(type.id)
-    showSuccess(t('agora', 'Option type deleted'))
+    await appSettingsStore.deleteOptionType(type.id);
+    showSuccess(t("agora", "Option type deleted"));
   } catch (e) {
-    showError(t('agora', 'Failed to delete option type: {msg}', { msg: e?.message ?? '' }))
+    showError(
+      t("agora", "Failed to delete option type: {msg}", {
+        msg: e?.message ?? "",
+      }),
+    );
   }
-}
+};
 
 const toggleExpand = (id) => {
-  expandedTypeId.value = expandedTypeId.value === id ? null : id
-}
+  expandedTypeId.value = expandedTypeId.value === id ? null : id;
+};
 
 // ============================================================
 // FIELD MANAGEMENT
 // ============================================================
 const addField = (target) => {
-  const field = newField.value
+  const field = newField.value;
   if (!field.key?.trim()) {
-    showError(t('agora', 'Field key is required'))
-    return
+    showError(t("agora", "Field key is required"));
+    return;
   }
   if (!/^[a-z][a-z0-9_]*$/i.test(field.key)) {
-    showError(t('agora', 'Field key must be alphanumeric (underscores allowed)'))
-    return
+    showError(
+      t("agora", "Field key must be alphanumeric (underscores allowed)"),
+    );
+    return;
   }
-  const arr = target === 'new' ? newType.value.fields : editingType.value.fields
+  const arr =
+    target === "new" ? newType.value.fields : editingType.value.fields;
   if (arr.some((f) => f.key === field.key)) {
-    showError(t('agora', 'A field with this key already exists'))
-    return
+    showError(t("agora", "A field with this key already exists"));
+    return;
   }
-  arr.push({ ...field })
-  newField.value = emptyField()
-}
+  arr.push({ ...field });
+  newField.value = emptyField();
+};
 
 const removeField = (target, index) => {
-  const arr = target === 'new' ? newType.value.fields : editingType.value.fields
-  arr.splice(index, 1)
-}
+  const arr =
+    target === "new" ? newType.value.fields : editingType.value.fields;
+  arr.splice(index, 1);
+};
 
 // ============================================================
 // ALLOWED RESPONSE MANAGEMENT
 // ============================================================
 const addAllowedResponse = (target) => {
-  const val = newAllowedResponse.value?.trim()
-  if (!val) return
-  const arr = target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
-  if (!arr.includes(val)) arr.push(val)
-  newAllowedResponse.value = ''
-}
+  const val = newAllowedResponse.value?.trim();
+  if (!val) return;
+  const arr =
+    target === "new"
+      ? newType.value.allowed_response
+      : editingType.value.allowed_response;
+  if (!arr.includes(val)) arr.push(val);
+  newAllowedResponse.value = "";
+};
 
 const removeAllowedResponse = (target, index) => {
-  const arr = target === 'new' ? newType.value.allowed_response : editingType.value.allowed_response
-  arr.splice(index, 1)
-}
+  const arr =
+    target === "new"
+      ? newType.value.allowed_response
+      : editingType.value.allowed_response;
+  arr.splice(index, 1);
+};
 
 // ============================================================
 // STATUS MANAGEMENT
 // ============================================================
 const addStatus = (target) => {
-  const { statusKey, label } = newStatus.value
+  const { statusKey, label } = newStatus.value;
   if (!statusKey?.trim()) {
-    showError(t('agora', 'Status key is required'))
-    return
+    showError(t("agora", "Status key is required"));
+    return;
   }
-  const arr = target === 'new' ? newType.value.statuses : editingType.value.statuses
+  const arr =
+    target === "new" ? newType.value.statuses : editingType.value.statuses;
   arr.push({
     statusKey: statusKey.trim(),
     label: (label || statusKey).trim(),
-  })
-  newStatus.value = { statusKey: '', label: '' }
-}
+  });
+  newStatus.value = { statusKey: "", label: "" };
+};
 
 const removeStatus = (target, index) => {
-  const arr = target === 'new' ? newType.value.statuses : editingType.value.statuses
-  arr.splice(index, 1)
-}
+  const arr =
+    target === "new" ? newType.value.statuses : editingType.value.statuses;
+  arr.splice(index, 1);
+};
 
-defineExpose({ editingType, newType })
+defineExpose({ editingType, newType });
 </script>
 
 <template>
@@ -365,14 +396,14 @@ defineExpose({ editingType, newType })
     <header class="manager-header">
       <div>
         <h2>
-          {{ t('agora', 'Option types — {family}', { family: familyLabel }) }}
+          {{ t("agora", "Option types — {family}", { family: familyLabel }) }}
         </h2>
         <p class="description">
           {{
             t(
-              'agora',
+              "agora",
               'Configure option types available in the "{family}" family (fields, allowed responses, support engines and statuses).',
-              { family: familyLabel }
+              { family: familyLabel },
             )
           }}
         </p>
@@ -392,7 +423,7 @@ defineExpose({ editingType, newType })
     <!-- ==================== EXISTING TYPES ==================== -->
     <section class="types-list">
       <h3>
-        {{ t('agora', 'Existing option types') }}
+        {{ t("agora", "Existing option types") }}
         <span class="count-badge">{{ filteredTypes.length }}</span>
       </h3>
 
@@ -400,7 +431,7 @@ defineExpose({ editingType, newType })
         v-if="!filteredTypes.length"
         class="empty-state"
       >
-        {{ t('agora', 'No option types match your filters.') }}
+        {{ t("agora", "No option types match your filters.") }}
       </div>
 
       <div
@@ -434,19 +465,29 @@ defineExpose({ editingType, newType })
             </p>
             <div class="type-stats">
               <span class="stat-chip">
-                {{ t('agora', '{count} fields', { count: type.fields.length }) }}
+                {{
+                  t("agora", "{count} fields", { count: type.fields.length })
+                }}
               </span>
               <span
                 v-if="type.allowed_response?.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} responses', { count: type.allowed_response.length }) }}
+                {{
+                  t("agora", "{count} responses", {
+                    count: type.allowed_response.length,
+                  })
+                }}
               </span>
               <span
                 v-if="type.statuses?.length"
                 class="stat-chip"
               >
-                {{ t('agora', '{count} statuses', { count: type.statuses.length }) }}
+                {{
+                  t("agora", "{count} statuses", {
+                    count: type.statuses.length,
+                  })
+                }}
               </span>
               <span
                 v-if="type.support_feature && type.support_feature !== 'none'"
@@ -458,7 +499,7 @@ defineExpose({ editingType, newType })
                 v-if="type.use_title"
                 class="stat-chip title-flag"
               >
-                {{ t('agora', 'uses title') }}
+                {{ t("agora", "uses title") }}
               </span>
             </div>
           </div>
@@ -468,16 +509,20 @@ defineExpose({ editingType, newType })
             @click.stop
           >
             <NcButton @click="toggleExpand(type.id)">
-              {{ expandedTypeId === type.id ? t('agora', 'Hide') : t('agora', 'Details') }}
+              {{
+                expandedTypeId === type.id
+                  ? t("agora", "Hide")
+                  : t("agora", "Details")
+              }}
             </NcButton>
             <NcButton @click="startEditing(type)">
-              {{ t('agora', 'Edit') }}
+              {{ t("agora", "Edit") }}
             </NcButton>
             <NcButton
               type="error"
               @click="deleteType(type)"
             >
-              {{ t('agora', 'Delete') }}
+              {{ t("agora", "Delete") }}
             </NcButton>
           </div>
         </div>
@@ -487,17 +532,17 @@ defineExpose({ editingType, newType })
           class="type-details"
         >
           <div class="detail-section">
-            <h5>{{ t('agora', 'Fields') }}</h5>
+            <h5>{{ t("agora", "Fields") }}</h5>
             <table
               v-if="type.fields.length"
               class="mini-table"
             >
               <thead>
                 <tr>
-                  <th>{{ t('agora', 'Key') }}</th>
-                  <th>{{ t('agora', 'Label') }}</th>
-                  <th>{{ t('agora', 'Type') }}</th>
-                  <th>{{ t('agora', 'Required') }}</th>
+                  <th>{{ t("agora", "Key") }}</th>
+                  <th>{{ t("agora", "Label") }}</th>
+                  <th>{{ t("agora", "Type") }}</th>
+                  <th>{{ t("agora", "Required") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -510,7 +555,7 @@ defineExpose({ editingType, newType })
                   </td>
                   <td>{{ f.label }}</td>
                   <td>{{ f.type }}</td>
-                  <td>{{ f.required ? '✓' : '—' }}</td>
+                  <td>{{ f.required ? "✓" : "—" }}</td>
                 </tr>
               </tbody>
             </table>
@@ -518,12 +563,12 @@ defineExpose({ editingType, newType })
               v-else
               class="muted"
             >
-              {{ t('agora', 'No custom fields') }}
+              {{ t("agora", "No custom fields") }}
             </p>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Allowed responses') }}</h5>
+            <h5>{{ t("agora", "Allowed responses") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(r, i) in type.allowed_response"
@@ -536,13 +581,13 @@ defineExpose({ editingType, newType })
                 v-if="!type.allowed_response?.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
 
           <div class="detail-section">
-            <h5>{{ t('agora', 'Statuses') }}</h5>
+            <h5>{{ t("agora", "Statuses") }}</h5>
             <ul class="pill-list">
               <li
                 v-for="(s, i) in type.statuses"
@@ -555,7 +600,7 @@ defineExpose({ editingType, newType })
                 v-if="!type.statuses?.length"
                 class="muted"
               >
-                {{ t('agora', 'None') }}
+                {{ t("agora", "None") }}
               </li>
             </ul>
           </div>
@@ -565,7 +610,11 @@ defineExpose({ editingType, newType })
 
     <!-- ==================== ADD NEW TYPE ==================== -->
     <section class="add-type-form">
-      <h3>{{ t('agora', 'Add new option type to {family}', { family: familyLabel }) }}</h3>
+      <h3>
+        {{
+          t("agora", "Add new option type to {family}", { family: familyLabel })
+        }}
+      </h3>
 
       <div class="form-grid">
         <NcInputField
@@ -611,13 +660,13 @@ defineExpose({ editingType, newType })
           v-model="newType.allow_comment"
           type="switch"
         >
-          {{ t('agora', 'Allow comments') }}
+          {{ t("agora", "Allow comments") }}
         </NcCheckboxRadioSwitch>
         <NcCheckboxRadioSwitch
           v-model="newType.use_title"
           type="switch"
         >
-          {{ t('agora', 'Use title') }}
+          {{ t("agora", "Use title") }}
         </NcCheckboxRadioSwitch>
 
         <NcInputField
@@ -629,7 +678,7 @@ defineExpose({ editingType, newType })
 
         <!-- Inline fields editor -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Custom fields') }}</label>
+          <label class="field-label">{{ t("agora", "Custom fields") }}</label>
           <div class="inline-editor field-editor">
             <NcInputField
               v-model="newField.key"
@@ -656,13 +705,13 @@ defineExpose({ editingType, newType })
               v-model="newField.required"
               type="checkbox"
             >
-              {{ t('agora', 'Required') }}
+              {{ t("agora", "Required") }}
             </NcCheckboxRadioSwitch>
             <NcButton
               type="secondary"
               @click="addField('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <ul class="field-list">
@@ -683,7 +732,9 @@ defineExpose({ editingType, newType })
 
         <!-- Inline allowed responses -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Allowed responses') }}</label>
+          <label class="field-label">{{
+            t("agora", "Allowed responses")
+          }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newAllowedResponse"
@@ -696,7 +747,7 @@ defineExpose({ editingType, newType })
               type="secondary"
               @click="addAllowedResponse('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -713,7 +764,7 @@ defineExpose({ editingType, newType })
 
         <!-- Inline statuses -->
         <div class="full-width">
-          <label class="field-label">{{ t('agora', 'Statuses') }}</label>
+          <label class="field-label">{{ t("agora", "Statuses") }}</label>
           <div class="inline-editor">
             <NcInputField
               v-model="newStatus.status_key"
@@ -731,7 +782,7 @@ defineExpose({ editingType, newType })
               type="secondary"
               @click="addStatus('new')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -749,14 +800,16 @@ defineExpose({ editingType, newType })
         <div class="form-actions full-width">
           <NcButton
             type="primary"
-            :disabled="savingType || !newType.option_type || !newType.label || !familyKey"
+            :disabled="
+              savingType || !newType.option_type || !newType.label || !familyKey
+            "
             @click="addType"
           >
             <NcLoadingIcon
               v-if="savingType"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Add option type') }}</span>
+            <span v-else>{{ t("agora", "Add option type") }}</span>
           </NcButton>
         </div>
       </div>
@@ -770,7 +823,7 @@ defineExpose({ editingType, newType })
     >
       <div class="modal-content large-modal">
         <header class="modal-header">
-          <h3>{{ t('agora', 'Edit option type') }}: {{ editingType.label }}</h3>
+          <h3>{{ t("agora", "Edit option type") }}: {{ editingType.label }}</h3>
           <NcButton
             type="tertiary"
             @click="cancelEditing"
@@ -787,7 +840,7 @@ defineExpose({ editingType, newType })
             :class="{ active: editTab === tab }"
             @click="editTab = tab"
           >
-            {{ t('agora', tab) }}
+            {{ t("agora", tab) }}
           </button>
         </nav>
 
@@ -834,13 +887,13 @@ defineExpose({ editingType, newType })
             v-model="editingType.allow_comment"
             type="switch"
           >
-            {{ t('agora', 'Allow comments') }}
+            {{ t("agora", "Allow comments") }}
           </NcCheckboxRadioSwitch>
           <NcCheckboxRadioSwitch
             v-model="editingType.use_title"
             type="switch"
           >
-            {{ t('agora', 'Use title') }}
+            {{ t("agora", "Use title") }}
           </NcCheckboxRadioSwitch>
           <NcInputField
             v-model="editingType.description"
@@ -881,13 +934,13 @@ defineExpose({ editingType, newType })
               v-model="newField.required"
               type="checkbox"
             >
-              {{ t('agora', 'Required') }}
+              {{ t("agora", "Required") }}
             </NcCheckboxRadioSwitch>
             <NcButton
               type="secondary"
               @click="addField('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <ul class="field-list">
@@ -923,7 +976,7 @@ defineExpose({ editingType, newType })
               type="secondary"
               @click="addAllowedResponse('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -960,7 +1013,7 @@ defineExpose({ editingType, newType })
               type="secondary"
               @click="addStatus('edit')"
             >
-              {{ t('agora', 'Add') }}
+              {{ t("agora", "Add") }}
             </NcButton>
           </div>
           <div class="pill-list">
@@ -977,7 +1030,7 @@ defineExpose({ editingType, newType })
 
         <footer class="modal-actions">
           <NcButton @click="cancelEditing">
-            {{ t('agora', 'Cancel') }}
+            {{ t("agora", "Cancel") }}
           </NcButton>
           <NcButton
             type="primary"
@@ -988,7 +1041,7 @@ defineExpose({ editingType, newType })
               v-if="savingType"
               :size="16"
             />
-            <span v-else>{{ t('agora', 'Save changes') }}</span>
+            <span v-else>{{ t("agora", "Save changes") }}</span>
           </NcButton>
         </footer>
       </div>

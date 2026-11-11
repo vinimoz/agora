@@ -4,237 +4,285 @@
 -->
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
-import { computed } from 'vue'
-import { DateTime } from 'luxon'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
-import { SupportFeature } from '../Base/index.ts'
-import { canComment, canSupport, createInquiryContext } from '../../utils/permissions.ts'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
-import { InquiryGeneralIcons, BadgeIcons, StatusIcons } from '../../utils/icons.ts'
+import { RouterLink } from "vue-router";
+import { computed } from "vue";
+import { DateTime } from "luxon";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import NcCounterBubble from "@nextcloud/vue/components/NcCounterBubble";
+import { SupportFeature } from "../Base/index.ts";
+import {
+  canComment,
+  canSupport,
+  createInquiryContext,
+} from "../../utils/permissions.ts";
+import NcPopover from "@nextcloud/vue/components/NcPopover";
+import {
+  InquiryGeneralIcons,
+  BadgeIcons,
+  StatusIcons,
+} from "../../utils/icons.ts";
 
-import { type Inquiry } from '../../stores/inquiry'
-import { useSessionStore } from '../../stores/session.ts'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
+import { type Inquiry } from "../../stores/inquiry";
+import { useSessionStore } from "../../stores/session.ts";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 interface Props {
-  inquiry: Inquiry
-  featured?: boolean
-  activeId?: number | null
-  interactionAction?: string
-  size?: 'small' | 'normal' | 'large'
-  compact?: boolean
-  noLink?: boolean
-  gridView?: boolean
-  showIcon?: boolean
-  showCover?: boolean
-  showMeta?: boolean
-  showAuthor?: boolean
-  showDescription?: boolean
-  showExpiry?: boolean
-  showType?: boolean
-  showStatus?: boolean
-  showSupport?: boolean
-  showComment?: boolean
-  showParticipants?: boolean
+  inquiry: Inquiry;
+  featured?: boolean;
+  activeId?: number | null;
+  interactionAction?: string;
+  size?: "small" | "normal" | "large";
+  compact?: boolean;
+  noLink?: boolean;
+  gridView?: boolean;
+  // showIcon?: boolean;
+  showCover?: boolean;
+  // showMeta?: boolean;
+  showAuthor?: boolean;
+  showDescription?: boolean;
+  showExpiry?: boolean;
+  showType?: boolean;
+  showStatus?: boolean;
+  showSupport?: boolean;
+  showComment?: boolean;
+  showParticipants?: boolean;
 }
 
 const {
   inquiry,
   noLink = false,
-  interactionAction = 'open',
+  interactionAction = "open",
   activeId = null,
   gridView = false,
-  showIcon = true,
+  // showIcon = true,
   showCover = true,
-  showMeta = true,
+  // showMeta = true,
   showDescription = true,
   showExpiry = true,
   showStatus = true,
   showSupport = true,
   showParticipants = true,
   featured = false,
-  size = 'normal',
+  size = "normal",
   compact = false,
-} = defineProps<Props>()
+} = defineProps<Props>();
 
-const emit = defineEmits<{ click: [inquiry: Inquiry] }>()
+const emit = defineEmits<{ click: [inquiry: Inquiry] }>();
 
 function onCardClick(e: MouseEvent) {
   // Let action buttons / slot content handle their own clicks
   if (
-    (e.target as HTMLElement).closest('.actions, .compact-actions, button, [data-no-card-click]')
+    (e.target as HTMLElement).closest(
+      ".actions, .compact-actions, button, [data-no-card-click]",
+    )
   ) {
-    return
+    return;
   }
-  emit('click', inquiry)
+  emit("click", inquiry);
 }
 
 const isSelectOnly = computed(
-  () => interactionAction === 'select' || (interactionAction === 'navigate' && noLink)
-)
+  () =>
+    interactionAction === "select" ||
+    (interactionAction === "navigate" && noLink),
+);
 
 // Context for permissions
-const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
+const context = computed(() =>
+  createInquiryContext(inquiry, sessionStore.appSettings),
+);
 
 function htmlToFirstLine(html: string): string {
-  const tempDiv = document.createElement('div')
-  tempDiv.innerHTML = html
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
 
-  let text = tempDiv.textContent || tempDiv.innerText || ''
+  let text = tempDiv.textContent || tempDiv.innerText || "";
 
-  text = text.replace(/\s+/g, ' ').trim()
+  text = text.replace(/\s+/g, " ").trim();
 
-  const firstLine = text.split(/\r?\n/)[0]
+  const firstLine = text.split(/\r?\n/)[0];
 
-  return firstLine
+  return firstLine;
 }
 
 const timeExpirationRelative = computed(() => {
   if (inquiry.configuration.expire) {
-    return DateTime.fromMillis(inquiry.configuration.expire * 1000).toRelative()
+    return DateTime.fromMillis(
+      inquiry.configuration.expire * 1000,
+    ).toRelative();
   }
-  return t('agora', 'never')
-})
+  return t("agora", "never");
+});
 
 const timeCreatedRelative = computed(
-  () => DateTime.fromMillis(inquiry.status.created * 1000).toRelative() as string
-)
+  () =>
+    DateTime.fromMillis(inquiry.status.created * 1000).toRelative() as string,
+);
 
 const safeDescription = computed(() => {
   if (inquiry.status.isArchived) {
-    return t('agora', 'Archived {relativeTime}', {
-      relativeTime: DateTime.fromMillis(inquiry.status.archivedDate * 1000).toRelative() as string,
-    })
+    return t("agora", "Archived {relativeTime}", {
+      relativeTime: DateTime.fromMillis(
+        inquiry.status.archivedDate * 1000,
+      ).toRelative() as string,
+    });
   }
 
-  return t('agora', 'Started {relativeTime} from {ownerName}', {
+  return t("agora", "Started {relativeTime} from {ownerName}", {
     ownerName: inquiry.owner.displayName,
     relativeTime: timeCreatedRelative.value,
-  })
-})
+  });
+});
 
 const formatDate = (timestamp: number) =>
-  DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
+  DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT);
 
-const formatVoteDate = (dateString: string, locale: string = navigator.language) => {
-  if (!dateString) return ''
+const formatVoteDate = (
+  dateString: string,
+  locale: string = navigator.language,
+) => {
+  if (!dateString) return "";
 
-  const cleaned = dateString.replace(/^"+|"+$/g, '')
+  const cleaned = dateString.replace(/^"+|"+$/g, "");
 
-  const date = new Date(cleaned)
+  const date = new Date(cleaned);
 
-  return date.toLocaleDateString(locale)
-}
+  return date.toLocaleDateString(locale);
+};
 
 const inquiryStatus = computed(
-  () => inquiry.status.inquiryStatus || inquiry.getInquiryStatus?.(inquiry.id)
-)
+  () => inquiry.status.inquiryStatus || inquiry.getInquiryStatus?.(inquiry.id),
+);
 
 const inquiryStatusIcon = computed(() => {
   const statusItem = sessionStore.appSettings.inquiryStatusTab.find(
-    (item) => item.inquiryType === inquiry.type && item.statusKey === inquiry.status.inquiryStatus
-  )
+    (item) =>
+      item.inquiryType === inquiry.type &&
+      item.statusKey === inquiry.status.inquiryStatus,
+  );
 
   if (!statusItem) {
-    return StatusIcons.Draft
+    return StatusIcons.Draft;
   }
 
-  return StatusIcons[statusItem.icon as keyof typeof StatusIcons] || StatusIcons.Draft
-})
+  return (
+    StatusIcons[statusItem.icon as keyof typeof StatusIcons] ||
+    StatusIcons.Draft
+  );
+});
 
 const inquiryStatusLabel = computed(() => {
   const statusItem = sessionStore.appSettings.inquiryStatusTab.find(
-    (item) => item.inquiryType === inquiry.type && item.statusKey === inquiry.status.inquiryStatus
-  )
+    (item) =>
+      item.inquiryType === inquiry.type &&
+      item.statusKey === inquiry.status.inquiryStatus,
+  );
 
   if (!statusItem) {
-    return t('agora', 'Draft')
+    return t("agora", "Draft");
   }
 
-  return statusItem.label || t('agora', 'Draft')
-})
+  return statusItem.label || t("agora", "Draft");
+});
 
 const inquiryStatusInfo = computed(() => {
   if (!inquiryStatus.value || !sessionStore.appSettings?.inquiryStatusTab) {
-    return null
+    return null;
   }
 
   return sessionStore.appSettings.inquiryStatusTab.find(
-    (status) => status.status_key === inquiryStatus.value
-  )
-})
+    (status) => status.status_key === inquiryStatus.value,
+  );
+});
 
 // Moderation status computed properties
-const moderationStatus = computed(() => inquiry.status.moderationStatus || null)
+const moderationStatus = computed(
+  () => inquiry.status.moderationStatus || null,
+);
 
-const isModerationRejected = computed(() => moderationStatus.value === 'rejected')
-const isModerationPending = computed(() => moderationStatus.value === 'pending')
+const isModerationRejected = computed(
+  () => moderationStatus.value === "rejected",
+);
+const isModerationPending = computed(
+  () => moderationStatus.value === "pending",
+);
 
 // Get moderation status icon
 const moderationStatusIcon = computed(() => {
-  if (isModerationRejected.value) return StatusIcons.Error
-  if (isModerationPending.value) return StatusIcons.Warning
-  return null
-})
+  if (isModerationRejected.value) return StatusIcons.Error;
+  if (isModerationPending.value) return StatusIcons.Warning;
+  return null;
+});
 
 // Get moderation status label
 const moderationStatusLabel = computed(() => {
-  if (isModerationRejected.value) return t('agora', 'Rejected')
-  if (isModerationPending.value) return t('agora', 'Pending Review')
-  return null
-})
+  if (isModerationRejected.value) return t("agora", "Rejected");
+  if (isModerationPending.value) return t("agora", "Pending Review");
+  return null;
+});
 
 // Get moderation status description
 const moderationStatusDescription = computed(() => {
   if (isModerationRejected.value) {
     return inquiry.status.moderationReason
-      ? t('agora', 'Rejected: {reason}', { reason: inquiry.status.moderationReason })
-      : t('agora', 'This inquiry has been rejected')
+      ? t("agora", "Rejected: {reason}", {
+          reason: inquiry.status.moderationReason,
+        })
+      : t("agora", "This inquiry has been rejected");
   }
   if (isModerationPending.value) {
-    return t('agora', 'This inquiry is pending moderation review')
+    return t("agora", "This inquiry is pending moderation review");
   }
-  return null
-})
+  return null;
+});
 
 // Check if we should show moderation banner
-const showModerationBanner = computed(() => isModerationRejected.value || isModerationPending.value)
+const showModerationBanner = computed(
+  () => isModerationRejected.value || isModerationPending.value,
+);
 
 // Get inquiry type data using helper
 const inquiryTypeData = computed(() =>
-  getInquiryTypeData(inquiry.type, sessionStore.appSettings.inquiryTypeTab || [], inquiry.type)
-)
+  getInquiryTypeData(
+    inquiry.type,
+    sessionStore.appSettings.inquiryTypeTab || [],
+    inquiry.type,
+  ),
+);
 
 // Image URL function
-function getNextcloudPreviewUrl(fileId: number, x = 1920, y = 1080, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`
+function getNextcloudPreviewUrl(
+  fileId: number,
+  x = 1920,
+  y = 1080,
+  autoScale = true,
+) {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`;
 }
 
 const currentCoverUrl = computed(() => {
   if (inquiry.coverId) {
-    return getNextcloudPreviewUrl(inquiry.coverId)
+    return getNextcloudPreviewUrl(inquiry.coverId);
   }
-  return null
-})
+  return null;
+});
 
 // Description for grid mode
 const gridDescription = computed(() => {
   if (inquiry.description) {
-    return htmlToFirstLine(inquiry.description)
+    return htmlToFirstLine(inquiry.description);
   }
-  return t('agora', 'No description provided')
-})
+  return t("agora", "No description provided");
+});
 
 // Citizen inquiry features
 const hasVotePeriod = computed(
-  () => inquiry.miscFields?.support_start && inquiry.miscFields?.support_end
-)
+  () => inquiry.miscFields?.support_start && inquiry.miscFields?.support_end,
+);
 </script>
 
 <template>
@@ -286,7 +334,7 @@ const hasVotePeriod = computed(
           />
           <div class="description">
             {{
-              t('agora', 'No access to this inquiry of {ownerName}', {
+              t("agora", "No access to this inquiry of {ownerName}", {
                 ownerName: inquiry.owner.displayName,
               })
             }}
@@ -321,7 +369,10 @@ const hasVotePeriod = computed(
       <div
         v-else
         class="item__title"
-        :class="{ closed: inquiry.status.isExpired, active: inquiry.id === activeId }"
+        :class="{
+          closed: inquiry.status.isExpired,
+          active: inquiry.id === activeId,
+        }"
       >
         <div class="title_line">
           <span class="title">
@@ -530,9 +581,17 @@ const hasVotePeriod = computed(
 
         <div class="compact-meta">
           <span
-            v-if="showComment && canComment(context) && inquiry.status.countComments > 0"
+            v-if="
+              showComment &&
+                canComment(context) &&
+                inquiry.status.countComments > 0
+            "
             class="compact-count"
-            :title="t('agora', '{count} comments', { count: inquiry.status.countComments || 0 })"
+            :title="
+              t('agora', '{count} comments', {
+                count: inquiry.status.countComments || 0,
+              })
+            "
           >
             <component
               :is="StatusIcons.ForumOutline"
@@ -545,7 +604,11 @@ const hasVotePeriod = computed(
           <span
             v-if="canSupport(context)"
             class="compact-count"
-            :title="t('agora', '{count} supports', { count: inquiry.status.countSupports || 0 })"
+            :title="
+              t('agora', '{count} supports', {
+                count: inquiry.status.countSupports || 0,
+              })
+            "
           >
             <component
               :is="StatusIcons.ThumbsUp"
@@ -648,7 +711,11 @@ const hasVotePeriod = computed(
           <div
             v-if="showExpiry && !hasVotePeriod && inquiry.configuration.expire"
             class="expiration-corner"
-            :title="t('agora', 'Expires {relativeTime}', { relativeTime: timeExpirationRelative })"
+            :title="
+              t('agora', 'Expires {relativeTime}', {
+                relativeTime: timeExpirationRelative,
+              })
+            "
           >
             <component
               :is="InquiryGeneralIcons.Expiration"
@@ -730,7 +797,10 @@ const hasVotePeriod = computed(
                 </div>
 
                 <div
-                  v-if="inquiry.type !== 'official' && inquiry.status.countParticipants > 0"
+                  v-if="
+                    inquiry.type !== 'official' &&
+                      inquiry.status.countParticipants > 0
+                  "
                   class="meta-chip meta-chip--participants"
                   :title="
                     t('agora', '{count} participants', {
@@ -797,7 +867,9 @@ const hasVotePeriod = computed(
                     :size="12"
                     class="icon"
                   />
-                  <span class="vote-date-label">{{ t('agora', 'Start support:') }}</span>
+                  <span class="vote-date-label">{{
+                    t("agora", "Start support:")
+                  }}</span>
                   <span class="vote-date-value">{{
                     formatVoteDate(inquiry.miscFields.support_start)
                   }}</span>
@@ -808,7 +880,9 @@ const hasVotePeriod = computed(
                     :size="12"
                     class="icon"
                   />
-                  <span class="vote-date-label">{{ t('agora', 'End support:') }}</span>
+                  <span class="vote-date-label">{{
+                    t("agora", "End support:")
+                  }}</span>
                   <span class="vote-date-value">{{
                     formatVoteDate(inquiry.miscFields.support_end)
                   }}</span>
@@ -835,7 +909,9 @@ const hasVotePeriod = computed(
                       :size="12"
                       class="icon"
                     />
-                    <span>{{ formatDate(inquiry.status.lastInteraction) }}</span>
+                    <span>{{
+                      formatDate(inquiry.status.lastInteraction)
+                    }}</span>
                   </div>
 
                   <div
@@ -865,11 +941,7 @@ const hasVotePeriod = computed(
 
 <style lang="scss" scoped>
 // Import color module for modern color functions
-@use 'sass:color';
-
-/* =========================================================
-   Design tokens
-	   ========================================================= */
+@use "sass:color";
 $chip-bg: #ffffff;
 $chip-border: var(--color-border);
 $chip-radius: 999px;
@@ -889,10 +961,6 @@ $transition-fast: 0.18s ease;
 $transition-base: 0.25s ease;
 
 .inquiry-item {
-  /* =========================================================
-	   Shared chip primitive
-		   ========================================================= */
-
   .chip,
   .meta-chip {
     display: inline-flex;
@@ -1052,9 +1120,6 @@ $transition-base: 0.25s ease;
       }
     }
   }
-  /* =========================================================
-	   LIST VIEW
-		   ========================================================= */
   &.list-view {
     display: flex;
     column-gap: 0.75rem;
@@ -1140,10 +1205,6 @@ $transition-base: 0.25s ease;
       align-items: center;
     }
   }
-
-  /* =========================================================
-	   GRID VIEW
-		   ========================================================= */
   &.grid-view {
     cursor: pointer;
 
@@ -1197,8 +1258,6 @@ $transition-base: 0.25s ease;
         display: flex;
         overflow: hidden;
 
-        // NcTooltip renders its trigger inside a wrapper span; make it
-        // a proper flex child so ellipsis still works on the link.
         > :deep(*) {
           flex: 1;
           min-width: 0;
@@ -1390,8 +1449,6 @@ $transition-base: 0.25s ease;
         }
       }
 
-      /* When there is no cover image, add a subtle inset area so the
-			   avatar / expire pill still look intentional at the top */
       &.no-cover {
         min-height: 88px;
         background: linear-gradient(
@@ -1632,9 +1689,6 @@ $transition-base: 0.25s ease;
   }
 }
 
-/* =========================================================
-		       Responsive
-			       ========================================================= */
 @media (max-width: 768px) {
   .inquiry-item.grid-view {
     .grid-card {

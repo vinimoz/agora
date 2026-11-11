@@ -4,27 +4,27 @@
 -->
 
 <script setup>
-import { InputDiv } from '../../Base/index.ts'
-import { t } from '@nextcloud/l10n'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
-import { computed } from 'vue'
-import { NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { InputDiv } from "../../Base/index.ts";
+import { t } from "@nextcloud/l10n";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
+import { computed } from "vue";
+import { NcCheckboxRadioSwitch } from "@nextcloud/vue";
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 const placeholder = computed(() => {
-  let privacy = t('agora', 'Enter the URL of your privacy policy')
-  let imprint = t('agora', 'Enter the URL of your legal notice')
+  let privacy = t("agora", "Enter the URL of your privacy policy");
+  let imprint = t("agora", "Enter the URL of your legal notice");
   if (appSettingsStore.defaultPrivacyUrl) {
-    privacy = appSettingsStore.defaultPrivacyUrl
+    privacy = appSettingsStore.defaultPrivacyUrl;
   }
   if (appSettingsStore.defaultImprintUrl) {
-    imprint = appSettingsStore.defaultImprintUrl
+    imprint = appSettingsStore.defaultImprintUrl;
   }
   return {
     privacy,
     imprint,
-  }
-})
+  };
+});
 </script>
 
 <template>
@@ -34,7 +34,12 @@ const placeholder = computed(() => {
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{ t('agora', 'Use the default terms for public inquiries and enable the default footer') }}
+      {{
+        t(
+          "agora",
+          "Use the default terms for public inquiries and enable the default footer",
+        )
+      }}
     </NcCheckboxRadioSwitch>
   </div>
   <div
@@ -42,7 +47,12 @@ const placeholder = computed(() => {
     class="user_settings"
   >
     <p class="settings-description">
-      {{ t('agora', 'If you want to use different terms for public inquiries, enter them below.') }}
+      {{
+        t(
+          "agora",
+          "If you want to use different terms for public inquiries, enter them below.",
+        )
+      }}
     </p>
 
     <InputDiv

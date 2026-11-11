@@ -148,77 +148,82 @@
       @click="handleRemoveVote"
     >
       <X :size="14" />
-      {{ t('agora', 'Reset') }}
+      {{ t("agora", "Reset") }}
     </NcButton>
   </div>
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { X } from 'lucide-vue-next'
-import type { Option, Inquiry, SupportData, SupportValue } from '../../Types/index'
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { X } from "lucide-vue-next";
+import type {
+  Option,
+  Inquiry,
+  SupportData,
+  SupportValue,
+} from "../../Types/index";
 
-import VoteInputBinary from './VoteInputs/VoteInputBinary.vue'
-import VoteInputTernary from './VoteInputs/VoteInputTernary.vue'
-import VoteInputStar from './VoteInputs/VoteInputStar.vue'
-import VoteInputScore from './VoteInputs/VoteInputScore.vue'
-import VoteInputReaction from './VoteInputs/VoteInputReaction.vue'
-import VoteInputApproval from './VoteInputs/VoteInputApproval.vue'
-import VoteInputRanking from './VoteInputs/VoteInputRanking.vue'
-import VoteInputMajorityJudgment from './VoteInputs/VoteInputMajorityJudgment.vue'
-import VoteInputQuadratic from './VoteInputs/VoteInputQuadratic.vue'
-import VoteInputTokenWeighted from './VoteInputs/VoteInputTokenWeighted.vue'
-import VoteInputCondorcet from './VoteInputs/VoteInputCondorcet.vue'
-import VoteInputPhasedVoting from './VoteInputs/VoteInputPhasedVoting.vue'
-import VoteInputBorda from './VoteInputs/VoteInputBorda.vue'
-import VoteInputNone from './VoteInputs/VoteInputNone.vue'
+import VoteInputBinary from "./VoteInputs/VoteInputBinary.vue";
+import VoteInputTernary from "./VoteInputs/VoteInputTernary.vue";
+import VoteInputStar from "./VoteInputs/VoteInputStar.vue";
+import VoteInputScore from "./VoteInputs/VoteInputScore.vue";
+import VoteInputReaction from "./VoteInputs/VoteInputReaction.vue";
+import VoteInputApproval from "./VoteInputs/VoteInputApproval.vue";
+import VoteInputRanking from "./VoteInputs/VoteInputRanking.vue";
+import VoteInputMajorityJudgment from "./VoteInputs/VoteInputMajorityJudgment.vue";
+import VoteInputQuadratic from "./VoteInputs/VoteInputQuadratic.vue";
+import VoteInputTokenWeighted from "./VoteInputs/VoteInputTokenWeighted.vue";
+import VoteInputCondorcet from "./VoteInputs/VoteInputCondorcet.vue";
+import VoteInputPhasedVoting from "./VoteInputs/VoteInputPhasedVoting.vue";
+import VoteInputBorda from "./VoteInputs/VoteInputBorda.vue";
+import VoteInputNone from "./VoteInputs/VoteInputNone.vue";
 
 const props = defineProps<{
-  engineId: string
-  engineConfig: Record<string, unknown>
-  item: Option | Inquiry
-  disabled?: boolean
-  userVote?: SupportData
-  isMultiEngine?: boolean
-  isSelected?: boolean
-  currentRank?: number | null
-  currentGrade?: string | null
-  currentScore?: number | null
-  currentStar?: number | null
-  currentReaction?: string[] | null
-  currentQuadraticVotes?: number | null
-  currentTokenWeight?: number | null
-  canRemoveVote?: boolean
-  totalItems?: number
-}>()
+  engineId: string;
+  engineConfig: Record<string, unknown>;
+  item: Option | Inquiry;
+  disabled?: boolean;
+  userVote?: SupportData;
+  isMultiEngine?: boolean;
+  isSelected?: boolean;
+  currentRank?: number | null;
+  currentGrade?: string | null;
+  currentScore?: number | null;
+  currentStar?: number | null;
+  currentReaction?: string[] | null;
+  currentQuadraticVotes?: number | null;
+  currentTokenWeight?: number | null;
+  canRemoveVote?: boolean;
+  totalItems?: number;
+}>();
 
 const emit = defineEmits<{
-  vote: [value: SupportValue]
-  approvalToggle: [itemId: number]
-  changeRank: [rank: number | null]
-  changeGrade: [grade: string | null]
-  removeVote: []
-  'update:score': [itemId: number, score: number | null]
-  'update:star': [itemId: number, star: number | null]
-  'update:reaction': [itemId: number, reaction: string[] | null]
-  'update:quadratic': [itemId: number, votes: number | null]
-  'update:token_weight': [itemId: number, weight: number | null]
-}>()
+  vote: [value: SupportValue];
+  approvalToggle: [itemId: number];
+  changeRank: [rank: number | null];
+  changeGrade: [grade: string | null];
+  removeVote: [];
+  "update:score": [itemId: number, score: number | null];
+  "update:star": [itemId: number, star: number | null];
+  "update:reaction": [itemId: number, reaction: string[] | null];
+  "update:quadratic": [itemId: number, votes: number | null];
+  "update:token_weight": [itemId: number, weight: number | null];
+}>();
 
-console.log(' PROPS ITEM ', props.item)
-console.log(' USER VOTEEEEEEEEEEEEEEE ', props.userVote)
+console.log(" PROPS ITEM ", props.item);
+console.log(" USER VOTEEEEEEEEEEEEEEE ", props.userVote);
 
 function handleVote(value: SupportValue) {
-  emit('vote', value)
+  emit("vote", value);
 }
 
 function handleApprovalToggle() {
-  emit('approvalToggle', props.item.id)
+  emit("approvalToggle", props.item.id);
 }
 
 function handleRemoveVote() {
-  if (!props.disabled) emit('removeVote')
+  if (!props.disabled) emit("removeVote");
 }
 </script>
 

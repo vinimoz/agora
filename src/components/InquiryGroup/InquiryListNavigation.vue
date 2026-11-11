@@ -6,12 +6,12 @@
 <template>
   <div class="inquiry-navigation-list">
     <div class="nav-header">
-      <span class="nav-title">{{ t('agora', 'Inquiries') }}</span>
-      <span class="nav-count">{{ inquiries.length }}</span>
+      <span class="nav-title">{{ t("agora", "Items") }}</span>
+      <span class="nav-count">{{ props.inquiries.length }}</span>
     </div>
     <div class="nav-list">
       <div
-        v-for="inquiry in inquiries"
+        v-for="inquiry in props.inquiries"
         :key="inquiry.id"
         class="nav-item"
         @click="handleClick(inquiry)"
@@ -40,29 +40,29 @@
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { Inquiry } from '../../Types'
+import { t } from "@nextcloud/l10n";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { Inquiry } from "../../Types";
 
 const props = defineProps<{
-  inquiries: Inquiry[]
-}>()
+  inquiries: Inquiry[];
+}>();
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-}>()
+  click: [inquiry: Inquiry];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 function getTypeIcon(type: string) {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const data = getInquiryTypeData(type, types)
-  return data?.icon || 'div'
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const data = getInquiryTypeData(type, types);
+  return data?.icon || "div";
 }
 
 function handleClick(inquiry: Inquiry) {
-  emit('click', inquiry)
+  emit("click", inquiry);
 }
 </script>
 

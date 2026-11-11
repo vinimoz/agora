@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <div class="landing-search">
@@ -12,22 +12,24 @@ AGPL-3.0-or-later */
       v-model="query"
       type="search"
       class="search-input"
-      :placeholder="t('agora', 'Search for information, a service, a discussion…')"
+      :placeholder="
+        t('agora', 'Search for information, a service, a discussion…')
+      "
       @keyup.enter="submit"
     >
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
+import { ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
 
-const emit = defineEmits<{ search: [query: string] }>()
-const query = ref('')
+const emit = defineEmits<{ search: [query: string] }>();
+const query = ref("");
 
 function submit() {
-  if (query.value.trim()) emit('search', query.value.trim())
+  if (query.value.trim()) emit("search", query.value.trim());
 }
 </script>
 

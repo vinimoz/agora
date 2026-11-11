@@ -3,82 +3,79 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { WatcherMode, WatcherStatus } from '../composables/useInquiryWatcher.types'
-import type { User } from '../Types/index.ts'
-import type { ViewMode } from '../Types/inquiry.types'
-import type { Share } from './share.types'
-import type { TimeZoneTypes } from './dateTime'
+import type { WatcherMode, WatcherStatus } from "./inquiryWatcher.types.ts";
+import type { User } from "../Types/index.ts";
+import type { ViewMode, FilterType } from "../Types/inquiry.types";
+import type { Share } from "./share.types";
+import type { TimeZoneTypes } from "./dateTime";
 
-export type WatcherMode = 'off' | 'periodic' | 'long-polling' | 'manual'
-export type WatcherStatus = 'idle' | 'loading' | 'loaded' | 'error'
-
-type RouteName = string | symbol | undefined
+type RouteName = string | symbol | undefined;
 
 interface RouteParams {
-  id: number
-  token: string
-  type: FilterType
-  slug: string
+  id: number;
+  token: string;
+  type: FilterType;
+  slug: string;
 }
 
 export type Route = {
-  currentRoute: string
-  name: RouteName
-  path: string
-  params: RouteParams
-}
+  currentRoute: string;
+  name: RouteName;
+  path: string;
+  params: RouteParams;
+};
 
 export type UserStatus = {
-  isLoggedin: boolean
-  isAdmin: boolean
-  isModerator: boolean
-  isOfficial: boolean
-  isGroupEditor: boolean
-}
+  isLoggedin: boolean;
+  isAdmin: boolean;
+  isModerator: boolean;
+  isOfficial: boolean;
+  isGroupEditor: boolean;
+};
 
 export type SessionSettings = {
-  viewModeForced: null | ViewMode
-  timezoneName: TimeZoneTypes | string
-}
+  viewModeForced: null | ViewMode;
+  timezoneName: TimeZoneTypes | string;
+};
 
 export type Watcher = {
-  id: string
-  mode: WatcherMode
-  status: WatcherStatus
-  interval?: number
-  lastUpdate: number
-  lastMessage?: string
-}
+  id: string;
+  mode: WatcherMode;
+  status: WatcherStatus;
+  interval?: number;
+  lastUpdate: number;
+  lastMessage?: string;
+};
 
 export type AppPermissions = {
-  addShares: boolean
-  addSharesExternal: boolean
-  changeForeignVotes: boolean
-  publicShares: boolean
-  seeMailAddresses: boolean
-  unrestrictedOwner: boolean
-}
+  addShares: boolean;
+  addSharesExternal: boolean;
+  changeForeignVotes: boolean;
+  publicShares: boolean;
+  seeMailAddresses: boolean;
+  unrestrictedOwner: boolean;
+};
 
 type AppSettings = {
-  finalImprintUrl: string
-  finalPrivacyUrl: string
-  useLogin: boolean
-  useActivity: boolean
-  updateType: WatcherMode
-  currentVersion: string
-}
+  finalImprintUrl: string;
+  finalPrivacyUrl: string;
+  useLogin: boolean;
+  useActivity: boolean;
+  updateType: WatcherMode;
+  currentVersion: string;
+};
 
 export type Session = {
-  appPermissions: AppPermissions
-  appSettings: AppSettings
-  currentUser: User
-  sessionSettings: SessionSettings
-  share: Share
-  token: string | null
-  userStatus: UserStatus
-  watcher: Watcher
-}
+  appPermissions: AppPermissions;
+  appSettings: AppSettings;
+  currentUser: User;
+  sessionSettings: SessionSettings;
+  share: Share;
+  token: string | null;
+  userStatus: UserStatus;
+  watcher: Watcher;
+};
 
 export type SessionStore = Session & {
-  navigationStatus: 'idle' | 'loading'
-}
+  navigationStatus: "idle" | "loading";
+};

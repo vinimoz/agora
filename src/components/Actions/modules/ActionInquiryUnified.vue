@@ -4,81 +4,90 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { debounce } from 'lodash'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
-import { emit } from '@nextcloud/event-bus'
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { debounce } from "lodash";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
+import { emit } from "@nextcloud/event-bus";
 
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionCheckbox from '@nextcloud/vue/components/NcActionCheckbox'
-import NcActionInput from '@nextcloud/vue/components/NcActionInput'
-import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import NcActionCheckbox from "@nextcloud/vue/components/NcActionCheckbox";
+import NcActionInput from "@nextcloud/vue/components/NcActionInput";
+import NcActionSeparator from "@nextcloud/vue/components/NcActionSeparator";
 
-import { UserIcons, StatusIcons, InquiryGeneralIcons } from '../../../utils/icons.ts'
+import {
+  UserIcons,
+  StatusIcons,
+  InquiryGeneralIcons,
+} from "../../../utils/icons.ts";
 
-import { ValidatorAPI, InquiriesAPI } from '../../../Api/index.ts'
-import { useSessionStore } from '../../../stores/session.ts'
-import { useSubscriptionStore } from '../../../stores/subscription.ts'
-import { useInquiriesStore } from '../../../stores/inquiries.ts'
-import { useInquiryStore } from '../../../stores/inquiry.ts'
-import { StatusResults, Event } from '../../../Types/index.ts'
-import { deleteCookieByValue, findCookieByValue } from '../../../helpers/index.ts'
+import { ValidatorAPI, InquiriesAPI } from "../../../Api/index.ts";
+import { useSessionStore } from "../../../stores/session.ts";
+import { useSubscriptionStore } from "../../../stores/subscription.ts";
+import { useInquiriesStore } from "../../../stores/inquiries.ts";
+import { useInquiryStore } from "../../../stores/inquiry.ts";
+import { StatusResults, Event } from "../../../Types/index.ts";
+import {
+  deleteCookieByValue,
+  findCookieByValue,
+} from "../../../helpers/index.ts";
 import {
   canArchive,
   canRestore,
   canDelete,
   canTransfer,
   createInquiryContext,
-} from '../../../utils/permissions.ts'
-import DeleteInquiryDialog from '../../Modals/DeleteInquiryDialog.vue'
-import TransferInquiryDialog from '../../Modals/TransferInquiryDialog.vue'
-import ArchiveRestoreInquiryDialog from '../../Modals/ArchiveRestoreInquiryDialog.vue'
+} from "../../../utils/permissions.ts";
+import DeleteInquiryDialog from "../../Modals/DeleteInquiryDialog.vue";
+import TransferInquiryDialog from "../../Modals/TransferInquiryDialog.vue";
+import ArchiveRestoreInquiryDialog from "../../Modals/ArchiveRestoreInquiryDialog.vue";
 
 type InputProps = {
-  success: boolean
-  error: boolean
-  showTrailingButton: boolean
-  labelOutside: boolean
-  label: string
-}
+  success: boolean;
+  error: boolean;
+  showTrailingButton: boolean;
+  labelOutside: boolean;
+  label: string;
+};
 
 // ---- Stores ----
-const sessionStore = useSessionStore()
-const subscriptionStore = useSubscriptionStore()
-const inquiriesStore = useInquiriesStore()
-const inquiryStore = useInquiryStore()
-const router = useRouter()
+const sessionStore = useSessionStore();
+const subscriptionStore = useSubscriptionStore();
+const inquiriesStore = useInquiriesStore();
+const inquiryStore = useInquiryStore();
+const router = useRouter();
 
 // ---- State ----
-const showDeleteDialog = ref(false)
-const showTransferDialog = ref(false)
-const showArchiveRestoreDialog = ref(false)
-const isNavigating = ref(false)
+const showDeleteDialog = ref(false);
+const showTransferDialog = ref(false);
+const showArchiveRestoreDialog = ref(false);
+const isNavigating = ref(false);
 
 // ---- Computed ----
-const hasCookie = !!findCookieByValue(sessionStore.publicToken)
-const isExternalShare = computed(() => sessionStore.share?.type === 'external')
-const hasEmail = computed(() => !!sessionStore.share?.user?.emailAddress)
-const isSubscribed = computed(() => subscriptionStore.subscribed)
-const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
+const hasCookie = !!findCookieByValue(sessionStore.publicToken);
+const isExternalShare = computed(() => sessionStore.share?.type === "external");
+const hasEmail = computed(() => !!sessionStore.share?.user?.emailAddress);
+const isSubscribed = computed(() => subscriptionStore.subscribed);
+const context = computed(() =>
+  createInquiryContext(inquiryStore, sessionStore.appSettings),
+);
 
 // Permissions
-const canArchiveAction = computed(() => canArchive(context.value))
-const canRestoreAction = computed(() => canRestore(context.value))
-const canDeleteAction = computed(() => canDelete(context.value))
-const canTransferAction = computed(() => canTransfer(context.value))
+const canArchiveAction = computed(() => canArchive(context.value));
+const canRestoreAction = computed(() => canRestore(context.value));
+const canDeleteAction = computed(() => canDelete(context.value));
+const canTransferAction = computed(() => canTransfer(context.value));
 
 // ---- User Actions ----
 function logout() {
-  const reRouteTo = deleteCookieByValue(sessionStore.publicToken)
+  const reRouteTo = deleteCookieByValue(sessionStore.publicToken);
   if (reRouteTo) {
     router.push({
-      name: 'publicInquiry',
+      name: "publicInquiry",
       params: { token: reRouteTo },
-    })
+    });
   }
 }
 
@@ -86,35 +95,35 @@ async function copyLink() {
   const personalLink =
     window.location.origin +
     router.resolve({
-      name: 'publicInquiry',
+      name: "publicInquiry",
       params: { token: sessionStore.publicToken },
-    }).href
+    }).href;
 
   try {
-    await navigator.clipboard.writeText(personalLink)
-    showSuccess(t('agora', 'Link copied'))
+    await navigator.clipboard.writeText(personalLink);
+    showSuccess(t("agora", "Link copied"));
   } catch {
-    showError(t('agora', 'Error copying link'))
+    showError(t("agora", "Error copying link"));
   }
 }
 
 async function resendInvitation() {
   try {
-    const response = await sessionStore.resendInvitation()
+    const response = await sessionStore.resendInvitation();
     if (response) {
-      showSuccess(t('agora', 'Invitation resent'))
+      showSuccess(t("agora", "Invitation resent"));
     }
   } catch {
-    showError(t('agora', 'Mail could not be resent'))
+    showError(t("agora", "Mail could not be resent"));
   }
 }
 
 async function deleteEmailAddress() {
   try {
-    await sessionStore.deleteEmailAddress()
-    showSuccess(t('agora', 'Email address deleted'))
+    await sessionStore.deleteEmailAddress();
+    showSuccess(t("agora", "Email address deleted"));
   } catch {
-    showError(t('agora', 'Error deleting email address'))
+    showError(t("agora", "Error deleting email address"));
   }
 }
 
@@ -124,47 +133,49 @@ const displayNameInputProps = ref<InputProps>({
   error: false,
   showTrailingButton: true,
   labelOutside: false,
-  label: t('agora', 'Change name'),
-})
+  label: t("agora", "Change name"),
+});
 
 const validateDisplayName = debounce(async function () {
-  if (!sessionStore.share) return
+  if (!sessionStore.share) return;
   if (sessionStore.share.user.displayName.length < 1) {
-    setDisplayNameStatus('error')
-    return
+    setDisplayNameStatus("error");
+    return;
   }
-  if (sessionStore.share.user.displayName === sessionStore.currentUser.displayName) {
-    setDisplayNameStatus('unchanged')
-    return
+  if (
+    sessionStore.share.user.displayName === sessionStore.currentUser.displayName
+  ) {
+    setDisplayNameStatus("unchanged");
+    return;
   }
   try {
     await ValidatorAPI.validateName(
       sessionStore.route.params.token,
-      sessionStore.share.user.displayName
-    )
-    setDisplayNameStatus('success')
+      sessionStore.share.user.displayName,
+    );
+    setDisplayNameStatus("success");
   } catch {
-    setDisplayNameStatus('error')
+    setDisplayNameStatus("error");
   }
-}, 500)
+}, 500);
 
 function setDisplayNameStatus(status: StatusResults) {
-  displayNameInputProps.value.success = status === 'success'
-  displayNameInputProps.value.error = status === 'error'
-  displayNameInputProps.value.showTrailingButton = status === 'success'
+  displayNameInputProps.value.success = status === "success";
+  displayNameInputProps.value.error = status === "error";
+  displayNameInputProps.value.showTrailingButton = status === "success";
 }
 
 async function submitDisplayName() {
-  if (!sessionStore.share) return
+  if (!sessionStore.share) return;
   try {
     await sessionStore.updateDisplayName({
       displayName: sessionStore.share.user.displayName,
-    })
-    showSuccess(t('agora', 'Name changed'))
-    setDisplayNameStatus('unchanged')
+    });
+    showSuccess(t("agora", "Name changed"));
+    setDisplayNameStatus("unchanged");
   } catch {
-    showError(t('agora', 'Error changing name'))
-    setDisplayNameStatus('error')
+    showError(t("agora", "Error changing name"));
+    setDisplayNameStatus("error");
   }
 }
 
@@ -174,98 +185,112 @@ const eMailInputProps = ref<InputProps>({
   error: false,
   showTrailingButton: true,
   labelOutside: false,
-  label: t('agora', 'Edit email'),
-})
+  label: t("agora", "Edit email"),
+});
 
 const validateEMail = debounce(async function () {
-  if (!sessionStore.share) return
-  if (sessionStore.share.user.emailAddress === sessionStore.currentUser.emailAddress) {
-    setEMailStatus('unchanged')
-    return
+  if (!sessionStore.share) return;
+  if (
+    sessionStore.share.user.emailAddress ===
+    sessionStore.currentUser.emailAddress
+  ) {
+    setEMailStatus("unchanged");
+    return;
   }
   try {
-    await ValidatorAPI.validateEmailAddress(sessionStore.share.user.emailAddress)
-    setEMailStatus('success')
+    await ValidatorAPI.validateEmailAddress(
+      sessionStore.share.user.emailAddress,
+    );
+    setEMailStatus("success");
   } catch {
-    setEMailStatus('error')
+    setEMailStatus("error");
   }
-}, 500)
+}, 500);
 
 function setEMailStatus(status: StatusResults) {
-  eMailInputProps.value.success = status === 'success'
-  eMailInputProps.value.error = status === 'error'
-  eMailInputProps.value.showTrailingButton = status === 'success'
+  eMailInputProps.value.success = status === "success";
+  eMailInputProps.value.error = status === "error";
+  eMailInputProps.value.showTrailingButton = status === "success";
 }
 
 async function submitEmail() {
-  if (!sessionStore.share) return
+  if (!sessionStore.share) return;
   try {
     await sessionStore.updateEmailAddress({
       emailAddress: sessionStore.share.user.emailAddress,
-    })
-    showSuccess(t('agora', 'Email saved'))
-    setEMailStatus('unchanged')
+    });
+    showSuccess(t("agora", "Email saved"));
+    setEMailStatus("unchanged");
   } catch {
-    showError(t('agora', 'Error saving email'))
-    setEMailStatus('error')
+    showError(t("agora", "Error saving email"));
+    setEMailStatus("error");
   }
 }
 
 // ---- Subscription ----
 async function toggleSubscription() {
   try {
-    await subscriptionStore.write()
+    await subscriptionStore.write();
     showSuccess(
-      subscriptionStore.subscribed ? t('agora', 'Subscribed') : t('agora', 'Unsubscribed')
-    )
+      subscriptionStore.subscribed
+        ? t("agora", "Subscribed")
+        : t("agora", "Unsubscribed"),
+    );
   } catch {
-    showError(t('agora', 'Could not update subscription'))
+    showError(t("agora", "Could not update subscription"));
   }
 }
 
 // ---- Inquiry Actions ----
 async function toggleArchive() {
   try {
-    await inquiriesStore.toggleArchive({ inquiryId: inquiryStore.id })
-    showSuccess(t('agora', 'Inquiry archived'))
+    await inquiriesStore.toggleArchive({ inquiryId: inquiryStore.id });
+    showSuccess(t("agora", "Inquiry archived"));
   } catch {
-    showError(t('agora', 'Error archiving the inquiry'))
+    showError(t("agora", "Error archiving the inquiry"));
   }
 }
 
 async function resetInquiries() {
   try {
-    await inquiriesStore.resetInquiries()
-    showSuccess(t('agora', 'Your inquiries are reset'))
+    await inquiriesStore.resetInquiries();
+    showSuccess(t("agora", "Your inquiries are reset"));
   } catch {
-    showError(t('agora', 'Error while resetting inquiries'))
+    showError(t("agora", "Error while resetting inquiries"));
   }
 }
 
 async function getAddresses() {
   try {
-    const response = await InquiriesAPI.getParticipantsEmailAddresses(sessionStore.route.params.id)
-    await navigator.clipboard.writeText(response.data.map((item) => item.combined).join(', '))
-    showSuccess(t('agora', 'Email addresses copied to clipboard'))
+    const response = await InquiriesAPI.getParticipantsEmailAddresses(
+      sessionStore.route.params.id,
+    );
+    await navigator.clipboard.writeText(
+      response.data.map((item) => item.combined).join(", "),
+    );
+    showSuccess(t("agora", "Email addresses copied to clipboard"));
   } catch (error) {
-    if ((error as Error)?.message?.includes('canceled')) return
-    showError(t('agora', 'Error while copying email addresses'))
+    if ((error as Error)?.message?.includes("canceled")) return;
+    showError(t("agora", "Error while copying email addresses"));
   }
 }
 
 const onInquiryDeleted = () => {
-  showSuccess(t('agora', 'Inquiry successfully deleted'))
-  emit(Event.UpdateInquiry, { store: 'inquiries', message: t('agora', 'Inquiry deleted') })
+  showSuccess(t("agora", "Inquiry successfully deleted"));
+  emit(Event.UpdateInquiry, {
+    store: "inquiries",
+    message: t("agora", "Inquiry deleted"),
+  });
   router
     .push({
-      name: 'list',
-      params: { type: 'relevant' },
-      query: { viewMode: 'view' },
+      name: "list",
+      params: { type: "relevant" },
+      query: { viewMode: "view" },
     })
     .finally(() => {
-      isNavigating.value = false
-    })
-}
+      isNavigating.value = false;
+    });
+};
 </script>
 
 <template>
@@ -282,7 +307,7 @@ const onInquiryDeleted = () => {
           :is="StatusIcons.AccountMultiple"
           :size="16"
         />
-        <span class="section-title">{{ t('agora', 'Profile') }}</span>
+        <span class="section-title">{{ t("agora", "Profile") }}</span>
       </header>
 
       <NcActions
@@ -301,7 +326,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Copy link') }}
+          {{ t("agora", "Copy link") }}
         </NcActionButton>
 
         <NcActionInput
@@ -343,7 +368,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Resend invitation') }}
+          {{ t("agora", "Resend invitation") }}
         </NcActionButton>
 
         <NcActionButton
@@ -357,7 +382,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Remove email') }}
+          {{ t("agora", "Remove email") }}
         </NcActionButton>
 
         <NcActionSeparator v-if="hasCookie" />
@@ -373,7 +398,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Logout') }}
+          {{ t("agora", "Logout") }}
         </NcActionButton>
       </NcActions>
     </section>
@@ -390,7 +415,7 @@ const onInquiryDeleted = () => {
           :is="InquiryGeneralIcons.Bell"
           :size="16"
         />
-        <span class="section-title">{{ t('agora', 'Notifications') }}</span>
+        <span class="section-title">{{ t("agora", "Notifications") }}</span>
       </header>
 
       <NcActions
@@ -405,11 +430,17 @@ const onInquiryDeleted = () => {
         >
           <template #icon>
             <component
-              :is="isSubscribed ? InquiryGeneralIcons.Bell : InquiryGeneralIcons.BellOutline"
+              :is="
+                isSubscribed
+                  ? InquiryGeneralIcons.Bell
+                  : InquiryGeneralIcons.BellOutline
+              "
               :size="20"
             />
           </template>
-          {{ isSubscribed ? t('agora', 'Unsubscribe') : t('agora', 'Subscribe') }}
+          {{
+            isSubscribed ? t("agora", "Unsubscribe") : t("agora", "Subscribe")
+          }}
         </NcActionCheckbox>
       </NcActions>
     </section>
@@ -433,7 +464,7 @@ const onInquiryDeleted = () => {
           :is="InquiryGeneralIcons.Tools"
           :size="16"
         />
-        <span class="section-title">{{ t('agora', 'Inquiry') }}</span>
+        <span class="section-title">{{ t("agora", "Inquiry") }}</span>
       </header>
 
       <NcActions
@@ -454,7 +485,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Archive inquiry') }}
+          {{ t("agora", "Archive inquiry") }}
         </NcActionButton>
 
         <!-- Restore -->
@@ -469,7 +500,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Restore inquiry') }}
+          {{ t("agora", "Restore inquiry") }}
         </NcActionButton>
 
         <!-- Delete -->
@@ -484,7 +515,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Delete inquiry') }}
+          {{ t("agora", "Delete inquiry") }}
         </NcActionButton>
 
         <!-- Transfer -->
@@ -499,7 +530,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Transfer ownership') }}
+          {{ t("agora", "Transfer ownership") }}
         </NcActionButton>
 
         <NcActionSeparator v-if="inquiryStore.permissions.edit" />
@@ -516,7 +547,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Copy participant emails') }}
+          {{ t("agora", "Copy participant emails") }}
         </NcActionButton>
 
         <!-- Reset inquiries -->
@@ -531,7 +562,7 @@ const onInquiryDeleted = () => {
               :size="20"
             />
           </template>
-          {{ t('agora', 'Reset your inquiries') }}
+          {{ t("agora", "Reset your inquiries") }}
         </NcActionButton>
       </NcActions>
     </section>

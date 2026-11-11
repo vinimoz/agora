@@ -4,11 +4,11 @@
 -->
 
 <script setup>
-import { t } from '@nextcloud/l10n'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import { useAppSettingsStore } from '../../../stores/appSettings.ts'
+import { t } from "@nextcloud/l10n";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import { useAppSettingsStore } from "../../../stores/appSettings.ts";
 
-const appSettingsStore = useAppSettingsStore()
+const appSettingsStore = useAppSettingsStore();
 </script>
 
 <template>
@@ -18,7 +18,7 @@ const appSettingsStore = useAppSettingsStore()
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{ t('agora', 'Load inquiries into the navigation') }}
+      {{ t("agora", "Load inquiries into the navigation") }}
     </NcCheckboxRadioSwitch>
   </div>
 </template>

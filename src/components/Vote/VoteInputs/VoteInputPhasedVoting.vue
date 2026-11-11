@@ -7,7 +7,10 @@
     <div class="round-info">
       <Info :size="14" />
       <span>{{
-        t('agora', 'Round {current} of {total}', { current: currentRound, total: totalRounds })
+        t("agora", "Round {current} of {total}", {
+          current: currentRound,
+          total: totalRounds,
+        })
       }}</span>
     </div>
 
@@ -42,38 +45,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { Info, X, ThumbsUp, ThumbsDown, Minus } from 'lucide-vue-next'
-import type { SupportData, SupportValue } from '../../../Types/index'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { Info, X, ThumbsUp, ThumbsDown, Minus } from "lucide-vue-next";
+import type { SupportData, SupportValue } from "../../../Types/index";
 
 const props = defineProps<{
-  userVote?: SupportData
-  currentRound?: number
-  totalRounds?: number
-}>()
+  userVote?: SupportData;
+  currentRound?: number;
+  totalRounds?: number;
+}>();
 
 const emit = defineEmits<{
-  vote: [value: SupportValue]
-}>()
+  vote: [value: SupportValue];
+}>();
 
 // Default to binary voting within a round
 const voteChoices = [
-  { value: 1, label: t('agora', 'For'), icon: ThumbsUp },
-  { value: 0, label: t('agora', 'Abstain'), icon: Minus },
-  { value: -1, label: t('agora', 'Against'), icon: ThumbsDown },
-]
+  { value: 1, label: t("agora", "For"), icon: ThumbsUp },
+  { value: 0, label: t("agora", "Abstain"), icon: Minus },
+  { value: -1, label: t("agora", "Against"), icon: ThumbsDown },
+];
 
 const currentChoice = computed(() => {
-  if (!props.userVote) return null
-  const raw = props.userVote.value
-  if (typeof raw === 'number') return raw
-  return null
-})
+  if (!props.userVote) return null;
+  const raw = props.userVote.value;
+  if (typeof raw === "number") return raw;
+  return null;
+});
 
 function vote(value: number | null) {
-  emit('vote', value)
+  emit("vote", value);
 }
 </script>
 

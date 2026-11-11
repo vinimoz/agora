@@ -4,113 +4,117 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-import { useSharesStore } from '../../stores/shares.ts'
-import { useInquiryGroupStore } from '../../stores/inquiryGroup.ts'
-import UserSearch from '../User/UserSearch.vue'
-import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from '../../Types/index.ts'
-import type { VisibilityType, PublicationStatus } from '../../Types/inquiry.types.ts'
-import ShareList from '../Shares/SharesList.vue'
-import SharesListUnsent from '../Shares/SharesListUnsent.vue'
-import SharesListLocked from '../Shares/SharesListLocked.vue'
-import { useParticipationStore } from '../../stores/participation.ts'
+import { computed, onMounted, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcTextField from "@nextcloud/vue/components/NcTextField";
+import { useSharesStore } from "../../stores/shares.ts";
+import { useInquiryGroupStore } from "../../stores/inquiryGroup.ts";
+import UserSearch from "../User/UserSearch.vue";
+import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from "../../Types/index.ts";
+import type {
+  VisibilityType,
+  //PublicationStatus,
+} from "../../Types/inquiry.types.ts";
+import ShareList from "../Shares/SharesList.vue";
+import SharesListUnsent from "../Shares/SharesListUnsent.vue";
+import SharesListLocked from "../Shares/SharesListLocked.vue";
+import { useParticipationStore } from "../../stores/participation.ts";
 import type {
   ParticipationPolicyType,
   ParticipationTargetType,
   LotteryMode,
   LotteryMethod,
-} from '../../Types/participation.types.ts'
+} from "../../Types/participation.types.ts";
 
 // ============================================================
 // STORE SETUP
 // ============================================================
-const inquiryGroupStore = useInquiryGroupStore()
-const sharesStore = useSharesStore()
+const inquiryGroupStore = useInquiryGroupStore();
+const sharesStore = useSharesStore();
 
 // ============================================================
 // COMPUTED - Direct store access
 // ============================================================
 
-const canEdit = computed(() => inquiryGroupStore.permissions.edit)
-const isLoading = ref(false)
-const isSaving = computed(() => inquiryGroupStore.updating)
+const canEdit = computed(() => inquiryGroupStore.permissions.edit);
+const isSaving = computed(() => inquiryGroupStore.updating);
 
 // Participation
-const participationStore = useParticipationStore()
+const participationStore = useParticipationStore();
 
-const participationTargetType = computed((): ParticipationTargetType => 'inquiry_group')
-const participationTargetId = computed(() => inquiryGroupStore.id)
+const participationTargetType = computed(
+  (): ParticipationTargetType => "inquiry_group",
+);
+const participationTargetId = computed(() => inquiryGroupStore.id);
 
 // Visibility options - Using string array like SideBarTabAccess.vue
-const visibilityOptions = ['everyone', 'groups', 'users', 'private']
+const visibilityOptions = ["everyone", "groups", "users", "private"];
 
 const visibilityOptionLabels: Record<string, string> = {
-  everyone: t('agora', 'Everyone'),
-  users: t('agora', 'Specific Users'),
-  groups: t('agora', 'Specific Groups'),
-  private: t('agora', 'Private'),
-}
+  everyone: t("agora", "Everyone"),
+  users: t("agora", "Specific Users"),
+  groups: t("agora", "Specific Groups"),
+  private: t("agora", "Private"),
+};
 
 // Publication status options - String array for simple values
-const groupStatusOptions = ['draft', 'active', 'archived', 'closed']
+const groupStatusOptions = ["draft", "active", "archived", "closed"];
 
 const groupStatusLabels: Record<string, string> = {
-  draft: t('agora', 'Draft'),
-  active: t('agora', 'Active'),
-  archived: t('agora', 'Archived'),
-  closed: t('agora', 'Closed'),
-}
+  draft: t("agora", "Draft"),
+  active: t("agora", "Active"),
+  archived: t("agora", "Archived"),
+  closed: t("agora", "Closed"),
+};
 
 const selectedGroupStatus = computed({
-  get: () => inquiryGroupStore.status.groupStatus || 'draft',
+  get: () => inquiryGroupStore.status.groupStatus || "draft",
   set: async (val: string) => {
     try {
-      await inquiryGroupStore.update({ groupStatus: val as any })
-      showSuccess(t('agora', 'Group status updated'))
+      await inquiryGroupStore.update({ groupStatus: val as any });
+      showSuccess(t("agora", "Group status updated"));
     } catch (error) {
-      showError(t('agora', 'Failed to update status'))
+      showError(t("agora", "Failed to update status", error));
     }
   },
-})
+});
 
 // ============================================================
 // PARTICIPATION
 // ============================================================
 
 interface ParticipationConfig {
-  selection_size: number
-  source_groups: string[]
-  method: LotteryMethod
-  user_ids: string[]
-  group_ids: string[]
-  mode: LotteryMode
+  selection_size: number;
+  source_groups: string[];
+  method: LotteryMethod;
+  user_ids: string[];
+  group_ids: string[];
+  mode: LotteryMode;
 }
 
-const localParticipationType = ref<ParticipationPolicyType>('none')
+const localParticipationType = ref<ParticipationPolicyType>("none");
 const localParticipationConfig = ref<ParticipationConfig>({
   selection_size: 10,
   source_groups: [],
-  method: 'random',
-  mode: 'groups',
+  method: "random",
+  mode: "groups",
   user_ids: [],
   group_ids: [],
-})
+});
 
 const extractIds = (items: Array<any>): string[] =>
   !items || !Array.isArray(items)
     ? []
     : (items
         .map((it) =>
-          typeof it === 'string'
+          typeof it === "string"
             ? it
-            : it.id || it.userId || it.groupId || it.uid || it.value || null
+            : it.id || it.userId || it.groupId || it.uid || it.value || null,
         )
-        .filter(Boolean) as string[])
+        .filter(Boolean) as string[]);
 
 const toBackendConfig = (c: ParticipationConfig): Record<string, unknown> => ({
   mode: c.mode,
@@ -119,112 +123,104 @@ const toBackendConfig = (c: ParticipationConfig): Record<string, unknown> => ({
   source_groups: c.source_groups,
   user_ids: c.user_ids,
   group_ids: c.group_ids,
-})
+});
 
-const fromBackendConfig = (raw: Record<string, unknown> | undefined): ParticipationConfig => {
-  const r = raw ?? {}
-  return {
-    selection_size: Number(r.count ?? r.selection_size ?? 10),
-    source_groups: (r.source_groups as string[]) ?? [],
-    method: ((r.method as string) ?? 'random') as LotteryMethod,
-    mode: ((r.mode as string) ?? 'groups') as LotteryMode,
-    user_ids: (r.user_ids as string[]) ?? [],
-    group_ids: (r.group_ids as string[]) ?? [],
-  }
-}
 
 const participationType = computed({
   get: () => localParticipationType.value,
   set: async (value: ParticipationPolicyType) => {
-    if (!canEdit.value) return
-    localParticipationType.value = value
-    await saveParticipationPolicy(value, localParticipationConfig.value)
+    if (!canEdit.value) return;
+    localParticipationType.value = value;
+    await saveParticipationPolicy(value, localParticipationConfig.value);
   },
-})
+});
 
 const participationConfig = computed({
   get: () => localParticipationConfig.value,
   set: async (config: ParticipationConfig) => {
-    if (!canEdit.value) return
-    localParticipationConfig.value = config
-    await saveParticipationPolicy(localParticipationType.value, config)
+    if (!canEdit.value) return;
+    localParticipationConfig.value = config;
+    await saveParticipationPolicy(localParticipationType.value, config);
   },
-})
+});
 
-async function saveParticipationPolicy(type: ParticipationPolicyType, config: ParticipationConfig) {
-  if (!participationTargetId.value) return
+async function saveParticipationPolicy(
+  type: ParticipationPolicyType,
+  config: ParticipationConfig,
+) {
+  if (!participationTargetId.value) return;
   try {
     await participationStore.setParticipation(
       participationTargetType.value,
       participationTargetId.value,
       type,
-      toBackendConfig(config)
-    )
-    showSuccess(t('agora', 'Participation updated'))
-  } catch (error: any) {
-    showError(t('agora', 'Failed to update participation: {error}', { error: error.message }))
+      toBackendConfig(config),
+    );
+    showSuccess(t("agora", "Participation updated"));
+  } catch (error) {
+    showError(
+      t("agora", "Failed to update participation: {error}", {
+        error: error.message,
+      }),
+    );
   }
 }
 
 async function resetParticipation() {
-  if (!canEdit.value || !participationTargetId.value) return
+  if (!canEdit.value || !participationTargetId.value) return;
   try {
     await participationStore.deleteParticipation(
       participationTargetType.value,
-      participationTargetId.value
-    )
-    localParticipationType.value = 'none'
+      participationTargetId.value,
+    );
+    localParticipationType.value = "none";
     localParticipationConfig.value = {
       selection_size: 10,
       source_groups: [],
-      method: 'random',
-      mode: 'groups',
+      method: "random",
+      mode: "groups",
       user_ids: [],
       group_ids: [],
-    }
-    showSuccess(t('agora', 'Participation disabled'))
-  } catch (error: any) {
-    showError(t('agora', 'Failed to reset participation: {error}', { error: error.message }))
+    };
+    showSuccess(t("agora", "Participation disabled"));
+  } catch (error) {
+    showError(
+      t("agora", "Failed to reset participation: {error}", {
+        error: error.message,
+      }),
+    );
   }
 }
 
-function handleParticipationConfigChange(field: keyof ParticipationConfig, value: any) {
-  if (!canEdit.value) return
-  const normalized = Array.isArray(value) ? extractIds(value) : value
-  participationConfig.value = { ...localParticipationConfig.value, [field]: normalized }
+function handleParticipationConfigChange(
+  field: keyof ParticipationConfig,
+  value: any,
+) {
+  if (!canEdit.value) return;
+  const normalized = Array.isArray(value) ? extractIds(value) : value;
+  participationConfig.value = {
+    ...localParticipationConfig.value,
+    [field]: normalized,
+  };
 }
 
 const participationOptions: ParticipationPolicyType[] = [
-  'none',
-  'everyone',
-  'users',
-  'groups',
-  'lottery',
-]
+  "none",
+  "everyone",
+  "users",
+  "groups",
+  "lottery",
+];
 
 const participationOptionLabels: Record<ParticipationPolicyType, string> = {
-  none: t('agora', 'No participation'),
-  everyone: t('agora', 'Everyone'),
-  users: t('agora', 'Specific Users'),
-  groups: t('agora', 'Specific Groups'),
-  lottery: t('agora', '🎲 Lottery'),
-}
+  none: t("agora", "No participation"),
+  everyone: t("agora", "Everyone"),
+  users: t("agora", "Specific Users"),
+  groups: t("agora", "Specific Groups"),
+  lottery: t("agora", "🎲 Lottery"),
+};
 
-// ============================================================
-// COMPUTED - Direct store access with reactive updates
-// ============================================================
 
-const selectedPublicationStatus = computed({
-  get: () => inquiryGroupStore.status.publicationStatus || 'draft',
-  set: async (val: PublicationStatus) => {
-    try {
-      await inquiryGroupStore.updatePublicationStatus(val)
-      showSuccess(t('agora', 'Publication status updated'))
-    } catch (error) {
-      showError(t('agora', 'Failed to update status'))
-    }
-  },
-})
 
 // ============================================================
 // COMPUTED - User/Group selections
@@ -232,137 +228,123 @@ const selectedPublicationStatus = computed({
 const visibilityGroups = computed({
   get: () => {
     // Get from configuration.visibilityGroups
-    const groups = inquiryGroupStore.configuration?.visibilityGroups || []
+    const groups = inquiryGroupStore.configuration?.visibilityGroups || [];
     // Convert string IDs to objects with displayName
     return groups.map((id: string) => ({
       id,
       displayName: id,
       groupId: id,
-    }))
+    }));
   },
   set: async (selected: Array<{ id: string; displayName: string }>) => {
-    const ids = selected.map((g) => g.id)
+    const ids = selected.map((g) => g.id);
     // Update the configuration
-    inquiryGroupStore.configuration.visibilityGroups = ids
+    inquiryGroupStore.configuration.visibilityGroups = ids;
 
     // Save via the store's update method
     await inquiryGroupStore.updateConfiguration({
       visibilityGroups: ids,
-    })
+    });
   },
-})
+});
 
 const visibilityUsers = computed({
   get: () => {
-    const users = inquiryGroupStore.configuration?.visibilityUsers || []
+    const users = inquiryGroupStore.configuration?.visibilityUsers || [];
     return users.map((id: string) => ({
       id,
       displayName: id,
       userId: id,
-    }))
+    }));
   },
   set: async (selected: Array<{ id: string; displayName: string }>) => {
-    const ids = selected.map((u) => u.id)
-    inquiryGroupStore.configuration.visibilityUsers = ids
+    const ids = selected.map((u) => u.id);
+    inquiryGroupStore.configuration.visibilityUsers = ids;
     await inquiryGroupStore.updateConfiguration({
       visibilityUsers: ids,
-    })
+    });
   },
-})
+});
 
 const selectedVisibility = computed({
-  get: () => inquiryGroupStore.configuration?.visibility || 'private',
+  get: () => inquiryGroupStore.configuration?.visibility || "private",
   set: async (val: VisibilityType) => {
-    inquiryGroupStore.configuration.visibility = val
-    await inquiryGroupStore.updateConfiguration({ visibility: val })
-    showSuccess(t('agora', 'Visibility updated'))
+    inquiryGroupStore.configuration.visibility = val;
+    await inquiryGroupStore.updateConfiguration({ visibility: val });
+    showSuccess(t("agora", "Visibility updated"));
   },
-})
-
-// ============================================================
-// ACTIONS - Ensure proper saving
-// ============================================================
-
-async function saveVisibilityGroups(groups: Array<{ id: string; displayName: string }>) {
-  const ids = groups.map((g) => g.id)
-  try {
-    await inquiryGroupStore.updateConfiguration({
-      visibilityGroups: ids,
-    })
-    showSuccess(t('agora', 'Visibility groups updated'))
-  } catch (error) {
-    showError(t('agora', 'Failed to update visibility groups'))
-  }
-}
+});
 
 // ============================================================
 // INFO TEXT
 // ============================================================
 const infoText = computed((): string => {
-  const visibility = inquiryGroupStore.configuration.visibility
-  const groupStatus = inquiryGroupStore.status.groupStatus
+  const visibility = inquiryGroupStore.configuration.visibility;
+  const groupStatus = inquiryGroupStore.status.groupStatus;
 
-  const parts: string[] = []
+  const parts: string[] = [];
 
   parts.push(
-    t('agora', 'Status: {status}', {
+    t("agora", "Status: {status}", {
       status: groupStatusLabels[groupStatus] || groupStatus,
-    })
-  )
+    }),
+  );
 
   switch (visibility) {
-    case 'everyone':
-      parts.push(t('agora', 'Open to everyone'))
-      break
-    case 'users':
+    case "everyone":
+      parts.push(t("agora", "Open to everyone"));
+      break;
+    case "users":
       if (inquiryGroupStore.configuration.visibilityUsers?.length) {
         parts.push(
-          t('agora', 'Visible to {count} participants', {
+          t("agora", "Visible to {count} participants", {
             count: inquiryGroupStore.configuration.visibilityUsers.length,
-          })
-        )
+          }),
+        );
       } else {
-        parts.push(t('agora', 'Visible to participants only'))
+        parts.push(t("agora", "Visible to participants only"));
       }
-      break
-    case 'groups':
+      break;
+    case "groups":
       if (inquiryGroupStore.configuration.visibilityGroups?.length) {
         parts.push(
-          t('agora', 'Visible to {count} groups', {
+          t("agora", "Visible to {count} groups", {
             count: inquiryGroupStore.configuration.visibilityGroups.length,
-          })
-        )
+          }),
+        );
       } else {
-        parts.push(t('agora', 'Visible only to the owner'))
+        parts.push(t("agora", "Visible only to the owner"));
       }
-      break
-    case 'private':
-      parts.push(t('agora', 'Private (owner only)'))
-      break
+      break;
+    case "private":
+      parts.push(t("agora", "Private (owner only)"));
+      break;
   }
-  return parts.join(' • ')
-})
+  return parts.join(" • ");
+});
 
 // ============================================================
 // ACTIONS
 // ============================================================
 async function publishGroup() {
-  if (!canEdit.value) return
+  if (!canEdit.value) return;
   try {
-    await inquiryGroupStore.updatePublicationStatus('published')
-    showSuccess(t('agora', 'Group published successfully'))
+    await inquiryGroupStore.updatePublicationStatus("published");
+    showSuccess(t("agora", "Group published successfully"));
   } catch (error) {
-    showError(t('agora', 'Failed to publish group'))
+    showError(t("agora", "Failed to publish group", {
+        error: error.message,
+      }),);
   }
 }
 
 async function archiveGroup() {
-  if (!canEdit.value) return
+  if (!canEdit.value) return;
   try {
-    await inquiryGroupStore.archive()
-    showSuccess(t('agora', 'Group archived successfully'))
+    await inquiryGroupStore.archive();
+    showSuccess(t("agora", "Group archived successfully"));
   } catch (error) {
-    showError(t('agora', 'Failed to archive group'))
+    showError(t("agora", "Failed to archive group",error));
   }
 }
 
@@ -371,19 +353,19 @@ async function archiveGroup() {
 // ============================================================
 onMounted(async () => {
   if (!inquiryGroupStore.id) {
-    await inquiryGroupStore.load()
+    await inquiryGroupStore.load();
   }
-  await sharesStore.load('inquiryGroup')
-})
+  await sharesStore.load("inquiryGroup");
+});
 </script>
 
 <template>
   <div class="sidebar-group-access">
     <!-- Header -->
     <div class="access-header">
-      <h2>{{ t('agora', 'Access & Voting') }}</h2>
+      <h2>{{ t("agora", "Access & Voting") }}</h2>
       <p class="subtitle">
-        {{ t('agora', 'Manage who can view the group and vote on inquiries') }}
+        {{ t("agora", "Manage who can view the group and vote on inquiries") }}
       </p>
     </div>
 
@@ -392,7 +374,7 @@ onMounted(async () => {
 			============================================================ -->
     <div class="access-section">
       <div class="section-header">
-        <h3>{{ t('agora', 'Group Status') }}</h3>
+        <h3>{{ t("agora", "Group Status") }}</h3>
         <div class="section-badge">
           <span
             class="badge"
@@ -403,7 +385,7 @@ onMounted(async () => {
         </div>
       </div>
       <p class="section-desc">
-        {{ t('agora', 'Control the workflow status of this group') }}
+        {{ t("agora", "Control the workflow status of this group") }}
       </p>
 
       <NcSelect
@@ -425,7 +407,7 @@ onMounted(async () => {
           :disabled="!canEdit || isSaving"
           @click="publishGroup"
         >
-          {{ t('agora', 'Activate') }}
+          {{ t("agora", "Activate") }}
         </NcButton>
         <NcButton
           v-if="inquiryGroupStore.isActive"
@@ -433,7 +415,7 @@ onMounted(async () => {
           :disabled="!canEdit || isSaving"
           @click="archiveGroup"
         >
-          {{ t('agora', 'Archive') }}
+          {{ t("agora", "Archive") }}
         </NcButton>
       </div>
     </div>
@@ -443,7 +425,7 @@ onMounted(async () => {
 				============================================================ -->
     <div class="access-section">
       <div class="section-header">
-        <h3>{{ t('agora', 'Visibility') }}</h3>
+        <h3>{{ t("agora", "Visibility") }}</h3>
         <div class="section-badge">
           <span class="badge">{{
             visibilityOptionLabels[inquiryGroupStore.configuration.visibility]
@@ -451,7 +433,7 @@ onMounted(async () => {
         </div>
       </div>
       <p class="section-desc">
-        {{ t('agora', 'Who can view this inquiry group and its inquiries') }}
+        {{ t("agora", "Who can view this inquiry group and its inquiries") }}
       </p>
 
       <NcSelect
@@ -471,7 +453,7 @@ onMounted(async () => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Visible to specific groups') }}</label>
+          <label>{{ t("agora", "Visible to specific groups") }}</label>
           <UserSearch
             :model-value="visibilityGroups"
             :search-types="[SEARCH_TYPE_GROUPS]"
@@ -482,18 +464,22 @@ onMounted(async () => {
             @update:model-value="visibilityGroups = $event"
           />
           <span
-            v-if="inquiryGroupStore.configuration?.visibilityGroups?.length === 0"
+            v-if="
+              inquiryGroupStore.configuration?.visibilityGroups?.length === 0
+            "
             class="hint"
           >
-            {{ t('agora', 'No groups selected. Only the owner can view.') }}
+            {{ t("agora", "No groups selected. Only the owner can view.") }}
           </span>
           <span
             v-else
             class="hint"
           >
             {{
-              t('agora', '{count} groups selected', {
-                count: inquiryGroupStore.configuration?.visibilityGroups?.length || 0,
+              t("agora", "{count} groups selected", {
+                count:
+                  inquiryGroupStore.configuration?.visibilityGroups?.length ||
+                  0,
               })
             }}
           </span>
@@ -506,7 +492,7 @@ onMounted(async () => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Visible to specific users') }}</label>
+          <label>{{ t("agora", "Visible to specific users") }}</label>
           <UserSearch
             :model-value="visibilityUsers"
             :search-types="[SEARCH_TYPE_USERS]"
@@ -517,18 +503,21 @@ onMounted(async () => {
             @update:model-value="visibilityUsers = $event"
           />
           <span
-            v-if="inquiryGroupStore.configuration?.visibilityUsers?.length === 0"
+            v-if="
+              inquiryGroupStore.configuration?.visibilityUsers?.length === 0
+            "
             class="hint"
           >
-            {{ t('agora', 'No users selected. Only the owner can view.') }}
+            {{ t("agora", "No users selected. Only the owner can view.") }}
           </span>
           <span
             v-else
             class="hint"
           >
             {{
-              t('agora', '{count} users selected', {
-                count: inquiryGroupStore.configuration?.visibilityUsers?.length || 0,
+              t("agora", "{count} users selected", {
+                count:
+                  inquiryGroupStore.configuration?.visibilityUsers?.length || 0,
               })
             }}
           </span>
@@ -541,7 +530,7 @@ onMounted(async () => {
 					============================================================ -->
     <div class="access-section">
       <div class="section-header">
-        <h3>{{ t('agora', 'Participation') }}</h3>
+        <h3>{{ t("agora", "Participation") }}</h3>
         <div class="section-badge">
           <span class="badge">
             {{ participationOptionLabels[participationType] }}
@@ -550,7 +539,10 @@ onMounted(async () => {
       </div>
       <p class="section-desc">
         {{
-          t('agora', 'Who can participate (vote, comment, contribute) in inquiries of this group')
+          t(
+            "agora",
+            "Who can participate (vote, comment, contribute) in inquiries of this group",
+          )
         }}
       </p>
 
@@ -559,13 +551,16 @@ onMounted(async () => {
         :options="participationOptions"
         :label-outside="true"
         :option-label="
-          (opt: string) => participationOptionLabels[opt as ParticipationPolicyType] || opt
+          (opt: string) =>
+            participationOptionLabels[opt as ParticipationPolicyType] || opt
         "
         :label="t('agora', 'Participation Policy')"
         :disabled="!canEdit || isSaving"
         :loading="participationStore.loading.participation"
         input-label="Select participation policy"
-        @update:model-value="(val: ParticipationPolicyType) => (participationType = val)"
+        @update:model-value="
+          (val: ParticipationPolicyType) => (participationType = val)
+        "
       />
 
       <!-- Users -->
@@ -574,7 +569,7 @@ onMounted(async () => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Select Users') }}</label>
+          <label>{{ t("agora", "Select Users") }}</label>
           <UserSearch
             :model-value="participationConfig.user_ids || []"
             :search-types="[SEARCH_TYPE_USERS]"
@@ -582,11 +577,13 @@ onMounted(async () => {
             :disabled="!canEdit || isSaving"
             :placeholder="t('agora', 'Type to search for users')"
             :aria-label="t('agora', 'Select users who can participate')"
-            @update:model-value="(val) => handleParticipationConfigChange('user_ids', val)"
+            @update:model-value="
+              (val) => handleParticipationConfigChange('user_ids', val)
+            "
           />
           <span class="hint">
             {{
-              t('agora', '{count} users selected', {
+              t("agora", "{count} users selected", {
                 count: participationConfig.user_ids?.length || 0,
               })
             }}
@@ -600,7 +597,7 @@ onMounted(async () => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Select Groups') }}</label>
+          <label>{{ t("agora", "Select Groups") }}</label>
           <UserSearch
             :model-value="participationConfig.group_ids || []"
             :search-types="[SEARCH_TYPE_GROUPS]"
@@ -608,11 +605,13 @@ onMounted(async () => {
             :disabled="!canEdit || isSaving"
             :placeholder="t('agora', 'Type to search for groups')"
             :aria-label="t('agora', 'Select groups that can participate')"
-            @update:model-value="(val) => handleParticipationConfigChange('group_ids', val)"
+            @update:model-value="
+              (val) => handleParticipationConfigChange('group_ids', val)
+            "
           />
           <span class="hint">
             {{
-              t('agora', '{count} groups selected', {
+              t("agora", "{count} groups selected", {
                 count: participationConfig.group_ids?.length || 0,
               })
             }}
@@ -626,7 +625,7 @@ onMounted(async () => {
         class="config-panel"
       >
         <div class="config-group">
-          <label>{{ t('agora', 'Selection Size') }}</label>
+          <label>{{ t("agora", "Selection Size") }}</label>
           <NcTextField
             :model-value="String(participationConfig.selection_size)"
             type="number"
@@ -635,26 +634,29 @@ onMounted(async () => {
             :disabled="!canEdit || isSaving"
             :label="t('agora', 'Number of participants to select')"
             @update:model-value="
-              (v: string) => handleParticipationConfigChange('selection_size', Number(v))
+              (v: string) =>
+                handleParticipationConfigChange('selection_size', Number(v))
             "
           />
         </div>
         <div class="config-group">
-          <label>{{ t('agora', 'Selection Method') }}</label>
+          <label>{{ t("agora", "Selection Method") }}</label>
           <NcSelect
             :model-value="participationConfig.method"
             :options="['random', 'weighted', 'stratified']"
             :label-outside="true"
             :disabled="!canEdit || isSaving"
             input-label="Select selection method"
-            @update:model-value="(val: string) => handleParticipationConfigChange('method', val)"
+            @update:model-value="
+              (val: string) => handleParticipationConfigChange('method', val)
+            "
           />
         </div>
         <span class="hint">
           {{
             t(
-              'agora',
-              'Run and validate this lottery from the participation settings of each inquiry.'
+              "agora",
+              "Run and validate this lottery from the participation settings of each inquiry.",
             )
           }}
         </span>
@@ -667,10 +669,10 @@ onMounted(async () => {
           :disabled="!canEdit || isSaving || participationType === 'none'"
           @click="resetParticipation"
         >
-          {{ t('agora', 'Disable participation') }}
+          {{ t("agora", "Disable participation") }}
         </button>
         <span class="hint">
-          {{ t('agora', 'Remove all participation restrictions') }}
+          {{ t("agora", "Remove all participation restrictions") }}
         </span>
       </div>
     </div>
@@ -680,13 +682,13 @@ onMounted(async () => {
 						============================================================ -->
     <div class="access-section shares-section">
       <div class="section-header">
-        <h3>{{ t('agora', 'Access') }}</h3>
+        <h3>{{ t("agora", "Access") }}</h3>
         <div class="section-badge">
-          <span class="badge">{{ sharesStore.active.length }} {{ t('agora', 'shares') }}</span>
+          <span class="badge">{{ sharesStore.active.length }} {{ t("agora", "shares") }}</span>
         </div>
       </div>
       <p class="section-desc">
-        {{ t('agora', 'Manage individual and public shares for this group') }}
+        {{ t("agora", "Manage individual and public shares for this group") }}
       </p>
 
       <SharesListUnsent class="shares unsent" />

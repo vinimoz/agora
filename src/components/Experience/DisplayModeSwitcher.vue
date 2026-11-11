@@ -25,32 +25,32 @@
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { type DisplayMode } from '../../composables/useExperience'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
+import { t } from "@nextcloud/l10n";
+import { type DisplayMode } from "../../composables/useExperience";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
 
 defineProps<{
-  currentMode: DisplayMode
-  availableModes: DisplayMode[]
-}>()
+  currentMode: DisplayMode;
+  availableModes: DisplayMode[];
+}>();
 
 const emit = defineEmits<{
-  change: [mode: DisplayMode]
-}>()
+  change: [mode: DisplayMode];
+}>();
 
 // Only include valid DisplayMode values from experience.types.ts
 const modeLabels: Partial<Record<DisplayMode, string>> = {
-  cards: t('agora', 'Cards'),
-  list: t('agora', 'List'),
-  feed: t('agora', 'Feed'),
-  tree: t('agora', 'Tree'),
-  navigation: t('agora', 'Navigation'),
-  timeline: t('agora', 'Timeline'),
-  kanban: t('agora', 'Kanban'),
-  book: t('agora', 'Book'),
-  widget: t('agora', 'Widget'),
-  tool: t('agora', 'Tool'),
-}
+  cards: t("agora", "Cards"),
+  list: t("agora", "List"),
+  feed: t("agora", "Feed"),
+  tree: t("agora", "Tree"),
+  navigation: t("agora", "Navigation"),
+  timeline: t("agora", "Timeline"),
+  kanban: t("agora", "Kanban"),
+  book: t("agora", "Book"),
+  widget: t("agora", "Widget"),
+  tool: t("agora", "Tool"),
+};
 
 const modeIcons: Partial<Record<DisplayMode, any>> = {
   cards: Icons.Grid,
@@ -63,14 +63,14 @@ const modeIcons: Partial<Record<DisplayMode, any>> = {
   book: Icons.Book,
   widget: Icons.Widget,
   tool: Icons.Tool,
-}
+};
 
 function getModeLabel(mode: DisplayMode): string {
-  return modeLabels[mode] || mode
+  return modeLabels[mode] || mode;
 }
 
 function getModeIcon(mode: DisplayMode) {
-  return modeIcons[mode] || Icons.Grid
+  return modeIcons[mode] || Icons.Grid;
 }
 </script>
 

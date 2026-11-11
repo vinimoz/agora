@@ -21,7 +21,9 @@
             />
             <span class="health-label">{{ consensusHealth.label }}</span>
           </div>
-          <span class="health-description">{{ consensusHealth.description }}</span>
+          <span class="health-description">{{
+            consensusHealth.description
+          }}</span>
         </div>
 
         <div
@@ -58,7 +60,9 @@
           <NcButton
             v-for="action in availableActions"
             :key="action.key"
-            :type="action.key === 'continue_discussion' ? 'primary' : 'secondary'"
+            :type="
+              action.key === 'continue_discussion' ? 'primary' : 'secondary'
+            "
             @click="handleAction(action.key)"
           >
             <template
@@ -70,7 +74,7 @@
                 :size="16"
               />
             </template>
-            {{ t('agora', action.label) }}
+            {{ t("agora", action.label) }}
           </NcButton>
         </div>
       </div>
@@ -90,7 +94,7 @@
         <div class="quorum-stats">
           <span>
             {{
-              t('agora', '{count} of {total} objections resolved', {
+              t("agora", "{count} of {total} objections resolved", {
                 count: resolvedObjections,
                 total: totalObjections,
               })
@@ -101,7 +105,7 @@
             class="quorum-badge"
           >
             {{
-              t('agora', 'Quorum: {count}/{total}', {
+              t("agora", "Quorum: {count}/{total}", {
                 count: objectionsQuorum,
                 total: quorumNeeded,
               })
@@ -121,12 +125,14 @@
           :is="InquiryOptionIcons.AlertCircle"
           :size="16"
         />
-        {{ t('agora', 'Blocking objections') }} ({{ blockingObjections.length }})
+        {{ t("agora", "Blocking objections") }} ({{
+          blockingObjections.length
+        }})
         <span
           v-if="blockedCount > 0"
           class="status-badge blocked"
         >
-          {{ t('agora', '{count} blocked', { count: blockedCount }) }}
+          {{ t("agora", "{count} blocked", { count: blockedCount }) }}
         </span>
       </h4>
       <div class="options-list">
@@ -135,7 +141,9 @@
           :key="item.id"
           :option="item.raw"
           :inquiry-id="parentId"
-          :highlight="uiConfig.highlight_objections && getOptionStatus(item) === 'blocked'"
+          :highlight="
+            uiConfig.highlight_objections && getOptionStatus(item) === 'blocked'
+          "
           :show-quorum="uiConfig.show_consensus_meter"
           :show-status="true"
           :show-resolution="true"
@@ -147,7 +155,9 @@
           :can-change-status="hasFeature('objection_management')"
           :family-type="familyKey"
           @click="emit('openDetail', item)"
-          @status-change="(status: string) => emit('optionStatusChange', item.id, status)"
+          @status-change="
+            (status: string) => emit('optionStatusChange', item.id, status)
+          "
           @propose-resolution="emit('proposeOptionResolution', item.id)"
           @resolve="emit('resolveOption', item.id)"
           @reopen="emit('reopenOption', item.id)"
@@ -165,7 +175,7 @@
           :is="InquiryOptionIcons.MessageSquare"
           :size="16"
         />
-        {{ t('agora', 'Active discussions') }} ({{ activeDiscussions.length }})
+        {{ t("agora", "Active discussions") }} ({{ activeDiscussions.length }})
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
@@ -179,7 +189,9 @@
           :can-propose-resolution="hasFeature('objection_management')"
           :family-type="familyKey"
           @click="emit('openDetail', item)"
-          @status-change="(status: string) => emit('optionStatusChange', item.id, status)"
+          @status-change="
+            (status: string) => emit('optionStatusChange', item.id, status)
+          "
         />
       </div>
     </div>
@@ -194,7 +206,9 @@
           :is="InquiryOptionIcons.FileText"
           :size="16"
         />
-        {{ t('agora', 'Proposed resolutions') }} ({{ proposedResolutions.length }})
+        {{ t("agora", "Proposed resolutions") }} ({{
+          proposedResolutions.length
+        }})
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
@@ -221,12 +235,14 @@
           :is="InquiryOptionIcons.CheckCircle"
           :size="16"
         />
-        {{ t('agora', 'Resolved concerns') }} ({{ resolvedConcerns.length }})
+        {{ t("agora", "Resolved concerns") }} ({{ resolvedConcerns.length }})
         <span
           v-if="recentlyResolved > 0"
           class="status-badge resolved"
         >
-          {{ t('agora', '{count} recently resolved', { count: recentlyResolved }) }}
+          {{
+            t("agora", "{count} recently resolved", { count: recentlyResolved })
+          }}
         </span>
       </h4>
       <div class="options-list">
@@ -255,7 +271,7 @@
           :is="InquiryOptionIcons.AlertOutline"
           :size="16"
         />
-        {{ t('agora', 'Exceptions') }} ({{ exceptions.length }})
+        {{ t("agora", "Exceptions") }} ({{ exceptions.length }})
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
@@ -280,7 +296,9 @@
           :is="InquiryOptionIcons.HelpCircle"
           :size="16"
         />
-        {{ t('agora', 'Consultation questions') }} ({{ consultationQuestions.length }})
+        {{ t("agora", "Consultation questions") }} ({{
+          consultationQuestions.length
+        }})
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
@@ -305,7 +323,7 @@
           :is="InquiryOptionIcons.ThumbUp"
           :size="16"
         />
-        {{ t('agora', 'Recommendations') }} ({{ recommendations.length }})
+        {{ t("agora", "Recommendations") }} ({{ recommendations.length }})
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
@@ -330,7 +348,7 @@
           :is="InquiryOptionIcons.CheckCircle"
           :size="16"
         />
-        {{ t('agora', 'Consent given') }} ({{ consents.length }})
+        {{ t("agora", "Consent given") }} ({{ consents.length }})
       </h4>
       <div class="options-list">
         <ItemCard
@@ -355,7 +373,7 @@
           :is="InquiryOptionIcons.Options"
           :size="16"
         />
-        {{ t('agora', 'Other items') }} ({{ otherItems.length }})
+        {{ t("agora", "Other items") }} ({{ otherItems.length }})
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
@@ -379,9 +397,14 @@
         :is="InquiryOptionIcons.AlertCircle"
         :size="48"
       />
-      <h4>{{ t('agora', 'No consensus items yet') }}</h4>
+      <h4>{{ t("agora", "No consensus items yet") }}</h4>
       <p>
-        {{ t('agora', 'Add objections, exceptions, consultation questions, or recommendations') }}
+        {{
+          t(
+            "agora",
+            "Add objections, exceptions, consultation questions, or recommendations",
+          )
+        }}
       </p>
 
       <div class="quick-add-actions">
@@ -405,117 +428,133 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import ItemCard from './ItemCard.vue'
-import ConsensusOptionCard from '../Options/ConsensusOptionCard.vue'
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import ItemCard from "./ItemCard.vue";
+import ConsensusOptionCard from "../Options/ConsensusOptionCard.vue";
 
 import {
   getOptionTypeIconComponent,
   getFamilyUIConfig,
   getFamilyFeatures,
   getFamilyActions,
-} from '../../helpers/modules/InquiryOptionHelper'
-import type { Item, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
-import { getItemsForFamily } from '../../helpers/modules/itemHelpers'
+} from "../../helpers/modules/InquiryOptionHelper";
+import type {
+  Item,
+  InquiryOptionType,
+  OptionFamily,
+} from "../../Types/index.ts";
+import { getItemsForFamily } from "../../helpers/modules/itemHelpers";
 
 interface FamilyAction {
-  key: string
-  label: string
-  icon?: string
+  key: string;
+  label: string;
+  icon?: string;
 }
 
 const props = defineProps<{
-  items: Item[]
-  parentId: number
-  targetType: 'option' | 'inquiry'
-  optionTypes: InquiryOptionType[]
-  familyOptionTypes?: InquiryOptionType[]
-  family?: OptionFamily | null
-  familyKey?: string
-  isReadonly?: boolean
-  appSettings?: Record<string, unknown>
-  quorumNeeded?: number
-  consensusStatus?: string
-  canReopen?: boolean
-  canContinueDiscussion?: boolean
-  canProposeResolution?: boolean
-  recentActivityThreshold?: number
-}>()
+  items: Item[];
+  parentId: number;
+  targetType: "option" | "inquiry";
+  optionTypes: InquiryOptionType[];
+  familyOptionTypes?: InquiryOptionType[];
+  family?: OptionFamily | null;
+  familyKey?: string;
+  isReadonly?: boolean;
+  appSettings?: Record<string, unknown>;
+  quorumNeeded?: number;
+  consensusStatus?: string;
+  canReopen?: boolean;
+  canContinueDiscussion?: boolean;
+  canProposeResolution?: boolean;
+  recentActivityThreshold?: number;
+}>();
 
 const emit = defineEmits<{
-  addOption: [optionType: string]
-  openDetail: [item: Item]
-  optionStatusChange: [optionId: number, status: string]
-  proposeOptionResolution: [optionId: number]
-  resolveOption: [optionId: number]
-  reopenOption: [optionId: number]
-  continueDiscussion: []
-  proposeResolution: []
-  reopenInquiry: []
-  action: [actionKey: string]
-}>()
+  addOption: [optionType: string];
+  openDetail: [item: Item];
+  optionStatusChange: [optionId: number, status: string];
+  proposeOptionResolution: [optionId: number];
+  resolveOption: [optionId: number];
+  reopenOption: [optionId: number];
+  continueDiscussion: [];
+  proposeResolution: [];
+  reopenInquiry: [];
+  action: [actionKey: string];
+}>();
 
 // ========================================
 // Family filtering
 // ========================================
-const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+const familyKey = computed(
+  () => props.familyKey ?? props.family?.family_type ?? "",
+);
 
 const filtered = computed(() => {
-  const key = familyKey.value
-  let list = key ? getItemsForFamily(props.items, key) : props.items
-  if (!list.length && props.items.length) list = props.items
-  return list
-})
+  const key = familyKey.value;
+  let list = key ? getItemsForFamily(props.items, key) : props.items;
+  if (!list.length && props.items.length) list = props.items;
+  return list;
+});
 
 // ========================================
 // Helper: get option status safely
 // ========================================
-const getOptionStatus = (item: Item) => item.statusKey
+const getOptionStatus = (item: Item) => item.statusKey;
 
 // ========================================
 // Filtered sections
 // ========================================
 const blockingObjections = computed(() =>
-  filtered.value.filter((i) => i.type === 'objection' || i.type === 'blocking_objection')
-)
+  filtered.value.filter(
+    (i) => i.type === "objection" || i.type === "blocking_objection",
+  ),
+);
 
 const activeDiscussions = computed(() =>
   filtered.value.filter(
     (i) =>
-      (i.type === 'objection' || i.type === 'blocking_objection') &&
-      i.statusKey === 'under_discussion'
-  )
-)
+      (i.type === "objection" || i.type === "blocking_objection") &&
+      i.statusKey === "under_discussion",
+  ),
+);
 
 const proposedResolutions = computed(() =>
-  filtered.value.filter((i) => i.type === 'resolution' && i.statusKey === 'proposed')
-)
+  filtered.value.filter(
+    (i) => i.type === "resolution" && i.statusKey === "proposed",
+  ),
+);
 
 const resolvedConcerns = computed(() =>
   filtered.value.filter(
     (i) =>
-      (i.type === 'objection' || i.type === 'blocking_objection') &&
-      (i.statusKey === 'resolved' || i.statusKey === 'accepted')
-  )
-)
+      (i.type === "objection" || i.type === "blocking_objection") &&
+      (i.statusKey === "resolved" || i.statusKey === "accepted"),
+  ),
+);
 
 const exceptions = computed(() =>
-  filtered.value.filter((i) => i.type === 'exception' || i.type === 'non_blocking_objection')
-)
+  filtered.value.filter(
+    (i) => i.type === "exception" || i.type === "non_blocking_objection",
+  ),
+);
 
 const consents = computed(() =>
-  filtered.value.filter((i) => i.type === 'consent' || i.type === 'agreement')
-)
+  filtered.value.filter((i) => i.type === "consent" || i.type === "agreement"),
+);
 
 const consultationQuestions = computed(() =>
-  filtered.value.filter((i) => i.type === 'consultation_question' || i.type === 'question')
-)
+  filtered.value.filter(
+    (i) => i.type === "consultation_question" || i.type === "question",
+  ),
+);
 
-const recommendations = computed(() => filtered.value.filter((i) => i.type === 'recommendation'))
+const recommendations = computed(() =>
+  filtered.value.filter((i) => i.type === "recommendation"),
+);
 
 /** Items not shown in any section above */
 const otherItems = computed(() => {
@@ -526,261 +565,292 @@ const otherItems = computed(() => {
     ...consents.value.map((i) => i.id),
     ...consultationQuestions.value.map((i) => i.id),
     ...recommendations.value.map((i) => i.id),
-  ])
-  return filtered.value.filter((i) => !shown.has(i.id))
-})
+  ]);
+  return filtered.value.filter((i) => !shown.has(i.id));
+});
 
-const allItems = computed(() => filtered.value)
+const allItems = computed(() => filtered.value);
 
 // ========================================
 // Recently resolved
 // ========================================
 const recentlyResolved = computed(() => {
-  const threshold = props.recentActivityThreshold || 60
-  const now = Date.now()
+  const threshold = props.recentActivityThreshold || 60;
+  const now = Date.now();
   return resolvedConcerns.value.filter((i) => {
-    const raw = i.raw as Record<string, unknown>
-    const ts = (raw.resolved_at ?? (raw.miscFields as Record<string, unknown>)?.resolved_at) as
-      string | undefined
-    if (!ts) return false
-    return (now - new Date(ts).getTime()) / 1000 / 60 < threshold
-  }).length
-})
+    const raw = i.raw as Record<string, unknown>;
+    const ts = (raw.resolved_at ??
+      (raw.miscFields as Record<string, unknown>)?.resolved_at) as
+      string | undefined;
+    if (!ts) return false;
+    return (now - new Date(ts).getTime()) / 1000 / 60 < threshold;
+  }).length;
+});
 
 // ========================================
 // Quorum
 // ========================================
 const objectionsQuorum = computed(() =>
   blockingObjections.value.reduce((sum, i) => {
-    const raw = i.raw as Record<string, unknown>
-    const status = raw.status as Record<string, number> | undefined
-    return sum + (status?.countSupports || 0)
-  }, 0)
-)
+    const raw = i.raw as Record<string, unknown>;
+    const status = raw.status as Record<string, number> | undefined;
+    return sum + (status?.countSupports || 0);
+  }, 0),
+);
 
 // ========================================
 // Family configuration
 // ========================================
 const uiConfig = computed(() => {
-  const config = getFamilyUIConfig(familyKey.value, props.family)
+  const config = getFamilyUIConfig(familyKey.value, props.family);
   return {
     show_consensus_meter: config.show_consensus_meter !== false,
     highlight_objections: config.highlight_objections !== false,
     visualize_progress: config.visualize_progress !== false,
     ...config,
-  }
-})
+  };
+});
 
-const features = computed(() => getFamilyFeatures(familyKey.value, props.family))
-const actions = computed(() => getFamilyActions(familyKey.value, props.family))
+const features = computed(() =>
+  getFamilyFeatures(familyKey.value, props.family),
+);
+const actions = computed(() => getFamilyActions(familyKey.value, props.family));
 
 // ========================================
 // Helpers
 // ========================================
-const hasFeature = (feature: string): boolean => features.value.includes(feature)
+const hasFeature = (feature: string): boolean =>
+  features.value.includes(feature);
 
 const getActionIcon = (iconName: string): unknown =>
-  InquiryOptionIcons[iconName] || InquiryOptionIcons.File
+  InquiryOptionIcons[iconName] || InquiryOptionIcons.File;
 
 const handleAction = (actionKey: string): void => {
-  emit('action', actionKey)
+  emit("action", actionKey);
 
-  if (actionKey === 'continue_discussion') {
-    emit('continueDiscussion')
-  } else if (actionKey === 'propose_resolution' || actionKey === 'proposeResolution') {
-    emit('proposeResolution')
-  } else if (actionKey === 'reopen_inquiry' || actionKey === 'reopenInquiry') {
-    emit('reopenInquiry')
+  if (actionKey === "continue_discussion") {
+    emit("continueDiscussion");
+  } else if (
+    actionKey === "propose_resolution" ||
+    actionKey === "proposeResolution"
+  ) {
+    emit("proposeResolution");
+  } else if (actionKey === "reopen_inquiry" || actionKey === "reopenInquiry") {
+    emit("reopenInquiry");
   }
-}
+};
 
 // ========================================
 // Available actions
 // ========================================
 const availableActions = computed(() => {
-  const defaultActions: FamilyAction[] = []
+  const defaultActions: FamilyAction[] = [];
 
   if (props.canContinueDiscussion || activeDiscussions.value.length > 0) {
     defaultActions.push({
-      key: 'continue_discussion',
-      label: t('agora', 'Continue discussion'),
-      icon: 'MessageSquare',
-    })
+      key: "continue_discussion",
+      label: t("agora", "Continue discussion"),
+      icon: "MessageSquare",
+    });
   }
 
   if (props.canProposeResolution || activeDiscussions.value.length > 0) {
     defaultActions.push({
-      key: 'propose_resolution',
-      label: t('agora', 'Propose resolution'),
-      icon: 'FileText',
-    })
+      key: "propose_resolution",
+      label: t("agora", "Propose resolution"),
+      icon: "FileText",
+    });
   }
 
-  if (props.canReopen || props.consensusStatus === 'resolved') {
+  if (props.canReopen || props.consensusStatus === "resolved") {
     defaultActions.push({
-      key: 'reopen_inquiry',
-      label: t('agora', 'Reopen'),
-      icon: 'Refresh',
-    })
+      key: "reopen_inquiry",
+      label: t("agora", "Reopen"),
+      icon: "Refresh",
+    });
   }
 
-  const familyActions = actions.value || []
-  return [...defaultActions, ...familyActions]
-})
+  const familyActions = actions.value || [];
+  return [...defaultActions, ...familyActions];
+});
 
 // ========================================
 // Stats
 // ========================================
-const totalObjections = computed(() => blockingObjections.value.length)
-const resolvedObjections = computed(() => resolvedConcerns.value.length)
+const totalObjections = computed(() => blockingObjections.value.length);
+const resolvedObjections = computed(() => resolvedConcerns.value.length);
 const blockedCount = computed(
-  () => blockingObjections.value.filter((i) => getOptionStatus(i) === 'blocked').length
-)
+  () =>
+    blockingObjections.value.filter((i) => getOptionStatus(i) === "blocked")
+      .length,
+);
 
 // ========================================
 // Quorum progress
 // ========================================
 const quorumPercentage = computed(() => {
-  if (!props.quorumNeeded || props.quorumNeeded === 0) return 0
-  return Math.min((resolvedObjections.value / props.quorumNeeded) * 100, 100)
-})
+  if (!props.quorumNeeded || props.quorumNeeded === 0) return 0;
+  return Math.min((resolvedObjections.value / props.quorumNeeded) * 100, 100);
+});
 
 const showQuorumProgress = computed(
-  () => !!props.quorumNeeded && props.quorumNeeded > 0 && totalObjections.value > 0
-)
+  () =>
+    !!props.quorumNeeded && props.quorumNeeded > 0 && totalObjections.value > 0,
+);
 
 const quorumProgressClass = computed(() => {
-  if (quorumPercentage.value >= 100) return 'complete'
-  if (quorumPercentage.value >= 75) return 'good'
-  if (quorumPercentage.value >= 50) return 'medium'
-  return 'low'
-})
+  if (quorumPercentage.value >= 100) return "complete";
+  if (quorumPercentage.value >= 75) return "good";
+  if (quorumPercentage.value >= 50) return "medium";
+  return "low";
+});
 
 // ========================================
 // Consensus health
 // ========================================
 const consensusHealth = computed(() => {
-  const hasBlocked = blockedCount.value > 0
-  const hasActiveDiscussions = activeDiscussions.value.length > 0
-  const hasProposedResolutions = proposedResolutions.value.length > 0
+  const hasBlocked = blockedCount.value > 0;
+  const hasActiveDiscussions = activeDiscussions.value.length > 0;
+  const hasProposedResolutions = proposedResolutions.value.length > 0;
   const allResolved =
-    resolvedObjections.value === totalObjections.value && totalObjections.value > 0
+    resolvedObjections.value === totalObjections.value &&
+    totalObjections.value > 0;
 
-  if (props.consensusStatus === 'resolved') {
+  if (props.consensusStatus === "resolved") {
     return {
-      class: 'resolved',
+      class: "resolved",
       icon: InquiryOptionIcons.CheckCircle,
-      label: t('agora', 'Resolved'),
-      description: t('agora', 'Consensus was reached on this inquiry'),
-    }
+      label: t("agora", "Resolved"),
+      description: t("agora", "Consensus was reached on this inquiry"),
+    };
   }
 
   if (hasBlocked) {
     return {
-      class: 'blocked',
+      class: "blocked",
       icon: InquiryOptionIcons.AlertCircle,
-      label: t('agora', 'Blocked'),
-      description: t('agora', 'Consensus blocked by {count} unresolved objections', {
-        count: blockedCount.value,
-      }),
-    }
+      label: t("agora", "Blocked"),
+      description: t(
+        "agora",
+        "Consensus blocked by {count} unresolved objections",
+        {
+          count: blockedCount.value,
+        },
+      ),
+    };
   }
 
   if (hasActiveDiscussions) {
     return {
-      class: 'progressing',
+      class: "progressing",
       icon: InquiryOptionIcons.MessageSquare,
-      label: t('agora', 'Progressing'),
-      description: t('agora', 'Consensus progressing with {count} active discussions', {
-        count: activeDiscussions.value.length,
-      }),
-    }
+      label: t("agora", "Progressing"),
+      description: t(
+        "agora",
+        "Consensus progressing with {count} active discussions",
+        {
+          count: activeDiscussions.value.length,
+        },
+      ),
+    };
   }
 
   if (hasProposedResolutions) {
     return {
-      class: 'reviewing',
+      class: "reviewing",
       icon: InquiryOptionIcons.FileText,
-      label: t('agora', 'Reviewing'),
-      description: t('agora', 'Proposed resolutions ready for review'),
-    }
+      label: t("agora", "Reviewing"),
+      description: t("agora", "Proposed resolutions ready for review"),
+    };
   }
 
   if (allResolved) {
     return {
-      class: 'ready',
+      class: "ready",
       icon: InquiryOptionIcons.CheckCircle,
-      label: t('agora', 'Ready'),
-      description: t('agora', 'No blocking objections. Ready for consensus'),
-    }
+      label: t("agora", "Ready"),
+      description: t("agora", "No blocking objections. Ready for consensus"),
+    };
   }
 
   return {
-    class: 'proposed',
+    class: "proposed",
     icon: InquiryOptionIcons.HelpCircle,
-    label: t('agora', 'Proposed'),
-    description: t('agora', 'Consensus process initiated'),
-  }
-})
+    label: t("agora", "Proposed"),
+    description: t("agora", "Consensus process initiated"),
+  };
+});
 
 // ========================================
 // Progress steps
 // ========================================
 const progressSteps = computed(() => [
   {
-    id: 'proposed',
-    label: t('agora', 'Proposed'),
+    id: "proposed",
+    label: t("agora", "Proposed"),
     icon: InquiryOptionIcons.HelpCircle,
     completed: true,
     active: false,
     count: 1,
   },
   {
-    id: 'consultation',
-    label: t('agora', 'Consultation'),
+    id: "consultation",
+    label: t("agora", "Consultation"),
     icon: InquiryOptionIcons.MessageSquare,
-    completed: consultationQuestions.value.length > 0 || exceptions.value.length > 0,
+    completed:
+      consultationQuestions.value.length > 0 || exceptions.value.length > 0,
     active: consultationQuestions.value.length > 0,
     count: consultationQuestions.value.length,
   },
   {
-    id: 'discussion',
-    label: t('agora', 'Discussion'),
+    id: "discussion",
+    label: t("agora", "Discussion"),
     icon: InquiryOptionIcons.MessageSquare,
-    completed: activeDiscussions.value.length === 0 && resolvedObjections.value > 0,
+    completed:
+      activeDiscussions.value.length === 0 && resolvedObjections.value > 0,
     active: activeDiscussions.value.length > 0,
     blocked: blockedCount.value > 0,
     count: activeDiscussions.value.length,
   },
   {
-    id: 'resolution',
-    label: t('agora', 'Resolution'),
+    id: "resolution",
+    label: t("agora", "Resolution"),
     icon: InquiryOptionIcons.FileText,
-    completed: resolvedObjections.value === totalObjections.value && totalObjections.value > 0,
+    completed:
+      resolvedObjections.value === totalObjections.value &&
+      totalObjections.value > 0,
     active: proposedResolutions.value.length > 0,
     count: proposedResolutions.value.length,
   },
   {
-    id: 'consensus',
-    label: t('agora', 'Consensus'),
+    id: "consensus",
+    label: t("agora", "Consensus"),
     icon: InquiryOptionIcons.CheckCircle,
     completed:
-      props.consensusStatus === 'resolved' ||
-      (resolvedObjections.value === totalObjections.value && totalObjections.value > 0),
-    active: props.consensusStatus === 'ready',
+      props.consensusStatus === "resolved" ||
+      (resolvedObjections.value === totalObjections.value &&
+        totalObjections.value > 0),
+    active: props.consensusStatus === "ready",
   },
-])
+]);
 
 // ========================================
 // Available types for quick add
 // ========================================
 const availableTypes = computed(() => {
-  const rootTypes = ['objection', 'exception', 'consultation_question', 'recommendation']
-  return (props.familyOptionTypes ?? []).filter((type) => rootTypes.includes(type.option_type))
-})
+  const rootTypes = [
+    "objection",
+    "exception",
+    "consultation_question",
+    "recommendation",
+  ];
+  return (props.familyOptionTypes ?? []).filter((type) =>
+    rootTypes.includes(type.option_type),
+  );
+});
 
 const getOptionTypeIcon = (type: string) =>
-  getOptionTypeIconComponent(type, props.familyOptionTypes ?? [])
+  getOptionTypeIconComponent(type, props.familyOptionTypes ?? []);
 </script>
 
 <style scoped lang="scss">

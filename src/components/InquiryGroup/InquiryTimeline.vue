@@ -18,7 +18,7 @@
           :size="24"
           class="timeline-icon"
         />
-        <h2>{{ t('agora', 'Timeline') }}</h2>
+        <h2>{{ t("agora", "Timeline") }}</h2>
         <span class="timeline-count">{{ filteredInquiries.length }}</span>
       </div>
       <div class="header-right">
@@ -69,7 +69,7 @@
             :is="Icons.Archive"
             :size="14"
           />
-          {{ t('agora', 'Archived') }}
+          {{ t("agora", "Archived") }}
         </button>
       </div>
     </div>
@@ -87,8 +87,10 @@
             :size="48"
             class="empty-icon"
           />
-          <h3>{{ t('agora', 'No inquiries on timeline') }}</h3>
-          <p>{{ t('agora', 'There are no inquiries matching your filters') }}</p>
+          <h3>{{ t("agora", "No inquiries on timeline") }}</h3>
+          <p>
+            {{ t("agora", "There are no inquiries matching your filters") }}
+          </p>
         </div>
 
         <div
@@ -98,7 +100,7 @@
         >
           <div class="group-header">
             <span class="group-date">{{ formatGroupDate(dateKey) }}</span>
-            <span class="group-count">{{ group.length }} {{ t('agora', 'items') }}</span>
+            <span class="group-count">{{ group.length }} {{ t("agora", "items") }}</span>
           </div>
 
           <div class="group-items">
@@ -126,7 +128,9 @@
                 :is="Icons.GitBranch"
                 :size="20"
               />
-              <h3>{{ t('agora', 'Process for') }}: {{ selectedInquiry.title }}</h3>
+              <h3>
+                {{ t("agora", "Process for") }}: {{ selectedInquiry.title }}
+              </h3>
             </div>
             <span
               class="process-status"
@@ -194,8 +198,10 @@
             :size="48"
             class="empty-icon"
           />
-          <h3>{{ t('agora', 'No inquiry selected') }}</h3>
-          <p>{{ t('agora', 'Select an inquiry to view its process timeline') }}</p>
+          <h3>{{ t("agora", "No inquiry selected") }}</h3>
+          <p>
+            {{ t("agora", "Select an inquiry to view its process timeline") }}
+          </p>
         </div>
       </template>
 
@@ -262,8 +268,10 @@
             :size="48"
             class="empty-icon"
           />
-          <h3>{{ t('agora', 'No historical events') }}</h3>
-          <p>{{ t('agora', 'Historical events will appear here as they occur') }}</p>
+          <h3>{{ t("agora", "No historical events") }}</h3>
+          <p>
+            {{ t("agora", "Historical events will appear here as they occur") }}
+          </p>
         </div>
         <!-- Compact mode footer -->
         <div
@@ -274,7 +282,7 @@
             type="button"
             @click="emit('viewAll')"
           >
-            {{ t('agora', 'View all') }} →
+            {{ t("agora", "View all") }} →
           </button>
         </div>
       </template>
@@ -283,28 +291,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import TimelineItem from './TimelineItem.vue'
-import type { Inquiry } from '../../Types'
+import { computed, ref, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import TimelineItem from "./TimelineItem.vue";
+import type { Inquiry } from "../../Types";
 
 interface Props {
-  inquiries: Inquiry[]
-  groupId?: number
-  selectedInquiryId?: number
-  processPhases?: Array<{ key: string; label: string; description?: string }>
+  inquiries: Inquiry[];
+  groupId?: number;
+  selectedInquiryId?: number;
+  processPhases?: Array<{ key: string; label: string; description?: string }>;
 
   /**
    * Compact mode: hides the header and filters, caps the list to `limit`,
    * and surfaces a "View all" link when there is more to show.
    * Used when the timeline is embedded inside a Home zone.
    */
-  compact?: boolean
+  compact?: boolean;
   /** Hide the header + filter strip regardless of compact. */
-  hideControls?: boolean
+  hideControls?: boolean;
   /** Max number of items to display. 0 = no limit. */
-  limit?: number
+  limit?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -312,12 +320,14 @@ const props = withDefaults(defineProps<Props>(), {
   compact: false,
   hideControls: false,
   limit: 0,
-})
+  groupId: 0,
+  selectedInquiryId: 0,
+});
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-  viewAll: []
-}>()
+  click: [inquiry: Inquiry];
+  viewAll: [];
+}>();
 
 // ---------------------------------------------------------------------------
 // Timeline modes
@@ -325,72 +335,76 @@ const emit = defineEmits<{
 
 const timelineModes = [
   {
-    key: 'inquiries',
-    label: t('agora', 'Inquiries'),
+    key: "inquiries",
+    label: t("agora", "Inquiries"),
     icon: Icons.ViewList,
-    description: t('agora', 'View all inquiries over time'),
+    description: t("agora", "View all inquiries over time"),
   },
   {
-    key: 'process',
-    label: t('agora', 'Process'),
+    key: "process",
+    label: t("agora", "Process"),
     icon: Icons.GitBranch,
-    description: t('agora', 'View the process steps of a selected inquiry'),
+    description: t("agora", "View the process steps of a selected inquiry"),
   },
   {
-    key: 'historical',
-    label: t('agora', 'History'),
+    key: "historical",
+    label: t("agora", "History"),
     icon: Icons.History,
-    description: t('agora', 'View historical events and milestones'),
+    description: t("agora", "View historical events and milestones"),
   },
-]
+];
 
-const timelineMode = ref<'inquiries' | 'process' | 'historical'>('inquiries')
-const viewMode = ref<'compact' | 'detailed' | 'calendar'>('detailed')
-const activeFilter = ref<'all' | 'active' | 'closed' | 'draft' | 'pending'>('all')
-const showArchived = ref(false)
-const activeId = ref<number | null>(null)
+const timelineMode = ref<"inquiries" | "process" | "historical">("inquiries");
+const viewMode = ref<"compact" | "detailed" | "calendar">("detailed");
+const activeFilter = ref<"all" | "active" | "closed" | "draft" | "pending">(
+  "all",
+);
+const showArchived = ref(false);
+const activeId = ref<number | null>(null);
 
 const filters = [
-  { key: 'all', label: t('agora', 'All'), icon: Icons.ViewAll },
-  { key: 'active', label: t('agora', 'Active'), icon: Icons.CheckCircle },
-  { key: 'closed', label: t('agora', 'Closed'), icon: Icons.Close },
-  { key: 'draft', label: t('agora', 'Drafts'), icon: Icons.Edit },
-  { key: 'pending', label: t('agora', 'Pending'), icon: Icons.Clock },
-]
+  { key: "all", label: t("agora", "All"), icon: Icons.ViewAll },
+  { key: "active", label: t("agora", "Active"), icon: Icons.CheckCircle },
+  { key: "closed", label: t("agora", "Closed"), icon: Icons.Close },
+  { key: "draft", label: t("agora", "Drafts"), icon: Icons.Edit },
+  { key: "pending", label: t("agora", "Pending"), icon: Icons.Clock },
+];
 
 // In compact mode we always render the inquiries timeline.
 watch(
   () => props.compact,
   (isCompact) => {
-    if (isCompact) timelineMode.value = 'inquiries'
+    if (isCompact) timelineMode.value = "inquiries";
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 const selectedInquiry = computed(() =>
-  props.inquiries.find((i) => i.id === props.selectedInquiryId)
-)
+  props.inquiries.find((i) => i.id === props.selectedInquiryId),
+);
 
 // ---------------------------------------------------------------------------
 // Filtered + visible lists
 // ---------------------------------------------------------------------------
 
 const filteredInquiries = computed(() => {
-  let items = [...props.inquiries]
+  let items = [...props.inquiries];
 
-  if (activeFilter.value !== 'all') {
+  if (activeFilter.value !== "all") {
     items = items.filter((i) => {
-      const status = i.status?.inquiryStatus || 'draft'
-      return status === activeFilter.value
-    })
+      const status = i.status?.inquiryStatus || "draft";
+      return status === activeFilter.value;
+    });
   }
 
   if (!showArchived.value) {
-    items = items.filter((i) => !i.status?.isArchived)
+    items = items.filter((i) => !i.status?.isArchived);
   }
 
-  return items.sort((a, b) => (b.status?.created || 0) - (a.status?.created || 0))
-})
+  return items.sort(
+    (a, b) => (b.status?.created || 0) - (a.status?.created || 0),
+  );
+});
 
 /**
  * Visible slice of the filtered list. When `limit > 0` (compact mode),
@@ -398,42 +412,46 @@ const filteredInquiries = computed(() => {
  */
 const visibleInquiries = computed(() => {
   if (props.limit > 0) {
-    return filteredInquiries.value.slice(0, props.limit)
+    return filteredInquiries.value.slice(0, props.limit);
   }
-  return filteredInquiries.value
-})
+  return filteredInquiries.value;
+});
 
-const hasMore = computed(() => props.limit > 0 && filteredInquiries.value.length > props.limit)
+const hasMore = computed(
+  () => props.limit > 0 && filteredInquiries.value.length > props.limit,
+);
 
 const groupedInquiries = computed(() => {
-  const groups: Record<string, Inquiry[]> = {}
+  const groups: Record<string, Inquiry[]> = {};
 
   visibleInquiries.value.forEach((inquiry) => {
-    const date = inquiry.status?.created
-    if (!date) return
+    const date = inquiry.status?.created;
+    if (!date) return;
 
-    const dateObj = new Date(date * 1000)
-    const key = dateObj.toISOString().split('T')[0]
+    const dateObj = new Date(date * 1000);
+    const key = dateObj.toISOString().split("T")[0];
 
-    if (!groups[key]) groups[key] = []
-    groups[key].push(inquiry)
-  })
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(inquiry);
+  });
 
-  return groups
-})
+  return groups;
+});
 
 // ---------------------------------------------------------------------------
 // Process steps (Mode B)
 // ---------------------------------------------------------------------------
 
 const processSteps = computed(() => {
-  if (!selectedInquiry.value) return []
+  if (!selectedInquiry.value) return [];
 
   if (props.processPhases.length > 0) {
     const currentPhase =
       (selectedInquiry.value.miscFields?.processPhase as string | undefined) ||
-      props.processPhases[0]?.key
-    const phaseIndex = props.processPhases.findIndex((p) => p.key === currentPhase)
+      props.processPhases[0]?.key;
+    const phaseIndex = props.processPhases.findIndex(
+      (p) => p.key === currentPhase,
+    );
 
     return props.processPhases.map((phase, index) => ({
       key: phase.key,
@@ -441,29 +459,32 @@ const processSteps = computed(() => {
       description: phase.description,
       completed: index < phaseIndex,
       active: index === phaseIndex,
-      date: (selectedInquiry.value.miscFields?.processHistory as any)?.[phase.key] || null,
-    }))
+      date:
+        (selectedInquiry.value.miscFields?.processHistory as any)?.[
+          phase.key
+        ] || null,
+    }));
   }
 
-  const statuses = ['draft', 'waiting_approval', 'active', 'closed']
-  const currentStatus = selectedInquiry.value.status?.inquiryStatus || 'draft'
-  const statusIndex = statuses.indexOf(currentStatus)
+  const statuses = ["draft", "waiting_approval", "active", "closed"];
+  const currentStatus = selectedInquiry.value.status?.inquiryStatus || "draft";
+  const statusIndex = statuses.indexOf(currentStatus);
 
   return statuses.map((status, index) => ({
     key: status,
-    label: t('agora', status.charAt(0).toUpperCase() + status.slice(1)),
+    label: t("agora", status.charAt(0).toUpperCase() + status.slice(1)),
     completed: index < statusIndex,
     active: index === statusIndex,
     date: selectedInquiry.value.status?.created,
-  }))
-})
+  }));
+});
 
 // ---------------------------------------------------------------------------
 // Historical events (Mode C)
 // ---------------------------------------------------------------------------
 
 const historicalEvents = computed(() => {
-  const events: any[] = []
+  const events: any[] = [];
 
   props.inquiries.forEach((inquiry) => {
     if (inquiry.status?.created) {
@@ -471,25 +492,36 @@ const historicalEvents = computed(() => {
         id: `created-${inquiry.id}`,
         date: inquiry.status.created,
         icon: Icons.PlusCircle,
-        type: 'creation',
-        title: t('agora', 'Created "{title}"', { title: inquiry.title }),
-        description: t('agora', 'Inquiry was created'),
+        type: "creation",
+        title: t("agora", 'Created "{title}"', { title: inquiry.title }),
+        description: t("agora", "Inquiry was created"),
         inquiry,
-      })
+      });
     }
 
     if (inquiry.status?.inquiryStatus) {
-      const statusMap: Record<string, { icon: any; type: string; label: string }> = {
-        active: { icon: Icons.CheckCircle, type: 'active', label: t('agora', 'Activated') },
-        closed: { icon: Icons.Close, type: 'closed', label: t('agora', 'Closed') },
+      const statusMap: Record<
+        string,
+        { icon: any; type: string; label: string }
+      > = {
+        active: {
+          icon: Icons.CheckCircle,
+          type: "active",
+          label: t("agora", "Activated"),
+        },
+        closed: {
+          icon: Icons.Close,
+          type: "closed",
+          label: t("agora", "Closed"),
+        },
         waiting_approval: {
           icon: Icons.Clock,
-          type: 'pending',
-          label: t('agora', 'Submitted for approval'),
+          type: "pending",
+          label: t("agora", "Submitted for approval"),
         },
-      }
+      };
 
-      const statusInfo = statusMap[inquiry.status.inquiryStatus]
+      const statusInfo = statusMap[inquiry.status.inquiryStatus];
       if (statusInfo && inquiry.status.lastInteraction) {
         events.push({
           id: `status-${inquiry.id}-${inquiry.status.inquiryStatus}`,
@@ -498,7 +530,7 @@ const historicalEvents = computed(() => {
           type: statusInfo.type,
           title: `${statusInfo.label}: "${inquiry.title}"`,
           inquiry,
-        })
+        });
       }
     }
 
@@ -507,77 +539,80 @@ const historicalEvents = computed(() => {
         id: `expiry-${inquiry.id}`,
         date: inquiry.configuration.expire,
         icon: Icons.Clock,
-        type: 'expiry',
-        title: t('agora', 'Expiry of "{title}"', { title: inquiry.title }),
-        description: t('agora', 'This inquiry will expire'),
+        type: "expiry",
+        title: t("agora", 'Expiry of "{title}"', { title: inquiry.title }),
+        description: t("agora", "This inquiry will expire"),
         inquiry,
-      })
+      });
     }
-  })
+  });
 
-  return events.sort((a, b) => a.date - b.date)
-})
+  return events.sort((a, b) => a.date - b.date);
+});
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 function getProcessStatusClass(inquiry: Inquiry): string {
-  const status = inquiry.status?.inquiryStatus || 'draft'
-  return `status-${status}`
+  const status = inquiry.status?.inquiryStatus || "draft";
+  return `status-${status}`;
 }
 
 function getProcessStatusText(inquiry: Inquiry): string {
-  const status = inquiry.status?.inquiryStatus || 'draft'
+  const status = inquiry.status?.inquiryStatus || "draft";
   const map: Record<string, string> = {
-    active: t('agora', 'In Progress'),
-    closed: t('agora', 'Completed'),
-    draft: t('agora', 'Draft'),
-    waiting_approval: t('agora', 'Pending Approval'),
-    rejected: t('agora', 'Rejected'),
-  }
-  return map[status] || status
+    active: t("agora", "In Progress"),
+    closed: t("agora", "Completed"),
+    draft: t("agora", "Draft"),
+    waiting_approval: t("agora", "Pending Approval"),
+    rejected: t("agora", "Rejected"),
+  };
+  return map[status] || status;
 }
 
 function formatGroupDate(dateKey: string): string {
-  const date = new Date(dateKey + 'T00:00:00')
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
+  const date = new Date(dateKey + "T00:00:00");
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
 
-  if (date.toDateString() === today.toDateString()) return t('agora', 'Today')
-  if (date.toDateString() === yesterday.toDateString()) return t('agora', 'Yesterday')
+  if (date.toDateString() === today.toDateString()) return t("agora", "Today");
+  if (date.toDateString() === yesterday.toDateString())
+    return t("agora", "Yesterday");
 
-  return date.toLocaleDateString('default', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  return date.toLocaleDateString("default", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function formatDate(timestamp: number): string {
-  const date = new Date(timestamp * 1000)
-  return date.toLocaleDateString('default', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleDateString("default", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function formatDateDay(timestamp: number): string {
-  return new Date(timestamp * 1000).getDate().toString()
+  return new Date(timestamp * 1000).getDate().toString();
 }
 
 function formatDateMonth(timestamp: number): string {
-  return new Date(timestamp * 1000).toLocaleDateString('default', { month: 'short' })
+  return new Date(timestamp * 1000).toLocaleDateString("default", {
+    month: "short",
+  });
 }
 
 function handleClick(inquiry: Inquiry) {
-  activeId.value = inquiry.id
-  emit('click', inquiry)
+  activeId.value = inquiry.id;
+  emit("click", inquiry);
 }
 </script>
 

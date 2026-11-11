@@ -3,209 +3,206 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch, nextTick } from 'vue'
-import { emit, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import type { AxiosError } from 'axios'
+import { computed, onUnmounted, ref, watch, nextTick } from "vue";
+import { emit, unsubscribe } from "@nextcloud/event-bus";
+import { t } from "@nextcloud/l10n";
+import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import type { AxiosError } from "axios";
 
-import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+import NcAppContent from "@nextcloud/vue/components/NcAppContent";
 
-import InquiryActionToolbar from '../components/Inquiry/InquiryActionToolbar.vue'
-import InquiryHeaderButtons from '../components/Inquiry/InquiryHeaderButtons.vue'
-import InquiryEditViewForm from '../components/Inquiry/InquiryEditViewForm.vue'
-import InquiryTransition from '../components/Inquiry/InquiryTransition.vue'
-import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
-import { useInquiryStore } from '../stores/inquiry.ts'
-import { useInquiriesStore } from '../stores/inquiries.ts'
-import { useSessionStore } from '../stores/session.ts'
-// import Collapsible from '../components/Base/modules/Collapsible.vue'
-import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vue'
-import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
-import { createInquiryContext, canEdit } from '../utils/permissions.ts'
-import { loadContext } from '../composables/context'
+import InquiryActionToolbar from "../components/Inquiry/InquiryActionToolbar.vue";
+import InquiryHeaderButtons from "../components/Inquiry/InquiryHeaderButtons.vue";
+import InquiryEditViewForm from "../components/Inquiry/InquiryEditViewForm.vue";
+import InquiryTransition from "../components/Inquiry/InquiryTransition.vue";
+import InquiryCreateDlg from "../components/Create/InquiryCreateDlg.vue";
+import { useInquiryStore } from "../stores/inquiry.ts";
+import { useInquiriesStore } from "../stores/inquiries.ts";
+import { useSessionStore } from "../stores/session.ts";
+// import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vue'
+import InquiryInfoCards from "../components/Cards/InquiryInfoCards.vue";
+import { createInquiryContext, canEdit } from "../utils/permissions.ts";
+import { loadContext } from "../composables/context";
 
 const props = defineProps<{
-  id?: string | number
-  token?: string | number
-}>()
+  id?: string | number;
+  token?: string | number;
+}>();
 
-const forceRenderKey = ref(0)
-const selectedMode = ref('response')
-const route = useRoute()
-const router = useRouter()
-const inquiryStore = useInquiryStore()
-const inquiriesStore = useInquiriesStore()
-const sessionStore = useSessionStore()
-const editMode = ref(false)
-const isAppLoaded = ref(false)
+const forceRenderKey = ref(0);
+const selectedMode = ref("response");
+const route = useRoute();
+const router = useRouter();
+const inquiryStore = useInquiryStore();
+const inquiriesStore = useInquiriesStore();
+const sessionStore = useSessionStore();
+const editMode = ref(false);
+const isAppLoaded = ref(false);
 
-const createDlgToggle = ref(false)
-const selectedInquiryTypeForCreation = ref('')
-const selectedGroups = ref([])
-const isSaving = ref(false)
+const createDlgToggle = ref(false);
+const selectedInquiryTypeForCreation = ref("");
+const selectedGroups = ref([]);
+const isSaving = ref(false);
 
 // Add error tracking
-const error = ref<Error | null>(null)
+const error = ref<Error | null>(null);
 
-const isPublicRoute = computed(() => route.name === 'publicInquiry' || !!props.token)
+const isPublicRoute = computed(
+  () => route.name === "publicInquiry" || !!props.token,
+);
 
 const identifier = computed(() => {
   if (isPublicRoute.value) {
-    return props.token || (route.params.token as string)
+    return props.token || (route.params.token as string);
   }
-  return props.id || (route.params.id as string)
-})
+  return props.id || (route.params.id as string);
+});
 
 // Context for permissions
-const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
+const context = computed(() =>
+  createInquiryContext(inquiryStore, sessionStore.appSettings),
+);
 
 const availableGroups = computed(() => {
-  const groups = sessionStore.currentUser?.groups || {}
-  if (typeof groups === 'object' && !Array.isArray(groups)) {
-    return Object.keys(groups)
+  const groups = sessionStore.currentUser?.groups || {};
+  if (typeof groups === "object" && !Array.isArray(groups)) {
+    return Object.keys(groups);
   }
-  return groups
-})
+  return groups;
+});
 
 async function routeChild(childId: string) {
-  router.push({ name: 'inquiry', params: { id: childId } })
+  router.push({ name: "inquiry", params: { id: childId } });
 }
 
 async function loadInquiry() {
   if (!identifier.value) {
-    error.value = new Error(t('agora', 'No identifier provided'))
-    return
+    error.value = new Error(t("agora", "No identifier provided"));
+    return;
   }
 
-  error.value = null
-  isAppLoaded.value = false
+  error.value = null;
+  isAppLoaded.value = false;
 
   try {
     if (isPublicRoute.value) {
-      await inquiryStore.loadByToken(identifier.value as string)
+      await inquiryStore.loadByToken(identifier.value as string);
     } else {
-      await inquiryStore.load(identifier.value as string)
+      await inquiryStore.load(identifier.value as string);
     }
 
     if (isPublicRoute.value) {
-      inquiryStore.childs = []
+      inquiryStore.childs = [];
     } else {
       const result = inquiriesStore.inquiries.filter(
-        (i) => i.parentId === Number(identifier.value) && i.configuration.visibility !== 'private'
-      )
-      inquiryStore.childs = result
+        (i) =>
+          i.parentId === Number(identifier.value) &&
+          i.configuration.visibility !== "private",
+      );
+      inquiryStore.childs = result;
     }
 
     if (inquiryStore.childs?.length === 0 && !isPublicRoute.value) {
-      inquiryStore.status.forceEditMode = true
-      editMode.value = true
+      inquiryStore.status.forceEditMode = true;
+      editMode.value = true;
     } else {
-      inquiryStore.status.forceEditMode = false
-      editMode.value = false
+      inquiryStore.status.forceEditMode = false;
+      editMode.value = false;
     }
 
-    inquiriesStore.setFamilyType(inquiryStore.family)
+    inquiriesStore.setFamilyType(inquiryStore.family);
 
-    await nextTick()
-    forceRenderKey.value += 1
+    await nextTick();
+    forceRenderKey.value += 1;
   } catch (e) {
-    const status = (e as AxiosError).response?.status
+    const status = (e as AxiosError).response?.status;
     if (!isPublicRoute.value && (status === 403 || status === 404)) {
-      router.replace({ name: status === 403 ? 'forbidden' : 'notfound' })
-      return
+      router.replace({ name: status === 403 ? "forbidden" : "notfound" });
+      return;
     }
-    console.error('Error in loadInquiry:', e)
-    error.value = e as Error
+    console.error("Error in loadInquiry:", e);
+    error.value = e as Error;
 
     if (isPublicRoute.value) {
-      showError(t('agora', 'Failed to load public inquiry. The link may be invalid or expired.'))
+      showError(
+        t(
+          "agora",
+          "Failed to load public inquiry. The link may be invalid or expired.",
+        ),
+      );
     } else {
-      showError(t('agora', 'Failed to load inquiry'))
+      showError(t("agora", "Failed to load inquiry"));
     }
   } finally {
-    isAppLoaded.value = true
+    isAppLoaded.value = true;
   }
 }
 
 watch(
   identifier,
   async () => {
-    isAppLoaded.value = false
-    await loadInquiry()
+    isAppLoaded.value = false;
+    await loadInquiry();
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 // Compute isReadonly
 const isReadonly = computed(() => {
   if (isPublicRoute.value) {
-    return true
+    return true;
   }
 
-  const user = sessionStore.currentUser
+  const user = sessionStore.currentUser;
   if (
-    inquiryStore.status?.moderationStatus === 'rejected' ||
-    inquiryStore.status?.moderationStatus === 'pending'
+    inquiryStore.status?.moderationStatus === "rejected" ||
+    inquiryStore.status?.moderationStatus === "pending"
   ) {
-    return true
+    return true;
   }
   if (!user) {
-    return true
+    return true;
   }
-  const canEditResult = canEdit(context.value)
+  const canEditResult = canEdit(context.value);
 
-  return !canEditResult
-})
+  return !canEditResult;
+});
 
 const enableEditMode = () => {
-  if (isPublicRoute.value) return
+  if (isPublicRoute.value) return;
 
-  editMode.value = true
-  inquiryStore.status.forceEditMode = true
-}
+  editMode.value = true;
+  inquiryStore.status.forceEditMode = true;
+};
 
 onBeforeRouteUpdate(async (to, from, next) => {
-  if (to.name === 'publicInquiry' && to.params.token !== from.params.token) {
-    loadContext(to)
+  if (to.name === "publicInquiry" && to.params.token !== from.params.token) {
+    loadContext(to);
   }
   if (to.params.id || to.params.token) {
-    inquiryStore.reset()
+    inquiryStore.reset();
   }
-  next()
-  emit('transitions-off', 500)
-})
+  next();
+  emit("transitions-off", 500);
+});
 
 onUnmounted(() => {
-  inquiryStore.reset()
-  unsubscribe('load-inquiry', () => {})
-})
-
-const isShortDescription = computed(() => {
-  if (!inquiryStore.description) return true
-  return (
-    inquiryStore.description.split(' ').length < 20 &&
-    inquiryStore.description.split(/\r\n|\r|\n/).length < 5
-  )
-})
-
-const collapsibleProps = computed<CollapsibleProps>(() => ({
-  noCollapse: !inquiryStore.configuration?.collapseDescription || isShortDescription.value,
-  initialState: inquiryStore.currentUserStatus?.countInquiries === 0 ? 'max' : 'min',
-}))
+  inquiryStore.reset();
+  unsubscribe("load-inquiry", () => {});
+});
 
 const handleSave = async () => {
-  if (isPublicRoute.value) return
+  if (isPublicRoute.value) return;
 
-  if (isSaving.value) return
+  if (isSaving.value) return;
 
-  if (!inquiryStore.title || inquiryStore.title.trim() === '') {
-    showError(t('agora', 'Title is mandatory'), { timeout: 2000 })
-    return
+  if (!inquiryStore.title || inquiryStore.title.trim() === "") {
+    showError(t("agora", "Title is mandatory"), { timeout: 2000 });
+    return;
   }
 
-  isSaving.value = true
+  isSaving.value = true;
 
   try {
     await inquiryStore.update({
@@ -216,50 +213,50 @@ const handleSave = async () => {
       categoryId: inquiryStore.categoryId,
       locationId: inquiryStore.locationId,
       parentId: inquiryStore.parentId,
-    })
-    showSuccess(t('agora', 'The inquiry has been saved'), { timeout: 2000 })
+    });
+    showSuccess(t("agora", "The inquiry has been saved"), { timeout: 2000 });
   } catch {
-    showError(t('agora', 'Error saving inquiry!'), { timeout: 2000 })
+    showError(t("agora", "Error saving inquiry!"), { timeout: 2000 });
   } finally {
-    isSaving.value = false
+    isSaving.value = false;
   }
-}
+};
 
 const handleAllowedResponse = (responseType: string) => {
-  if (isPublicRoute.value) return
+  if (isPublicRoute.value) return;
 
-  selectedMode.value = 'response'
-  selectedInquiryTypeForCreation.value = responseType
-  createDlgToggle.value = true
-}
+  selectedMode.value = "response";
+  selectedInquiryTypeForCreation.value = responseType;
+  createDlgToggle.value = true;
+};
 
 const handleAllowedTransformation = (transformType: string) => {
-  if (isPublicRoute.value) return
+  if (isPublicRoute.value) return;
 
-  selectedMode.value = 'transform'
-  selectedInquiryTypeForCreation.value = transformType
-  createDlgToggle.value = true
-}
+  selectedMode.value = "transform";
+  selectedInquiryTypeForCreation.value = transformType;
+  createDlgToggle.value = true;
+};
 
 const handleCloseDialog = () => {
-  createDlgToggle.value = false
-  selectedInquiryTypeForCreation.value = ''
-}
+  createDlgToggle.value = false;
+  selectedInquiryTypeForCreation.value = "";
+};
 
 const inquiryAdded = (inquiry) => {
-  showSuccess(t('agora', 'Inquiry {title} added', { title: inquiry.title }))
-  createDlgToggle.value = false
-  selectedInquiryTypeForCreation.value = ''
+  showSuccess(t("agora", "Inquiry {title} added", { title: inquiry.title }));
+  createDlgToggle.value = false;
+  selectedInquiryTypeForCreation.value = "";
 
   router.push({
-    name: 'inquiry',
+    name: "inquiry",
     params: { id: inquiry.id },
-  })
-}
+  });
+};
 
 const handleGroupUpdate = (groups) => {
-  selectedGroups.value = groups
-}
+  selectedGroups.value = groups;
+};
 </script>
 
 <template>
@@ -267,7 +264,7 @@ const handleGroupUpdate = (groups) => {
     v-if="error"
     class="error-container"
   >
-    <h3>{{ t('agora', 'Error loading inquiry') }}</h3>
+    <h3>{{ t("agora", "Error loading inquiry") }}</h3>
     <p>{{ error.message }}</p>
     <pre v-if="!isPublicRoute">{{ error.stack }}</pre>
   </div>
@@ -282,7 +279,7 @@ const handleGroupUpdate = (groups) => {
       class="public-banner"
     >
       <span class="public-icon">🔓</span>
-      {{ t('agora', 'You are viewing a public inquiry') }}
+      {{ t("agora", "You are viewing a public inquiry") }}
     </div>
 
     <InquiryHeaderButtons />
@@ -325,7 +322,9 @@ const handleGroupUpdate = (groups) => {
       :parent-inquiry-id="inquiryStore.id"
       :default-title="
         selectedInquiryTypeForCreation === 'official'
-          ? t('agora', 'Official response for: {title}', { title: inquiryStore.title })
+          ? t('agora', 'Official response for: {title}', {
+            title: inquiryStore.title,
+          })
           : t('agora', 'Response for: {title}', { title: inquiryStore.title })
       "
       @close="handleCloseDialog"

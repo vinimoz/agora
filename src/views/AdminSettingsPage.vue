@@ -4,14 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { onMounted, ref } from "vue";
+import { t } from "@nextcloud/l10n";
 
-import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcSettingsSection from "@nextcloud/vue/components/NcSettingsSection";
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import { FlexSettings } from '../components/Base/index.ts'
-import TemplateSetupWizard from '../components/Wizard/TemplateSetupWizard.vue'
+import { FlexSettings } from "../components/Base/index.ts";
+import TemplateSetupWizard from "../components/Wizard/TemplateSetupWizard.vue";
 import {
   AdminActivities,
   AdminArchiveInquiries,
@@ -34,102 +34,120 @@ import {
   AdminSharePublicShowLogin,
   AdminShowMailAddresses,
   AdminUnrescrictedOwners,
-} from '../components/Settings/AdminSettings/index.ts'
-import { useAppSettingsStore } from '../stores/appSettings.ts'
-import { useTemplateWizardStore } from '../stores/templateWizard.ts'
-import '../assets/scss/markdown.scss'
+} from "../components/Settings/AdminSettings/index.ts";
+import { useAppSettingsStore } from "../stores/appSettings.ts";
+import { useTemplateWizardStore } from "../stores/templateWizard.ts";
+import "../assets/scss/markdown.scss";
 
-const appSettingsStore = useAppSettingsStore()
-const wizardStore = useTemplateWizardStore()
-const isLoaded = ref(false)
+const appSettingsStore = useAppSettingsStore();
+const wizardStore = useTemplateWizardStore();
+const isLoaded = ref(false);
 
 const launchWizard = () => {
-  wizardStore.openWizard()
-}
+  wizardStore.openWizard();
+};
 
 const sections = {
   cleanInstance: {
-    name: t('agora', 'Agora clean instance'),
-    description: t('agora', 'Destroy all your agora data'),
+    name: t("agora", "Agora clean instance"),
+    description: t("agora", "Destroy all your agora data"),
   },
   templateSetup: {
-    name: t('agora', 'Template setup wizard'),
-    description: t('agora', 'Configure your agora instance using pre-built templates'),
+    name: t("agora", "Template setup wizard"),
+    description: t(
+      "agora",
+      "Configure your agora instance using pre-built templates",
+    ),
   },
   inquiryCategoryLocation: {
-    name: t('agora', 'Categories and locations management'),
-    description: t('agora', 'Change globally location and category (for all accounts)'),
+    name: t("agora", "Categories and locations management"),
+    description: t(
+      "agora",
+      "Change globally location and category (for all accounts)",
+    ),
   },
   inquirySettings: {
-    name: t('agora', 'Inquiry settings'),
-    description: t('agora', 'Change inquiry settings globally (for all accounts)'),
+    name: t("agora", "Inquiry settings"),
+    description: t(
+      "agora",
+      "Change inquiry settings globally (for all accounts)",
+    ),
   },
   shareSettings: {
-    name: t('agora', 'Share settings'),
-    description: t('agora', 'Change share settings globally (for all accounts)'),
+    name: t("agora", "Share settings"),
+    description: t(
+      "agora",
+      "Change share settings globally (for all accounts)",
+    ),
   },
   otherSettings: {
-    name: t('agora', 'Other settings'),
-    description: t('agora', 'Enable or disable individual features'),
+    name: t("agora", "Other settings"),
+    description: t("agora", "Enable or disable individual features"),
   },
   performanceSettings: {
-    name: t('agora', 'Performance settings'),
+    name: t("agora", "Performance settings"),
     description: t(
-      'agora',
-      'If you are experiencing connection problems, change how auto updates are retrieved.'
+      "agora",
+      "If you are experiencing connection problems, change how auto updates are retrieved.",
     ),
   },
   globalSettings: {
-    name: t('agora', 'Global inquiry settings'),
+    name: t("agora", "Global inquiry settings"),
     description: t(
-      'agora',
-      'Let you configure, family, type of inquiries and associed rights, like comment, supports, status …'
+      "agora",
+      "Let you configure, family, type of inquiries and associed rights, like comment, supports, status …",
     ),
   },
   publicSettings: {
-    name: t('agora', 'Public inquiry registration dialog options'),
+    name: t("agora", "Public inquiry registration dialog options"),
     description: t(
-      'agora',
-      'These options regard the appearence of the registration dialog of public inquiries.'
+      "agora",
+      "These options regard the appearence of the registration dialog of public inquiries.",
     ),
   },
   emailSettings: {
-    name: t('agora', 'Email options'),
+    name: t("agora", "Email options"),
     description: t(
-      'agora',
-      'Add links to legal terms, if they exist and add an optional disclaimer to emails.'
+      "agora",
+      "Add links to legal terms, if they exist and add an optional disclaimer to emails.",
     ),
   },
   inquiryRights: {
-    name: t('agora', 'Inquiry rights'),
-    description: t('agora', 'Change inquiry rights globally (for all accounts)'),
+    name: t("agora", "Inquiry rights"),
+    description: t(
+      "agora",
+      "Change inquiry rights globally (for all accounts)",
+    ),
   },
   moderationSettings: {
-    name: t('agora', 'Moderation settings'),
-    description: t('agora', 'Change moderation settings'),
+    name: t("agora", "Moderation settings"),
+    description: t("agora", "Change moderation settings"),
   },
   jobSettings: {
-    name: t('agora', 'Job control'),
-    description: t('agora', 'Manually start backgropund jobs independent from the cron schedule'),
+    name: t("agora", "Job control"),
+    description: t(
+      "agora",
+      "Manually start backgropund jobs independent from the cron schedule",
+    ),
   },
-}
+};
 
 onMounted(async () => {
   try {
-    await appSettingsStore.load()
+    await appSettingsStore.load();
 
     // Check if database is empty for auto-launch
-    await wizardStore.checkDatabaseEmpty()
+    await wizardStore.checkDatabaseEmpty();
     if (wizardStore.isDatabaseEmpty) {
       // Auto-launch wizard if database is empty
-      wizardStore.openWizard()
+      wizardStore.openWizard();
     }
   } catch (error) {
-    console.error('Failed to load data:', error)
+    console.error("Failed to load data:", error);
   } finally {
-    isLoaded.value = true
+    isLoaded.value = true;
   }
-})
+});
 </script>
 
 <template>
@@ -144,8 +162,8 @@ onMounted(async () => {
           <p>
             {{
               t(
-                'agora',
-                'Use the setup wizard to quickly configure your agora instance with pre-built templates for citizen participation, enterprise, or education use cases.'
+                "agora",
+                "Use the setup wizard to quickly configure your agora instance with pre-built templates for citizen participation, enterprise, or education use cases.",
               )
             }}
           </p>
@@ -153,7 +171,7 @@ onMounted(async () => {
             type="primary"
             @click="launchWizard"
           >
-            {{ t('agora', 'Launch setup wizard') }}
+            {{ t("agora", "Launch setup wizard") }}
           </NcButton>
         </NcSettingsSection>
 

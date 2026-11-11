@@ -10,14 +10,14 @@
       :disabled="disabled"
     >
       <option :value="null">
-        {{ t('agora', 'Not ranked') }}
+        {{ t("agora", "Not ranked") }}
       </option>
       <option
         v-for="i in maxRank"
         :key="i"
         :value="i"
       >
-        {{ t('agora', 'Rank {n}', { n: i }) }}
+        {{ t("agora", "Rank {n}", { n: i }) }}
       </option>
     </select>
     <NcButton
@@ -32,37 +32,37 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { X } from 'lucide-vue-next'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { X } from "lucide-vue-next";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  disabled?: boolean
-  rank?: number | null
-  totalItems?: number
-}>()
+  engineConfig: Record<string, unknown>;
+  disabled?: boolean;
+  rank?: number | null;
+  totalItems?: number;
+}>();
 
 const emit = defineEmits<{
-  changeRank: [rank: number | null]
-}>()
+  changeRank: [rank: number | null];
+}>();
 
 const maxRank = computed(() => {
-  const max = props.engineConfig.max_rank
+  const max = props.engineConfig.max_rank;
   if (max === null || max === undefined) {
-    return props.totalItems ?? 10
+    return props.totalItems ?? 10;
   }
-  return max as number
-})
+  return max as number;
+});
 
 const currentRank = computed({
   get: () => props.rank ?? null,
-  set: (value: number | null) => emit('changeRank', value),
-})
+  set: (value: number | null) => emit("changeRank", value),
+});
 
 function clearRank() {
-  emit('changeRank', null)
+  emit("changeRank", null);
 }
 </script>
 

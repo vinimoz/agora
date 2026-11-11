@@ -10,54 +10,54 @@
       @change="handleChange"
     >
       <option :value="null">
-        {{ t('agora', 'Not ranked') }}
+        {{ t("agora", "Not ranked") }}
       </option>
       <option
         v-for="i in maxRank"
         :key="i"
         :value="i"
       >
-        {{ t('agora', 'Rank {n}', { n: i }) }}
+        {{ t("agora", "Rank {n}", { n: i }) }}
       </option>
     </select>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import type { Option, Inquiry } from '../../../Types/index'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import type { Option, Inquiry } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Option | Inquiry
-  rank?: number | null
-  totalItems?: number
-}>()
+  engineConfig: Record<string, unknown>;
+  item: Option | Inquiry;
+  rank?: number | null;
+  totalItems?: number;
+}>();
 
 const maxRank = computed(() => {
-  const max = props.engineConfig.max_rank as number
+  const max = props.engineConfig.max_rank as number;
   if (max === null || max === undefined) {
-    return props.totalItems || 10
+    return props.totalItems || 10;
   }
-  return max
-})
+  return max;
+});
 
 const emit = defineEmits<{
-  changeRank: [rank: number | null]
-}>()
+  changeRank: [rank: number | null];
+}>();
 
 const localRank = computed({
   get: () => props.rank ?? null,
   set: (value) => {
-    emit('changeRank', value)
+    emit("changeRank", value);
   },
-})
+});
 
 function handleChange(event: Event) {
-  const target = event.target as HTMLSelectElement
-  const value = target.value === 'null' ? null : parseInt(target.value, 10)
-  emit('changeRank', value)
+  const target = event.target as HTMLSelectElement;
+  const value = target.value === "null" ? null : parseInt(target.value, 10);
+  emit("changeRank", value);
 }
 </script>
 

@@ -1,34 +1,36 @@
-!-- - SPDX-FileCopyrightText: Nextcloud 2026 - SPDX-License-Identifier: AGPL-3.0-or-later -->
+!-- - SPDX-FileCopyrightText: Nextcloud 2026 - SPDX-License-Identifier:
+AGPL-3.0-or-later -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { IconProps } from './types'
-import { computed } from 'vue'
+import { t } from "@nextcloud/l10n";
+import { IconProps } from "./types";
+import { computed } from "vue";
 
 const { size = 24, supportValue = null } = defineProps<
   IconProps & { supportValue?: number | null }
->()
+>();
 
 const emojiSymbol = computed(() => {
-  if (supportValue === 1) return '👍'
-  if (supportValue === 0) return '😐'
-  if (supportValue === -1) return '👎'
-  return '👍' // no participation → grey thumb up
-})
+  if (supportValue === 1) return "👍";
+  if (supportValue === 0) return "😐";
+  if (supportValue === -1) return "👎";
+  return "👍"; // no participation → grey thumb up
+});
 
 const iconColor = computed(() => {
-  if (supportValue === 1) return '#facc15' // yellow
-  if (supportValue === 0) return '#facc15' // yellow
-  if (supportValue === -1) return '#facc15' // yellow
-  return '#9ca3af' // solid grey for null
-})
+  if (supportValue === 1) return "#facc15"; // yellow
+  if (supportValue === 0) return "#facc15"; // yellow
+  if (supportValue === -1) return "#facc15"; // yellow
+  return "#9ca3af"; // solid grey for null
+});
 
 const dynamicTitle = computed(() => {
-  if (supportValue === 1) return t('agora', 'Support - click for neutral')
-  if (supportValue === -1) return t('agora', 'Against - click to remove participation')
-  if (supportValue === 0) return t('agora', 'Neutral - click for against')
-  return t('agora', 'No participation - click for support')
-})
+  if (supportValue === 1) return t("agora", "Support - click for neutral");
+  if (supportValue === -1)
+    return t("agora", "Against - click to remove participation");
+  if (supportValue === 0) return t("agora", "Neutral - click for against");
+  return t("agora", "No participation - click for support");
+});
 </script>
 
 <template>
@@ -59,7 +61,8 @@ const dynamicTitle = computed(() => {
   vertical-align: middle;
   transition: all 0.3s ease;
   cursor: pointer;
-  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+  font-family:
+    "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
 
 .emoji-support-icon.against {

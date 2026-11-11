@@ -4,72 +4,83 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import DOMPurify from 'dompurify'
-import { DateTime } from 'luxon'
+import { ref, computed, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import DOMPurify from "dompurify";
+import { DateTime } from "luxon";
 
 // Import icons and components
-import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
 
 // Import components
-import CommentAdd from '../Comments/CommentAdd.vue'
-import Comments from '../Comments/Comments.vue'
-import SideBarTabResources from '../SideBar/SideBarTabResources.vue'
+import CommentAdd from "../Comments/CommentAdd.vue";
+import Comments from "../Comments/Comments.vue";
+import SideBarTabResources from "../SideBar/SideBarTabResources.vue";
 
 // Import helpers and stores
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import type { Inquiry, InquiryType } from '../../Types/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { useInquiriesStore } from '../../stores/inquiries.ts'
-import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
-import { SupportFeature } from '../Base/index.ts'
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import type { Inquiry, InquiryType } from "../../Types/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { useInquiriesStore } from "../../stores/inquiries.ts";
+import {
+  createInquiryContext,
+  canSupport,
+  canComment,
+} from "../../utils/permissions.ts";
+import { SupportFeature } from "../Base/index.ts";
 
 interface Props {
-  inquiry: Inquiry
+  inquiry: Inquiry;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const sessionStore = useSessionStore()
-const inquiriesStore = useInquiriesStore()
+const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore();
 
 // State
-const showSidebar = ref(false)
-const currentSupportValue = ref(props.inquiry.currentUserStatus?.supportValue || null)
+const showSidebar = ref(false);
+const currentSupportValue = ref(
+  props.inquiry.currentUserStatus?.supportValue || null,
+);
 
 // Update openComments function
 function openSidebar() {
-  showSidebar.value = true
+  showSidebar.value = true;
 }
 
 function closeSidebar() {
-  showSidebar.value = false
+  showSidebar.value = false;
 }
 
 // Create permission context
 
 // Context for permissions
-const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
+const context = computed(() =>
+  createInquiryContext(props.inquiry, sessionStore.appSettings),
+);
 
 // Computed Properties
-const canSupportValue = computed(() => canSupport(context))
-const canCommentValue = computed(() => canComment(context))
+const canSupportValue = computed(() => canSupport(context));
+const canCommentValue = computed(() => canComment(context));
 
 const inquiryTypeData = computed(() =>
-  getInquiryTypeData(props.inquiry.type, sessionStore.appSettings?.inquiryTypeTab || [])
-)
+  getInquiryTypeData(
+    props.inquiry.type,
+    sessionStore.appSettings?.inquiryTypeTab || [],
+  ),
+);
 
 const typeIconComponent = computed(() => {
   if (inquiryTypeData.value?.icon) {
-    const iconName = inquiryTypeData.value.icon
-    if (typeof iconName === 'function' || typeof iconName === 'object') {
-      return iconName
+    const iconName = inquiryTypeData.value.icon;
+    if (typeof iconName === "function" || typeof iconName === "object") {
+      return iconName;
     }
-    if (typeof iconName === 'string' && InquiryGeneralIcons[iconName]) {
-      return InquiryGeneralIcons[iconName]
+    if (typeof iconName === "string" && InquiryGeneralIcons[iconName]) {
+      return InquiryGeneralIcons[iconName];
     }
   }
 
@@ -83,358 +94,387 @@ const typeIconComponent = computed(() => {
     announcement: InquiryGeneralIcons.Megaphone,
     meeting: InquiryGeneralIcons.Users,
     document: InquiryGeneralIcons.Document,
-  }
+  };
 
-  return iconMap[props.inquiry.type] || InquiryGeneralIcons.FolderMultiple
-})
+  return iconMap[props.inquiry.type] || InquiryGeneralIcons.FolderMultiple;
+});
 
 // Status
 const currentInquiryStatus = computed(() => {
-  if (!storeInquiry.value.status?.inquiryStatus) return null
+  if (!storeInquiry.value.status?.inquiryStatus) return null;
 
   const specialStatuses = {
     draft: {
-      statusKey: 'draft',
-      label: t('agora', 'Draft'),
-      icon: 'draft',
+      statusKey: "draft",
+      label: t("agora", "Draft"),
+      icon: "draft",
       inquiryType: props.inquiry.type,
       order: 0,
     },
     waiting_approval: {
-      statusKey: 'waiting_approval',
-      label: t('agora', 'Pending approval'),
-      icon: 'waitingapproval',
+      statusKey: "waiting_approval",
+      label: t("agora", "Pending approval"),
+      icon: "waitingapproval",
       inquiryType: props.inquiry.type,
       order: 1,
     },
-  }
+  };
 
-  const currentStatus = props.inquiry.status.inquiryStatus
+  const currentStatus = props.inquiry.status.inquiryStatus;
   if (specialStatuses[currentStatus]) {
-    return specialStatuses[currentStatus]
+    return specialStatuses[currentStatus];
   }
 
   const statusesFromSettings =
     sessionStore.appSettings?.inquiryStatusTab?.filter(
-      (status) => status.inquiryType === props.inquiry.type
-    ) || []
+      (status) => status.inquiryType === props.inquiry.type,
+    ) || [];
 
   return (
     statusesFromSettings.find((status) => status.statusKey === currentStatus) ||
     specialStatuses.draft
-  )
-})
+  );
+});
 
 const statusText = computed(() =>
-  currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : ''
-)
+  currentInquiryStatus.value?.label
+    ? t("agora", currentInquiryStatus.value.label)
+    : "",
+);
 
 const statusIconComponent = computed(() => {
-  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
-  const iconName = currentInquiryStatus.value.icon
-  return StatusIcons[iconName] || StatusIcons.Default
-})
+  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default;
+  const iconName = currentInquiryStatus.value.icon;
+  return StatusIcons[iconName] || StatusIcons.Default;
+});
 
 // Support
-const isSupported = computed(() => storeInquiry.value.currentUserStatus?.hasSupported || false)
+const isSupported = computed(
+  () => storeInquiry.value.currentUserStatus?.hasSupported || false,
+);
 
 // Replace all props.inquiry references with storeInquiry computed property
 const storeInquiry = computed(() => {
   // First try to find the inquiry in the inquiries store
-  const fromStore = inquiriesStore.inquiries.find((i) => i.id === props.inquiry.id)
+  const fromStore = inquiriesStore.inquiries.find(
+    (i) => i.id === props.inquiry.id,
+  );
   // If not found, use the prop (fallback)
-  return fromStore || props.inquiry
-})
+  return fromStore || props.inquiry;
+});
 
 // Quorum
 
 const hasQuorum = computed(
-  () => storeInquiry.value.configuration?.quorum && storeInquiry.value.configuration.quorum > 0
-)
-const quorumValue = computed(() => storeInquiry.value.configuration?.quorum || 0)
+  () =>
+    storeInquiry.value.configuration?.quorum &&
+    storeInquiry.value.configuration.quorum > 0,
+);
+const quorumValue = computed(
+  () => storeInquiry.value.configuration?.quorum || 0,
+);
 
 // Cover image
 const coverUrl = computed(() => {
-  if (!storeInquiry.value.coverId || storeInquiry.value.coverId === 0) return ''
-  return getNextcloudPreviewUrl(storeInquiry.value.coverId)
-})
+  if (!storeInquiry.value.coverId || storeInquiry.value.coverId === 0)
+    return "";
+  return getNextcloudPreviewUrl(storeInquiry.value.coverId);
+});
 
-function getNextcloudPreviewUrl(fileId: number, x = 1200, y = 400, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`
+function getNextcloudPreviewUrl(
+  fileId: number,
+  x = 1200,
+  y = 400,
+  autoScale = true,
+) {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`;
 }
 
 // Get hierarchy path for location and category display
 function getHierarchyPath(items, targetId) {
-  if (!items || !Array.isArray(items)) return ''
+  if (!items || !Array.isArray(items)) return "";
 
-  const itemMap = {}
+  const itemMap = {};
 
   items.forEach((item) => {
-    itemMap[item.id] = item
-  })
+    itemMap[item.id] = item;
+  });
 
   if (!itemMap[targetId]) {
-    return itemMap[1]?.name || t('agora', 'Not defined')
+    return itemMap[1]?.name || t("agora", "Not defined");
   }
 
   function buildPath(item) {
     if (item.parentId === 0) {
-      return item.name
+      return item.name;
     }
-    const parent = itemMap[item.parentId]
+    const parent = itemMap[item.parentId];
     if (parent) {
-      return `${buildPath(parent)} → ${item.name}`
+      return `${buildPath(parent)} → ${item.name}`;
     }
-    return item.name
+    return item.name;
   }
 
-  return buildPath(itemMap[targetId])
+  return buildPath(itemMap[targetId]);
 }
 
 // Date formatting
 const formattedCreationDate = computed(() => {
-  if (!props.inquiry.status?.created) return ''
+  if (!props.inquiry.status?.created) return "";
   try {
-    return DateTime.fromMillis(props.inquiry.status.created * 1000).toLocaleString(
-      DateTime.DATE_FULL
-    )
+    return DateTime.fromMillis(
+      props.inquiry.status.created * 1000,
+    ).toLocaleString(DateTime.DATE_FULL);
   } catch {
-    return ''
+    return "";
   }
-})
+});
 
 const formattedLastInteraction = computed(() => {
-  if (!props.inquiry.status?.lastInteraction) return ''
+  if (!props.inquiry.status?.lastInteraction) return "";
   try {
-    const date = DateTime.fromMillis(props.inquiry.status.lastInteraction * 1000)
-    const now = DateTime.now()
+    const date = DateTime.fromMillis(
+      props.inquiry.status.lastInteraction * 1000,
+    );
+    const now = DateTime.now();
 
-    if (date.hasSame(now, 'day')) {
-      return `${t('agora', 'Today')} ${date.toLocaleString(DateTime.TIME_SIMPLE)}`
+    if (date.hasSame(now, "day")) {
+      return `${t("agora", "Today")} ${date.toLocaleString(DateTime.TIME_SIMPLE)}`;
     }
-    if (date.hasSame(now.minus({ days: 1 }), 'day')) {
-      return `${t('agora', 'Yesterday')} ${date.toLocaleString(DateTime.TIME_SIMPLE)}`
+    if (date.hasSame(now.minus({ days: 1 }), "day")) {
+      return `${t("agora", "Yesterday")} ${date.toLocaleString(DateTime.TIME_SIMPLE)}`;
     }
-    return date.toRelative()
+    return date.toRelative();
   } catch {
-    return ''
+    return "";
   }
-})
+});
 
 // Expiration
 const timeExpirationRelative = computed(() => {
   if (props.inquiry.configuration?.expire) {
-    return DateTime.fromMillis(props.inquiry.configuration.expire * 1000).toRelative()
+    return DateTime.fromMillis(
+      props.inquiry.configuration.expire * 1000,
+    ).toRelative();
   }
-  return ''
-})
+  return "";
+});
 
 // Participants count
-const participantsCount = computed(() => storeInquiry.value.status?.countParticipants || 0)
+const participantsCount = computed(
+  () => storeInquiry.value.status?.countParticipants || 0,
+);
 
 // Content
 const sanitizedContent = computed(() => {
-  const content = storeInquiry.value.descriptionSafe || storeInquiry.value.description
-  if (!content || content.trim() === '') {
+  const content =
+    storeInquiry.value.descriptionSafe || storeInquiry.value.description;
+  if (!content || content.trim() === "") {
     return `<div class="no-content">
-              <p>${t('agora', 'No description available')}</p>
-            </div>`
+              <p>${t("agora", "No description available")}</p>
+            </div>`;
   }
 
   return DOMPurify.sanitize(content, {
     ALLOWED_TAGS: [
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'p',
-      'br',
-      'strong',
-      'em',
-      'u',
-      's',
-      'ul',
-      'ol',
-      'li',
-      'blockquote',
-      'pre',
-      'code',
-      'img',
-      'figure',
-      'figcaption',
-      'table',
-      'thead',
-      'tbody',
-      'tr',
-      'th',
-      'td',
-      'a',
-      'span',
-      'div',
-      'hr',
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "p",
+      "br",
+      "strong",
+      "em",
+      "u",
+      "s",
+      "ul",
+      "ol",
+      "li",
+      "blockquote",
+      "pre",
+      "code",
+      "img",
+      "figure",
+      "figcaption",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
+      "a",
+      "span",
+      "div",
+      "hr",
     ],
     ALLOWED_ATTR: [
-      'href',
-      'target',
-      'rel',
-      'title',
-      'src',
-      'alt',
-      'width',
-      'height',
-      'loading',
-      'class',
-      'id',
-      'style',
+      "href",
+      "target",
+      "rel",
+      "title",
+      "src",
+      "alt",
+      "width",
+      "height",
+      "loading",
+      "class",
+      "id",
+      "style",
     ],
-  })
-})
+  });
+});
 
 // Resources
 const hasResources = computed(
-  () => storeInquiry.value.miscFields && Object.keys(storeInquiry.value.miscFields).length > 0
-)
+  () =>
+    storeInquiry.value.miscFields &&
+    Object.keys(storeInquiry.value.miscFields).length > 0,
+);
 
 // Helper to get available fields
-function getAvailableFields(inquiryType: string, inquiryTypeTab: InquiryType[]) {
-  if (!inquiryTypeTab || !Array.isArray(inquiryTypeTab)) return []
+function getAvailableFields(
+  inquiryType: string,
+  inquiryTypeTab: InquiryType[],
+) {
+  if (!inquiryTypeTab || !Array.isArray(inquiryTypeTab)) return [];
 
-  const typeConfig = inquiryTypeTab.find((tab) => tab.key === inquiryType)
-  if (!typeConfig || !typeConfig.fields) return []
+  const typeConfig = inquiryTypeTab.find((tab) => tab.key === inquiryType);
+  if (!typeConfig || !typeConfig.fields) return [];
 
-  return typeConfig.fields
+  return typeConfig.fields;
 }
 
 // Get misc field value
 function getMiscValue(key: string) {
-  return storeInquiry.value.miscFields?.[key] ?? null
+  return storeInquiry.value.miscFields?.[key] ?? null;
 }
 
-type FieldType = 'text' | 'number' | 'boolean' | 'enum' | 'date' | 'array'
+type FieldType = "text" | "number" | "boolean" | "enum" | "date" | "array";
 
 interface EnumValue {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 interface FieldConfig {
-  type: FieldType
-  key: string
-  allowed_values?: (string | EnumValue)[]
+  type: FieldType;
+  key: string;
+  allowed_values?: (string | EnumValue)[];
 }
 
 // Get display value for a field
 function getDisplayValue(value: unknown, field: FieldConfig): string {
-  if (value === null || value === undefined || value === '') {
-    return t('agora', 'Not specified')
+  if (value === null || value === undefined || value === "") {
+    return t("agora", "Not specified");
   }
 
-  if (field.type === 'boolean') {
+  if (field.type === "boolean") {
     // Handle boolean values
-    if (typeof value === 'boolean') {
-      return value ? t('agora', 'Yes') : t('agora', 'No')
+    if (typeof value === "boolean") {
+      return value ? t("agora", "Yes") : t("agora", "No");
     }
     // Handle string representations of booleans
-    if (typeof value === 'string') {
-      const lowerValue = value.toLowerCase()
-      if (lowerValue === 'true' || lowerValue === '1' || lowerValue === 'yes') {
-        return t('agora', 'Yes')
+    if (typeof value === "string") {
+      const lowerValue = value.toLowerCase();
+      if (lowerValue === "true" || lowerValue === "1" || lowerValue === "yes") {
+        return t("agora", "Yes");
       }
-      if (lowerValue === 'false' || lowerValue === '0' || lowerValue === 'no') {
-        return t('agora', 'No')
+      if (lowerValue === "false" || lowerValue === "0" || lowerValue === "no") {
+        return t("agora", "No");
       }
     }
   }
 
-  if (field.type === 'enum' && field.allowed_values) {
+  if (field.type === "enum" && field.allowed_values) {
     const enumValue = field.allowed_values.find((v) =>
-      typeof v === 'object' ? v.value === value : v === value
-    )
+      typeof v === "object" ? v.value === value : v === value,
+    );
 
-    if (enumValue && typeof enumValue === 'object') {
-      return enumValue.label
+    if (enumValue && typeof enumValue === "object") {
+      return enumValue.label;
     }
 
-    if (typeof value === 'string') {
-      return value.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
+    if (typeof value === "string") {
+      return value.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     }
   }
 
   if (Array.isArray(value)) {
-    return value.join(', ')
+    return value.join(", ");
   }
 
-  return String(value)
+  return String(value);
 }
 
 // Check if field should be displayed
 function shouldDisplayField(field: FieldConfig, value: unknown): boolean {
-  const hiddenFields = ['layout_mode', 'render_mode']
+  const hiddenFields = ["layout_mode", "render_mode"];
   if (hiddenFields.includes(field.key)) {
-    return false
+    return false;
   }
 
   // Check for empty values
-  if (value === null || value === undefined || value === '') {
-    return false
+  if (value === null || value === undefined || value === "") {
+    return false;
   }
 
   // Handle arrays
   if (Array.isArray(value) && value.length === 0) {
-    return false
+    return false;
   }
 
   // Always display boolean fields (even false)
-  if (field.type === 'boolean') {
-    return true
+  if (field.type === "boolean") {
+    return true;
   }
 
-  return true
+  return true;
 }
 
 // Get dynamic fields
 const dynamicFields = computed(() => {
   try {
     if (!storeInquiry.value.type) {
-      return []
+      return [];
     }
     const fields = getAvailableFields(
       storeInquiry.value.type,
-      sessionStore.appSettings?.inquiryTypeTab || []
-    )
-    return Array.isArray(fields) ? fields : []
+      sessionStore.appSettings?.inquiryTypeTab || [],
+    );
+    return Array.isArray(fields) ? fields : [];
   } catch (e) {
-    console.error('Error getting fields:', e)
-    return []
+    console.error("Error getting fields:", e);
+    return [];
   }
-})
+});
 
 // Get fields that should be displayed
 const displayFields = computed(() =>
   dynamicFields.value
     .map((field) => {
-      const value = getMiscValue(field.key)
+      const value = getMiscValue(field.key);
       return {
         ...field,
         value,
         displayValue: getDisplayValue(value, field),
-        hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value),
-      }
+        hasValue:
+          field.type === "boolean" ? true : shouldDisplayField(field, value),
+      };
     })
-    .filter((field) => field.hasValue)
-)
+    .filter((field) => field.hasValue),
+);
 
 // Watch for changes in support value - now watching storeInquiry
 watch(
   () => storeInquiry.value.currentUserStatus?.supportValue,
   (newValue) => {
-    currentSupportValue.value = newValue || null
+    currentSupportValue.value = newValue || null;
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 </script>
 <!-- InquiryFull.vue - Professional Redesign -->
 <template>
@@ -486,7 +526,10 @@ watch(
             <div class="cover-actions">
               <!-- Support Button -->
               <button
-                v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'binary'"
+                v-if="
+                  canSupportValue &&
+                    storeInquiry.configuration?.supportFeature === 'binary'
+                "
                 class="action-button support-button"
                 :class="{ active: isSupported }"
                 @click="onToggleSupport"
@@ -498,9 +541,15 @@ watch(
                   :supported="isSupported"
                 />
                 <span class="action-text">
-                  {{ isSupported ? t('agora', 'Supported') : t('agora', 'Support') }}
+                  {{
+                    isSupported
+                      ? t("agora", "Supported")
+                      : t("agora", "Support")
+                  }}
                 </span>
-                <span class="action-count">{{ storeInquiry.status?.countSupports || 0 }}</span>
+                <span class="action-count">{{
+                  storeInquiry.status?.countSupports || 0
+                }}</span>
               </button>
 
               <!-- Comments Button -->
@@ -514,8 +563,10 @@ watch(
                   class="action-icon"
                   :size="18"
                 />
-                <span class="action-text">{{ t('agora', 'Comments') }}</span>
-                <span class="action-count">{{ storeInquiry.status?.countComments || 0 }}</span>
+                <span class="action-text">{{ t("agora", "Comments") }}</span>
+                <span class="action-count">{{
+                  storeInquiry.status?.countComments || 0
+                }}</span>
               </button>
 
               <!-- Participants -->
@@ -525,7 +576,9 @@ watch(
                   class="action-icon"
                   :size="18"
                 />
-                <span class="action-text">{{ t('agora', 'Participants') }}</span>
+                <span class="action-text">{{
+                  t("agora", "Participants")
+                }}</span>
                 <span class="action-count">{{ participantsCount }}</span>
               </div>
             </div>
@@ -568,7 +621,10 @@ watch(
             <!-- Quick Actions Bar -->
             <div class="header-actions">
               <button
-                v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'binary'"
+                v-if="
+                  canSupportValue &&
+                    storeInquiry.configuration?.supportFeature === 'binary'
+                "
                 class="action-button support-button"
                 :class="{ active: isSupported }"
                 @click="onToggleSupport"
@@ -580,9 +636,15 @@ watch(
                   :supported="isSupported"
                 />
                 <span class="action-text">
-                  {{ isSupported ? t('agora', 'Supported') : t('agora', 'Support') }}
+                  {{
+                    isSupported
+                      ? t("agora", "Supported")
+                      : t("agora", "Support")
+                  }}
                 </span>
-                <span class="action-count">{{ storeInquiry.status?.countSupports || 0 }}</span>
+                <span class="action-count">{{
+                  storeInquiry.status?.countSupports || 0
+                }}</span>
               </button>
 
               <button
@@ -595,8 +657,10 @@ watch(
                   class="action-icon"
                   :size="18"
                 />
-                <span class="action-text">{{ t('agora', 'Comments') }}</span>
-                <span class="action-count">{{ storeInquiry.status?.countComments || 0 }}</span>
+                <span class="action-text">{{ t("agora", "Comments") }}</span>
+                <span class="action-count">{{
+                  storeInquiry.status?.countComments || 0
+                }}</span>
               </button>
 
               <div class="action-button participants-button">
@@ -605,7 +669,9 @@ watch(
                   class="action-icon"
                   :size="18"
                 />
-                <span class="action-text">{{ t('agora', 'Participants') }}</span>
+                <span class="action-text">{{
+                  t("agora", "Participants")
+                }}</span>
                 <span class="action-count">{{ participantsCount }}</span>
               </div>
             </div>
@@ -646,8 +712,9 @@ watch(
               v-if="hasQuorum"
               class="meta-item"
             >
-              <span class="meta-label">{{ t('agora', 'Quorum') }}:</span>
-              <span class="meta-value">{{ storeInquiry.status?.countSupports || 0 }} / {{ quorumValue }}</span>
+              <span class="meta-label">{{ t("agora", "Quorum") }}:</span>
+              <span class="meta-value">{{ storeInquiry.status?.countSupports || 0 }} /
+                {{ quorumValue }}</span>
             </div>
 
             <div
@@ -684,12 +751,16 @@ watch(
                   class="meta-card-icon"
                   :size="18"
                 />
-                <span class="meta-card-title">{{ t('agora', 'Location') }}</span>
+                <span class="meta-card-title">{{
+                  t("agora", "Location")
+                }}</span>
               </div>
               <div class="meta-card-content">
                 {{
-                  getHierarchyPath(sessionStore.appSettings.locationTab, storeInquiry.locationId) ||
-                    t('agora', 'Inherited from parent')
+                  getHierarchyPath(
+                    sessionStore.appSettings.locationTab,
+                    storeInquiry.locationId,
+                  ) || t("agora", "Inherited from parent")
                 }}
               </div>
             </div>
@@ -702,12 +773,16 @@ watch(
                   class="meta-card-icon"
                   :size="18"
                 />
-                <span class="meta-card-title">{{ t('agora', 'Category') }}</span>
+                <span class="meta-card-title">{{
+                  t("agora", "Category")
+                }}</span>
               </div>
               <div class="meta-card-content">
                 {{
-                  getHierarchyPath(sessionStore.appSettings.categoryTab, storeInquiry.categoryId) ||
-                    t('agora', 'Inherited from parent')
+                  getHierarchyPath(
+                    sessionStore.appSettings.categoryTab,
+                    storeInquiry.categoryId,
+                  ) || t("agora", "Inherited from parent")
                 }}
               </div>
             </div>
@@ -718,14 +793,15 @@ watch(
         <div class="description-section">
           <div class="section-header">
             <h2 class="section-title">
-              {{ t('agora', 'Description') }}
+              {{ t("agora", "Description") }}
             </h2>
           </div>
-          <!-- eslint-disable-next-line vue/no-v-html -->
+          <!-- eslint-disable vue/no-v-html -->
           <div
             class="description-content"
             v-html="sanitizedContent"
           />
+          <!-- eslint-enable vue/no-v-html -->
         </div>
 
         <!-- Resources Section - Only if has resources -->
@@ -735,7 +811,7 @@ watch(
         >
           <div class="section-header">
             <h2 class="section-title">
-              {{ t('agora', 'Resources') }}
+              {{ t("agora", "Resources") }}
             </h2>
           </div>
           <div class="resources-content">
@@ -750,7 +826,7 @@ watch(
         >
           <div class="section-header">
             <h2 class="section-title">
-              {{ t('agora', 'Additional information') }}
+              {{ t("agora", "Additional information") }}
             </h2>
           </div>
           <div class="info-grid">
@@ -771,12 +847,15 @@ watch(
 
         <!-- Ternary Support Section - Only for ternary support -->
         <div
-          v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'"
+          v-if="
+            canSupportValue &&
+              storeInquiry.configuration?.supportFeature === 'ternary'
+          "
           class="ternary-support-section"
         >
           <div class="section-header">
             <h2 class="section-title">
-              {{ t('agora', 'Express your position') }}
+              {{ t("agora", "Express your position") }}
             </h2>
           </div>
 
@@ -804,7 +883,7 @@ watch(
           <h2 class="modal-title">
             {{ storeInquiry.title }}
           </h2>
-          <span class="modal-subtitle">{{ t('agora', 'Comments') }}</span>
+          <span class="modal-subtitle">{{ t("agora", "Comments") }}</span>
         </div>
       </template>
 

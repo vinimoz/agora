@@ -6,7 +6,10 @@
 <template>
   <div
     class="kanban-item"
-    :class="[`status-${inquiry.status?.inquiryStatus || 'draft'}`, { 'is-dragging': isDragging }]"
+    :class="[
+      `status-${inquiry.status?.inquiryStatus || 'draft'}`,
+      { 'is-dragging': isDragging },
+    ]"
     draggable="true"
     @click="handleClick"
     @dragstart="handleDragStart"
@@ -70,38 +73,42 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { Inquiry } from '../../Types'
+import { computed, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { Inquiry } from "../../Types";
 
 interface Props {
-  inquiry: Inquiry
-  draggable?: boolean
+  inquiry: Inquiry;
+  draggable?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   draggable: true,
-})
+});
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-  dragstart: [event: DragEvent, inquiry: Inquiry]
-  dragend: [event: DragEvent]
-}>()
+  click: [inquiry: Inquiry];
+  dragstart: [event: DragEvent, inquiry: Inquiry];
+  dragend: [event: DragEvent];
+}>();
 
-const sessionStore = useSessionStore()
-const isDragging = ref(false)
+const sessionStore = useSessionStore();
+const isDragging = ref(false);
 
-const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+const inquiryTypes = computed(
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
 
-const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
+const typeData = computed(() =>
+  getInquiryTypeData(props.inquiry.type, inquiryTypes.value),
+);
 
 const typeIcon = computed(() => {
   if (typeData.value?.icon) {
-    return typeData.value.icon
+    return typeData.value.icon;
   }
   const iconMap: Record<string, any> = {
     survey: Icons.ClipboardList,
@@ -114,43 +121,43 @@ const typeIcon = computed(() => {
     document: Icons.Document,
     proposal: Icons.Scale,
     general: Icons.FolderMultiple,
-  }
-  return iconMap[props.inquiry.type?.toLowerCase()] || Icons.FolderMultiple
-})
+  };
+  return iconMap[props.inquiry.type?.toLowerCase()] || Icons.FolderMultiple;
+});
 
 const shortDescription = computed(() => {
-  if (!props.inquiry.description) return ''
-  const plain = props.inquiry.description.replace(/<[^>]*>/g, '')
-  return plain.length > 60 ? `${plain.substring(0, 60)}…` : plain
-})
+  if (!props.inquiry.description) return "";
+  const plain = props.inquiry.description.replace(/<[^>]*>/g, "");
+  return plain.length > 60 ? `${plain.substring(0, 60)}…` : plain;
+});
 
 function formatTime(timestamp: number): string {
-  const date = new Date(timestamp * 1000)
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const date = new Date(timestamp * 1000);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
 
   if (hours < 1) {
-    return t('agora', 'Now')
+    return t("agora", "Now");
   }
   if (hours < 24) {
-    return t('agora', '{h}h ago', { h: hours })
+    return t("agora", "{h}h ago", { h: hours });
   }
-  return date.toLocaleDateString('default', { month: 'short', day: 'numeric' })
+  return date.toLocaleDateString("default", { month: "short", day: "numeric" });
 }
 
 function handleClick() {
-  emit('click', props.inquiry)
+  emit("click", props.inquiry);
 }
 
 function handleDragStart(event: DragEvent) {
-  isDragging.value = true
-  emit('dragstart', event, props.inquiry)
+  isDragging.value = true;
+  emit("dragstart", event, props.inquiry);
 }
 
 function handleDragEnd(event: DragEvent) {
-  isDragging.value = false
-  emit('dragend', event)
+  isDragging.value = false;
+  emit("dragend", event);
 }
 </script>
 

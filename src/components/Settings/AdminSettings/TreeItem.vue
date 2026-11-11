@@ -12,10 +12,10 @@
       <span class="tree-label">{{ item.name }}</span>
       <div class="tree-actions">
         <NcButton @click="editItem">
-          {{ t('agora', 'Edit') }}
+          {{ t("agora", "Edit") }}
         </NcButton>
         <NcButton @click="deleteItem">
-          {{ t('agora', 'Delete') }}
+          {{ t("agora", "Delete") }}
         </NcButton>
       </div>
     </div>
@@ -38,23 +38,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
 
 type Item = {
-  id: number
-  name: string
-  children?: Item[]
-}
+  id: number;
+  name: string;
+  children?: Item[];
+};
 
 const props = defineProps({
   item: {
-    type: Object as PropType<Item>,
-    default: () => ({ id: 0, name: '' }),
+    type: Object as Item,
+    default: () => ({ id: 0, name: "" }),
   },
   items: {
-    type: Array as PropType<Item[]>,
+    type: Array as Item[],
     default: () => [],
   },
   level: {
@@ -63,21 +63,23 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: 'default',
+    default: "default",
   },
-})
+});
 
-const emit = defineEmits(['edit', 'delete'])
+const emit = defineEmits(["edit", "delete"]);
 
-const children = computed(() => props.items.filter((i) => i.parentId === props.item.id))
+const children = computed(() =>
+  props.items.filter((i) => i.parentId === props.item.id),
+);
 
 const editItem = () => {
-  emit('edit', props.item, props.type)
-}
+  emit("edit", props.item, props.type);
+};
 
 const deleteItem = () => {
-  emit('delete', props.item.id, props.type)
-}
+  emit("delete", props.item.id, props.type);
+};
 </script>
 
 <style scoped>

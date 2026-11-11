@@ -1,5 +1,5 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <template>
   <section class="upcoming-widget">
@@ -10,12 +10,14 @@ AGPL-3.0-or-later */
           :size="20"
           class="header-icon"
         />
-        <h2>{{ t('agora', 'Upcoming') }}</h2>
+        <h2>{{ t("agora", "Upcoming") }}</h2>
       </div>
       <a
         class="header-link"
         @click="emit('viewAll')"
-      >{{ t('agora', 'View all') }}</a>
+      >{{
+        t("agora", "View all")
+      }}</a>
     </header>
 
     <ul class="events-list">
@@ -43,27 +45,27 @@ AGPL-3.0-or-later */
         v-if="events.length === 0"
         class="events-empty"
       >
-        <p>{{ t('agora', 'No upcoming events') }}</p>
+        <p>{{ t("agora", "No upcoming events") }}</p>
       </li>
     </ul>
   </section>
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
 
 export interface UpcomingEvent {
-  id: number | string
-  day: string
-  month: string
-  title: string
-  location: string
-  time: string
+  id: number | string;
+  day: string;
+  month: string;
+  title: string;
+  location: string;
+  time: string;
 }
 
-withDefaults(defineProps<{ events?: UpcomingEvent[] }>(), { events: () => [] })
-const emit = defineEmits<{ click: [event: UpcomingEvent]; viewAll: [] }>()
+withDefaults(defineProps<{ events?: UpcomingEvent[] }>(), { events: () => [] });
+const emit = defineEmits<{ click: [event: UpcomingEvent]; viewAll: [] }>();
 </script>
 
 <style lang="scss" scoped>

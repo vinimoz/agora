@@ -9,368 +9,458 @@ import type {
   InquiryType,
   VisibilityType,
   Category,
-} from '../../Types/index.js'
+} from "../../Types/index.js";
 
-import { AxiosResponse } from '@nextcloud/axios'
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { Share } from '../../Types/share.types.ts'
-import { Comment, User } from '../../Types/index.ts'
-import { InquiryGroup, Option, Support } from '@/Types'
-import type { ModerationWorkflowStatus } from '../../Types/index.ts'
+import { AxiosResponse } from "@nextcloud/axios";
+import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
+import { Share } from "../../Types/share.types.ts";
+import { Comment, User } from "../../Types/index.ts";
+import { InquiryGroup, Option, Support } from "@/Types";
+import type { ModerationWorkflowStatus } from "../../Types/index.ts";
 
 export type ApiEmailAdressList = {
-  displayName: string
-  emailAddress: string
-  combined: string
-}
+  displayName: string;
+  emailAddress: string;
+  combined: string;
+};
 
 export type Confirmations = {
-  sentMails: { emailAddress: string; displayName: string }[]
-  abortedMails: { emailAddress: string; displayName: string; reason: string }[]
-  countSentMails: number
-  countAbortedMails: number
-}
+  sentMails: { emailAddress: string; displayName: string }[];
+  abortedMails: { emailAddress: string; displayName: string; reason: string }[];
+  countSentMails: number;
+  countAbortedMails: number;
+};
 
 const inquiries = {
   getInquiries(): Promise<
     AxiosResponse<{
-      inquiries: Inquiry[]
+      inquiries: Inquiry[];
       permissions: {
-        inquiryCreationAllowed: boolean
-      }
-      inquiryGroups: InquiryGroup[]
+        inquiryCreationAllowed: boolean;
+      };
+      inquiryGroups: InquiryGroup[];
     }>
   > {
     return httpInstance.request({
-      method: 'GET',
-      url: 'inquiries',
+      method: "GET",
+      url: "inquiries",
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getInquiries.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getInquiries.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getChildInquiryIds(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  getChildInquiryIds(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/childs`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.getChildInquiryIds.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getChildInquiryIds.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   getInquiry(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/inquiry`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getInquiry.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   updateModerationStatus(
     inquiryId: number,
-    moderationStatus: ModerationWorkflowStatus
+    moderationStatus: ModerationWorkflowStatus,
   ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/updatemoderation/${inquiryId}/${moderationStatus}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateModerationStatus.name].handleRequestCancellation()
-          .token,
-    })
+        cancelTokenHandlerObject[
+          this.updateModerationStatus.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   getFullInquiry(inquiryId: number): Promise<
     AxiosResponse<{
-      inquiry: Inquiry
-      options: Option[]
-      supports: Support[]
-      comments: Comment[]
-      shares: Share[]
-      subscribed: boolean
+      inquiry: Inquiry;
+      options: Option[];
+      supports: Support[];
+      comments: Comment[];
+      shares: Share[];
+      subscribed: boolean;
     }>
   > {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}`,
       params: { time: +new Date() },
-      cancelToken: cancelTokenHandlerObject[this.getInquiry.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   takeOver(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `administration/inquiry/${inquiryId}/takeover`,
-      cancelToken: cancelTokenHandlerObject[this.takeOver.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[this.takeOver.name].handleRequestCancellation()
+          .token,
+    });
   },
 
-  changeOwner(inquiryId: number, userId: string): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  changeOwner(
+    inquiryId: number,
+    userId: string,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/${inquiryId}/changeowner/${userId}`,
       cancelToken:
-        cancelTokenHandlerObject[this.changeOwner.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.changeOwner.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   updateVisibility(
     inquiryId: number,
-    inquiryVisibility: string
+    inquiryVisibility: string,
   ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/updatevisibility/${inquiryId}/${inquiryVisibility}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateVisibility.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.updateVisibility.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   updateInquiryStatus(
     inquiryId: number,
-    inquiryStatus: string
+    inquiryStatus: string,
   ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/updatestatus/${inquiryId}/${inquiryStatus}`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateInquiryStatus.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.updateInquiryStatus.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  submitInquiry(inquiryId: number, action: string): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  submitInquiry(
+    inquiryId: number,
+    action: string,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/submitinquiry/${inquiryId}`,
       data: { action },
       cancelToken:
-        cancelTokenHandlerObject[this.submitInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.submitInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   updateInquiryConfig(
     inquiryId: number,
-    inquiryConfiguration: InquiryConfiguration
+    inquiryConfiguration: InquiryConfiguration,
   ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     // Convert Proxy to plain object before sending
-    const plainConfig = JSON.parse(JSON.stringify(inquiryConfiguration))
+    const plainConfig = JSON.parse(JSON.stringify(inquiryConfiguration));
 
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/updateconfig/${inquiryId}`,
       data: { inquiryConfiguration: plainConfig },
       cancelToken:
-        cancelTokenHandlerObject[this.updateInquiryConfig.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.updateInquiryConfig.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   addInquiry(dataInquiry: {
-    type: string
-    title: string
-    family: string
-    owner: User | string
-    visibility: VisibilityType
-    ownedGroup?: string
-    configuration?: InquiryConfiguration
-    parentId?: number
-    locationId?: number
-    categoryId?: number
-    description?: string
+    type: string;
+    title: string;
+    family: string;
+    owner: User | string;
+    visibility: VisibilityType;
+    ownedGroup?: string;
+    configuration?: InquiryConfiguration;
+    parentId?: number;
+    locationId?: number;
+    categoryId?: number;
+    description?: string;
   }): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-    console.log(' VISIIBILIT YYYYYY ', dataInquiry.visibility)
+    console.log(" VISIIBILIT YYYYYY ", dataInquiry.visibility);
     return httpInstance.request({
-      method: 'POST',
-      url: 'inquiry/add',
+      method: "POST",
+      url: "inquiry/add",
       data: dataInquiry,
-      cancelToken: cancelTokenHandlerObject[this.addInquiry.name].handleRequestCancellation().token,
-    })
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.addInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   updateInquiry(
     inquiryId: number,
     updateData: {
-      title?: string
-      type?: InquiryType
-      description?: string
-      parentId?: number | 0
-      locationId?: number | 0
-      categoryId?: number | 0
-    }
+      title?: string;
+      type?: InquiryType;
+      description?: string;
+      parentId?: number | 0;
+      locationId?: number | 0;
+      categoryId?: number | 0;
+    },
   ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/${inquiryId}`,
       data: updateData,
       cancelToken:
-        cancelTokenHandlerObject[this.updateInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.updateInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  lockAnonymous(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  lockAnonymous(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/${inquiryId}/lockAnonymous`,
       cancelToken:
-        cancelTokenHandlerObject[this.lockAnonymous.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.lockAnonymous.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  deleteInquiry(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  deleteInquiry(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'DELETE',
+      method: "DELETE",
       url: `inquiry/${inquiryId}`,
       cancelToken:
-        cancelTokenHandlerObject[this.deleteInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.deleteInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  closeInquiry(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  closeInquiry(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/${inquiryId}/close`,
       cancelToken:
-        cancelTokenHandlerObject[this.closeInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.closeInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  reopenInquiry(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  reopenInquiry(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/${inquiryId}/reopen`,
       cancelToken:
-        cancelTokenHandlerObject[this.reopenInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.reopenInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  toggleArchive(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  toggleArchive(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       url: `inquiry/${inquiryId}/toggleArchive`,
       cancelToken:
-        cancelTokenHandlerObject[this.toggleArchive.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.toggleArchive.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  cloneInquiry(inquiryId: number): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+  cloneInquiry(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `inquiry/${inquiryId}/clone`,
       cancelToken:
-        cancelTokenHandlerObject[this.cloneInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.cloneInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  sendConfirmation(inquiryId: number): Promise<AxiosResponse<{ confirmations: Confirmations }>> {
+  sendConfirmation(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ confirmations: Confirmations }>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `inquiry/${inquiryId}/confirmation`,
       cancelToken:
-        cancelTokenHandlerObject[this.sendConfirmation.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.sendConfirmation.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   getParticipantsEmailAddresses(
-    inquiryId: string | number | string[]
+    inquiryId: string | number | string[],
   ): Promise<AxiosResponse<ApiEmailAdressList[]>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/addresses`,
       cancelToken:
         cancelTokenHandlerObject[
           this.getParticipantsEmailAddresses.name
         ].handleRequestCancellation().token,
-    })
+    });
   },
 
-  getSubscription(inquiryId: number): Promise<AxiosResponse<{ subscribed: boolean }>> {
+  getSubscription(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ subscribed: boolean }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/subscription`,
       cancelToken:
-        cancelTokenHandlerObject[this.getSubscription.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getSubscription.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   setSubscription(
     inquiryId: number,
-    subscription: boolean
+    subscription: boolean,
   ): Promise<AxiosResponse<{ subscribed: boolean }>> {
     return httpInstance.request({
-      method: 'PUT',
-      url: `inquiry/${inquiryId}${subscription ? '/subscribe' : '/unsubscribe'}`,
+      method: "PUT",
+      url: `inquiry/${inquiryId}${subscription ? "/subscribe" : "/unsubscribe"}`,
       cancelToken:
-        cancelTokenHandlerObject[this.setSubscription.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.setSubscription.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getCommentsCount(inquiryId: number): Promise<AxiosResponse<{ count: number }>> {
+  getCommentsCount(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ count: number }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/comment-count`,
       cancelToken:
-        cancelTokenHandlerObject[this.getCommentsCount.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getCommentsCount.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getSupportsCount(inquiryId: number): Promise<AxiosResponse<{ count: number }>> {
+  getSupportsCount(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ count: number }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/support-count`,
       cancelToken:
-        cancelTokenHandlerObject[this.getSupportsCount.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getSupportsCount.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getCategories(inquiryId: number): Promise<AxiosResponse<{ categories: Category[] }>> {
+  getCategories(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ categories: Category[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/categories`,
       cancelToken:
-        cancelTokenHandlerObject[this.getCategories.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getCategories.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getLocations(inquiryId: number): Promise<AxiosResponse<{ locations: Location[] }>> {
+  getLocations(
+    inquiryId: number,
+  ): Promise<AxiosResponse<{ locations: Location[] }>> {
     return httpInstance.request({
-      method: 'GET',
+      method: "GET",
       url: `inquiry/${inquiryId}/locations`,
       cancelToken:
-        cancelTokenHandlerObject[this.getLocations.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.getLocations.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   updateMiscField(
     inquiryId: number,
-    updateData: { key: string; value: string }
+    updateData: { key: string; value: string },
   ): Promise<AxiosResponse<{ miscField: string }>> {
-    if (!updateData.key || updateData.key.trim() === '') {
-      throw new Error('Key cannot be null or empty for misc field update')
+    if (!updateData.key || updateData.key.trim() === "") {
+      throw new Error("Key cannot be null or empty for misc field update");
     }
-    console.log(' WE UPDAT THE MIS FIEILD ', updateData)
+    console.log(" WE UPDAT THE MIS FIEILD ", updateData);
 
     return httpInstance.request({
-      method: 'PUT',
+      method: "PUT",
       data: updateData,
       url: `inquiry/${inquiryId}/updatemiscfield`,
       cancelToken:
-        cancelTokenHandlerObject[this.updateMiscField.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.updateMiscField.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   enhanceText(text: string): Promise<AxiosResponse<{ text: string }>> {
     return httpInstance.request({
-      method: 'POST',
-      url: 'inquiry/get-text-ai',
+      method: "POST",
+      url: "inquiry/get-text-ai",
       data: { text },
       cancelToken:
-        cancelTokenHandlerObject[this.enhanceText.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.enhanceText.name
+        ].handleRequestCancellation().token,
+    });
   },
-}
+};
 
-const cancelTokenHandlerObject = createCancelTokenHandler(inquiries)
+const cancelTokenHandlerObject = createCancelTokenHandler(inquiries);
 
-export default inquiries
+export default inquiries;

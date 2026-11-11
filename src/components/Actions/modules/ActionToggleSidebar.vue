@@ -4,20 +4,20 @@
 -->
 
 <script setup lang="ts">
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
+import { emit } from "@nextcloud/event-bus";
+import { t } from "@nextcloud/l10n";
 
-import NcButton from '@nextcloud/vue/components/NcButton'
+import NcButton from "@nextcloud/vue/components/NcButton";
 
-import SidebarIcon from 'vue-material-design-icons/TextAccount.vue' // view-comfy-outline
-import { Event } from '../../../Types'
+import SidebarIcon from "vue-material-design-icons/TextAccount.vue"; // view-comfy-outline
+import { Event } from "../../../Types";
 
-const caption = t('agora', 'Toggle sidebar')
+const caption = t("agora", "Toggle sidebar");
 /**
  *
  */
 function clickAction() {
-  emit(Event.SidebarToggle, null)
+  emit(Event.SidebarToggle, null);
 }
 </script>
 

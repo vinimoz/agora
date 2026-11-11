@@ -7,32 +7,32 @@
     <label class="approval-checkbox">
       <input
         type="checkbox"
-        :checked="isSelected"
+        :checked="props.isSelected"
         @change="handleToggle"
       >
       <span class="checkmark" />
-      <span class="label-text">{{ t('agora', 'Approve') }}</span>
+      <span class="label-text">{{ t("agora", "Approve") }}</span>
     </label>
   </div>
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import type { Option, Inquiry } from '../../../Types/index'
+import { t } from "@nextcloud/l10n";
+// import type { Option, Inquiry } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Option | Inquiry
-  disabled?: boolean
-  isSelected?: boolean
-}>()
+  // engineConfig: Record<string, unknown>;
+  // item: Option | Inquiry;
+ // disabled?: boolean;
+  isSelected?: boolean;
+}>();
 
 const emit = defineEmits<{
-  toggle: []
-}>()
+  toggle: [];
+}>();
 
 function handleToggle() {
-  emit('toggle')
+  emit("toggle");
 }
 </script>
 
@@ -69,7 +69,7 @@ function handleToggle() {
     }
 
     input:checked ~ .checkmark:after {
-      content: '';
+      content: "";
       position: absolute;
       left: 5px;
       top: 2px;

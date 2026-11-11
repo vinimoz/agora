@@ -3,68 +3,69 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { ref, watch, computed, onMounted, onUnmounted, toRaw } from 'vue'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { useInquiryStore } from '../../stores/inquiry'
-import { useInquiriesStore } from '../../stores/inquiries'
-import { useCommentsStore } from '../../stores/comments'
-import { useSessionStore } from '../../stores/session'
-import { useAttachmentsStore } from '../../stores/attachments'
-import { BaseEntry, Event } from '../../Types/index.ts'
-import { DateTime } from 'luxon'
-import { t } from '@nextcloud/l10n'
-import { useRoute, useRouter } from 'vue-router'
-import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
+import { ref, watch, computed, onMounted, onUnmounted, toRaw } from "vue";
+import { subscribe, unsubscribe } from "@nextcloud/event-bus";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { useInquiryStore } from "../../stores/inquiry";
+import { useInquiriesStore } from "../../stores/inquiries";
+import { useCommentsStore } from "../../stores/comments";
+import { useSessionStore } from "../../stores/session";
+import { useAttachmentsStore } from "../../stores/attachments";
+import { BaseEntry, Event } from "../../Types/index.ts";
+import { DateTime } from "luxon";
+import { t } from "@nextcloud/l10n";
+import { useRoute, useRouter } from "vue-router";
+import NcNoteCard from "@nextcloud/vue/components/NcNoteCard";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
 import {
   getFamiliesWithOptionTypes,
   // getLayoutForFamily,
-} from '../../helpers/modules/InquiryOptionHelper'
-import { SupportFeature } from '../Base/index.ts'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
-import NcDateTimePicker from '@nextcloud/vue/components/NcDateTimePicker'
+} from "../../helpers/modules/InquiryOptionHelper";
+import { SupportFeature } from "../Base/index.ts";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcTextField from "@nextcloud/vue/components/NcTextField";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import NcCounterBubble from "@nextcloud/vue/components/NcCounterBubble";
+import NcDateTimePicker from "@nextcloud/vue/components/NcDateTimePicker";
 
-import { NcTextArea } from '@nextcloud/vue'
-import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import InquiryEditor from '../Editor/InquiryEditor.vue'
-import OptionEditView from '../Options/OptionEditView.vue'
-import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
+import { NcTextArea } from "@nextcloud/vue";
+import NcRichContenteditable from "@nextcloud/vue/components/NcRichContenteditable";
+import InquiryEditor from "../Editor/InquiryEditor.vue";
+import OptionEditView from "../Options/OptionEditView.vue";
+import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
 import {
   canSupport,
   canComment,
   canEdit,
   canView,
   createInquiryContext,
-} from '../../utils/permissions.ts'
+} from "../../utils/permissions.ts";
+import type { Inquiry, InquiryType, OptionType } from '@Types/'
 
 // Props
 const props = defineProps<{
-  isReadonly: boolean
-  inquiry?: Inquiry
-}>()
+  isReadonly: boolean;
+  inquiry?: Inquiry;
+}>();
 
-const hasAccess = ref(true)
-const sessionStore = useSessionStore()
-const commentsStore = useCommentsStore()
-const inquiryStore = useInquiryStore()
-const inquiriesStore = useInquiriesStore()
-const route = useRoute()
-const router = useRouter()
-const attachmentsStore = useAttachmentsStore()
+const hasAccess = ref(true);
+const sessionStore = useSessionStore();
+const commentsStore = useCommentsStore();
+const inquiryStore = useInquiryStore();
+const inquiriesStore = useInquiriesStore();
+const route = useRoute();
+const router = useRouter();
+const attachmentsStore = useAttachmentsStore();
 
-const imageFileInput = ref(null)
-const currentCoverUrl = ref('')
+const imageFileInput = ref(null);
+const currentCoverUrl = ref("");
 
-const onCommentsUpdated = () => commentsStore.load()
+const onCommentsUpdated = () => commentsStore.load();
 
 const triggerImageUpload = () => {
-  imageFileInput.value?.click()
-}
+  imageFileInput.value?.click();
+};
 
 const isStoreReady = computed(
   () =>
@@ -72,300 +73,323 @@ const isStoreReady = computed(
     inquiryStore.id &&
     sessionStore &&
     sessionStore.appSettings &&
-    Object.keys(sessionStore.appSettings).length > 0
-)
+    Object.keys(sessionStore.appSettings).length > 0,
+);
 
 // Context for permissions
 const context = computed(() => {
-  if (!isStoreReady.value) return null
-  return createInquiryContext(inquiryStore, sessionStore.appSettings)
-})
+  if (!isStoreReady.value) return null;
+  return createInquiryContext(inquiryStore, sessionStore.appSettings);
+});
 
 // Form fields
-const selectedCategory = ref(inquiryStore.categoryId || 0)
-const selectedLocation = ref(inquiryStore.locationId || 0)
+const selectedCategory = ref(inquiryStore.categoryId || 0);
+const selectedLocation = ref(inquiryStore.locationId || 0);
 
-const isLoaded = ref(false)
+const isLoaded = ref(false);
 
 // Get current inquiry type data
 const inquiryTypeData = computed(() => {
-  const data = getInquiryTypeData(inquiryStore.type, sessionStore.appSettings.inquiryTypeTab || [])
-  return data
-})
+  const data = getInquiryTypeData(
+    inquiryStore.type,
+    sessionStore.appSettings.inquiryTypeTab || [],
+  );
+  return data;
+});
 
 const moderationNotice = computed<{
-  type: 'info' | 'warning' | 'error'
-  title: string
-  text: string
+  type: "info" | "warning" | "error";
+  title: string;
+  text: string;
 } | null>(() => {
-  const modStatus = inquiryStore.status.moderationStatus
-  const pubStatus = inquiryStore.status.publicationStatus
-  const inquiryStatus = inquiryStore.status.inquiryStatus
+  const modStatus = inquiryStore.status.moderationStatus;
+  const pubStatus = inquiryStore.status.publicationStatus;
+  const inquiryStatus = inquiryStore.status.inquiryStatus;
 
-  if (modStatus === 'pending' || inquiryStatus === 'waiting_approval' || pubStatus === 'pending') {
+  if (
+    modStatus === "pending" ||
+    inquiryStatus === "waiting_approval" ||
+    pubStatus === "pending"
+  ) {
     return {
-      type: 'info',
-      title: t('agora', 'Inquiry under moderation'),
+      type: "info",
+      title: t("agora", "Inquiry under moderation"),
       text: t(
-        'agora',
-        'This inquiry is waiting for a moderator to review it. It cannot be modified until the review is complete.'
+        "agora",
+        "This inquiry is waiting for a moderator to review it. It cannot be modified until the review is complete.",
       ),
-    }
+    };
   }
 
-  if (modStatus === 'rejected') {
+  if (modStatus === "rejected") {
     return {
-      type: 'error',
-      title: t('agora', 'Inquiry rejected'),
+      type: "error",
+      title: t("agora", "Inquiry rejected"),
       text: t(
-        'agora',
-        'A moderator rejected this inquiry. It cannot be modified. Contact a moderator if you think this is a mistake.'
+        "agora",
+        "A moderator rejected this inquiry. It cannot be modified. Contact a moderator if you think this is a mistake.",
       ),
-    }
+    };
   }
 
-  return null
-})
+  return null;
+});
 
 // Computed for families and options
 const allInquiryTypes = computed<InquiryType[]>(
-  () => sessionStore.appSettings?.inquiryTypeTab || []
-)
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
 
 const allOptionTypes = computed<OptionType[]>(
-  () => sessionStore.appSettings?.inquiryOptionTypeTab || []
-)
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 
 const hasVisibleFamilies = computed(
   () =>
-    getFamiliesWithOptionTypes(inquiryStore.type, allInquiryTypes.value, allOptionTypes.value)
-      .length > 0
-)
+    getFamiliesWithOptionTypes(
+      inquiryStore.type,
+      allInquiryTypes.value,
+      allOptionTypes.value,
+    ).length > 0,
+);
 
 const availableInquiryStatuses = computed(() => {
   const statusesFromSettings =
     sessionStore.appSettings.inquiryStatusTab
       ?.filter((status) => status.inquiryType === inquiryStore.type)
-      ?.sort((a, b) => a.order - b.order) || []
+      ?.sort((a, b) => a.order - b.order) || [];
 
-  if (inquiryStore.status.inquiryStatus === 'draft') {
+  if (inquiryStore.status.inquiryStatus === "draft") {
     statusesFromSettings.unshift({
-      statusKey: 'draft',
-      label: t('agora', 'Draft'),
-      icon: 'draft',
+      statusKey: "draft",
+      label: t("agora", "Draft"),
+      icon: "draft",
       inquiryType: inquiryStore.type,
       order: 0,
-    })
+    });
   }
 
-  if (inquiryStore.status.inquiryStatus === 'waiting_approval') {
+  if (inquiryStore.status.inquiryStatus === "waiting_approval") {
     statusesFromSettings.unshift({
-      statusKey: 'waiting_approval',
-      label: t('agora', 'Pending approval'),
-      icon: 'waitingapproval',
+      statusKey: "waiting_approval",
+      label: t("agora", "Pending approval"),
+      icon: "waitingapproval",
       inquiryType: inquiryStore.type,
       order: 1,
-    })
+    });
   }
 
-  return statusesFromSettings
-})
+  return statusesFromSettings;
+});
 
 const currentInquiryStatus = computed(() => {
   const specialStatuses = {
     draft: {
-      statusKey: 'draft',
-      label: t('agora', 'Draft'),
-      icon: 'draft',
+      statusKey: "draft",
+      label: t("agora", "Draft"),
+      icon: "draft",
       inquiryType: inquiryStore.type,
       order: 0,
     },
     waiting_approval: {
-      statusKey: 'waiting_approval',
-      label: t('agora', 'Pending approval'),
-      icon: 'waitingapproval',
+      statusKey: "waiting_approval",
+      label: t("agora", "Pending approval"),
+      icon: "waitingapproval",
       inquiryType: inquiryStore.type,
       order: 1,
     },
-  }
+  };
 
-  const currentStatus = inquiryStore.status.inquiryStatus
+  const currentStatus = inquiryStore.status.inquiryStatus;
 
   if (specialStatuses[currentStatus]) {
-    return specialStatuses[currentStatus]
+    return specialStatuses[currentStatus];
   }
 
   return (
-    availableInquiryStatuses.value.find((status) => status.statusKey === currentStatus) ||
-    specialStatuses.draft
-  )
-})
+    availableInquiryStatuses.value.find(
+      (status) => status.statusKey === currentStatus,
+    ) || specialStatuses.draft
+  );
+});
 
-const selectedInquiryStatusKey = ref(currentInquiryStatus.value?.statusKey)
-const currentInquiryStatusLabel = computed(() => currentInquiryStatus.value?.label || 'Draft')
+const selectedInquiryStatusKey = ref(currentInquiryStatus.value?.statusKey);
+const currentInquiryStatusLabel = computed(
+  () => currentInquiryStatus.value?.label || "Draft",
+);
 const currentInquiryStatusIcon = computed(() => {
-  const iconName = currentInquiryStatus.value?.icon || 'draft'
-  return StatusIcons[iconName] || StatusIcons.Draft
-})
+  const iconName = currentInquiryStatus.value?.icon || "draft";
+  return StatusIcons[iconName] || StatusIcons.Draft;
+});
 
 const selectedInquiryStatus = computed({
   get: () =>
-    statusInquiryOptions.value.find((option) => option.id === selectedInquiryStatusKey.value),
+    statusInquiryOptions.value.find(
+      (option) => option.id === selectedInquiryStatusKey.value,
+    ),
   set: (newValue) => {
     if (newValue) {
-      selectedInquiryStatusKey.value = newValue.id
+      selectedInquiryStatusKey.value = newValue.id;
     }
   },
-})
+});
 
 const onStatusChange = async (newStatus: string) => {
   try {
-    const statusId = newStatus?.id || newStatus
-    await inquiryStore.setInquiryStatus(statusId)
-    showSuccess(t('agora', 'Inquiry status of this inquiry has been updated'))
+    const statusId = newStatus?.id || newStatus;
+    await inquiryStore.setInquiryStatus(statusId);
+    showSuccess(t("agora", "Inquiry status of this inquiry has been updated"));
   } catch {
-    selectedInquiryStatusKey.value = currentInquiryStatus.value.statusKey
+    selectedInquiryStatusKey.value = currentInquiryStatus.value.statusKey;
   }
-}
+};
 
 const statusInquiryOptions = computed(() =>
   availableInquiryStatuses.value.map((status) => ({
     id: status.statusKey,
-    label: t('agora', status.label),
-  }))
-)
+    label: t("agora", status.label),
+  })),
+);
 
 // Get hierarchy path for location and category display
 function getHierarchyPath(items, targetId) {
-  const itemMap = {}
+  const itemMap = {};
   items.forEach((item) => {
-    itemMap[item.id] = item
-  })
+    itemMap[item.id] = item;
+  });
 
   if (!itemMap[targetId]) {
-    return 'ID not found'
+    return "ID not found";
   }
 
   function buildPath(item) {
     if (item.parentId === 0) {
-      return item.name
+      return item.name;
     }
-    const parent = itemMap[item.parentId]
+    const parent = itemMap[item.parentId];
     if (parent) {
-      return `${buildPath(parent)} -> ${item.name}`
+      return `${buildPath(parent)} -> ${item.name}`;
     }
-    return item.name
+    return item.name;
   }
 
-  return buildPath(itemMap[targetId])
+  return buildPath(itemMap[targetId]);
 }
 // Watchers for the image
 watch(
   () => inquiryStore.coverId,
   (newCoverId) => {
     if (newCoverId) {
-      currentCoverUrl.value = getNextcloudPreviewUrl(newCoverId)
+      currentCoverUrl.value = getNextcloudPreviewUrl(newCoverId);
     } else {
-      currentCoverUrl.value = ''
+      currentCoverUrl.value = "";
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 // Watchers for location and category
 watch(
   selectedLocation,
   (newVal) => {
-    const rawValue = toRaw(newVal)
+    const rawValue = toRaw(newVal);
     if (rawValue) {
-      inquiryStore.locationId = rawValue.value
+      inquiryStore.locationId = rawValue.value;
     }
   },
-  { deep: true }
-)
+  { deep: true },
+);
 
 watch(
   selectedCategory,
   (newVal) => {
-    const rawValue = toRaw(newVal)
+    const rawValue = toRaw(newVal);
     if (rawValue) {
-      inquiryStore.categoryId = rawValue.value
+      inquiryStore.categoryId = rawValue.value;
     }
   },
-  { deep: true }
-)
+  { deep: true },
+);
 
 // Build hierarchy for location and category dropdowns
-function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[] {
-  if (!Array.isArray(list)) return []
+function buildHierarchy(
+  list: BaseEntry[],
+  parentId = 0,
+  depth = 0,
+): BaseEntry[] {
+  if (!Array.isArray(list)) return [];
   return list
     .filter((item) => item?.parentId === parentId)
     .map((item) => {
-      const children = buildHierarchy(list, item.id, depth + 1)
+      const children = buildHierarchy(list, item.id, depth + 1);
       return {
         ...item,
         depth,
         children,
-      }
+      };
     })
-    .flatMap((item) => [item, ...item.children])
+    .flatMap((item) => [item, ...item.children]);
 }
 
 const hierarchicalLocation = computed(() => {
-  if (!Array.isArray(sessionStore.appSettings.locationTab)) return []
+  if (!Array.isArray(sessionStore.appSettings.locationTab)) return [];
   return buildHierarchy(sessionStore.appSettings.locationTab).map((item) => ({
     value: item.id,
-    label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
+    label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
     original: item,
-  }))
-})
+  }));
+});
 
 const hierarchicalCategory = computed(() => {
-  if (!Array.isArray(sessionStore.appSettings.categoryTab)) return []
+  if (!Array.isArray(sessionStore.appSettings.categoryTab)) return [];
   return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
     value: item.id,
-    label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
+    label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
     original: item,
-  }))
-})
+  }));
+});
 
 // Initialize location and category
 watch(
   hierarchicalLocation,
   (locations) => {
-    if (!locations.length) return
+    if (!locations.length) return;
     if (inquiryStore.locationId === 0) {
-      selectedLocation.value = locations[0]
-      inquiryStore.locationId = locations[0].value
+      selectedLocation.value = locations[0];
+      inquiryStore.locationId = locations[0].value;
     } else {
-      const selected = locations.find((loc) => loc.value === inquiryStore.locationId)
-      selectedLocation.value = selected || locations[0]
-      inquiryStore.locationId = selected?.value || locations[0].value
+      const selected = locations.find(
+        (loc) => loc.value === inquiryStore.locationId,
+      );
+      selectedLocation.value = selected || locations[0];
+      inquiryStore.locationId = selected?.value || locations[0].value;
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 watch(
   hierarchicalCategory,
   (categories) => {
-    if (!categories.length) return
+    if (!categories.length) return;
     if (inquiryStore.categoryId === 0) {
-      selectedCategory.value = categories[0]
-      inquiryStore.categoryId = categories[0].value
+      selectedCategory.value = categories[0];
+      inquiryStore.categoryId = categories[0].value;
     } else {
-      const selected = categories.find((loc) => loc.value === inquiryStore.categoryId)
-      selectedCategory.value = selected || categories[0]
-      inquiryStore.categoryId = selected?.value || categories[0].value
+      const selected = categories.find(
+        (loc) => loc.value === inquiryStore.categoryId,
+      );
+      selectedCategory.value = selected || categories[0];
+      inquiryStore.categoryId = selected?.value || categories[0].value;
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 onUnmounted(() => {
-  isLoaded.value = false
-  unsubscribe(Event.UpdateComments, onCommentsUpdated)
-})
+  isLoaded.value = false;
+  unsubscribe(Event.UpdateComments, onCommentsUpdated);
+});
 
 // Event subscriptions
 /* onMounted(async () => {
@@ -393,59 +417,61 @@ onMounted(async () => {
   //    The store is the single source of truth for the rest of the component.
   if (props.inquiry?.id && props.inquiry.id !== inquiryStore.id) {
     try {
-      await inquiryStore.load(props.inquiry.id)
+      await inquiryStore.load(props.inquiry.id);
     } catch (err) {
-      console.error('[InquiryEditViewForm] failed to load inquiry', err)
-      hasAccess.value = false
-      return
+      console.error("[InquiryEditViewForm] failed to load inquiry", err);
+      hasAccess.value = false;
+      return;
     }
   }
 
   // 2. Guard before canView() — a null context means the store is still
   //    empty (bad id, no permission data, session not ready, …).
   if (!context.value) {
-    hasAccess.value = false
-    console.warn('[InquiryEditViewForm] context unavailable — cannot verify access')
-    return
+    hasAccess.value = false;
+    console.warn(
+      "[InquiryEditViewForm] context unavailable — cannot verify access",
+    );
+    return;
   }
 
   // 3. Permission check as before.
   if (!canView(context.value)) {
-    hasAccess.value = false
-    showError('Error you cannot view this inquiry !')
-    router.push({ name: 'list', params: { type: 'relevant' } })
-    return
+    hasAccess.value = false;
+    showError("Error you cannot view this inquiry !");
+    router.push({ name: "list", params: { type: "relevant" } });
+    return;
   }
 
   // 4. Everything else — unchanged.
   if (inquiryStore.coverId) {
-    currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
+    currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId);
   }
 
   if (inquiriesStore.inquiries.length === 0) {
-    inquiriesStore.setFamilyType(inquiryStore.family)
-    inquiriesStore.load()
+    inquiriesStore.setFamilyType(inquiryStore.family);
+    inquiriesStore.load();
   }
 
-  subscribe(Event.UpdateComments, onCommentsUpdated)
-  isLoaded.value = true
-})
+  subscribe(Event.UpdateComments, onCommentsUpdated);
+  isLoaded.value = true;
+});
 
 // Determine if category/location should be shown as select or label
 const showCategoryAsLabel = computed(() => {
-  const result = props.isReadonly
-  return result
-})
+  const result = props.isReadonly;
+  return result;
+});
 
 const showLocationAsLabel = computed(() => {
-  const result = props.isReadonly
-  return result
-})
+  const result = props.isReadonly;
+  return result;
+});
 
 // Image URL function
 function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`;
 }
 
 /**
@@ -453,113 +479,134 @@ function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
  * @param event
  */
 const handleImageUpload = async (event) => {
-  const file = event.target.files[0]
-  if (!file) return
+  const file = event.target.files[0];
+  if (!file) return;
 
-  if (!file.type.startsWith('image/')) {
-    showError(t('agora', 'Please select an image file'))
-    return
+  if (!file.type.startsWith("image/")) {
+    showError(t("agora", "Please select an image file"));
+    return;
   }
 
   // Check image size 5Mb max
-  const maxSize = 5 * 1024 * 1024
+  const maxSize = 5 * 1024 * 1024;
   if (file.size > maxSize) {
-    showError(t('agora', 'Image size should be less than 5mb'))
-    return
+    showError(t("agora", "Image size should be less than 5mb"));
+    return;
   }
 
   try {
-    const response = await attachmentsStore.upload(inquiryStore.id, file, true)
+    const response = await attachmentsStore.upload(inquiryStore.id, file, true);
 
     const attachment = {
-      id: response.id ?? `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id:
+        response.id ??
+        `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: response.name ?? file.name,
       size: response.size ?? file.size,
       fileId: response.fileId ?? undefined,
       mimeType: response.mimeType ?? undefined,
-    }
+    };
 
     // Use immutable update for better reactivity
-    attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
-    currentCoverUrl.value = getNextcloudPreviewUrl(attachment.fileId)
-    inquiryStore.coverId = attachment.fileId
-    showSuccess(t('agora', '{file} uploaded', { file: response.name ?? file.name }))
+    attachmentsStore.attachments = [
+      ...attachmentsStore.attachments,
+      attachment,
+    ];
+    currentCoverUrl.value = getNextcloudPreviewUrl(attachment.fileId);
+    inquiryStore.coverId = attachment.fileId;
+    showSuccess(
+      t("agora", "{file} uploaded", { file: response.name ?? file.name }),
+    );
   } catch (error) {
-    showError(t('agora', 'Failed to upload {file}', { file: file.name }))
-    throw error // Re-throw to handle in parent function
+    showError(t("agora", "Failed to upload {file}", { file: file.name }));
+    throw error; // Re-throw to handle in parent function
   }
-}
+};
 
 const timeExpirationRelative = computed(() => {
   if (inquiryStore.configuration.expire) {
-    return DateTime.fromMillis(inquiryStore.configuration.expire * 1000).toRelative()
+    return DateTime.fromMillis(
+      inquiryStore.configuration.expire * 1000,
+    ).toRelative();
   }
-  return t('agora', 'never')
-})
+  return t("agora", "never");
+});
 
-const canCommentOnInquiry = computed(() => (context.value ? canComment(context.value) : false))
+const canCommentOnInquiry = computed(() =>
+  context.value ? canComment(context.value) : false,
+);
 
 // Add this with your other computed properties
 const canSupportInquiry = computed(() =>
   // You might have a context or permission check here
-  context.value ? canSupport(context.value) : false
-)
+  context.value ? canSupport(context.value) : false,
+);
 
 const canEditInquiry = computed(() =>
   // You might have a context or permission check here
-  context.value ? canEdit(context.value) : false
-)
+  context.value ? canEdit(context.value) : false,
+);
 
 // Format date
-const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDateString()
+const formatDate = (timestamp: number) =>
+  new Date(timestamp * 1000).toLocaleDateString();
 
 const viewOnlySupportInquiry = computed(() => {
   // Check if user can support based on route
-  const isPublicRoute = ['publicInquiry', 'public-view'].includes(route.name as string)
+  const isPublicRoute = ["publicInquiry", "public-view"].includes(
+    route.name as string,
+  );
   // If it's a public route, users cannot support
-  return isPublicRoute
-})
+  return isPublicRoute;
+});
 
 // ============================================================
 // ACCESS LEVEL EDITING (only Open / Private / Invitation)
 // ============================================================
 const accessOptions = computed(() => [
-  { id: 'open', label: t('agora', 'Open') },
-  { id: 'private', label: t('agora', 'Private') },
-  { id: 'group', label: t('agora', 'Invitation') },
-])
+  { id: "open", label: t("agora", "Open") },
+  { id: "private", label: t("agora", "Private") },
+  { id: "group", label: t("agora", "Invitation") },
+]);
 
 const selectedAccess = computed({
   get: () =>
-    accessOptions.value.find((o) => o.id === inquiryStore.configuration.access) ??
-    accessOptions.value[0],
+    accessOptions.value.find(
+      (o) => o.id === inquiryStore.configuration.access,
+    ) ?? accessOptions.value[0],
   set: (newValue) => {
-    if (!newValue || newValue.id === inquiryStore.configuration.access) return
-    inquiryStore.configuration.access = newValue.id as typeof inquiryStore.configuration.access
-    inquiryStore.setInquiryAccess(inquiryStore.id, inquiryStore.configuration.access)
-    showSuccess(t('agora', 'Access level updated'))
+    if (!newValue || newValue.id === inquiryStore.configuration.access) return;
+    inquiryStore.configuration.access =
+      newValue.id as typeof inquiryStore.configuration.access;
+    inquiryStore.setInquiryAccess(
+      inquiryStore.id,
+      inquiryStore.configuration.access,
+    );
+    showSuccess(t("agora", "Access level updated"));
   },
-})
+});
 
 const currentAccessLabel = computed(() => {
-  const opt = accessOptions.value.find((o) => o.id === inquiryStore.configuration.access)
-  return opt?.label ?? inquiryStore.configuration.access
-})
+  const opt = accessOptions.value.find(
+    (o) => o.id === inquiryStore.configuration.access,
+  );
+  return opt?.label ?? inquiryStore.configuration.access;
+});
 // ============================================================
 // EXPIRATION DATE EDITING (uses NcDateTimePicker)
 // ============================================================
 const expirationDate = computed({
   get: () => {
-    const expire = inquiryStore.configuration.expire
-    return expire && expire > 0 ? new Date(expire * 1000) : null
+    const expire = inquiryStore.configuration.expire;
+    return expire && expire > 0 ? new Date(expire * 1000) : null;
   },
   set: (newDate: Date | null) => {
-    const newExpire = newDate ? Math.floor(newDate.getTime() / 1000) : 0
-    if (newExpire === inquiryStore.configuration.expire) return
-    inquiryStore.configuration.expire = newExpire
-    inquiryStore.write()
+    const newExpire = newDate ? Math.floor(newDate.getTime() / 1000) : 0;
+    if (newExpire === inquiryStore.configuration.expire) return;
+    inquiryStore.configuration.expire = newExpire;
+    inquiryStore.write();
   },
-})
+});
 </script>
 
 <template>
@@ -616,7 +663,7 @@ const expirationDate = computed({
                 :size="20"
               />
             </template>
-            {{ t('agora', 'Change cover image') }}
+            {{ t("agora", "Change cover image") }}
           </NcButton>
         </div>
       </div>
@@ -636,10 +683,10 @@ const expirationDate = computed({
             type="primary"
             class="add-cover-btn"
           >
-            {{ t('agora', 'Add cover image') }}
+            {{ t("agora", "Add cover image") }}
           </NcButton>
           <p class="placeholder-text">
-            {{ t('agora', 'Click to add a cover image') }}
+            {{ t("agora", "Click to add a cover image") }}
           </p>
         </div>
       </div>
@@ -671,7 +718,7 @@ const expirationDate = computed({
               :size="20"
             />
           </template>
-          {{ t('agora', 'Change cover image') }}
+          {{ t("agora", "Change cover image") }}
         </NcButton>
       </div>
     </div>
@@ -703,7 +750,7 @@ const expirationDate = computed({
         <div class="user-details">
           <h3 class="user-name">
             {{
-              inquiryStore.ownedGroup !== ''
+              inquiryStore.ownedGroup !== ""
                 ? inquiryStore.ownedGroup
                 : inquiryStore.owner.displayName
             }}
@@ -713,7 +760,7 @@ const expirationDate = computed({
               :is="inquiryTypeData.icon"
               :size="16"
             />
-            <span>{{ t('agora', inquiryTypeData.label) }}</span>
+            <span>{{ t("agora", inquiryTypeData.label) }}</span>
           </div>
         </div>
       </div>
@@ -732,7 +779,9 @@ const expirationDate = computed({
                 v-model="inquiryStore.title"
                 :label="t('agora', 'Inquiry title')"
                 :success="inquiryStore.title.length > 0"
-                :helper-text="t('agora', 'Enter a descriptive title for your inquiry')"
+                :helper-text="
+                  t('agora', 'Enter a descriptive title for your inquiry')
+                "
               >
                 <template #icon>
                   <component
@@ -762,7 +811,7 @@ const expirationDate = computed({
                 :count="inquiryStore.status.countComments || 0"
                 :raw="true"
               />
-              <span class="counter-label">{{ t('agora', 'Comments') }}</span>
+              <span class="counter-label">{{ t("agora", "Comments") }}</span>
             </div>
           </div>
 
@@ -786,7 +835,7 @@ const expirationDate = computed({
       <!-- Metadata section -->
       <div class="metadata-section">
         <h3 class="section-subtitle">
-          {{ t('agora', 'INQUIRY DETAILS') }}
+          {{ t("agora", "INQUIRY DETAILS") }}
         </h3>
         <div class="metadata-grid">
           <!-- Row 1 -->
@@ -798,7 +847,7 @@ const expirationDate = computed({
               />
             </div>
             <div class="metadata-content">
-              <span class="metadata-label">{{ t('agora', 'Location') }}</span>
+              <span class="metadata-label">{{ t("agora", "Location") }}</span>
               <div
                 v-if="!showLocationAsLabel"
                 class="select-container"
@@ -821,8 +870,10 @@ const expirationDate = computed({
                 class="metadata-value"
               >
                 {{
-                  getHierarchyPath(sessionStore.appSettings.locationTab, inquiryStore.locationId) ||
-                    t('agora', 'Inherited from parent')
+                  getHierarchyPath(
+                    sessionStore.appSettings.locationTab,
+                    inquiryStore.locationId,
+                  ) || t("agora", "Inherited from parent")
                 }}
               </span>
             </div>
@@ -836,7 +887,7 @@ const expirationDate = computed({
               />
             </div>
             <div class="metadata-content">
-              <span class="metadata-label">{{ t('agora', 'Category') }}</span>
+              <span class="metadata-label">{{ t("agora", "Category") }}</span>
               <div
                 v-if="!showCategoryAsLabel"
                 class="select-container"
@@ -859,8 +910,10 @@ const expirationDate = computed({
                 class="metadata-value"
               >
                 {{
-                  getHierarchyPath(sessionStore.appSettings.categoryTab, inquiryStore.categoryId) ||
-                    t('agora', 'Inherited from parent')
+                  getHierarchyPath(
+                    sessionStore.appSettings.categoryTab,
+                    inquiryStore.categoryId,
+                  ) || t("agora", "Inherited from parent")
                 }}
               </span>
             </div>
@@ -874,8 +927,10 @@ const expirationDate = computed({
               />
             </div>
             <div class="metadata-content">
-              <span class="metadata-label">{{ t('agora', 'Created') }}</span>
-              <span class="metadata-value">{{ formatDate(inquiryStore.status.created) }}</span>
+              <span class="metadata-label">{{ t("agora", "Created") }}</span>
+              <span class="metadata-value">{{
+                formatDate(inquiryStore.status.created)
+              }}</span>
             </div>
           </div>
 
@@ -888,7 +943,9 @@ const expirationDate = computed({
               />
             </div>
             <div class="metadata-content">
-              <span class="metadata-label">{{ t('agora', 'Last interaction') }}</span>
+              <span class="metadata-label">{{
+                t("agora", "Last interaction")
+              }}</span>
               <span class="metadata-value">{{
                 formatDate(inquiryStore.status.lastInteraction)
               }}</span>
@@ -903,7 +960,7 @@ const expirationDate = computed({
               />
             </div>
             <div class="metadata-content">
-              <span class="metadata-label">{{ t('agora', 'Status') }}</span>
+              <span class="metadata-label">{{ t("agora", "Status") }}</span>
               <template v-if="canEditInquiry">
                 <div class="select-container">
                   <NcSelect
@@ -917,7 +974,9 @@ const expirationDate = computed({
                 </div>
               </template>
               <template v-else>
-                <span class="metadata-value">{{ t('agora', currentInquiryStatusLabel) }}</span>
+                <span class="metadata-value">{{
+                  t("agora", currentInquiryStatusLabel)
+                }}</span>
               </template>
             </div>
           </div>
@@ -933,7 +992,7 @@ const expirationDate = computed({
               />
             </div>
             <div class="metadata-content">
-              <span class="metadata-label">{{ t('agora', 'Expires') }}</span>
+              <span class="metadata-label">{{ t("agora", "Expires") }}</span>
               <template v-if="canEditInquiry">
                 <div class="select-container">
                   <NcDateTimePicker
@@ -964,7 +1023,7 @@ const expirationDate = computed({
               />
             </div>
             <div class="metadata-content">
-              <span class="metadata-label">{{ t('agora', 'Access') }}</span>
+              <span class="metadata-label">{{ t("agora", "Access") }}</span>
               <template
                 v-if="
                   canEditInquiry &&
@@ -983,7 +1042,9 @@ const expirationDate = computed({
                 </div>
               </template>
               <template v-else>
-                <span class="metadata-value">{{ t('agora', currentAccessLabel) }}</span>
+                <span class="metadata-value">{{
+                  t("agora", currentAccessLabel)
+                }}</span>
               </template>
             </div>
           </div>
@@ -1001,10 +1062,10 @@ const expirationDate = computed({
           </div>
           <div>
             <h3 class="section-subtitle">
-              {{ t('agora', 'DESCRIPTION') }}
+              {{ t("agora", "DESCRIPTION") }}
             </h3>
             <p class="section-description">
-              {{ t('agora', 'Detailed information about this inquiry') }}
+              {{ t("agora", "Detailed information about this inquiry") }}
             </p>
           </div>
         </div>
@@ -1012,8 +1073,8 @@ const expirationDate = computed({
         <div class="description-content">
           <div
             v-if="
-              sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]?.editorType ===
-                'wysiwyg'
+              sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]
+                ?.editorType === 'wysiwyg'
             "
             class="editor-container"
           >
@@ -1025,8 +1086,8 @@ const expirationDate = computed({
 
           <div
             v-else-if="
-              sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]?.editorType ===
-                'texteditor'
+              sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]
+                ?.editorType === 'texteditor'
             "
             class="editor-container"
           >
@@ -1072,7 +1133,8 @@ const expirationDate = computed({
   --squareux-success-light: #dff6dd;
   --squareux-neutral-bg: #f3f2f1;
   --squareux-border: #edebe9;
-  --squareux-card-shadow: 0 2.4px 7.2px rgba(0, 0, 0, 0.08), 0 0.2px 0.6px rgba(0, 0, 0, 0.04);
+  --squareux-card-shadow:
+    0 2.4px 7.2px rgba(0, 0, 0, 0.08), 0 0.2px 0.6px rgba(0, 0, 0, 0.04);
   --squareux-elevation-shadow:
     0 6.4px 28.8px rgba(0, 0, 0, 0.12), 0 1.2px 3.6px rgba(0, 0, 0, 0.08);
 }
@@ -1107,7 +1169,7 @@ const expirationDate = computed({
   top: 16px;
   right: 24px;
   z-index: 5;
-  font-family: 'Monaco', 'Consolas', monospace;
+  font-family: "Monaco", "Consolas", monospace;
   font-size: 13px;
   color: var(--color-text-lighter);
   background: var(--color-background-darker);
@@ -1211,12 +1273,20 @@ const expirationDate = computed({
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-background-dark), var(--color-background-darker));
+  background: linear-gradient(
+    135deg,
+    var(--color-background-dark),
+    var(--color-background-darker)
+  );
   border-radius: 24px;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-background-dark));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-light),
+      var(--color-background-dark)
+    );
   }
 
   .placeholder-content {
@@ -1291,7 +1361,11 @@ const expirationDate = computed({
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: linear-gradient(135deg, var(--color-primary-light), var(--color-background-dark));
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-light),
+        var(--color-background-dark)
+      );
       border: 2px solid var(--color-primary-element);
       border-radius: 16px;
       font-size: 14px;
@@ -1405,7 +1479,7 @@ const expirationDate = computed({
     }
 
     .inquiry-id {
-      font-family: 'Monaco', 'Consolas', monospace;
+      font-family: "Monaco", "Consolas", monospace;
       font-size: 13px;
       color: var(--color-text-lighter);
       background: var(--color-background-darker);
@@ -1563,7 +1637,7 @@ const expirationDate = computed({
     gap: 8px;
 
     &::before {
-      content: '📋';
+      content: "📋";
       font-size: 14px;
       opacity: 0.7;
     }
@@ -1721,7 +1795,8 @@ const expirationDate = computed({
 
               &:focus-within {
                 border-color: var(--color-primary-element) !important;
-                box-shadow: 0 0 0 3px rgba(var(--color-primary-element-rgb), 0.12) !important;
+                box-shadow: 0 0 0 3px
+                  rgba(var(--color-primary-element-rgb), 0.12) !important;
               }
             }
 

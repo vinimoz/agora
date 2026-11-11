@@ -28,7 +28,7 @@
     <nav class="sidebar-nav">
       <div class="nav-section">
         <h5 class="nav-section-title">
-          {{ t('agora', 'Content') }}
+          {{ t("agora", "Content") }}
         </h5>
         <div
           v-for="item in navItems"
@@ -46,13 +46,15 @@
           <span
             v-if="item.count !== undefined"
             class="nav-count"
-          >{{ item.count }}</span>
+          >{{
+            item.count
+          }}</span>
         </div>
       </div>
 
       <div class="nav-section">
         <h5 class="nav-section-title">
-          {{ t('agora', 'Tools') }}
+          {{ t("agora", "Tools") }}
         </h5>
         <div
           v-for="tool in toolItems"
@@ -72,7 +74,7 @@
 
       <div class="nav-section">
         <h5 class="nav-section-title">
-          {{ t('agora', 'Features') }}
+          {{ t("agora", "Features") }}
         </h5>
         <div
           class="nav-item toggle-item"
@@ -84,7 +86,7 @@
             :size="18"
             class="nav-icon"
           />
-          <span class="nav-label">{{ t('agora', 'Resources') }}</span>
+          <span class="nav-label">{{ t("agora", "Resources") }}</span>
           <span class="toggle-indicator">
             <component
               :is="showResources ? Icons.Check : Icons.Close"
@@ -102,7 +104,7 @@
             :size="18"
             class="nav-icon"
           />
-          <span class="nav-label">{{ t('agora', 'Comments') }}</span>
+          <span class="nav-label">{{ t("agora", "Comments") }}</span>
           <span class="toggle-indicator">
             <component
               :is="showComments ? Icons.Check : Icons.Close"
@@ -117,124 +119,132 @@
     <div class="sidebar-stats">
       <div class="stat-item">
         <span class="stat-value">{{ inquiries?.length || 0 }}</span>
-        <span class="stat-label">{{ t('agora', 'Inquiries') }}</span>
+        <span class="stat-label">{{ t("agora", "Inquiries") }}</span>
       </div>
       <div class="stat-item">
         <span class="stat-value">{{ options?.length || 0 }}</span>
-        <span class="stat-label">{{ t('agora', 'Options') }}</span>
+        <span class="stat-label">{{ t("agora", "Options") }}</span>
       </div>
       <div class="stat-item">
         <span class="stat-value">{{ group?.participantCount || 0 }}</span>
-        <span class="stat-label">{{ t('agora', 'Participants') }}</span>
+        <span class="stat-label">{{ t("agora", "Participants") }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { InquiryGroup } from '../../Types/inquiryGroups.types'
-import type { ToolKey } from '../../Types/experience.types'
-import type { Inquiry, Option } from '../../Types/index.ts'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryGroupTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { InquiryGroup } from "../../Types/inquiryGroups.types";
+import type { ToolKey } from "../../Types/experience.types";
+import type { Inquiry, Option } from "../../Types/index.ts";
 
 // Only include tools that are in ALL_TOOLS
 const TOOL_ICON_MAP: Partial<Record<ToolKey, { icon: any; label: string }>> = {
-  debate: { icon: Icons.MessageSquare, label: 'Debate' },
-  vote: { icon: Icons.CheckCircle, label: 'Vote' },
-  support: { icon: Icons.ThumbUp, label: 'Support' },
-  kanban: { icon: Icons.Board, label: 'Kanban' },
-  timeline: { icon: Icons.Clock, label: 'Timeline' },
-  consensus: { icon: Icons.Handshake, label: 'Consensus' },
-  structure: { icon: Icons.FolderTree, label: 'Structure' },
-  search: { icon: Icons.Magnify, label: 'Search' },
-}
+  debate: { icon: Icons.MessageSquare, label: "Debate" },
+  vote: { icon: Icons.CheckCircle, label: "Vote" },
+  support: { icon: Icons.ThumbUp, label: "Support" },
+  kanban: { icon: Icons.Board, label: "Kanban" },
+  timeline: { icon: Icons.Clock, label: "Timeline" },
+  consensus: { icon: Icons.Handshake, label: "Consensus" },
+  structure: { icon: Icons.FolderTree, label: "Structure" },
+  search: { icon: Icons.Magnify, label: "Search" },
+};
 
 const props = defineProps<{
-  group: InquiryGroup | null
-  inquiries?: Inquiry[]
-  options?: Option[]
-  tools?: string[]
-  showResources?: boolean
-  showComments?: boolean
-}>()
+  group: InquiryGroup | null;
+  inquiries?: Inquiry[];
+  options?: Option[];
+  tools?: string[];
+  showResources?: boolean;
+  showComments?: boolean;
+}>();
 
 const emit = defineEmits<{
-  navigate: [target: string]
-  toggleResources: []
-  toggleComments: []
-}>()
+  navigate: [target: string];
+  toggleResources: [];
+  toggleComments: [];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 function getGroupIcon(type: string) {
-  const data = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return data?.icon || Icons.FolderMultiple
+  const data = getInquiryGroupTypeData(
+    type,
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  );
+  return data?.icon || Icons.FolderMultiple;
 }
 
 function getGroupTypeLabel(type: string) {
-  const data = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return data?.label || type
+  const data = getInquiryGroupTypeData(
+    type,
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  );
+  return data?.label || type;
 }
 
 const navItems = computed(() => {
-  const inquiryCount = props.inquiries?.length || 0
-  const optionCount = props.options?.length || 0
+  const inquiryCount = props.inquiries?.length || 0;
+  const optionCount = props.options?.length || 0;
 
   const debateCount =
-    props.inquiries?.filter((i) => i.status?.inquiryStatus === 'debate').length || 0
+    props.inquiries?.filter((i) => i.status?.inquiryStatus === "debate")
+      .length || 0;
   const votingCount =
-    props.inquiries?.filter((i) => i.status?.inquiryStatus === 'voting').length || 0
+    props.inquiries?.filter((i) => i.status?.inquiryStatus === "voting")
+      .length || 0;
 
   return [
     {
-      key: 'dashboard',
+      key: "dashboard",
       icon: Icons.Home,
-      label: t('agora', 'Overview'),
+      label: t("agora", "Overview"),
       active: true,
       count: undefined,
-      action: () => emit('navigate', 'dashboard'),
+      action: () => emit("navigate", "dashboard"),
     },
     {
-      key: 'inquiries',
+      key: "inquiries",
       icon: Icons.ClipboardList,
-      label: t('agora', 'Inquiries'),
+      label: t("agora", "Inquiries"),
       active: false,
       count: inquiryCount,
-      action: () => emit('navigate', 'inquiries'),
+      action: () => emit("navigate", "inquiries"),
     },
     {
-      key: 'options',
+      key: "options",
       icon: Icons.Lightbulb,
-      label: t('agora', 'Options'),
+      label: t("agora", "Options"),
       active: false,
       count: optionCount,
-      action: () => emit('navigate', 'options'),
+      action: () => emit("navigate", "options"),
     },
     {
-      key: 'debates',
+      key: "debates",
       icon: Icons.MessageSquare,
-      label: t('agora', 'Debates'),
+      label: t("agora", "Debates"),
       active: false,
       count: debateCount,
-      action: () => emit('navigate', 'debates'),
+      action: () => emit("navigate", "debates"),
     },
     {
-      key: 'votes',
+      key: "votes",
       icon: Icons.CheckCircle,
-      label: t('agora', 'Votes'),
+      label: t("agora", "Votes"),
       active: false,
       count: votingCount,
-      action: () => emit('navigate', 'votes'),
+      action: () => emit("navigate", "votes"),
     },
-  ]
-})
+  ];
+});
 
 const toolItems = computed(() => {
-  const availableTools = props.tools || []
+  const availableTools = props.tools || [];
   return availableTools
     .filter((key) => TOOL_ICON_MAP[key as ToolKey])
     .map((key) => ({
@@ -242,9 +252,9 @@ const toolItems = computed(() => {
       icon: TOOL_ICON_MAP[key as ToolKey]!.icon,
       label: TOOL_ICON_MAP[key as ToolKey]!.label,
       active: false,
-      action: () => emit('navigate', key),
-    }))
-})
+      action: () => emit("navigate", key),
+    }));
+});
 </script>
 
 <style lang="scss" scoped>

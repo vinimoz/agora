@@ -2,68 +2,57 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { defineStore } from 'pinia'
-import domPurify from 'dompurify'
-import { marked } from 'marked'
-import { gfmHeadingId } from 'marked-gfm-heading-id'
-import { t } from '@nextcloud/l10n'
-import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { useOptionsStore } from './options.ts'
-import { Logger } from '../helpers/index.ts'
-import { OptionsAPI } from '../Api/index.ts'
+import { defineStore } from "pinia";
+import domPurify from "dompurify";
+import { marked } from "marked";
+import { gfmHeadingId } from "marked-gfm-heading-id";
+import { t } from "@nextcloud/l10n";
+import { showError } from "@nextcloud/dialogs";
+import { emit } from "@nextcloud/event-bus";
+import { useOptionsStore } from "./options.ts";
+import { Logger } from "../helpers/index.ts";
+import { OptionsAPI } from "../Api/index.ts";
 import {
-  Chunking,
   createDefault,
   Event,
-  StatusResults,
   User,
   UserType,
   InquiryOptionType,
-  SupportResult,
   Comment,
   Inquiry,
-} from '../Types/index.ts'
-import { getFamilyColor } from '../helpers/modules/InquiryOptionHelper.ts'
-
-import { useInquiryStore } from './inquiry.ts'
-import { useSessionStore } from './session.ts'
-import { AxiosError } from '@nextcloud/axios'
-
-import type {
   Option,
-  OptionConfiguration,
-  OptionCurrentStatus,
-  CurrentUserOptionStatus,
-  OptionPermissions,
-  OptionStatus,
-} from '@/Types'
+} from "../Types/index.ts";
+import { getFamilyColor } from "../helpers/modules/InquiryOptionHelper.ts";
+
+import { useInquiryStore } from "./inquiry.ts";
+import { useSessionStore } from "./session.ts";
+import { AxiosError } from "@nextcloud/axios";
 
 const markedPrefix = {
-  prefix: 'opt-',
-}
+  prefix: "opt-",
+};
 
-export const useOptionStore = defineStore('option', {
+export const useOptionStore = defineStore("option", {
   state: (): Option => ({
     id: 0,
     targetId: 0,
     parentId: 0,
-    type: '',
-    family: 'debate',
-    text: '',
-    title: '',
-    textSafe: '',
+    type: "",
+    family: "debate",
+    text: "",
+    title: "",
+    textSafe: "",
     sortOrder: 0,
     configuration: {
-      visibility: 'private',
-      showResults: 'always',
+      visibility: "private",
+      showResults: "always",
       allowComment: null,
-      supportFeature: 'none',
-      family: 'debate',
+      supportFeature: "none",
+      family: "debate",
       expire: 0,
     },
     miscFields: {},
-    ownedGroup: '',
+    ownedGroup: "",
     owner: createDefault<User>(),
     currentUserStatus: {
       isInvolved: false,
@@ -71,9 +60,9 @@ export const useOptionStore = defineStore('option', {
       supportValue: null,
       isLoggedIn: false,
       isOwner: false,
-      shareToken: '',
-      userId: '',
-      userRole: 'user' as UserType,
+      shareToken: "",
+      userId: "",
+      userRole: "user" as UserType,
     },
     status: {
       created: 0,
@@ -85,9 +74,9 @@ export const useOptionStore = defineStore('option', {
       countComments: 0,
       trendingScore: 0,
       countSupports: 0,
-      optionStatus: 'draft',
+      optionStatus: "draft",
       supportResult: null,
-      publicationStatus: 'draft',
+      publicationStatus: "draft",
     },
     permissions: {
       view: false,
@@ -111,13 +100,13 @@ export const useOptionStore = defineStore('option', {
         size: 0,
         loaded: 0,
       },
-      status: 'loaded',
+      status: "loaded",
     },
     inquiryInfo: {
       targetId: 0,
-      inquiryTitle: '',
-      inquiryType: '',
-      inquiryAccess: '',
+      inquiryTitle: "",
+      inquiryType: "",
+      inquiryAccess: "",
     },
     _typeInfo: undefined,
     _familyInfo: undefined,
@@ -147,822 +136,882 @@ export const useOptionStore = defineStore('option', {
         inquiryInfo: this.inquiryInfo,
         _typeInfo: this._typeInfo,
         _familyInfo: this._familyInfo,
-      }
+      };
     },
 
     formattedExpireDate(): string {
       if (this.configuration.expire > 0) {
-        const date = new Date(this.configuration.expire * 1000)
-        return date.toLocaleString()
+        const date = new Date(this.configuration.expire * 1000);
+        return date.toLocaleString();
       }
-      return ''
+      return "";
     },
 
     isExpired(): boolean {
-      const now = Date.now() / 1000
-      return this.configuration.expire > 0 && this.configuration.expire < now
+      const now = Date.now() / 1000;
+      return this.configuration.expire > 0 && this.configuration.expire < now;
     },
 
     formattedCreatedDate(): string {
-      const date = new Date(this.meta.chunking.loaded * 1000)
-      return date.toLocaleString()
+      const date = new Date(this.meta.chunking.loaded * 1000);
+      return date.toLocaleString();
     },
 
     formattedUpdatedDate(): string {
-      const date = new Date(this.meta.chunking.size * 1000)
-      return date.toLocaleString()
+      const date = new Date(this.meta.chunking.size * 1000);
+      return date.toLocaleString();
     },
 
     isDraft(): boolean {
-      return this.status.optionStatus === 'draft'
+      return this.status.optionStatus === "draft";
     },
 
     isPublished(): boolean {
-      return this.status.optionStatus === 'published'
+      return this.status.optionStatus === "published";
     },
 
     hasChildren(): boolean {
-      return this.childs && this.childs.length > 0
+      return this.childs && this.childs.length > 0;
     },
 
     childCount(): number {
-      return this.childs?.length || 0
+      return this.childs?.length || 0;
     },
 
     // Get option type definition from session store
     typeInfo(): InquiryOptionType | undefined {
-      const sessionStore = useSessionStore()
-      const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+      const sessionStore = useSessionStore();
+      const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
       return optionTypes.find(
-        (opt: InquiryOptionType) => opt.option_type === this.type || opt.optionType === this.type
-      )
+        (opt: InquiryOptionType) =>
+          opt.option_type === this.type || opt.optionType === this.type,
+      );
     },
 
-    familyInfo(): { name: string; color: string; icon: string; description: string } | undefined {
-      if (!this.typeInfo?.family) return undefined
+    familyInfo():
+      | { name: string; color: string; icon: string; description: string }
+      | undefined {
+      if (!this.typeInfo?.family) return undefined;
 
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
       const family = sessionStore.appSettings?.optionFamilyTab?.find(
-        (f) => f.family_type === this.typeInfo!.family
-      )
+        (f) => f.family_type === this.typeInfo!.family,
+      );
 
       return {
         name: family?.label || this.typeInfo.family,
         color: getFamilyColor(this.typeInfo.family),
-        icon: family?.icon || 'File',
-        description: family?.description || this.typeInfo.description || '',
-      }
+        icon: family?.icon || "File",
+        description: family?.description || this.typeInfo.description || "",
+      };
     },
 
     // Fixed: miscFields holds *values* (Record<string, …>), so the
     // field *configs* must come from `this.typeInfo.fields`.
     hasRequiredMiscFields(): boolean {
-      const fields = this.typeInfo?.fields
-      if (!Array.isArray(fields)) return false
-      return fields.some((field) => field.required === true)
+      const fields = this.typeInfo?.fields;
+      if (!Array.isArray(fields)) return false;
+      return fields.some((field) => field.required === true);
     },
 
     // Fixed: iterate required field configs, read each value from miscFields.
     allRequiredMiscFieldsFilled(): boolean {
-      const fields = this.typeInfo?.fields
-      if (!Array.isArray(fields)) return true
+      const fields = this.typeInfo?.fields;
+      if (!Array.isArray(fields)) return true;
       return fields
         .filter((field) => field.required === true)
         .every((field) => {
-          const value = this.miscFields[field.key]
-          return value !== undefined && value !== null && value !== ''
-        })
+          const value = this.miscFields[field.key];
+          return value !== undefined && value !== null && value !== "";
+        });
     },
 
     // Type-specific checks
     isArgumentFor(): boolean {
-      return this.type === 'argument_for'
+      return this.type === "argument_for";
     },
 
     isArgumentAgainst(): boolean {
-      return this.type === 'argument_against'
+      return this.type === "argument_against";
     },
 
     isDebateArgument(): boolean {
-      return this.isArgumentFor || this.isArgumentAgainst
+      return this.isArgumentFor || this.isArgumentAgainst;
     },
 
     isProposal(): boolean {
-      return this.type === 'proposal'
+      return this.type === "proposal";
     },
 
     isQuestion(): boolean {
-      return this.type === 'question'
+      return this.type === "question";
     },
 
     isIdea(): boolean {
-      return this.type === 'idea'
+      return this.type === "idea";
     },
 
     // Text rendering
     textMarkDown(): string {
-      marked.use(gfmHeadingId(markedPrefix))
-      return domPurify.sanitize(marked.parse(this.text).toString())
+      marked.use(gfmHeadingId(markedPrefix));
+      return domPurify.sanitize(marked.parse(this.text).toString());
     },
 
     // Parent inquiry information
     // Fixed: `int` is not a TS type → `Inquiry | null`
     parentInquiry(): Inquiry | null {
-      const inquiryStore = useInquiryStore()
-      return inquiryStore.id === this.targetId ? inquiryStore : null
+      const inquiryStore = useInquiryStore();
+      return inquiryStore.id === this.targetId ? inquiryStore : null;
     },
 
     belongsToCurrentInquiry(): boolean {
-      const inquiryStore = useInquiryStore()
-      return this.targetId === inquiryStore.id
+      const inquiryStore = useInquiryStore();
+      return this.targetId === inquiryStore.id;
     },
 
     // Validation
     isValid(): boolean {
-      if (this.text.trim() === '') return false
-      if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false
-      return true
+      if (this.text.trim() === "") return false;
+      if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled)
+        return false;
+      return true;
     },
 
     // Get default status from type definition
     defaultStatus(): string {
-      return this.typeInfo?.defaultStatus || 'draft'
+      return this.typeInfo?.defaultStatus || "draft";
     },
 
     // Get available status transitions for this type
     availableStatuses(): string[] {
-      const baseStatuses = ['draft', 'published']
+      const baseStatuses = ["draft", "published"];
 
-      if (this.typeInfo?.features?.includes('archivable')) {
-        baseStatuses.push('archived')
+      if (this.typeInfo?.features?.includes("archivable")) {
+        baseStatuses.push("archived");
       }
 
-      return baseStatuses
+      return baseStatuses;
     },
 
     // Fixed: was `state.availableStatuses` — that's a *getter*, not state.
     // Converted to a method so `this.availableStatuses` resolves correctly.
     canChangeStatusTo(): (targetStatus: string) => boolean {
-      return (targetStatus: string) => this.availableStatuses.includes(targetStatus)
+      return (targetStatus: string) =>
+        this.availableStatuses.includes(targetStatus);
     },
   },
 
   actions: {
     syncToCollectionStore(): void {
-      if (this.id === 0) return
-      const optionsStore = useOptionsStore()
-      optionsStore.updateOption({ option: this.optionData })
+      if (this.id === 0) return;
+      const optionsStore = useOptionsStore();
+      optionsStore.updateOption({ option: this.optionData });
     },
 
     syncDeletionToCollectionStore(): void {
-      if (this.id === 0) return
-      const optionsStore = useOptionsStore()
-      optionsStore.removeOption(this.id)
+      if (this.id === 0) return;
+      const optionsStore = useOptionsStore();
+      optionsStore.removeOption(this.id);
     },
 
     reset(): void {
-      this.$reset()
+      this.$reset();
     },
 
     // Fixed: singular store has no `options` array — delegate to plural store.
     setOptions(options: Option[]) {
-      const optionsStore = useOptionsStore()
+      const optionsStore = useOptionsStore();
       optionsStore.options = options.map((option) => ({
         ...option,
         status: option.status || { countComments: 0 },
-      }))
+      }));
     },
 
     // Fixed: same as above.
     addOption(option: Option) {
-      const optionsStore = useOptionsStore()
+      const optionsStore = useOptionsStore();
       optionsStore.options.push({
         ...option,
         status: option.status || { countComments: 0 },
-      })
+      });
     },
 
     // Fixed: same as above.
     updateOptionCommentCount(optionId: number, count: number) {
-      const optionsStore = useOptionsStore()
-      const option = optionsStore.options.find((opt) => opt.id === optionId)
+      const optionsStore = useOptionsStore();
+      const option = optionsStore.options.find((opt) => opt.id === optionId);
       if (option && option.status) {
-        option.status.countComments = count
+        option.status.countComments = count;
       }
     },
 
     // Fixed: same as above.
     updateAllCommentCounts(inquiryId: number, comments: Comment[]) {
-      const optionsStore = useOptionsStore()
+      const optionsStore = useOptionsStore();
       optionsStore.options.forEach((option) => {
         const count = comments.filter(
           (comment) =>
             comment.inquiryId === inquiryId &&
             comment.optionId === option.id &&
-            comment.deleted === 0
-        ).length
+            comment.deleted === 0,
+        ).length;
 
         if (option.status) {
-          option.status.countComments = count
+          option.status.countComments = count;
         }
-      })
+      });
     },
 
     // Fixed: returns `.option` (was returning the wrapper object).
     async getOptionById(optionId: number): Promise<Option | undefined> {
       try {
         if (optionId) {
-          const response = await OptionsAPI.getFullOption(optionId)
+          const response = await OptionsAPI.getFullOption(optionId);
           if (response) {
-            return response.data?.option
+            return response.data?.option;
           }
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error getting option by the id :', {
+        Logger.error("Error getting option by the id :", {
           error,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
 
-      return undefined
+      return undefined;
     },
 
     async setOptionStatus(optionStatus: string): Promise<void> {
       try {
-        await OptionsAPI.setOptionStatus(this.id, optionStatus)
-        this.status.optionStatus = optionStatus
-        this.syncToCollectionStore()
+        await OptionsAPI.setOptionStatus(this.id, optionStatus);
+        this.status.optionStatus = optionStatus;
+        this.syncToCollectionStore();
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error setting option status:', {
+        Logger.error("Error setting option status:", {
           error,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async toggleArchive(payload: { optionId: number }): Promise<void> {
-      const inquiryStore = useInquiryStore()
+      const inquiryStore = useInquiryStore();
       try {
-        const response = await OptionsAPI.toggleArchive(payload.optionId)
+        const response = await OptionsAPI.toggleArchive(payload.optionId);
         if (this.id === payload.optionId) {
-          this.$patch(response.data.option)
-          this.syncToCollectionStore()
+          this.$patch(response.data.option);
+          this.syncToCollectionStore();
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error archiving/restoring option', {
+        Logger.error("Error archiving/restoring option", {
           error,
           payload,
-        })
-        throw error
+        });
+        throw error;
       } finally {
         if (inquiryStore.id) {
-          inquiryStore.load()
+          inquiryStore.load();
         }
       }
     },
 
     async getEnhancedText(payload: { text: string }): Promise<void> {
       try {
-        const response = await OptionsAPI.getEnhancedText(payload.text)
-        this.text = response.data.enhancedText || this.text
+        const response = await OptionsAPI.getEnhancedText(payload.text);
+        this.text = response.data.enhancedText || this.text;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error getting AI response for option text', {
+        Logger.error("Error getting AI response for option text", {
           error,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async submitOption(action: string): Promise<void> {
       try {
-        if (action === 'submit_for_accepted') {
-          this.status.optionStatus = 'published'
-        } else if (action === 'submit_for_rejected') {
-          this.status.optionStatus = 'rejected'
-        } else if (action === 'submit_for_moderate') {
-          this.status.optionStatus = 'pending'
+        if (action === "submit_for_accepted") {
+          this.status.optionStatus = "published";
+        } else if (action === "submit_for_rejected") {
+          this.status.optionStatus = "rejected";
+        } else if (action === "submit_for_moderate") {
+          this.status.optionStatus = "pending";
         }
-        const response = await OptionsAPI.submitOption(this.id, action)
-        this.syncToCollectionStore()
+        const response = await OptionsAPI.submitOption(this.id, action);
+        this.syncToCollectionStore();
         if (!response || !response.data) {
-          this.$reset()
-          return
+          this.$reset();
+          return;
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error submitting option', { error })
-        throw error
+        Logger.error("Error submitting option", { error });
+        throw error;
       }
     },
 
     async close(): Promise<void> {
-      const inquiryStore = useInquiryStore()
+      const inquiryStore = useInquiryStore();
       try {
-        const response = await OptionsAPI.closeOption(this.id)
-        this.$patch(response.data.option)
-        this.status.optionStatus = 'archived'
+        const response = await OptionsAPI.closeOption(this.id);
+        this.$patch(response.data.option);
+        this.status.optionStatus = "archived";
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error closing option', {
+        Logger.error("Error closing option", {
           error,
           optionId: this.id,
-        })
-        this.load()
-        throw error
+        });
+        this.load();
+        throw error;
       } finally {
         if (inquiryStore.id) {
-          inquiryStore.load()
+          inquiryStore.load();
         }
       }
     },
 
     async reopen(): Promise<void> {
-      const inquiryStore = useInquiryStore()
+      const inquiryStore = useInquiryStore();
       try {
-        const response = await OptionsAPI.reopenOption(this.id)
-        this.$patch(response.data.option)
-        this.status.optionStatus = 'published'
+        const response = await OptionsAPI.reopenOption(this.id);
+        this.$patch(response.data.option);
+        this.status.optionStatus = "published";
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error reopening option', {
+        Logger.error("Error reopening option", {
           error,
           optionId: this.id,
-        })
-        this.load()
-        throw error
+        });
+        this.load();
+        throw error;
       } finally {
         if (inquiryStore.id) {
-          inquiryStore.load()
+          inquiryStore.load();
         }
       }
     },
 
     // Initialize type info after loading option
     initializeTypeInfo(): void {
-      const sessionStore = useSessionStore()
-      const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-      this._typeInfo = optionTypes.find((opt: InquiryOptionType) => opt.option_type === this.type)
+      const sessionStore = useSessionStore();
+      const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
+      this._typeInfo = optionTypes.find(
+        (opt: InquiryOptionType) => opt.option_type === this.type,
+      );
 
       if (this._typeInfo?.family) {
         const family = sessionStore.appSettings?.optionFamilyTab?.find(
-          (f) => f.family_type === this._typeInfo!.family
-        )
+          (f) => f.family_type === this._typeInfo!.family,
+        );
 
         this._familyInfo = {
           name: family?.label || this._typeInfo.family,
           color: getFamilyColor(this._typeInfo.family),
-          icon: family?.icon || 'File',
-          description: family?.description || this._typeInfo.description || '',
-        }
+          icon: family?.icon || "File",
+          description: family?.description || this._typeInfo.description || "",
+        };
       }
     },
 
     async load(optionId: number | null = null): Promise<unknown> {
-      const sessionStore = useSessionStore()
+      const sessionStore = useSessionStore();
 
-      this.meta.status = 'loading'
+      this.meta.status = "loading";
       try {
-        const response = await OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
+        const response = await OptionsAPI.getFullOption(
+          optionId ?? sessionStore.currentOptionId,
+        );
 
         if (!response) {
-          this.$reset()
-          return
+          this.$reset();
+          return;
         }
-        this.$patch(response.data.option)
+        this.$patch(response.data.option);
 
         if (response.data.option.owner.id === sessionStore.currentUser.id)
-          sessionStore.currentUser.isOwner = true
-        else sessionStore.currentUser.isOwner = false
+          sessionStore.currentUser.isOwner = true;
+        else sessionStore.currentUser.isOwner = false;
 
         // Initialize type info after loading
-        this.initializeTypeInfo()
+        this.initializeTypeInfo();
 
-        this.meta.status = 'loaded'
-        return response
+        this.meta.status = "loaded";
+        return response;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        this.meta.status = 'error'
-        Logger.error('Error loading option', { error })
-        throw error
+        this.meta.status = "error";
+        Logger.error("Error loading option", { error });
+        throw error;
       }
     },
 
     async create(payload: {
-      title: string
-      text: string
-      type: string
-      targetId?: number
-      parentId?: number
-      ownedGroup?: string
-      access?: string
-      supportFeature?: string
-      allowComment?: number
-      family: string
-      status?: string
-      miscFields?: Record<string, { key: string; value: string }>
-      owner?: string // ← added: used at bottom of the method
+      title: string;
+      text: string;
+      type: string;
+      targetId?: number;
+      parentId?: number;
+      ownedGroup?: string;
+      access?: string;
+      supportFeature?: string;
+      allowComment?: number;
+      family: string;
+      status?: string;
+      miscFields?: Record<string, { key: string; value: string }>;
+      owner?: string; // ← added: used at bottom of the method
     }): Promise<Option | void> {
-      const inquiryStore = useInquiryStore()
+      const inquiryStore = useInquiryStore();
 
       // Validate parent if provided.
       // Fixed: `parentOption.typeInfo` is not a runtime property — `typeInfo`
       // is a getter on the *store*, not on plain `Option` data. Look it up
       // from the session's option-type tab instead.
       if (payload.parentId) {
-        const parentOption = await this.getOptionById(payload.parentId)
+        const parentOption = await this.getOptionById(payload.parentId);
         if (parentOption) {
-          const sessionStore = useSessionStore()
-          const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.find(
-            (opt: InquiryOptionType) => opt.option_type === parentOption.type
-          )
+          const sessionStore = useSessionStore();
+          const parentTypeInfo =
+            sessionStore.appSettings?.inquiryOptionTypeTab?.find(
+              (opt: InquiryOptionType) => opt.option_type === parentOption.type,
+            );
           if (
             parentTypeInfo?.allowed_response &&
             !parentTypeInfo.allowed_response.includes(payload.type)
           ) {
             showError(
-              t('agora', 'This option type cannot be added as a child to the selected parent')
-            )
-            return
+              t(
+                "agora",
+                "This option type cannot be added as a child to the selected parent",
+              ),
+            );
+            return;
           }
         }
       }
 
       try {
         // Set defaults from type definition
-        const sessionStore = useSessionStore()
+        const sessionStore = useSessionStore();
         // Fixed: `OptionType` → `InquiryOptionType` (the correct imported type)
         const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.find(
-          (opt: InquiryOptionType) => opt.option_type === payload.type
-        )
+          (opt: InquiryOptionType) => opt.option_type === payload.type,
+        );
 
-        const defaultMiscFields: Record<string, { key: string; value: string }> = {}
+        const defaultMiscFields: Record<
+          string,
+          { key: string; value: string }
+        > = {};
         if (typeInfo?.fields) {
-          const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : []
-          fields.forEach((field: { key: string; value: string; default?: unknown }) => {
-            if (field.default !== undefined) {
-              defaultMiscFields[field.key] = field.default as { key: string; value: string }
-            }
-          })
+          const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : [];
+          fields.forEach(
+            (field: { key: string; value: string; default?: unknown }) => {
+              if (field.default !== undefined) {
+                defaultMiscFields[field.key] = field.default as {
+                  key: string;
+                  value: string;
+                };
+              }
+            },
+          );
         }
 
-        const mergedMiscFields = { ...defaultMiscFields, ...(payload.miscFields || {}) }
+        const mergedMiscFields = {
+          ...defaultMiscFields,
+          ...(payload.miscFields || {}),
+        };
         const response = await OptionsAPI.createOption({
           title: payload.title,
           text: payload.text,
           type: payload.type,
           targetId: payload.targetId || inquiryStore.id,
           parentId: payload.parentId || 0,
-          ownedGroup: payload.ownedGroup || '',
-          owner: payload.owner || '',
-          family: payload.family || '',
-          access: payload.access || 'private',
-          status: payload.status || 'draft',
-          supportFeature: payload.supportFeature || 'none',
+          ownedGroup: payload.ownedGroup || "",
+          owner: payload.owner || "",
+          family: payload.family || "",
+          access: payload.access || "private",
+          status: payload.status || "draft",
+          supportFeature: payload.supportFeature || "none",
           allowComment: payload.allowComment || 0,
           miscFields: mergedMiscFields,
-        })
+        });
 
-        const newOption = response.data.option
-        return newOption
+        const newOption = response.data.option;
+        return newOption;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error creating option:', {
+        Logger.error("Error creating option:", {
           error,
           payload,
           state: this.$state,
-        })
+        });
 
-        throw error
+        throw error;
       }
     },
 
     // Fixed: `miscFields` is a Record — iterate field *configs* from
     // `typeInfo.fields` and read values from `this.miscFields`.
     validateMiscFields(): { valid: boolean; errors: string[] } {
-      const errors: string[] = []
+      const errors: string[] = [];
 
       if (!this.typeInfo) {
-        return { valid: true, errors }
+        return { valid: true, errors };
       }
 
-      const fields = this.typeInfo.fields
+      const fields = this.typeInfo.fields;
       if (!Array.isArray(fields)) {
-        return { valid: true, errors }
+        return { valid: true, errors };
       }
 
       fields.forEach((field) => {
         if (field.required) {
-          const value = this.miscFields[field.key]
-          if (value === undefined || value === null || value === '') {
-            errors.push(t('agora', '{field} is required', { field: field.label }))
+          const value = this.miscFields[field.key];
+          if (value === undefined || value === null || value === "") {
+            errors.push(
+              t("agora", "{field} is required", { field: field.label }),
+            );
           }
         }
 
-        if (field.type === 'number' && this.miscFields[field.key]) {
-          const numValue = Number(this.miscFields[field.key])
+        if (field.type === "number" && this.miscFields[field.key]) {
+          const numValue = Number(this.miscFields[field.key]);
           if (isNaN(numValue)) {
-            errors.push(t('agora', '{field} must be a number', { field: field.label }))
+            errors.push(
+              t("agora", "{field} must be a number", { field: field.label }),
+            );
           }
         }
-      })
+      });
 
       return {
         valid: errors.length === 0,
         errors,
-      }
+      };
     },
 
     async update(
       payload: Partial<{
-        id: number
-        title: string
-        text: string
-        type: string
-        targetId: number
-        parentId: number
-        ownedGroup: string
-        access: string
-        showResults: string
-        allowComment: number
-        supportFeature: string
-        family: string
-        status: string
-        miscFields: Record<string, { key: string; value: string }>
-      }>
+        id: number;
+        title: string;
+        text: string;
+        type: string;
+        targetId: number;
+        parentId: number;
+        ownedGroup: string;
+        access: string;
+        showResults: string;
+        allowComment: number;
+        supportFeature: string;
+        family: string;
+        status: string;
+        miscFields: Record<string, { key: string; value: string }>;
+      }>,
     ): Promise<Option | void> {
-      if (!payload || typeof payload !== 'object') {
-        Logger.error('updateOption called with invalid payload', { payload })
-        return
+      if (!payload || typeof payload !== "object") {
+        Logger.error("updateOption called with invalid payload", { payload });
+        return;
       }
 
       const debouncedLoad = this.$debounce(async () => {
-        let updatedOption: Option | undefined
+        let updatedOption: Option | undefined;
 
         try {
-          const response = await OptionsAPI.updateOption(payload.id ?? this.id, {
-            title: payload.title ?? '',
-            text: payload.text ?? '',
-            type: payload.type,
-            targetId: payload.targetId,
-            parentId: payload.parentId,
-            ownedGroup: payload.ownedGroup,
-            access: payload.access,
-            showResults: payload.showResults,
-            allowComment: payload.allowComment,
-            supportFeature: payload.supportFeature,
-            family: payload.family,
-            status: payload.status,
-            miscFields: payload.miscFields ?? {},
-          })
+          const response = await OptionsAPI.updateOption(
+            payload.id ?? this.id,
+            {
+              title: payload.title ?? "",
+              text: payload.text ?? "",
+              type: payload.type,
+              targetId: payload.targetId,
+              parentId: payload.parentId,
+              ownedGroup: payload.ownedGroup,
+              access: payload.access,
+              showResults: payload.showResults,
+              allowComment: payload.allowComment,
+              supportFeature: payload.supportFeature,
+              family: payload.family,
+              status: payload.status,
+              miscFields: payload.miscFields ?? {},
+            },
+          );
 
-          updatedOption = response?.data?.option
+          updatedOption = response?.data?.option;
 
           if (!updatedOption?.id) {
-            throw new Error('No option returned from API')
+            throw new Error("No option returned from API");
           }
 
-          return updatedOption
+          return updatedOption;
         } catch (error) {
-          if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-            return
+          if ((error as AxiosError)?.code === "ERR_CANCELED") {
+            return;
           }
 
-          Logger.error('Error updating option', {
+          Logger.error("Error updating option", {
             error,
             state: this.$state,
-          })
+          });
 
-          throw error
+          throw error;
         } finally {
           if (updatedOption?.id) {
-            this.load(updatedOption.id)
+            this.load(updatedOption.id);
           }
         }
-      }, 500)
+      }, 500);
 
-      debouncedLoad()
+      debouncedLoad();
     },
 
     async loadChildren(): Promise<void> {
       try {
-        const response = await OptionsAPI.getChildOptions(this.id)
-        this.childs = response.data.options
+        const response = await OptionsAPI.getChildOptions(this.id);
+        this.childs = response.data.options;
 
-        const sessionStore = useSessionStore()
-        const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+        const sessionStore = useSessionStore();
+        const optionTypes =
+          sessionStore.appSettings?.inquiryOptionTypeTab || [];
 
         this.childs.forEach((child) => {
           child._typeInfo = optionTypes.find(
-            (opt: InquiryOptionType) => opt.option_type === child.type
-          )
-        })
+            (opt: InquiryOptionType) => opt.option_type === child.type,
+          );
+        });
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error loading option children', { error })
-        throw error
+        Logger.error("Error loading option children", { error });
+        throw error;
       }
     },
 
     async addChild(payload: {
-      text?: string
-      type?: string
-      ownedGroup?: string
-      access?: string
-      status?: string
-      miscFields?: Record<string, { key: string; value: string }>
+      text?: string;
+      type?: string;
+      ownedGroup?: string;
+      access?: string;
+      status?: string;
+      miscFields?: Record<string, { key: string; value: string }>;
     }): Promise<Option | void> {
       try {
         const response = await OptionsAPI.addChildOption(this.id, {
-          text: payload.text || '',
-          type: payload.type || 'debate',
-          ownedGroup: payload.ownedGroup || '',
-          access: payload.access || 'private',
-          status: payload.status || 'draft',
+          text: payload.text || "",
+          type: payload.type || "debate",
+          ownedGroup: payload.ownedGroup || "",
+          access: payload.access || "private",
+          status: payload.status || "draft",
           miscFields: payload.miscFields || {},
-        })
+        });
 
-        const newChild = response.data.option
-        this.childs.push(newChild)
+        const newChild = response.data.option;
+        this.childs.push(newChild);
 
-        const optionsStore = useOptionsStore()
-        optionsStore.addOption(newChild)
-        this.syncToCollectionStore()
-        return newChild
+        const optionsStore = useOptionsStore();
+        optionsStore.addOption(newChild);
+        this.syncToCollectionStore();
+        return newChild;
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error adding child option:', {
+        Logger.error("Error adding child option:", {
           error,
           payload,
-        })
-        throw error
+        });
+        throw error;
       }
     },
 
     async delete(): Promise<void> {
-      const sessionStore = useSessionStore()
-      const inquiryStore = useInquiryStore()
+      const sessionStore = useSessionStore();
+      const inquiryStore = useInquiryStore();
 
       try {
         if (!this.permissions.delete) {
-          showError(t('agora', 'You do not have permission to delete this option'))
-          return
+          showError(
+            t("agora", "You do not have permission to delete this option"),
+          );
+          return;
         }
 
-        let confirmMessage = t('agora', 'Are you sure you want to delete this option?')
+        let confirmMessage = t(
+          "agora",
+          "Are you sure you want to delete this option?",
+        );
 
         if (this.hasChildren) {
           confirmMessage = t(
-            'agora',
-            'This option has {count} child options. Deleting this option will also delete all its children permanently.',
-            { count: this.childs.length }
-          )
+            "agora",
+            "This option has {count} child options. Deleting this option will also delete all its children permanently.",
+            { count: this.childs.length },
+          );
         }
 
         if (this.isPublished || this.isClosed || this.hasChildren) {
-          const confirmed = confirm(confirmMessage)
-          if (!confirmed) return
+          const confirmed = confirm(confirmMessage);
+          if (!confirmed) return;
         }
 
-        await OptionsAPI.deleteOption(this.id)
+        await OptionsAPI.deleteOption(this.id);
 
         emit(Event.DeleteOption, {
           optionId: this.id,
           message: this.hasChildren
-            ? t('agora', 'Option and all children deleted')
-            : t('agora', 'Option deleted'),
-        })
+            ? t("agora", "Option and all children deleted")
+            : t("agora", "Option deleted"),
+        });
 
         if (sessionStore.currentOptionId === this.id) {
-          this.reset()
+          this.reset();
         }
 
         if (inquiryStore.id) {
-          await inquiryStore.load()
+          await inquiryStore.load();
         }
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error deleting option:', {
+        Logger.error("Error deleting option:", {
           error,
           optionId: this.id,
-        })
+        });
 
         // Fixed: cast unknown → AxiosError before accessing `.response`
-        const axiosError = error as AxiosError
+        const axiosError = error as AxiosError;
         if (axiosError.response?.status === 403) {
-          showError(t('agora', 'You do not have permission to delete this option'))
+          showError(
+            t("agora", "You do not have permission to delete this option"),
+          );
         } else {
-          showError(t('agora', 'Error deleting option'))
+          showError(t("agora", "Error deleting option"));
         }
-        throw error
+        throw error;
       }
     },
 
     // Enhanced write action with type validation
     write(): void {
-      const inquiryStore = useInquiryStore()
+      const inquiryStore = useInquiryStore();
       const debouncedLoad = this.$debounce(async () => {
-        if (this.text === '') {
-          showError(t('agora', 'Text must not be empty!'))
-          return
+        if (this.text === "") {
+          showError(t("agora", "Text must not be empty!"));
+          return;
         }
 
-        const validation = this.validateMiscFields()
+        const validation = this.validateMiscFields();
         if (!validation.valid) {
           showError(
-            t('agora', 'Validation errors: {errors}', {
-              errors: validation.errors.join(', '),
-            })
-          )
-          return
+            t("agora", "Validation errors: {errors}", {
+              errors: validation.errors.join(", "),
+            }),
+          );
+          return;
         }
 
         try {
-          const response = await OptionsAPI.updateOptionConfig(this.id, this.configuration)
-          this.$patch(response.data.option)
-          this.initializeTypeInfo()
+          const response = await OptionsAPI.updateOptionConfig(
+            this.id,
+            this.configuration,
+          );
+          this.$patch(response.data.option);
+          this.initializeTypeInfo();
 
           emit(Event.UpdateOption, {
-            store: 'option',
-            message: t('agora', 'Option updated'),
-          })
+            store: "option",
+            message: t("agora", "Option updated"),
+          });
         } catch (error) {
-          if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-            return
+          if ((error as AxiosError)?.code === "ERR_CANCELED") {
+            return;
           }
-          Logger.error('Error updating option:', {
+          Logger.error("Error updating option:", {
             error,
             option: this.$state,
-          })
-          showError(t('agora', 'Error writing option'))
-          throw error
+          });
+          showError(t("agora", "Error writing option"));
+          throw error;
         } finally {
-          this.load()
+          this.load();
           if (inquiryStore.id) {
-            inquiryStore.load()
+            inquiryStore.load();
           }
         }
-      }, 500)
-      debouncedLoad()
+      }, 500);
+      debouncedLoad();
     },
 
-    async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {
-      const fieldConfig = this.typeInfo?.fields?.find((f) => f.key === key)
+    async updateMiscField(
+      key: string,
+      value: { key: string; value: string },
+    ): Promise<void> {
+      const fieldConfig = this.typeInfo?.fields?.find((f) => f.key === key);
       if (fieldConfig) {
-        if (fieldConfig.type === 'number' && value?.value && isNaN(Number(value.value))) {
-          showError(t('agora', '{field} must be a number', { field: fieldConfig.label }))
-          return
+        if (
+          fieldConfig.type === "number" &&
+          value?.value &&
+          isNaN(Number(value.value))
+        ) {
+          showError(
+            t("agora", "{field} must be a number", {
+              field: fieldConfig.label,
+            }),
+          );
+          return;
         }
 
-        if (fieldConfig.options && !fieldConfig.options.some((opt) => opt.value === value.value)) {
-          showError(t('agora', 'Invalid value for {field}', { field: fieldConfig.label }))
-          return
+        if (
+          fieldConfig.options &&
+          !fieldConfig.options.some((opt) => opt.value === value.value)
+        ) {
+          showError(
+            t("agora", "Invalid value for {field}", {
+              field: fieldConfig.label,
+            }),
+          );
+          return;
         }
       }
 
       try {
-        await OptionsAPI.updateOptionMiscField(this.id, { key, value })
-        this.miscFields[key] = value
-        this.syncToCollectionStore()
+        await OptionsAPI.updateOptionMiscField(this.id, { key, value });
+        this.miscFields[key] = value;
+        this.syncToCollectionStore();
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        if ((error as AxiosError)?.code === "ERR_CANCELED") {
+          return;
         }
-        Logger.error('Error updating option misc field:', {
+        Logger.error("Error updating option misc field:", {
           error,
           state: this.$state,
-        })
-        throw error
+        });
+        throw error;
       }
     },
   },
-})
+});

@@ -3,148 +3,158 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed } from 'vue'
-import linkifyStr from 'linkify-string'
-import { DateTime } from 'luxon'
-import { t } from '@nextcloud/l10n'
-import { showError } from '@nextcloud/dialogs'
+import { computed } from "vue";
+import linkifyStr from "linkify-string";
+import { DateTime } from "luxon";
+import { t } from "@nextcloud/l10n";
+import { showError } from "@nextcloud/dialogs";
 
-import ActionDelete from '../Actions/modules/ActionDelete.vue'
-import UserItem from '../User/UserItem.vue'
-import UserBubble from '../User/UserBubble.vue'
+import ActionDelete from "../Actions/modules/ActionDelete.vue";
+import UserItem from "../User/UserItem.vue";
+import UserBubble from "../User/UserBubble.vue";
 
-import { useSessionStore } from '../../stores/session'
-import { useInquiryStore } from '../../stores/inquiry'
-import { useCommentsStore } from '../../stores/comments'
-import { usePreferencesStore } from '../../stores/preferences'
+import { useSessionStore } from "../../stores/session";
+import { useInquiryStore } from "../../stores/inquiry";
+import { useCommentsStore } from "../../stores/comments";
+import { usePreferencesStore } from "../../stores/preferences";
 
-import type { Comment } from '../../Types/comments.types.ts'
+import type { Comment } from "../../Types/comments.types.ts";
 
-const sessionStore = useSessionStore()
-const inquiryStore = useInquiryStore()
-const commentsStore = useCommentsStore()
-const preferencesStore = usePreferencesStore()
+const sessionStore = useSessionStore();
+const inquiryStore = useInquiryStore();
+const commentsStore = useCommentsStore();
+const preferencesStore = usePreferencesStore();
 
 const props = defineProps<{
-  comment?: Comment
+  comment?: Comment;
   group?: {
-    userId: string | number
-    user: string
-    timestamp: number
-    comments: Comment[]
-  }
-}>()
+    userId: string | number;
+    user: string;
+    timestamp: number;
+    comments: Comment[];
+  };
+}>();
 
 // Safe computed properties with null checks
-const isGroupMode = computed(() => props.group !== undefined && props.group !== null)
+const isGroupMode = computed(
+  () => props.group !== undefined && props.group !== null,
+);
 
 const comments = computed(() => {
   if (isGroupMode.value && props.group?.comments) {
-    return props.group.comments
+    return props.group.comments;
   }
-  return props.comment ? [props.comment] : []
-})
+  return props.comment ? [props.comment] : [];
+});
 
 const user = computed(() => {
   if (isGroupMode.value && props.group?.user) {
-    return props.group.user
+    return props.group.user;
   }
-  return props.comment?.user || { id: 0, displayName: 'Unknown' }
-})
+  return props.comment?.user || { id: 0, displayName: "Unknown" };
+});
 
 const timestamp = computed(() => {
   if (isGroupMode.value && props.group?.timestamp) {
-    return props.group.timestamp
+    return props.group.timestamp;
   }
-  return props.comment?.timestamp || 0
-})
+  return props.comment?.timestamp || 0;
+});
 
 const commentedDateTime = computed(() => {
   try {
-    return DateTime.fromSeconds(timestamp.value)
+    return DateTime.fromSeconds(timestamp.value);
   } catch {
-    return DateTime.now()
+    return DateTime.now();
   }
-})
+});
 
-const isCurrentUser = computed(() => sessionStore.currentUser?.id === user.value.id)
+const isCurrentUser = computed(
+  () => sessionStore.currentUser?.id === user.value.id,
+);
 
 // Check if any comment in group is confidential
-const isConfidential = computed(() => comments.value.some((c) => c && c.confidential > 0))
+const isConfidential = computed(() =>
+  comments.value.some((c) => c && c.confidential > 0),
+);
 
 const deletable = computed(
-  () => user.value.id === sessionStore.currentUser?.id || inquiryStore.currentUserStatus?.isOwner
-)
+  () =>
+    user.value.id === sessionStore.currentUser?.id ||
+    inquiryStore.currentUserStatus?.isOwner,
+);
 
 // Format time for multiple comments
 const timeRange = computed(() => {
-  if (comments.value.length <= 1) return ''
+  if (comments.value.length <= 1) return "";
 
   try {
-    const first = DateTime.fromSeconds(comments.value[0]?.timestamp || 0)
-    const last = DateTime.fromSeconds(comments.value[comments.value.length - 1]?.timestamp || 0)
+    const first = DateTime.fromSeconds(comments.value[0]?.timestamp || 0);
+    const last = DateTime.fromSeconds(
+      comments.value[comments.value.length - 1]?.timestamp || 0,
+    );
 
-    if (first.hasSame(last, 'minute')) {
-      return first.toFormat('HH:mm')
+    if (first.hasSame(last, "minute")) {
+      return first.toFormat("HH:mm");
     }
-    return `${first.toFormat('HH:mm')} - ${last.toFormat('HH:mm')}`
+    return `${first.toFormat("HH:mm")} - ${last.toFormat("HH:mm")}`;
   } catch {
-    return ''
+    return "";
   }
-})
+});
 
 // Helper functions
 function linkify(text: string) {
-  if (!text) return ''
+  if (!text) return "";
   try {
-    return linkifyStr(text)
+    return linkifyStr(text);
   } catch {
-    return text
+    return text;
   }
 }
 
 async function deleteComment(comment: Comment) {
-  if (!comment) return
+  if (!comment) return;
   try {
-    await commentsStore.delete({ comment })
+    await commentsStore.delete({ comment });
   } catch {
-    showError(t('agora', 'Error while deleting the comment'))
+    showError(t("agora", "Error while deleting the comment"));
   }
 }
 
 async function restoreComment(comment: Comment) {
-  if (!comment) return
+  if (!comment) return;
   try {
-    await commentsStore.restore({ comment })
+    await commentsStore.restore({ comment });
   } catch {
-    showError(t('agora', 'Error while restoring the comment'))
+    showError(t("agora", "Error while restoring the comment"));
   }
 }
 
 // Track user positions for alternating ONLY in grouped mode
-const userPositionsGrouped = new Map<string | number, 'left' | 'right'>()
+const userPositionsGrouped = new Map<string | number, "left" | "right">();
 
 // Simplified position logic - only alternate in grouped mode
 const position = computed(() => {
   if (!isGroupMode.value) {
     // For single comments (option comments), always left
-    return 'left'
+    return "left";
   }
 
   // For grouped mode, alternate based on user
-  const userId = user.value.id
-  const lastPosition = userPositionsGrouped.get(userId)
+  const userId = user.value.id;
+  const lastPosition = userPositionsGrouped.get(userId);
 
-  let newPosition: 'left' | 'right'
+  let newPosition: "left" | "right";
   if (lastPosition) {
-    newPosition = lastPosition === 'left' ? 'right' : 'left'
+    newPosition = lastPosition === "left" ? "right" : "left";
   } else {
-    newPosition = 'left' // First time for this user
+    newPosition = "left"; // First time for this user
   }
 
-  userPositionsGrouped.set(userId, newPosition)
-  return newPosition
-})
+  userPositionsGrouped.set(userId, newPosition);
+  return newPosition;
+});
 </script>
 <template>
   <div
@@ -185,7 +195,7 @@ const position = computed(() => {
       <!-- Header - always left aligned -->
       <div class="comment-item__header">
         <span class="comment-item__user">
-          {{ user.displayName || t('agora', 'Unknown user') }}
+          {{ user.displayName || t("agora", "Unknown user") }}
         </span>
         <span
           class="comment-item__date"
@@ -203,7 +213,7 @@ const position = computed(() => {
           v-if="isConfidential"
           class="comment-item__confidential"
         >
-          {{ t('agora', 'Confidential') }}
+          {{ t("agora", "Confidential") }}
         </span>
         <span
           v-if="comments.length > 1"
@@ -232,7 +242,9 @@ const position = computed(() => {
             <ActionDelete
               v-if="deletable && singleComment"
               :name="
-                singleComment.deleted ? t('agora', 'Restore comment') : t('agora', 'Delete comment')
+                singleComment.deleted
+                  ? t('agora', 'Restore comment')
+                  : t('agora', 'Delete comment')
               "
               :restore="!!singleComment.deleted"
               :timeout="0"
@@ -360,7 +372,7 @@ const position = computed(() => {
   font-size: 0.75em; // Smaller
 
   &::before {
-    content: '•';
+    content: "•";
     margin-right: 4px;
     opacity: 0.5;
   }
@@ -382,7 +394,7 @@ const position = computed(() => {
   border-radius: 8px;
 
   &::before {
-    content: '🔒';
+    content: "🔒";
     margin-right: 4px;
     font-size: 0.85em;
   }

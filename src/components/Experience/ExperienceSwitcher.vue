@@ -68,58 +68,67 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { EXPERIENCE_DEFINITIONS, type ExperienceKey } from '../../composables/useExperience'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import {
+  EXPERIENCE_DEFINITIONS,
+  type ExperienceKey,
+} from "../../composables/useExperience";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
 
 const props = defineProps<{
-  currentExperience: ExperienceKey
-  availableExperiences: ExperienceKey[]
-}>()
+  currentExperience: ExperienceKey;
+  availableExperiences: ExperienceKey[];
+}>();
 
 const emit = defineEmits<{
-  change: [experience: ExperienceKey]
-}>()
+  change: [experience: ExperienceKey];
+}>();
 
 // Never offer the landing-page experience inside a group.
-const HIDDEN = new Set<ExperienceKey>(['home'])
+const HIDDEN = new Set<ExperienceKey>(["home"]);
 
 const allExperiences = computed(() =>
   props.availableExperiences
     .filter((key) => !HIDDEN.has(key))
     .map((key) => EXPERIENCE_DEFINITIONS[key])
-    .filter(Boolean)
-)
+    .filter(Boolean),
+);
 
 const currentDefinition = computed(
-  () => EXPERIENCE_DEFINITIONS[props.currentExperience] ?? EXPERIENCE_DEFINITIONS.dashboard
-)
+  () =>
+    EXPERIENCE_DEFINITIONS[props.currentExperience] ??
+    EXPERIENCE_DEFINITIONS.dashboard,
+);
 
-const currentLabel = computed(() => currentDefinition.value?.label ?? props.currentExperience)
-const currentIcon = computed(() => getIcon(currentDefinition.value?.icon ?? 'Home'))
+const currentLabel = computed(
+  () => currentDefinition.value?.label ?? props.currentExperience,
+);
+const currentIcon = computed(() =>
+  getIcon(currentDefinition.value?.icon ?? "Home"),
+);
 
 function getIcon(iconName: string) {
-  return (Icons as Record<string, unknown>)[iconName] ?? Icons.Home
+  return (Icons as Record<string, unknown>)[iconName] ?? Icons.Home;
 }
 
-const isOpen = ref(false)
-const containerRef = ref<HTMLElement | null>(null)
+const isOpen = ref(false);
+const containerRef = ref<HTMLElement | null>(null);
 
 function select(key: ExperienceKey) {
-  isOpen.value = false
-  if (key === props.currentExperience) return
-  emit('change', key)
+  isOpen.value = false;
+  if (key === props.currentExperience) return;
+  emit("change", key);
 }
 
 function handleClickOutside(e: MouseEvent) {
   if (containerRef.value && !containerRef.value.contains(e.target as Node)) {
-    isOpen.value = false
+    isOpen.value = false;
   }
 }
 
-onMounted(() => document.addEventListener('click', handleClickOutside))
-onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+onMounted(() => document.addEventListener("click", handleClickOutside));
+onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 </script>
 
 <style lang="scss" scoped>

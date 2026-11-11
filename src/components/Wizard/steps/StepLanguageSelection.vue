@@ -4,39 +4,40 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { NcNoteCard } from '@nextcloud/vue'
-import { useTemplateWizardStore } from '../../../stores/templateWizard'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { NcNoteCard } from "@nextcloud/vue";
+import { useTemplateWizardStore } from "../../../stores/templateWizard";
 
-const wizardStore = useTemplateWizardStore()
+const wizardStore = useTemplateWizardStore();
 
-const availableLanguages = computed(() => wizardStore.availableLanguages)
+const availableLanguages = computed(() => wizardStore.availableLanguages);
 
 const languageNames: Record<string, string> = {
-  en: t('agora', 'English'),
-  fr: t('agora', 'French'),
-  de: t('agora', 'German'),
-  gsw: t('agora', 'Swiss german'),
-  it: t('agora', 'Italian'),
-  es: t('agora', 'Spanish'),
-  pt: t('agora', 'Portuguese'),
-  nl: t('agora', 'Dutch'),
-}
+  en: t("agora", "English"),
+  fr: t("agora", "French"),
+  de: t("agora", "German"),
+  gsw: t("agora", "Swiss german"),
+  it: t("agora", "Italian"),
+  es: t("agora", "Spanish"),
+  pt: t("agora", "Portuguese"),
+  nl: t("agora", "Dutch"),
+};
 
-const getLanguageName = (code: string): string => languageNames[code] || code.toUpperCase()
+const getLanguageName = (code: string): string =>
+  languageNames[code] || code.toUpperCase();
 
 const selectLanguage = (language: string) => {
-  wizardStore.selectLanguage(language)
-}
+  wizardStore.selectLanguage(language);
+};
 </script>
 
 <template>
   <div class="language-selection">
     <div class="language-header">
-      <h2>{{ t('agora', 'Choose your language') }}</h2>
+      <h2>{{ t("agora", "Choose your language") }}</h2>
       <p class="subtitle">
-        {{ t('agora', 'Select the language for your template content') }}
+        {{ t("agora", "Select the language for your template content") }}
       </p>
     </div>
 
@@ -47,8 +48,8 @@ const selectLanguage = (language: string) => {
       <p>
         {{
           t(
-            'agora',
-            'Only the selected language will be imported into the database. The template contains embedded translations, but you must choose which language to use for your instance.'
+            "agora",
+            "Only the selected language will be imported into the database. The template contains embedded translations, but you must choose which language to use for your instance.",
           )
         }}
       </p>
@@ -81,7 +82,7 @@ const selectLanguage = (language: string) => {
       v-if="wizardStore.selectedLanguage"
       class="selection-summary"
     >
-      <strong>{{ t('agora', 'Selected:') }}</strong>
+      <strong>{{ t("agora", "Selected:") }}</strong>
       {{ getLanguageName(wizardStore.selectedLanguage) }}
     </div>
   </div>

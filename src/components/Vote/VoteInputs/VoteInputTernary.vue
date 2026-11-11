@@ -33,52 +33,52 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import CheckIcon from 'vue-material-design-icons/Check.vue'
-import { ThumbsUp, Minus, ThumbsDown } from 'lucide-vue-next'
-import type { SupportData, Item } from '../../../Types/index'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import CheckIcon from "vue-material-design-icons/Check.vue";
+import { ThumbsUp, Minus, ThumbsDown } from "lucide-vue-next";
+import type { SupportData, Item } from "../../../Types/index";
 
 const props = defineProps<{
-  item: Item
-  disabled?: boolean
-  userVote?: SupportData
-  currentScore?: number | null
-}>()
+  item: Item;
+  disabled?: boolean;
+  userVote?: SupportData;
+  currentScore?: number | null;
+}>();
 
 const emit = defineEmits<{
-  'update:score': [itemId: number, score: number | null]
-}>()
+  "update:score": [itemId: number, score: number | null];
+}>();
 
 const ternaryItems = [
-  { value: 1, label: t('agora', 'For'), icon: ThumbsUp },
-  { value: 0, label: t('agora', 'Abstain'), icon: Minus },
-  { value: -1, label: t('agora', 'Against'), icon: ThumbsDown },
-]
+  { value: 1, label: t("agora", "For"), icon: ThumbsUp },
+  { value: 0, label: t("agora", "Abstain"), icon: Minus },
+  { value: -1, label: t("agora", "Against"), icon: ThumbsDown },
+];
 
 const currentValue = computed(() => {
   // Normalize to number
   if (props.currentScore !== undefined && props.currentScore !== null) {
-    const num = Number(props.currentScore)
-    return isNaN(num) ? null : num
+    const num = Number(props.currentScore);
+    return isNaN(num) ? null : num;
   }
   // Fallback to stored vote
-  if (!props.userVote) return null
-  let raw = props.userVote.value
-  if (raw && typeof raw === 'object' && 'value' in raw) raw = raw.value
-  if (typeof raw === 'number') return raw
-  if (typeof raw === 'string') return Number(raw)
-  return null
-})
+  if (!props.userVote) return null;
+  let raw = props.userVote.value;
+  if (raw && typeof raw === "object" && "value" in raw) raw = raw.value;
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string") return Number(raw);
+  return null;
+});
 
 function isSelected(value: number) {
-  return currentValue.value === value
+  return currentValue.value === value;
 }
 
 function vote(value: number) {
-  const newValue = currentValue.value === value ? null : value
-  emit('update:score', props.item.id, newValue)
+  const newValue = currentValue.value === value ? null : value;
+  emit("update:score", props.item.id, newValue);
 }
 </script>
 

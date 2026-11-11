@@ -10,7 +10,9 @@
         :step="step"
         :value="currentValue ?? defaultValue"
         class="score-slider"
-        :style="{ '--progress': getProgress(currentValue ?? defaultValue) + '%' }"
+        :style="{
+          '--progress': getProgress(currentValue ?? defaultValue) + '%',
+        }"
         @input="handleSliderInput"
         @change="handleSliderChange"
       >
@@ -28,54 +30,56 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { X } from 'lucide-vue-next'
-import type { Option, Inquiry } from '../../../Types/index'
+import { ref, computed, watch } from "vue";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { X } from "lucide-vue-next";
+import type { Option, Inquiry } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Option | Inquiry
-  currentScore?: number | null
-}>()
+  engineConfig: Record<string, unknown>;
+  item: Option | Inquiry;
+  currentScore?: number | null;
+}>();
 
 const emit = defineEmits<{
-  'update:score': [itemId: number, score: number | null]
-}>()
+  "update:score": [itemId: number, score: number | null];
+}>();
 
-const minValue = computed(() => (props.engineConfig.min as number) || 0)
-const maxValue = computed(() => (props.engineConfig.max as number) || 10)
-const step = computed(() => (props.engineConfig.step as number) || 1)
-const defaultValue = computed(() => Math.floor((minValue.value + maxValue.value) / 2))
+const minValue = computed(() => (props.engineConfig.min as number) || 0);
+const maxValue = computed(() => (props.engineConfig.max as number) || 10);
+const step = computed(() => (props.engineConfig.step as number) || 1);
+const defaultValue = computed(() =>
+  Math.floor((minValue.value + maxValue.value) / 2),
+);
 
-const currentValue = computed(() => props.currentScore ?? null)
-const displayValue = ref(currentValue.value ?? defaultValue.value)
+const currentValue = computed(() => props.currentScore ?? null);
+const displayValue = ref(currentValue.value ?? defaultValue.value);
 
 watch(currentValue, (newValue) => {
-  displayValue.value = newValue ?? defaultValue.value
-})
+  displayValue.value = newValue ?? defaultValue.value;
+});
 
 function handleSliderInput(event: Event) {
-  const target = event.target as HTMLInputElement
-  displayValue.value = parseInt(target.value, 10)
+  const target = event.target as HTMLInputElement;
+  displayValue.value = parseInt(target.value, 10);
 }
 
 function handleSliderChange(event: Event) {
-  const target = event.target as HTMLInputElement
-  const value = parseInt(target.value, 10)
+  const target = event.target as HTMLInputElement;
+  const value = parseInt(target.value, 10);
   if (currentValue.value === value && value !== 0) {
-    emit('update:score', props.item.id, null)
+    emit("update:score", props.item.id, null);
   } else {
-    emit('update:score', props.item.id, value)
+    emit("update:score", props.item.id, value);
   }
 }
 
 function clearScore() {
-  emit('update:score', props.item.id, null)
+  emit("update:score", props.item.id, null);
 }
 
 function getProgress(value: number): number {
-  return ((value - minValue.value) / (maxValue.value - minValue.value)) * 100
+  return ((value - minValue.value) / (maxValue.value - minValue.value)) * 100;
 }
 </script>
 

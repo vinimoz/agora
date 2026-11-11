@@ -13,7 +13,7 @@
           :size="18"
           class="header-icon"
         />
-        <span class="header-title">{{ t('agora', 'Groups') }}</span>
+        <span class="header-title">{{ t("agora", "Groups") }}</span>
         <span class="nav-count">{{ groups.length }}</span>
       </div>
       <div class="header-right">
@@ -77,11 +77,19 @@
           <button
             v-if="getChildren(group).length > 0"
             class="toggle-btn"
-            :title="expandedGroups.has(group.id) ? t('agora', 'Collapse') : t('agora', 'Expand')"
+            :title="
+              expandedGroups.has(group.id)
+                ? t('agora', 'Collapse')
+                : t('agora', 'Expand')
+            "
             @click.stop="toggleGroup(group.id)"
           >
             <component
-              :is="expandedGroups.has(group.id) ? Icons.ChevronDown : Icons.ChevronRight"
+              :is="
+                expandedGroups.has(group.id)
+                  ? Icons.ChevronDown
+                  : Icons.ChevronRight
+              "
               :size="14"
             />
           </button>
@@ -109,13 +117,13 @@
                 v-if="group.groupStatus === 'archived'"
                 class="status-badge archived"
               >
-                {{ t('agora', 'Archived') }}
+                {{ t("agora", "Archived") }}
               </span>
               <span
                 v-if="group.groupStatus === 'draft'"
                 class="status-badge draft"
               >
-                {{ t('agora', 'Draft') }}
+                {{ t("agora", "Draft") }}
               </span>
             </div>
             <div
@@ -184,8 +192,8 @@
         <p>
           {{
             searchQuery
-              ? t('agora', 'No groups match your search')
-              : t('agora', 'No groups available')
+              ? t("agora", "No groups match your search")
+              : t("agora", "No groups available")
           }}
         </p>
         <NcButton
@@ -200,7 +208,7 @@
               :size="14"
             />
           </template>
-          {{ t('agora', 'Create group') }}
+          {{ t("agora", "Create group") }}
         </NcButton>
       </div>
     </div>
@@ -208,118 +216,122 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { InquiryGroup } from '../../Types/inquiryGroups.types'
+import { ref, computed, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryGroupTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { InquiryGroup } from "../../Types/inquiryGroups.types";
 
 // ============================================================
 // PROPS
 // ============================================================
 const props = defineProps<{
-  groups: InquiryGroup[]
-  activeId?: number
-  depth?: number
-  maxDepth?: number
-  showCreateButton?: boolean
-}>()
+  groups: InquiryGroup[];
+  activeId?: number;
+  depth?: number;
+  maxDepth?: number;
+  showCreateButton?: boolean;
+}>();
 
 // ============================================================
 // EMITS
 // ============================================================
 const emit = defineEmits<{
-  click: [group: InquiryGroup]
-  select: [group: InquiryGroup]
-  create: []
-}>()
+  click: [group: InquiryGroup];
+  select: [group: InquiryGroup];
+  create: [];
+}>();
 
 // ============================================================
 // STORES
 // ============================================================
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // ============================================================
 // STATE
 // ============================================================
-const searchQuery = ref('')
-const expandedGroups = ref<Set<number>>(new Set())
-const navListRef = ref<HTMLElement | null>(null)
+const searchQuery = ref("");
+const expandedGroups = ref<Set<number>>(new Set());
+const navListRef = ref<HTMLElement | null>(null);
 
 // ============================================================
 // COMPUTED
 // ============================================================
 const canCreateGroup = computed(
-  () => sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor
-)
+  () =>
+    sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor,
+);
 
 const filteredGroups = computed(() => {
-  if (!searchQuery.value) return props.groups
+  if (!searchQuery.value) return props.groups;
 
-  const query = searchQuery.value.toLowerCase()
+  const query = searchQuery.value.toLowerCase();
   return props.groups.filter((group) => {
-    const titleMatch = group.title.toLowerCase().includes(query)
-    const descMatch = group.description?.toLowerCase().includes(query) || false
-    return titleMatch || descMatch
-  })
-})
+    const titleMatch = group.title.toLowerCase().includes(query);
+    const descMatch = group.description?.toLowerCase().includes(query) || false;
+    return titleMatch || descMatch;
+  });
+});
 
 // ============================================================
 // METHODS
 // ============================================================
 function getGroupIcon(type: string) {
-  const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return typeData?.icon || Icons.Folder
+  const typeData = getInquiryGroupTypeData(
+    type,
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  );
+  return typeData?.icon || Icons.Folder;
 }
 
 function getIconClass(group: InquiryGroup): string {
-  const type = group.type?.toLowerCase() || 'default'
-  return `icon-${type}`
+  const type = group.type?.toLowerCase() || "default";
+  return `icon-${type}`;
 }
 
 function getChildren(group: InquiryGroup): InquiryGroup[] {
   // Find children from the full groups list
   // This assumes the parent component has access to all groups
   // If not, we need to use the store
-  return props.groups.filter((g) => g.parentId === group.id)
+  return props.groups.filter((g) => g.parentId === group.id);
 }
 
 function getDepth(group: InquiryGroup): number {
-  let depth = 0
-  let current = group
+  let depth = 0;
+  let current = group;
   while (current.parentId) {
-    const parent = props.groups.find((g) => g.id === current.parentId)
-    if (!parent) break
-    depth++
-    current = parent
+    const parent = props.groups.find((g) => g.id === current.parentId);
+    if (!parent) break;
+    depth++;
+    current = parent;
   }
-  return depth + (props.depth || 0)
+  return depth + (props.depth || 0);
 }
 
 function isActive(group: InquiryGroup): boolean {
-  return props.activeId === group.id
+  return props.activeId === group.id;
 }
 
 function toggleGroup(id: number) {
   if (expandedGroups.value.has(id)) {
-    expandedGroups.value.delete(id)
+    expandedGroups.value.delete(id);
   } else {
-    expandedGroups.value.add(id)
+    expandedGroups.value.add(id);
   }
 }
 
 function handleClick(group: InquiryGroup) {
-  emit('select', group)
+  emit("select", group);
 }
 
 function handleChildClick(group: InquiryGroup) {
-  emit('select', group)
+  emit("select", group);
 }
 
 function handleCreate() {
-  emit('create')
+  emit("create");
 }
 
 function handleSearch() {
@@ -327,8 +339,8 @@ function handleSearch() {
 }
 
 function truncateText(text: string, maxLength: number): string {
-  if (!text) return ''
-  return text.length > maxLength ? `${text.substring(0, maxLength)}…` : text
+  if (!text) return "";
+  return text.length > maxLength ? `${text.substring(0, maxLength)}…` : text;
 }
 
 // ============================================================
@@ -337,21 +349,21 @@ function truncateText(text: string, maxLength: number): string {
 onMounted(() => {
   // Auto-expand the active group's parents
   if (props.activeId) {
-    const activeGroup = props.groups.find((g) => g.id === props.activeId)
+    const activeGroup = props.groups.find((g) => g.id === props.activeId);
     if (activeGroup) {
-      let current = activeGroup
+      let current = activeGroup;
       while (current.parentId) {
-        const parent = props.groups.find((g) => g.id === current.parentId)
+        const parent = props.groups.find((g) => g.id === current.parentId);
         if (parent) {
-          expandedGroups.value.add(parent.id)
-          current = parent
+          expandedGroups.value.add(parent.id);
+          current = parent;
         } else {
-          break
+          break;
         }
       }
     }
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>

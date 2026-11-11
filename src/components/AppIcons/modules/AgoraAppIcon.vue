@@ -4,9 +4,9 @@
 -->
 
 <script setup lang="ts">
-import { IconProps } from './types'
+import { IconProps } from "./types";
 
-const { size = 32 } = defineProps<IconProps>()
+const { size = 32 } = defineProps<IconProps>();
 </script>
 
 <template>

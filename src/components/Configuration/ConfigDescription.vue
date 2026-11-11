@@ -4,11 +4,11 @@
 -->
 
 <script setup lang="ts">
-import { NcCheckboxRadioSwitch } from '@nextcloud/vue'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { t } from '@nextcloud/l10n'
-const inquiryStore = useInquiryStore()
-const emit = defineEmits(['change'])
+import { NcCheckboxRadioSwitch } from "@nextcloud/vue";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { t } from "@nextcloud/l10n";
+const inquiryStore = useInquiryStore();
+const emit = defineEmits(["change"]);
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const emit = defineEmits(['change'])
     type="switch"
     @update:model-value="emit('change')"
   >
-    {{ t('agora', 'Collapse long descriptions') }}
+    {{ t("agora", "Collapse long descriptions") }}
   </NcCheckboxRadioSwitch>
 </template>
 

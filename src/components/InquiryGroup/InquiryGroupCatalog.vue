@@ -31,7 +31,7 @@
     <!-- Active Groups -->
     <div class="catalog-section">
       <div class="section-header">
-        <h2>{{ t('agora', 'Active Groups') }}</h2>
+        <h2>{{ t("agora", "Active Groups") }}</h2>
         <span class="section-count">{{ filteredGroups.length }}</span>
       </div>
 
@@ -65,16 +65,20 @@
             <div class="card-stats">
               <span class="stat">
                 <span class="stat-icon">📝</span>
-                <span class="stat-value">{{ group.inquiryIds?.length || 0 }}</span>
-                <span class="stat-label">{{ t('agora', 'inquiries') }}</span>
+                <span class="stat-value">{{
+                  group.inquiryIds?.length || 0
+                }}</span>
+                <span class="stat-label">{{ t("agora", "inquiries") }}</span>
               </span>
               <span
                 v-if="getGroupChildren(group).length > 0"
                 class="stat"
               >
                 <span class="stat-icon">👥</span>
-                <span class="stat-value">{{ getGroupChildren(group).length }}</span>
-                <span class="stat-label">{{ t('agora', 'subgroups') }}</span>
+                <span class="stat-value">{{
+                  getGroupChildren(group).length
+                }}</span>
+                <span class="stat-label">{{ t("agora", "subgroups") }}</span>
               </span>
             </div>
 
@@ -83,7 +87,7 @@
               v-if="group.ui?.displayArchitecture"
               class="card-badge experience-badge"
             >
-              ✨ {{ t('agora', 'Custom experience') }}
+              ✨ {{ t("agora", "Custom experience") }}
             </div>
           </div>
         </div>
@@ -96,8 +100,8 @@
           <div class="empty-icon">
             📂
           </div>
-          <h4>{{ t('agora', 'No groups found') }}</h4>
-          <p>{{ t('agora', 'There are no active groups in this category') }}</p>
+          <h4>{{ t("agora", "No groups found") }}</h4>
+          <p>{{ t("agora", "There are no active groups in this category") }}</p>
         </div>
       </div>
     </div>
@@ -108,7 +112,7 @@
       class="catalog-section archived-section"
     >
       <div class="section-header">
-        <h2>{{ t('agora', 'Archived Groups') }}</h2>
+        <h2>{{ t("agora", "Archived Groups") }}</h2>
         <span class="section-count archived">{{ archivedGroups.length }}</span>
       </div>
 
@@ -129,113 +133,103 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { useRouter } from 'vue-router'
-import { DateTime } from 'luxon'
-import { getInquiryGroupTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts'
-import type { InquiryGroup } from '../../Types/inquiryGroups.types.ts'
+import { computed, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import { useRouter } from "vue-router";
+import { DateTime } from "luxon";
+import { getInquiryGroupTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { useInquiryGroupsStore } from "../../stores/inquiryGroups.ts";
+import type { InquiryGroup } from "../../Types/inquiryGroups.types.ts";
 
 const props = defineProps<{
-  groups: InquiryGroup[]
-  families?: Array<{ key: string; label: string; icon: any }>
-}>()
+  groups: InquiryGroup[];
+  families?: Array<{ key: string; label: string; icon: any }>;
+}>();
 
 const emit = defineEmits<{
-  select: [group: InquiryGroup]
-}>()
+  select: [group: InquiryGroup];
+}>();
 
-const router = useRouter()
-const sessionStore = useSessionStore()
-const inquiryGroupsStore = useInquiryGroupsStore()
+const router = useRouter();
+const sessionStore = useSessionStore();
+const inquiryGroupsStore = useInquiryGroupsStore();
 
-const selectedFamily = ref<string | null>(null)
+const selectedFamily = ref<string | null>(null);
 
-// Get all unique families from groups
-const availableFamilies = computed(() => {
-  if (props.families) return props.families
-
-  const familiesSet = new Set<string>()
-  props.groups.forEach((group) => {
-    const typeData = getInquiryGroupTypeData(
-      group.type,
-      sessionStore.appSettings.inquiryGroupTypeTab
-    )
-    if (typeData?.family) {
-      familiesSet.add(typeData.family)
-    }
-  })
-
-  return Array.from(familiesSet).map((key) => ({
-    key,
-    label: key,
-    icon: 'div',
-  }))
-})
 
 // Filter groups by selected family
 const filteredGroups = computed(() => {
-  let result = props.groups.filter((g) => g.status.groupStatus !== 'archived')
+  let result = props.groups.filter((g) => g.status.groupStatus !== "archived");
 
   if (selectedFamily.value) {
     result = result.filter((group) => {
       const typeData = getInquiryGroupTypeData(
         group.type,
-        sessionStore.appSettings.inquiryGroupTypeTab
-      )
-      return typeData?.family === selectedFamily.value
-    })
+        sessionStore.appSettings.inquiryGroupTypeTab,
+      );
+      return typeData?.family === selectedFamily.value;
+    });
   }
 
-  return result.sort((a, b) => a.title.localeCompare(b.title))
-})
+  return result.sort((a, b) => a.title.localeCompare(b.title));
+});
 
 // Archived groups
 const archivedGroups = computed(() =>
   props.groups
-    .filter((g) => g.status.groupStatus === 'archived')
-    .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())
-)
+    .filter((g) => g.status.groupStatus === "archived")
+    .sort(
+      (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime(),
+    ),
+);
 
 function getGroupTypeIcon(type: string) {
-  const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return typeData?.icon || 'div'
+  const typeData = getInquiryGroupTypeData(
+    type,
+    sessionStore.appSettings.inquiryGroupTypeTab,
+  );
+  return typeData?.icon || "div";
 }
 
 function getGroupChildren(group: InquiryGroup) {
-  return inquiryGroupsStore.inquiryGroups.filter((g) => g.parentId === group.id)
+  return inquiryGroupsStore.inquiryGroups.filter(
+    (g) => g.parentId === group.id,
+  );
 }
 
 function getFamilyCount(familyKey: string): number {
   return props.groups.filter((group) => {
     const typeData = getInquiryGroupTypeData(
       group.type,
-      sessionStore.appSettings.inquiryGroupTypeTab
-    )
-    return typeData?.family === familyKey && group.status.groupStatus !== 'archived'
-  }).length
+      sessionStore.appSettings.inquiryGroupTypeTab,
+    );
+    return (
+      typeData?.family === familyKey && group.status.groupStatus !== "archived"
+    );
+  }).length;
 }
 
 function selectFamily(key: string) {
-  selectedFamily.value = selectedFamily.value === key ? null : key
+  selectedFamily.value = selectedFamily.value === key ? null : key;
 }
 
 function selectGroup(group: InquiryGroup) {
-  emit('select', group)
+  emit("select", group);
   if (group.slug) {
-    router.push({ name: 'group-list', params: { slug: group.slug } })
+    router.push({ name: "group-list", params: { slug: group.slug } });
   }
 }
 
 function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text
-  return `${text.slice(0, maxLength)}…`
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}…`;
 }
 
 function formatDate(timestamp: number) {
-  return DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
+  return DateTime.fromMillis(timestamp * 1000).toLocaleString(
+    DateTime.DATE_SHORT,
+  );
 }
 </script>
 

@@ -16,7 +16,7 @@
           :size="24"
           class="feed-icon"
         />
-        <h2>{{ t('agora', 'Activity Feed') }}</h2>
+        <h2>{{ t("agora", "Activity Feed") }}</h2>
         <span class="feed-count">{{ inquiries.length }}</span>
       </div>
       <div class="feed-header-right">
@@ -25,7 +25,7 @@
           :class="{ active: showAll }"
           @click="showAll = !showAll"
         >
-          {{ showAll ? t('agora', 'Show all') : t('agora', 'Show unread') }}
+          {{ showAll ? t("agora", "Show all") : t("agora", "Show unread") }}
         </button>
       </div>
     </div>
@@ -81,7 +81,9 @@
                 <span class="author-name">
                   {{ inquiry.ownedGroup || inquiry.owner?.displayName }}
                 </span>
-                <span class="feed-time">{{ formatTime(inquiry.status?.created) }}</span>
+                <span class="feed-time">{{
+                  formatTime(inquiry.status?.created)
+                }}</span>
               </div>
             </div>
             <div class="feed-badges">
@@ -99,7 +101,7 @@
                 v-if="isNew(inquiry)"
                 class="new-badge"
               >
-                {{ t('agora', 'New') }}
+                {{ t("agora", "New") }}
               </span>
             </div>
           </div>
@@ -166,151 +168,156 @@
           :size="48"
           class="empty-icon"
         />
-        <h3>{{ t('agora', 'No activity') }}</h3>
-        <p>{{ t('agora', 'There are no recent inquiries to display') }}</p>
+        <h3>{{ t("agora", "No activity") }}</h3>
+        <p>{{ t("agora", "There are no recent inquiries to display") }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { DateTime } from 'luxon'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
-import { createInquiryContext } from '../../utils/permissions'
-import { SupportFeature } from '../Base'
-import type { Inquiry } from '../../Types'
-import { useSessionStore } from '../../stores/session.ts'
+import { computed, ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcAvatar from "@nextcloud/vue/components/NcAvatar";
+import { DateTime } from "luxon";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper";
+import { createInquiryContext } from "../../utils/permissions";
+import { SupportFeature } from "../Base";
+import type { Inquiry } from "../../Types";
+import { useSessionStore } from "../../stores/session.ts";
 
 interface Props {
-  inquiries: Inquiry[]
-  groupId?: number
-  hideHeader?: boolean
+  inquiries: Inquiry[];
+  groupId?: number;
+  hideHeader?: boolean;
 }
-const props = withDefaults(defineProps<Props>(), { hideHeader: false })
+const props = withDefaults(defineProps<Props>(), {inquiries: null, hideHeader: false , groupId: 0 });
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-}>()
+  click: [inquiry: Inquiry];
+}>();
 
-const showAll = ref(true)
-const activeId = ref<number | null>(null)
-const sessionStore = useSessionStore()
+const showAll = ref(true);
+const activeId = ref<number | null>(null);
+const sessionStore = useSessionStore();
 
 const context = computed(() =>
   props.inquiries.length > 0
     ? createInquiryContext(props.inquiries[0], sessionStore.appSettings)
-    : null
-)
+    : null,
+);
 
 const filteredInquiries = computed(() => {
-  let items = [...props.inquiries]
+  let items = [...props.inquiries];
   if (!showAll.value) {
-    items = items.filter((i) => !isRead(i))
+    items = items.filter((i) => !isRead(i));
   }
-  return items.sort((a, b) => (b.status?.created || 0) - (a.status?.created || 0))
-})
+  return items.sort(
+    (a, b) => (b.status?.created || 0) - (a.status?.created || 0),
+  );
+});
 
 function isRead(inquiry: Inquiry): boolean {
-  return inquiry.currentUserStatus?.hasRead || false
+  return inquiry.currentUserStatus?.hasRead || false;
 }
 
 function isNew(inquiry: Inquiry): boolean {
-  return !isRead(inquiry) && (inquiry.status?.created || 0) > Date.now() / 1000 - 86400
+  return (
+    !isRead(inquiry) &&
+    (inquiry.status?.created || 0) > Date.now() / 1000 - 86400
+  );
 }
 
 function isLast(inquiry: Inquiry): boolean {
-  const idx = filteredInquiries.value.findIndex((i) => i.id === inquiry.id)
-  return idx === filteredInquiries.value.length - 1
+  const idx = filteredInquiries.value.findIndex((i) => i.id === inquiry.id);
+  return idx === filteredInquiries.value.length - 1;
 }
 
 function getStatusClass(inquiry: Inquiry): string {
-  const status = inquiry.status?.inquiryStatus || 'draft'
+  const status = inquiry.status?.inquiryStatus || "draft";
   const classes: Record<string, string> = {
-    active: 'status-active',
-    closed: 'status-closed',
-    draft: 'status-draft',
-    waiting_approval: 'status-pending',
-  }
-  return classes[status] || 'status-default'
+    active: "status-active",
+    closed: "status-closed",
+    draft: "status-draft",
+    waiting_approval: "status-pending",
+  };
+  return classes[status] || "status-default";
 }
 
 function getStatusIcon(inquiry: Inquiry) {
-  const status = inquiry.status?.inquiryStatus || 'draft'
+  const status = inquiry.status?.inquiryStatus || "draft";
   const icons: Record<string, any> = {
     active: Icons.CheckCircle,
     closed: Icons.Close,
     draft: Icons.Edit,
     waiting_approval: Icons.Clock,
-  }
-  return icons[status] || Icons.Circle
+  };
+  return icons[status] || Icons.Circle;
 }
 
 function getTypeClass(type: string): string {
-  return `type-${type?.toLowerCase() || 'default'}`
+  return `type-${type?.toLowerCase() || "default"}`;
 }
 
 function getTypeIcon(type: string) {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const data = getInquiryTypeData(type, types)
-  return data?.icon || Icons.FolderMultiple
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const data = getInquiryTypeData(type, types);
+  return data?.icon || Icons.FolderMultiple;
 }
 
 function getTypeLabel(type: string): string {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const data = getInquiryTypeData(type, types)
-  return data?.label || type || 'Unknown'
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const data = getInquiryTypeData(type, types);
+  return data?.label || type || "Unknown";
 }
 
 function getExpiryClass(inquiry: Inquiry): string {
-  if (!inquiry.configuration?.expire) return ''
-  const now = Date.now() / 1000
-  const diff = inquiry.configuration.expire - now
-  if (diff < 0) return 'expiry-expired'
-  if (diff < 86400) return 'expiry-soon'
-  if (diff < 259200) return 'expiry-warning'
-  return 'expiry-normal'
+  if (!inquiry.configuration?.expire) return "";
+  const now = Date.now() / 1000;
+  const diff = inquiry.configuration.expire - now;
+  if (diff < 0) return "expiry-expired";
+  if (diff < 86400) return "expiry-soon";
+  if (diff < 259200) return "expiry-warning";
+  return "expiry-normal";
 }
 
 function getExpiryText(inquiry: Inquiry): string {
-  if (!inquiry.configuration?.expire) return ''
-  const now = Date.now() / 1000
-  const diff = inquiry.configuration.expire - now
-  if (diff < 0) return t('agora', 'Expired')
-  const days = Math.floor(diff / 86400)
-  if (days === 0) return t('agora', 'Today')
-  if (days === 1) return t('agora', '1 day left')
-  return t('agora', '{days} days left', { days })
+  if (!inquiry.configuration?.expire) return "";
+  const now = Date.now() / 1000;
+  const diff = inquiry.configuration.expire - now;
+  if (diff < 0) return t("agora", "Expired");
+  const days = Math.floor(diff / 86400);
+  if (days === 0) return t("agora", "Today");
+  if (days === 1) return t("agora", "1 day left");
+  return t("agora", "{days} days left", { days });
 }
 
 function formatTime(timestamp?: number): string {
-  if (!timestamp) return ''
+  if (!timestamp) return "";
   try {
-    return DateTime.fromMillis(timestamp * 1000).toRelative() || ''
+    return DateTime.fromMillis(timestamp * 1000).toRelative() || "";
   } catch {
-    return ''
+    return "";
   }
 }
 
 function truncateText(text: string, max: number): string {
-  if (!text) return ''
-  if (text.length <= max) return text
-  return `${text.substring(0, max)}…`
+  if (!text) return "";
+  if (text.length <= max) return text;
+  return `${text.substring(0, max)}…`;
 }
 
 function stripHtml(html: string): string {
-  if (!html) return ''
-  const div = document.createElement('div')
-  div.innerHTML = html
-  return div.textContent || div.innerText || ''
+  if (!html) return "";
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
 }
 
 function handleClick(inquiry: Inquiry) {
-  activeId.value = inquiry.id
-  emit('click', inquiry)
+  activeId.value = inquiry.id;
+  emit("click", inquiry);
 }
 </script>
 

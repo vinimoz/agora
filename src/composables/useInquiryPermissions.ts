@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, Ref } from 'vue'
-import { Inquiry } from '../Types/inquiry.ts'
+import { computed, Ref } from "vue";
+import { Inquiry } from "../Types/inquiry.ts";
 import {
   createPermissionContextForContent,
   ContentType,
   type PermissionContext,
-} from '../utils/permissions.ts'
+} from "../utils/permissions.ts";
 
 export function useInquiryPermissions(inquiry: Ref<Inquiry>) {
   const context = computed<PermissionContext>(() =>
@@ -23,9 +23,9 @@ export function useInquiryPermissions(inquiry: Ref<Inquiry>) {
       inquiry.value.archived,
       inquiry.value.hasGroupRestrictions,
       inquiry.value.allowedGroups,
-      inquiry.value.type
-    )
-  )
+      inquiry.value.type,
+    ),
+  );
 
-  return { context }
+  return { context };
 }

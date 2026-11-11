@@ -1,4 +1,5 @@
-SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGPL-3.0-or-later -->
+SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier:
+AGPL-3.0-or-later -->
 
 <template>
   <div class="statistics-widget">
@@ -9,12 +10,12 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
         :size="20"
         class="stat-icon"
       />
-      <h3>{{ t('agora', 'Statistics') }}</h3>
+      <h3>{{ t("agora", "Statistics") }}</h3>
       <span
         v-if="lastUpdated"
         class="stat-updated"
       >
-        {{ t('agora', 'Updated') }} {{ formatTime(lastUpdated) }}
+        {{ t("agora", "Updated") }} {{ formatTime(lastUpdated) }}
       </span>
     </div>
 
@@ -30,7 +31,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
             :is="Icons.ClipboardList"
             :size="14"
           />
-          {{ t('agora', 'Total Inquiries') }}
+          {{ t("agora", "Total Inquiries") }}
         </div>
         <div
           v-if="trends.total"
@@ -51,7 +52,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
             :is="Icons.CheckCircle"
             :size="14"
           />
-          {{ t('agora', 'Active') }}
+          {{ t("agora", "Active") }}
         </div>
         <div class="stat-progress">
           <div
@@ -71,7 +72,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
             :is="Icons.MessageSquare"
             :size="14"
           />
-          {{ t('agora', 'Comments') }}
+          {{ t("agora", "Comments") }}
         </div>
       </div>
 
@@ -85,7 +86,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
             :is="Icons.Users"
             :size="14"
           />
-          {{ t('agora', 'Participants') }}
+          {{ t("agora", "Participants") }}
         </div>
       </div>
 
@@ -99,7 +100,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
             :is="Icons.ThumbUp"
             :size="14"
           />
-          {{ t('agora', 'Supports') }}
+          {{ t("agora", "Supports") }}
         </div>
       </div>
 
@@ -113,7 +114,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
             :is="Icons.TrendingUp"
             :size="14"
           />
-          {{ t('agora', 'Engagement') }}
+          {{ t("agora", "Engagement") }}
         </div>
         <div class="stat-progress">
           <div
@@ -129,7 +130,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
       v-if="typeDistribution.length > 0"
       class="distribution-section"
     >
-      <h4>{{ t('agora', 'By Type') }}</h4>
+      <h4>{{ t("agora", "By Type") }}</h4>
       <div class="distribution-bars">
         <div
           v-for="item in typeDistribution"
@@ -160,7 +161,7 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
       v-if="statusDistribution.length > 0"
       class="distribution-section"
     >
-      <h4>{{ t('agora', 'By Status') }}</h4>
+      <h4>{{ t("agora", "By Status") }}</h4>
       <div class="status-pills">
         <span
           v-for="item in statusDistribution"
@@ -177,86 +178,91 @@ SPDX-FileCopyrightText: 2026 Nextcloud contributors SPDX-License-Identifier: AGP
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
-import { useSessionStore } from '../../stores/session'
-import type { Inquiry } from '../../Types'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper";
+import { useSessionStore } from "../../stores/session";
+import type { Inquiry } from "../../Types";
 
 const props = defineProps<{
-  inquiries: Inquiry[]
-  groupId?: number
-}>()
+  inquiries: Inquiry[];
+  groupId?: number;
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // Computed stats
-const totalInquiries = computed(() => props.inquiries.length)
+const totalInquiries = computed(() => props.inquiries.length);
 
-const trends = computed(() => ({}))
+const trends = computed(() => ({}));
 
 const activeCount = computed(
   () =>
-    props.inquiries.filter((i) => i.status?.inquiryStatus === 'active' && !i.status?.isArchived)
-      .length
-)
+    props.inquiries.filter(
+      (i) => i.status?.inquiryStatus === "active" && !i.status?.isArchived,
+    ).length,
+);
 
 const totalComments = computed(() =>
-  props.inquiries.reduce((sum, i) => sum + (i.status?.countComments || 0), 0)
-)
+  props.inquiries.reduce((sum, i) => sum + (i.status?.countComments || 0), 0),
+);
 
 const totalParticipants = computed(() =>
-  props.inquiries.reduce((sum, i) => sum + (i.status?.countParticipants || 0), 0)
-)
+  props.inquiries.reduce(
+    (sum, i) => sum + (i.status?.countParticipants || 0),
+    0,
+  ),
+);
 
 const totalSupports = computed(() =>
-  props.inquiries.reduce((sum, i) => sum + (i.status?.countSupports || 0), 0)
-)
+  props.inquiries.reduce((sum, i) => sum + (i.status?.countSupports || 0), 0),
+);
 
 const engagementRate = computed(() => {
-  if (totalInquiries.value === 0) return 0
+  if (totalInquiries.value === 0) return 0;
   const engaged = props.inquiries.filter(
-    (i) => (i.status?.countComments || 0) > 0 || (i.status?.countSupports || 0) > 0
-  ).length
-  return Math.round((engaged / totalInquiries.value) * 100)
-})
+    (i) =>
+      (i.status?.countComments || 0) > 0 || (i.status?.countSupports || 0) > 0,
+  ).length;
+  return Math.round((engaged / totalInquiries.value) * 100);
+});
 
 const typeDistribution = computed(() => {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const counts: Record<string, number> = {}
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const counts: Record<string, number> = {};
 
   props.inquiries.forEach((inquiry) => {
-    const type = inquiry.type || 'default'
-    counts[type] = (counts[type] || 0) + 1
-  })
+    const type = inquiry.type || "default";
+    counts[type] = (counts[type] || 0) + 1;
+  });
 
   return Object.entries(counts)
     .map(([type, count]) => {
-      const data = getInquiryTypeData(type, types)
+      const data = getInquiryTypeData(type, types);
       return {
         type,
         label: data?.label || type,
         count,
         percentage: Math.round((count / totalInquiries.value) * 100),
-      }
+      };
     })
-    .sort((a, b) => b.count - a.count)
-})
+    .sort((a, b) => b.count - a.count);
+});
 
 const statusDistribution = computed(() => {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
   const labels: Record<string, string> = {
-    active: t('agora', 'Active'),
-    closed: t('agora', 'Closed'),
-    draft: t('agora', 'Draft'),
-    waiting_approval: t('agora', 'Pending'),
-  }
+    active: t("agora", "Active"),
+    closed: t("agora", "Closed"),
+    draft: t("agora", "Draft"),
+    waiting_approval: t("agora", "Pending"),
+  };
 
   props.inquiries.forEach((inquiry) => {
-    const status = inquiry.status?.inquiryStatus || 'draft'
-    counts[status] = (counts[status] || 0) + 1
-  })
+    const status = inquiry.status?.inquiryStatus || "draft";
+    counts[status] = (counts[status] || 0) + 1;
+  });
 
   return Object.entries(counts)
     .map(([status, count]) => ({
@@ -264,25 +270,27 @@ const statusDistribution = computed(() => {
       label: labels[status] || status,
       count,
     }))
-    .sort((a, b) => b.count - a.count)
-})
+    .sort((a, b) => b.count - a.count);
+});
 
 const lastUpdated = computed(() => {
-  const timestamps = props.inquiries.map((i) => i.status?.lastInteraction || i.status?.created || 0)
-  return timestamps.length > 0 ? Math.max(...timestamps) : null
-})
+  const timestamps = props.inquiries.map(
+    (i) => i.status?.lastInteraction || i.status?.created || 0,
+  );
+  return timestamps.length > 0 ? Math.max(...timestamps) : null;
+});
 
 function getTypeIcon(type: string) {
-  const types = sessionStore.appSettings?.inquiryTypeTab || []
-  const data = getInquiryTypeData(type, types)
-  return data?.icon || Icons.FolderMultiple
+  const types = sessionStore.appSettings?.inquiryTypeTab || [];
+  const data = getInquiryTypeData(type, types);
+  return data?.icon || Icons.FolderMultiple;
 }
 
 function formatTime(timestamp: number): string {
   try {
-    return new Date(timestamp * 1000).toLocaleString()
+    return new Date(timestamp * 1000).toLocaleString();
   } catch {
-    return ''
+    return "";
   }
 }
 </script>
@@ -406,7 +414,11 @@ function formatTime(timestamp: number): string {
       transition: width 0.6s ease;
 
       &.engagement {
-        background: linear-gradient(90deg, var(--color-primary-element), var(--color-success));
+        background: linear-gradient(
+          90deg,
+          var(--color-primary-element),
+          var(--color-success)
+        );
       }
     }
   }

@@ -4,55 +4,55 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { ThumbIcon } from '../AppIcons'
-import UserItem from '../User/UserItem.vue'
+import { ref, computed, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import { ThumbIcon } from "../AppIcons";
+import UserItem from "../User/UserItem.vue";
 
-import { Share } from '../../stores/shares.ts'
-import ShareMenu from './ShareMenu.vue'
+import { Share } from "../../stores/shares.ts";
+import ShareMenu from "./ShareMenu.vue";
 
-const emit = defineEmits(['showQrCode'])
+const emit = defineEmits(["showQrCode"]);
 
-const { share } = defineProps<{ share: Share }>()
+const { share } = defineProps<{ share: Share }>();
 
 const label = ref({
-  inputValue: '',
+  inputValue: "",
   inputProps: {
     success: false,
     error: false,
     showTrailingButton: true,
     labelOutside: false,
-    label: t('agora', 'Share label'),
+    label: t("agora", "Share label"),
   },
-})
+});
 
 const userItemProps = computed(() => ({
   user: share.user,
   label: share.label,
   showEmail: true,
   resolveInfo: true,
-  forcedDescription: share.deleted ? `(${t('agora', 'deleted')})` : null,
+  forcedDescription: share.deleted ? `(${t("agora", "deleted")})` : null,
   showTypeIcon: true,
   icon: true,
-}))
+}));
 
 const participationLabel = computed(() => {
   switch (share.participationLevel) {
     case 1:
-      return t('agora', 'Vote')
+      return t("agora", "Vote");
     case 2:
-      return t('agora', 'Comment')
+      return t("agora", "Comment");
     case 3:
-      return t('agora', 'Vote + Comment')
+      return t("agora", "Vote + Comment");
     default:
-      return t('agora', 'Read only')
+      return t("agora", "Read only");
   }
-})
+});
 
 onMounted(() => {
-  label.value.inputValue = share.label
-})
+  label.value.inputValue = share.label;
+});
 </script>
 
 <template>
@@ -72,7 +72,9 @@ onMounted(() => {
           />
         </div>
 
-        <div v-else-if="share.groupId || ['public', 'group'].includes(share.type)">
+        <div
+          v-else-if="share.groupId || ['public', 'group'].includes(share.type)"
+        >
           <div class="support-status empty" />
         </div>
         <div v-else>

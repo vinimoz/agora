@@ -13,7 +13,7 @@
             {{ totalVotes }}
           </div>
           <div class="summary-label">
-            {{ t('agora', 'Total votes') }}
+            {{ t("agora", "Total votes") }}
           </div>
         </div>
       </div>
@@ -23,10 +23,10 @@
         </div>
         <div class="summary-content">
           <div class="summary-value">
-            {{ winner?.title || '-' }}
+            {{ winner?.title || "-" }}
           </div>
           <div class="summary-label">
-            {{ t('agora', 'Current leader') }}
+            {{ t("agora", "Current leader") }}
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
             {{ winnerPercentage }}%
           </div>
           <div class="summary-label">
-            {{ t('agora', 'Leading percentage') }}
+            {{ t("agora", "Leading percentage") }}
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@
             {{ timeRemaining }}
           </div>
           <div class="summary-label">
-            {{ t('agora', 'Time remaining') }}
+            {{ t("agora", "Time remaining") }}
           </div>
         </div>
       </div>
@@ -60,25 +60,25 @@
 
     <div class="charts-section">
       <div class="chart-container">
-        <h4>{{ t('agora', 'Vote distribution') }}</h4>
+        <h4>{{ t("agora", "Vote distribution") }}</h4>
         <canvas ref="pieChartCanvas" />
       </div>
       <div class="chart-container">
-        <h4>{{ t('agora', 'Vote ranking') }}</h4>
+        <h4>{{ t("agora", "Vote ranking") }}</h4>
         <canvas ref="barChartCanvas" />
       </div>
     </div>
 
     <div class="ranking-table">
-      <h4>{{ t('agora', 'Detailed ranking') }}</h4>
+      <h4>{{ t("agora", "Detailed ranking") }}</h4>
       <table>
         <thead>
           <tr>
-            <th>{{ t('agora', 'Rank') }}</th>
-            <th>{{ t('agora', 'Option') }}</th>
-            <th>{{ t('agora', 'Votes') }}</th>
-            <th>{{ t('agora', 'Percentage') }}</th>
-            <th>{{ t('agora', 'Status') }}</th>
+            <th>{{ t("agora", "Rank") }}</th>
+            <th>{{ t("agora", "Option") }}</th>
+            <th>{{ t("agora", "Votes") }}</th>
+            <th>{{ t("agora", "Percentage") }}</th>
+            <th>{{ t("agora", "Status") }}</th>
           </tr>
         </thead>
         <tbody>
@@ -149,31 +149,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import Chart from 'chart.js/auto'
-import { Users, Trophy, TrendingUp, Clock } from 'lucide-vue-next'
-import type { Item, Option, Inquiry } from '../../Types/index'
+import { ref, watch, nextTick, onMounted, onUnmounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import Chart from "chart.js/auto";
+import { Users, Trophy, TrendingUp, Clock } from "lucide-vue-next";
+import type { Item, Option, Inquiry } from "../../Types/index";
 
 const props = defineProps<{
-  rankedItems: (Option | Inquiry)[]
-  totalVotes: number
-  winner: Option | Inquiry | null
-  winnerPercentage: number
-  timeRemaining: string
-  getItemVoteCount: (itemId: number) => number
-  getPercentage: (item: { id: number }, total?: number) => number
-  getItemRank?: (itemId: number) => number | null
-}>()
+  rankedItems: (Option | Inquiry)[];
+  totalVotes: number;
+  winner: Option | Inquiry | null;
+  winnerPercentage: number;
+  timeRemaining: string;
+  getItemVoteCount: (itemId: number) => number;
+  getPercentage: (item: { id: number }, total?: number) => number;
+  getItemRank?: (itemId: number) => number | null;
+}>();
 
 // Rank published by the server, which shares a rank between tied items.
 // Falls back to the row position for engines that do not publish one.
-const rankOf = (item: Item, index: number): number => props.getItemRank?.(item.id) ?? index + 1
+const rankOf = (item: Item, index: number): number =>
+  props.getItemRank?.(item.id) ?? index + 1;
 
-const pieChartCanvas = ref<HTMLCanvasElement | null>(null)
-const barChartCanvas = ref<HTMLCanvasElement | null>(null)
-let pieChart: Chart | null = null
-let barChart: Chart | null = null
+const pieChartCanvas = ref<HTMLCanvasElement | null>(null);
+const barChartCanvas = ref<HTMLCanvasElement | null>(null);
+let pieChart: Chart | null = null;
+let barChart: Chart | null = null;
 
 /*
 const getRankClass = (index: number): string => {
@@ -185,30 +186,32 @@ const getRankClass = (index: number): string => {
 */
 
 const createCharts = (): void => {
-  if (!pieChartCanvas.value || !barChartCanvas.value) return
+  if (!pieChartCanvas.value || !barChartCanvas.value) return;
 
   const labels = props.rankedItems.map((item) =>
-    item.title.length > 20 ? `${item.title.substring(0, 20)}...` : item.title
-  )
-  const votes = props.rankedItems.map((item) => props.getItemVoteCount(item.id))
+    item.title.length > 20 ? `${item.title.substring(0, 20)}...` : item.title,
+  );
+  const votes = props.rankedItems.map((item) =>
+    props.getItemVoteCount(item.id),
+  );
   const colors = [
-    '#42b883',
-    '#3490dc',
-    '#f6993f',
-    '#e74c3c',
-    '#9b59b6',
-    '#1abc9c',
-    '#e67e22',
-    '#2c3e50',
-    '#16a085',
-    '#27ae60',
-  ]
+    "#42b883",
+    "#3490dc",
+    "#f6993f",
+    "#e74c3c",
+    "#9b59b6",
+    "#1abc9c",
+    "#e67e22",
+    "#2c3e50",
+    "#16a085",
+    "#27ae60",
+  ];
 
-  if (pieChart) pieChart.destroy()
-  if (barChart) barChart.destroy()
+  if (pieChart) pieChart.destroy();
+  if (barChart) barChart.destroy();
 
   pieChart = new Chart(pieChartCanvas.value, {
-    type: 'pie',
+    type: "pie",
     data: {
       labels,
       datasets: [
@@ -225,7 +228,7 @@ const createCharts = (): void => {
       maintainAspectRatio: true,
       plugins: {
         legend: {
-          position: 'bottom',
+          position: "bottom",
           labels: {
             font: { size: 11 },
             padding: 10,
@@ -235,25 +238,26 @@ const createCharts = (): void => {
         tooltip: {
           callbacks: {
             label: (context) => {
-              const label = context.label || ''
-              const value = context.raw as number
-              const total = votes.reduce((a, b) => a + b, 0)
-              const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
-              return `${label}: ${value} votes (${percentage}%)`
+              const label = context.label || "";
+              const value = context.raw as number;
+              const total = votes.reduce((a, b) => a + b, 0);
+              const percentage =
+                total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+              return `${label}: ${value} votes (${percentage}%)`;
             },
           },
         },
       },
     },
-  })
+  });
 
   barChart = new Chart(barChartCanvas.value, {
-    type: 'bar',
+    type: "bar",
     data: {
       labels,
       datasets: [
         {
-          label: t('agora', 'Votes'),
+          label: t("agora", "Votes"),
           data: votes,
           backgroundColor: colors,
           borderRadius: 8,
@@ -269,7 +273,7 @@ const createCharts = (): void => {
         y: {
           beginAtZero: true,
           ticks: { stepSize: 1 },
-          grid: { color: 'rgba(0, 0, 0, 0.05)' },
+          grid: { color: "rgba(0, 0, 0, 0.05)" },
         },
         x: {
           ticks: { font: { size: 11 } },
@@ -281,34 +285,35 @@ const createCharts = (): void => {
         tooltip: {
           callbacks: {
             label: (context) => {
-              const value = context.raw as number
-              const total = votes.reduce((a, b) => a + b, 0)
-              const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
-              return `${value} votes (${percentage}%)`
+              const value = context.raw as number;
+              const total = votes.reduce((a, b) => a + b, 0);
+              const percentage =
+                total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+              return `${value} votes (${percentage}%)`;
             },
           },
         },
       },
     },
-  })
-}
+  });
+};
 
 watch(
   [() => props.rankedItems],
   () => {
-    nextTick(() => createCharts())
+    nextTick(() => createCharts());
   },
-  { deep: true }
-)
+  { deep: true },
+);
 
 onMounted(() => {
-  nextTick(() => createCharts())
-})
+  nextTick(() => createCharts());
+});
 
 onUnmounted(() => {
-  if (pieChart) pieChart.destroy()
-  if (barChart) barChart.destroy()
-})
+  if (pieChart) pieChart.destroy();
+  if (barChart) barChart.destroy();
+});
 </script>
 
 <style scoped lang="scss">

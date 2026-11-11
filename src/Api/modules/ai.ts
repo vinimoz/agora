@@ -3,49 +3,49 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { AxiosResponse } from '@nextcloud/axios'
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
+import { AxiosResponse } from "@nextcloud/axios";
+import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
 
 // ============ TYPES ============
 
 export interface EnhanceContentResponse {
-  enhanced: string
+  enhanced: string;
 }
 
 export interface OptionsResponse {
-  options: string[]
+  options: string[];
 }
 
 export interface DocumentOptionsResponse {
   options: Array<{
-    id: string
-    type: string
-    title: string
-    content: string
-    summary: string
-    metadata: Record<string, unknown>
-  }>
+    id: string;
+    type: string;
+    title: string;
+    content: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+  }>;
 }
 
 export interface DecisionOptionsResponse {
   options: Array<{
-    id: string
-    title: string
-    pros: string[]
-    cons: string[]
-  }>
+    id: string;
+    title: string;
+    pros: string[];
+    cons: string[];
+  }>;
 }
 
 export interface SummaryResponse {
-  summary: string
+  summary: string;
 }
 
 export interface SentimentResponse {
   sentiment: {
-    sentiment: 'positive' | 'neutral' | 'negative'
-    score: number
-    confidence: number
-  }
+    sentiment: "positive" | "neutral" | "negative";
+    score: number;
+    confidence: number;
+  };
 }
 
 // ============ AI API ============
@@ -59,16 +59,18 @@ const aiApi = {
    */
   enhanceContent(
     inquiryId: number,
-    prompt: string
+    prompt: string,
   ): Promise<AxiosResponse<EnhanceContentResponse>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `ai/inquiry/${inquiryId}/enhance`,
       data: { prompt },
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.enhanceContent.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.enhanceContent.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -79,17 +81,18 @@ const aiApi = {
    */
   generateOptionsFromInquiry(
     inquiryId: number,
-    count: number = 4
+    count: number = 4,
   ): Promise<AxiosResponse<OptionsResponse>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `ai/inquiry/${inquiryId}/generate-options`,
       data: { count },
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.generateOptionsFromInquiry.name].handleRequestCancellation()
-          .token,
-    })
+        cancelTokenHandlerObject[
+          this.generateOptionsFromInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -103,18 +106,20 @@ const aiApi = {
   generateDocumentOptions(
     inquiryId: number,
     documentPath: string,
-    optionType: 'chapter' | 'section' | 'subsection' | 'paragraph' | 'custom' = 'section',
-    options: Record<string, unknown> = {}
+    optionType:
+      "chapter" | "section" | "subsection" | "paragraph" | "custom" = "section",
+    options: Record<string, unknown> = {},
   ): Promise<AxiosResponse<DocumentOptionsResponse>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `ai/inquiry/${inquiryId}/document-options`,
       data: { documentPath, optionType, options },
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.generateDocumentOptions.name].handleRequestCancellation()
-          .token,
-    })
+        cancelTokenHandlerObject[
+          this.generateDocumentOptions.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -124,17 +129,18 @@ const aiApi = {
    */
   generateDecisionOptions(
     inquiryId: number,
-    constraints: Record<string, unknown> = {}
+    constraints: Record<string, unknown> = {},
   ): Promise<AxiosResponse<DecisionOptionsResponse>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `ai/inquiry/${inquiryId}/decision-options`,
       data: { constraints },
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.generateDecisionOptions.name].handleRequestCancellation()
-          .token,
-    })
+        cancelTokenHandlerObject[
+          this.generateDecisionOptions.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -144,16 +150,18 @@ const aiApi = {
    */
   generateCreativeIdeas(
     inquiryId: number,
-    count: number = 5
+    count: number = 5,
   ): Promise<AxiosResponse<{ ideas: string[] }>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `ai/inquiry/${inquiryId}/creative-ideas`,
       data: { count },
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.generateCreativeIdeas.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.generateCreativeIdeas.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -163,33 +171,39 @@ const aiApi = {
    */
   summarizeInquiry(
     inquiryId: number,
-    format: 'concise' | 'detailed' | 'bullet_points' = 'concise'
+    format: "concise" | "detailed" | "bullet_points" = "concise",
   ): Promise<AxiosResponse<SummaryResponse>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `ai/inquiry/${inquiryId}/summarize`,
       data: { format },
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.summarizeInquiry.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.summarizeInquiry.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
    * Analyze sentiment
    * @param inquiryId
    */
-  analyzeSentiment(inquiryId: number): Promise<AxiosResponse<SentimentResponse>> {
+  analyzeSentiment(
+    inquiryId: number,
+  ): Promise<AxiosResponse<SentimentResponse>> {
     return httpInstance.request({
-      method: 'POST',
+      method: "POST",
       url: `ai/inquiry/${inquiryId}/sentiment`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[this.analyzeSentiment.name].handleRequestCancellation().token,
-    })
+        cancelTokenHandlerObject[
+          this.analyzeSentiment.name
+        ].handleRequestCancellation().token,
+    });
   },
-}
+};
 
-const cancelTokenHandlerObject = createCancelTokenHandler(aiApi)
+const cancelTokenHandlerObject = createCancelTokenHandler(aiApi);
 
-export default aiApi
+export default aiApi;

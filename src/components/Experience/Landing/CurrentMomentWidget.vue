@@ -1,5 +1,7 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+<!--
+  - SPDX-FileCopyrightText: 2026 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 
 <template>
   <section class="current-moment">
@@ -11,21 +13,23 @@ AGPL-3.0-or-later */
           class="header-icon"
         />
         <div>
-          <h2>{{ title || t('agora', 'Right now') }}</h2>
+          <h2>{{ props.title || t("agora", "Right now") }}</h2>
           <p class="section-subtitle">
-            {{ t('agora', subtitle || 'Topics that need your attention') }}
+            {{ t("agora", subtitle || "Topics that need your attention") }}
           </p>
         </div>
       </div>
       <a
         class="header-link"
         @click="emit('viewAll')"
-      > {{ t('agora', 'View all') }} → </a>
+      >
+        {{ t("agora", "View all") }} →
+      </a>
     </header>
 
     <div class="moment-grid">
       <article
-        v-for="inquiry in inquiries"
+        v-for="inquiry in props.inquiries"
         :key="inquiry.id"
         class="moment-card"
         @click="emit('click', inquiry)"
@@ -64,7 +68,10 @@ AGPL-3.0-or-later */
           >
             <div
               class="progress-fill"
-              :style="{ width: getProgress(inquiry) + '%', background: getTypeColor(inquiry.type) }"
+              :style="{
+                width: getProgress(inquiry) + '%',
+                background: getTypeColor(inquiry.type),
+              }"
             />
             <span class="progress-label">{{ getProgressLabel(inquiry) }}</span>
           </div>
@@ -82,75 +89,93 @@ AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
-import type { Inquiry } from '../../../Types'
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
+import type { Inquiry } from "../../../Types";
 const props = withDefaults(
   defineProps<{
-    inquiries: Inquiry[]
-    title?: string
-    subtitle?: string
+    inquiries: Inquiry[];
+    title?: string;
+    subtitle?: string;
   }>(),
-  { title: '', subtitle: '' }
-)
-const emit = defineEmits<{ click: [inquiry: Inquiry]; viewAll: [] }>()
+  { inquiries: null, title: "", subtitle: "" },
+);
+const emit = defineEmits<{ click: [inquiry: Inquiry]; viewAll: [] }>();
 
-const TYPE_META: Record<string, { color: string; label: string; action: string }> = {
-  vote: { color: '#16a34a', label: 'VOTE', action: 'Vote now' },
-  debate: { color: '#2563eb', label: 'DEBATE', action: 'Join the debate' },
-  consultation: { color: '#f59e0b', label: 'CONSULTATION', action: 'Answer the survey' },
-  proposal: { color: '#ea580c', label: 'PROPOSAL', action: 'View proposals' },
-  poll: { color: '#16a34a', label: 'POLL', action: 'Vote now' },
-  discussion: { color: '#2563eb', label: 'DISCUSSION', action: 'Join the debate' },
-}
+const TYPE_META: Record<
+  string,
+  { color: string; label: string; action: string }
+> = {
+  vote: { color: "#16a34a", label: "VOTE", action: "Vote now" },
+  debate: { color: "#2563eb", label: "DEBATE", action: "Join the debate" },
+  consultation: {
+    color: "#f59e0b",
+    label: "CONSULTATION",
+    action: "Answer the survey",
+  },
+  proposal: { color: "#ea580c", label: "PROPOSAL", action: "View proposals" },
+  poll: { color: "#16a34a", label: "POLL", action: "Vote now" },
+  discussion: {
+    color: "#2563eb",
+    label: "DISCUSSION",
+    action: "Join the debate",
+  },
+};
 
 function meta(type: string) {
   return (
-    TYPE_META[type] || { color: '#6b7280', label: type?.toUpperCase() || 'INQUIRY', action: 'Open' }
-  )
+    TYPE_META[type] || {
+      color: "#6b7280",
+      label: type?.toUpperCase() || "INQUIRY",
+      action: "Open",
+    }
+  );
 }
 function getTypeColor(type: string) {
-  return meta(type).color
+  return meta(type).color;
 }
 function getTypeLabel(type: string) {
-  return meta(type).label
+  return meta(type).label;
 }
 function getActionLabel(type: string) {
-  return t('agora', meta(type).action)
+  return t("agora", meta(type).action);
 }
 
 function getCoverUrl(inquiry: Inquiry): string | null {
-  if (!inquiry.coverId) return null
-  return `${window.location.origin}/index.php/core/preview?fileId=${inquiry.coverId}&x=400&y=200`
+  if (!inquiry.coverId) return null;
+  return `${window.location.origin}/index.php/core/preview?fileId=${inquiry.coverId}&x=400&y=200`;
 }
 
 function getDeadline(inquiry: Inquiry): string {
-  const expire = inquiry.configuration?.expire
-  if (!expire) return ''
-  const days = Math.ceil((expire * 1000 - Date.now()) / 86400000)
-  if (days < 0) return t('agora', 'Closed')
-  if (days === 0) return t('agora', 'Ends today')
-  return t('agora', '{n} days left', { n: days })
+  const expire = inquiry.configuration?.expire;
+  if (!expire) return "";
+  const days = Math.ceil((expire * 1000 - Date.now()) / 86400000);
+  if (days < 0) return t("agora", "Closed");
+  if (days === 0) return t("agora", "Ends today");
+  return t("agora", "{n} days left", { n: days });
 }
 
 function stripHtml(html: string): string {
-  const div = document.createElement('div')
-  div.innerHTML = html
-  return (div.textContent || '').slice(0, 80)
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return (div.textContent || "").slice(0, 80);
 }
 
 function showProgress(inquiry: Inquiry): boolean {
-  return (inquiry.status?.countSupports || 0) > 0 || (inquiry.status?.countParticipants || 0) > 0
+  return (
+    (inquiry.status?.countSupports || 0) > 0 ||
+    (inquiry.status?.countParticipants || 0) > 0
+  );
 }
 
 function getProgress(inquiry: Inquiry): number {
-  const total = inquiry.status?.countParticipants || 100
-  const current = inquiry.status?.countSupports || 0
-  return Math.min(100, Math.round((current / total) * 100))
+  const total = inquiry.status?.countParticipants || 100;
+  const current = inquiry.status?.countSupports || 0;
+  return Math.min(100, Math.round((current / total) * 100));
 }
 
 function getProgressLabel(inquiry: Inquiry): string {
-  return t('agora', '{n} votes', { n: inquiry.status?.countSupports || 0 })
+  return t("agora", "{n} votes", { n: inquiry.status?.countSupports || 0 });
 }
 </script>
 

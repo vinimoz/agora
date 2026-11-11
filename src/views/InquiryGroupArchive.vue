@@ -1,199 +1,217 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
+/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later */
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { t } from '@nextcloud/l10n'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
-import { DateTime } from 'luxon'
-import { useSessionStore } from '../stores/session.ts'
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
-import { useInquiryGroupStore } from '../stores/inquiryGroup.ts'
-import { InquiryGeneralIcons, NavigationIcons } from '../utils/icons.ts'
-import { createInquiryGroupContext, canRestore, canDelete } from '../utils/permissions.ts'
-import InquiryGroupVignette from '../components/InquiryGroup/InquiryGroupVignette.vue'
-import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
-import type { InquiryGroup } from '../Types/inquiryGroups.types.ts'
+import { computed, ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { t } from "@nextcloud/l10n";
+import { showError, showSuccess } from "@nextcloud/dialogs";
+import NcAppContent from "@nextcloud/vue/components/NcAppContent";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcDialog from "@nextcloud/vue/components/NcDialog";
+import { DateTime } from "luxon";
+import { useSessionStore } from "../stores/session.ts";
+import { useInquiryGroupsStore } from "../stores/inquiryGroups.ts";
+import { useInquiryGroupStore } from "../stores/inquiryGroup.ts";
+import { InquiryGeneralIcons, NavigationIcons } from "../utils/icons.ts";
+import {
+  createInquiryGroupContext,
+  canRestore,
+  canDelete,
+} from "../utils/permissions.ts";
+import InquiryGroupVignette from "../components/InquiryGroup/InquiryGroupVignette.vue";
+import { getInquiryGroupTypeData } from "../helpers/modules/InquiryHelper.ts";
+import type { InquiryGroup } from "../Types/inquiryGroups.types.ts";
 
-const sessionStore = useSessionStore()
-const inquiryGroupsStore = useInquiryGroupsStore()
-const inquiryGroupStore = useInquiryGroupStore()
-const router = useRouter()
+const sessionStore = useSessionStore();
+const inquiryGroupsStore = useInquiryGroupsStore();
+const inquiryGroupStore = useInquiryGroupStore();
+const router = useRouter();
 
-const isLoading = ref(true)
-const showDeleteDialog = ref(false)
-const deleteDialogGroup = ref<InquiryGroup | null>(null)
-const showRestoreDialog = ref(false)
-const restoreDialogGroup = ref<InquiryGroup | null>(null)
+const isLoading = ref(true);
+const showDeleteDialog = ref(false);
+const deleteDialogGroup = ref<InquiryGroup | null>(null);
+const showRestoreDialog = ref(false);
+const restoreDialogGroup = ref<InquiryGroup | null>(null);
 
 const archivedGroups = computed(() =>
   inquiryGroupsStore.inquiryGroups
-    .filter((g) => g.status?.groupStatus === 'archived')
-    .sort((a, b) => new Date(b.updated ?? 0).getTime() - new Date(a.updated ?? 0).getTime())
-)
+    .filter((g) => g.status?.groupStatus === "archived")
+    .sort(
+      (a, b) =>
+        new Date(b.updated ?? 0).getTime() - new Date(a.updated ?? 0).getTime(),
+    ),
+);
 
 function permissionContext(group: InquiryGroup) {
-  return createInquiryGroupContext(group)
+  return createInquiryGroupContext(group);
 }
 
 function canUserRestoreGroup(group: InquiryGroup): boolean {
-  if (sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor) return true
-  const ctx = permissionContext(group)
-  return ctx ? canRestore(ctx) : false
+  if (
+    sessionStore.currentUser.isAdmin ||
+    sessionStore.currentUser.isGroupEditor
+  )
+    return true;
+  const ctx = permissionContext(group);
+  return ctx ? canRestore(ctx) : false;
 }
 
 function canUserDeleteGroup(group: InquiryGroup): boolean {
-  if (sessionStore.currentUser.isAdmin) return true
-  const ctx = permissionContext(group)
-  return ctx ? canDelete(ctx) : false
+  if (sessionStore.currentUser.isAdmin) return true;
+  const ctx = permissionContext(group);
+  return ctx ? canDelete(ctx) : false;
 }
 
 function getGroupTypeIconComponent(type: string) {
   return (
-    getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)?.icon || 'Folder'
-  )
+    getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
+      ?.icon || "Folder"
+  );
 }
 
 // --- Delete dialog -----------------------------------------------------
 const deleteDialogTitle = computed(() =>
   deleteDialogGroup.value
-    ? t('agora', 'Delete "{group}"', { group: deleteDialogGroup.value.title })
-    : t('agora', 'Delete group')
-)
+    ? t("agora", 'Delete "{group}"', { group: deleteDialogGroup.value.title })
+    : t("agora", "Delete group"),
+);
 const deleteDialogMessage = computed(() =>
   t(
-    'agora',
-    'Are you sure you want to permanently delete this archived group? This action cannot be undone.'
-  )
-)
+    "agora",
+    "Are you sure you want to permanently delete this archived group? This action cannot be undone.",
+  ),
+);
 const deleteDialogButtons = computed(() => [
   {
-    label: t('agora', 'Cancel'),
-    type: 'secondary',
+    label: t("agora", "Cancel"),
+    type: "secondary",
     callback: () => {
-      showDeleteDialog.value = false
-      deleteDialogGroup.value = null
+      showDeleteDialog.value = false;
+      deleteDialogGroup.value = null;
     },
   },
   {
-    label: t('agora', 'Delete'),
-    type: 'error',
+    label: t("agora", "Delete"),
+    type: "error",
     callback: async () => {
-      if (deleteDialogGroup.value) await performDeleteGroup(deleteDialogGroup.value)
-      showDeleteDialog.value = false
-      deleteDialogGroup.value = null
+      if (deleteDialogGroup.value)
+        await performDeleteGroup(deleteDialogGroup.value);
+      showDeleteDialog.value = false;
+      deleteDialogGroup.value = null;
     },
   },
-])
+]);
 
 // --- Restore dialog ----------------------------------------------------
 const restoreDialogTitle = computed(() =>
   restoreDialogGroup.value
-    ? t('agora', 'Restore "{group}"', { group: restoreDialogGroup.value.title })
-    : t('agora', 'Restore group')
-)
+    ? t("agora", 'Restore "{group}"', { group: restoreDialogGroup.value.title })
+    : t("agora", "Restore group"),
+);
 const restoreDialogMessage = computed(() =>
   t(
-    'agora',
-    'Are you sure you want to restore this group? It will be moved back to the active groups list.'
-  )
-)
+    "agora",
+    "Are you sure you want to restore this group? It will be moved back to the active groups list.",
+  ),
+);
 const restoreDialogButtons = computed(() => [
   {
-    label: t('agora', 'Cancel'),
-    type: 'secondary',
+    label: t("agora", "Cancel"),
+    type: "secondary",
     callback: () => {
-      showRestoreDialog.value = false
-      restoreDialogGroup.value = null
+      showRestoreDialog.value = false;
+      restoreDialogGroup.value = null;
     },
   },
   {
-    label: t('agora', 'Restore'),
-    type: 'primary',
+    label: t("agora", "Restore"),
+    type: "primary",
     callback: async () => {
-      if (restoreDialogGroup.value) await performRestoreGroup(restoreDialogGroup.value)
-      showRestoreDialog.value = false
-      restoreDialogGroup.value = null
+      if (restoreDialogGroup.value)
+        await performRestoreGroup(restoreDialogGroup.value);
+      showRestoreDialog.value = false;
+      restoreDialogGroup.value = null;
     },
   },
-])
+]);
 
 // --- Actions -----------------------------------------------------------
 function navigateToHome() {
-  router.push({ name: 'home' })
+  router.push({ name: "home" });
 }
 
 function selectGroup(group: InquiryGroup) {
-  if (group.slug) router.push({ name: 'group-list', params: { slug: group.slug } })
-  else if (group.id) router.push({ name: 'group', params: { id: String(group.id) } })
+  if (group.slug)
+    router.push({ name: "group-list", params: { slug: group.slug } });
+  else if (group.id)
+    router.push({ name: "group", params: { id: String(group.id) } });
 }
 
 function deleteGroup(group: InquiryGroup) {
   if (!canUserDeleteGroup(group)) {
-    showError(t('agora', 'You do not have permission to delete this group'))
-    return
+    showError(t("agora", "You do not have permission to delete this group"));
+    return;
   }
-  deleteDialogGroup.value = group
-  showDeleteDialog.value = true
+  deleteDialogGroup.value = group;
+  showDeleteDialog.value = true;
 }
 
 function restoreGroup(group: InquiryGroup) {
   if (!canUserRestoreGroup(group)) {
-    showError(t('agora', 'You do not have permission to restore this group'))
-    return
+    showError(t("agora", "You do not have permission to restore this group"));
+    return;
   }
-  restoreDialogGroup.value = group
-  showRestoreDialog.value = true
+  restoreDialogGroup.value = group;
+  showRestoreDialog.value = true;
 }
 
 async function performRestoreGroup(group: InquiryGroup) {
   try {
-    await inquiryGroupStore.restore()
-    showSuccess(t('agora', 'Group restored successfully'))
-    await inquiryGroupsStore.fetchAllGroups()
+    await inquiryGroupStore.restore(group.id);
+    showSuccess(t("agora", "Group restored successfully"));
+    await inquiryGroupsStore.fetchAllGroups();
   } catch (error) {
-    console.error('Error restoring group:', error)
-    showError(t('agora', 'Failed to restore group'))
+    console.error("Error restoring group:", error);
+    showError(t("agora", "Failed to restore group"));
   }
 }
 
 async function performDeleteGroup(group: InquiryGroup) {
   try {
-    await inquiryGroupStore.deleteGroup(group.id)
-    showSuccess(t('agora', 'Group deleted successfully'))
-    await inquiryGroupsStore.fetchAllGroups()
+    await inquiryGroupStore.deleteGroup(group.id);
+    showSuccess(t("agora", "Group deleted successfully"));
+    await inquiryGroupsStore.fetchAllGroups();
   } catch (error) {
-    console.error('Error deleting group:', error)
-    showError(t('agora', 'Failed to delete group'))
+    console.error("Error deleting group:", error);
+    showError(t("agora", "Failed to delete group"));
   }
 }
 
 function formatDate(timestamp: number) {
-  return DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
+  return DateTime.fromMillis(timestamp * 1000).toLocaleString(
+    DateTime.DATE_SHORT,
+  );
 }
 
 // --- Cover preview -----------------------------------------------------
-const BASE_URL = window.location.origin
+const BASE_URL = window.location.origin;
 function getCoverUrl(coverId: string) {
-  return `${BASE_URL}/index.php/core/preview?fileId=${coverId}&x=1920&y=1080&a=1`
+  return `${BASE_URL}/index.php/core/preview?fileId=${coverId}&x=1920&y=1080&a=1`;
 }
 
 onMounted(async () => {
   try {
     if (inquiryGroupsStore.inquiryGroups.length === 0) {
-      await inquiryGroupsStore.fetchAllGroups()
+      await inquiryGroupsStore.fetchAllGroups();
     }
   } catch (error) {
-    console.error('Error loading archived groups:', error)
-    showError(t('agora', 'Failed to load archived groups'))
+    console.error("Error loading archived groups:", error);
+    showError(t("agora", "Failed to load archived groups"));
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-})
+});
 </script>
 
 <template>
@@ -214,7 +232,7 @@ onMounted(async () => {
                 :size="20"
               />
             </template>
-            <span class="breadcrumb-label">{{ t('agora', 'Home') }}</span>
+            <span class="breadcrumb-label">{{ t("agora", "Home") }}</span>
           </NcButton>
 
           <!-- Archived Groups Label -->
@@ -227,7 +245,9 @@ onMounted(async () => {
                 :is="NavigationIcons.Archive"
                 class="breadcrumb-icon"
               />
-              <span class="breadcrumb-label">{{ t('agora', 'Archived groups') }}</span>
+              <span class="breadcrumb-label">{{
+                t("agora", "Archived groups")
+              }}</span>
               <span class="inquiry-count"> ({{ archivedGroups.length }}) </span>
             </div>
           </div>
@@ -250,16 +270,20 @@ onMounted(async () => {
             </div>
             <div class="archive-title-section">
               <h1 class="archive-title">
-                {{ t('agora', 'Archived groups') }}
+                {{ t("agora", "Archived groups") }}
               </h1>
               <div class="archive-subtitle">
                 <p>
                   {{
-                    t('agora', 'Groups that have been archived. You can restore or delete them.')
+                    t(
+                      "agora",
+                      "Groups that have been archived. You can restore or delete them.",
+                    )
                   }}
                 </p>
                 <span class="archive-count-badge">
-                  {{ archivedGroups.length }} {{ t('agora', 'Archived groups') }}
+                  {{ archivedGroups.length }}
+                  {{ t("agora", "Archived groups") }}
                 </span>
               </div>
             </div>
@@ -272,7 +296,7 @@ onMounted(async () => {
           class="loading-state"
         >
           <div class="spinner" />
-          <p>{{ t('agora', 'Loading archived groups …') }}</p>
+          <p>{{ t("agora", "Loading archived groups …") }}</p>
         </div>
 
         <!-- No Archived Groups -->
@@ -283,13 +307,13 @@ onMounted(async () => {
           <div class="empty-icon">
             <component :is="NavigationIcons.Archive" />
           </div>
-          <h3>{{ t('agora', 'No archived groups') }}</h3>
-          <p>{{ t('agora', 'There are no archived groups at the moment.') }}</p>
+          <h3>{{ t("agora", "No archived groups") }}</h3>
+          <p>{{ t("agora", "There are no archived groups at the moment.") }}</p>
           <NcButton
             type="primary"
             @click="navigateToHome"
           >
-            {{ t('agora', 'Back to home') }}
+            {{ t("agora", "Back to home") }}
           </NcButton>
         </div>
 
@@ -315,8 +339,12 @@ onMounted(async () => {
               >
                 <template #footer>
                   <div class="archive-date">
-                    <span class="date-label">{{ t('agora', 'Archived on:') }}</span>
-                    <span class="date-value">{{ formatDate(group.created) }}</span>
+                    <span class="date-label">{{
+                      t("agora", "Archived on:")
+                    }}</span>
+                    <span class="date-value">{{
+                      formatDate(group.created)
+                    }}</span>
                   </div>
                 </template>
               </InquiryGroupVignette>
@@ -350,7 +378,7 @@ onMounted(async () => {
                         />
                       </svg>
                     </template>
-                    {{ t('agora', 'Restore') }}
+                    {{ t("agora", "Restore") }}
                   </NcButton>
 
                   <!-- Delete button -->
@@ -371,7 +399,7 @@ onMounted(async () => {
                         />
                       </svg>
                     </template>
-                    {{ t('agora', 'Delete') }}
+                    {{ t("agora", "Delete") }}
                   </NcButton>
                 </div>
               </div>
@@ -489,7 +517,12 @@ onMounted(async () => {
 /* White Separation Line */
 .separation-line {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
   margin: 0;
 }
 

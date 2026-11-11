@@ -13,7 +13,7 @@
           :size="24"
           class="kanban-icon"
         />
-        <h2>{{ t('agora', 'Kanban Board') }}</h2>
+        <h2>{{ t("agora", "Kanban Board") }}</h2>
         <span class="kanban-count">{{ inquiries.length }}</span>
         <span
           v-if="useProcessColumns"
@@ -23,7 +23,7 @@
             :is="Icons.GitBranch"
             :size="12"
           />
-          {{ t('agora', 'Process') }}
+          {{ t("agora", "Process") }}
         </span>
       </div>
       <div class="header-right">
@@ -100,7 +100,7 @@
             :is="Icons.Inbox"
             :size="32"
           />
-          <span>{{ t('agora', 'No items') }}</span>
+          <span>{{ t("agora", "No items") }}</span>
         </div>
       </div>
     </div>
@@ -108,186 +108,201 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import KanbanItem from './KanbanItem.vue'
-import type { Inquiry } from '../../Types'
-import { useSessionStore } from '../../stores/session'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
+import { computed, ref, watch } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../utils/icons";
+import KanbanItem from "./KanbanItem.vue";
+import type { Inquiry } from "../../Types";
+import { useSessionStore } from "../../stores/session";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper";
 
 interface Props {
-  inquiries: Inquiry[]
-  groupId?: number
-  processPhases?: Array<{ key: string; label: string; icon?: string }>
+  inquiries: Inquiry[];
+  groupId?: number;
+  processPhases?: Array<{ key: string; label: string; icon?: string }>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  inquiries: null,
+  groupId: 0,
   processPhases: () => [],
-})
+});
 
 const emit = defineEmits<{
-  click: [inquiry: Inquiry]
-  add: [columnKey: string]
-  move: [inquiry: Inquiry, fromColumn: string, toColumn: string]
-}>()
+  click: [inquiry: Inquiry];
+  add: [columnKey: string];
+  move: [inquiry: Inquiry, fromColumn: string, toColumn: string];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // Determine if we use process columns
-const useProcessColumns = computed(() => props.processPhases.length > 0)
+const useProcessColumns = computed(() => props.processPhases.length > 0);
 
 // Grouping mode
-const groupBy = ref<'process' | 'status' | 'type' | 'family'>(
-  useProcessColumns.value ? 'process' : 'status'
-)
+const groupBy = ref<"process" | "status" | "type" | "family">(
+  useProcessColumns.value ? "process" : "status",
+);
 
 // Grouping options with French labels
 const groupingOptions = computed(() => {
   const options = [
-    { key: 'status', label: t('agora', 'Status'), icon: Icons.CheckCircle },
-    { key: 'type', label: t('agora', 'Type'), icon: Icons.Folder },
-    { key: 'family', label: t('agora', 'Family'), icon: Icons.Layers },
-  ]
+    { key: "status", label: t("agora", "Status"), icon: Icons.CheckCircle },
+    { key: "type", label: t("agora", "Type"), icon: Icons.Folder },
+    { key: "family", label: t("agora", "Family"), icon: Icons.Layers },
+  ];
   if (useProcessColumns.value) {
-    options.unshift({ key: 'process', label: t('agora', 'Process'), icon: Icons.GitBranch })
+    options.unshift({
+      key: "process",
+      label: t("agora", "Process"),
+      icon: Icons.GitBranch,
+    });
   }
-  return options
-})
+  return options;
+});
 
-const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
-const draggedInquiryId = ref<number | null>(null)
+const draggedInquiryId = ref<number | null>(null);
 
 // Group inquiries by selected grouping
 const groupedColumns = computed(() => {
-  const groups: Record<string, Inquiry[]> = {}
-  const groupKey = groupBy.value
+  const groups: Record<string, Inquiry[]> = {};
+  const groupKey = groupBy.value;
 
   props.inquiries.forEach((inquiry) => {
-    let key: string
+    let key: string;
 
     switch (groupKey) {
-      case 'process':
-        key = inquiry.miscFields?.processPhase || props.processPhases[0]?.key || 'default'
-        break
-      case 'status':
-        key = inquiry.status?.inquiryStatus || 'draft'
-        break
-      case 'type':
-        key = inquiry.type || 'general'
-        break
-      case 'family':
-        key = inquiry.family || 'default'
-        break
+      case "process":
+        key =
+          inquiry.miscFields?.processPhase ||
+          props.processPhases[0]?.key ||
+          "default";
+        break;
+      case "status":
+        key = inquiry.status?.inquiryStatus || "draft";
+        break;
+      case "type":
+        key = inquiry.type || "general";
+        break;
+      case "family":
+        key = inquiry.family || "default";
+        break;
       default:
-        key = 'default'
+        key = "default";
     }
 
     if (!groups[key]) {
-      groups[key] = []
+      groups[key] = [];
     }
-    groups[key].push(inquiry)
-  })
+    groups[key].push(inquiry);
+  });
 
   // Sort columns by predefined order
-  const sortedKeys = sortColumnKeys(Object.keys(groups))
-  const sortedGroups: Record<string, Inquiry[]> = {}
+  const sortedKeys = sortColumnKeys(Object.keys(groups));
+  const sortedGroups: Record<string, Inquiry[]> = {};
   sortedKeys.forEach((key) => {
-    sortedGroups[key] = groups[key]
-  })
+    sortedGroups[key] = groups[key];
+  });
 
-  return sortedGroups
-})
+  return sortedGroups;
+});
 
 function sortColumnKeys(keys: string[]): string[] {
-  if (groupBy.value === 'process') {
-    const order = props.processPhases.map((p) => p.key)
+  if (groupBy.value === "process") {
+    const order = props.processPhases.map((p) => p.key);
     return keys.sort((a, b) => {
-      const idxA = order.indexOf(a)
-      const idxB = order.indexOf(b)
-      if (idxA === -1 && idxB === -1) return a.localeCompare(b)
-      if (idxA === -1) return 1
-      if (idxB === -1) return -1
-      return idxA - idxB
-    })
+      const idxA = order.indexOf(a);
+      const idxB = order.indexOf(b);
+      if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
   }
 
-  if (groupBy.value === 'status') {
-    const order = ['active', 'open', 'waiting_approval', 'draft', 'closed', 'rejected']
+  if (groupBy.value === "status") {
+    const order = [
+      "active",
+      "open",
+      "waiting_approval",
+      "draft",
+      "closed",
+      "rejected",
+    ];
     return keys.sort((a, b) => {
-      const idxA = order.indexOf(a)
-      const idxB = order.indexOf(b)
-      if (idxA === -1 && idxB === -1) return a.localeCompare(b)
-      if (idxA === -1) return 1
-      if (idxB === -1) return -1
-      return idxA - idxB
-    })
+      const idxA = order.indexOf(a);
+      const idxB = order.indexOf(b);
+      if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
   }
 
-  if (groupBy.value === 'type') {
-    const types = sessionStore.appSettings?.inquiryTypeTab || []
-    const order = types.map((t) => t.typeKey || t.label)
+  if (groupBy.value === "type") {
+    const types = sessionStore.appSettings?.inquiryTypeTab || [];
+    const order = types.map((t) => t.typeKey || t.label);
     return keys.sort((a, b) => {
-      const idxA = order.indexOf(a)
-      const idxB = order.indexOf(b)
-      if (idxA === -1 && idxB === -1) return a.localeCompare(b)
-      if (idxA === -1) return 1
-      if (idxB === -1) return -1
-      return idxA - idxB
-    })
+      const idxA = order.indexOf(a);
+      const idxB = order.indexOf(b);
+      if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
   }
 
-  return keys.sort()
+  return keys.sort();
 }
 
 function getColumnLabel(key: string): string {
-  if (groupBy.value === 'process') {
-    const phase = props.processPhases.find((p) => p.key === key)
-    return phase?.label || key
+  if (groupBy.value === "process") {
+    const phase = props.processPhases.find((p) => p.key === key);
+    return phase?.label || key;
   }
 
-  if (groupBy.value === 'status') {
+  if (groupBy.value === "status") {
     const map: Record<string, string> = {
-      active: t('agora', 'Active'),
-      open: t('agora', 'Open'),
-      closed: t('agora', 'Closed'),
-      draft: t('agora', 'Draft'),
-      waiting_approval: t('agora', 'Pending'),
-      rejected: t('agora', 'Rejected'),
-    }
-    return map[key] || key
+      active: t("agora", "Active"),
+      open: t("agora", "Open"),
+      closed: t("agora", "Closed"),
+      draft: t("agora", "Draft"),
+      waiting_approval: t("agora", "Pending"),
+      rejected: t("agora", "Rejected"),
+    };
+    return map[key] || key;
   }
 
-  if (groupBy.value === 'type') {
-    const types = sessionStore.appSettings?.inquiryTypeTab || []
-    const data = getInquiryTypeData(key, types)
-    return data?.label || key
+  if (groupBy.value === "type") {
+    const types = sessionStore.appSettings?.inquiryTypeTab || [];
+    const data = getInquiryTypeData(key, types);
+    return data?.label || key;
   }
 
-  if (groupBy.value === 'family') {
+  if (groupBy.value === "family") {
     const map: Record<string, string> = {
-      default: t('agora', 'Default'),
-      proposal: t('agora', 'Proposals'),
-      poll: t('agora', 'Polls'),
-      survey: t('agora', 'Surveys'),
-      discussion: t('agora', 'Discussions'),
-    }
-    return map[key] || key
+      default: t("agora", "Default"),
+      proposal: t("agora", "Proposals"),
+      poll: t("agora", "Polls"),
+      survey: t("agora", "Surveys"),
+      discussion: t("agora", "Discussions"),
+    };
+    return map[key] || key;
   }
 
-  return key
+  return key;
 }
 
 function getColumnIcon(key: string): any {
-  if (groupBy.value === 'process') {
-    const phase = props.processPhases.find((p) => p.key === key)
+  if (groupBy.value === "process") {
+    const phase = props.processPhases.find((p) => p.key === key);
     if (phase?.icon) {
-      return Icons[phase.icon] || Icons.Circle
+      return Icons[phase.icon] || Icons.Circle;
     }
-    return Icons.GitBranch
+    return Icons.GitBranch;
   }
 
-  if (groupBy.value === 'status') {
+  if (groupBy.value === "status") {
     const map: Record<string, any> = {
       active: Icons.CheckCircle,
       open: Icons.CheckCircle,
@@ -295,89 +310,89 @@ function getColumnIcon(key: string): any {
       draft: Icons.Edit,
       waiting_approval: Icons.Clock,
       rejected: Icons.Close,
-    }
-    return map[key] || Icons.Circle
+    };
+    return map[key] || Icons.Circle;
   }
 
-  if (groupBy.value === 'type') {
-    const types = sessionStore.appSettings?.inquiryTypeTab || []
-    const data = getInquiryTypeData(key, types)
-    return data?.icon || Icons.Folder
+  if (groupBy.value === "type") {
+    const types = sessionStore.appSettings?.inquiryTypeTab || [];
+    const data = getInquiryTypeData(key, types);
+    return data?.icon || Icons.Folder;
   }
 
-  return Icons.Layers
+  return Icons.Layers;
 }
 
 function getColumnClass(key: string): string {
-  if (groupBy.value === 'status') {
-    return `column-status-${key}`
+  if (groupBy.value === "status") {
+    return `column-status-${key}`;
   }
-  if (groupBy.value === 'process') {
-    return `column-process`
+  if (groupBy.value === "process") {
+    return `column-process`;
   }
-  return ''
+  return "";
 }
 
 function canAddToColumn(key: string): boolean {
-  if (groupBy.value === 'status') {
-    return !['closed', 'rejected'].includes(key)
+  if (groupBy.value === "status") {
+    return !["closed", "rejected"].includes(key);
   }
-  return true
+  return true;
 }
 
 function handleDragStart(event: DragEvent, inquiry: Inquiry) {
-  if (!event.dataTransfer) return
-  draggedInquiryId.value = inquiry.id
-  event.dataTransfer.effectAllowed = 'move'
-  event.dataTransfer.setData('text/plain', String(inquiry.id))
+  if (!event.dataTransfer) return;
+  draggedInquiryId.value = inquiry.id;
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", String(inquiry.id));
 }
 
 function handleDrop(columnKey: string, event: DragEvent) {
-  if (!event.dataTransfer) return
-  const inquiryId = parseInt(event.dataTransfer.getData('text/plain'))
-  const inquiry = props.inquiries.find((i) => i.id === inquiryId)
-  if (!inquiry) return
+  if (!event.dataTransfer) return;
+  const inquiryId = parseInt(event.dataTransfer.getData("text/plain"));
+  const inquiry = props.inquiries.find((i) => i.id === inquiryId);
+  if (!inquiry) return;
 
   // Find which column the inquiry is currently in
-  let fromColumn = ''
+  let fromColumn = "";
   for (const [key, items] of Object.entries(groupedColumns.value)) {
     if (items.some((i) => i.id === inquiryId)) {
-      fromColumn = key
-      break
+      fromColumn = key;
+      break;
     }
   }
 
   if (fromColumn && fromColumn !== columnKey) {
     // If process grouping, update the inquiry's processPhase
-    if (groupBy.value === 'process') {
+    if (groupBy.value === "process") {
       // Store the phase change for the move event
-      emit('move', inquiry, fromColumn, columnKey)
+      emit("move", inquiry, fromColumn, columnKey);
     } else {
-      emit('move', inquiry, fromColumn, columnKey)
+      emit("move", inquiry, fromColumn, columnKey);
     }
   }
 
-  draggedInquiryId.value = null
+  draggedInquiryId.value = null;
 }
 
 function handleClick(inquiry: Inquiry) {
-  emit('click', inquiry)
+  emit("click", inquiry);
 }
 
 function handleAdd(columnKey: string) {
-  emit('add', columnKey)
+  emit("add", columnKey);
 }
 
 // Watch for process phases changes
 watch(
   () => props.processPhases,
   (newPhases) => {
-    if (newPhases.length > 0 && groupBy.value === 'status') {
-      groupBy.value = 'process'
+    if (newPhases.length > 0 && groupBy.value === "status") {
+      groupBy.value = "process";
     }
   },
-  { deep: true }
-)
+  { deep: true },
+);
 </script>
 
 <style lang="scss" scoped>

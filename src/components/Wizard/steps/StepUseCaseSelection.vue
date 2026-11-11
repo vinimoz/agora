@@ -4,81 +4,98 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { useTemplateWizardStore, type UseCase } from '../../../stores/templateWizard'
+import { t } from "@nextcloud/l10n";
+import {
+  useTemplateWizardStore,
+  type UseCase,
+} from "../../../stores/templateWizard";
 
-const wizardStore = useTemplateWizardStore()
+const wizardStore = useTemplateWizardStore();
 
 interface UseCaseOption {
-  id: UseCase
-  title: string
-  description: string
-  icon: string
-  examples: string[]
+  id: UseCase;
+  title: string;
+  description: string;
+  icon: string;
+  examples: string[];
 }
 
 const useCases: UseCaseOption[] = [
   {
-    id: 'citizen_participation',
-    title: t('agora', 'Citizen participation'),
-    description: t('agora', 'For municipalities, cantons, communes and government entities'),
-    icon: '🏛️',
+    id: "citizen_participation",
+    title: t("agora", "Citizen participation"),
+    description: t(
+      "agora",
+      "For municipalities, cantons, communes and government entities",
+    ),
+    icon: "🏛️",
     examples: [
-      t('agora', 'Deliberative processes (debates, proposals, petitions)'),
-      t('agora', 'Legislative processes (law proposals, amendments)'),
-      t('agora', 'Administrative requests and grievances'),
-      t('agora', 'Social services (housing, childcare, scholarships)'),
+      t("agora", "Deliberative processes (debates, proposals, petitions)"),
+      t("agora", "Legislative processes (law proposals, amendments)"),
+      t("agora", "Administrative requests and grievances"),
+      t("agora", "Social services (housing, childcare, scholarships)"),
     ],
   },
   {
-    id: 'enterprise',
-    title: t('agora', 'Enterprise & business'),
-    description: t('agora', 'For companies, departments and business operations'),
-    icon: '🏢',
+    id: "enterprise",
+    title: t("agora", "Enterprise & business"),
+    description: t(
+      "agora",
+      "For companies, departments and business operations",
+    ),
+    icon: "🏢",
     examples: [
-      t('agora', 'It services (ideas, automation, service requests)'),
-      t('agora', 'Human resources (training, policies, workplace)'),
-      t('agora', 'Facility management (infrastructure, sustainability)'),
-      t('agora', 'Finance & procurement (budget, vendor feedback)'),
+      t("agora", "It services (ideas, automation, service requests)"),
+      t("agora", "Human resources (training, policies, workplace)"),
+      t("agora", "Facility management (infrastructure, sustainability)"),
+      t("agora", "Finance & procurement (budget, vendor feedback)"),
     ],
   },
   {
-    id: 'education',
-    title: t('agora', 'Education & research'),
-    description: t('agora', 'For schools, universities and research institutions'),
-    icon: '🎓',
+    id: "education",
+    title: t("agora", "Education & research"),
+    description: t(
+      "agora",
+      "For schools, universities and research institutions",
+    ),
+    icon: "🎓",
     examples: [
-      t('agora', 'Student feedback and suggestions'),
-      t('agora', 'Research project proposals'),
-      t('agora', 'Course evaluations and improvements'),
-      t('agora', 'Campus facility requests'),
+      t("agora", "Student feedback and suggestions"),
+      t("agora", "Research project proposals"),
+      t("agora", "Course evaluations and improvements"),
+      t("agora", "Campus facility requests"),
     ],
   },
   {
-    id: 'custom',
-    title: t('agora', 'Custom setup'),
-    description: t('agora', 'Start from scratch or import your own template'),
-    icon: '🛠️',
+    id: "custom",
+    title: t("agora", "Custom setup"),
+    description: t("agora", "Start from scratch or import your own template"),
+    icon: "🛠️",
     examples: [
-      t('agora', 'Upload ai-generated template'),
-      t('agora', 'Import custom json configuration'),
-      t('agora', 'Start with empty configuration'),
-      t('agora', 'Use community templates'),
+      t("agora", "Upload ai-generated template"),
+      t("agora", "Import custom json configuration"),
+      t("agora", "Start with empty configuration"),
+      t("agora", "Use community templates"),
     ],
   },
-]
+];
 
 const selectUseCase = (useCase: UseCase) => {
-  wizardStore.selectUseCase(useCase)
-}
+  wizardStore.selectUseCase(useCase);
+};
 </script>
 
 <template>
   <div class="use-case-selection">
     <div class="use-case-header">
-      <h2>{{ t('agora', 'What is your primary use case?') }}</h2>
+      <h2>{{ t("agora", "What is your primary use case?") }}</h2>
       <p class="subtitle">
-        {{ t('agora', "Select the option that best matches your organization's needs") }}
+        {{
+          t(
+            "agora",
+            "Select the option that best matches your organization's needs",
+          )
+        }}
       </p>
     </div>
 
@@ -112,7 +129,7 @@ const selectUseCase = (useCase: UseCase) => {
           class="selected-indicator"
         >
           <span class="check-icon">✓</span>
-          {{ t('agora', 'Selected') }}
+          {{ t("agora", "Selected") }}
         </div>
       </div>
     </div>
@@ -201,7 +218,7 @@ const selectUseCase = (useCase: UseCase) => {
     position: relative;
 
     &::before {
-      content: '•';
+      content: "•";
       position: absolute;
       left: 8px;
       color: var(--color-primary-element);

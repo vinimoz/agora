@@ -6,14 +6,14 @@
   <div class="vote-input-none">
     <span class="none-badge">
       <EyeOff :size="14" />
-      {{ t('agora', 'No voting method') }}
+      {{ t("agora", "No voting method") }}
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { EyeOff } from 'lucide-vue-next'
+import { t } from "@nextcloud/l10n";
+import { EyeOff } from "lucide-vue-next";
 </script>
 
 <style scoped lang="scss">

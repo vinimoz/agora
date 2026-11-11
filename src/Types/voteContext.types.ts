@@ -11,14 +11,14 @@
  *   option  → pass the inquiry id
  *   inquiry → pass the group id
  */
-export type TargetType = 'option' | 'inquiry'
+export type TargetType = "option" | "inquiry";
 
 /**
  * A shape every family layout (cards, kanban, timeline, vote) can render.
  * Both `Option` and `Inquiry` must be adaptable to this.
  */
 export interface VotableItem {
-  id: number
-  title: string
-  [key: string]: unknown
+  id: number;
+  title: string;
+  [key: string]: unknown;
 }

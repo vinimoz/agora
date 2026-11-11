@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { h } from 'vue'
+import { h } from "vue";
 
 const SimpleLink = {
   props: {
     href: {
       type: String,
-      default: '',
+      default: "",
     },
     name: {
       type: String,
-      default: '',
+      default: "",
     },
     target: {
       type: String,
@@ -24,14 +24,14 @@ const SimpleLink = {
   setup(props: { href: string; target: string; name: string }) {
     return () =>
       h(
-        'a',
+        "a",
         {
           href: props.href,
           target: props.target,
         },
-        props.name
-      )
+        props.name,
+      );
   },
-}
+};
 
-export { SimpleLink }
+export { SimpleLink };

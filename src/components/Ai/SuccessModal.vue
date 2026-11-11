@@ -16,16 +16,16 @@
           class="success-color"
         />
       </div>
-      <h3>{{ t('agora', 'Options Created Successfully!') }}</h3>
+      <h3>{{ t("agora", "Options Created Successfully!") }}</h3>
       <p class="success-message">
-        {{ t('agora', '{count} options have been created.', { count }) }}
+        {{ t("agora", "{count} options have been created.", { count }) }}
       </p>
       <div class="modal-footer">
         <NcButton
           type="primary"
           @click="handleClose"
         >
-          {{ t('agora', 'Done') }}
+          {{ t("agora", "Done") }}
         </NcButton>
       </div>
     </div>
@@ -33,23 +33,25 @@
 </template>
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { CheckCircle } from 'lucide-vue-next'
+import { t } from "@nextcloud/l10n";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { CheckCircle } from "lucide-vue-next";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
-  show: boolean
-  count: number
-}>()
+  show: boolean;
+  count: number;
+}>();
+
 
 const emit = defineEmits<{
-  close: []
-}>()
+  close: [];
+}>();
 
 const handleClose = () => {
-  emit('close')
-}
+  emit("close");
+};
 </script>
 
 <style scoped lang="scss">

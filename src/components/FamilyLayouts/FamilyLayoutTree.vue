@@ -1,6 +1,3 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors * SPDX-License-Identifier:
-AGPL-3.0-or-later */
-
 <!--
     SPDX-FileCopyrightText: 2024 Nextcloud contributors
 -->
@@ -10,7 +7,7 @@ AGPL-3.0-or-later */
       <!-- Left sidebar - Table of Contents -->
       <div class="table-of-contents">
         <div class="toc-header">
-          <h3>{{ t('agora', 'Table of contents') }}</h3>
+          <h3>{{ t("agora", "Table of contents") }}</h3>
         </div>
         <div class="toc-list">
           <!-- Show only structure family options (2 levels max) -->
@@ -87,12 +84,14 @@ AGPL-3.0-or-later */
               :is="InquiryOptionIcons.BookOpenVariant"
               :size="32"
             />
-            <p>{{ t('agora', 'No content yet') }}</p>
+            <p>{{ t("agora", "No content yet") }}</p>
             <NcButton
               type="tertiary"
               @click="openAddOptionModalForRoot()"
             >
-              {{ t('agora', 'Create first {type}', { type: getRootTypeLabel() }) }}
+              {{
+                t("agora", "Create first {type}", { type: getRootTypeLabel() })
+              }}
             </NcButton>
           </div>
         </div>
@@ -117,8 +116,12 @@ AGPL-3.0-or-later */
                   {{ activeNode.text }}
                 </h3>
                 <div class="title-meta">
-                  <span class="type-label">{{ getOptionTypeLabel(activeNode.type) }}</span>
-                  <span class="created-date">{{ formatDate(activeNode.status?.created) }}</span>
+                  <span class="type-label">{{
+                    getOptionTypeLabel(activeNode.type)
+                  }}</span>
+                  <span class="created-date">{{
+                    formatDate(activeNode.status?.created)
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -129,17 +132,18 @@ AGPL-3.0-or-later */
             <!-- Content display -->
             <div class="content-display">
               <div class="text-content">
-                <!-- eslint-disable-next-line vue/no-v-html -->
+                <!-- eslint-disable vue/no-v-html -->
                 <div
                   v-if="activeNode.text && activeNode.text.trim()"
                   class="text-text"
                   v-html="formattedContent"
                 />
+                <!-- eslint-enable vue/no-v-html -->
                 <div
                   v-else
                   class="empty-content"
                 >
-                  <p>{{ t('agora', 'No content yet') }}</p>
+                  <p>{{ t("agora", "No content yet") }}</p>
                 </div>
               </div>
             </div>
@@ -179,7 +183,7 @@ AGPL-3.0-or-later */
                   size="small"
                   @click="openNodeDetail(activeNode)"
                 >
-                  {{ t('agora', 'Comments') }}
+                  {{ t("agora", "Comments") }}
                 </NcButton>
               </div>
             </div>
@@ -220,7 +224,9 @@ AGPL-3.0-or-later */
                           class="inline-edit-full"
                         >
                           <div class="edit-section">
-                            <label class="edit-label">{{ t('agora', 'Title') }}</label>
+                            <label class="edit-label">{{
+                              t("agora", "Title")
+                            }}</label>
                             <NcRichContenteditable
                               v-model="inlineEditTitle"
                               :emoji-autocomplete="true"
@@ -234,7 +240,9 @@ AGPL-3.0-or-later */
                           </div>
 
                           <div class="edit-section">
-                            <label class="edit-label">{{ t('agora', 'Description') }}</label>
+                            <label class="edit-label">{{
+                              t("agora", "Description")
+                            }}</label>
                             <NcRichContenteditable
                               v-model="inlineEditText"
                               :emoji-autocomplete="true"
@@ -254,14 +262,14 @@ AGPL-3.0-or-later */
                               size="small"
                               @click.stop="saveInlineEdit(rootNode)"
                             >
-                              {{ t('agora', 'Save') }}
+                              {{ t("agora", "Save") }}
                             </NcButton>
                             <NcButton
                               type="tertiary"
                               size="small"
                               @click.stop="cancelInlineEdit"
                             >
-                              {{ t('agora', 'Cancel') }}
+                              {{ t("agora", "Cancel") }}
                             </NcButton>
                           </div>
                         </div>
@@ -275,7 +283,10 @@ AGPL-3.0-or-later */
                             class="node-title"
                             @click.stop="setActiveNode(rootNode)"
                           >
-                            {{ displayNodeTitle(rootNode) || t('agora', 'Untitled') }}
+                            {{
+                              displayNodeTitle(rootNode) ||
+                                t("agora", "Untitled")
+                            }}
                           </h3>
 
                           <div
@@ -295,13 +306,20 @@ AGPL-3.0-or-later */
                       <!-- Quick actions and meta -->
                       <div class="node-meta-actions">
                         <div class="node-meta">
-                          <span class="node-type">{{ getOptionTypeLabel(rootNode.type) }}</span>
-                          <span class="node-date">{{ formatDate(rootNode.status?.created) }}</span>
+                          <span class="node-type">{{
+                            getOptionTypeLabel(rootNode.type)
+                          }}</span>
+                          <span class="node-date">{{
+                            formatDate(rootNode.status?.created)
+                          }}</span>
 
                           <!-- Support and comments inline -->
                           <div class="node-interactions">
                             <div
-                              v-if="hasSupportFeature(rootNode) && canSupportNode(rootNode)"
+                              v-if="
+                                hasSupportFeature(rootNode) &&
+                                  canSupportNode(rootNode)
+                              "
                               class="node-support-inline"
                             >
                               <SupportFeature
@@ -322,7 +340,9 @@ AGPL-3.0-or-later */
                                 :is="InquiryOptionIcons.Comment"
                                 :size="12"
                               />
-                              <span>{{ rootNode.status?.countComments || 0 }}</span>
+                              <span>{{
+                                rootNode.status?.countComments || 0
+                              }}</span>
                             </div>
                           </div>
                         </div>
@@ -386,17 +406,23 @@ AGPL-3.0-or-later */
                             :is="InquiryOptionIcons.MessageReplyText"
                             :size="12"
                           />
-                          <span class="responses-title">{{ t('agora', 'Add response') }}</span>
+                          <span class="responses-title">{{
+                            t("agora", "Add response")
+                          }}</span>
                         </div>
 
                         <div class="responses-options">
                           <NcButton
-                            v-for="responseType in getAllowedResponseTypes(rootNode.type)"
+                            v-for="responseType in getAllowedResponseTypes(
+                              rootNode.type,
+                            )"
                             :key="responseType"
                             type="tertiary"
                             size="small"
                             class="response-type-btn"
-                            @click.stop="openAddOptionModal(responseType, rootNode.id)"
+                            @click.stop="
+                              openAddOptionModal(responseType, rootNode.id)
+                            "
                           >
                             <template #icon>
                               <component
@@ -443,7 +469,9 @@ AGPL-3.0-or-later */
                               class="inline-edit-full"
                             >
                               <div class="edit-section">
-                                <label class="edit-label">{{ t('agora', 'Title') }}</label>
+                                <label class="edit-label">{{
+                                  t("agora", "Title")
+                                }}</label>
                                 <NcRichContenteditable
                                   v-model="inlineEditTitle"
                                   :emoji-autocomplete="true"
@@ -457,7 +485,9 @@ AGPL-3.0-or-later */
                               </div>
 
                               <div class="edit-section">
-                                <label class="edit-label">{{ t('agora', 'Description') }}</label>
+                                <label class="edit-label">{{
+                                  t("agora", "Description")
+                                }}</label>
                                 <NcRichContenteditable
                                   v-model="inlineEditText"
                                   :emoji-autocomplete="true"
@@ -477,14 +507,14 @@ AGPL-3.0-or-later */
                                   size="small"
                                   @click.stop="saveInlineEdit(child)"
                                 >
-                                  {{ t('agora', 'Save') }}
+                                  {{ t("agora", "Save") }}
                                 </NcButton>
                                 <NcButton
                                   type="tertiary"
                                   size="small"
                                   @click.stop="cancelInlineEdit"
                                 >
-                                  {{ t('agora', 'Cancel') }}
+                                  {{ t("agora", "Cancel") }}
                                 </NcButton>
                               </div>
                             </div>
@@ -498,7 +528,10 @@ AGPL-3.0-or-later */
                                 class="node-title"
                                 @click.stop="setActiveNode(child)"
                               >
-                                {{ displayNodeTitle(child) || t('agora', 'Untitled') }}
+                                {{
+                                  displayNodeTitle(child) ||
+                                    t("agora", "Untitled")
+                                }}
                               </h4>
 
                               <div
@@ -518,13 +551,20 @@ AGPL-3.0-or-later */
                           <!-- Quick actions and meta -->
                           <div class="node-meta-actions">
                             <div class="node-meta">
-                              <span class="node-type">{{ getOptionTypeLabel(child.type) }}</span>
-                              <span class="node-date">{{ formatDate(child.status?.created) }}</span>
+                              <span class="node-type">{{
+                                getOptionTypeLabel(child.type)
+                              }}</span>
+                              <span class="node-date">{{
+                                formatDate(child.status?.created)
+                              }}</span>
 
                               <!-- Support and comments inline -->
                               <div class="node-interactions">
                                 <div
-                                  v-if="hasSupportFeature(child) && canSupportNode(child)"
+                                  v-if="
+                                    hasSupportFeature(child) &&
+                                      canSupportNode(child)
+                                  "
                                   class="node-support-inline"
                                 >
                                   <SupportFeature
@@ -545,7 +585,9 @@ AGPL-3.0-or-later */
                                     :is="InquiryOptionIcons.Comment"
                                     :size="12"
                                   />
-                                  <span>{{ child.status?.countComments || 0 }}</span>
+                                  <span>{{
+                                    child.status?.countComments || 0
+                                  }}</span>
                                 </div>
                               </div>
                             </div>
@@ -609,17 +651,23 @@ AGPL-3.0-or-later */
                                 :is="InquiryOptionIcons.MessageReplyText"
                                 :size="12"
                               />
-                              <span class="responses-title">{{ t('agora', 'Add response') }}</span>
+                              <span class="responses-title">{{
+                                t("agora", "Add response")
+                              }}</span>
                             </div>
 
                             <div class="responses-options">
                               <NcButton
-                                v-for="responseType in getAllowedResponseTypes(child.type)"
+                                v-for="responseType in getAllowedResponseTypes(
+                                  child.type,
+                                )"
                                 :key="responseType"
                                 type="tertiary"
                                 size="small"
                                 class="response-type-btn"
-                                @click.stop="openAddOptionModal(responseType, child.id)"
+                                @click.stop="
+                                  openAddOptionModal(responseType, child.id)
+                                "
                               >
                                 <template #icon>
                                   <component
@@ -648,7 +696,9 @@ AGPL-3.0-or-later */
                           active: activeNodeId === grandChild.id,
                           editing: editingNodeId === grandChild.id,
                         }"
-                        @click.stop="!editingNodeId && setActiveNode(grandChild)"
+                        @click.stop="
+                          !editingNodeId && setActiveNode(grandChild)
+                        "
                       >
                         <div class="node-header">
                           <div class="node-icon-title">
@@ -665,7 +715,9 @@ AGPL-3.0-or-later */
                                   class="inline-edit-full"
                                 >
                                   <div class="edit-section">
-                                    <label class="edit-label">{{ t('agora', 'Title') }}</label>
+                                    <label class="edit-label">{{
+                                      t("agora", "Title")
+                                    }}</label>
                                     <NcRichContenteditable
                                       v-model="inlineEditTitle"
                                       :emoji-autocomplete="true"
@@ -680,7 +732,7 @@ AGPL-3.0-or-later */
 
                                   <div class="edit-section">
                                     <label class="edit-label">{{
-                                      t('agora', 'Description')
+                                      t("agora", "Description")
                                     }}</label>
                                     <NcRichContenteditable
                                       v-model="inlineEditText"
@@ -689,7 +741,9 @@ AGPL-3.0-or-later */
                                       :autolink="true"
                                       :use-markdown="true"
                                       :multiline="true"
-                                      :placeholder="t('agora', 'Enter description')"
+                                      :placeholder="
+                                        t('agora', 'Enter description')
+                                      "
                                       class="edit-input text-input"
                                       rows="3"
                                     />
@@ -701,14 +755,14 @@ AGPL-3.0-or-later */
                                       size="small"
                                       @click.stop="saveInlineEdit(grandChild)"
                                     >
-                                      {{ t('agora', 'Save') }}
+                                      {{ t("agora", "Save") }}
                                     </NcButton>
                                     <NcButton
                                       type="tertiary"
                                       size="small"
                                       @click.stop="cancelInlineEdit"
                                     >
-                                      {{ t('agora', 'Cancel') }}
+                                      {{ t("agora", "Cancel") }}
                                     </NcButton>
                                   </div>
                                 </div>
@@ -722,11 +776,16 @@ AGPL-3.0-or-later */
                                     class="node-title"
                                     @click.stop="setActiveNode(grandChild)"
                                   >
-                                    {{ displayNodeTitle(grandChild) || t('agora', 'Untitled') }}
+                                    {{
+                                      displayNodeTitle(grandChild) ||
+                                        t("agora", "Untitled")
+                                    }}
                                   </h5>
 
                                   <div
-                                    v-if="grandChild.text && grandChild.text.trim()"
+                                    v-if="
+                                      grandChild.text && grandChild.text.trim()
+                                    "
                                     class="node-preview"
                                   >
                                     <p
@@ -753,7 +812,8 @@ AGPL-3.0-or-later */
                                   <div class="node-interactions">
                                     <div
                                       v-if="
-                                        hasSupportFeature(grandChild) && canSupportNode(grandChild)
+                                        hasSupportFeature(grandChild) &&
+                                          canSupportNode(grandChild)
                                       "
                                       class="node-support-inline"
                                     >
@@ -775,7 +835,9 @@ AGPL-3.0-or-later */
                                         :is="InquiryOptionIcons.Comment"
                                         :size="12"
                                       />
-                                      <span>{{ grandChild.status?.countComments || 0 }}</span>
+                                      <span>{{
+                                        grandChild.status?.countComments || 0
+                                      }}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -831,7 +893,10 @@ AGPL-3.0-or-later */
 
                               <!-- Allowed responses hover panel -->
                               <div
-                                v-if="hasAllowedResponses(grandChild) && !editingNodeId"
+                                v-if="
+                                  hasAllowedResponses(grandChild) &&
+                                    !editingNodeId
+                                "
                                 class="allowed-responses-hover"
                               >
                                 <div class="responses-header">
@@ -840,18 +905,25 @@ AGPL-3.0-or-later */
                                     :size="12"
                                   />
                                   <span class="responses-title">{{
-                                    t('agora', 'Add response')
+                                    t("agora", "Add response")
                                   }}</span>
                                 </div>
 
                                 <div class="responses-options">
                                   <NcButton
-                                    v-for="responseType in getAllowedResponseTypes(grandChild.type)"
+                                    v-for="responseType in getAllowedResponseTypes(
+                                      grandChild.type,
+                                    )"
                                     :key="responseType"
                                     type="tertiary"
                                     size="small"
                                     class="response-type-btn"
-                                    @click.stop="openAddOptionModal(responseType, grandChild.id)"
+                                    @click.stop="
+                                      openAddOptionModal(
+                                        responseType,
+                                        grandChild.id,
+                                      )
+                                    "
                                   >
                                     <template #icon>
                                       <component
@@ -883,7 +955,7 @@ AGPL-3.0-or-later */
               :is="InquiryOptionIcons.BookOpenVariant"
               :size="48"
             />
-            <p>{{ t('agora', 'No chapters yet') }}</p>
+            <p>{{ t("agora", "No chapters yet") }}</p>
             <NcButton
               type="primary"
               @click="openAddOptionModalForRoot()"
@@ -894,7 +966,9 @@ AGPL-3.0-or-later */
                   :size="16"
                 />
               </template>
-              {{ t('agora', 'Create first {type}', { type: getRootTypeLabel() }) }}
+              {{
+                t("agora", "Create first {type}", { type: getRootTypeLabel() })
+              }}
             </NcButton>
           </div>
         </div>
@@ -923,25 +997,25 @@ AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, onMounted } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import { SupportFeature } from '../Base/index.ts'
-import { DateTime } from 'luxon'
-import DOMPurify from 'dompurify'
+import { ref, nextTick, computed, onMounted } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcRichContenteditable from "@nextcloud/vue/components/NcRichContenteditable";
+import { SupportFeature } from "../Base/index.ts";
+import { DateTime } from "luxon";
+import DOMPurify from "dompurify";
 
-import { useOptionsStore } from '../../stores/options'
-import { useSessionStore } from '../../stores/session'
-import { useOptionStore } from '../../stores/option'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+import { useOptionsStore } from "../../stores/options";
+import { useSessionStore } from "../../stores/session";
+import { useOptionStore } from "../../stores/option";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import { showSuccess, showError } from "@nextcloud/dialogs";
 import {
   createOptionContext,
   canEditOption,
   canCommentOption,
   canSupportOption,
-} from '../../utils/permissions.ts'
+} from "../../utils/permissions.ts";
 
 import {
   findOptionType,
@@ -951,7 +1025,7 @@ import {
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments as allowsCommentsHelper,
   usesTitle,
-} from '../../helpers/modules/InquiryOptionHelper'
+} from "../../helpers/modules/InquiryOptionHelper";
 
 // Types
 import type {
@@ -961,116 +1035,123 @@ import type {
   Option,
   OptionType,
   OptionStoreLike,
-} from '../../Types/index.ts'
+} from "../../Types/index.ts";
 
-import OptionAddModal from '../Modals/OptionAddModal.vue'
-import OptionDetailModal from '../Modals/OptionDetailModal.vue'
+import OptionAddModal from "../Modals/OptionAddModal.vue";
+import OptionDetailModal from "../Modals/OptionDetailModal.vue";
 
 const props = defineProps<{
-  items: Item[]
-  parentId: number
-  targetType: 'option' | 'inquiry'
-  optionTypes: InquiryOptionType[]
-  familyOptionTypes?: InquiryOptionType[]
-  family?: OptionFamily | null
-  familyKey?: string
-  isReadonly?: boolean
-  appSettings?: Record<string, unknown>
-}>()
+  items: Item[];
+  parentId: number;
+  targetType: "option" | "inquiry";
+  optionTypes: InquiryOptionType[];
+  familyOptionTypes?: InquiryOptionType[];
+  family?: OptionFamily | null;
+  familyKey?: string;
+  isReadonly?: boolean;
+  appSettings?: Record<string, unknown>;
+}>();
 
+/*
 const emit = defineEmits<{
-  addOption: [optionType: string, parentId?: number]
-  openDetail: [item: Item]
-}>()
-console.log(' ITEMS IN STRUCTURE  ', props.items)
+  addOption: [optionType: string, parentId?: number];
+  openDetail: [item: Item];
+}>(); */
 
 // Stores
-const optionsStore = useOptionsStore()
-const sessionStore = useSessionStore()
-const optionStore = useOptionStore()
+const optionsStore = useOptionsStore();
+const sessionStore = useSessionStore();
+const optionStore = useOptionStore();
 
 // State
-const activeNodeId = ref<number | null>(null)
-const selectedNode = ref<Option | null>(null)
-const editingNodeId = ref<number | null>(null)
-const inlineEditTitle = ref<string>('')
-const inlineEditText = ref<string>('')
+const activeNodeId = ref<number | null>(null);
+const selectedNode = ref<Option | null>(null);
+const editingNodeId = ref<number | null>(null);
+const inlineEditTitle = ref<string>("");
+const inlineEditText = ref<string>("");
 
-const showAddOptionModal = ref(false)
-const showDetailModal = ref(false)
-const selectedOptionTypeKey = ref<string | null>(null)
-const selectedParentId = ref<number | null>(null)
+const showAddOptionModal = ref(false);
+const showDetailModal = ref(false);
+const selectedOptionTypeKey = ref<string | null>(null);
+const selectedParentId = ref<number | null>(null);
 
 // Get all option types
 const allOptionTypes = computed<OptionType[]>(
-  () => sessionStore.appSettings?.inquiryOptionTypeTab || []
-)
+  () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
+);
 
 // Get structure family types (filter by family 'structure')
 const structureTypes = computed<OptionType[]>(() =>
-  allOptionTypes.value.filter((type) => type.family === 'structure')
-)
+  allOptionTypes.value.filter((type) => type.family === "structure"),
+);
 
 // Get root structure types
 const rootStructureTypes = computed<OptionType[]>(() =>
   structureTypes.value.filter((type) => {
-    const typeKey = type.option_type || type.optionType
+    const typeKey = type.option_type || type.optionType;
     // Types that can be root (e.g., chapter, introduction)
     return (
-      ['chapter', 'structure_intro'].includes(typeKey) ||
+      ["chapter", "structure_intro"].includes(typeKey) ||
       !allOptionTypes.value.some((parentType) => {
-        const parentResponses = parentType.allowed_response
+        const parentResponses = parentType.allowed_response;
         if (Array.isArray(parentResponses)) {
-          return parentResponses.includes(typeKey)
+          return parentResponses.includes(typeKey);
         }
-        return false
+        return false;
       })
-    )
-  })
-)
+    );
+  }),
+);
 
 /** Raw Option[] — prefer unified props.items, fall back to store */
 const sourceOptions = computed<Option[]>(() =>
-  props.items.length > 0 ? props.items.map((i) => i.raw as Option) : optionsStore.options
-)
+  props.items.length > 0
+    ? props.items.map((i) => i.raw as Option)
+    : optionsStore.options,
+);
 
 // Get only structure family root options
 const structureRootOptions = computed<Option[]>(() =>
   sourceOptions.value.filter((opt) => {
     // Check if it's a structure family type and has no parent
-    const typeData = findOptionType(opt.type, allOptionTypes.value)
-    return typeData?.family === 'structure' && (!opt.parentId || opt.parentId === 0)
-  })
-)
+    const typeData = findOptionType(opt.type, allOptionTypes.value);
+    return (
+      typeData?.family === "structure" && (!opt.parentId || opt.parentId === 0)
+    );
+  }),
+);
 
 const activeNode = computed<Option | null>(() => {
-  if (!activeNodeId.value) return null
-  return sourceOptions.value.find((opt) => opt.id === activeNodeId.value) || null
-})
+  if (!activeNodeId.value) return null;
+  return (
+    sourceOptions.value.find((opt) => opt.id === activeNodeId.value) || null
+  );
+});
 
 const getOptionTypeLabel = (type: string): string =>
-  getOptionTypeLabelHelper(type, allOptionTypes.value, type)
+  getOptionTypeLabelHelper(type, allOptionTypes.value, type);
 
-const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
+const getOptionTypeIcon = (type: string) =>
+  getOptionTypeIconComponent(type, allOptionTypes.value);
 
 const displayNodeTitle = (node: Option): string => {
-  if (!node) return ''
-  const useTitle = usesTitle(node.type, allOptionTypes.value)
-  return useTitle ? node.title || node.label : node.label
-}
+  if (!node) return "";
+  const useTitle = usesTitle(node.type, allOptionTypes.value);
+  return useTitle ? node.title || node.label : node.label;
+};
 
 const hasSupportFeature = (node: Option): boolean => {
-  if (!node) return false
-  return hasSupportFeatureHelper(node.type, allOptionTypes.value)
-}
+  if (!node) return false;
+  return hasSupportFeatureHelper(node.type, allOptionTypes.value);
+};
 
 const getChildren = (parentId: number): Option[] => {
-  if (!sourceOptions.value) return []
-  return sourceOptions.value.filter((opt) => opt.parentId === parentId)
-}
+  if (!sourceOptions.value) return [];
+  return sourceOptions.value.filter((opt) => opt.parentId === parentId);
+};
 
 const getAllowedResponseTypes = (nodeType: string): string[] =>
-  getAllowedResponses(nodeType, allOptionTypes.value)
+  getAllowedResponses(nodeType, allOptionTypes.value);
 /*
 const canAddChild = (node: Option): boolean => {
   if (!node) return false
@@ -1079,218 +1160,230 @@ const canAddChild = (node: Option): boolean => {
 } */
 
 const getRootType = (): string => {
-  const firstRoot = rootStructureTypes.value[0]
-  return firstRoot?.option_type || firstRoot?.optionType || 'chapter'
-}
+  const firstRoot = rootStructureTypes.value[0];
+  return firstRoot?.option_type || firstRoot?.optionType || "chapter";
+};
 
-const getRootTypeLabel = (): string => getOptionTypeLabel(getRootType())
+const getRootTypeLabel = (): string => getOptionTypeLabel(getRootType());
 
 const getDepth = (node: Option, depth = 0): number => {
-  if (!node.parentId || node.parentId === 0) return depth
-  const parent = sourceOptions.value.find((opt) => opt.id === node.parentId)
-  if (!parent) return depth
-  return getDepth(parent, depth + 1)
-}
+  if (!node.parentId || node.parentId === 0) return depth;
+  const parent = sourceOptions.value.find((opt) => opt.id === node.parentId);
+  if (!parent) return depth;
+  return getDepth(parent, depth + 1);
+};
 
 // Permission checks with safe access
 const canEditNode = (node: Option): boolean => {
-  if (!node) return false
+  if (!node) return false;
 
   const optionLike: OptionStoreLike = {
-    owner: { id: node.owner?.id || '' },
+    owner: { id: node.owner?.id || "" },
     type: node.type,
     isDeleted: node.isDeleted || false,
     isArchived: node.isArchived || false,
-  }
+  };
 
-  const context = createOptionContext(optionLike)
-  return canEditOption(context)
-}
+  const context = createOptionContext(optionLike);
+  return canEditOption(context);
+};
 
 const canCommentOnNode = (node: Option): boolean => {
-  if (!node) return false
+  if (!node) return false;
 
   const safeNode: OptionStoreLike = {
     ...node,
-    owner: node.owner || { id: sessionStore.currentUser?.id || '' },
-  }
+    owner: node.owner || { id: sessionStore.currentUser?.id || "" },
+  };
 
-  const context = createOptionContext(safeNode)
-  return canCommentOption(context)
-}
+  const context = createOptionContext(safeNode);
+  return canCommentOption(context);
+};
 
 const canSupportNode = (node: Option): boolean => {
-  if (!node) return false
+  if (!node) return false;
 
   const safeNode: OptionStoreLike = {
     ...node,
-    owner: node.owner || { id: sessionStore.currentUser?.id || '' },
-  }
+    owner: node.owner || { id: sessionStore.currentUser?.id || "" },
+  };
 
-  const context = createOptionContext(safeNode)
-  return canSupportOption(context)
-}
+  const context = createOptionContext(safeNode);
+  return canSupportOption(context);
+};
 
 const allowComments = (node: Option): boolean => {
-  if (!node) return false
-  return allowsCommentsHelper(node.type, allOptionTypes.value) && canCommentOnNode(node)
-}
+  if (!node) return false;
+  return (
+    allowsCommentsHelper(node.type, allOptionTypes.value) &&
+    canCommentOnNode(node)
+  );
+};
 
 const formatDate = (timestamp?: number): string => {
-  if (!timestamp) return ''
-  return DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
-}
+  if (!timestamp) return "";
+  return DateTime.fromMillis(timestamp * 1000).toLocaleString(
+    DateTime.DATE_SHORT,
+  );
+};
 
 // Helper function to truncate text
 const truncateText = (text: string, maxLength: number): string => {
-  if (!text) return ''
-  if (text.length <= maxLength) return text
-  return `${text.substring(0, maxLength)}...`
-}
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return `${text.substring(0, maxLength)}...`;
+};
 
 // Check if node has allowed responses
 const hasAllowedResponses = (node: Option): boolean => {
-  if (!node) return false
-  const allowedResponses = getAllowedResponseTypes(node.type)
-  return allowedResponses.length > 0
-}
+  if (!node) return false;
+  const allowedResponses = getAllowedResponseTypes(node.type);
+  return allowedResponses.length > 0;
+};
 
 // Methods
 const setActiveNode = (node: Option): void => {
-  if (editingNodeId.value) return
-  activeNodeId.value = node.id
-  selectedNode.value = null
-  editingNodeId.value = null
-}
+  if (editingNodeId.value) return;
+  activeNodeId.value = node.id;
+  selectedNode.value = null;
+  editingNodeId.value = null;
+};
 
 const startInlineEdit = (node: Option): void => {
-  editingNodeId.value = node.id
-  inlineEditTitle.value = displayNodeTitle(node) || ''
-  inlineEditText.value = node.text || ''
-}
+  editingNodeId.value = node.id;
+  inlineEditTitle.value = displayNodeTitle(node) || "";
+  inlineEditText.value = node.text || "";
+};
 
 const cancelInlineEdit = (): void => {
-  editingNodeId.value = null
-  inlineEditTitle.value = ''
-  inlineEditText.value = ''
-}
+  editingNodeId.value = null;
+  inlineEditTitle.value = "";
+  inlineEditText.value = "";
+};
 
 const saveInlineEdit = async (node: Option): Promise<void> => {
   try {
-    await optionStore.load(node.id)
+    await optionStore.load(node.id);
     const updatedOption = await optionStore.update({
       id: node.id,
-      title: inlineEditTitle.value || '',
-      text: inlineEditText.value || '',
+      title: inlineEditTitle.value || "",
+      text: inlineEditText.value || "",
       type: node.type,
       parentId: node.parentId,
-    })
+    });
 
-    const index = sourceOptions.value.findIndex((opt) => opt.id === node.id)
+    const index = sourceOptions.value.findIndex((opt) => opt.id === node.id);
     if (index >= 0) {
       const newOption = {
         ...sourceOptions.value[index],
         ...updatedOption,
-        title: inlineEditTitle.value || '',
-        text: inlineEditText.value || '',
-        label: inlineEditTitle.value || sourceOptions.value[index].label || '',
-      }
-      sourceOptions.value.splice(index, 1, newOption)
+        title: inlineEditTitle.value || "",
+        text: inlineEditText.value || "",
+        label: inlineEditTitle.value || sourceOptions.value[index].label || "",
+      };
+      sourceOptions.value.splice(index, 1, newOption);
     }
 
     if (activeNode.value && activeNode.value.id === node.id) {
-      await nextTick()
-      const tempId = activeNodeId.value
-      activeNodeId.value = null
+      await nextTick();
+      const tempId = activeNodeId.value;
+      activeNodeId.value = null;
       setTimeout(() => {
-        activeNodeId.value = tempId
-      }, 50)
+        activeNodeId.value = tempId;
+      }, 50);
     }
 
-    editingNodeId.value = null
-    inlineEditTitle.value = ''
-    inlineEditText.value = ''
+    editingNodeId.value = null;
+    inlineEditTitle.value = "";
+    inlineEditText.value = "";
 
-    showSuccess(t('agora', 'Option updated'))
+    showSuccess(t("agora", "Option updated"));
   } catch (error) {
-    console.error('Error saving inline edit:', error)
-    showError(t('agora', 'Failed to update option'))
+    console.error("Error saving inline edit:", error);
+    showError(t("agora", "Failed to update option"));
   }
-}
+};
 
 const formattedContent = computed(() => {
-  if (!activeNode.value?.text || !activeNode.value.text.trim()) return ''
-  return DOMPurify.sanitize(activeNode.value.text || '')
+  if (!activeNode.value?.text || !activeNode.value.text.trim()) return "";
+  return DOMPurify.sanitize(activeNode.value.text || "")
     .trim()
-    .replace(/\n/g, '<br>')
-})
+    .replace(/\n/g, "<br>");
+});
 
 const openNodeDetail = (node: Option): void => {
-  if (editingNodeId.value) return
-  selectedNode.value = node
-  showDetailModal.value = true
-}
+  if (editingNodeId.value) return;
+  selectedNode.value = node;
+  showDetailModal.value = true;
+};
 
 const closeDetailModal = (): void => {
-  showDetailModal.value = false
-  selectedNode.value = null
-}
+  showDetailModal.value = false;
+  selectedNode.value = null;
+};
 
 const openAddOptionModal = (optionTypeKey: string, parentId?: number): void => {
-  selectedOptionTypeKey.value = optionTypeKey
-  selectedParentId.value = parentId || null
-  showAddOptionModal.value = true
-}
+  selectedOptionTypeKey.value = optionTypeKey;
+  selectedParentId.value = parentId || null;
+  showAddOptionModal.value = true;
+};
 
 const openAddOptionModalForRoot = (): void => {
-  const rootType = getRootType()
-  openAddOptionModal(rootType)
-}
+  const rootType = getRootType();
+  openAddOptionModal(rootType);
+};
 
 const closeAddOptionModal = (): void => {
-  showAddOptionModal.value = false
-  selectedOptionTypeKey.value = null
-  selectedParentId.value = null
-}
+  showAddOptionModal.value = false;
+  selectedOptionTypeKey.value = null;
+  selectedParentId.value = null;
+};
 
 const handleNodeUpdated = (updatedNode: Option): void => {
-  const index = optionsStore.options.findIndex((opt) => opt.id === updatedNode.id)
+  const index = optionsStore.options.findIndex(
+    (opt) => opt.id === updatedNode.id,
+  );
   if (index >= 0) {
-    optionsStore.options[index] = updatedNode
+    optionsStore.options[index] = updatedNode;
   }
-  closeDetailModal()
-}
+  closeDetailModal();
+};
 
 const handleNodeDeleted = (deletedNodeId: number): void => {
-  const index = optionsStore.options.findIndex((opt) => opt.id === deletedNodeId)
+  const index = optionsStore.options.findIndex(
+    (opt) => opt.id === deletedNodeId,
+  );
   if (index >= 0) {
-    optionsStore.options.splice(index, 1)
+    optionsStore.options.splice(index, 1);
   }
   if (activeNodeId.value === deletedNodeId) {
-    activeNodeId.value = null
+    activeNodeId.value = null;
   }
-  closeDetailModal()
-}
+  closeDetailModal();
+};
 
 const handleOptionCreated = (newOption: Option): void => {
-  sourceOptions.value.push(newOption)
-  closeAddOptionModal()
+  sourceOptions.value.push(newOption);
+  closeAddOptionModal();
 
-  if ((!newOption.parentId || newOption.parentId === 0) && !activeNodeId.value) {
-    setActiveNode(newOption)
+  if (
+    (!newOption.parentId || newOption.parentId === 0) &&
+    !activeNodeId.value
+  ) {
+    setActiveNode(newOption);
   } else if (newOption.parentId === activeNodeId.value) {
     if (activeNode.value) {
-      setActiveNode(activeNode.value)
+      setActiveNode(activeNode.value);
     }
   }
-}
+};
 
 onMounted(() => {
   if (structureRootOptions.value.length > 0 && !activeNodeId.value) {
-    setActiveNode(structureRootOptions.value[0])
+    setActiveNode(structureRootOptions.value[0]);
   }
-  console.log(' ITEMS IN STRUCTURE ', props.items)
-})
+  console.log(" ITEMS IN STRUCTURE ", props.items);
+});
 </script>
 
 <style scoped lang="scss">

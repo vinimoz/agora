@@ -4,21 +4,23 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { IconProps } from './types'
-import { computed } from 'vue'
+import { t } from "@nextcloud/l10n";
+import { IconProps } from "./types";
+import { computed } from "vue";
 
-const { size = 24, supported = false } = defineProps<IconProps & { supported?: boolean }>()
+const { size = 24, supported = false } = defineProps<
+  IconProps & { supported?: boolean }
+>();
 
-const emojiSymbol = computed(() => '👍')
+const emojiSymbol = computed(() => "👍");
 
-const iconColor = computed(() => (supported ? '#facc15' : '#9ca3af'))
+const iconColor = computed(() => (supported ? "#facc15" : "#9ca3af"));
 
 const dynamicTitle = computed(() =>
   supported
-    ? t('agora', 'Supported - click to remove support')
-    : t('agora', 'Not supported - click to support')
-)
+    ? t("agora", "Supported - click to remove support")
+    : t("agora", "Not supported - click to support"),
+);
 </script>
 
 <template>
@@ -47,7 +49,8 @@ const dynamicTitle = computed(() =>
   vertical-align: middle;
   transition: all 0.3s ease;
   cursor: pointer;
-  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+  font-family:
+    "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
 
 .emoji-thumb-icon.supported {

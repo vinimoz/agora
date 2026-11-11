@@ -16,12 +16,14 @@
           :size="48"
           class="header-icon"
         />
-        <h2>{{ t('agora', 'Export results') }}</h2>
-        <p>{{ t('agora', 'Export voting results in your preferred format') }}</p>
+        <h2>{{ t("agora", "Export results") }}</h2>
+        <p>
+          {{ t("agora", "Export voting results in your preferred format") }}
+        </p>
       </div>
 
       <div class="form-group">
-        <label>{{ t('agora', 'Export format') }}</label>
+        <label>{{ t("agora", "Export format") }}</label>
         <NcSelect
           v-model="exportFormat"
           :options="exportFormats"
@@ -30,19 +32,19 @@
       </div>
 
       <div class="form-group">
-        <label>{{ t('agora', 'Options') }}</label>
+        <label>{{ t("agora", "Options") }}</label>
         <div class="checkbox-group">
           <NcCheckboxRadioSwitch
             v-model="includeMetadata"
             type="switch"
           >
-            {{ t('agora', 'Include metadata') }}
+            {{ t("agora", "Include metadata") }}
           </NcCheckboxRadioSwitch>
           <NcCheckboxRadioSwitch
             v-model="includeTimestamps"
             type="switch"
           >
-            {{ t('agora', 'Include timestamps') }}
+            {{ t("agora", "Include timestamps") }}
           </NcCheckboxRadioSwitch>
         </div>
       </div>
@@ -52,7 +54,7 @@
           type="tertiary"
           @click="handleClose"
         >
-          {{ t('agora', 'Cancel') }}
+          {{ t("agora", "Cancel") }}
         </NcButton>
         <NcButton
           type="primary"
@@ -65,7 +67,7 @@
               :size="20"
             />
           </template>
-          {{ t('agora', 'Export') }}
+          {{ t("agora", "Export") }}
         </NcButton>
       </div>
     </div>
@@ -73,40 +75,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import { InquiryGeneralIcons } from '../../../utils/icons.ts'
+import { ref } from "vue";
+import { t } from "@nextcloud/l10n";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import NcModal from "@nextcloud/vue/components/NcModal";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import NcSelect from "@nextcloud/vue/components/NcSelect";
+import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import { InquiryGeneralIcons } from "../../../utils/icons.ts";
 
 interface Props {
-  show: boolean
+  show: boolean;
   // inquiryId: number
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 const emit = defineEmits<{
-  close: []
-  exported: []
-}>()
+  close: [];
+  exported: [];
+}>();
 
-const exporting = ref(false)
-const exportFormat = ref('csv')
-const includeMetadata = ref(true)
-const includeTimestamps = ref(true)
+const exporting = ref(false);
+const exportFormat = ref("csv");
+const includeMetadata = ref(true);
+const includeTimestamps = ref(true);
 
 const exportFormats = [
-  { value: 'csv', label: 'CSV' },
-  { value: 'json', label: 'JSON' },
-  { value: 'pdf', label: 'PDF' },
-]
+  { value: "csv", label: "CSV" },
+  { value: "json", label: "JSON" },
+  { value: "pdf", label: "PDF" },
+];
 
 const exportResults = async () => {
-  exporting.value = true
+  exporting.value = true;
 
   try {
     // TODO: Call actual export API
@@ -121,24 +123,28 @@ const exportResults = async () => {
     // await new Promise(resolve => setTimeout(resolve, 1000))
 
     showSuccess(
-      t('agora', 'To be implemented, results exported successfully as {format}', {
-        format: exportFormat.value.toUpperCase(),
-      })
-    )
+      t(
+        "agora",
+        "To be implemented, results exported successfully as {format}",
+        {
+          format: exportFormat.value.toUpperCase(),
+        },
+      ),
+    );
 
-    emit('exported')
-    handleClose()
+    emit("exported");
+    handleClose();
   } catch (error) {
-    console.error('Export failed:', error)
-    showError(t('agora', 'Failed to export results'))
+    console.error("Export failed:", error);
+    showError(t("agora", "Failed to export results"));
   } finally {
-    exporting.value = false
+    exporting.value = false;
   }
-}
+};
 
 const handleClose = () => {
-  emit('close')
-}
+  emit("close");
+};
 </script>
 
 <style scoped lang="scss">

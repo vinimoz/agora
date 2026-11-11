@@ -61,8 +61,8 @@
         :is="getFamilyIcon()"
         :size="48"
       />
-      <h4>{{ t('agora', 'No options yet') }}</h4>
-      <p>{{ t('agora', 'Be the first to contribute') }}</p>
+      <h4>{{ t("agora", "No options yet") }}</h4>
+      <p>{{ t("agora", "Be the first to contribute") }}</p>
 
       <div
         v-if="optionTypes.length > 0"
@@ -128,58 +128,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import ItemCard from './ItemCard.vue'
+import { ref, computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { InquiryOptionIcons } from "../../utils/icons.ts";
+import ItemCard from "./ItemCard.vue";
 import {
   getFamilyIconComponent,
   getOptionTypeIconComponent,
-} from '../../helpers/modules/InquiryOptionHelper'
-import type { Item, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
-import { getItemsForFamily } from '../../helpers/modules/itemHelpers'
+} from "../../helpers/modules/InquiryOptionHelper";
+import type {
+  Item,
+  InquiryOptionType,
+  OptionFamily,
+} from "../../Types/index.ts";
+import { getItemsForFamily } from "../../helpers/modules/itemHelpers";
 
 const props = defineProps<{
-  items: Item[]
-  family?: OptionFamily | null
-  parentId: number
-  targetType: 'option' | 'inquiry'
-  optionTypes: InquiryOptionType[]
-  familyOptionTypes?: InquiryOptionType[]
-  familyKey?: string
-  isReadonly?: boolean
-  appSettings?: Record<string, unknown>
-}>()
+  items: Item[];
+  family?: OptionFamily | null;
+  parentId: number;
+  targetType: "option" | "inquiry";
+  optionTypes: InquiryOptionType[];
+  familyOptionTypes?: InquiryOptionType[];
+  familyKey?: string;
+  isReadonly?: boolean;
+  appSettings?: Record<string, unknown>;
+}>();
 
 const emit = defineEmits<{
-  addOption: [optionType: string, parentId?: number]
-  openDetail: [item: Item]
-  optionUpdated: [item: Item]
-  optionDeleted: [itemId: number]
-}>()
+  addOption: [optionType: string, parentId?: number];
+  openDetail: [item: Item];
+  optionUpdated: [item: Item];
+  optionDeleted: [itemId: number];
+}>();
 
-const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+const familyKey = computed(
+  () => props.familyKey ?? props.family?.family_type ?? "",
+);
 
-const filtered = computed(() => getItemsForFamily(props.items, familyKey.value))
+const filtered = computed(() =>
+  getItemsForFamily(props.items, familyKey.value),
+);
 
 // Debug
 console.log(
-  '[Cards] familyKey =',
+  "[Cards] familyKey =",
   familyKey.value,
-  '| items =',
+  "| items =",
   props.items.length,
-  '| filtered =',
-  filtered.value.length
-)
+  "| filtered =",
+  filtered.value.length,
+);
 
-const viewMode = ref<'grid' | 'list' | 'compact'>('grid')
+const viewMode = ref<"grid" | "list" | "compact">("grid");
 
-const hasMultipleViewModes = computed(() => (props.family?.ui as any)?.viewModes?.length > 1)
+const hasMultipleViewModes = computed(
+  () => (props.family?.ui as any)?.viewModes?.length > 1,
+);
 
-const getFamilyIcon = () => getFamilyIconComponent(props.family?.key || 'default')
-const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, props.optionTypes)
-console.log(' ITEMS IN CARD  ', props.items)
+const getFamilyIcon = () =>
+  getFamilyIconComponent(props.family?.key || "default");
+const getOptionTypeIcon = (type: string) =>
+  getOptionTypeIconComponent(type, props.optionTypes);
+console.log(" ITEMS IN CARD  ", props.items);
 </script>
 
 <style scoped lang="scss">

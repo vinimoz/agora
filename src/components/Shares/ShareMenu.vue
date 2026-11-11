@@ -4,96 +4,104 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { ref, computed, onMounted } from "vue";
+import { showSuccess, showError } from "@nextcloud/dialogs";
+import { t } from "@nextcloud/l10n";
 
-import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
-import NcActionInput from '@nextcloud/vue/components/NcActionInput'
-import NcActionRadio from '@nextcloud/vue/components/NcActionRadio'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from "@nextcloud/vue/components/NcActionCaption";
+import NcActionInput from "@nextcloud/vue/components/NcActionInput";
+import NcActionRadio from "@nextcloud/vue/components/NcActionRadio";
+import NcActions from "@nextcloud/vue/components/NcActions";
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
 
-import { AxiosError } from '@nextcloud/axios'
+import { AxiosError } from "@nextcloud/axios";
 
-import { useSharesStore, Share } from '../../stores/shares.ts'
-import { SentResults } from '../../Api/modules/shares.ts'
-import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { ShareIcons } from '../../utils/icons.ts'
+import { useSharesStore, Share } from "../../stores/shares.ts";
+import { SentResults } from "../../Api/modules/shares.ts";
+import { useInquiryGroupsStore } from "../../stores/inquiryGroups.ts";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { ShareIcons } from "../../utils/icons.ts";
 
-const emit = defineEmits(['showQrCode'])
+const emit = defineEmits(["showQrCode"]);
 
-const { share } = defineProps<{ share: Share }>()
+const { share } = defineProps<{ share: Share }>();
 
-const sharesStore = useSharesStore()
-const inquiryGroupsStore = useInquiryGroupsStore()
-const inquiryStore = useInquiryStore()
+const sharesStore = useSharesStore();
+const inquiryGroupsStore = useInquiryGroupsStore();
+const inquiryStore = useInquiryStore();
 
 const isDirectShare = computed(
   () =>
     share.groupId === inquiryGroupsStore.currentInquiryGroup?.id ||
-    share.inquiryId === inquiryStore.id
-)
+    share.inquiryId === inquiryStore.id,
+);
 
-const resolving = ref(false)
+const resolving = ref(false);
 const label = ref({
-  inputValue: '',
+  inputValue: "",
   inputProps: {
     success: false,
     error: false,
     showTrailingButton: true,
     labelOutside: false,
-    label: t('agora', 'Share label'),
+    label: t("agora", "Share label"),
   },
-})
+});
 
-const isActivePublicShare = computed(() => !share.deleted && share.type === 'public')
+const isActivePublicShare = computed(
+  () => !share.deleted && share.type === "public",
+);
 
 type ButtonProps = {
-  activate: boolean
-  name: string
-  action?: () => void
-}
+  activate: boolean;
+  name: string;
+  action?: () => void;
+};
 
 const resendInvitation = computed<ButtonProps>(() => ({
   activate:
-    !share.groupId && !share.deleted && (!!share.user.emailAddress || share.type === 'group'),
+    !share.groupId &&
+    !share.deleted &&
+    (!!share.user.emailAddress || share.type === "group"),
   name: share.invitationSent
-    ? t('agora', 'Resend invitation mail')
-    : t('agora', 'Send invitation mail'),
+    ? t("agora", "Resend invitation mail")
+    : t("agora", "Send invitation mail"),
   action: async () => {
     try {
-      const result = await sharesStore.sendInvitation({ share })
+      const result = await sharesStore.sendInvitation({ share });
       if (result?.sentResult) {
-        handleInvitationResults(result.sentResult)
+        handleInvitationResults(result.sentResult);
       }
     } catch {
-      showError(t('agora', 'Error sending invitation'))
+      showError(t("agora", "Error sending invitation"));
     }
   },
-}))
+}));
 
 function handleInvitationResults(sentResult: SentResults) {
   if (sentResult?.sentMails) {
     sentResult.sentMails.forEach((item) => {
       showSuccess(
-        t('agora', 'Invitation sent to {displayName} ({emailAddress})', {
+        t("agora", "Invitation sent to {displayName} ({emailAddress})", {
           emailAddress: item.emailAddress,
           displayName: item.displayName,
-        })
-      )
-    })
+        }),
+      );
+    });
   }
   if (sentResult?.abortedMails) {
     sentResult.abortedMails.forEach((item) => {
       showError(
-        t('agora', 'Error sending invitation to {displayName} ({emailAddress})', {
-          emailAddress: item.emailAddress,
-          displayName: item.displayName,
-        })
-      )
-    })
+        t(
+          "agora",
+          "Error sending invitation to {displayName} ({emailAddress})",
+          {
+            emailAddress: item.emailAddress,
+            displayName: item.displayName,
+          },
+        ),
+      );
+    });
   }
 }
 
@@ -102,118 +110,135 @@ const resolveGroups = computed<ButtonProps>(() => ({
     !share.groupId &&
     !resolving.value &&
     !share.deleted &&
-    ['contactGroup', 'circle'].includes(share.type),
-  name: t('agora', 'Resolve group into individual invitations'),
+    ["contactGroup", "circle"].includes(share.type),
+  name: t("agora", "Resolve group into individual invitations"),
   action: async () => {
-    if (resolving.value) return
+    if (resolving.value) return;
 
     try {
-      resolving.value = true
-      await sharesStore.resolveGroup({ share })
+      resolving.value = true;
+      await sharesStore.resolveGroup({ share });
     } catch (error) {
       if ((error as AxiosError).response?.status === 409) {
-        const message = (error as AxiosError).response?.data as string
-        resolveGroupResolveError(message)
-        return
+        const message = (error as AxiosError).response?.data as string;
+        resolveGroupResolveError(message);
+        return;
       }
     } finally {
-      resolving.value = false
+      resolving.value = false;
     }
   },
-}))
+}));
 
 function resolveGroupResolveError(message: string) {
   switch (message) {
-    case 'Contacts is not enabled':
-      return t('agora', 'Resolving of {name} is not possible. The contacts app is not enabled.', {
-        name: share.user.displayName,
-      })
-    case 'Circles is not enabled for this user':
-      return t('agora', 'Resolving of {name} is not possible. The teams app is not enabled.', {
-        name: share.user.displayName,
-      })
+    case "Contacts is not enabled":
+      return t(
+        "agora",
+        "Resolving of {name} is not possible. The contacts app is not enabled.",
+        {
+          name: share.user.displayName,
+        },
+      );
+    case "Circles is not enabled for this user":
+      return t(
+        "agora",
+        "Resolving of {name} is not possible. The teams app is not enabled.",
+        {
+          name: share.user.displayName,
+        },
+      );
     default:
-      return t('agora', 'Error resolving {name}', {
+      return t("agora", "Error resolving {name}", {
         name: share.user.displayName,
-      })
+      });
   }
 }
 
 const switchAdmin = computed<ButtonProps>(() => ({
-  activate: !share.groupId && !share.deleted && (share.type === 'user' || share.type === 'admin'),
+  activate:
+    !share.groupId &&
+    !share.deleted &&
+    (share.type === "user" || share.type === "admin"),
   name:
-    share.type === 'user'
-      ? t('agora', 'Grant administrative inquiry access')
-      : t('agora', 'Withdraw administrative inquiry access'),
+    share.type === "user"
+      ? t("agora", "Grant administrative inquiry access")
+      : t("agora", "Withdraw administrative inquiry access"),
   action: () => {
-    sharesStore.switchAdmin({ share })
+    sharesStore.switchAdmin({ share });
   },
-}))
+}));
 
 const copyLinkButton = computed<ButtonProps>(() => ({
   activate: !share.groupId && !share.deleted && !!share.URL,
-  name: t('agora', 'Copy link to clipboard'),
+  name: t("agora", "Copy link to clipboard"),
   action: () => {
     try {
-      navigator.clipboard.writeText(share.URL)
-      showSuccess(t('agora', 'Link copied to clipboard'))
+      navigator.clipboard.writeText(share.URL);
+      showSuccess(t("agora", "Link copied to clipboard"));
     } catch {
-      showError(t('agora', 'Error while copying link to clipboard'))
+      showError(t("agora", "Error while copying link to clipboard"));
     }
   },
-}))
+}));
 
 const showQrCodeButton = computed<ButtonProps>(() => ({
   activate: !share.groupId && !share.deleted && !!share.URL,
-  name: t('agora', 'Show qr code'),
+  name: t("agora", "Show qr code"),
   action: () => {
-    emit('showQrCode')
+    emit("showQrCode");
   },
-}))
+}));
 
 const lockShareButton = computed<ButtonProps>(() => ({
   activate: !share.groupId && !share.deleted,
-  name: share.locked ? t('agora', 'Unlock share') : t('agora', 'Lock share'),
+  name: share.locked ? t("agora", "Unlock share") : t("agora", "Lock share"),
   action: () => {
     try {
       if (share.locked) {
-        sharesStore.unlock({ share })
+        sharesStore.unlock({ share });
       } else {
-        sharesStore.lock({ share })
+        sharesStore.lock({ share });
       }
     } catch {
       showError(
-        t('agora', 'Error while changing lock status of share {displayName}', {
+        t("agora", "Error while changing lock status of share {displayName}", {
           displayName: share.user.displayName,
-        })
-      )
+        }),
+      );
     }
   },
-}))
+}));
 
 const deleteShareButton = computed<ButtonProps>(() => ({
   activate: isDirectShare.value,
-  name: share.deleted ? t('agora', 'Restore share') : t('agora', 'Delete share'),
+  name: share.deleted
+    ? t("agora", "Restore share")
+    : t("agora", "Delete share"),
   action: () => {
     try {
       if (share.deleted) {
-        sharesStore.restore({ share })
+        sharesStore.restore({ share });
       } else {
-        sharesStore.delete({ share })
+        sharesStore.delete({ share });
       }
     } catch {
       showError(
-        t('agora', 'Error while changing deleted status of share {displayName}', {
-          displayName: share.user.displayName,
-        })
-      )
+        t(
+          "agora",
+          "Error while changing deleted status of share {displayName}",
+          {
+            displayName: share.user.displayName,
+          },
+        ),
+      );
     }
   },
-}))
+}));
 
 onMounted(() => {
-  label.value.inputValue = share.label
-})
+  label.value.inputValue = share.label;
+});
 
 /**
  *
@@ -222,7 +247,7 @@ async function submitLabel() {
   sharesStore.writeLabel({
     token: share.token,
     label: label.value.inputValue,
-  })
+  });
 }
 </script>
 
@@ -324,7 +349,7 @@ async function submitLabel() {
         })
       "
     >
-      {{ t('agora', 'Email address is optional') }}
+      {{ t("agora", "Email address is optional") }}
     </NcActionRadio>
 
     <NcActionRadio
@@ -339,7 +364,7 @@ async function submitLabel() {
         })
       "
     >
-      {{ t('agora', 'Email address is mandatory') }}
+      {{ t("agora", "Email address is mandatory") }}
     </NcActionRadio>
 
     <NcActionRadio
@@ -354,7 +379,7 @@ async function submitLabel() {
         })
       "
     >
-      {{ t('agora', 'Do not ask for an email address') }}
+      {{ t("agora", "Do not ask for an email address") }}
     </NcActionRadio>
     <NcActionCaption
       v-if="!share.groupId && !share.deleted"
@@ -366,9 +391,11 @@ async function submitLabel() {
       name="participationLevel"
       :value="0"
       :model-value="share.participationLevel"
-      @update:model-value="sharesStore.setParticipationLevel({ share, level: 0 })"
+      @update:model-value="
+        sharesStore.setParticipationLevel({ share, level: 0 })
+      "
     >
-      {{ t('agora', 'No participation') }}
+      {{ t("agora", "No participation") }}
     </NcActionRadio>
 
     <NcActionRadio
@@ -376,9 +403,11 @@ async function submitLabel() {
       name="participationLevel"
       :value="1"
       :model-value="share.participationLevel"
-      @update:model-value="sharesStore.setParticipationLevel({ share, level: 1 })"
+      @update:model-value="
+        sharesStore.setParticipationLevel({ share, level: 1 })
+      "
     >
-      {{ t('agora', 'Vote only') }}
+      {{ t("agora", "Vote only") }}
     </NcActionRadio>
 
     <NcActionRadio
@@ -386,9 +415,11 @@ async function submitLabel() {
       name="participationLevel"
       :value="2"
       :model-value="share.participationLevel"
-      @update:model-value="sharesStore.setParticipationLevel({ share, level: 2 })"
+      @update:model-value="
+        sharesStore.setParticipationLevel({ share, level: 2 })
+      "
     >
-      {{ t('agora', 'Comment only') }}
+      {{ t("agora", "Comment only") }}
     </NcActionRadio>
 
     <NcActionRadio
@@ -396,9 +427,11 @@ async function submitLabel() {
       name="participationLevel"
       :value="3"
       :model-value="share.participationLevel"
-      @update:model-value="sharesStore.setParticipationLevel({ share, level: 3 })"
+      @update:model-value="
+        sharesStore.setParticipationLevel({ share, level: 3 })
+      "
     >
-      {{ t('agora', 'Vote and comment') }}
+      {{ t("agora", "Vote and comment") }}
     </NcActionRadio>
 
     <NcActionButton

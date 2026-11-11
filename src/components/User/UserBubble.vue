@@ -4,23 +4,26 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
 
-import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
+import NcUserBubble from "@nextcloud/vue/components/NcUserBubble";
 
-import { createDefault, type User } from '../../Types'
+import { createDefault, type User } from "../../Types";
 
 interface Props {
-  user: User
+  user: User;
 }
 
-const { user = createDefault<User>() } = defineProps<Props>()
+const { user = createDefault<User>() } = defineProps<Props>();
 
 const bubbleProps = computed(() => ({
   user: user.isNoUser || user.isGuest ? undefined : user.id,
-  displayName: user.type === 'deleted' ? t('agora', 'Deleted participant') : user.displayName,
-}))
+  displayName:
+    user.type === "deleted"
+      ? t("agora", "Deleted participant")
+      : user.displayName,
+}));
 </script>
 
 <template>

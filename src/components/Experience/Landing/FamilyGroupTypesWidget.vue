@@ -57,11 +57,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { InquiryGeneralIcons as Icons } from '../../../utils/icons'
-import { getInquiryGroupTypeData } from '../../../helpers/modules/InquiryHelper.ts'
-import { useSessionStore } from '../../../stores/session.ts'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
+import { getInquiryGroupTypeData } from "../../../helpers/modules/InquiryHelper.ts";
+import { useSessionStore } from "../../../stores/session.ts";
 
 /**
  * FamilyGroupTypesWidget
@@ -75,34 +75,34 @@ import { useSessionStore } from '../../../stores/session.ts'
 const props = withDefaults(
   defineProps<{
     /** Inquiry family key. Required. */
-    family: string
+    family: string;
     /** Max number of tiles. 0 = no limit. */
-    limit?: number
+    limit?: number;
     /** Show the family header (icon + label). */
-    showHeader?: boolean
+    showHeader?: boolean;
     /** Show the "Access all …" CTA. */
-    showCta?: boolean
+    showCta?: boolean;
     /** Optional overrides — leave empty to use family config. */
-    title?: string
-    subtitle?: string
-    ctaLabel?: string
+    title?: string;
+    subtitle?: string;
+    ctaLabel?: string;
   }>(),
   {
     limit: 0,
     showHeader: true,
     showCta: true,
-    title: '',
-    subtitle: '',
-    ctaLabel: '',
-  }
-)
+    title: "",
+    subtitle: "",
+    ctaLabel: "",
+  },
+);
 
 const emit = defineEmits<{
-  select: [groupType: string]
-  all: []
-}>()
+  select: [groupType: string];
+  all: [];
+}>();
 
-const sessionStore = useSessionStore()
+const sessionStore = useSessionStore();
 
 // ---------------------------------------------------------------------------
 // Family config — source of all labels/icons
@@ -110,42 +110,46 @@ const sessionStore = useSessionStore()
 const familyConfig = computed(
   () =>
     (sessionStore.appSettings?.inquiryFamilyTab || []).find(
-      (f: any) => f.family_type === props.family
-    ) ?? null
-)
+      (f: any) => f.family_type === props.family,
+    ) ?? null,
+);
 
 const headerIcon = computed(() => {
-  const name = familyConfig.value?.icon as string | undefined
-  return (name && (Icons as any)[name]) || Icons.FolderMultiple
-})
+  const name = familyConfig.value?.icon as string | undefined;
+  return (name && (Icons as any)[name]) || Icons.FolderMultiple;
+});
 
-const resolvedTitle = computed(() => props.title || familyConfig.value?.label || props.family)
+const resolvedTitle = computed(
+  () => props.title || familyConfig.value?.label || props.family,
+);
 
-const resolvedSubtitle = computed(() => props.subtitle || familyConfig.value?.description || '')
+const resolvedSubtitle = computed(
+  () => props.subtitle || familyConfig.value?.description || "",
+);
 
 const resolvedCta = computed(() => {
-  if (props.ctaLabel) return props.ctaLabel
-  const label = familyConfig.value?.label || props.family
-  return t('agora', 'Access all {family}', { family: label.toLowerCase() })
-})
+  if (props.ctaLabel) return props.ctaLabel;
+  const label = familyConfig.value?.label || props.family;
+  return t("agora", "Access all {family}", { family: label.toLowerCase() });
+});
 
 // ---------------------------------------------------------------------------
 // Root templates for this family
 // ---------------------------------------------------------------------------
 const rootTypes = computed(() => {
-  const allTypes = sessionStore.appSettings?.inquiryGroupTypeTab || []
+  const allTypes = sessionStore.appSettings?.inquiryGroupTypeTab || [];
   const list = allTypes
     .filter((ty: any) => ty.family === props.family && ty.is_root === true)
     .map((ty: any) => {
-      const data = getInquiryGroupTypeData(ty.group_type, allTypes)
+      const data = getInquiryGroupTypeData(ty.group_type, allTypes);
       return {
         group_type: ty.group_type,
         label: data.label || ty.group_type,
         icon: data.icon,
-      }
-    })
-  return props.limit > 0 ? list.slice(0, props.limit) : list
-})
+      };
+    });
+  return props.limit > 0 ? list.slice(0, props.limit) : list;
+});
 </script>
 
 <style lang="scss" scoped>

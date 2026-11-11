@@ -22,53 +22,53 @@
       @click="clearAllReactions"
     >
       <X :size="14" />
-      {{ t('agora', 'Remove all reactions') }}
+      {{ t("agora", "Remove all reactions") }}
     </NcButton>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import { X } from 'lucide-vue-next'
-import type { Option, Inquiry, SupportData } from '../../../Types/index'
+import { computed } from "vue";
+import { t } from "@nextcloud/l10n";
+import NcButton from "@nextcloud/vue/components/NcButton";
+import { X } from "lucide-vue-next";
+import type { Option, Inquiry, SupportData } from "../../../Types/index";
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  item: Option | Inquiry
-  disabled?: boolean
-  userVote?: SupportData
-}>()
+  engineConfig: Record<string, unknown>;
+  item: Option | Inquiry;
+  disabled?: boolean;
+  userVote?: SupportData;
+}>();
 
 const emit = defineEmits<{
-  'update:reactions': [itemId: number, reactions: string[]]
-}>()
+  "update:reactions": [itemId: number, reactions: string[]];
+}>();
 
 const allowedReactions = computed(() => {
-  const reactions = props.engineConfig.allowed_reactions as string[]
-  return reactions || ['👍', '❤️', '🎉', '🤔', '👎']
-})
+  const reactions = props.engineConfig.allowed_reactions as string[];
+  return reactions || ["👍", "❤️", "🎉", "🤔", "👎"];
+});
 
 const currentReactions = computed(() => {
-  const value = props.userVote?.value
-  if (Array.isArray(value)) return value
-  if (typeof value === 'string') return [value]
-  return []
-})
+  const value = props.userVote?.value;
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string") return [value];
+  return [];
+});
 
 function toggleReaction(reaction: string) {
-  let newReactions: string[]
+  let newReactions: string[];
   if (currentReactions.value.includes(reaction)) {
-    newReactions = currentReactions.value.filter((r) => r !== reaction)
+    newReactions = currentReactions.value.filter((r) => r !== reaction);
   } else {
-    newReactions = [...currentReactions.value, reaction]
+    newReactions = [...currentReactions.value, reaction];
   }
-  emit('update:reactions', props.item.id, newReactions)
+  emit("update:reactions", props.item.id, newReactions);
 }
 
 function clearAllReactions() {
-  emit('update:reactions', props.item.id, [])
+  emit("update:reactions", props.item.id, []);
 }
 </script>
 
