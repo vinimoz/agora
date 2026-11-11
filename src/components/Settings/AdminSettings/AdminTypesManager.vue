@@ -360,7 +360,7 @@ const removeAllowedOptionType = (target: 'new' | 'edit', index: number) =>
           type="text"
           :label="t('agora', 'Search')"
           :label-outside="true"
-          :placeholder="t('agora', 'Search inquiry types…')"
+          :placeholder="t('agora', 'Search inquiry types …')"
           class="search-field"
         />
       </div>

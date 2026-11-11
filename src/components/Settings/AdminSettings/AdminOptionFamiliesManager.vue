@@ -338,7 +338,7 @@ watch(
   type="text"
   :label="t('agora', 'Search')"
   :label-outside="true"
-  :placeholder="t('agora', 'Filter families…')"
+  :placeholder="t('agora', 'Filter families …')"
   class="search-field"
 />
 

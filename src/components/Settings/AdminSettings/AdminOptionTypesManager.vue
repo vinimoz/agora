@@ -362,7 +362,7 @@ defineExpose({ editingType, newType })
           type="text"
           :label="t('agora', 'Search')"
           :label-outside="true"
-          :placeholder="t('agora', 'Search option types…')"
+          :placeholder="t('agora', 'Search option types …')"
           class="search-field"
         />
       </div>
