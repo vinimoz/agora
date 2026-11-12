@@ -1164,7 +1164,6 @@ OC.L10N.register(
     "Failed to delete option type: {msg}" : "Valiku tüübi kustutamine ei õnnestunud: {msg}",
     "Status key is required" : "Olekuvõti on nõutav",
     "Option types — {family}" : "Valikute tüübid - {family}",
-    "Search option types…" : "Otsi valikute tüüpe…",
     "Existing option types" : "Olemasolevad valikute tüübid",
     "{count} statuses" : "{count} olekut",
     "uses title" : "kasutab pealkirja",

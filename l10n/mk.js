@@ -8,6 +8,7 @@ OC.L10N.register(
     "Access denied" : "Забранет пристап",
     "Delete" : "Избриши",
     "_Deleting in {countdown} second_::_Deleting in {countdown} seconds_" : ["Бришење за {countdown} секунда","Бришење за {countdown} секунди"],
+    "Edit access" : "Измени пристап",
     "Register" : "Регистрирај се",
     "Unknown error" : "Непозната грешка",
     "Loading" : "Се вчитува",
