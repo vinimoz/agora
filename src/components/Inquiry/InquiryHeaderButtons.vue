@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import {  onBeforeUnmount } from "vue";
+import { onBeforeUnmount } from "vue";
 import { useInquiryStore } from "../../stores/inquiry.ts";
 import { ActionToggleSidebar } from "../Actions/index.ts";
 import { useSessionStore } from "../../stores/session.ts";
@@ -12,7 +12,6 @@ import Collapsible from "../Base/modules/Collapsible.vue";
 
 const inquiryStore = useInquiryStore();
 const sessionStore = useSessionStore();
-
 
 onBeforeUnmount(() => {
   inquiryStore.$reset();

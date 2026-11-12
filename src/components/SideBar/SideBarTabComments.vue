@@ -7,7 +7,7 @@
 import { computed, onMounted, watch } from "vue";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { t } from "@nextcloud/l10n";
-
+import type { Inquiry } from "../../Types/index.ts";
 import NcEmptyContent from "@nextcloud/vue/components/NcEmptyContent";
 
 import CommentAdd from "../Comments/CommentAdd.vue";
@@ -19,12 +19,16 @@ import { useCommentsStore } from "../../stores/comments";
 import ConfigBox from "../Base/modules/ConfigBox.vue";
 import CardDiv from "../Base/modules/CardDiv.vue";
 
-defineOptions({
-  inheritAttrs: false,
-});
+const props = defineProps<{ inquiry?: Inquiry }>();
 
 const inquiryStore = useInquiryStore();
 const commentsStore = useCommentsStore();
+
+const currentInquiryId = computed(() => props.inquiry?.id ?? inquiryStore.id);
+
+defineOptions({
+  inheritAttrs: false,
+});
 
 const emptyContentProps = {
   name: t("agora", "No comments"),
@@ -34,15 +38,15 @@ const emptyContentProps = {
 const showEmptyContent = computed(() => commentsStore.comments.length === 0);
 
 onMounted(() => {
-  commentsStore.load(inquiryStore.id);
+  if (currentInquiryId.value) commentsStore.load(currentInquiryId.value);
 });
 
 onBeforeRouteUpdate(async () => {
-  commentsStore.load(inquiryStore.id);
+  if (currentInquiryId.value) commentsStore.load(currentInquiryId.value);
 });
 
-onBeforeRouteLeave(() => {
-  commentsStore.$reset();
+watch(currentInquiryId, (id) => {
+  if (id) commentsStore.load(id);
 });
 
 watch(
@@ -51,9 +55,13 @@ watch(
     () => inquiryStore.permissions.seeUsernames,
   ],
   () => {
-    commentsStore.load(inquiryStore.id);
+    if (currentInquiryId.value) commentsStore.load(currentInquiryId.value);
   },
 );
+
+onBeforeRouteLeave(() => {
+  commentsStore.$reset();
+});
 </script>
 
 <template>

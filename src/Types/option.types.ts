@@ -23,6 +23,34 @@ export type OptionConfiguration = {
   expire?: number;
 };
 
+export interface OptionFieldOption {
+  value: string;
+  label: string;
+}
+
+export interface OptionField {
+  key: string;
+  label: string;
+  type:
+    | "string"
+    | "number"
+    | "boolean"
+    | "option"
+    | "datetime"
+    | "json"
+    | "location"
+    | "inquiry"
+    | "category"
+    | "groups"
+    | "users"
+    | "integer"
+    | "enum";
+  required?: boolean;
+  default?: unknown;
+  allowed_values?: unknown[];
+  options?: OptionFieldOption[];
+}
+
 export type OptionCurrentStatus = {
   created: number;
   updated: number;
@@ -41,7 +69,7 @@ export type OptionCurrentStatus = {
 export type CurrentUserOptionStatus = {
   isInvolved: boolean;
   hasSupported: boolean;
-  supportValue: string | null;
+  supportValue: string | number | null;
   supportResult: SupportResult | null;
   isLoggedIn: boolean;
   isOwner: boolean;
@@ -123,7 +151,7 @@ export type OptionGroup = {
 };
 
 export type OptionsByFamily = {
-  [key: string]: OptionGroup[];
+  [key: string]: Option[];
 };
 
 export type OptionsState = {
@@ -149,7 +177,7 @@ export interface InquiryOptionType {
   icon: string;
   label: string;
   description?: string;
-  fields: string[];
+  fields: OptionField[];
   allowed_response: string[];
   allow_comment: number;
   support_feature: string;
@@ -177,23 +205,22 @@ export interface FamilyFeatures {
 }
 
 export interface OptionFamily {
-  // Backend-only fields (present on server objects, absent on client-built ones)
   id?: number;
   family_type?: string;
   sort_order?: number;
   created?: number;
 
-  // Present on both
   label: string;
   description?: string;
   icon?: string;
-  ui?: string[] | Record<string, unknown>;
-  features?: FamilyFeatures | string[];
-  rules?: string[];
-  actions?: string[] | Array<{ key: string; label: string; icon?: string }>;
+
+  // ── Changed to match actual usage ──
+  ui?: Record<string, unknown>;
+  features?: string[];
+  rules?: Record<string, unknown>;
+  actions?: Array<{ key: string; label: string; icon?: string }>;
   statuses?: FamilyStatus[] | string[];
 
-  // Client-side aliases (already there)
   key?: string;
   name?: string;
   color?: string;

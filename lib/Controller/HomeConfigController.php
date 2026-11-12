@@ -29,6 +29,8 @@ class HomeConfigController extends BaseController
 		parent::__construct($appName, $request);
 	}
 
+
+
 	// ================================================================
 	// READ — public (any logged-in user)
 	// ================================================================
@@ -196,7 +198,7 @@ class HomeConfigController extends BaseController
 	 *
 	 * PUT /apps/agora/home-config/instance
 	 */
-	#[FrontpageRoute(verb: 'PUT', url: '/home-config/instance')]
+	#[FrontpageRoute(verb: 'PUT', url: '/home-config/instance/update')]
 	public function updateInstance(
 		array $data,
 		?string $label = null,

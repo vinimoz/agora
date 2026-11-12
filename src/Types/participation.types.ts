@@ -35,6 +35,20 @@ export interface ParticipationPolicy {
     count?: number;
     seed?: string | number;
     method?: LotteryMethod;
+
+    // ── users / groups policy target lists ─────────────────
+    user_ids?: string[]; // ← ADD
+    group_ids?: string[]; // ← ADD
+
+    // ── lottery selections (per-user status) ───────────────
+    lottery?: {
+      selections?: Array<{
+        selected_user_id: string;
+        status: "pending" | "accepted" | "declined" | "expired";
+        expires_at?: number;
+      }>;
+    };
+
     [key: string]: unknown;
   };
   createdAt: number;

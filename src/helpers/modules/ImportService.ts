@@ -79,7 +79,12 @@ export class ImportService {
       const response = await fetch("/apps/agora/import", {
         method: "POST",
         headers: {
-          requesttoken: (window as unknown).OC?.requestToken || "",
+          requesttoken:
+            (
+              window as Window & {
+                OC?: { requestToken?: string };
+              }
+            ).OC?.requestToken || "",
         },
         body: formData,
       });
@@ -89,7 +94,13 @@ export class ImportService {
         throw new Error(error.error || `HTTP ${response.status}`);
       }
 
-      const result = await response.json();
+      const result = (await response.json()) as {
+        success: boolean;
+        error?: string;
+        content: string;
+        title?: string;
+        metadata?: ImportResult["metadata"];
+      };
 
       if (!result.success) {
         throw new Error(result.error);

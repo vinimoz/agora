@@ -13,9 +13,9 @@ import type { Option, Inquiry } from "../../Types/index.ts";
 
 export type GenericItem = Option | Inquiry;
 
-export interface GenericItemWithMiscFields extends GenericItem {
+export type GenericItemWithMiscFields = (Option | Inquiry) & {
   miscFields?: Record<string, unknown>;
-}
+};
 
 // ============================================================================
 // ITEM PROPERTY GETTERS
@@ -28,8 +28,25 @@ export interface GenericItemWithMiscFields extends GenericItem {
 export function getItemTitle(item: GenericItem | null | undefined): string {
   if (!item) return "";
   if ("title" in item && item.title) return item.title;
-  if ("label" in item && item.label) return item.label;
+
+  const label = (item as { label?: string }).label;
+  if (label) return label;
+
   return `Item #${item.id}`;
+}
+
+/**
+ * Get the type of an item (works for both Option and Inquiry)
+ * @param item
+ */
+export function getItemType(item: GenericItem | null | undefined): string {
+  if (!item) return "text";
+  if ("type" in item && item.type) return item.type;
+
+  const inquiryType = (item as { inquiry_type?: string }).inquiry_type;
+  if (inquiryType) return inquiryType;
+
+  return "text";
 }
 
 /**
@@ -48,17 +65,6 @@ export function getItemStatus(item: GenericItem | null | undefined): string {
     }
   }
   return "draft";
-}
-
-/**
- * Get the type of an item (works for both Option and Inquiry)
- * @param item
- */
-export function getItemType(item: GenericItem | null | undefined): string {
-  if (!item) return "text";
-  if ("type" in item && item.type) return item.type;
-  if ("inquiry_type" in item && item.inquiry_type) return item.inquiry_type;
-  return "text";
 }
 
 /**
@@ -447,8 +453,8 @@ export function getItemTypeIconComponent(
 ): Component {
   const iconName = getItemTypeIcon(type, optionTypes);
   return (
-    InquiryOptionIcons[iconName] ||
-    InquiryGeneralIcons[iconName] ||
+    (InquiryOptionIcons as Record<string, Component>)[iconName] ||
+    (InquiryGeneralIcons as Record<string, Component>)[iconName] ||
     InquiryGeneralIcons.File
   );
 }
@@ -607,8 +613,8 @@ export function getItemStatusIcon(
 
   const iconName = icons[status] || "File";
   return (
-    InquiryOptionIcons[iconName] ||
-    InquiryGeneralIcons[iconName] ||
+    (InquiryOptionIcons as Record<string, Component>)[iconName] ||
+    (InquiryGeneralIcons as Record<string, Component>)[iconName] ||
     InquiryGeneralIcons.File
   );
 }

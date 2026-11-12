@@ -6,6 +6,7 @@ import NcUserBubble from "@nextcloud/vue/components/NcUserBubble";
 import { h } from "vue";
 import { Icon } from "@iconify/vue";
 import type { Component } from "vue";
+import type { IconifyIcon } from "@iconify/vue";
 
 // -------------------------------
 import FolderMultiple from "@iconify-icons/mdi/folder-multiple";
@@ -304,13 +305,12 @@ import DragHorizontal from "@iconify-icons/mdi/drag-horizontal";
 import InboxRemove from "@iconify-icons/mdi/inbox-remove";
 
 // -------------------------------
-// -------------------------------
 export const makeIconComponent = (
-  icon: Component,
+  icon: IconifyIcon,
   color = "#000",
   size = 24,
 ) => ({
-  name: `Icon-${icon.name || "custom"}`,
+  name: "CustomIcon",
   render() {
     return h(Icon, {
       icon,

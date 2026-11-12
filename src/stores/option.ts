@@ -58,6 +58,7 @@ export const useOptionStore = defineStore("option", {
       isInvolved: false,
       hasSupported: false,
       supportValue: null,
+      supportResult: null,
       isLoggedIn: false,
       isOwner: false,
       shareToken: "",
@@ -140,18 +141,19 @@ export const useOptionStore = defineStore("option", {
     },
 
     formattedExpireDate(): string {
-      if (this.configuration.expire > 0) {
-        const date = new Date(this.configuration.expire * 1000);
+      const expire = this.configuration.expire ?? 0;
+      if (expire > 0) {
+        const date = new Date(expire * 1000);
         return date.toLocaleString();
       }
       return "";
     },
 
     isExpired(): boolean {
+      const expire = this.configuration.expire ?? 0;
       const now = Date.now() / 1000;
-      return this.configuration.expire > 0 && this.configuration.expire < now;
+      return expire > 0 && expire < now;
     },
-
     formattedCreatedDate(): string {
       const date = new Date(this.meta.chunking.loaded * 1000);
       return date.toLocaleString();
@@ -172,6 +174,10 @@ export const useOptionStore = defineStore("option", {
 
     hasChildren(): boolean {
       return this.childs && this.childs.length > 0;
+    },
+
+    isClosed(): boolean {
+      return this.status.optionStatus === "archived";
     },
 
     childCount(): number {
@@ -206,7 +212,6 @@ export const useOptionStore = defineStore("option", {
       };
     },
 
-    // Fixed: miscFields holds *values* (Record<string, …>), so the
     // field *configs* must come from `this.typeInfo.fields`.
     hasRequiredMiscFields(): boolean {
       const fields = this.typeInfo?.fields;
@@ -214,15 +219,14 @@ export const useOptionStore = defineStore("option", {
       return fields.some((field) => field.required === true);
     },
 
-    // Fixed: iterate required field configs, read each value from miscFields.
     allRequiredMiscFieldsFilled(): boolean {
       const fields = this.typeInfo?.fields;
       if (!Array.isArray(fields)) return true;
       return fields
         .filter((field) => field.required === true)
         .every((field) => {
-          const value = this.miscFields[field.key];
-          return value !== undefined && value !== null && value !== "";
+          const entry = this.miscFields[field.key];
+          return entry !== undefined && entry.value !== "";
         });
     },
 
@@ -407,7 +411,9 @@ export const useOptionStore = defineStore("option", {
       try {
         const response = await OptionsAPI.toggleArchive(payload.optionId);
         if (this.id === payload.optionId) {
-          this.$patch(response.data.option);
+          this.$patch((state) => {
+            Object.assign(state, response.data.option);
+          });
           this.syncToCollectionStore();
         }
       } catch (error) {
@@ -469,7 +475,9 @@ export const useOptionStore = defineStore("option", {
       const inquiryStore = useInquiryStore();
       try {
         const response = await OptionsAPI.closeOption(this.id);
-        this.$patch(response.data.option);
+        this.$patch((state) => {
+          Object.assign(state, response.data.option);
+        });
         this.status.optionStatus = "archived";
       } catch (error) {
         if ((error as AxiosError)?.code === "ERR_CANCELED") {
@@ -492,7 +500,9 @@ export const useOptionStore = defineStore("option", {
       const inquiryStore = useInquiryStore();
       try {
         const response = await OptionsAPI.reopenOption(this.id);
-        this.$patch(response.data.option);
+        this.$patch((state) => {
+          Object.assign(state, response.data.option);
+        });
         this.status.optionStatus = "published";
       } catch (error) {
         if ((error as AxiosError)?.code === "ERR_CANCELED") {
@@ -546,7 +556,9 @@ export const useOptionStore = defineStore("option", {
           this.$reset();
           return;
         }
-        this.$patch(response.data.option);
+        this.$patch((state) => {
+          Object.assign(state, response.data.option);
+        });
 
         if (response.data.option.owner.id === sessionStore.currentUser.id)
           sessionStore.currentUser.isOwner = true;
@@ -574,7 +586,6 @@ export const useOptionStore = defineStore("option", {
       targetId?: number;
       parentId?: number;
       ownedGroup?: string;
-      access?: string;
       supportFeature?: string;
       allowComment?: number;
       family: string;
@@ -625,18 +636,15 @@ export const useOptionStore = defineStore("option", {
         > = {};
         if (typeInfo?.fields) {
           const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : [];
-          fields.forEach(
-            (field: { key: string; value: string; default?: unknown }) => {
-              if (field.default !== undefined) {
-                defaultMiscFields[field.key] = field.default as {
-                  key: string;
-                  value: string;
-                };
-              }
-            },
-          );
+          fields.forEach((field) => {
+            if (field.default !== undefined) {
+              defaultMiscFields[field.key] = {
+                key: field.key,
+                value: String(field.default),
+              };
+            }
+          });
         }
-
         const mergedMiscFields = {
           ...defaultMiscFields,
           ...(payload.miscFields || {}),
@@ -650,7 +658,6 @@ export const useOptionStore = defineStore("option", {
           ownedGroup: payload.ownedGroup || "",
           owner: payload.owner || "",
           family: payload.family || "",
-          access: payload.access || "private",
           status: payload.status || "draft",
           supportFeature: payload.supportFeature || "none",
           allowComment: payload.allowComment || 0,
@@ -689,8 +696,8 @@ export const useOptionStore = defineStore("option", {
 
       fields.forEach((field) => {
         if (field.required) {
-          const value = this.miscFields[field.key];
-          if (value === undefined || value === null || value === "") {
+          const entry = this.miscFields[field.key];
+          if (entry === undefined || entry.value === "") {
             errors.push(
               t("agora", "{field} is required", { field: field.label }),
             );
@@ -698,15 +705,14 @@ export const useOptionStore = defineStore("option", {
         }
 
         if (field.type === "number" && this.miscFields[field.key]) {
-          const numValue = Number(this.miscFields[field.key]);
-          if (isNaN(numValue)) {
+          const raw = this.miscFields[field.key].value;
+          if (raw !== "" && isNaN(Number(raw))) {
             errors.push(
               t("agora", "{field} must be a number", { field: field.label }),
             );
           }
         }
       });
-
       return {
         valid: errors.length === 0,
         errors,
@@ -722,7 +728,6 @@ export const useOptionStore = defineStore("option", {
         targetId: number;
         parentId: number;
         ownedGroup: string;
-        access: string;
         showResults: string;
         allowComment: number;
         supportFeature: string;
@@ -749,12 +754,15 @@ export const useOptionStore = defineStore("option", {
               targetId: payload.targetId,
               parentId: payload.parentId,
               ownedGroup: payload.ownedGroup,
-              access: payload.access,
               showResults: payload.showResults,
               allowComment: payload.allowComment,
               supportFeature: payload.supportFeature,
               family: payload.family,
-              status: payload.status,
+              status:
+                payload.status !== undefined
+                  ? { ...this.status, optionStatus: payload.status }
+                  : undefined,
+
               miscFields: payload.miscFields ?? {},
             },
           );
@@ -814,7 +822,6 @@ export const useOptionStore = defineStore("option", {
       text?: string;
       type?: string;
       ownedGroup?: string;
-      access?: string;
       status?: string;
       miscFields?: Record<string, { key: string; value: string }>;
     }): Promise<Option | void> {
@@ -822,8 +829,8 @@ export const useOptionStore = defineStore("option", {
         const response = await OptionsAPI.addChildOption(this.id, {
           text: payload.text || "",
           type: payload.type || "debate",
+          access: "private",
           ownedGroup: payload.ownedGroup || "",
-          access: payload.access || "private",
           status: payload.status || "draft",
           miscFields: payload.miscFields || {},
         });
@@ -832,7 +839,7 @@ export const useOptionStore = defineStore("option", {
         this.childs.push(newChild);
 
         const optionsStore = useOptionsStore();
-        optionsStore.addOption(newChild);
+        optionsStore.updateOption({ option: newChild });
         this.syncToCollectionStore();
         return newChild;
       } catch (error) {
@@ -879,13 +886,13 @@ export const useOptionStore = defineStore("option", {
 
         await OptionsAPI.deleteOption(this.id);
 
-        emit(Event.DeleteOption, {
+        emit(Event.OptionDeleted, {
+          store: "option",
           optionId: this.id,
           message: this.hasChildren
             ? t("agora", "Option and all children deleted")
             : t("agora", "Option deleted"),
         });
-
         if (sessionStore.currentOptionId === this.id) {
           this.reset();
         }
@@ -939,10 +946,11 @@ export const useOptionStore = defineStore("option", {
             this.id,
             this.configuration,
           );
-          this.$patch(response.data.option);
+          this.$patch((state) => {
+            Object.assign(state, response.data.option);
+          });
           this.initializeTypeInfo();
-
-          emit(Event.UpdateOption, {
+          emit(Event.UpdateOptions, {
             store: "option",
             message: t("agora", "Option updated"),
           });
@@ -999,7 +1007,7 @@ export const useOptionStore = defineStore("option", {
       }
 
       try {
-        await OptionsAPI.updateOptionMiscField(this.id, { key, value });
+        await OptionsAPI.updateOptionMiscField(this.id, value);
         this.miscFields[key] = value;
         this.syncToCollectionStore();
       } catch (error) {

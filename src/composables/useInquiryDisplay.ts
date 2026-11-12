@@ -72,16 +72,18 @@ export function useInquiryDisplay(inquiry: MaybeRefOrGetter<Inquiry | null>) {
         (statusInfo.value?.icon as keyof typeof StatusIcons) ?? "Default"
       ] ?? StatusIcons.Default,
   );
-  const statusClass = computed(
-    () =>
-      ({
-        active: "status-open",
-        open: "status-open",
-        closed: "status-closed",
-        draft: "status-draft",
-        waiting_approval: "status-waiting",
-      })[statusKey.value] ?? "status-unknown",
-  );
+
+  const statusClass = computed(() => {
+    const map: Record<string, string> = {
+      active: "status-open",
+      open: "status-open",
+      closed: "status-closed",
+      draft: "status-draft",
+      waiting_approval: "status-waiting",
+      rejected: "status-rejected",
+    };
+    return map[statusKey.value] ?? "status-unknown";
+  });
 
   // ── cover ───────────────────────────────────────────
   const coverUrl = computed(() => {

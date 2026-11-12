@@ -4,6 +4,8 @@
  */
 
 import { defineStore } from "pinia";
+import { t } from "@nextcloud/l10n";
+import { AxiosError } from "@nextcloud/axios";
 import { getCurrentUser } from "@nextcloud/auth";
 import { PublicAPI, SessionAPI } from "../Api/index.ts";
 import {
@@ -14,16 +16,18 @@ import {
   UpdateType,
 } from "../Types/index.ts";
 import { useAppSettingsStore } from "./appSettings.ts";
-import { SessionSettings } from "./preferences.ts";
-import { useInquiriesStore } from "./inquiries.ts";
+import { SessionSettings } from "../Types/session.types.ts";
 import { FilterType } from "../Types/inquiry.types.ts";
 import { Share } from "../Types/share.types.ts";
-import { RouteLocationNormalized, RouteRecordNameGeneric } from "vue-router";
+import {
+  RouteLocationNormalized,
+  RouteLocationNormalizedLoaded,
+  RouteRecordNameGeneric,
+} from "vue-router";
 import { Logger } from "../helpers/index.ts";
 import { useInquiryStore } from "./inquiry.ts";
+import { useInquiriesStore } from "./inquiries.ts";
 import { useSubscriptionStore } from "./subscription.ts";
-import { AxiosError } from "@nextcloud/axios";
-import { t } from "@nextcloud/l10n";
 import { useInquiryGroupsStore } from "./inquiryGroups.ts";
 
 interface RouteParams {
@@ -83,6 +87,10 @@ export const useSessionStore = defineStore("session", {
       seeMailAddresses: false,
       unrestrictedOwner: false,
     },
+    sessionSettings: {
+      timezoneName: "local",
+    },
+
     appSettings: createDefault<AppSettings>(),
     route: {
       currentRoute: "",
@@ -145,7 +153,7 @@ export const useSessionStore = defineStore("session", {
         } else if (state.route.name === "group") {
           const inquiryGroupsStore = useInquiryGroupsStore();
           if (inquiryGroupsStore.currentInquiryGroup) {
-            title = `${t("agora", "Agora")} – ${inquiryGroupsStore.currentInquiryGroup.titleExt || inquiryGroupsStore.currentInquiryGroup.name || ""}`;
+            title = `${t("agora", "Agora")} – ${inquiryGroupsStore.currentInquiryGroup.titleExt || inquiryGroupsStore.currentInquiryGroup.title || ""}`;
           }
         } else if (
           state.route.name === "publicInquiry" ||
@@ -175,71 +183,6 @@ export const useSessionStore = defineStore("session", {
     generateWatcherId() {
       this.watcher.id = Math.random().toString(36).substring(2);
     },
-    /*
-    async load(
-      to: null | RouteLocationNormalized,
-      cheapLoading: boolean = false,
-      forceReload: boolean = false
-    ) {
-      Logger.debug('Loading session')
-      if (!forceReload && this.isLoaded && this.currentUser.id === lastLoadedUserId) {
-        Logger.debug('Session already loaded for same user, skipping, route set to:', to)
-        if (to !== null) await this.setRouter(to)
-        return
-      }
-
-      this.generateWatcherId()
-
-      if (to !== null) {
-        Logger.debug('Set requested route', { to })
-        await this.setRouter(to)
-        Logger.debug('Route set', { route: this.route })
-      }
-
-      if (cheapLoading) {
-        Logger.debug('Same route, skipping session load')
-        return
-      }
-
-      try {
-        const response = await (() => {
-          if (this.route.name === 'publicInquiry') {
-            return PublicAPI.getSession(this.publicToken)
-          }
-          return SessionAPI.getSession()
-        })()
-
-        this.$patch(response.data)
-	// We store the appSettingsStore
-	const appSettingsStore = useAppSettingsStore()
-	 appSettingsStore.$patch({
-      		inquiryStatusTab: this.appSettings.inquiryStatusTab,
-      		inquiryTypeTab: this.appSettings.inquiryTypeTab,
-      		inquiryOptionTypeTab: this.appSettings.inquiryOptionTypeTab,
-      		inquiryGroupTypeTab: this.appSettings.inquiryGroupTypeTab,
-      		inquiryFamilyTab: this.appSettings.inquiryFamilyTab,
-      		optionFamilyTab: this.appSettings.optionFamilyTab,
-      		categoryTab: this.appSettings.categoryTab,
-      		locationTab: this.appSettings.locationTab,
-    	})
-
-        this.isLoaded = true
-        lastLoadedUserId = this.currentUser.id
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-
-        this.$reset()
-        if (this.route.name === null) {
-          this.$reset()
-        } else {
-          throw error
-        }
-      }
-      Logger.debug('Session loaded')
-    },
-    */
     async load(
       to: null | RouteLocationNormalized,
       cheapLoading: boolean = false,
@@ -255,7 +198,6 @@ export const useSessionStore = defineStore("session", {
         ) {
           Logger.debug(
             "Session already loaded for same user, skipping, route set to:",
-            to,
           );
           if (to !== null) await this.setRouter(to);
           return;
@@ -287,23 +229,26 @@ export const useSessionStore = defineStore("session", {
         }
 
         if (response && response.data) {
-          this.$patch(response.data);
-
+          this.$patch((state) => {
+            Object.assign(state, response.data);
+          });
           // Update appSettingsStore safely
           try {
             const appSettingsStore = useAppSettingsStore();
             if (appSettingsStore) {
-              appSettingsStore.$patch({
-                inquiryStatusTab: this.appSettings?.inquiryStatusTab || [],
-                inquiryTypeTab: this.appSettings?.inquiryTypeTab || [],
-                inquiryOptionTypeTab:
-                  this.appSettings?.inquiryOptionTypeTab || [],
-                inquiryGroupTypeTab:
-                  this.appSettings?.inquiryGroupTypeTab || [],
-                inquiryFamilyTab: this.appSettings?.inquiryFamilyTab || [],
-                optionFamilyTab: this.appSettings?.optionFamilyTab || [],
-                categoryTab: this.appSettings?.categoryTab || [],
-                locationTab: this.appSettings?.locationTab || [],
+              appSettingsStore.$patch((state) => {
+                state.inquiryStatusTab =
+                  this.appSettings?.inquiryStatusTab || [];
+                state.inquiryTypeTab = this.appSettings?.inquiryTypeTab || [];
+                state.inquiryOptionTypeTab =
+                  this.appSettings?.inquiryOptionTypeTab || [];
+                state.inquiryGroupTypeTab =
+                  this.appSettings?.inquiryGroupTypeTab || [];
+                state.inquiryFamilyTab =
+                  this.appSettings?.inquiryFamilyTab || [];
+                state.optionFamilyTab = this.appSettings?.optionFamilyTab || [];
+                state.categoryTab = this.appSettings?.categoryTab || [];
+                state.locationTab = this.appSettings?.locationTab || [];
               });
             }
           } catch (storeError) {
@@ -351,7 +296,9 @@ export const useSessionStore = defineStore("session", {
       Logger.debug("Session loaded");
     },
 
-    async setRouter(payload: RouteLocationNormalized) {
+    async setRouter(payload: RouteLocationNormalizedLoaded | null) {
+      if (!payload) return;
+
       this.route.currentRoute = payload.fullPath || "";
       this.route.name = payload.name || "";
       this.route.path = payload.path || "";

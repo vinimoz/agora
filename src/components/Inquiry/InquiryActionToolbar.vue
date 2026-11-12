@@ -34,7 +34,6 @@ const props = defineProps<{
 
 const inquiriesStore = useInquiriesStore();
 
-
 // Emits
 const emit = defineEmits<{
   save: [];

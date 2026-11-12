@@ -459,7 +459,6 @@ function currentStatusOf(item: VotableItem): string {
   return "draft";
 }
 
-
 async function patchOption(
   item: Option,
   patch: MiscUpdateMap,

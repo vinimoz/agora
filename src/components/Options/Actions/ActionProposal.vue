@@ -90,7 +90,6 @@ const generatedOptions = ref<GeneratedOption[]>([]);
 const createdCount = ref(0);
 const configModalRef = ref<InstanceType<typeof GenerateOptionsModal>>();
 
-
 // Methods
 const executeAction = async () => {
   if (!props.show) return;
@@ -180,9 +179,7 @@ const handleGenerate = async (prompt: string, count: number) => {
   }
 };
 
-const parseOptions = (
-  response: any,
-): GeneratedOption[] => {
+const parseOptions = (response: any): GeneratedOption[] => {
   let options: GeneratedOption[] = [];
 
   // Check if response has options array

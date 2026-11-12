@@ -41,7 +41,7 @@ import {
   canView,
   createInquiryContext,
 } from "../../utils/permissions.ts";
-import type { Inquiry, InquiryType, OptionType } from '@Types/'
+import type { Inquiry, InquiryType, OptionType } from "@Types/";
 
 // Props
 const props = defineProps<{

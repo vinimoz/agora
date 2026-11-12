@@ -360,7 +360,6 @@ const getEnumModelValue = (field: Field) => {
   return found || value;
 };
 
-
 // ============================================================
 // CHECKBOX HELPERS
 // ============================================================
@@ -692,8 +691,8 @@ onMounted(() => {
                     :options="hierarchicalLocation"
                     :clearable="!field.required"
                     :label-outside="true"
-                    :option-label="(option: any) => option?.label || option"
-                    :option-value="(option: any) => option?.value || option"
+                    :option-label="(option: Option) => option?.label || option"
+                    :option-value="(option: Option) => option?.value || option"
                     :disabled="isSaving"
                     class="select-field location-select"
                     :placeholder="t('Select location')"
@@ -727,8 +726,8 @@ onMounted(() => {
                     :options="hierarchicalCategory"
                     :clearable="!field.required"
                     :label-outside="true"
-                    :option-label="(option: any) => option?.label || option"
-                    :option-value="(option: any) => option?.value || option"
+                    :option-label="(option: Option) => option?.label || option"
+                    :option-value="(option: Option) => option?.value || option"
                     :disabled="isSaving"
                     class="select-field category-select"
                     :placeholder="t('Select category')"
@@ -745,8 +744,8 @@ onMounted(() => {
                   v-else-if="field.type === 'enum'"
                   :model-value="getEnumModelValue(field)"
                   :options="normalizeAllowedValues(field.allowed_values)"
-                  :option-label="(option: any) => option?.label || option"
-                  :option-value="(option: any) => option?.value || option"
+                  :option-label="(option: Option) => option?.label || option"
+                  :option-value="(option: Option) => option?.value || option"
                   :clearable="!field.required"
                   :label-outside="true"
                   :disabled="isSaving"

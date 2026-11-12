@@ -42,10 +42,6 @@ async function loadContext(
     Logger.info("Context loaded");
   } catch (error) {
     console.error("❌ loadContext error:", error);
-    console.error("Error name:", error.name);
-    console.error("Error message:", error.message);
-    console.error("Error stack:", error.stack);
-
     Logger.error("Could not load context", { error });
     throw error; // Re-throw to let router handle it
   }

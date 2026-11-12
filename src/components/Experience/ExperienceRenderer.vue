@@ -61,7 +61,7 @@
           `display-${zone.display?.type || 'cards'}`,
           {
             'is-empty':
-              !shouldRenderZone(zone, String(zoneKey)) ||
+              !shouldRenderZone(zone) ||
               !isZoneRenderable(zone),
           },
         ]"
@@ -80,7 +80,7 @@
             getZoneLabel(zone, String(zoneKey))
           }}</span>
           <span
-            v-if="hasZoneData(zone, String(zoneKey)) && isZoneRenderable(zone)"
+            v-if="hasZoneData(zone) && isZoneRenderable(zone)"
             class="zone-count"
           >
             {{ getZoneCount(zone) }}
@@ -92,7 +92,7 @@
           <!-- Render component when data exists AND zone is renderable -->
           <template
             v-if="
-              shouldRenderZone(zone, String(zoneKey)) && isZoneRenderable(zone)
+              shouldRenderZone(zone) && isZoneRenderable(zone)
             "
           >
             <component
@@ -315,7 +315,7 @@
 // ============================================================
 // IMPORTS
 // ============================================================
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, type Component } from "vue";
 import { t } from "@nextcloud/l10n";
 import NcButton from "@nextcloud/vue/components/NcButton";
 import { InquiryGeneralIcons as Icons } from "../../utils/icons";
@@ -380,9 +380,13 @@ import type {
   InteractionAction,
   InteractionTarget,
   DisplayType,
+  DisplayZone,
+  Scope,
 } from "../../Types/experience.types";
 import { useSessionStore } from "../../stores/session";
 import { useCommentsStore } from "../../stores/comments";
+import { useInquiryLinksStore } from "../../stores/inquiryLinks";
+import { useOptionsStore } from "../../stores/options";
 import { useInquiryGroupsStore } from "../../stores/inquiryGroups";
 import { useInquiriesStore } from "../../stores/inquiries";
 import { getExperienceArchitecture } from "../../composables/experienceArchitecture";
@@ -410,14 +414,14 @@ import { useRelevance } from "../../composables/useRelevance";
 import {
   getOptionTypesForFamily,
   getLayoutForFamily,
-  getForceLayouts,
 } from "../../helpers/modules/InquiryOptionHelper";
+import { getForceLayouts } from "../../helpers/modules/GenericItemHelper";
 
 import type { Inquiry, Option } from "../../Types/index.ts";
 import { toItems } from "../../helpers/modules/itemHelpers";
 import { useUserContext } from "../../composables/useUserContext";
-import { useOptionsStore } from "../../stores/options";
-import {  useInquiryLinksStore } from "../../stores/inquiryLinks";
+import type { Comment } from "../../Types/comments.types";
+import type { Support } from "../../Types/support.types";
 
 // ============================================================
 // PROPS
@@ -427,7 +431,7 @@ const props = defineProps<{
   inquiries?: Inquiry[];
   options?: Option[];
   experience?: string;
-  displayArchitecture?: Record<string, any> | null;
+  displayArchitecture?: Record<string, DisplayZone> | null;
   layoutConfig?: {
     type: string;
     columns?: number;
@@ -454,12 +458,12 @@ const props = defineProps<{
 // ============================================================
 const emit = defineEmits<{
   viewInquiry: [inquiry: Inquiry];
-  viewOption: [option: any];
+  viewOption: [option: Option];
   viewGroup: [group: InquiryGroup];
   selectInquiry: [inquiry: Inquiry];
   selectGroup: [group: InquiryGroup];
-  comment: [inquiryId: number, comment: any];
-  support: [inquiryId: number, value: any];
+  comment: [inquiryId: number, comment: Comment];
+  support: [inquiryId: number, value: Support];
   retry: [];
   createInquiry: [];
   sidebarNavigate: [target: string];
@@ -531,7 +535,10 @@ const gridStyle = computed(() => {
   } as Record<string, string>;
 });
 
-function effectiveContentForZone(zone: any): { content: string; display: any } {
+function effectiveContentForZone(zone: DisplayZone | null | undefined): {
+  content: string;
+  display: DisplayZone["display"];
+} {
   if (!zone) return { content: "inquiries", display: { type: "list" } };
   return {
     content: zone.content || "inquiries",
@@ -708,7 +715,7 @@ const filteredArchitecture = computed(() => {
 // EFFECTIVE ARCHITECTURE (camelCase)
 // ============================================================
 const effectiveArchitecture = computed(() => {
-  let arch: Record<string, any> = {};
+  let arch: Record<string, DisplayZone> = {};
   try {
     const exp = props.experience || "dashboard";
     const groupDefault = props.uiConfig?.defaultExperience || "dashboard";
@@ -772,32 +779,25 @@ function resolveHeroImage(src: string | number | undefined | null): string {
 
 function resolveIcon(icon: unknown): unknown {
   if (!icon || typeof icon !== "string") return icon;
-  return (Icons as unknown)[icon] || Icons.CheckCircle;
+  return (Icons as Record<string, Component>)[icon] || Icons.CheckCircle;
 }
 
-function resolveHeroActions(actions: unknown[]) {
-  return (actions || []).map((a) => ({ ...a, icon: resolveIcon(a.icon) }));
+function resolveHeroActions(actions: Array<Record<string, unknown>> = []) {
+  return actions.map((a) => ({ ...a, icon: resolveIcon(a.icon) }));
 }
 
 function getOptionsForInquiry(inquiry: Inquiry | null): Option[] {
   if (!inquiry) return [];
-
   const targetId = Number(inquiry.id);
-
-  return optionsStore.options.filter((o: Option) => {
-    // The store uses `targetId` for the inquiry reference. Fall back to
-    // `inquiryId` / `target_id` / `inquiry_id` so this survives future
-    // backend field renames without a silent-empty regression.
-    const parentInquiry =
-      o.targetId ?? o.inquiryId ?? o.target_id ?? o.inquiry_id;
-    return Number(parentInquiry) === targetId;
-  });
+  return optionsStore.options.filter((o) => Number(o.targetId) === targetId);
 }
 
 // ============================================================
 // ZONE GRID POSITION HELPER (camelCase)
 // ============================================================
-function getZoneGridPosition(zone: any): GridPosition | null {
+function getZoneGridPosition(
+  zone: DisplayZone | null | undefined,
+): GridPosition | null {
   if (!zone || !zone.position) return null;
 
   const pos = zone.position;
@@ -809,7 +809,7 @@ function getZoneGridPosition(zone: any): GridPosition | null {
   };
 }
 
-function getColumns(zone: any): number {
+function getColumns(zone: DisplayZone): number {
   const display = zone.display || { type: "cards" };
   return display.options?.cardsPerRow || display.cardsPerRow || 3;
 }
@@ -817,7 +817,7 @@ function getColumns(zone: any): number {
 // ============================================================
 // ZONE DATA HELPERS
 // ============================================================
-function getZoneData(zone: any): any[] {
+function getZoneData(zone: DisplayZone): unknown[] {
   if (!zone) return [];
   const { content } = effectiveContentForZone(zone);
   const scope = zone.scope || { source: "all" };
@@ -826,14 +826,15 @@ function getZoneData(zone: any): any[] {
 
   // 'trending' pseudo-sort → use relevance ranking
   if (scope.sort?.field === "trending") {
-    const ranked = rank(raw).map((r: any) => r.inquiry);
+    const ranked = rank(raw).map((r: { inquiry: Inquiry }) => r.inquiry);
     const limit = scope.pagination?.limit ?? ranked.length;
     const offset = scope.pagination?.offset ?? 0;
     return ranked.slice(offset, offset + limit);
   }
 
   // Options have an extra union rule the generic pipeline can't express.
-  if (content === "options") return processOptionZoneData(raw, zone);
+  if (content === "options")
+    return processOptionZoneData(raw as Option[], zone);
 
   // Everything else: shared filter / sort / pagination.
   // zone.filter + zone.scope.sort + zone.scope.pagination.
@@ -856,8 +857,8 @@ function getZoneData(zone: any): any[] {
  * migrates legacy `filter.family` into it. Downstream code should never
  * read `filter.family` directly.
  */
-function processOptionZoneData(options: Option[], zone: any): Option[] {
-  const filterIn = { ...(zone.filter ?? {}) };
+function processOptionZoneData(options: Option[], zone: DisplayZone): Option[] {
+  const filterIn = { ...(zone.scope?.filter ?? {}) };
   const family = zone.scope?.optionFamily as string | undefined;
   const tool = zone?.display?.tool as string | undefined;
   const layout = tool ? getLayoutForFamily(family ?? "") : null;
@@ -895,7 +896,11 @@ function processOptionZoneData(options: Option[], zone: any): Option[] {
 
 //// FETCH RAW DATA
 
-function fetchRawData(content: string, source: string, scope: any = {}) {
+function fetchRawData(
+  content: string,
+  source: string,
+  scope: Partial<Scope> = {},
+) {
   switch (content) {
     case "inquiry_groups": {
       const store = useInquiryGroupsStore();
@@ -1001,10 +1006,8 @@ function fetchRawData(content: string, source: string, scope: any = {}) {
       return getOptionsForInquiry(getSelectedInquiry());
     }
     case "resources":
-      return getResourcesForInquiry(getSelectedInquiry());
     case "messages":
     case "comments":
-      return getCommentsForInquiry(getSelectedInquiry());
     case "statistics":
       return props.inquiries || [];
     case "activity":
@@ -1023,16 +1026,6 @@ function fetchRawData(content: string, source: string, scope: any = {}) {
     default:
       return [];
   }
-}
-
-function getResourcesForInquiry(inquiry: Inquiry | null): any[] {
-  if (!inquiry) return [];
-  return inquiry.miscFields?.resources || [];
-}
-
-function getCommentsForInquiry(inquiry: Inquiry | null): any[] {
-  if (!inquiry) return [];
-  return commentsStore.comments.filter((c) => c.inquiryId === inquiry.id);
 }
 
 /**
@@ -1108,7 +1101,7 @@ function getSelectedGroup(): InquiryGroup | null {
 /**
  * Whether the zone has data to display.
  */
-function hasZoneData(zone: any, zoneKey?: string): boolean {
+function hasZoneData(zone: DisplayZone): boolean {
   if (!zone) return false;
   const content = zone.content || "inquiries";
   if (
@@ -1124,7 +1117,7 @@ function hasZoneData(zone: any, zoneKey?: string): boolean {
   ) {
     return true;
   }
-  const data = getZoneData(zone, zoneKey);
+  const data = getZoneData(zone);
   switch (content) {
     case "inquiry_groups":
     case "inquiries":
@@ -1158,15 +1151,15 @@ function hasZoneData(zone: any, zoneKey?: string): boolean {
  * `isZoneRenderable` still gates tools that require a missing selected
  * inquiry/group, so the empty state remains when no context is available.
  */
-function shouldRenderZone(zone: any, zoneKey?: string): boolean {
+function shouldRenderZone(zone: DisplayZone): boolean {
   if (!zone) return false;
 
   const hide = zone.display?.options?.hideWhenEmpty;
 
-  if (hide && !hasZoneData(zone, zoneKey)) return false;
+  if (hide && !hasZoneData(zone)) return false;
 
   if (zone.display?.type === "tool") return true;
-  return hasZoneData(zone, zoneKey);
+  return hasZoneData(zone);
 }
 
 /**
@@ -1174,7 +1167,7 @@ function shouldRenderZone(zone: any, zoneKey?: string): boolean {
  * Prevents rendering components that require a selected inquiry/group
  * when nothing is selected.
  */
-function isZoneRenderable(zone: any): boolean {
+function isZoneRenderable(zone: DisplayZone): boolean {
   if (!zone) return false;
   const content = zone.content || "inquiries";
   const source = zone.scope?.source;
@@ -1225,7 +1218,7 @@ const sectionLabelByZone = computed<Record<string, string>>(() => {
   return map;
 });
 
-function getZoneLabel(zone: any, zoneKey?: string): string {
+function getZoneLabel(zone: DisplayZone, zoneKey?: string): string {
   const custom = zoneKey ? sectionLabelByZone.value[zoneKey] : undefined;
   if (custom) return custom;
 
@@ -1247,7 +1240,7 @@ function getZoneLabel(zone: any, zoneKey?: string): string {
  * Icon for the zone header, per content type.
  */
 function getContentIcon(content: string) {
-  const map: Record<string, any> = {
+  const map: Record<string, Component> = {
     // core data zones
     inquiry_groups: Icons.FolderMultiple,
     inquiries: Icons.ClipboardList,
@@ -1274,8 +1267,8 @@ function getContentIcon(content: string) {
  * Better icon for a zone header: prefer the section key (which is what
  * homeDefaults sections actually mean) over the generic content type.
  */
-function getZoneHeaderIcon(zone: any, zoneKey: string) {
-  const bySection: Record<string, any> = {
+function getZoneHeaderIcon(zone: DisplayZone, zoneKey: string) {
+  const bySection: Record<string, Component> = {
     search: Icons.Magnify,
     hero: Icons.Home,
     news: Icons.Megaphone,
@@ -1292,7 +1285,7 @@ function getZoneHeaderIcon(zone: any, zoneKey: string) {
 /**
  * Icon shown in the empty state, per content type.
  */
-function getEmptyIcon(zone: any) {
+function getEmptyIcon(zone: DisplayZone) {
   return getContentIcon(zone?.content || "inquiries");
 }
 
@@ -1300,7 +1293,7 @@ function getEmptyIcon(zone: any) {
  * Main line of the empty state.
  * Distinguishes "no selection yet" from "selection has no data".
  */
-function getEmptyTitle(zone: any): string {
+function getEmptyTitle(zone: DisplayZone): string {
   const { content } = effectiveContentForZone(zone);
   const source = zone?.scope?.source;
 
@@ -1347,7 +1340,7 @@ function getEmptyTitle(zone: any): string {
 /**
  * Secondary line — tells the user what to do, or why it's empty.
  */
-function getEmptyHint(zone: any): string {
+function getEmptyHint(zone: DisplayZone): string {
   const { content } = effectiveContentForZone(zone);
   const source = zone?.scope?.source;
 
@@ -1393,7 +1386,7 @@ function getEmptyHint(zone: any): string {
 // ============================================================
 // ZONE COMPONENT RESOLVER
 // ============================================================
-function getZoneComponent(zone: any) {
+function getZoneComponent(zone: DisplayZone): Component | null {
   if (!zone) return null;
 
   const { content, display } = effectiveContentForZone(zone);
@@ -1415,7 +1408,7 @@ function getZoneComponent(zone: any) {
   }
 
   // COMPONENT MAP - using only valid DisplayType values
-  const componentMap: Record<string, Record<string, any>> = {
+  const componentMap: Record<string, Record<string, Component>> = {
     hero: { banner: WelcomeHero },
     search: { search_bar: SearchBar },
     news: { news_list: NewsWidget, list: NewsWidget },
@@ -1497,7 +1490,7 @@ function getZoneComponent(zone: any) {
   const component = contentComponents[type];
   if (!component) {
     // Content-specific fallback rather than a global InquiryCard fallback
-    const fallbacks: Record<string, any> = {
+    const fallbacks: Record<string, Component> = {
       inquiry_groups: InquiryGroupCatalog,
       inquiry: InquiryCard,
       inquiries: InquiryCard,
@@ -1524,7 +1517,7 @@ function getToolComponent(tool: string, content: string) {
   // some custom group architectures express as `display.tool = 'search'`.
   if (tool === "search") return SearchBar;
 
-  const toolMap: Record<string, any> = {
+  const toolMap: Record<string, Component> = {
     vote: FamilyLayoutVote,
     timeline: FamilyLayoutTimeline,
     kanban: FamilyLayoutKanban,
@@ -1550,7 +1543,7 @@ function getToolComponent(tool: string, content: string) {
 // DISPLAY COMPONENT (fallback) - only valid DisplayType
 // ============================================================
 function getDisplayComponent(mode: string) {
-  const map: Record<string, any> = {
+  const map: Record<string, Component> = {
     cards: InquiryCard,
     list: InquiryListItem,
     feed: InquiryFeed,
@@ -1569,7 +1562,7 @@ function getDisplayComponent(mode: string) {
 // ============================================================
 // ZONE PROPS RESOLVER - Fixed inquiry_groups case
 // ============================================================
-function getZoneProps(zone: any, zoneKey?: string) {
+function getZoneProps(zone: DisplayZone, zoneKey?: string) {
   if (!zone) return {};
 
   const { content, display } = effectiveContentForZone(zone);
@@ -1683,7 +1676,8 @@ function getZoneProps(zone: any, zoneKey?: string) {
       const familyTab = sessionStore.appSettings?.inquiryOptionFamilyTab || [];
       const familyObj = familyKey
         ? (familyTab.find(
-            (f: any) => (f.family_type || f.type) === familyKey,
+            (f: { family_type?: string; type?: string }) =>
+              (f.family_type || f.type) === familyKey,
           ) ?? null)
         : null;
       console.log(
@@ -1881,9 +1875,9 @@ function getZoneProps(zone: any, zoneKey?: string) {
 // ============================================================
 // ZONE HELPERS
 // ============================================================
-function getZoneCount(zone: any, zoneKey?: string): number | null {
+function getZoneCount(zone: DisplayZone): number | null {
   if (!zone) return null;
-  return getZoneData(zone, zoneKey).length;
+  return getZoneData(zone).length;
 }
 
 function handleHeroAction(key: string) {
@@ -1927,7 +1921,7 @@ function legacyHeroAction(key: string) {
 }
 
 // ---------- Vocabulary: TOOL ----------
-function showZoneHeader(zone: any): boolean {
+function showZoneHeader(zone: DisplayZone): boolean {
   if (!zone) return false;
   const explicit = zone.display?.options?.showHeader;
   if (explicit === false) return false;
@@ -1951,7 +1945,7 @@ function showZoneHeader(zone: any): boolean {
   return true;
 }
 
-function getZoneStyle(zone: any) {
+function getZoneStyle(zone: DisplayZone): Record<string, string> {
   if (!zone) return {};
   const styles: Record<string, string> = {};
 
@@ -1976,7 +1970,7 @@ function getZoneStyle(zone: any) {
 }
 
 // ROUTING
-function onNavigate(target: any) {
+function onNavigate(target: { type: string; [k: string]: unknown }) {
   if (!target) return;
 
   switch (target.type) {
@@ -2252,11 +2246,10 @@ function handleInteraction(item: Inquiry | InquiryGroup, zoneKey: string) {
   }
 }
 
-
 /**
  * Option click - phase 1 selects locally, phase 2 executes the interaction.
  */
-function handleOptionClick(option: any, zoneKey: string) {
+function handleOptionClick(option: Option, zoneKey: string) {
   if (!option || !option.id) return;
 
   const zone = filteredArchitecture.value[zoneKey];
@@ -2289,47 +2282,34 @@ function handleOptionClick(option: any, zoneKey: string) {
 // ============================================================
 // CENTRAL EVENT ROUTER
 // ============================================================
-function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
+function handleZoneEvent(eventName: string, payload: unknown, zoneKey: string) {
   const zone = filteredArchitecture.value[zoneKey];
   if (!zone) return;
-
   const content = zone.content || "inquiries";
 
-  // ---------------------------------------------------------
-  // 1. ITEM CLICKS (Inquiries & Groups)
-  // ---------------------------------------------------------
   if (
     ["inquiry_groups", "inquiries", "inquiry"].includes(content) &&
     ["click", "select", "view", "viewInquiry", "viewGroup"].includes(eventName)
   ) {
-    // Validation: ensure it's a valid item
-    if (!payload?.id) return;
-
-    // Delegate to the simplified universal handler
-    handleInteraction(payload, zoneKey);
+    const item = payload as Inquiry | InquiryGroup | null;
+    if (!item?.id) return;
+    handleInteraction(item, zoneKey);
     return;
   }
 
-  // ---------------------------------------------------------
-  // 2. OTHER ZONE EVENTS (Actions, Widgets, Search)
-  // ---------------------------------------------------------
+  const p = payload as Record<string, unknown>;
   switch (content) {
     case "group_types":
       if (eventName === "select")
-        onNavigate({
-          type: "group-type",
-          family: payload?.family,
-          key: payload?.key,
-        });
+        onNavigate({ type: "group-type", family: p?.family, key: p?.key });
       else if (eventName === "all")
-        onNavigate({ type: "group-types-all", family: payload?.family });
+        onNavigate({ type: "group-types-all", family: p?.family });
       else if (eventName === "selectFamily")
         onNavigate({ type: "family", family: payload });
       return;
-
     case "options":
       if (["click", "view", "viewOption"].includes(eventName))
-        handleOptionClick(payload, zoneKey);
+        handleOptionClick(payload as Option, zoneKey);
       return;
 
     case "hero":
@@ -2358,8 +2338,8 @@ function handleZoneEvent(eventName: string, payload: any, zoneKey: string) {
       else if (eventName === "create")
         onNavigate({
           type: "create",
-          inquiryType: payload?.inquiryType,
-          family: payload?.family,
+          inquiryType: p?.inquiryType,
+          family: p?.family,
         });
       else if (eventName === "viewAll") onNavigate({ type: "explore-all" });
       return;
@@ -2392,8 +2372,10 @@ function toggleComments() {
 // ============================================================
 // WATCHERS
 // ============================================================
+const effectiveInquiryId = computed(() => getSelectedInquiry()?.id ?? null);
+
 watch(
-  selectedInquiryId,
+  effectiveInquiryId,
   (newId) => {
     if (newId == null) return;
     optionsStore.load(newId);
@@ -2432,7 +2414,7 @@ watch(
     }
   },
 );
-// option (b)
+
 const autoSelectedId = ref<number | null>(null);
 
 watch(

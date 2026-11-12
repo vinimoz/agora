@@ -94,7 +94,7 @@ const participation = {
   runLottery(
     targetType: string,
     targetId: number,
-    seed?: string,
+    seed?: string | number,
   ): Promise<AxiosResponse> {
     return httpInstance.request({
       method: "POST",

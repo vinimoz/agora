@@ -18,33 +18,10 @@ import type { useOptionsStore } from "@/stores/options";
 
 type OptionsStore = ReturnType<typeof useOptionsStore>;
 
-export {
-  getItemTitle,
-  getItemStatus,
-  getItemType,
-  getItemFamily,
-  getItemId,
+import {
   getForceLayouts,
-  addLayoutToItem,
-  removeLayoutFromItem,
-  hasLayout,
-  filterItemsByLayout,
   setTimelineDates,
-  getTimelineStartDate,
-  getTimelineEndDate,
   hasTimelineDates,
-  addToTimeline,
-  removeFromTimeline,
-  getItemTypeIcon,
-  getItemTypeIconComponent,
-  getAvailableStatuses,
-  getStatusColor,
-  groupItemsByFamily,
-  groupItemsByStatus,
-  groupItemsByType,
-  searchItemsByTitle,
-  filterItemsByStatus,
-  filterItemsByType,
 } from "./GenericItemHelper";
 
 export const isImportedFromView = (
@@ -63,7 +40,7 @@ export function getOptionItemData(
 ) {
   if (!item) {
     return {
-      icon: InquiryGeneralIcons.File,
+      icon: InquiryGeneralIcons.Activity,
       label: fallbackLabel,
       description: "",
     };
@@ -73,7 +50,9 @@ export function getOptionItemData(
   const iconName = item?.icon || "File";
 
   return {
-    icon: InquiryOptionIcons[iconName] || InquiryGeneralIcons.Activity,
+    icon:
+      (InquiryOptionIcons as Record<string, Component>)[iconName] ||
+      InquiryGeneralIcons.Activity,
     label: item.label || fallbackLabel,
     description: item.description || "",
   };
@@ -293,7 +272,7 @@ export function getFamilyIconName(familyKey: string): string {
     ) {
       // Find the family config by family_type
       const familyConfig = appSettingsStore.optionFamilyTab.find(
-        (item: FamilyConfig) => item?.family_type === familyKey,
+        (item: OptionFamily) => item?.family_type === familyKey,
       );
       if (familyConfig?.icon) {
         return familyConfig.icon;
@@ -321,10 +300,9 @@ export function getFamilyIconName(familyKey: string): string {
  */
 export function getFamilyIconComponent(familyKey: string): Component {
   const iconName = getFamilyIconName(familyKey);
-
   return (
-    InquiryOptionIcons[iconName] ||
-    InquiryGeneralIcons[iconName] ||
+    (InquiryOptionIcons as Record<string, Component>)[iconName] ||
+    (InquiryGeneralIcons as Record<string, Component>)[iconName] ||
     InquiryGeneralIcons.File
   );
 }
@@ -350,7 +328,9 @@ export function getFamilyUIConfig(
   // Try to get from appSettings
   try {
     const appSettingsStore = useAppSettingsStore();
-    const storedUI = appSettingsStore?.optionFamilyTab?.[familyKey]?.ui;
+    const storedUI = appSettingsStore?.optionFamilyTab?.find(
+      (f) => f.family_type === familyKey,
+    )?.ui;
     if (storedUI) {
       return { ...defaultUIConfig, ...storedUI };
     }
@@ -376,7 +356,10 @@ export function getFamilyRules(
 
   try {
     const appSettingsStore = useAppSettingsStore();
-    const storedRules = appSettingsStore?.optionFamilyTab?.[familyKey]?.rules;
+    const storedRules = appSettingsStore?.optionFamilyTab?.find(
+      (f) => f.family_type === familyKey,
+    )?.rules;
+
     if (storedRules) {
       return storedRules;
     }
@@ -402,8 +385,10 @@ export function getFamilyFeatures(
 
   try {
     const appSettingsStore = useAppSettingsStore();
-    const storedFeatures =
-      appSettingsStore?.optionFamilyTab?.[familyKey]?.features;
+    const storedFeatures = appSettingsStore?.optionFamilyTab?.find(
+      (f) => f.family_type === familyKey,
+    )?.features;
+
     if (storedFeatures) {
       return storedFeatures;
     }
@@ -429,8 +414,10 @@ export function getFamilyActions(
 
   try {
     const appSettingsStore = useAppSettingsStore();
-    const storedActions =
-      appSettingsStore?.optionFamilyTab?.[familyKey]?.actions;
+    const storedActions = appSettingsStore?.optionFamilyTab?.find(
+      (f) => f.family_type === familyKey,
+    )?.actions;
+
     if (storedActions) {
       return storedActions;
     }
@@ -489,12 +476,8 @@ export function getFamiliesWithOptionTypes(
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes);
 
   // Get app settings store (try-catch in case called outside setup)
-  let appSettingsStore: unknown = null;
-  try {
+  let appSettingsStore: ReturnType<typeof useAppSettingsStore> | null = null;
     appSettingsStore = useAppSettingsStore();
-  } catch {
-    // Store not available
-  }
 
   // Get fallback data as backup
   const fallbackData = getFamilyFallbackData();
@@ -505,12 +488,10 @@ export function getFamiliesWithOptionTypes(
       // PRIORITY 1: Get from appSettings.optionFamilyTab if available
       let familyConfig = null;
       if (appSettingsStore?.optionFamilyTab) {
-        // Find the family config by family_type
         familyConfig = appSettingsStore.optionFamilyTab.find(
-          (item: unknown) => item.family_type === familyKey,
+          (item: OptionFamily) => item?.family_type === familyKey,
         );
       }
-
       // PRIORITY 2: Get from fallback data
       const fallback = fallbackData[familyKey] || fallbackData.default || {};
 
@@ -546,14 +527,12 @@ export function getFamiliesWithOptionTypes(
         features: familyConfig?.features || fallback.features,
         actions: familyConfig?.actions || fallback.actions,
       };
-
       return {
         key: familyKey,
-        name: familyData.name,
+        name: familyData.name ?? formattedLabel,
         label: familyData.label,
-        description: familyData.description,
+        description: familyData.description ?? "",
         icon: iconName,
-        // Use the dedicated getter functions (they already check appSettings)
         ui: getFamilyUIConfig(familyKey, familyData),
         rules: getFamilyRules(familyKey, familyData),
         features: getFamilyFeatures(familyKey, familyData),
@@ -955,8 +934,10 @@ export function getOptionTypeIconComponent(
 
   const found = findOptionType(optionType, optionTypes);
   const iconName = found?.icon || "File";
-
-  return InquiryOptionIcons[iconName] || InquiryOptionIcons.File;
+  return (
+    (InquiryOptionIcons as Record<string, Component>)[iconName] ||
+    InquiryOptionIcons.File
+  );
 }
 
 /**
@@ -1110,7 +1091,7 @@ export function hasSupportFeature(
   if (!optionType) return false;
   const found = findOptionType(optionType, optionTypes);
   const feature = found?.support_feature;
-  return feature && feature !== "none";
+  return Boolean(feature && feature !== "none");
 }
 
 /**
@@ -1144,7 +1125,7 @@ export function allowsComments(
 ): boolean {
   if (!optionType) return false;
   const found = findOptionType(optionType, optionTypes);
-  return found?.allow_comment || false;
+  return Boolean(found?.allow_comment);
 }
 
 /**
@@ -1220,7 +1201,7 @@ export function getDefaultLayout(
   const uiConfig = getFamilyUIConfig(family);
 
   // Check if family has default_layout in its UI config
-  if (uiConfig?.default_layout) {
+  if (typeof uiConfig?.default_layout === "string") {
     return uiConfig.default_layout;
   }
 
@@ -1356,7 +1337,7 @@ export function getAvailableForeignOptionsForLayout(
     }
 
     // Check if they can be shown in this layout
-    return canShowInLayout(option, layout, optionTypes);
+    return canShowInLayout(option, layout);
   });
 }
 
@@ -1414,7 +1395,10 @@ export function addLayoutToOption(option: Option, layout: string): Option {
   if (!currentLayouts.includes(layout)) {
     currentLayouts.push(layout);
     // Store as JSON string for consistency
-    miscFields.force_layouts = JSON.stringify(currentLayouts);
+    miscFields.force_layouts = {
+      key: "force_layouts",
+      value: JSON.stringify(currentLayouts),
+    };
   }
 
   return {
@@ -1431,12 +1415,14 @@ export function addLayoutToOption(option: Option, layout: string): Option {
 export function removeLayoutFromOption(option: Option, layout: string): Option {
   const miscFields = { ...(option.miscFields || {}) };
   const currentLayouts = getForceLayouts(option);
-  const updatedLayouts = currentLayouts.filter((l) => l !== layout);
-
+  const updatedLayouts = currentLayouts.filter((l: string) => l !== layout);
   if (updatedLayouts.length === 0) {
     delete miscFields.force_layouts;
   } else {
-    miscFields.force_layouts = JSON.stringify(updatedLayouts);
+    miscFields.force_layouts = {
+      key: "force_layouts",
+      value: JSON.stringify(updatedLayouts),
+    };
   }
 
   return {
@@ -1569,8 +1555,9 @@ export async function updateTimelineDates(
 ): Promise<void> {
   try {
     // Update dates while preserving existing force_layouts
-    const updatedOption = setTimelineDates(option, startDate, endDate);
-
+    const date =
+      startDate instanceof Date ? startDate : new Date(startDate ?? Date.now());
+    const updatedOption = setTimelineDates(option, date);
     await optionsStore.updateOption({ option: updatedOption });
   } catch (error) {
     console.error("Failed to update timeline dates:", error);
@@ -1597,14 +1584,14 @@ export async function setTimelineDatesForOption(
 ): Promise<void> {
   try {
     // First get the current option
-    const currentOption = optionsStore.getOptionById(optionId);
+    const currentOption = optionsStore.options.find((o) => o.id === optionId);
     if (!currentOption) {
       throw new Error("Option not found");
     }
 
-    // Update the dates using the helper
-    const updatedOption = setTimelineDates(currentOption, startDate, endDate);
-
+    const date =
+      startDate instanceof Date ? startDate : new Date(startDate ?? Date.now());
+    const updatedOption = setTimelineDates(currentOption, date);
     // Also add 'timeline' to force_layouts if not already present
     const finalOption = addLayoutToOption(updatedOption, "timeline");
 

@@ -363,14 +363,14 @@ export const useSupportsStore = defineStore("supports", () => {
             userId,
             optionId,
             {
-              value,
+              value: value as NonNullable<SupportValue>,
               weight: 1,
               engineId: supportEngineId ?? undefined,
             },
           );
         }
         return SupportsAPI.addSupport(inquiryId, userId, optionId, {
-          value,
+          value: value as NonNullable<SupportValue>,
           weight: 1,
           engineId: supportEngineId ?? undefined,
         });
@@ -422,14 +422,14 @@ export const useSupportsStore = defineStore("supports", () => {
             userId,
             optionId,
             {
-              value,
+              value: value as NonNullable<SupportValue>,
               weight: 1,
               engineId: supportEngineId ?? undefined,
             },
           );
         }
         return SupportsAPI.updateSupport(inquiryId, userId, optionId, {
-          value,
+          value: value as NonNullable<SupportValue>,
           weight: 1,
           engineId: supportEngineId ?? undefined,
         });
@@ -672,7 +672,7 @@ export const useSupportsStore = defineStore("supports", () => {
     if (!item.currentUserStatus) item.currentUserStatus = {};
 
     const oldValue =
-      (item.currentUserStatus.supportValue as string | null) ?? null;
+      (item.currentUserStatus.supportValue as SupportValue) ?? null;
     const oldHasSupported = item.currentUserStatus.hasSupported ?? false;
 
     let gradeString: string | null = null;
@@ -747,7 +747,7 @@ export const useSupportsStore = defineStore("supports", () => {
     userId: string,
     item: SupportableItem,
     itemType: "inquiry" | "option",
-    value: number | string | null,
+    value: SupportValue,
     engineId: number | null = null,
   ): Promise<SupportResultData | null> {
     if (!item.currentUserStatus) item.currentUserStatus = {};
@@ -1182,7 +1182,7 @@ export const useSupportsStore = defineStore("supports", () => {
             userId,
             item,
             itemType,
-            customValue as number | string | null,
+            customValue as SupportValue,
             supportEngineId,
           );
         }

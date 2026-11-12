@@ -106,7 +106,7 @@ export interface InquiryGroupConfiguration {
 export interface InquiryGroupType {
   id: number | string;
   type: string;
-  group_type?: string; 
+  group_type?: string;
   label: string;
   family: string;
   icon?: string;

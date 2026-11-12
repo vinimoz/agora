@@ -16,6 +16,7 @@ import { useSessionStore } from "./session.ts";
 import {
   MiscUpdateMap,
   InquiryWorkflowStatus,
+  ModerationWorkflowStatus,
 } from "../Types/index.ts";
 import { AxiosError } from "@nextcloud/axios";
 import { useInquiryGroupsStore } from "./inquiryGroups.ts";
@@ -30,6 +31,7 @@ import type {
   FilterType,
   AdvancedFilters,
   FilterState,
+  VisibilityType,
 } from "@/Types";
 
 export const sortColumnsMapping: { [key in SortType]: string } = {
@@ -40,6 +42,8 @@ export const sortColumnsMapping: { [key in SortType]: string } = {
   owner: "owner.displayName",
   expire: "configuration.expire",
   interaction: "status.lastInteraction",
+  comments: "status.countComments",
+  supports: "status.countSupports",
   countComments: "status.countComments",
   countSupports: "status.countSupports",
 };
@@ -52,6 +56,8 @@ export const sortTitlesMapping: { [key in SortType]: string } = {
   owner: t("agora", "Owner"),
   expire: t("agora", "Expired"),
   interaction: t("agora", "Last interaction"),
+  comments: t("agora", "Comments count"),
+  supports: t("agora", "Supports count"),
   countComments: t("agora", "Comments count"),
   countSupports: t("agora", "Supports count"),
 };
@@ -172,7 +178,7 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived &&
       inquiry.currentUserStatus.isOwner &&
-      (inquiry.status.inquiryStatus === "private" ||
+      (inquiry.status.publicationStatus === "draft" ||
         (inquiry.status.inquiryStatus === "draft" &&
           inquiry.configuration.visibility === "groups")),
   },
@@ -257,7 +263,6 @@ const inquiryCategories: InquiryCategoryList = {
         return false;
       }
 
-      const sessionStore = useSessionStore();
       const visibility = inquiry.configuration.visibility;
       if (inquiry.status.isArchived) return false;
 
@@ -270,15 +275,6 @@ const inquiryCategories: InquiryCategoryList = {
       ) {
         return true;
       }
-
-      // Moderate inquiries are visible to moderators and admins
-      if (visibility === "moderate") {
-        return !!(
-          sessionStore.currentUser?.isModerator ||
-          sessionStore.currentUser?.isAdmin
-        );
-      }
-
       return false;
     },
   },
@@ -490,7 +486,8 @@ export const useInquiriesStore = defineStore("inquiries", {
       // Filter by categoryId
       if (state.advancedFilters.categoryId) {
         filteredInquiries = filteredInquiries.filter(
-          (inquiry) => inquiry.categoryId === state.advancedFilters.categoryId,
+          (inquiry) =>
+            inquiry.categoryId === Number(state.advancedFilters.categoryId),
         );
       }
 
@@ -505,10 +502,19 @@ export const useInquiriesStore = defineStore("inquiries", {
         );
       }
 
+      // Filter by categoryId
+      if (state.advancedFilters.categoryId) {
+        filteredInquiries = filteredInquiries.filter(
+          (inquiry) =>
+            inquiry.categoryId === Number(state.advancedFilters.categoryId),
+        );
+      }
+
       // Filter by locationId
       if (state.advancedFilters.locationId) {
         filteredInquiries = filteredInquiries.filter(
-          (inquiry) => inquiry.locationId === state.advancedFilters.locationId,
+          (inquiry) =>
+            inquiry.locationId === Number(state.advancedFilters.locationId),
         );
       }
 
@@ -664,7 +670,7 @@ export const useInquiriesStore = defineStore("inquiries", {
   },
 
   actions: {
-    setFamilyType(familyType) {
+    setFamilyType(familyType: string = "") {
       this.advancedFilters.familyType = familyType || "";
     },
 
@@ -738,7 +744,10 @@ export const useInquiriesStore = defineStore("inquiries", {
       }
     },
 
-    updateInquiryModerationStatus(inquiryId, moderationStatus) {
+    updateInquiryModerationStatus(
+      inquiryId: number,
+      moderationStatus: ModerationWorkflowStatus,
+    ) {
       const idx = this.inquiries.findIndex((inq) => inq.id === inquiryId);
       if (idx !== -1) {
         this.$patch((state) => {
@@ -747,7 +756,10 @@ export const useInquiriesStore = defineStore("inquiries", {
       }
     },
 
-    updateInquiryStatus(inquiryId, inquiryStatus) {
+    updateInquiryStatus(
+      inquiryId: number,
+      inquiryStatus: InquiryWorkflowStatus,
+    ) {
       const idx = this.inquiries.findIndex((inq) => inq.id === inquiryId);
       if (idx !== -1) {
         this.$patch((state) => {
@@ -756,10 +768,13 @@ export const useInquiriesStore = defineStore("inquiries", {
       }
     },
 
-    updateInquiryVisibility(inquiryId, inquiryVisibility) {
+    updateInquiryVisibility(
+      inquiryId: number,
+      inquiryVisibility: VisibilityType,
+    ) {
       const inquiry = this.inquiries.find((inq) => inq.id === inquiryId);
       if (inquiry) {
-        inquiry.inquiryVisibility = inquiryVisibility;
+        inquiry.configuration.visibility = inquiryVisibility;
       }
     },
 
@@ -813,12 +828,10 @@ export const useInquiriesStore = defineStore("inquiries", {
       const response = await InquiriesAPI.getInquiry(inquiryId);
       const idx = this.inquiries.findIndex((i) => i.id === inquiryId);
       if (idx !== -1) {
-        // update relevant fields
         this.inquiries[idx].status.countSupports =
-          response.data.status.countSupports;
+          response.data.inquiry.status.countSupports;
         this.inquiries[idx].status.supportResult =
-          response.data.status.supportResult;
-        // etc.
+          response.data.inquiry.status.supportResult;
       }
     },
     /**
@@ -932,7 +945,10 @@ export const useInquiriesStore = defineStore("inquiries", {
       this.meta.chunks.loaded = 1;
     },
 
-    async setInquiryStatus(inquiryId, inquiryStatus): Promise<void> {
+    async setInquiryStatus(
+      inquiryId: number,
+      inquiryStatus: InquiryWorkflowStatus,
+    ): Promise<void> {
       try {
         await InquiriesAPI.updateInquiryStatus(inquiryId, inquiryStatus);
         const inquiry = this.inquiries.find((inq) => inq.id === inquiryId);

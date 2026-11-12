@@ -17,6 +17,13 @@ import type {
   InquiryType,
   InquiryOptionType,
 } from "../../Types/index.js";
+import { generateUrl } from "@nextcloud/router";
+import type {
+  HomeConfig,
+  HomeConfigPayload,
+  HomeConfigRecord,
+} from "../../Types/appSettings.types";
+
 import type { InquiryGroupType } from "../../Types/inquiryGroups.types.js";
 
 const appSettings = {
@@ -508,6 +515,140 @@ const appSettings = {
           this.deleteInquiryGroupType.name
         ].handleRequestCancellation().token,
     });
+  },
+
+  // ============================================================
+  // HOME CONFIG (admin CRUD)
+  // ============================================================
+  getHomeConfigs(): Promise<AxiosResponse<{ configs: HomeConfigRecord[] }>> {
+    return httpInstance.request({
+      method: "GET",
+      url: "home-config",
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getHomeConfigs.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  createHomeConfig(
+    payload: HomeConfigPayload,
+  ): Promise<AxiosResponse<{ config: HomeConfigRecord }>> {
+    return httpInstance.request({
+      method: "POST",
+      url: "home-config",
+      data: payload,
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.createHomeConfig.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  updateHomeConfigRecord(
+    id: number,
+    payload: HomeConfigPayload,
+  ): Promise<AxiosResponse<{ config: HomeConfigRecord }>> {
+    return httpInstance.request({
+      method: "PUT",
+      url: `home-config/${id}`,
+      data: payload,
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.updateHomeConfigRecord.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  deleteHomeConfigRecord(
+    id: number,
+  ): Promise<AxiosResponse<{ config: HomeConfigRecord }>> {
+    return httpInstance.request({
+      method: "DELETE",
+      url: `home-config/${id}`,
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.deleteHomeConfigRecord.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  /**
+   * PUT /apps/agora/home-config/instance
+   *
+   * The override row is (config_key='default', role='instance'). Backend
+   * replaces `data` wholesale, but since the override is merged on top of
+   * the template via array_replace_recursive, sending a *partial* override
+   * is the correct usage.
+   */
+  updateHomeInstance(
+    data: Partial<HomeConfig>,
+    label?: string,
+    description?: string,
+  ): Promise<AxiosResponse<{ config: HomeConfigRecord }>> {
+    return httpInstance.request({
+      method: "PUT",
+      url: "home-config/instance/update",
+      data: { data, label, description },
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.updateHomeInstance.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  // ============================================================
+  // HOME IMAGES (IAppData)
+  // ============================================================
+  uploadHomeImage(
+    configId: number,
+    slot: string,
+    file: File,
+  ): Promise<
+    AxiosResponse<{
+      filename: string | null;
+      url: string;
+      config: HomeConfigRecord;
+    }>
+  > {
+    const formData = new FormData();
+    formData.append("image", file);
+    return httpInstance.request({
+      method: "POST",
+      url: `home-config/${configId}/images/${slot}`,
+      data: formData,
+      headers: { "Content-Type": "multipart/form-data" },
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.uploadHomeImage.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  deleteHomeImage(
+    configId: number,
+    slot: string,
+  ): Promise<AxiosResponse<{ config: HomeConfigRecord | null }>> {
+    return httpInstance.request({
+      method: "DELETE",
+      url: `home-config/${configId}/images/${slot}`,
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.deleteHomeImage.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  /**
+   * Non-request helper: builds a stable public URL for an image slot.
+   * The `version` query is a cache-buster — pass `config.updated` (or
+   * `created`) so browsers refresh after an admin replaces the file.
+   */
+  homeImageUrl(configId: number, slot: string, version?: number): string {
+    const base = generateUrl(
+      `/apps/agora/home-config/${configId}/images/${slot}`,
+    );
+    return version ? `${base}?v=${version}` : base;
   },
 };
 

@@ -9,6 +9,7 @@ export type Comment = {
   id: number;
   inquiryId: number;
   optionId: number;
+  parent: number;
   userId: string;
   comment: string;
   timestamp: number;

@@ -41,7 +41,8 @@ export function useTrending(inquiryId: number) {
     }
 
     // 3. Recency score (20%)
-    const ageInDays = (Date.now() - (option.created || 0)) / (1000 * 3600 * 24);
+    const createdMs = (option.status?.created ?? 0) * 1000;
+    const ageInDays = (Date.now() - createdMs) / (1000 * 3600 * 24);
     const recencyScore = Math.max(0, 100 - ageInDays * 10);
 
     // 4. Engagement score (10%)

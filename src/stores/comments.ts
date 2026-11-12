@@ -117,7 +117,7 @@ export const useCommentsStore = defineStore("comments", {
 
     async loadInquiryComments(inquiryId: number): Promise<void> {
       try {
-        const response = await CommentsAPI.getInquiryComments(inquiryId);
+        const response = await CommentsAPI.getComments(inquiryId);
 
         const otherComments = this.comments.filter(
           (comment) =>
@@ -142,15 +142,15 @@ export const useCommentsStore = defineStore("comments", {
       const sessionStore = useSessionStore();
       try {
         const targetInquiryId = inquiryId || sessionStore.currentInquiryId;
-
         if (!targetInquiryId) {
           Logger.warn("No inquiryId available for loading option comments");
           return;
         }
 
-        const response = await CommentsAPI.getOptionComments(
-          targetInquiryId,
-          optionId,
+        // API has no per-option endpoint — fetch all, filter client-side.
+        const response = await CommentsAPI.getComments(targetInquiryId);
+        const optionComments = response.data.comments.filter(
+          (comment) => comment.optionId === optionId,
         );
 
         const otherComments = this.comments.filter(
@@ -161,7 +161,7 @@ export const useCommentsStore = defineStore("comments", {
             ),
         );
 
-        this.comments = [...otherComments, ...response.data.comments];
+        this.comments = [...otherComments, ...optionComments];
         this.updateStatusCounts(targetInquiryId);
       } catch (error) {
         if ((error as AxiosError)?.code === "ERR_CANCELED") {
@@ -195,7 +195,6 @@ export const useCommentsStore = defineStore("comments", {
               sessionStore.publicToken,
               payload.message,
               payload.confidential,
-              payload.optionId || 0,
             );
           }
 
@@ -214,8 +213,8 @@ export const useCommentsStore = defineStore("comments", {
             return CommentsAPI.addComment(
               targetInquiryId,
               payload.message,
-              payload.confidential,
-              payload.optionId || 0,
+              payload.confidential ?? false,
+              payload.optionId ?? 0,
             );
           }
           return null;

@@ -444,6 +444,55 @@ export interface PhasedVotingResult {
   counts: Record<number, number>; // optionId → selection count
 }
 
+// ============================================================================
+// 🔎 STRUCTURAL ACCESS OVER THE RESULT UNION
+// ============================================================================
+
+/**
+ * The result union is discriminated on `type`, but several accessors in
+ * `useVoteContext` switch on `engineId` (a string that only *correlates*
+ * with `result.type`) or iterate over `items` before narrowing. This pair
+ * of interfaces declares every field those accessors touch, so the reads
+ * compile against one structural cast instead of a per-arm guard.
+ */
+export interface SupportResultItemAccess {
+  yes?: number;
+  no?: number;
+  abstain?: number;
+  total?: number;
+  total_votes?: number;
+  median_grade?: string | null;
+  grade_distribution?: Record<string, number>;
+}
+
+export interface SupportResultDataAccess {
+  /** Per‑option buckets (`BinaryResult.items`, `ReactionResult.items`, …). */
+  items?: Record<number, SupportResultItemAccess>;
+  /** Aggregate buckets (`BinaryResult.totals`, `TernaryResult.totals`, …). */
+  totals?: Record<string, number>;
+  percentages?: Record<string, number>;
+  /** Approval / reaction / phased counts. */
+  counts?: Record<string | number, number>;
+  /** `RankingResult.rankings` — optionId → average rank. */
+  rankings?: Record<number, number>;
+  /** `BordaResult.ranking` — optionId → rank (singular). */
+  ranking?: Record<number, number>;
+  /** Borda / quadratic / token scores. */
+  scores?: Record<number, number>;
+  /** Condorcet wins. */
+  wins?: Record<number, number>;
+  /** Token‑weighted totals. */
+  weights?: Record<number, number>;
+  /** Majority‑judgment grade ladder. */
+  grades?: string[];
+  total_voters?: number;
+  total_votes?: number;
+  total_weight?: number;
+  total_credits?: number;
+  participant_count?: number;
+  winner?: number | null;
+}
+
 // Union of all possible result types
 export type SupportResultData =
   | BinaryResult

@@ -28,7 +28,7 @@ export interface AgoraLocation {
    * (TAG_SEMANTICS), so adding a new type there is enough.
    */
   tags: AgoraContextTag[];
- 
+
   /**
    * Legacy convenience fields.
    *
@@ -67,7 +67,6 @@ export interface AgoraUserContext {
     isAdmin: boolean;
     isModerator: boolean;
     isOfficial: boolean;
-    isBoard: boolean;
     isGroupEditor: boolean;
   };
   preferences: {
@@ -77,24 +76,34 @@ export interface AgoraUserContext {
   };
 }
 
+type StoredUserPrefs = {
+  location?: Partial<AgoraLocation>;
+  defaultDisplayMode?: "view" | "create" | "group";
+  interests?: string[];
+};
+
 export function useUserContext() {
   const session = useSessionStore();
-  const groups  = useInquiryGroupsStore();
-  const prefs   = usePreferencesStore();
+  const groups = useInquiryGroupsStore();
+  const prefs = usePreferencesStore();
 
+  const storedPrefs = computed<StoredUserPrefs>(() => {
+    const u = prefs.user as StoredUserPrefs | undefined;
+    return u ?? {};
+  });
   // ── NC groups the user belongs to ───────────────────────────
   // `currentUser.groups` is what Nextcloud exposes on the profile;
   // fall back to an empty array for guests / public inquiries.
   const ncGroups = computed<string[]>(() => {
-    const raw = (session.currentUser as { groups?: string[] } | undefined)?.groups;
+    const raw = (session.currentUser as { groups?: string[] } | undefined)
+      ?.groups;
     return Array.isArray(raw) ? raw : [];
   });
 
   const roles = computed(() => ({
-    isAdmin:       !!session.currentUser?.isAdmin,
-    isModerator:   !!session.currentUser?.isModerator,
-    isOfficial:    !!session.currentUser?.isOfficial,
-    isBoard:       !!session.currentUser?.isBoard,
+    isAdmin: !!session.currentUser?.isAdmin,
+    isModerator: !!session.currentUser?.isModerator,
+    isOfficial: !!session.currentUser?.isOfficial,
     isGroupEditor: !!session.currentUser?.isGroupEditor,
   }));
 
@@ -107,30 +116,30 @@ export function useUserContext() {
       .map((g) => toAgoraSpace(g, uid));
   });
 
-  const location = computed<AgoraLocation>(() => {
-    const stored = (prefs.user as unknown)?.location as
-      Partial<AgoraLocation> | undefined;
-    return normalizeLocation(stored, session.currentUser?.location ?? "");
-  });
+  const location = computed<AgoraLocation>(() =>
+    normalizeLocation(
+      storedPrefs.value.location,
+      session.currentUser?.location ?? "",
+    ),
+  );
 
   const context = computed<AgoraUserContext>(() => ({
-    userId:      session.currentUser?.id ?? "",
+    userId: session.currentUser?.id ?? "",
     displayName: session.currentUser?.displayName ?? "",
     rawLocation: session.currentUser?.location ?? "",
-    location:    location.value,
-    spaces:      spaces.value,
-    ncGroups:    ncGroups.value,
-    roles:       roles.value,
+    location: location.value,
+    spaces: spaces.value,
+    ncGroups: ncGroups.value,
+    roles: roles.value,
     preferences: {
-      defaultDisplayMode: (prefs.user as unknown)?.defaultDisplayMode ?? "view",
-      interests:          (prefs.user as unknown)?.interests ?? [],
-      language:           session.currentUser?.languageCodeIntl ?? "en",
+      defaultDisplayMode: storedPrefs.value.defaultDisplayMode ?? "view",
+      interests: storedPrefs.value.interests ?? [],
+      language: session.currentUser?.languageCodeIntl ?? "en",
     },
   }));
 
   return { context, spaces, location, ncGroups, roles };
 }
-
 
 // ---- helpers ----
 export function isValidContextTag(t: unknown): t is AgoraContextTag {
@@ -208,10 +217,7 @@ function isUserInGroup(
   return false;
 }
 
-function toAgoraSpace(
-  group: InquiryGroup,
-  uid: string,
-): AgoraSpace {
+function toAgoraSpace(group: InquiryGroup, uid: string): AgoraSpace {
   let role: AgoraSpace["role"] = "viewer";
   if (group.owner?.id === uid) role = "owner";
   else if (group.permissions?.edit) role = "editor";

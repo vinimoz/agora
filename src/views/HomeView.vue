@@ -64,7 +64,7 @@ const experience = computed<ExperienceKey>(() => {
 
 const showCreateDialog = computed(() => route.query.viewMode === "create");
 
-function handleOpenPanel(payload: { inquiry: any; target: string }) {
+function handleOpenPanel(payload: { inquiry: Inquiry; target: string }) {
   shellRef.value.open(payload);
 }
 

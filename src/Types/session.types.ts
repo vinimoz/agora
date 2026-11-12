@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { WatcherMode, WatcherStatus } from "./inquiryWatcher.types.ts";
+import type { WatcherMode } from "./inquiryWatcher.types.ts";
 import type { User } from "../Types/index.ts";
-import type { ViewMode, FilterType } from "../Types/inquiry.types";
+import type { FilterType } from "../Types/inquiry.types";
 import type { Share } from "./share.types";
 import type { TimeZoneTypes } from "./dateTime";
 
@@ -17,6 +17,9 @@ interface RouteParams {
   type: FilterType;
   slug: string;
 }
+
+export type WatcherStatus =
+  "idle" | "loading" | "loaded" | "error" | "running" | "stopped" | "stopping";
 
 export type Route = {
   currentRoute: string;
@@ -34,7 +37,6 @@ export type UserStatus = {
 };
 
 export type SessionSettings = {
-  viewModeForced: null | ViewMode;
   timezoneName: TimeZoneTypes | string;
 };
 

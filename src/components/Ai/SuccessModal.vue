@@ -44,7 +44,6 @@ const props = defineProps<{
   count: number;
 }>();
 
-
 const emit = defineEmits<{
   close: [];
 }>();

@@ -107,10 +107,14 @@
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.03) 0%, transparent 50%);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-primary-rgb), 0.03) 0%,
+      transparent 50%
+    );
     opacity: 0;
     transition: opacity var(--inquiry-transition-base);
     pointer-events: none;

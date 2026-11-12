@@ -64,18 +64,18 @@ export const useParticipationStore = defineStore("participation", {
         : "random";
     },
 
-    canCurrentUserParticipate(): boolean {
+    canCurrentUserParticipate(state): boolean {
       const inquiryStore = useInquiryStore();
       const ctx = createInquiryContext(inquiryStore);
       if (!ctx) return false;
-      return canParticipateInInquiry(ctx, this.participation);
+      return canParticipateInInquiry(ctx, state.participation);
     },
 
-    participationStatus() {
+    participationStatus(state) {
       const inquiryStore = useInquiryStore();
       const ctx = createInquiryContext(inquiryStore);
       if (!ctx) return { canParticipate: false };
-      return getParticipationStatus(ctx, this.participation);
+      return getParticipationStatus(ctx, state.participation);
     },
   },
 

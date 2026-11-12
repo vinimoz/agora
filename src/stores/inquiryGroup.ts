@@ -10,10 +10,11 @@ import { AxiosError } from "axios";
 
 import { Logger } from "../helpers/index.ts";
 import { InquiryGroupsAPI } from "../Api/index.ts";
-import type { UserType, SupportResult } from "../Types/index.ts";
+import type { User, UserType, SupportResult } from "../Types/index.ts";
 import { useSessionStore } from "./session.ts";
 import { useInquiriesStore } from "./inquiries.ts";
 import { useInquiryGroupsStore } from "./inquiryGroups.ts";
+import { AppSettings } from "../Types/appSettings.types.ts";
 import type {
   InquiryGroup,
   InquiryGroupType,
@@ -43,7 +44,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     ownedGroup: "",
     metadata: null as string | null,
     protected_: false,
-    allowEdit: false,
     order: 0,
     expire: null as number | null,
     type: "default",
@@ -126,7 +126,9 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     typeTemplate(): InquiryGroupType | undefined {
       if (!this.type) return undefined;
       const sessionStore = useSessionStore();
-      return sessionStore.appSettings?.inquiryGroupTypeTab?.find(
+      const tabs = (sessionStore.appSettings as AppSettings)
+        ?.inquiryGroupTypeTab as InquiryGroupType[] | undefined;
+      return tabs?.find(
         (t: InquiryGroupType) =>
           t.type === this.type || t.group_type === this.type,
       );
@@ -164,10 +166,9 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       if ("display_architecture" in uiConfig && !uiConfig.displayArchitecture) {
         return {
           ...uiConfig,
-          displayArchitecture: (uiConfig as unknown).display_architecture as Record<
-            string,
-            DisplayZone
-          >,
+          displayArchitecture: (
+            uiConfig as { display_architecture?: Record<string, DisplayZone> }
+          ).display_architecture as Record<string, DisplayZone>,
         };
       }
 
@@ -204,16 +205,14 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       rows: number;
       responsive: boolean;
     } {
-      return (
-        this.ui?.layout || {
-          type: "grid",
-          columns: 2,
-          rows: 2,
-          responsive: true,
-        }
-      );
+      const layout = this.ui?.layout;
+      return {
+        type: layout?.type ?? "grid",
+        columns: layout?.columns ?? 2,
+        rows: layout?.rows ?? 2,
+        responsive: layout?.responsive ?? true,
+      };
     },
-
     /**
      * Get features from UI config
      */
@@ -227,8 +226,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     allowedInquiryTypes(): string[] {
       const template = this.typeTemplate;
       if (!template) return [];
-      const types =
-        template.allowedInquiryTypes || template.allowed_inquiry_types;
+      const types = template.allowed_inquiry_types;
       if (typeof types === "string") {
         return types.split(",").map((s) => s.trim());
       }
@@ -245,8 +243,12 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     /**
      * Get actions from template
      */
-    actions(): string[] {
+    actions(): Array<{ key: string; label: string; icon?: string }> {
       return this.typeTemplate?.actions || [];
+    },
+
+    fields(): NonNullable<InquiryGroupType["fields"]> {
+      return this.typeTemplate?.fields || [];
     },
 
     /**
@@ -293,9 +295,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     /**
      * Get fields from template
      */
-    fields(): string[] {
-      return this.typeTemplate?.fields || [];
-    },
 
     // ============================================================
     // COMPUTED - Basic status (matches inquiry.ts pattern)
@@ -325,7 +324,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         isLoggedIn: sessionStore.currentUser.id !== "",
         userId: sessionStore.currentUser.id,
         userRole: sessionStore.currentUser.type,
-        canEdit: this.allowEdit,
+        canEdit: this.permissions.edit,
         isProtected: this.protected_,
       };
     },
@@ -339,7 +338,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         created: this.created,
         deleted: this.deleted,
         description: this.description || null,
-        owner: this.owner,
+        owner: this.owner as unknown as User,
         type: this.type,
         configuration: {
           visibility: this.configuration.visibility,
@@ -367,7 +366,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         metadata: this.metadata,
         coverId: this.coverId,
         protected: this.protected_,
-        allowEdit: this.allowEdit,
         inquiryIds: this.inquiryIds,
         childs: this.childs,
         slug: this.slug,
@@ -413,7 +411,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     /**
      * Get zone scope for a specific zone
      */
-    getZoneScope(zoneName: string): Record<string, unknown> | undefined {
+    getZoneScope(zoneName: string): DisplayZone["scope"] | undefined {
       return this.displayArchitecture?.[zoneName]?.scope;
     },
 
@@ -503,10 +501,9 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       ) {
         uiConfig = {
           ...uiConfig,
-          displayArchitecture: (uiConfig as unknown).display_architecture as Record<
-            string,
-            DisplayZone
-          >,
+          displayArchitecture: (
+            uiConfig as { display_architecture?: Record<string, DisplayZone> }
+          ).display_architecture,
         };
       }
 
@@ -547,14 +544,13 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       this.permissions = {
         view: true,
         edit:
-          (this.allowEdit || isOwner || isAdmin || isGroupEditor) &&
+          (isOwner || isAdmin || isGroupEditor) &&
           (!isProtected || isGroupEditor || isAdmin),
         delete: (isOwner || isAdmin) && !isProtected,
         addInquiries:
-          (this.allowEdit || isOwner || isAdmin || isGroupEditor) &&
+          (isOwner || isAdmin || isGroupEditor) &&
           (!isProtected || isAdmin || isGroupEditor),
-        reorderInquiries:
-          (this.allowEdit || isOwner || isAdmin) && !isProtected,
+        reorderInquiries: (isOwner || isAdmin) && !isProtected,
         changeOwner: (isOwner || isAdmin) && !isProtected,
         archive: (isOwner || isAdmin) && !isProtected,
         clone: true,
@@ -578,8 +574,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       if (data.metadata !== undefined) this.metadata = data.metadata || null;
       if (data.protected !== undefined)
         this.protected_ = data.protected || false;
-      if (data.allowEdit !== undefined)
-        this.allowEdit = data.allowEdit || false;
       if (data.order !== undefined) this.order = data.order || 0;
       if (data.expire !== undefined) this.expire = data.expire || null;
       if (data.type !== undefined) this.type = data.type || "default";
@@ -678,7 +672,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       this.ownedGroup = "";
       this.metadata = null;
       this.protected_ = false;
-      this.allowEdit = false;
       this.order = 0;
       this.expire = null;
       this.type = "default";
@@ -768,12 +761,12 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     }): Promise<InquiryGroup | void> {
       try {
         const response = await InquiryGroupsAPI.addGroup({
-          title: payload.title,
-          titleExt: payload.titleExt,
+          title: payload.title ?? "",
+          title_ext: payload.titleExt ?? "",
           type: payload.type || "default",
-          parentId: payload.parentId || null,
+          parentId: payload.parentId ?? undefined,
           protected: payload.protected || true,
-          ownedGroup: payload.ownedGroup,
+          ownedGroup: payload.ownedGroup ?? "",
           groupStatus: payload.groupStatus || "draft",
         });
 
@@ -808,17 +801,17 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     }): Promise<InquiryGroup | void> {
       try {
         const response = await InquiryGroupsAPI.updateGroup(this.id, {
-          title: payload.title,
-          titleExt: payload.titleExt,
-          description: payload.description,
+          title: payload.title ?? "",
+          titleExt: payload.titleExt ?? "",
+          description: payload.description ?? "",
           type: payload.type,
           parentId: payload.parentId,
           protected: payload.protected,
-          ownedGroup: payload.ownedGroup,
-          groupStatus: payload.groupStatus,
+          ownedGroup: payload.ownedGroup ?? "",
+          groupStatus: payload.groupStatus ?? this.status.groupStatus,
           expire: payload.expire,
           configuration: payload.configuration,
-        });
+        } as Parameters<typeof InquiryGroupsAPI.updateGroup>[1]);
 
         if (response.data?.inquiryGroup) {
           this.patchFromResponse(response.data.inquiryGroup);
@@ -970,12 +963,12 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
           titleExt: this.titleExt,
           description: this.description,
           type: this.type,
-          parentId: this.parentId,
+          parentId: this.parentId || undefined,
           protected: this.protected_,
           ownedGroup: this.ownedGroup,
           groupStatus: this.status.groupStatus,
           configuration: this.configuration,
-        });
+        } as Parameters<typeof InquiryGroupsAPI.updateGroup>[1]);
 
         if (response.data?.inquiryGroup) {
           this.patchFromResponse(response.data.inquiryGroup);
@@ -1007,6 +1000,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       try {
         const response = await InquiryGroupsAPI.updateGroup(groupId, {
           groupStatus: "archived",
+          ownedGroup: this.ownedGroup || "",
         });
         if (response.data?.inquiryGroup) {
           this.patchFromResponse(response.data.inquiryGroup);
@@ -1032,11 +1026,10 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
      */
     async restore(groupId?: string): Promise<void> {
       try {
-        let grpId = this.id;
-        if (!groupId) grpId = groupId;
-
+        const grpId = groupId ? Number(groupId) : this.id;
         const response = await InquiryGroupsAPI.updateGroup(grpId, {
           groupStatus: "active",
+          ownedGroup: this.ownedGroup || "",
         });
         if (response.data?.inquiryGroup) {
           this.patchFromResponse(response.data.inquiryGroup);

@@ -74,7 +74,7 @@ export const useInquiryWatcher = (interval = 30000) => {
       updateType: mode,
       interval,
       baseUrl,
-      token: sessionStore.token,
+      token: sessionStore.token ?? "",
       watcherId: sessionStore.watcher.id,
       lastUpdate: sessionStore.watcher.lastUpdate,
     } satisfies WatcherProps);
@@ -84,14 +84,14 @@ export const useInquiryWatcher = (interval = 30000) => {
       const { type, message, updates, status, mode, lastUpdate, params } =
         e.data;
 
-      sessionStore.watcher = <Watcher>{
+      sessionStore.watcher = {
         ...sessionStore.watcher,
         mode,
         status,
         interval,
         lastUpdate: lastUpdate ?? sessionStore.watcher.lastUpdate,
         lastMessage: message ?? sessionStore.watcher.lastMessage,
-      };
+      } as typeof sessionStore.watcher;
 
       switch (type) {
         case "info":
@@ -117,9 +117,8 @@ export const useInquiryWatcher = (interval = 30000) => {
           if (message) Logger.info(`[InquiryWatcher] ${message}`, { params });
 
           if (status === "modeChanged") {
-            sessionStore.load();
+            (sessionStore.load as unknown as () => void)();
           }
-
           break;
         default:
           Logger.warn("[InquiryWatcher] Unknown message type:", { type });
@@ -134,12 +133,12 @@ export const useInquiryWatcher = (interval = 30000) => {
     if (worker) {
       worker.terminate();
       worker = null;
-      sessionStore.watcher = <Watcher>{
+      sessionStore.watcher = (<Watcher>{
         ...sessionStore.watcher,
         status: "stopped",
         lastMessage: "Watcher stopped.",
         lastUpdate: Math.floor(Date.now() / 1000),
-      };
+      }) as typeof sessionStore.watcher;
       Logger.info("[InquiryWatcher] Worker stopped.");
     }
   };
@@ -191,7 +190,7 @@ export const useInquiryWatcher = (interval = 30000) => {
           inquiriesStore.load();
           break;
         case "supports":
-          supportsStore.load();
+          supportsStore.loadSupports(inquiryStore.id ?? undefined);
           break;
         case "options":
           optionsStore.load();

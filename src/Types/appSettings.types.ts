@@ -73,17 +73,14 @@ export interface HeroRoute {
 }
 
 export interface HeroAction {
-  key: string;
+  key?: string;
   label: string;
-  icon: string;
+  icon?: string;
   color?: string;
   hint?: string;
-  /**
-   * Where the action navigates. When omitted, the renderer falls back to
-   * the legacy hardcoded switch in ExperienceRenderer (deprecated; kept
-   * so pre-existing DB rows keep working).
-   */
   route?: HeroRoute;
+  url?: string;
+  type?: string;
 }
 
 export interface HeroActionConfig {
@@ -94,6 +91,66 @@ export interface HeroActionConfig {
   hint?: string;
 }
 
+/** The data blob stored on a HomeConfig row (merged server-side). */
+export interface HomeConfigData {
+  hero?: {
+    title?: string;
+    subtitle?: string;
+    /** filename, e.g. "hero.png" — server resolves to imageUrl */
+    image?: string;
+    /** readonly, injected by resolveImageUrls() */
+    imageUrl?: string;
+    imageConfigId?: number;
+    imageUpdated?: number;
+    actions?: Array<{
+      label: string;
+      url: string;
+      type?: string;
+      icon?: string;
+    }>;
+  };
+  promo?: {
+    title?: string;
+    description?: string;
+    image?: string;
+    imageUrl?: string;
+    imageConfigId?: number;
+    imageUpdated?: number;
+    cta?: { label?: string; url?: string };
+  };
+  logo?: { image?: string; imageUrl?: string; imageConfigId?: number };
+  relevance?: {
+    tiers?: RelevanceTierLabel[];
+    weights?: Partial<RelevanceWeights>;
+  };
+  sectionLabels?: Record<string, string>;
+  sections?: string[];
+  [key: string]: unknown;
+}
+
+/** Full DB entity as returned by the admin CRUD endpoints. */
+export interface HomeConfigRecord {
+  id: number;
+  config_key: string;
+  role: "template" | "instance";
+  label: string;
+  description: string | null;
+  data: HomeConfigData;
+  sort_order: number;
+  created: number | null;
+  updated: number | null;
+}
+
+/** Payload accepted by POST /home-config and PUT /home-config/{id}. */
+export interface HomeConfigPayload {
+  configKey: string;
+  role: "template" | "instance";
+  label: string;
+  description?: string | null;
+  data?: HomeConfigData;
+  sortOrder?: number;
+}
+
 export interface HomeHeroConfig {
   cityName: string;
   tagline: string;
@@ -102,7 +159,7 @@ export interface HomeHeroConfig {
   backgroundUrl?: string;
   showWeather?: boolean;
   weather?: { temp: number; location: string };
-  actions: HeroAction[]; // was: any[]
+  actions: HeroAction[];
 }
 
 export interface HomeConfig {
@@ -157,6 +214,10 @@ export interface InquiryStatusDefinition {
 export type AppSettings = {
   allAccessGroups: string[];
   allowPublicShares: boolean;
+  allowPublicAccess: boolean;
+  allowGuestSupport: boolean;
+  allowGuestComments: boolean;
+  allowGuestCreation: boolean;
   allowAllAccess: boolean;
   allowInquiryCreation: boolean;
   allowInquiryDownload: boolean;
@@ -190,6 +251,7 @@ export type AppSettings = {
   showMailAddressesGroups: string[];
   unrestrictedOwnerGroups: string[];
   home?: HomeConfig;
+  homeConfigs: HomeConfigRecord[];
   organization?: OrganizationConfig;
   navigation?: NavigationConfig;
   categoryTab: Category[];
@@ -206,6 +268,7 @@ export type AppSettings = {
   officialRights: OfficialRights;
   status: {
     loadingGroups: boolean;
+    loadingHomeConfigs: boolean;
   };
 };
 

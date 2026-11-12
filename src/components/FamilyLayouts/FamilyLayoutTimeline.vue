@@ -244,12 +244,14 @@ import NcTextField from "@nextcloud/vue/components/NcTextField";
 import { DateTime } from "luxon";
 import { showError, showSuccess } from "@nextcloud/dialogs";
 import { InquiryOptionIcons } from "../../utils/icons.ts";
+import { isImportedFromView } from "../../helpers/modules/InquiryOptionHelper";
+
 import {
   getTimelineStartDate,
-  isImportedFromView,
   getTimelineEndDate,
   getItemTypeIconComponent,
-} from "../../helpers/modules/InquiryOptionHelper";
+} from "../../helpers/modules/GenericItemHelper";
+
 import type {
   InquiryOptionType,
   OptionFamily,

@@ -101,7 +101,7 @@ function unwrap(item: Item): Option | Inquiry {
   if ("raw" in item && item.raw) {
     return item.raw as Option | Inquiry;
   }
-  return item as Option | Inquiry;
+  return item as unknown as Option | Inquiry;
 }
 
 function getMiscFields(item: Item): Record<string, unknown> {
@@ -153,8 +153,18 @@ export function parseForceLayouts(
   return [];
 }
 
-export function hasForceLayout(item: Item, layout: string): boolean {
-  return parseForceLayouts(getMiscFields(item)).includes(layout);
+function isItemWrapper(obj: Item | Option | Inquiry): obj is Item {
+  return "kind" in obj && "raw" in obj;
+}
+
+export function hasForceLayout(
+  item: Item | Option | Inquiry,
+  layout: string,
+): boolean {
+  const miscFields = isItemWrapper(item)
+    ? getMiscFields(item)
+    : ((item.miscFields as Record<string, unknown>) ?? {});
+  return parseForceLayouts(miscFields).includes(layout);
 }
 
 // ---------------------------------------------------------------------------

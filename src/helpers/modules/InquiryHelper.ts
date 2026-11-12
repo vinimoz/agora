@@ -5,10 +5,12 @@
 
 import { computed, type Ref } from "vue";
 import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
-import type { useInquiryStore } from "../../stores/inquiry.ts";
-import type { useAppSettingsStore } from "../../stores/appSettings.ts";
-import type { InquiryStatus, InquiryType } from "../../Types/index.ts";
 import type { InquiryGroupType } from "../../Types/inquiryGroups.types.ts";
+import type {
+  Inquiry,
+  InquiryType,
+} from "../../Types/inquiry.types";
+import type { InquiryStatusDefinition } from "../../Types/appSettings.types";
 
 export interface InquiryFamily {
   id: number | string;
@@ -134,7 +136,7 @@ export function getInquiryTypeData(
   fallbackLabel: string = "",
 ) {
   const typeInfo = inquiryTypes.find((t) => t.inquiry_type === inquiryType);
-  return getInquiryItemData(typeInfo, fallbackLabel || inquiryType);
+  return getInquiryItemData(typeInfo ?? null, fallbackLabel || inquiryType);
 }
 
 export function getInquiryGroupTypeData(
@@ -145,7 +147,10 @@ export function getInquiryGroupTypeData(
   const typeInfo = inquiryGroupTypes.find(
     (t) => t.group_type === inquiryGroupType,
   );
-  return getInquiryGroupItemData(typeInfo, fallbackLabel || inquiryGroupType);
+  return getInquiryGroupItemData(
+    typeInfo ?? null,
+    fallbackLabel || inquiryGroupType,
+  );
 }
 
 // ============================================================================
@@ -358,7 +363,9 @@ export function getAvailableResponseGroupTypes(
     : safeJsonParse<string[]>(parent.allowed_response as unknown as string, []);
 
   const allowedSet = new Set(allowed);
-  return allTypes.filter((t) => allowedSet.has(t.group_type));
+  return allTypes.filter(
+    (t) => t.group_type !== undefined && allowedSet.has(t.group_type),
+  );
 }
 
 /**
@@ -430,7 +437,7 @@ export function getAvailableGroupFields(
   inquiryType: string,
   inquiryTypes: InquiryType[],
 ): string[] {
-  const currentType = inquiryTypes.find((t) => t.group_type === inquiryType);
+  const currentType = inquiryTypes.find((t) => t.inquiry_type === inquiryType);
   if (!currentType || !currentType.fields) return [];
 
   // Parse fields if it's a string (JSON)
@@ -525,32 +532,21 @@ export const getAvailableInquiryTypesForCreation = (list: InquiryType[]) =>
  * @param inquiryStore
  * @param appSettings
  */
+
+/**
+ * True when the inquiry's current workflow status is marked `isFinal`
+ * for its type in the app-settings status table.
+ */
 export function isInquiryFinalStatus(
-  inquiryStore: ReturnType<typeof useInquiryStore>,
-  appSettings: ReturnType<typeof useAppSettingsStore>,
+  inquiry: Inquiry,
+  appSettings: { inquiryStatusTab?: InquiryStatusDefinition[] },
 ): boolean {
-  if (
-    !inquiryStore?.type ||
-    !inquiryStore?.status?.inquiryStatus ||
-    !appSettings?.inquiryStatusTab
-  ) {
-    return false;
-  }
-
-  const inquiryType = inquiryStore.type;
-  const currentStatus = inquiryStore.status.inquiryStatus;
-
-  // Find status configuration for this inquiry type and status
-  const statusConfig = appSettings.inquiryStatusTab.find(
-    (status: InquiryStatus) =>
-      status.inquiryType === inquiryType && status.statusKey === currentStatus,
+  const statusDef = (appSettings.inquiryStatusTab ?? []).find(
+    (status: InquiryStatusDefinition) =>
+      status.inquiryType === inquiry.type &&
+      status.statusKey === inquiry.status.inquiryStatus,
   );
-
-  if (!statusConfig) {
-    return false;
-  }
-
-  return statusConfig.isFinal === true;
+  return statusDef?.isFinal ?? false;
 }
 /**
  * Get inquiry group types for specific family

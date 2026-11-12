@@ -165,8 +165,8 @@ const emit = defineEmits<{
   close: [];
   regenerate: [];
   import: [options: Option[]];
-   update: [options: Option];
-  'update:options': [options: Option[]];
+  update: [options: Option];
+  "update:options": [options: Option[]];
 }>();
 
 const selectedCount = computed(
@@ -175,12 +175,10 @@ const selectedCount = computed(
 
 const toggleOption = (index: number) => {
   const updatedOptions = props.options.map((option, i) =>
-    i === index
-      ? { ...option, selected: !option.selected }
-      : option
+    i === index ? { ...option, selected: !option.selected } : option,
   );
 
-  emit('update:options', updatedOptions);
+  emit("update:options", updatedOptions);
 };
 
 const selectAll = () => {

@@ -22,7 +22,7 @@
   margin-bottom: var(--shadow-height);
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: -1px;
@@ -33,7 +33,9 @@
       rgba(var(--color-box-shadow-rgb), 0.3),
       rgba(var(--color-box-shadow-rgb), 0)
     );
-    transition: all var(--animation-slow) linear, border 1ms;
+    transition:
+      all var(--animation-slow) linear,
+      border 1ms;
   }
 
   &.sticky-bottom-shadow {
@@ -76,7 +78,9 @@
     border-radius: var(--ncselect-radius);
     padding: var(--ncselect-padding-y) var(--ncselect-padding-x);
     min-height: var(--ncselect-min-height);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
 
     &:hover {
       border-color: var(--color-primary-element);

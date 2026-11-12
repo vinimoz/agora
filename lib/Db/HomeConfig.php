@@ -77,7 +77,7 @@ class HomeConfig extends Entity implements JsonSerializable
 			'role' => $this->getRole(),
 			'label' => $this->getLabel(),
 			'description' => $this->getDescription(),
-			'data' => $this->getData() ?? [],
+			'data' => $this->getData() ?? new \stdClass(),
 			'sort_order' => $this->getSortOrder(),
 			'created' => $this->getCreated(),
 			'updated' => $this->getUpdated(),

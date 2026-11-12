@@ -17,7 +17,7 @@ export type DisplayMode =
   | "grid" // → InquiryItem, displayMode='grid'
   | "list" // → InquiryItem, displayMode='list'
   | "summary"
-  | "compact" 
+  | "compact"
   | "full"
   | "book"
   | "rich_html" // → InquiryDetail

@@ -485,7 +485,7 @@ const generatePreview = async () => {
       });
 
       if (result.success) {
-	previewContent.value = marked.parse(result.content) as string;
+        previewContent.value = marked.parse(result.content) as string;
         documentMetadata.value = result.metadata;
 
         if (!title.value && result.title) {

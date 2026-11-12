@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Agora\Service;
 
 use OCA\Agora\Db\HomeConfig;
+use OCA\Agora\Service\HomeImageService;
 use OCA\Agora\Db\HomeConfigMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -19,6 +20,7 @@ class HomeConfigService
 {
 	public function __construct(
 		private HomeConfigMapper $mapper,
+		private HomeImageService $imageService,
 		private LoggerInterface $logger
 	) {
 	}
@@ -137,29 +139,112 @@ class HomeConfigService
 	public function delete(int $id): HomeConfig
 	{
 		$config = $this->mapper->find($id);
+		$this->imageService->purgeForConfig($id);
 		return $this->mapper->delete($config);
+	}
+
+	private function mergeHomeConfig(array $template, array $override): array
+	{
+		// 1. Deep merge everything (good for sectionLabels, relevance.weights,
+		//    hero.title, promo.text, …)
+		$merged = array_replace_recursive($template, $override);
+
+		// 2. Lists that must be fully replaced, not positionally merged:
+		foreach ([
+			['hero',      'actions'],
+			['promo',     'actions'],           // if you ever add promo actions
+			['relevance', 'tiers'],
+		] as [$section, $field]) {
+		if (isset($override[$section][$field])) {
+			$merged[$section][$field] = $override[$section][$field];
+		}
+		}
+		if (isset($override['sections'])) {
+			$merged['sections'] = $override['sections'];
+		}
+
+		return $merged;
 	}
 
 	/**
 	 * Resolve the effective home config for the current session:
-	 * template for the org type, deep-merged with the instance override.
+	 * template for the org type, deep-merged with the instance override,
+	 * with any `*.image` filenames resolved to public URLs.
 	 */
 	public function resolveForOrganization(string $organizationType): array
 	{
-		$template = [];
+		$template = null;
 		try {
-			$template = $this->mapper->findByKeyAndRole($organizationType, HomeConfig::ROLE_TEMPLATE)->getData() ?? [];
+			$template = $this->mapper->findByKeyAndRole(
+				$organizationType,
+				HomeConfig::ROLE_TEMPLATE
+			);
+} catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
+    $this->logger->warning('Ambiguous home config row', [
+        'config_key' => $organizationType,
+        'role' => HomeConfig::ROLE_TEMPLATE,
+        'error' => $e->getMessage(),
+    ]);
+}
+		$override = null;
+		try {
+			$override = $this->mapper->findByKeyAndRole(
+				'default',
+				HomeConfig::ROLE_INSTANCE
+			);
 		} catch (DoesNotExistException) {
-			// no template for this org type — start from empty
 		}
 
-		$override = [];
-		try {
-			$override = $this->mapper->findByKeyAndRole('default', HomeConfig::ROLE_INSTANCE)->getData() ?? [];
-		} catch (DoesNotExistException) {
-			// no instance override yet
-		}
+		$merged = $this->mergeHomeConfig(
+			$template?->getData() ?? [],
+			$override?->getData() ?? [],
+		);
 
-		return array_replace_recursive($template, $override);
+		return $this->resolveImageUrls($merged, $template, $override);
+	}
+
+	/**
+	 * For every image slot present in $merged, determine which config row
+	 * won the merge and rewrite `image` (a filename) into `imageUrl`
+	 * (a stable public URL). Also exposes `imageConfigId` so the frontend
+	 * can build cache-busting query strings.
+	 */
+	private function resolveImageUrls(
+		array $merged,
+		?HomeConfig $template,
+		?HomeConfig $override,
+	): array {
+		foreach (['hero', 'promo', 'logo', 'background'] as $slot) {
+			$filename = $merged[$slot]['image'] ?? null;
+			if (!is_string($filename) || $filename === '') {
+				continue;
+			}
+
+			$owner = null;
+			if ($override !== null
+				&& ($override->getData()[$slot]['image'] ?? null) === $filename) {
+				$owner = $override;
+			} elseif ($template !== null
+				&& ($template->getData()[$slot]['image'] ?? null) === $filename) {
+				$owner = $template;
+			}
+			if ($owner === null) {
+				continue;
+			}
+
+			if ($this->imageService->getFile($owner->getId(), $slot) === null) {
+				continue;   
+			}
+
+
+			$merged[$slot]['imageConfigId'] = $owner->getId();
+			$merged[$slot]['imageUrl'] = sprintf(
+				'/apps/agora/home-config/%d/images/%s',
+				$owner->getId(),
+				$slot,
+			);
+			$merged[$slot]['imageUpdated'] = $owner->getUpdated() ?? $owner->getCreated();
+		}
+		return $merged;
 	}
 }

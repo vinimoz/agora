@@ -17,8 +17,5 @@ export {
   uniqueParticipants,
 } from "./modules/arrayHelper.ts";
 export { groupComments } from "./modules/comments.ts";
-export { groupSupports } from "./modules/supports.ts";
 export { SimpleLink } from "./modules/SimpleLink.ts";
 export { GuestBubble } from "./modules/GuestBubble.ts";
-export { InquiryHelper } from "./modules/InquiryHelper.ts";
-export { InquiryOptionHelper } from "./modules/InquiryOptionHelper.ts";

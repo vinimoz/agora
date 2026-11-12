@@ -7,26 +7,33 @@ import { defineStore } from "pinia";
 import { t } from "@nextcloud/l10n";
 import { AppSettingsAPI } from "../Api/index.ts";
 import { Logger } from "../helpers/index.ts";
-import {
-  BaseEntry,
-} from "../Types/index.ts";
+import { BaseEntry } from "../Types/index.ts";
 import { AxiosError } from "@nextcloud/axios";
 import type { InquiryGroupType } from "../Types/inquiryGroups.types";
+import {
+  InquiryType,
+  InquiryOptionType,
+  OptionFamily,
+} from "../Types/index.ts";
 
-import type {
-  InquiryTypeRights,
-  ModeratorRights,
-  OfficialRights,
-} from "../utils/permissions.ts";
 import {
   DefaultModeratorRights,
   DefaultOfficialRights,
 } from "../utils/permissions.ts";
 import type {
+  InquiryTypeRights,
+  ModeratorRights,
+  OfficialRights,
+} from "../utils/permissions.ts";
+
+import type {
   AppSettings,
   InquiryStatusDefinition,
   OrganizationConfig,
-} from "@/Types";
+  HomeConfig,
+  HomeConfigRecord,
+  HomeConfigPayload,
+} from "../Types/appSettings.types";
 
 import type { OrganizationType } from "@/Types/experience.types";
 
@@ -37,6 +44,10 @@ export const useAppSettingsStore = defineStore("appSettings", {
     allowAllAccess: true,
     allowInquiryCreation: true,
     allowInquiryDownload: true,
+    allowPublicAccess: false,
+    allowGuestSupport: false,
+    allowGuestComments: false,
+    allowGuestCreation: false,
     autoArchive: false,
     autoExpire: false,
     autoDelete: false,
@@ -66,6 +77,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
     inquiryDownloadGroups: [],
     showMailAddressesGroups: [],
     unrestrictedOwnerGroups: [],
+    homeConfigs: [] as HomeConfigRecord[],
     home: undefined,
     organization: { type: "municipality" } as OrganizationConfig,
     categoryTab: [],
@@ -82,6 +94,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
     officialRights: { ...DefaultOfficialRights } as OfficialRights,
     status: {
       loadingGroups: false,
+      loadingHomeConfigs: false,
     },
   }),
 
@@ -112,6 +125,76 @@ export const useAppSettingsStore = defineStore("appSettings", {
   },
 
   actions: {
+    // ============================================================
+    // ADMIN — HOME CONFIG CRUD
+    // ============================================================
+    async loadHomeConfigs(): Promise<void> {
+      this.status.loadingHomeConfigs = true;
+      try {
+        const response = await AppSettingsAPI.getHomeConfigs();
+        this.homeConfigs = response.data.configs;
+      } catch (error) {
+        Logger.error("Error loading home configs", { error });
+        throw error;
+      } finally {
+        this.status.loadingHomeConfigs = false;
+      }
+    },
+
+    async createHomeConfigRecord(
+      payload: HomeConfigPayload,
+    ): Promise<HomeConfigRecord> {
+      const response = await AppSettingsAPI.createHomeConfig(payload);
+      const record = response.data.config as HomeConfigRecord;
+      this.homeConfigs.push(record);
+      return record;
+    },
+
+    async saveHomeConfigRecord(
+      id: number,
+      payload: HomeConfigPayload,
+    ): Promise<HomeConfigRecord> {
+      const response = await AppSettingsAPI.updateHomeConfigRecord(id, payload);
+      const record = response.data.config as HomeConfigRecord;
+      const idx = this.homeConfigs.findIndex((c) => c.id === id);
+      if (idx !== -1) this.homeConfigs[idx] = record;
+      return record;
+    },
+
+    async deleteHomeConfigRecord(id: number): Promise<void> {
+      await AppSettingsAPI.deleteHomeConfigRecord(id);
+      this.homeConfigs = this.homeConfigs.filter((c) => c.id !== id);
+    },
+
+    async uploadHomeImage(
+      configId: number,
+      slot: string,
+      file: File,
+    ): Promise<HomeConfigRecord> {
+      const response = await AppSettingsAPI.uploadHomeImage(
+        configId,
+        slot,
+        file,
+      );
+      const record = response.data.config as HomeConfigRecord;
+      const idx = this.homeConfigs.findIndex((c) => c.id === configId);
+      if (idx !== -1) this.homeConfigs[idx] = record;
+      return record;
+    },
+
+    async deleteHomeImage(
+      configId: number,
+      slot: string,
+    ): Promise<HomeConfigRecord | null> {
+      const response = await AppSettingsAPI.deleteHomeImage(configId, slot);
+      const record = (response.data.config as HomeConfigRecord) ?? null;
+      if (record) {
+        const idx = this.homeConfigs.findIndex((c) => c.id === configId);
+        if (idx !== -1) this.homeConfigs[idx] = record;
+      }
+      return record;
+    },
+
     initializeInquiryTypeRights(inquiryType: string) {
       if (!this.inquiryTypeRights[inquiryType]) {
         this.inquiryTypeRights[inquiryType] = {
@@ -199,19 +282,12 @@ export const useAppSettingsStore = defineStore("appSettings", {
      */
     async updateHomeConfig(data: Partial<HomeConfig>): Promise<void> {
       const previous = this.home;
-      // Merge locally so the UI sees the change immediately. A subsequent
-      // load() will overwrite with the server's fully merged result.
+      // Optimistic local merge so the UI reacts immediately. A subsequent
+      // load() overwrites with the server's fully merged result.
       this.home = previous ? { ...previous, ...data } : (data as HomeConfig);
 
       try {
-        // Requires: AppSettingsAPI.updateHomeInstance(data)
-        // → PUT /apps/agora/home-config/instance with body { data }
-        // If the API method doesn't exist yet, fall back to write():
-        if (typeof (AppSettingsAPI as unknown).updateHomeInstance === "function") {
-          await (AppSettingsAPI as unknown).updateHomeInstance(data);
-        } else {
-          await this.write();
-        }
+        await AppSettingsAPI.updateHomeInstance(data);
       } catch (error) {
         this.home = previous;
         Logger.error("Error updating home config", { error, data });
@@ -291,7 +367,8 @@ export const useAppSettingsStore = defineStore("appSettings", {
       updates: Partial<InquiryStatusDefinition>,
     ): Promise<void> {
       const index = this.inquiryStatusTab.findIndex(
-        (s) => s.inquiryType === inquiryType && s.id === statusId,
+        (s) =>
+          s.inquiryType === inquiryType && String(s.id) === String(statusId),
       );
 
       if (index === -1) {
@@ -546,6 +623,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
           features: [],
           rules: [],
           actions: [],
+          statuses: [],
           created: Date.now(),
         });
       } catch (error) {
@@ -607,7 +685,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
     }): Promise<void> {
       const maxId =
         this.inquiryGroupTypeTab.length > 0
-          ? Math.max(...this.inquiryGroupTypeTab.map((t) => t.id))
+          ? Math.max(...this.inquiryGroupTypeTab.map((t) => Number(t.id)))
           : 0;
       const newId = maxId + 1;
 
@@ -621,7 +699,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
           ...typeData,
           created: Date.now(),
         };
-        this.inquiryGroupTypeTab.push(saved as unknown);
+        this.inquiryGroupTypeTab.push(saved as InquiryGroupType);
       } catch (error) {
         Logger.error("Error adding inquiry group type", { error });
         throw error;
@@ -708,7 +786,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
           ...typeData,
           created: Date.now(),
         };
-        this.inquiryOptionTypeTab.push(saved as unknown);
+        this.inquiryOptionTypeTab.push(saved as InquiryOptionType);
       } catch (error) {
         Logger.error("Error adding option type", { error });
         throw error;
@@ -777,7 +855,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
           ...familyData,
           created: Date.now(),
         };
-        this.optionFamilyTab.push(saved as unknown);
+        this.optionFamilyTab.push(saved as OptionFamily);
       } catch (error) {
         Logger.error("Error adding option family", { error });
         throw error;
@@ -844,7 +922,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
           id: newId,
           ...typeData,
           created: Date.now(),
-        });
+        } as unknown as InquiryType);
       } catch (error) {
         Logger.error("Error adding inquiry type", { error });
       }
@@ -924,7 +1002,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
         return results;
       };
 
-      return options.concat(flattenTree(tree));
+      return options.concat(flattenTree(tree as unknown as BaseEntry[]));
     },
   },
 });

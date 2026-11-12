@@ -20,7 +20,7 @@ import type { FilterableItem } from "../../Types/filter.types";
  * @param filter - Filter criteria
  * @see Complete Vocabulary Definition - Section 13: Filter
  */
-export function applyFilters<T extends Record<string, FilterableItem>>(
+export function applyFilters<T extends FilterableItem>(
   data: T[],
   filter?: ScopeFilter,
 ): T[] {
@@ -35,7 +35,7 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
         ? filter.inquiry_type
         : [filter.inquiry_type];
       const itemType = item.inquiryType || item.type;
-      if (!types.includes(itemType)) {
+      if (!itemType || !types.includes(itemType)) {
         return false;
       }
     }
@@ -48,7 +48,7 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
         ? filter.group_type
         : [filter.group_type];
       const itemType = item.groupType || item.type;
-      if (!types.includes(itemType)) {
+      if (!itemType || !types.includes(itemType)) {
         return false;
       }
     }
@@ -59,7 +59,7 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
     if (filter.type) {
       const types = Array.isArray(filter.type) ? filter.type : [filter.type];
       const itemType = item.type || item.inquiryType || item.groupType;
-      if (!types.includes(itemType)) {
+      if (!itemType || !types.includes(itemType)) {
         return false;
       }
     }
@@ -74,13 +74,13 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
       // Handle nested status (e.g., inquiry.status.inquiryStatus)
       const rawStatus = item.status as unknown;
       const itemStatus =
-      item.status?.inquiryStatus ||
+        item.status?.inquiryStatus ||
         (typeof rawStatus === "string" ? rawStatus : undefined) ||
         item.statusKey;
       if (typeof itemStatus !== "string" || !statuses.includes(itemStatus)) {
         return false;
-       }
       }
+    }
 
     // ============================================================
     // FAMILY FILTER (generic capability)
@@ -109,28 +109,28 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
     // DATE FILTER
     // ============================================================
     if (filter.date) {
-      const itemDate = item.created || item.createdAt || item.timestamp;
-      if (filter.date.from && itemDate < filter.date.from) {
+      const itemDate = item.created ?? item.createdAt ?? item.timestamp;
+      if (
+        itemDate != null &&
+        filter.date.from != null &&
+        itemDate < filter.date.from
+      )
         return false;
-      }
-      if (filter.date.to && itemDate > filter.date.to) {
+      if (
+        itemDate != null &&
+        filter.date.to != null &&
+        itemDate > filter.date.to
+      )
         return false;
-      }
     }
 
-    // ============================================================
-    // DATE RANGE FILTER (alternative using from/to)
-    // ============================================================
     if (filter.from || filter.to) {
-      const itemDate = item.created || item.createdAt || item.timestamp;
-      if (filter.from && itemDate < filter.from) {
+      const itemDate = item.created ?? item.createdAt ?? item.timestamp;
+      if (filter.from != null && itemDate != null && itemDate < filter.from)
         return false;
-      }
-      if (filter.to && itemDate > filter.to) {
+      if (filter.to != null && itemDate != null && itemDate > filter.to)
         return false;
-      }
     }
-
     // ============================================================
     // SELECTION FILTER
     // For marketplace, user selections, categories, locations, etc.
@@ -177,9 +177,9 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
 
       // Filter by tags
       if (selection.tags && selection.tags.length > 0) {
-        const itemTags = item.tags || item.miscFields?.tags || [];
+        const rawTags = item.tags ?? item.miscFields?.tags;
+        const itemTags: string[] = Array.isArray(rawTags) ? rawTags : [];
         const hasMatchingTag = selection.tags.some((tag) => {
-          // Skip template variables
           if (tag.startsWith("{") && tag.endsWith("}")) return true;
           return itemTags.includes(tag);
         });
@@ -191,7 +191,8 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
       // Custom selection filters
       if (selection.custom) {
         for (const [key, value] of Object.entries(selection.custom)) {
-          const itemValue = item.miscFields?.[key] || item[key];
+          const itemValue =
+            item.miscFields?.[key] ?? (item as Record<string, unknown>)[key];
           if (Array.isArray(value)) {
             if (!value.includes(itemValue)) {
               return false;
@@ -223,7 +224,8 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
     for (const key of Object.keys(filter)) {
       if (reservedKeys.includes(key)) continue;
       const filterValue = filter[key];
-      const itemValue = item.miscFields?.[key] ?? item[key];
+      const itemValue =
+        item.miscFields?.[key] ?? (item as Record<string, unknown>)[key];
       if (Array.isArray(filterValue)) {
         if (!filterValue.includes(itemValue)) return false;
       } else if (filterValue !== undefined && filterValue !== null) {
@@ -239,30 +241,29 @@ export function applyFilters<T extends Record<string, FilterableItem>>(
  * @param data - Array of items to sort
  * @param sort - Sorting criteria
  */
-export function applySort<T extends Record<string, FilterableItem>>(
+export function applySort<T extends FilterableItem>(
   data: T[],
   sort?: { field: string; direction: "asc" | "desc" },
 ): T[] {
   if (!sort) return data;
 
   return [...data].sort((a, b) => {
-      let aVal: unknown = (a as Record<string, unknown>)[sort.field];
-      let bVal: unknown = (b as Record<string, unknown>)[sort.field];
+    let aVal: unknown = (a as Record<string, unknown>)[sort.field];
+    let bVal: unknown = (b as Record<string, unknown>)[sort.field];
 
     // Handle nested properties (e.g., status.created)
     if (sort.field.includes(".")) {
       const parts = sort.field.split(".");
-    const read = (obj: unknown): unknown =>
+      const read = (obj: unknown): unknown =>
         parts.reduce<unknown>(
           (o, k) =>
-           typeof o === "object" && o !== null
+            typeof o === "object" && o !== null
               ? (o as Record<string, unknown>)[k]
               : undefined,
           obj,
         );
       aVal = read(a);
       bVal = read(b);
-    
     }
 
     // Handle null/undefined values
@@ -320,7 +321,7 @@ export function applyPagination<T>(
  *
  * @see Complete Vocabulary Definition - Section 10-12: Matrix CONTENT × SOURCE
  */
-export function processScopeData<T extends Record<string, FilterableItem>>(
+export function processScopeData<T extends FilterableItem>(
   data: T[],
   options: {
     filter?: ScopeFilter;
@@ -352,7 +353,7 @@ export function processScopeData<T extends Record<string, FilterableItem>>(
  *
  * @see Complete Vocabulary Definition - Section 16: ValidatedUIDefinition
  */
-export function processZoneData<T extends Record<string, FilterableItem>>(
+export function processZoneData<T extends FilterableItem>(
   data: T[],
   zone: {
     scope?: {

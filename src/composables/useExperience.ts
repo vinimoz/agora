@@ -5,6 +5,7 @@
 
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { t } from "@nextcloud/l10n";
 import { useInquiryGroupsStore } from "../stores/inquiryGroups";
 // import type { InquiryGroup } from '../Types/inquiryGroups.types'
 
@@ -49,12 +50,13 @@ export const EXPERIENCE_DEFINITIONS: Record<
 > = {
   home: {
     key: "home",
-    label: "Home",
+    label: t("agora", "Home"),
     icon: "Home",
-    description: "Welcome to your civic space",
-    verb: "Discover",
-    question: "What can I do today?",
+    description: t("agora", "Welcome to your civic space"),
+    verb: t("agora", "Discover"),
+    question: t("agora", "What can I do today?"),
     defaultDisplay: "banner",
+    defaultTools: [],
     allowedDisplays: ["banner", "cards", "list"],
     allowedTools: ["search"],
     layout: "grid",
@@ -65,12 +67,13 @@ export const EXPERIENCE_DEFINITIONS: Record<
 
   dashboard: {
     key: "dashboard",
-    label: "Dashboard",
+    label: t("agora", "Dashboard"),
     icon: "Home",
-    description: "Understand and see what is happening",
-    verb: "Understand",
-    question: "What is happening here and where can I go?",
+    description: t("agora", "Understand and see what is happening"),
+    verb: t("agora", "Understand"),
+    question: t("agora", "What is happening here and where can I go?"),
     defaultDisplay: "cards",
+    defaultTools: ["vote"],
     allowedDisplays: ["cards", "list", "feed"],
     allowedTools: ["vote", "kanban", "timeline"],
     layout: "grid",
@@ -81,12 +84,13 @@ export const EXPERIENCE_DEFINITIONS: Record<
 
   social: {
     key: "social",
-    label: "Social",
+    label: t("agora", "Social"),
     icon: "Users",
-    description: "Follow and participate",
-    verb: "Follow",
-    question: "What are others thinking?",
+    description: t("agora", "Follow and participate"),
+    verb: t("agora", "Follow"),
+    question: t("agora", "What are others thinking?"),
     defaultDisplay: "feed",
+    defaultTools: [],
     allowedDisplays: ["feed", "cards", "list"],
     allowedTools: [],
     layout: "grid",
@@ -97,12 +101,13 @@ export const EXPERIENCE_DEFINITIONS: Record<
 
   marketplace: {
     key: "marketplace",
-    label: "Marketplace",
+    label: t("agora", "Marketplace"),
     icon: "Storefront",
-    description: "Browse and discover",
-    verb: "Discover",
-    question: "What is available?",
+    description: t("agora", "Browse and discover"),
+    verb: t("agora", "Discover"),
+    question: t("agora", "What is available?"),
     defaultDisplay: "cards",
+    defaultTools: ["search"],
     allowedDisplays: ["cards", "list"],
     allowedTools: ["search"],
     layout: "grid",
@@ -113,12 +118,13 @@ export const EXPERIENCE_DEFINITIONS: Record<
 
   wiki: {
     key: "wiki",
-    label: "Wiki",
+    label: t("agora", "Wiki"),
     icon: "Book",
-    description: "Understand the content",
-    verb: "Understand",
-    question: "What does this information mean / contain?",
+    description: t("agora", "Understand the content"),
+    verb: t("agora", "Understand"),
+    question: t("agora", "What does this information mean / contain?"),
     defaultDisplay: "book",
+    defaultTools: ["structure"],
     allowedDisplays: ["book"],
     allowedTools: ["structure"],
     layout: "grid",
@@ -129,12 +135,13 @@ export const EXPERIENCE_DEFINITIONS: Record<
 
   decision_room: {
     key: "decision_room",
-    label: "Decision Room",
+    label: t("agora", "Decision Room"),
     icon: "Scale",
-    description: "Decide",
-    verb: "Decide",
-    question: "How do we decide?",
+    description: t("agora", "Decide"),
+    verb: t("agora", "Decide"),
+    question: t("agora", "How do we decide?"),
     defaultDisplay: "book",
+    defaultTools: ["debate", "vote"],
     allowedDisplays: ["book"],
     allowedTools: ["debate", "vote"],
     layout: "grid",
@@ -145,12 +152,13 @@ export const EXPERIENCE_DEFINITIONS: Record<
 
   classic: {
     key: "classic",
-    label: "Classic View",
+    label: t("agora", "Classic View"),
     icon: "Home",
-    description: "Standard group layout",
-    verb: "View",
-    question: "Default view",
+    description: t("agora", "Standard group layout"),
+    verb: t("agora", "View"),
+    question: t("agora", "Default view"),
     defaultDisplay: "list",
+    defaultTools: [],
     allowedDisplays: ["list"],
     allowedTools: [],
     layout: "full",

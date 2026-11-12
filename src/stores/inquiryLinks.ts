@@ -33,6 +33,7 @@ export interface CreateLinkData {
   targetId: string;
   sortOrder?: number;
   createdBy?: number;
+  metadata?: string;
 }
 
 export interface UpdateLinkData {
@@ -47,6 +48,8 @@ export interface CreateAppResourceData {
   description?: string;
   stackId?: number;
   amount?: number;
+  expires?: number | null;
+  showExpiration?: boolean;
 }
 
 // Define interfaces for API responses
@@ -131,7 +134,6 @@ interface CospendProjectResponse {
   paymentmodes: CospendPaymentMode[];
 }
 
-// Polls API interfaces (https://github.com/nextcloud/polls)
 interface PollOption {
   id: number;
   poll_id: number;
@@ -167,8 +169,6 @@ interface PollResponse {
   expired: boolean;
   access: PollAccess;
 }
-
-// Deck API interfaces (https://github.com/nextcloud/deck)
 
 interface DeckLabel {
   id: number;
@@ -536,7 +536,7 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
       try {
         const url = generateOcsUrl(`/apps/forms/api/v3/forms/${formId}`);
 
-        const keyValuePairs: Record<string, object> = {};
+        const keyValuePairs: Record<string, string | number | boolean> = {};
 
         if (formData.title) {
           keyValuePairs.title = formData.title;
@@ -817,7 +817,7 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
     // COLLECTIVES API functions
     async createCollectiveViaAPI(
       collectiveData: CreateAppResourceData,
-    ): Promise<OCSResponse<CollectiveResponse>> {
+    ): Promise<OCSResponse<{ collective: CollectiveResponse }>> {
       try {
         const response = await axios.post(
           generateOcsUrl("/apps/collectives/api/v1.0/collectives"),
@@ -901,8 +901,8 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
         const collectiveResponse =
           await this.createCollectiveViaAPI(collectiveData);
         const collectiveId =
-          collectiveResponse.ocs?.data?.collective.id ||
-          collectiveResponse.ocs?.data?.name;
+          collectiveResponse.ocs?.data?.collective.id ??
+          collectiveResponse.ocs?.data?.collective.name;
 
         if (!collectiveId) {
           throw new Error("No collective ID returned from API");
@@ -971,7 +971,7 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
     // POLLS API functions
     async createPollViaAPI(
       pollData: CreateAppResourceData,
-    ): Promise<OCSResponse<PollResponse>> {
+    ): Promise<OCSResponse<PollResponse & { poll?: PollResponse }>> {
       try {
         const response = await axios.post(
           generateOcsUrl("/apps/polls/api/v1.0/poll"),
@@ -1030,7 +1030,7 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
         // 1. Create the poll via API
         const pollResponse = await this.createPollViaAPI(pollData);
         const pollId =
-          pollResponse.ocs.data.poll.id || pollResponse.ocs.data?.id;
+          pollResponse.ocs.data.poll?.id ?? pollResponse.ocs.data.id;
 
         if (!pollId) {
           throw new Error("No poll ID returned from API");
@@ -1092,7 +1092,7 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
     // DECK API functions
     async createDeckBoardViaAPI(
       boardData: CreateAppResourceData,
-    ): Promise<OCSResponse<DeckBoardResponse>> {
+    ): Promise<DeckBoardResponse> {
       try {
         const response = await axios.post(
           generateUrl("/apps/deck/api/v1.0/boards"),
@@ -1151,7 +1151,7 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
       try {
         // 1. Create the board via API
         const boardResponse = await this.createDeckBoardViaAPI(boardData);
-        const boardId = boardResponse.id || boardResponse.data?.id;
+        const boardId = boardResponse.id;
 
         if (!boardId) {
           throw new Error("No board ID returned from API");
@@ -1302,7 +1302,7 @@ export const useInquiryLinksStore = defineStore("inquiryLinks", {
         const collectivesArray = response.data.ocs.data.collectives;
 
         const collective = collectivesArray.find(
-          (c: unknown) =>
+          (c: CollectiveResponse) =>
             c.id === parseInt(collectiveId) || c.id.toString() === collectiveId,
         );
 

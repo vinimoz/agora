@@ -125,7 +125,6 @@ const toBackendConfig = (c: ParticipationConfig): Record<string, unknown> => ({
   group_ids: c.group_ids,
 });
 
-
 const participationType = computed({
   get: () => localParticipationType.value,
   set: async (value: ParticipationPolicyType) => {
@@ -219,8 +218,6 @@ const participationOptionLabels: Record<ParticipationPolicyType, string> = {
   groups: t("agora", "Specific Groups"),
   lottery: t("agora", "🎲 Lottery"),
 };
-
-
 
 // ============================================================
 // COMPUTED - User/Group selections
@@ -332,9 +329,11 @@ async function publishGroup() {
     await inquiryGroupStore.updatePublicationStatus("published");
     showSuccess(t("agora", "Group published successfully"));
   } catch (error) {
-    showError(t("agora", "Failed to publish group", {
+    showError(
+      t("agora", "Failed to publish group", {
         error: error.message,
-      }),);
+      }),
+    );
   }
 }
 
@@ -344,7 +343,7 @@ async function archiveGroup() {
     await inquiryGroupStore.archive();
     showSuccess(t("agora", "Group archived successfully"));
   } catch (error) {
-    showError(t("agora", "Failed to archive group",error));
+    showError(t("agora", "Failed to archive group", error));
   }
 }
 

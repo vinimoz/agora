@@ -168,9 +168,9 @@ export interface InquiryType {
   allowed_response: string[];
   allowed_transformation: string[];
   allowed_option_type: string[];
-  allow_comment: number;
-  support_feature: string;
-  is_root: boolean;
+  allow_comment?: number;
+  support_feature?: string;
+  is_root?: boolean;
   created: number;
 }
 
@@ -195,7 +195,7 @@ export type FamilyType = "vote" | "timeline" | "kanban";
 // LIST / FILTERS
 // ============================================================================
 
-export type ViewMode = "table-view" | "list-view";
+export type ViewMode = "table-view" | "list-view" | "reel-view";
 
 export type SortType =
   | "created"
@@ -296,6 +296,7 @@ export interface Item {
   text: string;
   type: string;
   family: string;
+  coverId: number | null;
   owner: User;
   statusKey: string;
   raw: Option | Inquiry;

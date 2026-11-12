@@ -23,7 +23,7 @@ import { t } from "@nextcloud/l10n";
 const props = defineProps<{
   // engineConfig: Record<string, unknown>;
   // item: Option | Inquiry;
- // disabled?: boolean;
+  // disabled?: boolean;
   isSelected?: boolean;
 }>();
 

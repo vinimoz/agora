@@ -34,6 +34,7 @@ import {
   AdminSharePublicShowLogin,
   AdminShowMailAddresses,
   AdminUnrescrictedOwners,
+  AdminHomeConfigManager,
 } from "../components/Settings/AdminSettings/index.ts";
 import { useAppSettingsStore } from "../stores/appSettings.ts";
 import { useTemplateWizardStore } from "../stores/templateWizard.ts";
@@ -48,6 +49,10 @@ const launchWizard = () => {
 };
 
 const sections = {
+  homeConfig: {
+    name: t("agora", "Agora landing page config"),
+    description: t("agora", "Configure your landing page"),
+  },
   cleanInstance: {
     name: t("agora", "Agora clean instance"),
     description: t("agora", "Destroy all your agora data"),
@@ -177,6 +182,9 @@ onMounted(async () => {
 
         <NcSettingsSection v-bind="sections.globalSettings">
           <AdminSettings />
+        </NcSettingsSection>
+        <NcSettingsSection v-bind="sections.homeConfig">
+          <AdminHomeConfigManager />
         </NcSettingsSection>
         <NcSettingsSection v-bind="sections.inquirySettings">
           <AdminInquiryCreation />

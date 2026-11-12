@@ -18,8 +18,8 @@ const uniqueOptions = (options: Option[]) =>
 
 const uniqueParticipants = (inquiries: Inquiry[]): Participant[] => {
   const participants: Participant[] = inquiries.map((inquiry) => ({
-    user: inquiry.user,
-    inquiryId: inquiry.inquiryId,
+    user: inquiry.owner,
+    inquiryId: inquiry.id,
   }));
 
   return uniqueArrayOfObjects(participants);

@@ -4,16 +4,7 @@
  */
 import { AxiosResponse } from "@nextcloud/axios";
 import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
-import type { SupportResultData, Support } from "@/Types";
-
-export interface SupportValue {
-  value?: number | string | boolean;
-  values?: Record<string, unknown>;
-  ranking?: Record<number, number>;
-  scores?: Record<number, number>;
-  reaction?: string;
-  selected?: number[];
-}
+import type { SupportResultData, Support, SupportValue } from "@/Types";
 
 export interface AddSupportOptions {
   value: number | string | SupportValue;

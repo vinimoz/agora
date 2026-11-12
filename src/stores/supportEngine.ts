@@ -279,7 +279,7 @@ export const useSupportEngineStore = defineStore("supportEngine", () => {
       return JSON.stringify(currentVal) !== JSON.stringify(newVal);
     });
 
-    const hasExistingSupports = await hasSupports(id);
+    const hasExistingSupports = hasSupports(id);
     if (
       hasExistingSupports &&
       !requestedKeys.every((k) => allowedUpdatesWithVotes.includes(k))
@@ -345,10 +345,20 @@ export const useSupportEngineStore = defineStore("supportEngine", () => {
     }
   }
 
-  async function hasSupports(engineId: number): Promise<boolean> {
-    const { supports } = useSupportsStore();
-    if (!supports.value) return false;
-    return supports.value.some((s) => s.supportEngineId === engineId);
+  /**
+   * Returns true if any support/ballot row already exists for this engine.
+   *
+   * NOTE: `useSupportsStore()` is a setup store; `.supports` is already the
+   * unwrapped `Support[]`. Accessing `.value` here used to silently return
+   * `false`, defeating the "no config changes after votes" guard.
+   */
+  function hasSupports(engineId: number): boolean {
+    const supportsStore = useSupportsStore();
+    const list = supportsStore.supports as unknown;
+    if (!Array.isArray(list)) return false;
+    return list.some(
+      (s: { supportEngineId?: number }) => s.supportEngineId === engineId,
+    );
   }
 
   async function deleteEngine(id: number): Promise<boolean> {

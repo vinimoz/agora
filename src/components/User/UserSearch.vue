@@ -22,7 +22,7 @@ interface Props {
   closeOnSelect?: boolean;
   inputLabel?: string;
   multiple?: boolean;
-  disabled?: boolean; 
+  disabled?: boolean;
 }
 
 const emit = defineEmits<{
@@ -36,9 +36,9 @@ const props = withDefaults(defineProps<Props>(), {
   ariaLabel: t("agora", "Select users"),
   searchTypes: () => [SEARCH_TYPE_ALL],
   closeOnSelect: false,
-  inputLabel: '',
+  inputLabel: "",
   multiple: false,
-  disabled: false, 
+  disabled: false,
 });
 
 const users = ref<User[]>([]);

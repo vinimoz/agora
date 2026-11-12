@@ -9,7 +9,6 @@ import type {
   Inquiry,
   InquiryGroup,
   Option,
-  InquiryType,
   VisibilityType,
 } from "../Types/index.ts";
 import type { ParticipationPolicy } from "../Types/participation.types.ts";
@@ -164,11 +163,7 @@ export interface PermissionContext {
 /**
  * Single entry from `ParticipationPolicy.policyConfig.lottery.selections`.
  */
-type LotterySelectionStatus =
-  | "pending"
-  | "accepted"
-  | "declined"
-  | "expired";
+type LotterySelectionStatus = "pending" | "accepted" | "declined" | "expired";
 
 interface LotterySelection {
   selected_user_id: string;
@@ -184,8 +179,7 @@ function getLotterySelections(
   policy?: ParticipationPolicy | null,
 ): LotterySelection[] {
   const lottery = policy?.policyConfig?.lottery as
-    | LotteryPolicyConfig
-    | undefined;
+    LotteryPolicyConfig | undefined;
   return lottery?.selections ?? [];
 }
 
@@ -307,10 +301,8 @@ function isParticipantOfInquiry(): boolean {
         (user.groups ?? []).includes(g),
       );
     case "lottery": {
-    const selections = getLotterySelections(policy);
-    const sel = selections.find(
-        (s) => s.selected_user_id === user.id,
-      );
+      const selections = getLotterySelections(policy);
+      const sel = selections.find((s) => s.selected_user_id === user.id);
       if (!sel) return false;
       if (sel.status === "declined" || sel.status === "expired") return false;
       if (sel.expires_at && sel.expires_at < Date.now() / 1000) return false;
@@ -932,9 +924,7 @@ export function canParticipate(
 
     case "lottery": {
       const selections = getLotterySelections(policy);
-      const sel = selections.find(
-        (s) => s.selected_user_id === user.id,
-      );
+      const sel = selections.find((s) => s.selected_user_id === user.id);
       if (!sel) return false;
       if (sel.status === "declined" || sel.status === "expired") return false;
       if (sel.expires_at && sel.expires_at < Date.now() / 1000) return false;
@@ -1016,9 +1006,7 @@ export function getParticipationStatus(
 
     case "lottery": {
       const selections = getLotterySelections(policy);
-      const sel = selections.find(
-        (s) => s.selected_user_id === user.id,
-      );
+      const sel = selections.find((s) => s.selected_user_id === user.id);
       if (!sel) {
         return {
           canParticipate: false,
@@ -1208,7 +1196,9 @@ export function getEditPermissions(ctx: PermissionContext): {
   if (ctx.contentType === ContentType.Inquiry && typeRights) {
     return {
       canSupport:
-        typeRights.supportInquiry && typeRights.supportFeature !== "none",
+        typeRights.supportInquiry === true &&
+        typeRights.supportFeature !== "none",
+
       canComment:
         typeRights.commentInquiry !== false &&
         typeRights.commentInquiry !== null,
@@ -1228,7 +1218,7 @@ export function getEditPermissions(ctx: PermissionContext): {
           cfg.support_feature !== "" &&
           cfg.support_feature !== "none" &&
           cfg.support_feature !== null,
-        canComment: cfg.allow_comment !== null && cfg.allow_comment !== false,
+        canComment: cfg.allow_comment !== null && cfg.allow_comment !== 0,
       };
     }
   } else if (ctx.contentType === ContentType.Option) {
@@ -1240,11 +1230,10 @@ export function getEditPermissions(ctx: PermissionContext): {
           cfg.support_feature !== "" &&
           cfg.support_feature !== "none" &&
           cfg.support_feature !== null,
-        canComment: cfg.allow_comment !== null && cfg.allow_comment !== false,
+        canComment: cfg.allow_comment !== null && cfg.allow_comment !== 0,
       };
     }
   }
-
   return { canSupport: false, canComment: false };
 }
 

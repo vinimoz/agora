@@ -192,7 +192,11 @@ interface Props {
   groupId?: number;
   hideHeader?: boolean;
 }
-const props = withDefaults(defineProps<Props>(), {inquiries: null, hideHeader: false , groupId: 0 });
+const props = withDefaults(defineProps<Props>(), {
+  inquiries: null,
+  hideHeader: false,
+  groupId: 0,
+});
 
 const emit = defineEmits<{
   click: [inquiry: Inquiry];

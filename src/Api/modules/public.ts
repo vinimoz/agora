@@ -277,6 +277,42 @@ const publicInquiry = {
     });
   },
 
+  createOption(
+    shareToken: string,
+    data: {
+      title: string;
+      text: string;
+      type: string;
+      parentId?: number;
+      miscFields?: Record<string, { key: string; value: string }>;
+    },
+  ): Promise<AxiosResponse<{ option: Option }>> {
+    return httpInstance.request({
+      method: "POST",
+      url: `s/${shareToken}/option`,
+      data,
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.createOption.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
+  updateOption(
+    shareToken: string,
+    data: Option,
+  ): Promise<AxiosResponse<{ option: Option }>> {
+    return httpInstance.request({
+      method: "PUT",
+      url: `s/${shareToken}/option/${data.id}`,
+      data,
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.updateOption.name
+        ].handleRequestCancellation().token,
+    });
+  },
+
   addComment(
     shareToken: string,
     message: string,

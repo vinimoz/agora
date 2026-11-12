@@ -10,7 +10,7 @@ import {
   ORGANIZATION_TYPES,
   type OrganizationType,
 } from "../Types/experience.types";
-import type { HomeConfig } from "../Types/appSettings.types.ts";
+import type { HomeConfig, HomeConfigData } from "../Types/appSettings.types.ts";
 
 export function useHomeConfig() {
   const session = useSessionStore();
@@ -28,7 +28,7 @@ export function useHomeConfig() {
     ) {
       return candidate as OrganizationType;
     }
-    return "university";
+    return "municipality";
   });
 
   /** The selected template — useful for admin previews ("what would a university see?") */
@@ -39,34 +39,58 @@ export function useHomeConfig() {
   /**
    * Final merged config, resolution order:
    *
-   *   1. session.appSettings.home       (tenant-specific override from the DB)
-   *   2. HOME_TEMPLATES[organizationType] (org-type defaults)
+   *   1. session.appSettings.home            (tenant override, HomeConfigData)
+   *   2. HOME_TEMPLATES[organizationType]    (org-type defaults, HomeConfig)
    *
-   * There is no third level: the org-type template is the last resort. If
-   * organizationType itself is unknown, getHomeTemplate() already degrades
-   * to the municipality template.
+   * The server (`HomeConfigService::resolveForOrganization()`) already merged
+   * template + instance on the backend and injected `hero.imageUrl` /
+   * `promo.imageUrl` as `/apps/agora/home-config/<id>/images/<slot>` URLs.
+   * What arrives under `session.appSettings.home` is therefore
+   * `HomeConfigData`, NOT `HomeConfig` — the two shapes use different field
+   * names (`image` vs `backgroundUrl`, `description` vs `text`,
+   * `cta: {label,url}` vs `cta: string`). This computed projects the
+   * admin-editable blob back onto the renderer shape.
    */
   const config = computed<HomeConfig>(() => {
-    const override = session.appSettings?.home;
+    // `AppSettings.home` is typed as `HomeConfig` for backwards compatibility,
+    // but at runtime the server returns a `HomeConfigData` blob.
+    const override = session.appSettings?.home as HomeConfigData | undefined;
     const tpl = template.value;
     if (!override) return tpl;
 
     return {
       sections: override.sections ?? tpl.sections,
 
-      // ── Deep merge: hero ─────────────────────────────────────────────
+      // ── Hero ────────────────────────────────────────────────────────
+      // Only copy the fields HomeConfigData actually owns; explicit picks
+      // keep admin-only fields (image, imageConfigId, imageUpdated) from
+      // leaking into the returned HomeConfig.
       hero: {
         ...tpl.hero,
-        ...override.hero,
-        actions: override.hero?.actions ?? tpl.hero.actions,
+        title: override.hero?.title ?? tpl.hero.title,
+        subtitle: override.hero?.subtitle ?? tpl.hero.subtitle,
+        backgroundUrl: override.hero?.imageUrl ?? tpl.hero.backgroundUrl,
+        actions: override.hero?.actions?.length
+          ? override.hero.actions
+          : tpl.hero.actions,
       },
 
-      // ── Deep merge: promo ────────────────────────────────────────────
+      // ── Promo ───────────────────────────────────────────────────────
       promo: {
         ...tpl.promo,
-        ...override.promo,
+        title: override.promo?.title ?? tpl.promo.title,
+        // HomeConfigData: `description` → HomeConfig: `text`
+        text: override.promo?.description ?? tpl.promo.text,
+        // HomeConfigData: `cta: {label?, url?}` → HomeConfig: `cta: string`
+        cta: override.promo?.cta?.label ?? tpl.promo.cta,
+        // HomeConfigData: `image` (filename) or `imageUrl` (resolved URL)
+        imageUrl:
+          override.promo?.imageUrl ??
+          override.promo?.image ??
+          tpl.promo.imageUrl,
       },
 
+      // ── Relevance ───────────────────────────────────────────────────
       relevance: {
         ...tpl.relevance,
         ...override.relevance,
@@ -76,7 +100,12 @@ export function useHomeConfig() {
           ...override.relevance?.weights,
         },
       },
-      sectionLabels: { ...tpl.sectionLabels, ...override.sectionLabels },
+
+      // ── Section labels ──────────────────────────────────────────────
+      sectionLabels: {
+        ...tpl.sectionLabels,
+        ...override.sectionLabels,
+      },
     };
   });
 

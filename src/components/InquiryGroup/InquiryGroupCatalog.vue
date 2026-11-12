@@ -157,7 +157,6 @@ const inquiryGroupsStore = useInquiryGroupsStore();
 
 const selectedFamily = ref<string | null>(null);
 
-
 // Filter groups by selected family
 const filteredGroups = computed(() => {
   let result = props.groups.filter((g) => g.status.groupStatus !== "archived");

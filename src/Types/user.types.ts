@@ -41,6 +41,7 @@ export interface User {
   isLegislative: boolean;
   isGroupEditor: boolean;
   isGuest: boolean;
+  isOwner: boolean;
   isUnrestrictedOwner: boolean;
 
   // i18n

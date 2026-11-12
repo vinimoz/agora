@@ -52,15 +52,20 @@ export interface HierarchicalOption {
   original: BaseEntry;
 }
 
+export type HierarchicalEntry = BaseEntry & {
+  depth: number;
+  children: HierarchicalEntry[];
+};
+
 export const buildHierarchy = (
   list: BaseEntry[],
   parentId = 0,
   depth = 0,
-): BaseEntry[] => {
+): HierarchicalEntry[] => {
   if (!Array.isArray(list)) return [];
   return list
     .filter((item) => item?.parentId === parentId)
-    .map((item) => {
+    .map((item): HierarchicalEntry => {
       const children = buildHierarchy(list, item.id, depth + 1);
       return {
         ...item,
@@ -162,8 +167,10 @@ export const formatValueForStorage = (
       return String(value);
   }
 };
-
-export const parseFormValue = (value: unknown, fieldType: string): unknown => {
+export const parseFormValue = (
+  value: unknown,
+  fieldType: string,
+): MiscValue => {
   if (value === null || value === undefined) {
     return null;
   }
@@ -185,7 +192,7 @@ export const parseFormValue = (value: unknown, fieldType: string): unknown => {
         const date = new Date(value);
         return isNaN(date.getTime()) ? null : date;
       }
-      return value;
+      return value as MiscValue;
     case "json":
       if (typeof value === "string") {
         try {
@@ -194,7 +201,7 @@ export const parseFormValue = (value: unknown, fieldType: string): unknown => {
           return value;
         }
       }
-      return value;
+      return value as MiscValue;
     case "enum":
       return String(value);
     case "users":
@@ -209,13 +216,13 @@ export const parseFormValue = (value: unknown, fieldType: string): unknown => {
           return [value];
         }
       }
-      return value;
+      return value as string[];
     case "location":
     case "category":
       if (value && typeof value === "object" && "value" in value) {
-        return value.value;
+        return (value as { value: MiscValue }).value;
       }
-      return value;
+      return value as MiscValue;
     case "option":
     case "inquiry":
       if (value && typeof value === "object" && "id" in value) {
@@ -366,9 +373,13 @@ export const sanitizeValue = (value: unknown): string => {
   return String(value);
 };
 
+export interface MiscFieldStore {
+  updateMiscField?: (...args: unknown[]) => Promise<unknown>;
+}
+
 export function useMiscFields(
   fields: Ref<MiscField[]>,
-  store: unknown,
+  store: MiscFieldStore | null | undefined,
   existingValues: Ref<Record<string, MiscValue>>,
   options?: {
     saveImmediateTypes?: string[];
@@ -435,7 +446,7 @@ export function useMiscFields(
     fieldKey: string,
     value: unknown,
     fieldType: string,
-    saveCallback?: (key: string, value: string) => Promise<void>,
+    saveCallback?: (key: string, value: MiscValue) => Promise<void>,
   ) => {
     if (state.saveTimeouts.value[fieldKey]) {
       clearTimeout(state.saveTimeouts.value[fieldKey]);
@@ -459,8 +470,7 @@ export function useMiscFields(
       }, 1000);
     }
   };
-
-  const saveToStore = async (fieldKey: string, value: unknown) => {
+  const saveToStore = async (fieldKey: string, value: MiscValue) => {
     if (!store) return;
 
     state.isSaving.value = true;
@@ -482,6 +492,9 @@ export function useMiscFields(
   };
 
   const saveAll = async () => {
+    const updateFn = store?.updateMiscField;
+    if (!updateFn) return;
+
     state.isSaving.value = true;
     state.errors.value = {};
 
@@ -493,7 +506,7 @@ export function useMiscFields(
             value,
             field?.type || "string",
           );
-          return store.updateMiscField(key, stringValue);
+          return updateFn(key, stringValue);
         },
       );
 
@@ -610,7 +623,7 @@ export const formatMiscValueForDisplay = (
     let parsed = value;
 
     if (typeof value === "string") {
-      if (field.type === "integer" || field.type === "number") {
+      if (field.type === "integer") {
         const num = Number(value);
         if (!isNaN(num)) {
           parsed = num;
@@ -665,7 +678,6 @@ export const formatMiscValueForDisplay = (
         }
         return String(parsed);
       case "integer":
-      case "number":
         return String(parsed);
       case "enum":
         if (field.allowed_values) {
@@ -683,10 +695,9 @@ export const formatMiscValueForDisplay = (
       case "users":
       case "groups":
         if (Array.isArray(parsed)) {
-          if (context?.users) {
-            return parsed
-              .map((id) => context.users[id]?.displayName || id)
-              .join(", ");
+          const users = context?.users;
+          if (users) {
+            return parsed.map((id) => users[id]?.displayName || id).join(", ");
           }
           return parsed.join(", ");
         }
@@ -694,10 +705,9 @@ export const formatMiscValueForDisplay = (
           try {
             const arr = JSON.parse(parsed);
             if (Array.isArray(arr)) {
-              if (context?.users) {
-                return arr
-                  .map((id) => context.users[id]?.displayName || id)
-                  .join(", ");
+              const users = context?.users;
+              if (users) {
+                return arr.map((id) => users[id]?.displayName || id).join(", ");
               }
               return arr.join(", ");
             }
@@ -708,7 +718,7 @@ export const formatMiscValueForDisplay = (
           }
         }
         if (parsed && typeof parsed === "object" && "displayName" in parsed) {
-          return parsed.displayName;
+          return String(parsed.displayName);
         }
         return String(parsed);
       case "location":
@@ -788,7 +798,7 @@ export const getHierarchicalOptions = (
   if (!Array.isArray(items)) return [];
 
   const hierarchical = buildHierarchy(items);
-  const options = hierarchical.map((item) => ({
+  const options: HierarchicalOption[] = hierarchical.map((item) => ({
     value: item.id,
     label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
     original: item,
@@ -798,10 +808,9 @@ export const getHierarchicalOptions = (
     options.unshift({
       value: "",
       label: emptyLabel,
-      original: { id: "", name: emptyLabel, parentId: 0 } as BaseEntry,
+      original: { id: 0, name: emptyLabel, parentId: 0 },
     });
   }
-
   return options;
 };
 
@@ -834,30 +843,38 @@ export const validateField = (
     return t("agora", "This field is required");
   }
 
+  const maxLength = field.rules.maxLength;
   if (
-    field.rules.maxLength &&
+    maxLength &&
+    typeof maxLength === "number" &&
     typeof value === "string" &&
-    value.length > field.rules.maxLength
+    value.length > maxLength
   ) {
     return t("agora", "Maximum length is {max} characters", {
-      max: field.rules.maxLength,
+      max: maxLength,
     });
   }
 
+  const minLength = field.rules.minLength;
   if (
-    field.rules.minLength &&
+    minLength &&
+    typeof minLength === "number" &&
     typeof value === "string" &&
-    value.length < field.rules.minLength
+    value.length < minLength
   ) {
     return t("agora", "Minimum length is {min} characters", {
-      min: field.rules.minLength,
+      min: minLength,
     });
   }
 
-  if (field.rules.pattern && typeof value === "string") {
-    const regex = new RegExp(field.rules.pattern);
+  const pattern = field.rules.pattern;
+  if (pattern && typeof pattern === "string" && typeof value === "string") {
+    const regex = new RegExp(pattern);
     if (!regex.test(value)) {
-      return field.rules.message || t("agora", "Invalid format");
+      const message = field.rules.message;
+      return typeof message === "string"
+        ? message
+        : t("agora", "Invalid format");
     }
   }
 

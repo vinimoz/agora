@@ -313,6 +313,7 @@ export interface DisplayZone {
       showCover?: boolean;
       showMeta?: boolean;
       showStats?: boolean;
+      showComment?: boolean;
       showAuthor?: boolean;
       showDescription?: boolean;
       showExpiry?: boolean;

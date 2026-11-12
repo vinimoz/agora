@@ -189,11 +189,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, type Component } from "vue";
 import { t } from "@nextcloud/l10n";
 import { InquiryGeneralIcons as Icons } from "../../utils/icons";
 import InquiryRichHTML from "./InquiryRichHTML.vue";
-import type { Inquiry, InquiryGroup } from "../../Types";
+import type { Item, Inquiry, InquiryGroup } from "../../Types";
 
 interface Props {
   inquiry: Inquiry | null;
@@ -250,8 +250,8 @@ const tableOfContents = computed(() => {
   }));
 });
 
-function getInquiryIcon(inquiry: Inquiry): any {
-  const iconMap: Record<string, any> = {
+function getInquiryIcon(inquiry: Inquiry): Component {
+  const iconMap: Record<string, Component> = {
     survey: Icons.ClipboardList,
     poll: Icons.CheckCircle,
     question: Icons.Question,
@@ -265,7 +265,7 @@ function getInquiryIcon(inquiry: Inquiry): any {
   return iconMap[inquiry.type?.toLowerCase()] || Icons.File;
 }
 
-function getTocIcon(item: any): any {
+function getTocIcon(item: Item): Component {
   return item.icon || Icons.File;
 }
 

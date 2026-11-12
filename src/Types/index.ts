@@ -44,7 +44,6 @@ export type {
   QuadraticResult,
   TokenWeightedResult,
   PhasedVotingResult,
-  SupportResultData,
 
   // Support primitives
   SupportFeature,
@@ -55,6 +54,9 @@ export type {
   VotingConfiguration,
   VotingOptions,
   Phase,
+  SupportResultData,
+  SupportResultDataAccess,
+  SupportResultItemAccess,
 
   // Engine metadata
   EngineDefinition,
@@ -137,10 +139,13 @@ export enum Event {
   SidebarChangeTab = "agora:sidebar:changeTab",
   SidebarToggle = "agora:sidebar:toggle",
   ChangeShares = "agora:change:shares",
-  UpdateOptions = "agora:options:update",
   AddDate = "agora:options:add-date",
   UpdateComments = "agora:comments:update",
   UpdateSupports = "agora:supports:update",
   UpdateActivity = "agora:activity:update",
   ShowSettings = "agora:settings:show",
+  OptionsLoaded = "agora:optionsLoaded",
+  OptionAdded = "agora:optionAdded",
+  OptionDeleted = "agora:optionDeleted",
+  UpdateOptions = "agora:updateOptions",
 }

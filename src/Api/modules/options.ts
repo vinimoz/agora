@@ -624,7 +624,7 @@ const options = {
         ].handleRequestCancellation().token,
     });
   },
-}
+};
 const cancelTokenHandlerObject = createCancelTokenHandler(options);
 
 export default options;

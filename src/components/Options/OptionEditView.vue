@@ -221,7 +221,7 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, computed, onMounted, watch, markRaw, type Component } from "vue";
+import { ref, computed, onMounted, watch, markRaw, type Component } from "vue";
 import { useRoute } from "vue-router";
 import { t } from "@nextcloud/l10n";
 import NcButton from "@nextcloud/vue/components/NcButton";
@@ -401,9 +401,9 @@ const loadActionComponent = async (
     // For other families, try to load individual action modals
     else {
       const componentName = `${actionKey
-	.split("_")
-	.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-	.join("")}Modal`;
+        .split("_")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join("")}Modal`;
 
       const module = await import(`./Actions/${componentName}.vue`);
       component = markRaw(module.default || module);
@@ -548,7 +548,6 @@ const familyItems = computed(() => {
   return optionsStore.getOptionsByTargetId(inquiryStore.id);
 });
 
-
 /**
  * Get all option types that belong to the current family
  * (from the full option types tab, not filtered by inquiry)
@@ -614,7 +613,7 @@ const handleOptionCreated = async (newOption: Option) => {
     if (activeEngine && !activeEngine.target_ids.includes(newOption.id)) {
       const newTargetIds = [...activeEngine.target_ids, newOption.id];
       await engineStore.updateEngine(activeEngine.id, {
-	target_ids: newTargetIds,
+        target_ids: newTargetIds,
       });
     }
   }
@@ -701,272 +700,272 @@ watch(
 
 <style scoped lang="scss">
 .inquiry-options-view {
-	margin-top: 32px;
-	padding: 24px;
-	background: var(--color-main-background);
-	border: 2px solid var(--color-border);
-	border-radius: 24px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-top: 32px;
+  padding: 24px;
+  background: var(--color-main-background);
+  border: 2px solid var(--color-border);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
-	.family-tabs-container {
-		margin-bottom: 32px;
+  .family-tabs-container {
+    margin-bottom: 32px;
 
-		.family-tabs {
-			display: flex;
-			gap: 8px;
-			flex-wrap: wrap;
-			padding-bottom: 16px;
-			border-bottom: 2px solid var(--color-border);
+    .family-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--color-border);
 
-			.family-tab {
-				background: var(--color-background-dark) !important;
-				border: 2px solid transparent !important;
-				border-radius: 16px !important;
-				padding: 0 !important;
-				margin: 0 !important;
-				min-height: auto !important;
-				transition: all 0.3s ease !important;
+      .family-tab {
+        background: var(--color-background-dark) !important;
+        border: 2px solid transparent !important;
+        border-radius: 16px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        min-height: auto !important;
+        transition: all 0.3s ease !important;
 
-				:deep(.button-vue) {
-					padding: 12px 20px !important;
-					background: transparent !important;
-					border: none !important;
-					min-height: auto !important;
-				}
+        :deep(.button-vue) {
+          padding: 12px 20px !important;
+          background: transparent !important;
+          border: none !important;
+          min-height: auto !important;
+        }
 
-				&:hover {
-					transform: translateY(-2px);
-					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-					:deep(.button-vue) {
-						background: transparent !important;
-					}
-				}
+          :deep(.button-vue) {
+            background: transparent !important;
+          }
+        }
 
-				&.active {
-					background: var(--color-primary-light) !important;
-					border-color: var(--color-primary-element) !important;
+        &.active {
+          background: var(--color-primary-light) !important;
+          border-color: var(--color-primary-element) !important;
 
-					.tab-icon {
-						background: var(--color-primary-element);
-						color: white !important;
-					}
+          .tab-icon {
+            background: var(--color-primary-element);
+            color: white !important;
+          }
 
-					.tab-label {
-						color: var(--color-primary-element);
-					}
-				}
+          .tab-label {
+            color: var(--color-primary-element);
+          }
+        }
 
-				.tab-content {
-					display: flex;
-					align-items: center;
-					gap: 8px;
-					padding: 12px 20px;
-					width: 100%;
-					min-width: max-content;
-				}
+        .tab-content {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 20px;
+          width: 100%;
+          min-width: max-content;
+        }
 
-				.tab-icon {
-					width: 32px;
-					height: 32px;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					background: var(--color-background-darker);
-					border-radius: 10px;
-					transition: all 0.3s ease;
-					flex-shrink: 0;
-				}
+        .tab-icon {
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--color-background-darker);
+          border-radius: 10px;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+        }
 
-				.tab-label {
-					font-size: 14px;
-					font-weight: 600;
-					color: var(--color-text-light);
-					white-space: nowrap;
-				}
+        .tab-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--color-text-light);
+          white-space: nowrap;
+        }
 
-				.tab-counter {
-					margin-left: 4px;
-					flex-shrink: 0;
+        .tab-counter {
+          margin-left: 4px;
+          flex-shrink: 0;
 
-					:deep(.counter-bubble) {
-						min-width: 24px;
-						height: 24px;
-						font-size: 12px;
-						font-weight: 600;
-					}
-				}
-			}
-		}
-	}
+          :deep(.counter-bubble) {
+            min-width: 24px;
+            height: 24px;
+            font-size: 12px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
 
-	.family-content {
-		.family-header {
-			margin-bottom: 24px;
-			padding-bottom: 20px;
-			border-bottom: 2px solid var(--color-border);
+  .family-content {
+    .family-header {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--color-border);
 
-			.family-title {
-				font-size: 24px;
-				font-weight: 700;
-				margin: 0 0 8px 0;
-				color: var(--color-main-text);
-			}
+      .family-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        color: var(--color-main-text);
+      }
 
-			.family-text {
-				font-size: 16px;
-				color: var(--color-text-lighter);
-				margin: 0 0 20px 0;
-				max-width: 600px;
-				line-height: 1.5;
-			}
+      .family-text {
+        font-size: 16px;
+        color: var(--color-text-lighter);
+        margin: 0 0 20px 0;
+        max-width: 600px;
+        line-height: 1.5;
+      }
 
-			.family-actions-wrapper {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				flex-wrap: wrap;
-				gap: 16px;
-				margin-top: 16px;
+      .family-actions-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 16px;
 
-				.create-options-bar {
-					display: flex;
-					gap: 12px;
-					flex-wrap: wrap;
-					flex: 1;
+        .create-options-bar {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          flex: 1;
 
-					.create-option-btn {
-						padding: 10px 20px;
-						border-radius: 12px;
-						font-weight: 600;
-						display: flex;
-						align-items: center;
-						gap: 8px;
-						transition: all 0.3s ease;
+          .create-option-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
 
-						&:hover {
-							transform: translateY(-2px);
-							box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-						}
-					}
-				}
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+          }
+        }
 
-				.no-engine-message {
-					display: flex;
-					align-items: center;
-					gap: 8px;
-					padding: 10px 16px;
-					background: var(--color-background-dark);
-					border-radius: 12px;
-					color: var(--color-text-lighter);
-					font-size: 13px;
+        .no-engine-message {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 16px;
+          background: var(--color-background-dark);
+          border-radius: 12px;
+          color: var(--color-text-lighter);
+          font-size: 13px;
 
-					svg {
-						color: var(--color-primary-element);
-					}
-				}
+          svg {
+            color: var(--color-primary-element);
+          }
+        }
 
-				.actions-dropdown {
-					flex-shrink: 0;
-					margin-left: auto;
+        .actions-dropdown {
+          flex-shrink: 0;
+          margin-left: auto;
 
-					:deep(.action-item) {
-						.action-item__menutoggle {
-							padding: 10px 16px;
-							border-radius: 12px;
-							background: var(--color-background-dark);
-							border: 1px solid var(--color-border);
+          :deep(.action-item) {
+            .action-item__menutoggle {
+              padding: 10px 16px;
+              border-radius: 12px;
+              background: var(--color-background-dark);
+              border: 1px solid var(--color-border);
 
-							&:hover {
-								background: var(--color-background-darker);
-								transform: translateY(-2px);
-								box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-							}
-						}
-					}
-				}
-			}
+              &:hover {
+                background: var(--color-background-darker);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              }
+            }
+          }
+        }
+      }
 
-			.read-only-indicator {
-				display: inline-flex;
-				align-items: center;
-				gap: 8px;
-				padding: 8px 16px;
-				background: var(--color-background-dark);
-				border-radius: 12px;
-				color: var(--color-text-lighter);
-				font-size: 14px;
-				margin-top: 8px;
+      .read-only-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--color-background-dark);
+        border-radius: 12px;
+        color: var(--color-text-lighter);
+        font-size: 14px;
+        margin-top: 8px;
 
-				svg {
-					color: var(--color-primary-element);
-				}
-			}
-		}
-	}
+        svg {
+          color: var(--color-primary-element);
+        }
+      }
+    }
+  }
 
-	.no-families {
-		text-align: center;
-		padding: 60px 20px;
+  .no-families {
+    text-align: center;
+    padding: 60px 20px;
 
-		svg {
-			color: var(--color-text-lighter);
-			margin-bottom: 20px;
-		}
+    svg {
+      color: var(--color-text-lighter);
+      margin-bottom: 20px;
+    }
 
-		h3 {
-			margin: 0 0 8px 0;
-			color: var(--color-main-text);
-			font-size: 20px;
-		}
+    h3 {
+      margin: 0 0 8px 0;
+      color: var(--color-main-text);
+      font-size: 20px;
+    }
 
-		p {
-			margin: 0;
-			color: var(--color-text-lighter);
-			font-style: italic;
-		}
-	}
+    p {
+      margin: 0;
+      color: var(--color-text-lighter);
+      font-style: italic;
+    }
+  }
 
-	@media (max-width: 768px) {
-		padding: 16px;
+  @media (max-width: 768px) {
+    padding: 16px;
 
-		.family-tabs {
-			overflow-x: auto;
-			padding-bottom: 12px;
+    .family-tabs {
+      overflow-x: auto;
+      padding-bottom: 12px;
 
-			.family-tab {
-				white-space: nowrap;
-				flex-shrink: 0;
-			}
-		}
+      .family-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+    }
 
-		.family-actions-wrapper {
-			flex-direction: column;
-			align-items: stretch !important;
+    .family-actions-wrapper {
+      flex-direction: column;
+      align-items: stretch !important;
 
-			.create-options-bar {
-				width: 100%;
+      .create-options-bar {
+        width: 100%;
 
-				.create-option-btn {
-					flex: 1;
-					justify-content: center;
-				}
-			}
+        .create-option-btn {
+          flex: 1;
+          justify-content: center;
+        }
+      }
 
-			.actions-dropdown {
-				width: 100%;
-				margin-left: 0 !important;
+      .actions-dropdown {
+        width: 100%;
+        margin-left: 0 !important;
 
-				:deep(.action-item) {
-					width: 100%;
+        :deep(.action-item) {
+          width: 100%;
 
-					.action-item__menutoggle {
-						width: 100%;
-						justify-content: center;
-					}
-				}
-			}
-		}
-	}
+          .action-item__menutoggle {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

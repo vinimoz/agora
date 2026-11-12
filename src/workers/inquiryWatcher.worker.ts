@@ -28,7 +28,7 @@ interface WorkerResponseMessage {
   status: string;
   mode: string;
   interval: number;
-  message: string;
+  message?: string;
   updates?: unknown[];
   lastUpdate?: number;
 }

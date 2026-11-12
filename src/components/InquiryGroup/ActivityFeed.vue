@@ -76,7 +76,6 @@ import { useActivityStore } from "../../stores/activity";
 import { useSessionStore } from "../../stores/session";
 import { showError } from "@nextcloud/dialogs";
 
-
 // Local set to track which activity IDs have been marked as read
 const readStatus = ref<Set<number>>(new Set());
 
@@ -123,7 +122,7 @@ async function loadActivities() {
   try {
     await activityStore.load();
   } catch (error) {
-  showError(error)
+    showError(error);
   }
 }
 

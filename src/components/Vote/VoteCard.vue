@@ -290,11 +290,7 @@ import {
 import { translateGrade } from "../../Types/votingType";
 import type { MajorityJudgmentSummary } from "../../composables/useVoteContext";
 
-import type {
-  Item,
-  SupportData,
-  SupportValue,
-} from "../../Types/index";
+import type { Item, SupportData, SupportValue } from "../../Types/index";
 
 const props = defineProps<{
   item: Item;

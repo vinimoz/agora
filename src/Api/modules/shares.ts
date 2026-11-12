@@ -7,7 +7,7 @@ import { Share, ShareType, User } from "../../Types/index.js";
 import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
 import {
   PublicInquiryEmailConditions,
-  ParticipationLevel,
+  ShareParticipationLevel,
   SharePurpose,
 } from "../../Types/share.types.js";
 
@@ -93,7 +93,7 @@ const shares = {
 
   setParticipationLevel(
     shareToken: string,
-    participationLevel: ParticipationLevel,
+    participationLevel: ShareParticipationLevel,
   ): Promise<AxiosResponse<{ share: Share }>> {
     console.log(" SET PART ", participationLevel);
     return httpInstance.request({

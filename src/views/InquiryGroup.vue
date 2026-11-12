@@ -1172,7 +1172,7 @@ async function archiveGroup(group: InquiryGroup) {
       query: { family: activeFamily.value ?? undefined, from: group.slug },
     });
   } catch (error) {
-    showError(t("agora", "Failed to archive group"),error);
+    showError(t("agora", "Failed to archive group"), error);
   }
 }
 

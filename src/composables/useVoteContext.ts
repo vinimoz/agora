@@ -35,9 +35,16 @@ import { useInquiriesStore } from "../stores/inquiries";
 import { useInquiryGroupsStore } from "../stores/inquiryGroups";
 import { useSupportResultStore } from "../stores/supportResult";
 import { SupportsAPI } from "../Api/index.ts";
-import type { SupportResultData, Support } from "../Types/index";
-import type { SupportEngine, SupportValue } from "../Types/index";
 import type { TargetType, VotableItem } from "../Types/voteContext.types";
+import type {
+  SupportResultData,
+  SupportResultDataAccess,
+  MajorityJudgmentResult,
+  SupportResult,
+  Support,
+  SupportEngine,
+  SupportValue,
+} from "../Types/index";
 
 /** Accept a raw value, a Ref, or a getter — all reactive. */
 type MaybeRefOrGetter<T> = T | Ref<T> | (() => T);
@@ -121,7 +128,6 @@ const SINGLE_VOTE_ENGINES = [
   "reaction",
   "approval_delib",
 ];
-
 
 const POINT_BASED_ENGINES = ["borda", "condorcet"];
 
@@ -1283,11 +1289,17 @@ export function useVoteContext(
   const getItemMajorityJudgment = (
     itemId: number,
   ): MajorityJudgmentSummary | null => {
-    const res = [resultsMap.value.get(itemId), engineResult.value].find(
-      (r) => r?.type === "majority_judgment" && r.items?.[itemId],
+    const candidates: Array<SupportResultData | null> = [
+      resultsMap.value.get(itemId) ?? null,
+      engineResult.value,
+    ];
+    const res = candidates.find(
+      (r): r is MajorityJudgmentResult =>
+        r?.type === "majority_judgment" && !!r.items?.[itemId],
     );
     if (!res) return null;
-    const opt = res.items[itemId];
+    const opt = res.items?.[itemId];
+    if (!opt) return null;
     const grades: string[] =
       res.grades ?? Object.keys(opt.grade_distribution ?? {});
     return {
@@ -1312,82 +1324,67 @@ export function useVoteContext(
       "reaction",
     ];
 
-    // Per-item engines (deliberative or engine mode via engineResult)
+    // Per‑item engines (deliberative or engine mode via engineResult)
     if (perItemEngines.includes(engineId)) {
-      // Try per‑item result first (deliberative)
-      const result = resultsMap.value.get(itemId);
-      if (result) {
-        switch (result.type) {
-          case "binary":
-            return result.items?.[itemId]?.yes ?? result.totals?.yes ?? 0;
-          case "ternary":
-            return result.items?.[itemId]?.yes ?? result.totals?.yes ?? 0;
-          case "score":
-          case "star":
-            return result.items?.[itemId]?.total ?? result.totals?.total ?? 0;
-          case "reaction": {
-            const perOpt = result.items?.[itemId];
-            if (perOpt) return Object.values(perOpt).reduce((a, b) => a + b, 0);
-            return Object.values(result.counts || {}).reduce(
-              (a, b) => a + b,
-              0,
-            );
+      // Prefer per‑item result; fall back to engineResult.
+      const result = resultsMap.value.get(itemId) ?? engineResult.value;
+      if (!result) return 0;
+
+      const r = result as SupportResultDataAccess;
+      const item = r.items?.[itemId];
+
+      switch (result.type) {
+        case "binary":
+        case "ternary":
+          return item?.yes ?? r.totals?.yes ?? 0;
+        case "score":
+        case "star":
+          return item?.total ?? r.totals?.total ?? 0;
+        case "reaction": {
+          if (item) {
+            let sum = 0;
+            for (const v of Object.values(item)) {
+              if (typeof v === "number") sum += v;
+            }
+            return sum;
           }
-          case "majority_judgment":
-            return result.items?.[itemId]?.total_votes ?? 0;
+          const counts: Record<string | number, number> = r.counts ?? {};
+          return Object.values(counts).reduce((a, b) => a + b, 0);
         }
-      }
-      // Fallback: use engineResult (engine mode)
-      const res = engineResult.value;
-      if (res) {
-        switch (res.type) {
-          case "binary":
-            return res.items?.[itemId]?.yes ?? res.totals?.yes ?? 0;
-          case "ternary":
-            return res.items?.[itemId]?.yes ?? res.totals?.yes ?? 0;
-          case "score":
-          case "star":
-            return res.items?.[itemId]?.total ?? res.totals?.total ?? 0;
-          case "reaction": {
-            const perOpt = res.items?.[itemId];
-            if (perOpt) return Object.values(perOpt).reduce((a, b) => a + b, 0);
-            return Object.values(res.counts || {}).reduce((a, b) => a + b, 0);
-          }
-          case "majority_judgment":
-            return res.items?.[itemId]?.total_votes ?? 0;
-        }
+        case "majority_judgment":
+          return item?.total_votes ?? 0;
       }
       return 0;
     }
 
-    // Complex engines: use inquiry-level result
-    const res = engineResult.value;
+    // Complex engines: use inquiry‑level result
+    const res = engineResult.value as SupportResultDataAccess | null;
     if (!res) return 0;
 
     switch (engineId) {
       case "approval":
-        return res.counts?.[itemId] || 0;
+        return res.counts?.[itemId] ?? 0;
       case "ranking":
-        return res.rankings?.[itemId] || 0;
+        return res.rankings?.[itemId] ?? 0;
       case "condorcet":
-        return res.wins?.[itemId] || 0;
+        return res.wins?.[itemId] ?? 0;
       case "borda":
-        return res.scores?.[itemId] || 0;
+        return res.scores?.[itemId] ?? 0;
       case "quadratic":
-        return res.scores?.[itemId] || 0;
+        return res.scores?.[itemId] ?? 0;
       case "token_weighted":
-        return res.weights?.[itemId] || 0;
+        return res.weights?.[itemId] ?? 0;
       case "phased_voting":
-        return res.counts?.[itemId] || 0;
+        return res.counts?.[itemId] ?? 0;
       case "approval_delib":
-        return res.totals?.approved || 0;
+        return res.totals?.approved ?? 0;
       default:
         return 0;
     }
   };
 
   const getItemRank = (itemId: number): number | null => {
-    const res = engineResult.value as Record<string, unknown> | null;
+    const res = engineResult.value as SupportResultDataAccess | null;
     return res?.ranking?.[itemId] ?? null;
   };
 
@@ -1403,41 +1400,42 @@ export function useVoteContext(
       "reaction",
     ];
 
-    // If we have an engineResult (engine mode), use it
     const res = engineResult.value;
     if (res && perItemEngines.includes(engineId)) {
-      // Compute total from res.items or res.totals
-      if (res.items) {
+      const r = res as SupportResultDataAccess;
+
+      if (r.items) {
         let total = 0;
-        for (const optId in res.items) {
-          const opt = res.items[optId];
+        for (const optId in r.items) {
+          const opt = r.items[optId];
           if (res.type === "binary" || res.type === "ternary") {
-            total += (opt.yes || 0) + (opt.no || 0) + (opt.abstain || 0);
+            total += (opt.yes ?? 0) + (opt.no ?? 0) + (opt.abstain ?? 0);
           } else if (res.type === "score" || res.type === "star") {
-            total += opt.total || 0;
+            total += opt.total ?? 0;
           } else if (res.type === "reaction") {
-            total += Object.values(opt).reduce((a, b) => a + b, 0);
+            for (const v of Object.values(opt)) {
+              if (typeof v === "number") total += v;
+            }
           } else if (res.type === "majority_judgment") {
-            total += opt.total_votes || 0;
+            total += opt.total_votes ?? 0;
           }
         }
         return total;
       }
-      if (res.totals) {
-        // Fallback to global totals
+      if (r.totals) {
         if (res.type === "binary")
-          return (res.totals.yes || 0) + (res.totals.no || 0);
+          return (r.totals.yes ?? 0) + (r.totals.no ?? 0);
         if (res.type === "ternary")
           return (
-            (res.totals.yes || 0) +
-            (res.totals.no || 0) +
-            (res.totals.abstain || 0)
+            (r.totals.yes ?? 0) + (r.totals.no ?? 0) + (r.totals.abstain ?? 0)
           );
         if (res.type === "score" || res.type === "star")
-          return res.totals.total || 0;
-        if (res.type === "reaction")
-          return Object.values(res.counts || {}).reduce((a, b) => a + b, 0);
-        if (res.type === "majority_judgment") return res.total_votes || 0;
+          return r.totals.total ?? 0;
+        if (res.type === "reaction") {
+          const counts: Record<string | number, number> = r.counts ?? {};
+          return Object.values(counts).reduce((a, b) => a + b, 0);
+        }
+        if (res.type === "majority_judgment") return r.total_votes ?? 0;
         return 0;
       }
       return 0;
@@ -1447,29 +1445,29 @@ export function useVoteContext(
     if (perItemEngines.includes(engineId)) {
       let total = 0;
       for (const result of resultsMap.value.values()) {
+        const r = result as SupportResultDataAccess;
         switch (result.type) {
           case "binary":
-            total += (result.totals?.yes || 0) + (result.totals?.no || 0);
+            total += (r.totals?.yes ?? 0) + (r.totals?.no ?? 0);
             break;
           case "ternary":
             total +=
-              (result.totals?.yes || 0) +
-              (result.totals?.no || 0) +
-              (result.totals?.abstain || 0);
+              (r.totals?.yes ?? 0) +
+              (r.totals?.no ?? 0) +
+              (r.totals?.abstain ?? 0);
             break;
           case "score":
           case "star":
-            total += result.totals?.total || 0;
+            total += r.totals?.total ?? 0;
             break;
           case "majority_judgment":
-            total += result.total_votes || 0;
+            total += r.total_votes ?? 0;
             break;
-          case "reaction":
-            total += Object.values(result.counts || {}).reduce(
-              (a, b) => a + b,
-              0,
-            );
+          case "reaction": {
+            const counts: Record<string | number, number> = r.counts ?? {};
+            total += Object.values(counts).reduce((a, b) => a + b, 0);
             break;
+          }
         }
       }
       return total;
@@ -1477,20 +1475,25 @@ export function useVoteContext(
 
     // Complex engines: use engineResult
     if (!res) return 0;
+    const r = res as SupportResultDataAccess;
     switch (engineId) {
-      case "approval":
-        return Object.values(res.counts || {}).reduce((a, b) => a + b, 0);
+      case "approval": {
+        const counts: Record<string | number, number> = r.counts ?? {};
+        return Object.values(counts).reduce((a, b) => a + b, 0);
+      }
       case "ranking":
-        return res.total_voters || Object.keys(res.rankings || {}).length;
+        return r.total_voters ?? Object.keys(r.rankings ?? {}).length;
       case "condorcet":
       case "borda":
-        return res.total_voters || 0;
+        return r.total_voters ?? 0;
       case "quadratic":
-        return res.total_votes || 0;
+        return r.total_votes ?? 0;
       case "token_weighted":
-        return res.total_weight || 0;
-      case "phased_voting":
-        return Object.values(res.counts || {}).reduce((a, b) => a + b, 0);
+        return r.total_weight ?? 0;
+      case "phased_voting": {
+        const counts: Record<string | number, number> = r.counts ?? {};
+        return Object.values(counts).reduce((a, b) => a + b, 0);
+      }
       default:
         return 0;
     }
@@ -1735,15 +1738,16 @@ export function useVoteContext(
       return;
     }
 
-    const results =
+    const results: SupportResult[] | null | undefined =
       targetType === "inquiry"
         ? inquiryGroupsStore.currentInquiryGroup?.status?.supportResult
         : inquiryStore.status?.supportResult;
 
     const entry = results?.find(
-      (r: unknown) =>
+      (r) =>
         r.support_engine_id === engineIdValue && r.target_type === targetType,
     );
+    engineResult.value = entry?.result ?? null;
     engineResult.value = entry?.result ?? null;
   };
 

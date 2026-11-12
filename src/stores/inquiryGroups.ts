@@ -39,37 +39,35 @@ export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
     );
 
     // Deep merge to preserve nested objects
-    const group = existing
-      ? {
-          ...existing,
-          ...payload.inquiryGroup,
-          // Preserve inquiryGroupType
-          inquiryGroupType:
-            payload.inquiryGroup.inquiryGroupType ?? existing.inquiryGroupType,
-          // Preserve permissions
-          permissions: payload.inquiryGroup.permissions ?? existing.permissions,
-          // Deep merge configuration
-          configuration: payload.inquiryGroup.configuration
-            ? {
-                ...existing.configuration,
-                ...payload.inquiryGroup.configuration,
-                ui: payload.inquiryGroup.configuration.ui
-                  ? {
-                      ...existing.configuration?.ui,
-                      ...payload.inquiryGroup.configuration.ui,
-                    }
-                  : existing.configuration?.ui,
-              }
-            : existing.configuration,
-          // Deep merge status
-          status: payload.inquiryGroup.status
-            ? {
-                ...existing.status,
-                ...payload.inquiryGroup.status,
-              }
-            : existing.status,
-        }
-      : payload.inquiryGroup;
+    const group = (
+      existing
+        ? {
+            ...existing,
+            ...payload.inquiryGroup,
+            inquiryGroupType:
+              payload.inquiryGroup.inquiryGroupType ??
+              existing.inquiryGroupType,
+            permissions:
+              payload.inquiryGroup.permissions ?? existing.permissions,
+            configuration: payload.inquiryGroup.configuration
+              ? {
+                  ...existing.configuration,
+                  ...payload.inquiryGroup.configuration,
+                  ui: payload.inquiryGroup.configuration.ui
+                    ? {
+                        ...existing.configuration?.ui,
+                        ...payload.inquiryGroup.configuration.ui,
+                      }
+                    : existing.configuration?.ui,
+                }
+              : existing.configuration,
+            // Deep merge status
+            status: payload.inquiryGroup.status
+              ? { ...existing.status, ...payload.inquiryGroup.status }
+              : existing.status,
+          }
+        : payload.inquiryGroup
+    ) as InquiryGroup;
 
     const index = inquiryGroups.value.findIndex((g) => g.id === group.id);
     if (index === -1) {
@@ -96,7 +94,7 @@ export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
         updatedGroup.inquiryGroupType ?? existing?.inquiryGroupType,
       permissions: updatedGroup.permissions ?? existing?.permissions,
     };
-    addOrUpdateInquiryGroupInList({ inquiryGroup: merged });
+    addOrUpdateInquiryGroupInList({ inquiryGroup: merged as InquiryGroup });
   }
 
   function removeInquiryGroup(groupId: number) {
@@ -246,26 +244,23 @@ export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
     const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || [];
 
     let rootTypesForFamily: string[] = [];
-
     if (currentFamily) {
-      // Get root types for the selected family
       rootTypesForFamily = typeTabs
         .filter(
           (tab: InquiryGroupType) =>
             tab.family === currentFamily && tab.is_root === true,
         )
-        .map((tab: InquiryGroupType) => tab.type || tab.group_type);
+        .map((tab: InquiryGroupType) => tab.type || tab.group_type || "");
     } else {
-      // Get ALL root types (no family filter)
       rootTypesForFamily = typeTabs
         .filter((tab: InquiryGroupType) => tab.is_root === true)
-        .map((tab: InquiryGroupType) => tab.type || tab.group_type);
+        .map((tab: InquiryGroupType) => tab.type || tab.group_type || "");
     }
 
     // Filter groups: only include groups whose type matches a root type
     const filteredGroups = inquiryGroups.value.filter((group) => {
       // Only include active groups (not archived) when not specifically showing archived
-      if (group.status?.groupStatus === "archived") return false;
+      if (group.status.groupStatus === "archived") return false;
       return rootTypesForFamily.includes(group.type);
     });
 
@@ -352,8 +347,7 @@ export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
         (tab: InquiryGroupType) =>
           tab.family === familyType && tab.is_root === true,
       )
-      .map((tab: InquiryGroupType) => tab.type || tab.group_type);
-
+      .map((tab: InquiryGroupType) => tab.type || tab.group_type || "");
     if (rootTypesForFamily.length === 0) return [];
 
     return inquiryGroups.value.filter((group) =>
@@ -412,7 +406,6 @@ export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
       }
       const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || [];
 
-      console.log(" RESPONSSEEEEEEEEEEEEEEEEEEE", groups);
       inquiryGroups.value = groups.map((group) => ({
         ...group,
         inquiryGroupType: typeTabs.find(
@@ -532,13 +525,19 @@ export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
     payload: Partial<InquiryGroup>,
   ): Promise<void> {
     const group = currentInquiryGroup.value;
+
     if (!group) {
       Logger.error("No current inquiry group to write");
       return;
     }
 
     try {
-      const response = await InquiryGroupsAPI.updateGroup(group.id, payload);
+      const response = await InquiryGroupsAPI.updateGroup(group.id, {
+        ...payload,
+        ownedGroup: payload.ownedGroup ?? group.ownedGroup ?? "",
+        groupStatus: payload.status?.groupStatus ?? group.status.groupStatus,
+      } as Parameters<typeof InquiryGroupsAPI.updateGroup>[1]);
+
       if (response.data?.inquiryGroup) {
         updateInquiryGroup(response.data.inquiryGroup);
       }
@@ -547,7 +546,6 @@ export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
       throw error;
     }
   }
-
   /**
    * Add an inquiry to an inquiry group
    * @param groupId

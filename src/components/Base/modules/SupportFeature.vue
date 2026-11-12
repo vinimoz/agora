@@ -679,7 +679,7 @@ const getUserReaction = computed(() => {
       const parsed = JSON.parse(value);
       if (parsed?.value) value = parsed.value;
     } catch {
-       showError(t('agora','Cannot get reaction'))
+      showError(t("agora", "Cannot get reaction"));
     }
   } else if (value && typeof value === "object" && "value" in value) {
     value = value.value;

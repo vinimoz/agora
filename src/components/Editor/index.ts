@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { App } from "vue";
 import InquiryEditor from "./InquiryEditor.vue";
 
 export default {
-  install(app) {
+  install(app: App) {
     app.component("InquiryEditor", InquiryEditor);
   },
 };

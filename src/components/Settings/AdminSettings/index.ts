@@ -23,3 +23,4 @@ export { default as AdminSharePublicShowLogin } from "./AdminSharePublicShowLogi
 export { default as AdminShowMailAddresses } from "./AdminShowMailAddresses.vue";
 export { default as AdminUnrescrictedOwners } from "./AdminUnrescrictedOwners.vue";
 export { default as AdminCleanInstance } from "./AdminCleanInstance.vue";
+export { default as AdminHomeConfigManager } from "./AdminHomeConfigManager.vue";

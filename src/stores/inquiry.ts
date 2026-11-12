@@ -12,12 +12,7 @@ import { emit } from "@nextcloud/event-bus";
 import { AxiosError } from "@nextcloud/axios";
 import { Logger } from "../helpers/index.ts";
 import { PublicAPI, InquiriesAPI } from "../Api/index.ts";
-import {
-  createDefault,
-  Event,
-  User,
-  UserType,
-} from "../Types/index.ts";
+import { createDefault, Event, User, UserType } from "../Types/index.ts";
 
 import { useInquiriesStore } from "./inquiries.ts";
 import { useSessionStore } from "./session.ts";
@@ -33,6 +28,7 @@ import { useSupportResultStore } from "./supportResult.ts";
 
 import type {
   Inquiry,
+  InquiryType,
   VisibilityType,
   ModerationWorkflowStatus,
   InquiryWorkflowStatus,
@@ -277,10 +273,11 @@ export const useInquiryStore = defineStore("inquiry", {
         }
 
         const response = await InquiriesAPI.submitInquiry(this.id, action);
-
-        // Reconcile with server truth if returned
         if (response?.data?.inquiry) {
-          this.$patch(response.data.inquiry);
+          const inquiry = response.data.inquiry;
+          this.$patch((state) => {
+            Object.assign(state, inquiry);
+          });
         } else if (!response || !response.data) {
           this.$reset();
         }
@@ -302,12 +299,19 @@ export const useInquiryStore = defineStore("inquiry", {
 
       try {
         const response = await PublicAPI.getInquiry(token);
-        this.$patch(response.data.inquiry);
+        const inquiry = response.data.inquiry;
+        this.$patch((state) => {
+          Object.assign(state, inquiry);
+        });
+
+        const data = response.data as typeof response.data & {
+          attachments?: typeof attachmentsStore.attachments;
+        };
 
         sharesStore.shares = response.data.shares ?? [];
         commentsStore.comments = response.data.comments ?? [];
         subscriptionStore.subscribed = response.data.subscribed ?? false;
-        attachmentsStore.attachments = response.data.attachments ?? [];
+        attachmentsStore.attachments = data.attachments ?? [];
 
         this.meta.status = "loaded";
       } catch (error) {
@@ -353,20 +357,29 @@ export const useInquiryStore = defineStore("inquiry", {
           return;
         }
         const inquiry = response.data.inquiry;
-        this.$patch(inquiry);
+        this.$patch((state) => {
+          Object.assign(state, inquiry);
+        });
+
+        const data = response.data as typeof response.data & {
+          attachments?: typeof attachmentsStore.attachments;
+          supportResult?: Parameters<typeof supportResultStore.setResults>[0];
+          supportEngine?: Parameters<
+            typeof supportEngineStore.initializeFromInquiry
+          >[1];
+        };
 
         optionsStore.options = response.data.options;
         supportsStore.supports = response.data.supports;
         sharesStore.shares = response.data.shares;
         commentsStore.comments = response.data.comments;
         subscriptionStore.subscribed = response.data.subscribed;
-        attachmentsStore.attachments = response.data.attachments;
-        supportResultStore.setResults(response.data.supportResult || []);
-        await supportEngineStore.initializeFromInquiry(
-          this.id,
-          response.data.supportEngine,
-        );
-        this.configuration.supportEngine = response.data.supportEngine;
+        attachmentsStore.attachments = data.attachments ?? [];
+        supportResultStore.setResults(data.supportResult ?? []);
+        const supportEngine = data.supportEngine ?? [];
+        await supportEngineStore.initializeFromInquiry(this.id, supportEngine);
+        this.configuration.supportEngine = supportEngine;
+
         // this.status.supportResult = response.data.supportResult
         inquiriesStore.setFamilyType(this.family);
 
@@ -415,7 +428,7 @@ export const useInquiryStore = defineStore("inquiry", {
           visibility: payload.visibility ?? "private",
           categoryId: payload.categoryId,
           description: payload.description,
-          owner: payload.owner,
+          owner: payload.owner ?? "",
           ownedGroup: payload.ownedGroup,
         });
 
@@ -452,7 +465,7 @@ export const useInquiryStore = defineStore("inquiry", {
 
           const response = await InquiriesAPI.updateInquiry(inquiryId, {
             title: payload.title,
-            type: payload.type,
+            type: payload.type as unknown as InquiryType | undefined,
             description: payload.description,
             parentId: payload.parentId ?? undefined,
             locationId: payload.locationId ?? undefined,
@@ -514,7 +527,10 @@ export const useInquiryStore = defineStore("inquiry", {
         );
         this.status.inquiryStatus = status;
         if (response?.data?.inquiry) {
-          this.$patch(response.data.inquiry);
+          const inquiry = response.data.inquiry;
+          this.$patch((state) => {
+            Object.assign(state, inquiry);
+          });
           this.syncToCollectionStore();
         }
       } catch (error) {
@@ -550,7 +566,18 @@ export const useInquiryStore = defineStore("inquiry", {
       try {
         const response = await InquiriesAPI.lockAnonymous(this.id);
         if (response?.data?.inquiry) {
-          this.$patch(response.data.inquiry);
+          const inquiry = response.data.inquiry;
+          this.$patch((state) => {
+            Object.assign(state, inquiry);
+          });
+          this.syncToCollectionStore();
+        }
+        if (response?.data?.inquiry) {
+          const inquiry = response.data.inquiry;
+          this.$patch((state) => {
+            Object.assign(state, inquiry);
+          });
+
           this.syncToCollectionStore();
         } else {
           this.status.isAnonymous = true;
@@ -576,7 +603,10 @@ export const useInquiryStore = defineStore("inquiry", {
             this.id,
             this.configuration,
           );
-          this.$patch(response.data.inquiry);
+          const inquiry = response.data.inquiry;
+          this.$patch((state) => {
+            Object.assign(state, inquiry);
+          });
           this.syncToCollectionStore();
           emit(Event.UpdateInquiry, {
             store: "inquiry",
@@ -601,7 +631,9 @@ export const useInquiryStore = defineStore("inquiry", {
       try {
         const response = await InquiriesAPI.closeInquiry(this.id);
         const updated = response.data.inquiry;
-        this.$patch(updated);
+        this.$patch((state) => {
+          Object.assign(state, updated);
+        });
         const index = inquiriesStore.inquiries.findIndex(
           (i) => i.id === updated.id,
         );
@@ -621,7 +653,9 @@ export const useInquiryStore = defineStore("inquiry", {
       try {
         const response = await InquiriesAPI.reopenInquiry(this.id);
         const updated = response.data.inquiry;
-        this.$patch(updated);
+        this.$patch((state) => {
+          Object.assign(state, updated);
+        });
 
         const index = inquiriesStore.inquiries.findIndex(
           (i) => i.id === updated.id,
@@ -645,7 +679,9 @@ export const useInquiryStore = defineStore("inquiry", {
         const updatedInquiry = response.data.inquiry;
 
         if (updatedInquiry && this.id === inquiryId) {
-          this.$patch(updatedInquiry);
+          this.$patch((state) => {
+            Object.assign(state, updatedInquiry);
+          });
 
           const index = inquiriesStore.inquiries.findIndex(
             (inq) => inq.id === updatedInquiry.id,

@@ -15,6 +15,7 @@ import { useSessionStore } from "../../stores/session";
 import { InquiryGeneralIcons } from "../../utils/icons.ts";
 import { Inquiry } from "../../Types/index.ts";
 import { canEdit, createInquiryContext } from "../../utils/permissions.ts";
+import type { Component } from "vue";
 
 // Components
 import AddResourceModal from "../Modals/AddResourceModal.vue";
@@ -41,19 +42,17 @@ const showAddModal = ref(false);
 
 // Determine which inquiry to use
 const currentInquiry = computed(() => {
-  // If currentInquiry has an inquiry, use it
-  if (inquiryStore.id) {
-    return inquiryStore;
-  }
-  console.log(" CURRENT INQUIRY ", props.inquiry);
-
-  // Otherwise, try to find the inquiry by ID in the store or use minimal data
-  if (props.inquiry) {
-    return props.inquiry;
-  }
-
+  if (props.inquiry?.id) return props.inquiry;
+  if (inquiryStore.id) return inquiryStore;
   return null;
 });
+
+watch(
+  () => currentInquiry.value?.id,
+  (id) => {
+    if (id) loadLinks();
+  },
+);
 
 interface ResourceItem {
   id: number | string;
@@ -82,11 +81,10 @@ interface GroupedResources {
 
 // Context for permissions
 const context = computed(() => {
-  if (!props.inquiry || !props.inquiry.id) {
-    return null;
-  }
+  const inquiry = currentInquiry.value;
+  if (!inquiry?.id) return null;
   try {
-    return createInquiryContext(props.inquiry, sessionStore.appSettings);
+    return createInquiryContext(inquiry, sessionStore.appSettings);
   } catch (error) {
     console.error("Error creating permission context:", error);
     return null;
@@ -206,8 +204,8 @@ const getAppName = (appId: string): string => {
   return appNames[appId] || appId;
 };
 
-const getAppIcon = (appId: string): unknown => {
-  const icons: Record<string, unknown> = {
+const getAppIcon = (appId: string): Component => {
+  const icons: Record<string, Component> = {
     polls: InquiryGeneralIcons.Poll,
     forms: InquiryGeneralIcons.Form,
     deck: InquiryGeneralIcons.Deck,
@@ -461,11 +459,13 @@ const handleResourceClick = () => {
 };
 
 const loadLinks = async () => {
+  const id = currentInquiry.value?.id;
+  if (!id) return;
   try {
     isLoading.value = true;
-    await inquiryLinksStore.loadByInquiry(currentInquiry.value.id);
-  } catch (error) {
-    console.warn("Could not load inquiry links:", error);
+    await inquiryLinksStore.loadByInquiry(id);
+  } catch (e) {
+    console.warn("Could not load inquiry links:", e);
   } finally {
     isLoading.value = false;
   }
