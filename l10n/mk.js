@@ -212,6 +212,7 @@ OC.L10N.register(
     "Email options" : "Е-пошта параметри",
     "Delete group" : "Избриши група",
     "Home" : "Дома",
+    "groups" : "групи",
     "Loading …" : "Се вчитува…",
     "Title is mandatory" : "Насловот е задолжителен",
     "View all" : "Види ги сите",
