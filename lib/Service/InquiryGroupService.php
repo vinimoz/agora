@@ -68,7 +68,6 @@ class InquiryGroupService
 		string $type = 'default',
 		?int $parentId = null,
 		?bool $protected = false,
-		?string $ownedGroup = '',
 		?string $groupStatus = 'draft',
 		?string $titleExt = '',
 		?string $description = '',
@@ -85,7 +84,6 @@ class InquiryGroupService
 		$inquiryGroup->setParentId($parentId ?? null);
 		$inquiryGroup->setProtected((bool) ($protected ?? false));
 		$inquiryGroup->setGroupStatus($groupStatus ?? 'draft');
-		$inquiryGroup->setOwnedGroup($ownedGroup ?? '');
 		$inquiryGroup->setDescription($description ?? '');
 		$inquiryGroup->setCreated(time());
 
@@ -143,7 +141,6 @@ class InquiryGroupService
 		?string $type = null,
 		?int $parentId = null,
 		?bool $protected = null,
-		?string $ownedGroup = null,
 		?string $groupStatus = null,
 		?int $expire = null,
 		?array $miscFields = null,
@@ -177,9 +174,6 @@ class InquiryGroupService
 			}
 			if ($protected !== null) {
 				$inquiryGroup->setProtected($protected);
-			}
-			if ($ownedGroup !== null) {
-				$inquiryGroup->setOwnedGroup($ownedGroup);
 			}
 			if ($groupStatus !== null) {
 				$inquiryGroup->setGroupStatus($groupStatus);

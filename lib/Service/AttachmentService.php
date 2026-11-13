@@ -259,9 +259,9 @@ public function syncSharesForEntity(Inquiry|InquiryGroup $entity, bool $isGroupA
  * Compute the desired share targets for the given entity.
  *
  *  - Group attachment  AGORA_USERS (READ only) + moderators + officials
- *  - ACCESS_OPEN       AGORA_USERS + moderators + officials
- *  - ACCESS_GROUP      entity.ownedGroup + moderators + officials
- *  - ACCESS_PRIVATE    owner (user share) only + moderators + officials
+ *  - VISIBILITY_EVERYONE      AGORA_USERS + moderators + officials
+ *  - VISIBILITY_GROUP      entity. + moderators + officials
+ *  - VISIBILITY_USER    owner (user share) only + moderators + officials
  *
  * @param Inquiry|InquiryGroup $entity
  * @return array<int, array{type:int, with:string, permissions:int}>
@@ -270,82 +270,54 @@ private function getTargetSharesForEntity(
     Inquiry|InquiryGroup $entity,
     bool $isGroupAttachment,
 ): array {
-    $ownerUid   = (string) $entity->getOwner();
-    $access     = $isGroupAttachment
-        ? null
-        : (string) $entity->getAccess();
-    $ownedGroup = $isGroupAttachment
-        ? ''
-        : (string) ($entity->getOwnedGroup() ?? '');
-
+    $ownerUid = (string) $entity->getOwner();
 
     $targets = [
-        [
-            'type'        => IShare::TYPE_GROUP,
-            'with'        => Group::GROUP_MODERATOR,
-            'permissions' => \OCP\Constants::PERMISSION_READ
-                           | \OCP\Constants::PERMISSION_UPDATE
-                           | \OCP\Constants::PERMISSION_SHARE,
-        ],
-        [
-            'type'        => IShare::TYPE_GROUP,
-            'with'        => Group::GROUP_OFFICIAL,
-            'permissions' => \OCP\Constants::PERMISSION_READ
-                           | \OCP\Constants::PERMISSION_UPDATE
-                           | \OCP\Constants::PERMISSION_SHARE,
-        ],
+        [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_MODERATOR, 'permissions' => READ|UPDATE|SHARE ],
+        [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_OFFICIAL,  'permissions' => READ|UPDATE|SHARE ],
     ];
 
+    // Group attachments: readable by all Agora users
     if ($isGroupAttachment) {
-        $targets[] = [
-            'type'        => IShare::TYPE_GROUP,
-            'with'        => Group::GROUP_USERS,
-            'permissions' => \OCP\Constants::PERMISSION_READ,
-        ];
+        $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_USERS, 'permissions' => READ ];
         return $targets;
     }
 
-    switch ($access) {
-        case Inquiry::ACCESS_OPEN:
-            $targets[] = [
-                'type'        => IShare::TYPE_GROUP,
-                'with'        => Group::GROUP_USERS,
-                'permissions' => \OCP\Constants::PERMISSION_READ,
-            ];
+    $visibility = (string) $entity->getVisibility();
+
+    switch ($visibility) {
+        case Inquiry::VISIBILITY_EVERYONE:
+            $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_USERS, 'permissions' => READ ];
             break;
 
-        case Inquiry::ACCESS_GROUP:
-            if ($ownedGroup !== '') {
-                $targets[] = [
-                    'type'        => IShare::TYPE_GROUP,
-                    'with'        => $ownedGroup,
-                    'permissions' => \OCP\Constants::PERMISSION_READ,
-                ];
-            } else {
-                $targets[] = [
-                    'type'        => IShare::TYPE_USER,
-                    'with'        => $ownerUid,
-                    'permissions' => \OCP\Constants::PERMISSION_READ
-                                   | \OCP\Constants::PERMISSION_UPDATE
-                                   | \OCP\Constants::PERMISSION_SHARE,
-                ];
+        case Inquiry::VISIBILITY_GROUPS:
+            foreach ($entity->getVisibilityGroups() as $groupId) {
+                if ($groupId === '') continue;
+                $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => $groupId, 'permissions' => READ ];
             }
             break;
 
-        case Inquiry::ACCESS_PRIVATE:
+        case Inquiry::VISIBILITY_USERS:
+            foreach ($entity->getVisibilityUsers() as $userId) {
+                if ($userId === '') continue;
+                $targets[] = [ 'type' => IShare::TYPE_USER, 'with' => $userId, 'permissions' => READ ];
+            }
+            break;
+
+        case Inquiry::VISIBILITY_PARTICIPANTS:
+        case Inquiry::VISIBILITY_PRIVATE:
         default:
             $targets[] = [
                 'type'        => IShare::TYPE_USER,
                 'with'        => $ownerUid,
-                'permissions' => \OCP\Constants::PERMISSION_READ
-                               | \OCP\Constants::PERMISSION_UPDATE
-                               | \OCP\Constants::PERMISSION_SHARE,
+                'permissions' => READ|UPDATE|SHARE,
             ];
             break;
     }
 
     return $targets;
 }
+
 
 /**
  * Ensure file is shared with required groups

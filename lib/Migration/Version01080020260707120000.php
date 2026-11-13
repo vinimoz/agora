@@ -387,7 +387,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
 	    $t = $this->schema->getTable(self::S_SHARE);
 	    $t->addColumn('participation_level', Types::INTEGER, [
 		    'notnull'  => true,
-		    'default'  => 0,   // BOTH — vote + comment (safe default for existing shares)
+		    'default'  => 3,  
 		    'unsigned' => false,
 		    'length'   => 4,
 	    ]);

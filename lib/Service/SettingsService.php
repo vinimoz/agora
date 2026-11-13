@@ -73,6 +73,7 @@ class SettingsService
      */
     public function writeAppSettings(array $settingsArray): void
     {
+	$this->appSettings->setOrganizationType($settingsArray['organization']['type']);
         // Boolean settings
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_SHOW_MAIL_ADDRESSES, $settingsArray[AppSettings::SETTING_SHOW_MAIL_ADDRESSES]);
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_PUBLIC_SHARES, $settingsArray[AppSettings::SETTING_ALLOW_PUBLIC_SHARES]);

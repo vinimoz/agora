@@ -162,7 +162,7 @@ class InquiryApiController extends BaseApiV2Controller
                 $title,
                 $type,
                 $family,
-                Inquiry::ACCESS_PRIVATE,
+                Inquiry::VISIBILITY_PRIVATE,
                 $ownedGroup ?? '',
                 $description ?? '',
                 $parentId ?? 0,

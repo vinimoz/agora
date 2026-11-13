@@ -44,7 +44,7 @@ use OCP\IURLGenerator;
  * @method         int getDeleted()
  * @method         void setDeleted(int $value)
  * @method         int getParticipationLevel()
- * @method         void setwParticipationLevel(int $value)
+ * @method         void setParticipationLevel(int $value)
  * @method         ?string getLabel()
  * @method         void setLabel(?string $value)
  */

@@ -13,6 +13,7 @@ import { t, n } from "@nextcloud/l10n";
 import NcAppContent from "@nextcloud/vue/components/NcAppContent";
 import NcEmptyContent from "@nextcloud/vue/components/NcEmptyContent";
 import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
+import NcButton from "@nextcloud/vue/components/NcButton"; 
 
 import { HeaderBar, IntersectionObserver } from "../components/Base/index.ts";
 import { AgoraAppIcon } from "../components/AppIcons/index.ts";
@@ -43,9 +44,6 @@ const props = withDefaults(
   { showFilterBar: null },
 );
 
-const showFilterBar = computed(() =>
-  props.showFilterBar !== null ? props.showFilterBar : showFilterBar.value,
-);
 
 const inquiriesStore = useInquiriesStore();
 const inquiryGroupsStore = useInquiryGroupsStore();
@@ -143,6 +141,7 @@ function handleMainModeChange(mode: string) {
     });
   }
 }
+
 
 // Handle sub mode change
 async function handleSubModeChange(mode: ViewMode) {
@@ -243,6 +242,27 @@ function openInquiry(inquiry: Inquiry) {
     query: { ...route.query },
   });
 }
+
+
+// ============================================================
+// FILTER BAR VISIBILITY
+// ============================================================
+// The parent may fully control the filter bar via the `showFilterBar` prop.
+// If they don't (prop === null), we manage a local toggle right next to
+// the create button so users can reveal the InquiryFilter on demand.
+
+const filterBarVisible = ref(false);
+
+const showFilterBar = computed(() => {
+  if (props.showFilterBar !== null) {
+    return props.showFilterBar;
+  }
+  return filterBarVisible.value;
+});
+
+const isFilterBarControlledByParent = computed(
+  () => props.showFilterBar !== null,
+);
 
 // ============================================================
 // ROUTE → STORE SYNC
@@ -375,6 +395,21 @@ watch(subMode, (newMode) => {
         <div class="header-controls">
           <div class="mode-switchers">
             <div class="main-mode-switcher">
+	      <NcButton
+    v-if="!isFilterBarControlledByParent"
+    class="filter-toggle-btn"
+    :class="{ active: filterBarVisible }"
+    :title="t('agora', 'Show/hide filters')"
+    @click="filterBarVisible = !filterBarVisible"
+  >
+    <template #icon>
+      <span
+        class="filter-toggle-icon"
+        aria-hidden="true"
+      >{{ filterBarVisible ? "▲" : "▼" }}</span>
+    </template>
+    {{ t("agora", "Filters") }}
+  </NcButton>
               <!-- Create mode button -->
               <NcCheckboxRadioSwitch
                 :button-variant="true"
@@ -692,6 +727,24 @@ watch(subMode, (newMode) => {
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
+
+.filter-toggle-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    .filter-toggle-icon {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    &.active {
+      background-color: var(--color-primary-element);
+      border-color: var(--color-primary-element);
+      color: var(--color-primary-element-text, #fff);
+    }
+  }
 }
 
 .right-controls {

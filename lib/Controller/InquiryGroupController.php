@@ -141,7 +141,6 @@ class InquiryGroupController extends BaseController
                         $data['type'] ?? 'default',
                         $data['parentId'] ?? null,
                         $data['protected'] ?? false,
-                        $data['ownedGroup'] ?? '',
                         $data['groupStatus'] ?? 'draft',
                         $data['titleExt'] ?? '',
                         $data['description'] ?? ''
@@ -206,7 +205,6 @@ class InquiryGroupController extends BaseController
 				    type: $data['type'] ?? null,
 				    parentId: $data['parentId'] ?? null,
 				    protected: $data['protected'] ?? null,
-				    ownedGroup: $data['ownedGroup'] ?? null,
 				    groupStatus: $data['groupStatus'] ?? null,
 				    expire: $data['expire'] ?? null,
 				    miscFields: $data['miscFields'] ?? null,

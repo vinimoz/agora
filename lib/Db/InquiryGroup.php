@@ -37,8 +37,6 @@ use OCP\IGroupManager;
  * @method void setTitle(string $value)
  * @method ?string getTitleExt()
  * @method void setTitleExt(?string $value)
- * @method ?string getOwnedGroup()
- * @method void setOwnedGroup(?string $value)
  * @method int getOrder()
  * @method void setOrder(int $value)
  * @method ?int getExpire()
@@ -93,7 +91,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     /** @var string[] */
     protected array $visibilityUsers = [];
     protected string $groupStatus = self::STATUS_ACTIVE;
-    protected ?string $ownedGroup = null;
     protected ?string $description = null;
     protected ?string $titleExt = null;
     protected int $order = 0;
@@ -121,7 +118,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->addType('visibilityGroups', 'json');
         $this->addType('visibilityUsers', 'json');
         $this->addType('groupStatus', 'string');
-        $this->addType('ownedGroup', 'string');
         $this->addType('description', 'string');
         $this->addType('titleExt', 'string');
         $this->addType('order', 'integer');
@@ -571,7 +567,6 @@ public function getPermissionsArray(): array
             'owner' => $this->getOwner(),
             'type' => $this->getType(),
             'groupStatus' => $this->getGroupStatus(),
-            'ownedGroup' => $this->getOwnedGroup(),
             'title' => $this->getTitle(),
             'titleExt' => $this->getTitleExt(),
             'order' => $this->getOrder(),

@@ -1,5 +1,7 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
-SPDX-License-Identifier: AGPL-3.0-or-later */
+<!-- 
+SPDX-FileCopyrightText: 2026 Nextcloud contributors *
+SPDX-License-Identifier: AGPL-3.0-or-later 
+-->
 
 <template>
   <section class="news-widget">
@@ -62,6 +64,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later */
 <script setup lang="ts">
 import { t } from "@nextcloud/l10n";
 import { InquiryGeneralIcons as Icons } from "../../../utils/icons";
+import newsPlaceholder from "../../../assets/img/news.png";
 
 export interface NewsItem {
   id: number;
@@ -88,15 +91,23 @@ const emit = defineEmits<{
 }>();
 
 function resolveCoverUrl(src?: number | string): string {
-  if (!src) return "";
+  // Sin cover → imagen por defecto del proyecto
+  if (src === undefined || src === null || src === "") {
+    return newsPlaceholder;
+  }
+
   const s = String(src);
+
   if (/^https?:\/\//i.test(s) || s.startsWith("/")) return s;
+
   if (/^\d+$/.test(s)) {
     return `${window.location.origin}/index.php/core/preview?fileId=${s}&x=1200&y=400&a=1`;
   }
+
   return s;
 }
 </script>
+
 <style lang="scss" scoped>
 .news-widget {
   background: var(--color-main-background);

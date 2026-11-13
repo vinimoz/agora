@@ -766,7 +766,7 @@ class ShareService
 	    $this->share->setInvitationSent($preventInvitation ? time() : 0);
 	    $this->share->setEmailAddress($userGroup->getEmailAddress());
 	    $this->share->setUserId($userGroup->getShareUserId());
-	    $this->share->setParticipationLevel( $purpose === 'inquiry' ? Share::PARTICIPATION_BOTH : Share::PARTICIPATION_NONE );
+	    $this->share->setParticipationLevel( Share::PARTICIPATION_NONE );
 
 	    // skip for inquiry groups
 	    if ($purpose === 'inquiry') {
