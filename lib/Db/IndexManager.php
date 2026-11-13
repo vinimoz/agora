@@ -133,7 +133,8 @@ class IndexManager extends DbManager
         $messages = array_merge($messages, $this->createUniqueIndices());
         $messages = array_merge($messages, $this->createCommonIndices());
         $messages = array_merge($messages, $this->createOptionalIndices());
-        $messages = array_merge($messages, $this->createSupportIndices());
+	$messages = array_merge($messages, $this->createSupportIndices());
+	  $messages = array_merge($messages, $this->createV18Indices());
         return $messages;
     }
 
@@ -184,19 +185,63 @@ class IndexManager extends DbManager
      */
     public function listExistingIndices(): array
     {
-        $this->needsSchema();
-        $messages = [];
+	    $this->needsSchema();
+	    $messages = [];
 
-        foreach (array_keys(IndexDefinitions::getAllIndices()) as $tableName) {
-            if (is_string($tableName) && $this->schema->hasTable($tableName)) {
-                $table = $this->schema->getTable($tableName);
+	    foreach ($this->getAllTableNames() as $tableName) {
+		    if (!$this->schema->hasTable($tableName)) {
+			    continue;
+		    }
+		    $table = $this->schema->getTable($tableName);
+		    foreach ($table->getIndexes() as $index) {
+			    $messages[] = $tableName . ' - ' . $index->getName()
+				    . ' (' . implode(',', $index->getColumns()) . ')';
+		    }
+	    }
+	    return $messages;
+    }
 
-                foreach ($table->getIndexes() as $index) {
-                    $messages[] = $tableName . ' - ' . $index->getName() . ' (' . implode(',', $index->getColumns()) . ')';
-                }
-            }
-        }
-        return $messages;
+    public function removeAllGenericIndices(): array
+    {
+	    $messages = [];
+	    foreach ($this->getAllTableNames() as $table) {
+		    $messages = array_merge($messages, $this->removeGenericIndicesFromTable($table));
+	    }
+	    return $messages;
+    }
+
+    /**
+     * Build a de-duplicated list of unprefixed table names referenced by any
+     * IndexDefinitions constant, regardless of whether the constant is keyed by
+     * table name or by index name.
+     *
+     * @return string[]
+     */
+    private function getAllTableNames(): array
+    {
+	    $tables = [];
+
+	    foreach (IndexDefinitions::COMMON_INDICES as $def) {
+		    $tables[$def['table']] = true;
+	    }
+	    foreach (IndexDefinitions::V18_INDICES as $table => $_) {
+		    $tables[$table] = true;
+	    }
+	    foreach ([
+		    IndexDefinitions::OPTIONAL_INDICES,
+		    IndexDefinitions::UNIQUE_INDICES,
+		    IndexDefinitions::SUPPORT_INDICES,
+		    IndexDefinitions::SUPPORT_ENGINE_INDICES,
+		    IndexDefinitions::SUPPORT_RESULT_INDICES,
+	    ] as $group) {
+	    foreach (array_keys($group) as $table) {
+		    if (is_string($table)) {
+			    $tables[$table] = true;
+		    }
+	    }
+	    }
+
+	    return array_keys($tables);
     }
 
     /**
@@ -210,24 +255,24 @@ class IndexManager extends DbManager
      */
     public function createIndex(string $tableName, string $indexName, array $columns, bool $unique = false): string
     {
-        $this->needsSchema();
-        $tableName = $this->getTableName($tableName);
+	    $this->needsSchema();
+	    $tableName = $this->getTableName($tableName);
 
-        if ($this->schema->hasTable($tableName)) {
-            $table = $this->schema->getTable($tableName);
+	    if ($this->schema->hasTable($tableName)) {
+		    $table = $this->schema->getTable($tableName);
 
-            if (!$table->hasIndex($indexName)) {
-                if ($unique) {
-                    $table->addUniqueIndex($columns, $indexName);
-                    return 'Added unique index ' . $indexName . ' for ' . json_encode($columns) . ' to ' . $tableName;
-                } else {
-                    $table->addIndex($columns, $indexName);
-                    return 'Added index ' . $indexName . ' for ' . json_encode($columns) . ' to ' . $tableName;
-                }
-            }
-            return 'Index ' . $indexName . ' already exists in ' . $tableName;
-        }
-        return 'Table ' . $tableName . ' does not exist';
+		    if (!$table->hasIndex($indexName)) {
+			    if ($unique) {
+				    $table->addUniqueIndex($columns, $indexName);
+				    return 'Added unique index ' . $indexName . ' for ' . json_encode($columns) . ' to ' . $tableName;
+			    } else {
+				    $table->addIndex($columns, $indexName);
+				    return 'Added index ' . $indexName . ' for ' . json_encode($columns) . ' to ' . $tableName;
+			    }
+		    }
+		    return 'Index ' . $indexName . ' already exists in ' . $tableName;
+	    }
+	    return 'Table ' . $tableName . ' does not exist';
     }
 
     /**
@@ -237,34 +282,17 @@ class IndexManager extends DbManager
      */
     public function removeAllForeignKeyConstraints(): array
     {
-        $messages = [];
+	    $messages = [];
 
-        foreach (IndexDefinitions::FK_INDICES as $child) {
-            foreach (array_keys($child) as $table) {
-                $messages = array_merge($messages, $this->removeForeignKeysFromTable($table));
-            }
-        }
+	    foreach (IndexDefinitions::FK_INDICES as $child) {
+		    foreach (array_keys($child) as $table) {
+			    $messages = array_merge($messages, $this->removeForeignKeysFromTable($table));
+		    }
+	    }
 
-        return $messages;
+	    return $messages;
     }
 
-    /**
-     * remove all generic indices
-     *
-     * @return string[] logged messages
-     */
-    public function removeAllGenericIndices(): array
-    {
-        $messages = [];
-
-        foreach (array_keys(IndexDefinitions::getAllIndices()) as $table) {
-            if (is_string($table)) {
-                $messages = array_merge($messages, $this->removeGenericIndicesFromTable($table));
-            }
-        }
-
-        return $messages;
-    }
 
     /**
      * remove all generic indices
@@ -273,18 +301,18 @@ class IndexManager extends DbManager
      */
     public function removeNamedIndices(): array
     {
-        $messages = [];
+	    $messages = [];
 
-        foreach (IndexDefinitions::OPTIONAL_INDICES as $table => $indices) {
-            foreach (array_keys($indices) as $name) {
-                $message = $this->removeNamedIndexFromTable($table, $name);
-                if ($message !== null && $message !== '') {
-                    $messages[] = $message;
-                }
-            }
-        }
+	    foreach (IndexDefinitions::OPTIONAL_INDICES as $table => $indices) {
+		    foreach (array_keys($indices) as $name) {
+			    $message = $this->removeNamedIndexFromTable($table, $name);
+			    if ($message !== null && $message !== '') {
+				    $messages[] = $message;
+			    }
+		    }
+	    }
 
-        return $messages;
+	    return $messages;
     }
 
     /**
@@ -294,13 +322,13 @@ class IndexManager extends DbManager
      */
     public function removeAllUniqueIndices(): array
     {
-        $messages = [];
+	    $messages = [];
 
-        foreach (array_keys(IndexDefinitions::UNIQUE_INDICES) as $tableName) {
-            $messages = array_merge($messages, $this->removeUniqueIndicesFromTable($tableName));
-        }
+	    foreach (array_keys(IndexDefinitions::UNIQUE_INDICES) as $tableName) {
+		    $messages = array_merge($messages, $this->removeUniqueIndicesFromTable($tableName));
+	    }
 
-        return $messages;
+	    return $messages;
     }
 
     /**
@@ -311,20 +339,20 @@ class IndexManager extends DbManager
      */
     public function removeForeignKeysFromTable(string $tableName): array
     {
-        $this->needsSchema();
-        $tableName = $this->getTableName($tableName);
-        $messages = [];
+	    $this->needsSchema();
+	    $tableName = $this->getTableName($tableName);
+	    $messages = [];
 
-        if ($this->schema->hasTable($tableName)) {
-            $table = $this->schema->getTable($tableName);
+	    if ($this->schema->hasTable($tableName)) {
+		    $table = $this->schema->getTable($tableName);
 
-            foreach ($table->getForeignKeys() as $foreignKey) {
-                $table->removeForeignKey($foreignKey->getName());
-                $messages[] = 'Removed ' . $foreignKey->getName() . ' from ' . $tableName;
-            }
-        }
+		    foreach ($table->getForeignKeys() as $foreignKey) {
+			    $table->removeForeignKey($foreignKey->getName());
+			    $messages[] = 'Removed ' . $foreignKey->getName() . ' from ' . $tableName;
+		    }
+	    }
 
-        return $messages;
+	    return $messages;
     }
 
     /**
@@ -335,21 +363,21 @@ class IndexManager extends DbManager
      */
     public function removeUniqueIndicesFromTable(string $tableName): array
     {
-        $this->needsSchema();
-        $tableName = $this->getTableName($tableName);
-        $messages = [];
+	    $this->needsSchema();
+	    $tableName = $this->getTableName($tableName);
+	    $messages = [];
 
-        if ($this->schema->hasTable($tableName)) {
-            $table = $this->schema->getTable($tableName);
+	    if ($this->schema->hasTable($tableName)) {
+		    $table = $this->schema->getTable($tableName);
 
-            foreach ($table->getIndexes() as $index) {
-                if (strpos($index->getName(), 'UNIQ_') === 0) {
-                    $table->dropIndex($index->getName());
-                    $messages[] = 'Removed ' . $index->getName() . ' from ' . $tableName;
-                }
-            }
-        }
-        return $messages;
+		    foreach ($table->getIndexes() as $index) {
+			    if (strpos($index->getName(), 'UNIQ_') === 0) {
+				    $table->dropIndex($index->getName());
+				    $messages[] = 'Removed ' . $index->getName() . ' from ' . $tableName;
+			    }
+		    }
+	    }
+	    return $messages;
     }
 
     /**
@@ -360,32 +388,32 @@ class IndexManager extends DbManager
      */
     public function removeGenericIndicesFromTable(string $tableName): array
     {
-        $this->needsSchema();
-        $tableName = $this->getTableName($tableName);
-        $messages = [];
+	    $this->needsSchema();
+	    $tableName = $this->getTableName($tableName);
+	    $messages = [];
 
-        if ($this->schema->hasTable($tableName)) {
-            $table = $this->schema->getTable($tableName);
+	    if ($this->schema->hasTable($tableName)) {
+		    $table = $this->schema->getTable($tableName);
 
-            foreach ($table->getIndexes() as $index) {
-                if (strpos($index->getName(), 'IDX_') === 0) {
-                    try {
-                        $messages[] = 'Removes ' . $index->getName() . ' from ' . $tableName;
-                        $table->dropIndex($index->getName());
-                    } catch (Exception $e) {
-                        /**
-                         * If this fails, it is not a generic index, skip it
-                         *
-                         * This can happen if the index is already removed
-                         * For some strange reason, an index name is
-                         * reported, although it does not exist anymore
-                         */
-                        continue;
-                    }
-                }
-            }
-        }
-        return $messages;
+		    foreach ($table->getIndexes() as $index) {
+			    if (strpos($index->getName(), 'IDX_') === 0) {
+				    try {
+					    $messages[] = 'Removes ' . $index->getName() . ' from ' . $tableName;
+					    $table->dropIndex($index->getName());
+				    } catch (Exception $e) {
+					    /**
+					     * If this fails, it is not a generic index, skip it
+					     *
+					     * This can happen if the index is already removed
+					     * For some strange reason, an index name is
+					     * reported, although it does not exist anymore
+					     */
+					    continue;
+				    }
+			    }
+		    }
+	    }
+	    return $messages;
     }
 
     /**
@@ -398,20 +426,31 @@ class IndexManager extends DbManager
      */
     public function removeNamedIndexFromTable(string $tableName, string $indexName): ?string
     {
-        $this->needsSchema();
-        $tableName = $this->getTableName($tableName);
-        $message = null;
+	    $this->needsSchema();
+	    $tableName = $this->getTableName($tableName);
+	    $message = null;
 
-        try {
-            if ($this->schema->hasTable($tableName)) {
-                $table = $this->schema->getTable($tableName);
-                $table->dropIndex($indexName);
-                $message = 'Removed ' . $indexName . ' from ' . $tableName;
-            }
-        } catch (Exception $e) {
-            // Index does not exist, skip it
-        }
-        return $message;
+	    try {
+		    if ($this->schema->hasTable($tableName)) {
+			    $table = $this->schema->getTable($tableName);
+			    $table->dropIndex($indexName);
+			    $message = 'Removed ' . $indexName . ' from ' . $tableName;
+		    }
+	    } catch (Exception $e) {
+		    // Index does not exist, skip it
+	    }
+	    return $message;
+    }
+
+    public function createV18Indices(): array
+    {
+	    $messages = [];
+	    foreach (IndexDefinitions::V18_INDICES as $table => $indices) {
+		    foreach ($indices as $name => $definition) {
+			    $messages[] = $this->createIndex($table, $name, $definition['columns']);
+		    }
+	    }
+	    return $messages;
     }
 
 }

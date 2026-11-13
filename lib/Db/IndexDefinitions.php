@@ -285,6 +285,43 @@ abstract class IndexDefinitions
     ];
 
     /**
+ * Indices introduced with Agora 1.8.0 (sortition / visibility).
+ *
+ * Kept in a separate constant so earlier migrations (010710 / 010716)
+ * never attempt to create them before the underlying tables/columns exist.
+ */
+public const V18_INDICES = [
+    Inquiry::TABLE => [
+        'inquiry_visibility_idx' => ['columns' => ['visibility']],
+        'inquiry_pubstatus_idx'  => ['columns' => ['publication_status']],
+    ],
+    InquiryGroup::TABLE => [
+        'group_visibility_idx' => ['columns' => ['visibility']],
+    ],
+    Comment::TABLE => [
+        'comment_parent_idx'    => ['columns' => ['parent_id']],
+        'comment_parent_ts_idx' => ['columns' => ['parent_id', 'timestamp']],
+    ],
+    InquiryStatus::TABLE => [
+        'status_family_idx' => ['columns' => ['family_type']],
+    ],
+    'agora_participation' => [
+        'participation_created_idx' => ['columns' => ['created_at']],
+        'participation_policy_idx'  => ['columns' => ['policy_type']],
+    ],
+    'agora_lottery_run' => [
+        'run_status_idx'    => ['columns' => ['status']],
+        'run_created_idx'   => ['columns' => ['created_at']],
+        'run_completed_idx' => ['columns' => ['completed_at']],
+    ],
+    'agora_lottery_selection' => [
+        'selection_rank_idx'    => ['columns' => ['rank']],
+        'selection_expires_idx' => ['columns' => ['expires_at']],
+        'selection_role_idx'    => ['columns' => ['role']],
+    ],
+];
+
+    /**
      * define useful optional indices, which are not unique
      * tableName => [
      *  indexName => ['columns' => [column1, column2, ...]],

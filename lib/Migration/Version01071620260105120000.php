@@ -132,6 +132,19 @@ private function registerForeignKeys(ISchemaWrapper $schema, IOutput $out): bool
                 $fkName = 'fk_' . substr(md5($fkName), 0, 16);
             }
 
+
+$exists = false;
+foreach ($child->getForeignKeys() as $existing) {
+    if ($existing->getName() === $fkName) {
+        $exists = true;
+        break;
+    }
+}
+if ($exists) {
+    $out->info("Agora 1.7.16: FK {$childName}.{$column} already exists");
+    continue;
+}
+
             try {
                 $child->addForeignKeyConstraint(
                     $parent,
