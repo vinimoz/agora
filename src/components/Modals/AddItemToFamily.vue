@@ -547,6 +547,8 @@ async function addToKanban(): Promise<void> {
   emitFamilyChanged(item, "kanban");
 }
 
+
+// AddItemToFamily.vue — add()
 async function add(): Promise<void> {
   if (!selectedItem.value) return;
 
@@ -564,12 +566,16 @@ async function add(): Promise<void> {
         break;
     }
 
-    try {
-      await inquiryStore.load();
-      await optionsStore.load();
-      await inquiriesStore.load(true);
-    } catch (refreshError) {
-      console.warn("Refresh after add failed (non-fatal):", refreshError);
+    // Options keep the full reload (older flows depend on it).
+    // group's default experience.
+    if (props.targetType === "option") {
+      try {
+        await inquiryStore.load();
+        await optionsStore.load();
+        await inquiriesStore.load(true);
+      } catch (refreshError) {
+        console.warn("Refresh after add failed (non-fatal):", refreshError);
+      }
     }
 
     showSuccess(
@@ -580,6 +586,7 @@ async function add(): Promise<void> {
             : t("agora", "Option"),
       }),
     );
+
     emit("success");
     emit("close");
   } catch (error) {

@@ -179,12 +179,11 @@ onMounted(async () => {
             {{ t("agora", "Launch setup wizard") }}
           </NcButton>
         </NcSettingsSection>
-
-        <NcSettingsSection v-bind="sections.globalSettings">
-          <AdminSettings />
-        </NcSettingsSection>
         <NcSettingsSection v-bind="sections.homeConfig">
           <AdminHomeConfigManager />
+        </NcSettingsSection>
+        <NcSettingsSection v-bind="sections.globalSettings">
+          <AdminSettings />
         </NcSettingsSection>
         <NcSettingsSection v-bind="sections.inquirySettings">
           <AdminInquiryCreation />

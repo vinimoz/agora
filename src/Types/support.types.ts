@@ -15,6 +15,8 @@ import type {
 // ============================================================================
 
 export type SupportEngineTarget = "inquiry" | "option";
+export type SupportResultTarget = "inquiry" | "option" | "inquirygroup"; 
+
 export type SupportResultType = SupportResultData["type"];
 
 export interface SupportEngine {
@@ -45,15 +47,15 @@ export interface SupportEngine {
 // ============================================================================
 // SUPPORT RESULTS
 // ============================================================================
-
 export interface SupportResult {
   id: number;
   support_engine_id: number | null;
-  target_type: SupportEngineTarget;
+  target_type: SupportResultTarget;
   target_id: number;
   result: SupportResultData;
   updated: number;
 }
+
 
 // ============================================================================
 // SUPPORT ITEM (raw row)

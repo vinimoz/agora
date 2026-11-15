@@ -91,19 +91,6 @@ export const supportResultApi = {
     });
   },
 
-  getResultHistory(
-    resultId: number,
-  ): Promise<AxiosResponse<{ history: SupportResult[] }>> {
-    return httpInstance.request({
-      method: "GET",
-      url: `support/result/${resultId}/history`,
-      params: { time: +new Date() },
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.getResultHistory.name
-        ].handleRequestCancellation().token,
-    });
-  },
 };
 
 const cancelTokenHandlerObject = createCancelTokenHandler(supportResultApi);

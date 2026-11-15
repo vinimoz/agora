@@ -93,6 +93,13 @@ public function findResultById(int $id): ?SupportResult
 
         return $this->findResultById($result->getId());
     }
+public function deleteByEngine(int $engineId): int
+{
+    $qb = $this->db->getQueryBuilder();
+    $qb->delete($this->getTableName())
+       ->where($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
+    return $qb->executeStatement();
+}
 
     /**
  * Count results by engine ID

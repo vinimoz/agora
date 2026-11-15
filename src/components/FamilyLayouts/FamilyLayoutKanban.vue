@@ -179,29 +179,35 @@ const columnCount = computed(() => Math.max(statusColumns.value.length, 1));
 // ---------------------------------------------------------------------------
 // Item filtering (family + optional kanbanFilters)
 // ---------------------------------------------------------------------------
-
 const familyKey = computed(
   () => props.familyKey ?? (props.family as any)?.family_type ?? "",
 );
 
+const effectiveFamilyKey = computed(() => {
+  if (familyKey.value) return familyKey.value;         // caller wins
+  if (props.targetType === "inquiry") return "kanban"; // default for inquiries
+  return "";                                           // options: no default
+});
+
 const kanbanItems = computed<Item[]>(() => {
-  const key = familyKey.value;
+  const key = effectiveFamilyKey.value;
+
+  if (props.targetType === "inquiry") {
+    return key ? getItemsForFamily(props.items, key) : [];
+  }
+
+  // Options: preserve the historical bypass + safety fallback.
   let list = key ? getItemsForFamily(props.items, key) : props.items;
-  // If the family filter removed everything, fall back to the raw list so
-  // inquiries whose family doesn't match the layout still render.
   if (!list.length && props.items.length) list = props.items;
 
   const filters = props.kanbanFilters;
   if (filters) {
-    if (filters.types?.length) {
-      list = list.filter((i) => filters.types!.includes(i.type));
-    }
-    if (filters.families?.length) {
-      list = list.filter((i) => filters.families!.includes(i.family));
-    }
+    if (filters.types?.length) list = list.filter((i) => filters.types!.includes(i.type));
+    if (filters.families?.length) list = list.filter((i) => filters.families!.includes(i.family));
   }
   return list;
 });
+
 
 // ---------------------------------------------------------------------------
 // Read / write status per field

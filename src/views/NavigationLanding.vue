@@ -225,6 +225,18 @@ const primaryNav = computed<NavItem[]>(() => [
     to: { name: "explore", params: { type: "relevant" } },
     children: [],
   },
+  
+  /* Services — spaces of the "service" family. */
+  {
+    key: "services",
+    label: t("agora", "Services"),
+    icon: InquiryGeneralIcons.Apps,
+    to: {
+      name: "group-list",
+      params: { slug: "" },
+      query: { family: "service", viewMode: "group" },
+    },
+  },
 
   /* My spaces — dynamic families that own at least one root group type.
      Rendered like Explore: click expands children inline. */
@@ -257,17 +269,6 @@ const primaryNav = computed<NavItem[]>(() => [
     },
   },
 
-  /* Services — spaces of the "service" family. */
-  {
-    key: "services",
-    label: t("agora", "Services"),
-    icon: InquiryGeneralIcons.Apps,
-    to: {
-      name: "group-list",
-      params: { slug: "" },
-      query: { family: "service", viewMode: "group" },
-    },
-  },
 
   /* Agenda — dated consultations and deadlines. */
   {

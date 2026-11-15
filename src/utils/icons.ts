@@ -112,6 +112,7 @@ import MapClockOutline from "@iconify-icons/mdi/map-clock-outline";
 import Monitor from "@iconify-icons/mdi/monitor";
 import MonitorLock from "@iconify-icons/mdi/monitor-lock";
 import MonitorOff from "@iconify-icons/mdi/monitor-off";
+import Desk from '@iconify-icons/mdi/desk'
 
 // For 'ViewKanban' - use one of these alternatives:
 
@@ -638,6 +639,7 @@ export const StatusIcons: Record<string, Component> = {
   CogOutline: makeIconComponent(CogOutline, "#455A64"),
   PlayOutline: makeIconComponent(PlayOutline, "#558B2F"),
   Plus: makeIconComponent(Plus, "#0097A7"),
+  Desk: makeIconComponent(Desk, "#607D8B"),
   Star: makeIconComponent(Star, "#FFD600"),
   Lock: makeIconComponent(Lock, "#5D4037"),
   LockOpen: makeIconComponent(LockOpen, "#388E3C"),

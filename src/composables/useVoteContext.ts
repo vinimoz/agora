@@ -469,11 +469,11 @@ export function useVoteContext(
 
     // Case 4 aggregates — `inquiryId = 0`
     try {
-      const resp = await SupportsAPI.getByInquiryId(0);
+      const resp = await SupportsAPI.getByGroupId(pid);
       const items: Support[] = resp?.data?.supports || [];
       for (const s of items) {
         const eng = engineIdOf(s);
-        if (eng !== null && groupEngineIds.has(eng) && s.inquiryId === 0) {
+        if (eng !== null && groupEngineIds.has(eng)) {
           add(s);
         }
       }
@@ -570,24 +570,91 @@ export function useVoteContext(
     const engineIdValue = currentEngine.value?.id;
     if (!engineIdValue) return null;
 
+    // 1. Real aggregate rows (multi-vote engines)
     if (targetType === "inquiry") {
-      return (
-        votes.find(
-          (v) =>
-            engineIdOf(v) === engineIdValue &&
-            v.inquiryId === 0 &&
-            v.optionId === 0,
-        ) ?? null
+      const aggregate = votes.find(
+        (v) =>
+          engineIdOf(v) === engineIdValue &&
+          v.inquiryId === 0 &&
+          v.optionId === 0,
       );
-    }
-    return (
-      votes.find(
+      if (aggregate) return aggregate;
+    } else {
+      const aggregate = votes.find(
         (v) =>
           engineIdOf(v) === engineIdValue &&
           v.optionId === 0 &&
           v.inquiryId === parentId.value,
-      ) ?? null
-    );
+      );
+      if (aggregate) return aggregate;
+    }
+
+    // 2. Single-vote engines — synthesize an aggregate-shaped snapshot
+    //    from the per-item rows so hasSelectionsChanged can compare apples to apples.
+    if (!isEngineMulti.value) {
+      const engine = effectiveEngineId.value;
+
+      // approval_delib is toggle-only; no batch form → nothing to compare
+      if (engine === "approval_delib") return null;
+
+      const perItem = votes.filter((v) => {
+        if (engineIdOf(v) !== engineIdValue) return false;
+        return targetType === "option"
+          ? v.optionId > 0 && v.inquiryId === parentId.value
+          : v.inquiryId > 0 && v.optionId === 0;
+      });
+      if (!perItem.length) return null;
+
+      const keyOf = (v: Support) => (v.optionId > 0 ? v.optionId : v.inquiryId);
+      const payload: Record<string, unknown> = {};
+
+      if (
+        [
+          "binary",
+          "ternary",
+          "score",
+          "star",
+          "quadratic",
+          "token_weighted",
+        ].includes(engine)
+      ) {
+        const map: Record<number, number> = {};
+        for (const v of perItem) {
+          const val = unwrapVoteValue(v.value);
+          if (typeof val === "number") map[keyOf(v)] = val;
+        }
+        payload.scores = map;
+      } else if (engine === "majority_judgment") {
+        const map: Record<number, string> = {};
+        for (const v of perItem) {
+          const val = unwrapVoteValue(v.value);
+          if (typeof val === "string") map[keyOf(v)] = val;
+        }
+        payload.grades = map;
+      } else if (engine === "reaction") {
+        const map: Record<number, string[]> = {};
+        for (const v of perItem) {
+          const val = unwrapVoteValue(v.value);
+          if (Array.isArray(val)) map[keyOf(v)] = val as string[];
+        }
+        payload.reactions = map;
+      } else {
+        return null;
+      }
+
+      return {
+        id: 0,
+        inquiryId: parentId.value ?? 0,
+        optionId: 0,
+        userId: sessionStore.currentUser?.id ?? "",
+        value: payload,
+        weight: 1,
+        created: 0,
+        supportEngineId: engineIdValue,
+      } as Support;
+    }
+
+    return null;
   });
 
   const isEngineMulti = computed(
@@ -598,10 +665,8 @@ export function useVoteContext(
     const engine = currentEngine.value;
     if (!engine || engine.status !== "active" || inquiryStore.isClosed)
       return false;
-    if (!isEngineMulti.value && hasUserVoted.value) return false;
     return true;
   });
-
   // ---------- Lookups ----------
   const hasUserVotedFor = (itemId: number): boolean =>
     getUserVoteValueForItem(itemId) !== null;
@@ -622,7 +687,16 @@ export function useVoteContext(
     if (!votes.length) return null;
 
     if (targetType === "option") {
-      // Case 3 aggregate
+      // Case 3a — engine-scoped per-option row (single-vote engines)
+      const enginePerOption = votes.find(
+        (v) =>
+          engineIdOf(v) !== null &&
+          v.optionId === itemId &&
+          v.inquiryId === parentId.value,
+      );
+      if (enginePerOption) return unwrapVoteValue(enginePerOption.value);
+
+      // Case 3b — engine aggregate (multi-vote engines)
       const engineVote = votes.find(
         (v) =>
           engineIdOf(v) !== null &&
@@ -631,7 +705,7 @@ export function useVoteContext(
       );
       if (engineVote) return lookupFromAggregate(engineVote.value, itemId);
 
-      // Case 2 direct option vote
+      // Case 2 — deliberative per-option
       const directVote = votes.find(
         (v) =>
           engineIdOf(v) === null &&
@@ -640,7 +714,7 @@ export function useVoteContext(
       );
       if (directVote) return unwrapVoteValue(directVote.value);
 
-      // Case 1 aggregate on the inquiry itself
+      // Case 1 — deliberative aggregate on the inquiry
       const aggregateVote = votes.find(
         (v) =>
           engineIdOf(v) === null &&
@@ -652,14 +726,22 @@ export function useVoteContext(
       return null;
     }
 
-    // inquiry target
-    // Case 4 aggregate
-    const engineVote = votes.find(
+    // === inquiry target ===
+    // Case 4 — engine aggregate
+    const engineAggregate = votes.find(
       (v) => engineIdOf(v) !== null && v.inquiryId === 0 && v.optionId === 0,
     );
-    if (engineVote) return lookupFromAggregate(engineVote.value, itemId);
+    if (engineAggregate)
+      return lookupFromAggregate(engineAggregate.value, itemId);
 
-    // Case 1 direct vote on the inquiry
+    // Single-vote engine per-inquiry row
+    const enginePerInquiry = votes.find(
+      (v) =>
+        engineIdOf(v) !== null && v.inquiryId === itemId && v.optionId === 0,
+    );
+    if (enginePerInquiry) return unwrapVoteValue(enginePerInquiry.value);
+
+    // Case 1 — deliberative inquiry vote
     const directVote = votes.find(
       (v) =>
         engineIdOf(v) === null && v.inquiryId === itemId && v.optionId === 0,
@@ -783,6 +865,8 @@ export function useVoteContext(
         for (const id of currentSet) if (!savedSet.has(id)) return true;
         return false;
       }
+      case "approval_delib":
+        return false;
       case "ranking":
       case "condorcet":
       case "borda":
@@ -890,17 +974,57 @@ export function useVoteContext(
   /**
    * Submit a single-item vote.
    *
-   * - option target : `inquiryId = parentId`, `optionId = item.id`  (Case 2)
-   * - inquiry target: `inquiryId = item.id`,  `optionId = 0`       (Case 1)
    */
-  const submitSingleVote = async (
-    _parentId: number,
-    item: VotableItem,
-    value: SupportValue,
-  ): Promise<boolean> => {
-    const userId = sessionStore.currentUser?.id;
-    if (!userId || !canVote.value) return false;
+const submitSingleVote = async (
+  _parentId: number,
+  item: VotableItem,
+  value: SupportValue,
+): Promise<boolean> => {
+  const userId = sessionStore.currentUser?.id;
+  if (!userId || !canVote.value) return false;
+  const activeEngine = currentEngine.value;
 
+  // Any active engine ⇒ aggregate ballot. Update local reactive state,
+  // then submit the full aggregate through submitMultiVote().
+  if (activeEngine) {
+    const engine = effectiveEngineId.value;
+    if (["binary", "ternary", "score", "star"].includes(engine)) {
+      updateScore(item.id, value as number | null);
+    } else if (engine === "majority_judgment") {
+      updateGrade(item.id, value as string | null);
+    } else if (engine === "reaction") {
+      const arr = Array.isArray(value) ? (value as string[]) : [];
+      updateReaction(item.id, arr.length ? arr : null);
+    } else if (["ranking", "condorcet", "borda"].includes(engine)) {
+      updateRanking(item.id, value as number | null);
+    } else if (engine === "quadratic") {
+      updateQuadratic(item.id, value as number | null);
+    } else if (engine === "token_weighted") {
+      updateTokenWeight(item.id, value as number | null);
+    } else if (["approval", "phased_voting"].includes(engine)) {
+      const next = new Set(selectedItems.value);
+      if (value) next.add(item.id);
+      else next.delete(item.id);
+      selectedItems.value = next;
+    }
+
+    // If the aggregate is now empty, delete the ballot instead of updating it.
+    const isEmpty =
+      Object.keys(scores.value).length === 0 &&
+      Object.keys(grades.value).length === 0 &&
+      Object.keys(reactions.value).length === 0 &&
+      Object.keys(rankings.value).length === 0 &&
+      Object.keys(quadraticVotes.value).length === 0 &&
+      Object.keys(tokenWeights.value).length === 0 &&
+      selectedItems.value.size === 0;
+
+    if (isEmpty && currentUserVoteForEngine.value) {
+      return await removeMyVote();
+    }
+    return await submitMultiVote();
+  }
+
+    // Deliberative and option-target paths unchanged.
     const inquiryIdForVote =
       targetType === "option" ? _parentId || parentId.value : item.id;
     if (!inquiryIdForVote) return false;
@@ -1295,10 +1419,11 @@ export function useVoteContext(
     ];
     const res = candidates.find(
       (r): r is MajorityJudgmentResult =>
-        r?.type === "majority_judgment" && !!r.items?.[itemId],
+        r?.type === "majority_judgment" && !!(r as any).options?.[itemId],
     );
     if (!res) return null;
-    const opt = res.items?.[itemId];
+    const opt = (res as any).options?.[itemId];
+
     if (!opt) return null;
     const grades: string[] =
       res.grades ?? Object.keys(opt.grade_distribution ?? {});
@@ -1329,9 +1454,10 @@ export function useVoteContext(
       // Prefer per‑item result; fall back to engineResult.
       const result = resultsMap.value.get(itemId) ?? engineResult.value;
       if (!result) return 0;
-
-      const r = result as SupportResultDataAccess;
-      const item = r.items?.[itemId];
+      const r = result as SupportResultDataAccess & {
+        options?: Record<number, Record<string, number>>;
+      };
+      const item = (r.options ?? r.items)?.[itemId];
 
       switch (result.type) {
         case "binary":
@@ -1596,6 +1722,35 @@ export function useVoteContext(
         continue;
       }
 
+      // Engine-scoped per-inquiry row (single-vote engines, inquiry target)
+      if (
+        targetType === "inquiry" &&
+        optionId === 0 &&
+        inquiryIdOfVote > 0 &&
+        engineIdOf(vote) !== null
+      ) {
+        const unwrapped = unwrapVoteValue(vote.value);
+        if (unwrapped === null || unwrapped === undefined) continue;
+        const key = inquiryIdOfVote;
+
+        if (
+          typeof unwrapped === "number" &&
+          ["score", "star", "binary", "ternary"].includes(engine)
+        ) {
+          scores.value = { ...scores.value, [key]: unwrapped };
+        } else if (
+          typeof unwrapped === "string" &&
+          engine === "majority_judgment"
+        ) {
+          grades.value = { ...grades.value, [key]: unwrapped };
+        } else if (Array.isArray(unwrapped) && engine === "reaction") {
+          reactions.value = {
+            ...reactions.value,
+            [key]: unwrapped as string[],
+          };
+        }
+        continue;
+      }
       // Aggregate — Case 3 (option target) or Case 4 (inquiry target)
       if (!value || typeof value !== "object" || Array.isArray(value)) continue;
       const val = value as Record<string, unknown>;
@@ -1713,43 +1868,55 @@ export function useVoteContext(
    * Note: results use `target_type = 'inquiry'` at the parent level even for
    * Case 3, because the aggregate is still one row per engine (per inquiry).
    */
-  const loadResults = async () => {
-    const engineIdValue = currentEngine.value?.id;
-    if (!engineIdValue) {
-      engineResult.value = null;
-      return;
-    }
 
-    let engineResults = resultStore.getResultsByEngine(engineIdValue);
-    if (engineResults.length === 0) {
-      try {
-        await resultStore.loadEngineResults(engineIdValue);
-      } catch {
-        /* ignore */
-      }
+const loadResults = async () => {
+  const engineIdValue = currentEngine.value?.id;
+  if (!engineIdValue) {
+    engineResult.value = null;
+    return;
+  }
+
+  let engineResults = resultStore.getResultsByEngine(engineIdValue);
+  if (engineResults.length === 0) {
+    try {
+      await resultStore.loadEngineResults(engineIdValue);
       engineResults = resultStore.getResultsByEngine(engineIdValue);
+    } catch {
+      /* best-effort */
     }
+  }
 
-    if (engineResults.length > 0) {
-      const match =
-        engineResults.find((r) => r.target_type === targetType) ??
-        engineResults[0];
-      engineResult.value = match?.result ?? null;
-      return;
-    }
-
-    const results: SupportResult[] | null | undefined =
-      targetType === "inquiry"
-        ? inquiryGroupsStore.currentInquiryGroup?.status?.supportResult
-        : inquiryStore.status?.supportResult;
-
-    const entry = results?.find(
+  if (targetType === "inquiry") {
+    // Group engine → 'inquirygroup' row scoped to this group.
+    const groupRow = engineResults.find(
       (r) =>
-        r.support_engine_id === engineIdValue && r.target_type === targetType,
+        r.target_type === "inquirygroup" &&
+        r.target_id === parentId.value &&
+        r.support_engine_id === engineIdValue,
     );
-    engineResult.value = entry?.result ?? null;
-    engineResult.value = entry?.result ?? null;
-  };
+    engineResult.value = groupRow?.result ?? null;
+    return;
+  }
+
+  // Option target → 'inquiry' row scoped to this inquiry.
+  const inquiryRow = engineResults.find(
+    (r) =>
+      r.target_type === "inquiry" &&
+      r.target_id === parentId.value &&
+      r.support_engine_id === engineIdValue,
+  );
+  if (inquiryRow) {
+    engineResult.value = inquiryRow.result;
+    return;
+  }
+
+  // Fallback for case 3a — entity store snapshot from a mutation response.
+  const entry = inquiryStore.status?.supportResult?.find(
+    (r) =>
+      r.support_engine_id === engineIdValue && r.target_type === "inquiry",
+  );
+  engineResult.value = entry?.result ?? null;
+};
 
   // ─── Hydration watcher ───
   watch(

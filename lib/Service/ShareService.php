@@ -466,7 +466,7 @@ class ShareService
     public function delete(Share $share, bool $restore = false): Share
     {
 	    if (!$share->getInquiryId() && $share->getGroupId()) {
-		    $this->inquiryGroupMapper->find($share->getGroupId())->request(InquiryGroup::PERMISSION_INQUIRY_GROUP_EDIT);
+		    $this->inquiryGroupMapper->find($share->getGroupId())->request(InquiryGroup::PERMISSION_EDIT);
 	    } else {
 		    $this->inquiryMapper->get($share->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
 	    }

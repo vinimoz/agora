@@ -278,6 +278,9 @@ export const useSupportsStore = defineStore("supports", () => {
     resultData: SupportResultData | null,
     engineId: number | null = null,
   ): void {
+	     if (inquiryId === 0 && optionId === 0 && engineId !== null) {
+    return;
+  }
     const targetType: "inquiry" | "option" =
       optionId > 0 ? "option" : "inquiry";
     const targetId = optionId > 0 ? optionId : inquiryId;
@@ -1440,6 +1443,21 @@ export const useSupportsStore = defineStore("supports", () => {
     }
   }
 
+  async function loadSupportsForGroup(groupId: number): Promise<void> {
+  if (!groupId || groupId <= 0) return;
+  loading.value = true;
+  try {
+    const response = await SupportsAPI.getByGroupId(groupId);
+    for (const s of response.data.supports) setItem(s);
+  } catch (error) {
+    if ((error as AxiosError)?.code !== "ERR_CANCELED") {
+      Logger.error("Error loading group supports", { error });
+    }
+  } finally {
+    loading.value = false;
+  }
+}
+
   function reset(): void {
     supports.value = [];
     results.value.clear();
@@ -1474,6 +1492,7 @@ export const useSupportsStore = defineStore("supports", () => {
     toggleRankingSupport,
     formatResult,
     loadSupports,
+    loadSupportsForGroup,
     addSupport,
     updateSupport,
     removeSupport,

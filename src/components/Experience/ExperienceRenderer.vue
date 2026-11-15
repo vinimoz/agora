@@ -576,7 +576,6 @@ const canManageVote = computed(
     (sessionStore.currentUser.isAdmin ||
       sessionStore.currentUser.isGroupEditor),
 );
-
 /**
  * Display types that represent a *list of many* inquiries.
  * Only these may be swapped for each other by the experience‑level
@@ -1631,7 +1630,7 @@ function getZoneProps(zone: DisplayZone, zoneKey?: string) {
 
   const data = getZoneData(zone);
   const selectedInquiry = getSelectedInquiry();
-
+console.log(" GET ZONE PROPS ",content)
   switch (content) {
     case "inquiry_groups": {
       const groupsData: InquiryGroup[] = Array.isArray(data) ? data : [];
@@ -1782,6 +1781,9 @@ function getZoneProps(zone: DisplayZone, zoneKey?: string) {
         // Timeline / compact-display hints — ignored by other consumers
         compact: displayOptions.compact || false,
         hideControls: displayOptions.hideControls || false,
+        // required by FamilyLayoutVote
+        canManageVote: canManageVote.value,
+        isReadonly: isReadonly.value,
         limit: displayOptions.limit || 0,
       };
     }

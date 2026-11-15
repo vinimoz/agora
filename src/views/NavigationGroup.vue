@@ -21,8 +21,10 @@ import type {
   InquiryGroupType,
   InquiryGroup,
 } from "../Types/inquiryGroups.types.ts";
+import type { Inquiry } from "../Types/index.ts";
 import { getInquiryGroupTypeData } from "../helpers/modules/InquiryHelper.ts";
 import { createInquiryGroupContext, canEdit } from "../utils/permissions.ts";
+import InquiryNavigationItems from "../components/Navigation/InquiryNavigationItems.vue";
 
 const props = defineProps<{
   slug?: string;
@@ -117,13 +119,13 @@ const subgroups = computed<InquiryGroup[]>(() => {
 // -----------------------------------------------------------
 // Inquiries belonging to the current space
 // -----------------------------------------------------------
-const groupInquiries = computed(() => {
+
+const groupInquiries = computed<Inquiry[]>(() => {
   if (!currentGroup.value?.inquiryIds) return [];
   return currentGroup.value.inquiryIds
     .map((id) => inquiriesStore.inquiries.find((i) => i.id === id))
-    .filter(Boolean);
+    .filter((i): i is Inquiry => i !== undefined);
 });
-
 // -----------------------------------------------------------
 // Archived subgroups (space archives)
 // -----------------------------------------------------------
@@ -459,15 +461,13 @@ onMounted(() => {
                 class="navigation-counter"
               />
             </template>
-            <ul class="navigation-sublist">
-              <NcAppNavigationItem
-                v-for="inq in groupInquiries"
-                :key="inq.id"
-                :name="inq.title"
-                :to="{ name: 'inquiry', params: { id: String(inq.id) } }"
-                class="navigation-subitem"
-              />
-            </ul>
+	    <ul class="navigation-sublist">
+  <InquiryNavigationItems
+    v-for="inq in groupInquiries"
+    :key="inq.id"
+    :inquiry="inq"
+  />
+</ul>
           </NcAppNavigationItem>
 
           <NcAppNavigationItem

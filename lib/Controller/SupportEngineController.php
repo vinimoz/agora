@@ -44,7 +44,7 @@ class SupportEngineController extends Controller
     {
         try {
             $engines = $this->engineService->getEnginesByInquiry($inquiryId);
-            return new DataResponse($engines);
+            return new DataResponse(['engines' => $engines]);
         } catch (\Exception $e) {
             $this->logger->error('Error getting engines by inquiry', [
                 'inquiryId' => $inquiryId,
@@ -64,7 +64,7 @@ class SupportEngineController extends Controller
     {
         try {
             $engines = $this->engineService->getEnginesByInquiryGroup($inquiryGroupId);
-            return new DataResponse($engines);
+            return new DataResponse(['engines' => $engines]);
         } catch (\Exception $e) {
             $this->logger->error('Error getting engines by inquiry group', [
                 'inquiryGroupId' => $inquiryGroupId,
@@ -86,8 +86,8 @@ class SupportEngineController extends Controller
             $engine = $this->engineService->getEngine($id);
             if (!$engine) {
                 return new DataResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-            }
-            return new DataResponse($engine);
+	    }
+	    return new DataResponse(['engine' => $engine]);
         } catch (\Exception $e) {
             $this->logger->error('Error getting engine', [
                 'id' => $id,
@@ -110,42 +110,50 @@ class SupportEngineController extends Controller
             
             if (!$data) {
                 return new JSONResponse(['error' => 'Invalid JSON data'], Http::STATUS_BAD_REQUEST);
-            }
+	    }
 
-            // Validate required fields
-            $requiredFields = ['engine', 'title', 'target_type', 'target_ids'];
-            foreach ($requiredFields as $field) {
-                if (!isset($data[$field])) {
-                    return new JSONResponse(['error' => "Missing required field: {$field}"], Http::STATUS_BAD_REQUEST);
-                }
-            }
+	    if (
+		    empty($data['inquiry_id']) && empty($data['inquiry_group_id'])
+	    ) {
+		    return new JSONResponse(
+			    ['error' => 'Either inquiry_id or inquiry_group_id must be > 0'],
+			    Http::STATUS_BAD_REQUEST
+		    );
+	    }
 
-            $engine = $this->engineService->createEngine([
-                'engine' => $data['engine'],
-                'title' => $data['title'],
-                'description' => $data['description'] ?? '',
-                'purpose' => $data['purpose'] ?? '',
-                'inquiry_group_id' => $data['inquiry_group_id'] ?? null,
-                'inquiry_id' => $data['inquiry_id'] ?? 0,
-                'status' => $data['status'] ?? SupportEngine::STATUS_DRAFT,
-                'config' => $data['config'] ?? [],
-                'target_type' => $data['target_type'],
-                'target_ids' => $data['target_ids'],
-                'metadata' => $data['metadata'] ?? []
-            ]);
+	    // Validate required fields
+	    $requiredFields = ['engine', 'title', 'target_type', 'target_ids'];
+	    foreach ($requiredFields as $field) {
+		    if (!isset($data[$field])) {
+			    return new JSONResponse(['error' => "Missing required field: {$field}"], Http::STATUS_BAD_REQUEST);
+		    }
+	    }
 
-            return new JSONResponse($engine, Http::STATUS_CREATED);
-        } catch (ForbiddenException $e) {
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
-        } catch (DoesNotExistException $e) {
-            return new JSONResponse(['error' => 'Inquiry not found'], Http::STATUS_NOT_FOUND);
-        } catch (\Exception $e) {
-            $this->logger->error('Error creating support engine', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
-        }
+	    $engine = $this->engineService->createEngine([
+		    'engine' => $data['engine'],
+		    'title' => $data['title'],
+		    'description' => $data['description'] ?? '',
+		    'purpose' => $data['purpose'] ?? '',
+		    'inquiry_group_id' => $data['inquiry_group_id'] ?? null,
+		    'inquiry_id' => $data['inquiry_id'] ?? 0,
+		    'status' => $data['status'] ?? SupportEngine::STATUS_DRAFT,
+		    'config' => $data['config'] ?? [],
+		    'target_type' => $data['target_type'],
+		    'target_ids' => $data['target_ids'],
+		    'metadata' => $data['metadata'] ?? []
+	    ]);
+	return new JSONResponse(['engine' => $engine], Http::STATUS_CREATED);
+	} catch (ForbiddenException $e) {
+		return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+	} catch (DoesNotExistException $e) {
+		return new JSONResponse(['error' => 'Inquiry not found'], Http::STATUS_NOT_FOUND);
+	} catch (\Exception $e) {
+		$this->logger->error('Error creating support engine', [
+			'error' => $e->getMessage(),
+			'trace' => $e->getTraceAsString()
+		]);
+		return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+	}
     }
 
     /**
@@ -155,40 +163,40 @@ class SupportEngineController extends Controller
     #[FrontpageRoute(verb: 'PUT', url: '/support/engine/{id}')]
     public function update(int $id): JSONResponse
     {
-        try {
-            $data = $this->getJsonInput();
-            
-            if (!$data) {
-                return new JSONResponse(['error' => 'Invalid JSON data'], Http::STATUS_BAD_REQUEST);
-            }
+	    try {
+		    $data = $this->getJsonInput();
 
-            $this->engineService->requestEditEngine($id);
+		    if (!$data) {
+			    return new JSONResponse(['error' => 'Invalid JSON data'], Http::STATUS_BAD_REQUEST);
+		    }
 
-            // Check if engine can be modified (has votes?)
-            if (isset($data['engine'])) {
-                $hasVotes = $this->engineService->hasVotes($id);
-                if ($hasVotes) {
-                    return new JSONResponse(['error' => 'Cannot change engine type after votes have been cast'], Http::STATUS_CONFLICT);
-                }
-            }
+		    $this->engineService->requestEditEngine($id);
 
-            $updatedEngine = $this->engineService->updateEngine($id, $data);
-            if (!$updatedEngine) {
-                return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-            }
+		    // Check if engine can be modified (has votes?)
+		    if (isset($data['engine'])) {
+			    $hasVotes = $this->engineService->hasVotes($id);
+			    if ($hasVotes) {
+				    return new JSONResponse(['error' => 'Cannot change engine type after votes have been cast'], Http::STATUS_CONFLICT);
+			    }
+		    }
 
-            return new JSONResponse($updatedEngine);
-        } catch (ForbiddenException $e) {
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
-        } catch (DoesNotExistException $e) {
-            return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-        } catch (\Exception $e) {
-            $this->logger->error('Error updating support engine', [
-                'id' => $id,
-                'error' => $e->getMessage()
-            ]);
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
-        }
+		    $updatedEngine = $this->engineService->updateEngine($id, $data);
+		    if (!$updatedEngine) {
+			    return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
+		    }
+
+		    return new JSONResponse($updatedEngine);
+	    } catch (ForbiddenException $e) {
+		    return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+	    } catch (DoesNotExistException $e) {
+		    return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
+	    } catch (\Exception $e) {
+		    $this->logger->error('Error updating support engine', [
+			    'id' => $id,
+			    'error' => $e->getMessage()
+		    ]);
+		    return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+	    }
     }
 
     /**
@@ -198,32 +206,32 @@ class SupportEngineController extends Controller
     #[FrontpageRoute(verb: 'DELETE', url: '/support/engine/{id}')]
     public function delete(int $id): JSONResponse
     {
-        try {
-            $this->engineService->requestEditEngine($id);
+	    try {
+		    $this->engineService->requestEditEngine($id);
 
-            // Check if there are votes before deletion
-            $hasVotes = $this->engineService->hasVotes($id);
-            if ($hasVotes) {
-                return new JSONResponse(['error' => 'Cannot delete engine with existing votes'], Http::STATUS_CONFLICT);
-            }
+		    // Check if there are votes before deletion
+		    $hasVotes = $this->engineService->hasVotes($id);
+		    if ($hasVotes) {
+			    return new JSONResponse(['error' => 'Cannot delete engine with existing votes'], Http::STATUS_CONFLICT);
+		    }
 
-            $deleted = $this->engineService->deleteEngine($id);
-            if (!$deleted) {
-                return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-            }
+		    $deleted = $this->engineService->deleteEngine($id);
+		    if (!$deleted) {
+			    return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
+		    }
 
-            return new JSONResponse(['success' => true]);
-        } catch (ForbiddenException $e) {
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
-        } catch (DoesNotExistException $e) {
-            return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-        } catch (\Exception $e) {
-            $this->logger->error('Error deleting support engine', [
-                'id' => $id,
-                'error' => $e->getMessage()
-            ]);
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
-        }
+		    return new JSONResponse(['success' => true]);
+	    } catch (ForbiddenException $e) {
+		    return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+	    } catch (DoesNotExistException $e) {
+		    return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
+	    } catch (\Exception $e) {
+		    $this->logger->error('Error deleting support engine', [
+			    'id' => $id,
+			    'error' => $e->getMessage()
+		    ]);
+		    return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+	    }
     }
 
     /**
@@ -233,30 +241,30 @@ class SupportEngineController extends Controller
     #[FrontpageRoute(verb: 'POST', url: '/support/engine/active')]
     public function setActive(): JSONResponse
     {
-        try {
-            $data = $this->getJsonInput();
-            
-            if (!$data || !isset($data['target_type']) || !isset($data['target_id']) || !isset($data['engine_id'])) {
-                return new JSONResponse(['error' => 'Missing required fields: target_type, target_id, engine_id'], Http::STATUS_BAD_REQUEST);
-            }
+	    try {
+		    $data = $this->getJsonInput();
 
-            $this->engineService->setActiveEngine(
-                $data['target_type'],
-                $data['target_id'],
-                $data['engine_id']
-            );
+		    if (!$data || !isset($data['target_type']) || !isset($data['target_id']) || !isset($data['engine_id'])) {
+			    return new JSONResponse(['error' => 'Missing required fields: target_type, target_id, engine_id'], Http::STATUS_BAD_REQUEST);
+		    }
 
-            return new JSONResponse(['success' => true]);
-        } catch (ForbiddenException $e) {
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
-        } catch (DoesNotExistException $e) {
-            return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-        } catch (\Exception $e) {
-            $this->logger->error('Error setting active engine', [
-                'error' => $e->getMessage()
-            ]);
-            return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
-        }
+		    $this->engineService->setActiveEngine(
+			    $data['target_type'],
+			    $data['target_id'],
+			    $data['engine_id']
+		    );
+
+		    return new JSONResponse(['success' => true]);
+	    } catch (ForbiddenException $e) {
+		    return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+	    } catch (DoesNotExistException $e) {
+		    return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
+	    } catch (\Exception $e) {
+		    $this->logger->error('Error setting active engine', [
+			    'error' => $e->getMessage()
+		    ]);
+		    return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+	    }
     }
 
     /**
@@ -267,17 +275,17 @@ class SupportEngineController extends Controller
     #[FrontpageRoute(verb: 'GET', url: '/support/engine/active/{targetType}/{targetId}')]
     public function getActive(string $targetType, int $targetId): DataResponse
     {
-        try {
-            $engine = $this->engineService->getActiveEngine($targetType, $targetId);
-            return new DataResponse($engine);
-        } catch (\Exception $e) {
-            $this->logger->error('Error getting active engine', [
-                'targetType' => $targetType,
-                'targetId' => $targetId,
-                'error' => $e->getMessage()
-            ]);
-            return new DataResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
-        }
+	    try {
+		    $engine = $this->engineService->getActiveEngine($targetType, $targetId);
+	    	    return new DataResponse(['engine' => $engine]);
+	    } catch (\Exception $e) {
+		    $this->logger->error('Error getting active engine', [
+			    'targetType' => $targetType,
+			    'targetId' => $targetId,
+			    'error' => $e->getMessage()
+		    ]);
+		    return new DataResponse(['error' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+	    }
     }
 
     /**
@@ -287,21 +295,21 @@ class SupportEngineController extends Controller
      */
     private function getJsonInput(): ?array
     {
-        // Try to get from php://input (JSON requests)
-        $input = file_get_contents('php://input');
-        if ($input) {
-            $data = json_decode($input, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return $data;
-            }
-        }
-        
-        // Fallback to POST parameters (for form data)
-        $params = $this->request->getParams();
-        if (!empty($params)) {
-            return $params;
-        }
-        
-        return null;
+	    // Try to get from php://input (JSON requests)
+	    $input = file_get_contents('php://input');
+	    if ($input) {
+		    $data = json_decode($input, true);
+		    if (json_last_error() === JSON_ERROR_NONE) {
+			    return $data;
+		    }
+	    }
+
+	    // Fallback to POST parameters (for form data)
+	    $params = $this->request->getParams();
+	    if (!empty($params)) {
+		    return $params;
+	    }
+
+	    return null;
     }
 }

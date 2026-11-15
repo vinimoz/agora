@@ -408,11 +408,6 @@ export interface ApprovalDelibResult {
   percentages: { approved: number };
 }
 
-export interface TrendingResult {
-  type: "trending";
-  score: number;
-  components?: { votes?: number; activity?: number; recency?: number };
-}
 
 /** Borda Count results */
 export interface BordaResult {
@@ -505,7 +500,6 @@ export type SupportResultData =
   | ReactionResult
   | ApprovalResult
   | ApprovalDelibResult
-  | TrendingResult
   | BordaResult
   | QuadraticResult
   | TokenWeightedResult
@@ -938,19 +932,6 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   },
 
   // === Additional support features (no formal voting) ===
-  trending: {
-    id: "trending",
-    label: t("agora", "Trending"),
-    supportFeature: false,
-    voteScope: "none",
-    inputModel: "scalar",
-    description: t("agora", "Popularity-based trending (votes + activity)"),
-    constraints: { min_options: 1 },
-    recommendedViews: ["cards", "list"],
-    compatibleOptionTypes: ["text"],
-    config_schema: {},
-  },
-
   none: {
     id: "none",
     label: t("agora", "No Support"),

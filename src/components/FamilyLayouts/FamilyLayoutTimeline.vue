@@ -350,19 +350,30 @@ const getStatusColor = (status: string): string => {
 // ---------------------------------------------------------------------------
 // Item filtering
 // ---------------------------------------------------------------------------
-
 const familyKey = computed(
   () => props.familyKey ?? (props.family as any)?.family_type ?? "",
 );
 
+const effectiveFamilyKey = computed(() => {
+  if (familyKey.value) return familyKey.value; 
+  if (props.targetType === "inquiry") return "timeline";
+  return ""; 
+});
+
 const timelineItems = computed<Item[]>(() => {
-  const key = familyKey.value;
+  const key = effectiveFamilyKey.value;
+
+  if (props.targetType === "inquiry") {
+    return key ? getItemsForFamily(props.items, key) : [];
+  }
+
+  // Options: preserve the historical bypass + safety fallback.
   let list = key ? getItemsForFamily(props.items, key) : props.items;
-  // If family filtering removed everything, fall back to the raw list so
-  // inquiries whose family doesn't match the layout still render.
   if (!list.length && props.items.length) list = props.items;
+
   return list;
 });
+
 
 // ---------------------------------------------------------------------------
 // Date resolution — handles both Option and Inquiry raw objects

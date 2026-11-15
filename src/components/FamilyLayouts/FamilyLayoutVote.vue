@@ -355,7 +355,7 @@
               :vote-selection-info="voteSelectionInfo"
               :get-item-vote-count="getItemVoteCount"
               :get-percentage="(item) => getPercentage(item)"
-              :get-item-majority-judgment="getMajorityJudgment"
+              :get-item-majority-judgment="getItemMajorityJudgment"
               :has-user-voted-for="hasUserVotedFor"
               :is-selected-for-vote="isSelectedForVote"
               :get-user-vote-value-for-item="getUserVoteValueForItem"
@@ -589,24 +589,12 @@ const supportsStore = useSupportsStore();
 const inquiryGroupsStore = useInquiryGroupsStore();
 const resultStore = useSupportResultStore();
 
-const familyKey = computed(
-  () => props.familyKey ?? props.family?.family_type ?? "",
-);
-const voteItems = computed(() => {
-  const key = familyKey.value;
-  let list = key ? getItemsForFamily(props.items, key) : props.items;
-  // Match Timeline/Kanban: if the family filter wiped everything, use raw list
-  if (!list.length && props.items.length) list = props.items;
-  return list;
-});
 
 const targetEngineId = ref<number | null>(null);
 const activeTab = ref<TabKey>("active");
 
 const capitalize = (s: string): string =>
   s ? s.charAt(0).toUpperCase() + s.slice(1) : "";
-console.log(" PROPS ITEMS ", props.items);
-console.log(" VOTE ITEMS ", voteItems.value);
 // ---------------------------------------------------------------
 // Effective parent id — mirrors the engine-scoping rule:
 //   targetType = 'option'  → parent is the inquiry id
@@ -614,23 +602,53 @@ console.log(" VOTE ITEMS ", voteItems.value);
 // ---------------------------------------------------------------
 const effectiveParentId = computed<number | null>(() => {
   if (props.targetType === "inquiry") {
-    return inquiryGroupsStore.currentInquiryGroup?.id ?? props.parentId ?? null;
+    const g = inquiryGroupsStore.currentInquiryGroup?.id;
+    if (g && g > 0) return g;
+    return props.parentId && props.parentId > 0 ? props.parentId : null;
   }
-  return props.parentId;
+  return props.parentId && props.parentId > 0 ? props.parentId : null;
 });
+
 
 // ---------------------------------------------------------------
 // All items for this family
 // ---------------------------------------------------------------
+// FamilyLayoutVote.vue
+const familyKey = computed(
+  () => props.familyKey ?? props.family?.family_type ?? "",
+);
+
+const effectiveFamilyKey = computed(() => {
+  if (familyKey.value) return familyKey.value;       // caller wins
+  if (props.targetType === "inquiry") return "vote"; // default for inquiries
+  return "";                                          // options: no default
+});
+
+const voteItems = computed(() => {
+  const key = effectiveFamilyKey.value;
+
+  // Inquiries: strict — only those with force_layouts ∋ "vote".
+  if (props.targetType === "inquiry") {
+    return key ? getItemsForFamily(props.items, key) : [];
+  }
+
+  // Options: unchanged (historical bypass + fallback preserved).
+  let list = key ? getItemsForFamily(props.items, key) : props.items;
+  if (!list.length && props.items.length) list = props.items;
+  return list;
+});
+
 const allItems = computed<(Option | Inquiry)[]>(() => {
   if (voteItems.value.length) {
     return voteItems.value.map((i) => i.raw as Option | Inquiry);
   }
   return props.targetType === "option"
     ? optionsStore.options || []
-    : inquiriesStore.inquiries || [];
+    : [];
 });
 
+console.log(" CAN MANAGE VOTE ", props.canManageVote);
+console.log(" IS READ ONLY ", props.isReadonly);
 // ---------------------------------------------------------------
 // Vote context — parentId passed reactively, so engines reload
 // whenever the group/inquiry id becomes available or changes.
@@ -663,7 +681,7 @@ const {
   getPercentage,
   getRankedItems,
   getWinner,
-  getMajorityJudgment,
+  getItemMajorityJudgment,
   getWinnerPercentage,
   getUserVoteValueForItem,
   refreshEngines,
@@ -701,7 +719,7 @@ console.log("🔍 FLV-INIT", {
 // Guard: phased_voting is excluded (its phases interact), and every item
 // shown by any engine must be covered by exactly one engine.
 const stackedEngines = computed<SupportEngine[]>(() => {
-  const active = availableEngines.value.filter((e) => e.status !== "draft");
+  const active = availableEngines.value.filter((e) => e.status === "active");
   if (
     active.length < 2 ||
     active.some((e) => e.engine === "phased_voting" || !e.target_ids?.length)
@@ -804,6 +822,15 @@ const resultsEngine = computed(() => {
 });
 
 watch(
+  () => props.group?.id,
+  (id) => {
+    if (!id) return;
+    engineStore.loadEnginesByInquiryGroup(id);
+  },
+  { immediate: true },
+);
+
+watch(
   [
     activeTab,
     () => activeEngines.value.length,
@@ -866,7 +893,7 @@ const hidesResults = (engine?: SupportEngine | null) =>
   !props.canManageVote;
 
 const resultsHidden = computed(() => hidesResults(currentEngine.value));
-
+console.log(" CAN MANAGE VOTE IN FAMIL",props.canManageVote)
 const visibleTabs = computed<
   Array<{ key: TabKey; label: string; count: number }>
 >(() => {
@@ -893,7 +920,9 @@ const visibleTabs = computed<
       count: closedEngines.value.length,
     });
   }
-  if (activeEngines.value.length > 0 && !resultsHidden.value) {
+  
+  if ( (activeEngines.value.length || closedEngines.value.length) && !resultsHidden.value )
+ {
     tabs.push({ key: "results", label: t("agora", "Results"), count: 0 });
   }
   return tabs;
@@ -1165,23 +1194,33 @@ const onEngineSaved = async (data: {
   engine: string;
   purpose: string;
   config: Record<string, unknown>;
-  status?: "draft" | "active" | "closed";
-}) => {
+  status: SupportEngine["status"];
+}) => { 
+    const parentId = effectiveParentId.value;
+  if (!parentId || parentId <= 0) {
+    console.error("[FLV] Cannot save engine: parent id unresolved", {
+      targetType: props.targetType,
+      parentId,
+    });
+    return;
+  }
+
   if (engineModalMode.value === "create") {
     await engineStore.createEngine({
-      inquiry_id:
-        props.targetType === "inquiry" ? 0 : (effectiveParentId.value ?? 0),
-      inquiry_group_id:
-        props.targetType === "inquiry" ? (effectiveParentId.value ?? 0) : 0,
-      title: data.title,
-      description: data.description,
-      engine: data.engine,
-      purpose: data.purpose,
-      config: data.config,
-      status: data.status || "draft",
-      target_type: props.targetType,
-      target_ids: [],
-    });
+  inquiry_id:
+    props.targetType === "inquiry" ? 0 : (effectiveParentId.value ?? 0),
+  inquiry_group_id:
+    props.targetType === "inquiry" ? (effectiveParentId.value ?? 0) : 0,
+  title: data.title,
+  description: data.description,
+  engine: data.engine,
+  purpose: data.purpose,
+  config: data.config,
+  status: data.status || "draft",
+  target_type: props.targetType,
+  target_ids: votableItemIds.value.slice(),   // ← non-empty for group engines
+});
+
     await refreshEngines();
     // Bring the user to the drafts tab so they see their new engine.
     if (draftEngines.value.length) activeTab.value = "draft";
@@ -1224,7 +1263,8 @@ const handleItemFamilyChanged = async (payload: {
     action: payload.action,
   });
 
-  if (payload.familyKey !== "vote" || payload.action !== "added") return;
+  if (payload.action !== "added") return;
+  if (payload.familyKey !== effectiveFamilyKey.value) return;  // ← was `!== "vote"`
 
   const activeEngine = currentEngine.value;
   if (!activeEngine) return;

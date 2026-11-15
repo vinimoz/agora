@@ -92,14 +92,14 @@ class SupportEngine extends Entity implements JsonSerializable
         }
     }
 
-    public function setTargetIds(array|string $targetIds): void
-    {
-        if (is_string($targetIds)) {
-            $this->targetIds = json_decode($targetIds, true) ?? [];
-        } else {
-            $this->targetIds = $targetIds;
-        }
+public function setTargetIds(array|string $targetIds): void
+{
+    if (is_string($targetIds)) {
+        $decoded = json_decode($targetIds, true);
+        $targetIds = is_array($decoded) ? $decoded : [];
     }
+    $this->targetIds = array_map('intval', $targetIds);
+}
 
 public function setMetadata(array|string|null $metadata): void
 {
