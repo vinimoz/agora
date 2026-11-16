@@ -416,6 +416,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import type { Component } from "vue";
 import { t } from "@nextcloud/l10n";
 import NcAvatar from "@nextcloud/vue/components/NcAvatar";
 import NcActions from "@nextcloud/vue/components/NcActions";
@@ -427,14 +428,14 @@ import { useOptionsStore } from "../../stores/options";
 import { useSessionStore } from "../../stores/session";
 import { useInquiriesStore } from "../../stores/inquiries";
 import { showSuccess, showError } from "@nextcloud/dialogs";
-import { InquiryOptionIcons } from "../../utils/icons.ts";
+import { InquiryOptionIcons, InquiryGeneralIcons } from "../../utils/icons.ts";
+import { getFamilyColor } from "../../helpers/modules/InquiryOptionHelper";
+
 import {
   createOptionContext,
   canEditOption,
   canDeleteOption,
 } from "../../utils/permissions.ts";
-
-// ---- Unified types ----
 import type { Item } from "../../Types/index.ts";
 import {
   getItemTitle,
@@ -451,6 +452,8 @@ import {
   usesTitle,
 } from "../../helpers/modules/InquiryOptionHelper";
 import DeleteConfirmationDialog from "../Modals/DeleteConfirmationDialog.vue";
+
+
 
 export type TargetType = "option" | "inquiry";
 
@@ -525,28 +528,56 @@ const canDelete = computed(() =>
 const canEditOrDelete = computed(() => canEdit.value || canDelete.value);
 
 // ---- Type lookups stay the same ----
+const isInquiryItem = computed(() => props.targetType === "inquiry");
 
 const allItemTypes = computed(
   () => sessionStore.appSettings?.inquiryOptionTypeTab || [],
 );
 
-const itemTypeLabel = computed(() =>
-  getOptionTypeLabel(
+const allInquiryTypes = computed(
+  () => sessionStore.appSettings?.inquiryTypeTab || [],
+);
+
+const itemTypeLabel = computed(() => {
+  if (isInquiryItem.value) {
+    const found = allInquiryTypes.value.find(
+      (t: any) => t.inquiry_type === itemType.value,
+    );
+    return found?.label || t("agora", "Inquiry");
+  }
+  return getOptionTypeLabel(
     itemType.value,
     allItemTypes.value,
-    props.targetType === "option"
-      ? t("agora", "Option")
-      : t("agora", "Inquiry"),
-  ),
-);
+    t("agora", "Option"),
+  );
+});
 
-const itemIcon = computed(() =>
-  getOptionTypeIconComponent(itemType.value, allItemTypes.value),
-);
+const itemIcon = computed(() => {
+  if (isInquiryItem.value) {
+    const found = allInquiryTypes.value.find(
+      (t: any) => t.inquiry_type === itemType.value,
+    );
+    const iconName = found?.icon || "File";
+    return (
+      (InquiryOptionIcons as Record<string, Component>)[iconName] ||
+      (InquiryGeneralIcons as Record<string, Component>)[iconName] ||
+      InquiryGeneralIcons.File
+    );
+  }
+  return getOptionTypeIconComponent(itemType.value, allItemTypes.value);
+});
 
-const itemTypeColor = computed(() =>
-  getOptionTypeColor(itemType.value, allItemTypes.value),
-);
+const itemTypeColor = computed(() => {
+  if (isInquiryItem.value) {
+    const found = allInquiryTypes.value.find(
+      (t: any) => t.inquiry_type === itemType.value,
+    );
+    return found?.family ? getFamilyColor(found.family) : "#949494";
+  }
+  return getOptionTypeColor(itemType.value, allItemTypes.value);
+});
+
+
 
 const showTitle = computed(() =>
   props.targetType === "inquiry"

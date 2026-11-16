@@ -77,7 +77,6 @@ export const useOptionStore = defineStore("option", {
       countSupports: 0,
       optionStatus: "draft",
       supportResult: null,
-      publicationStatus: "draft",
     },
     permissions: {
       view: false,
@@ -447,29 +446,6 @@ export const useOptionStore = defineStore("option", {
       }
     },
 
-    async submitOption(action: string): Promise<void> {
-      try {
-        if (action === "submit_for_accepted") {
-          this.status.optionStatus = "published";
-        } else if (action === "submit_for_rejected") {
-          this.status.optionStatus = "rejected";
-        } else if (action === "submit_for_moderate") {
-          this.status.optionStatus = "pending";
-        }
-        const response = await OptionsAPI.submitOption(this.id, action);
-        this.syncToCollectionStore();
-        if (!response || !response.data) {
-          this.$reset();
-          return;
-        }
-      } catch (error) {
-        if ((error as AxiosError)?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error submitting option", { error });
-        throw error;
-      }
-    },
 
     async close(): Promise<void> {
       const inquiryStore = useInquiryStore();

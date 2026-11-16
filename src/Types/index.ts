@@ -83,6 +83,12 @@ export function createDefault<T>(): T {
 // ============================================================================
 
 export type KanbanStatusField =
+  | 'publicationStatus'   // inquiry only
+  | 'moderationStatus'    // inquiry only
+  | 'inquiryStatus'
+  | 'optionStatus';
+
+export type KanbanStatusField =
   | "publicationStatus"
   | "moderationStatus"
   | "inquiryStatus"

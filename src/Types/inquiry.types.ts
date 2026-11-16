@@ -46,6 +46,12 @@ export type InquiryWorkflowStatus =
   "draft" | "waiting_approval" | "active" | "closed" | "rejected";
 export type SortParticipants = "alphabetical" | "supportCount" | "unordered";
 
+export type FamilyStatus = {
+  value: string;
+  label: string;
+  color?: string;
+};
+
 // ============================================================================
 // INQUIRY CONFIG / STATUS / PERMISSIONS
 // ============================================================================

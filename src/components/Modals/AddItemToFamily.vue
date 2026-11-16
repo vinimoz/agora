@@ -45,12 +45,9 @@
             class="hint"
           >
             {{
-              hasEligibleCandidates
-                ? t("agora", "No inquiries match the criteria for this view.")
-                : t(
-                  "agora",
-                  "Only inquiries in the same group can be added to this vote.",
-                )
+	     hasEligibleCandidates
+      ? t("agora", "All inquiries in this group are already added to this vote.")
+      : t("agora", "This group has no inquiries yet.")
             }}
           </p>
         </div>
@@ -172,7 +169,6 @@ type EngineFamily = "vote" | "timeline" | "kanban";
  * Which inquiry types make sense as candidates for a vote.
  * Keep this list in sync with the `to_vote` filter in the inquiries store.
  */
-const VOTABLE_INQUIRY_TYPES: ReadonlySet<string> = new Set(["vote", "poll"]);
 
 const props = withDefaults(
   defineProps<{
@@ -269,24 +265,17 @@ function collectGroupInquiryIds(): number[] {
 }
 
 /** Does `inquiry` belong in `familyKey` already? */
+// Inquiries have no `family` field. Membership in a layout family is
+// expressed solely through `force_layouts`. (`familyType` is a literal
+// passed by the caller — e.g. `:family-type="'vote'"` in
+// FamilyLayoutVote — not an attribute read off the inquiry.)
 function inquiryAlreadyInFamily(
   inquiry: Inquiry,
   familyKey: EngineFamily,
 ): boolean {
-  if (inquiry.family === familyKey) return true;
   return getForceLayouts(inquiry).includes(familyKey);
 }
 
-/** Does `inquiry`'s *type* fit `familyKey`? */
-function inquiryTypeFitsFamily(
-  inquiry: Inquiry,
-  familyKey: EngineFamily,
-): boolean {
-  // Vote family only accepts votable inquiry types.
-  if (familyKey === "vote") return VOTABLE_INQUIRY_TYPES.has(inquiry.type);
-  // Timeline and kanban accept any inquiry type.
-  return true;
-}
 
 /** Were there candidates in the group that got filtered out? Drives the hint copy. */
 const hasEligibleCandidates = computed(() => {
@@ -303,7 +292,6 @@ const availableItemIds = computed<number[]>(() => {
       const inquiry = inquiriesStore.byId[id];
       if (!inquiry) return false;
       if (inquiryAlreadyInFamily(inquiry, props.familyType)) return false;
-      if (!inquiryTypeFitsFamily(inquiry, props.familyType)) return false;
       return true;
     });
   }
@@ -312,7 +300,6 @@ const availableItemIds = computed<number[]>(() => {
     .filter((o) => !props.inquiryId || o.targetId === props.inquiryId)
     .filter((o) => {
       if (linked.has(o.id)) return false;
-      // Already in the target family → nothing to add.
       if (o.family === props.familyType) return false;
       if (getForceLayouts(o).includes(props.familyType)) return false;
       return true;

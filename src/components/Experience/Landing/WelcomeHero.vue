@@ -276,6 +276,8 @@ const actions = computed(
     gap: 10px;
     padding: 12px 14px;
     border: none;
+    overflow: visible;
+      white-space: normal;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.95);
     color: var(--color-main-text);
@@ -306,6 +308,8 @@ const actions = computed(
       display: flex;
       flex-direction: column;
       line-height: 1.2;
+      min-width: 0; 
+      white-space: normal;
     }
 
     .action-label {
@@ -315,7 +319,9 @@ const actions = computed(
 
     .action-hint {
       font-size: 11px;
-      color: var(--color-text-lighter);
+    color: var(--color-text-maxcontrast); 
+    white-space: normal;
+    overflow: visible;
     }
   }
 

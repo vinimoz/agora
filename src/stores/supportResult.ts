@@ -256,12 +256,14 @@ export const useSupportResultStore = defineStore("supportResult", () => {
 
       lastCalculated.value = Date.now();
     } catch (err) {
+	    const axiosErr = err as { code?: string };
+    if (axiosErr?.code !== "ERR_CANCELED") {
       error.value =
         err instanceof Error ? err.message : "Failed to load results";
       Logger.error("Error loading engine results", { error: err, engineId });
-    } finally {
       loading.value = false;
-    }
+      }
+   }
   }
 
   async function loadTargetResults(

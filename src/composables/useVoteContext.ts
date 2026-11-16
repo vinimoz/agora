@@ -113,7 +113,7 @@ export interface VoteContext {
   ) => Promise<boolean>;
   submitMultiVote: (reload?: boolean) => Promise<boolean>;
   removeMyVote: (reload?: boolean) => Promise<boolean>;
-  loadUserVotesForEngine: (engineId: number) => void;
+  loadUserVotesForEngine: (engineId: number, reset?: boolean) => void;
   resetSelections: () => void;
   hasUserVotedFor: (itemId: number) => boolean;
   isSelectedForVote: (itemId: number) => boolean;
@@ -249,6 +249,16 @@ export function useVoteContext(
   engineId?: number,
   fallbackItems?: MaybeRefOrGetter<Array<{ id: number; title?: string }>>,
 ): VoteContext {
+  // Defensive: catches callers that forgot to forward the prop.
+  if (targetType !== "inquiry" && targetType !== "option") {
+    // eslint-disable-next-line no-console
+    console.error(
+      "[useVoteContext] invalid targetType — falling back to 'option'",
+      { targetType },
+    );
+    targetType = "option";
+  }
+
   const engineStore = useSupportEngineStore();
   const supportsStore = useSupportsStore();
   const optionsStore = useOptionsStore();
@@ -266,14 +276,6 @@ export function useVoteContext(
 
   // ---------- Engine management ----------
   const loadingEngines = ref(false);
-  watch(
-    () => engineStore.loading,
-    (v) => {
-      loadingEngines.value = v;
-    },
-    { immediate: true },
-  );
-
   const selectedEngineId = ref<number | null>(engineId ?? null);
 
   /**
@@ -290,43 +292,23 @@ export function useVoteContext(
 
   const currentEngine = computed<SupportEngine | null>(() => {
     const engines = availableEngines.value;
-    if (engineId !== undefined) {
-      return engines.find((e) => e.id === engineId) ?? null;
-    }
     if (!engines.length) return null;
-    if (selectedEngineId.value) {
-      const found = engines.find((e) => e.id === selectedEngineId.value);
-      if (found) return found;
+
+    // 1) explicit user selection wins over the initial engineId prop
+    if (selectedEngineId.value !== null) {
+      const selected = engines.find((e) => e.id === selectedEngineId.value);
+      if (selected) return selected;
     }
+
+    // 2) fall back to the initial engineId prop (if it still exists)
+    if (engineId !== undefined) {
+      const initial = engines.find((e) => e.id === engineId);
+      if (initial) return initial;
+    }
+
+    // 3) otherwise prefer the active engine
     return engines.find((e) => e.status === "active") ?? engines[0] ?? null;
   });
-
-  watch(
-    currentEngine,
-    (engine) => {
-      if (engine) engineStore.setCurrentEngine(engine);
-    },
-    { immediate: true },
-  );
-
-  watch(
-    availableEngines,
-    (engines) => {
-      if (!engines.length) {
-        if (selectedEngineId.value !== null) selectedEngineId.value = null;
-        return;
-      }
-      if (
-        selectedEngineId.value &&
-        engines.some((e) => e.id === selectedEngineId.value)
-      ) {
-        return;
-      }
-      const active = engines.find((e) => e.status === "active");
-      selectedEngineId.value = (active ?? engines[0]).id;
-    },
-    { immediate: true },
-  );
 
   // ---------- Votable items ----------
   const votableItems = computed<VotableItem[]>(() => {
@@ -337,7 +319,7 @@ export function useVoteContext(
 
     if (targetType === "option") {
       const fromStore: VotableItem[] = (optionsStore.options || []).filter(
-        (opt) => opt.parentId === pid && engine.target_ids!.includes(opt.id),
+        (opt) => opt.targetId === pid && engine.target_ids!.includes(opt.id),
       );
       if (fromStore.length > 0) return fromStore;
     } else {
@@ -363,23 +345,21 @@ export function useVoteContext(
     availableEngines.value.some((e) => e.status === "active"),
   );
 
-  const refreshEngines = async () => {
-    loadingEngines.value = true;
-    try {
-      // Delegated to the caller (supportEngineStore.loadEnginesByInquiry / ...ByInquiryGroup).
-    } finally {
-      loadingEngines.value = false;
+  const refreshEngines = async (): Promise<void> => {
+    const pid = parentId.value;
+    if (!pid || pid <= 0) return;
+    if (targetType === "inquiry") {
+      await engineStore.loadEnginesByInquiryGroup(pid);
+    } else {
+      await engineStore.loadEnginesByInquiry(pid);
     }
   };
-
-  const selectEngine = (id: number) => {
-    if (availableEngines.value.some((e) => e.id === id)) {
-      selectedEngineId.value = id;
-      resetSelections();
-      loadUserVotesForEngine(id);
-    }
+  
+   const selectEngine = (id: number) => {
+    if (!availableEngines.value.some((e) => e.id === id)) return;
+    selectedEngineId.value = id;      // watcher handles reset + hydrate + results
   };
-
+  
   const effectiveEngineId = computed(
     () => currentEngine.value?.engine || "binary",
   );
@@ -509,28 +489,6 @@ export function useVoteContext(
     supportsStore.supports = [...preserved, ...accumulated];
   };
 
-  watch(
-    () => parentId.value,
-    async (pid) => {
-      if (!pid) return;
-      await loadSupportsForContext();
-    },
-    { immediate: true },
-  );
-
-  // For inquiry target, the group may finish loading *after* parentId arrives.
-  watch(
-    () => {
-      if (targetType !== "inquiry") return "";
-      const pid = parentId.value;
-      if (!pid) return "";
-      const group = inquiryGroupsStore.byId(pid);
-      return group?.inquiryIds?.join(",") ?? "";
-    },
-    async (ids) => {
-      if (ids) await loadSupportsForContext();
-    },
-  );
 
   /**
    * Supports whose `supportEngineId` matches the current engine.
@@ -975,54 +933,54 @@ export function useVoteContext(
    * Submit a single-item vote.
    *
    */
-const submitSingleVote = async (
-  _parentId: number,
-  item: VotableItem,
-  value: SupportValue,
-): Promise<boolean> => {
-  const userId = sessionStore.currentUser?.id;
-  if (!userId || !canVote.value) return false;
-  const activeEngine = currentEngine.value;
+  const submitSingleVote = async (
+    _parentId: number,
+    item: VotableItem,
+    value: SupportValue,
+  ): Promise<boolean> => {
+    const userId = sessionStore.currentUser?.id;
+    if (!userId || !canVote.value) return false;
+    const activeEngine = currentEngine.value;
 
-  // Any active engine ⇒ aggregate ballot. Update local reactive state,
-  // then submit the full aggregate through submitMultiVote().
-  if (activeEngine) {
-    const engine = effectiveEngineId.value;
-    if (["binary", "ternary", "score", "star"].includes(engine)) {
-      updateScore(item.id, value as number | null);
-    } else if (engine === "majority_judgment") {
-      updateGrade(item.id, value as string | null);
-    } else if (engine === "reaction") {
-      const arr = Array.isArray(value) ? (value as string[]) : [];
-      updateReaction(item.id, arr.length ? arr : null);
-    } else if (["ranking", "condorcet", "borda"].includes(engine)) {
-      updateRanking(item.id, value as number | null);
-    } else if (engine === "quadratic") {
-      updateQuadratic(item.id, value as number | null);
-    } else if (engine === "token_weighted") {
-      updateTokenWeight(item.id, value as number | null);
-    } else if (["approval", "phased_voting"].includes(engine)) {
-      const next = new Set(selectedItems.value);
-      if (value) next.add(item.id);
-      else next.delete(item.id);
-      selectedItems.value = next;
+    // Any active engine ⇒ aggregate ballot. Update local reactive state,
+    // then submit the full aggregate through submitMultiVote().
+    if (activeEngine) {
+      const engine = effectiveEngineId.value;
+      if (["binary", "ternary", "score", "star"].includes(engine)) {
+        updateScore(item.id, value as number | null);
+      } else if (engine === "majority_judgment") {
+        updateGrade(item.id, value as string | null);
+      } else if (engine === "reaction") {
+        const arr = Array.isArray(value) ? (value as string[]) : [];
+        updateReaction(item.id, arr.length ? arr : null);
+      } else if (["ranking", "condorcet", "borda"].includes(engine)) {
+        updateRanking(item.id, value as number | null);
+      } else if (engine === "quadratic") {
+        updateQuadratic(item.id, value as number | null);
+      } else if (engine === "token_weighted") {
+        updateTokenWeight(item.id, value as number | null);
+      } else if (["approval", "phased_voting"].includes(engine)) {
+        const next = new Set(selectedItems.value);
+        if (value) next.add(item.id);
+        else next.delete(item.id);
+        selectedItems.value = next;
+      }
+
+      // If the aggregate is now empty, delete the ballot instead of updating it.
+      const isEmpty =
+        Object.keys(scores.value).length === 0 &&
+        Object.keys(grades.value).length === 0 &&
+        Object.keys(reactions.value).length === 0 &&
+        Object.keys(rankings.value).length === 0 &&
+        Object.keys(quadraticVotes.value).length === 0 &&
+        Object.keys(tokenWeights.value).length === 0 &&
+        selectedItems.value.size === 0;
+
+      if (isEmpty && currentUserVoteForEngine.value) {
+        return await removeMyVote();
+      }
+      return await submitMultiVote();
     }
-
-    // If the aggregate is now empty, delete the ballot instead of updating it.
-    const isEmpty =
-      Object.keys(scores.value).length === 0 &&
-      Object.keys(grades.value).length === 0 &&
-      Object.keys(reactions.value).length === 0 &&
-      Object.keys(rankings.value).length === 0 &&
-      Object.keys(quadraticVotes.value).length === 0 &&
-      Object.keys(tokenWeights.value).length === 0 &&
-      selectedItems.value.size === 0;
-
-    if (isEmpty && currentUserVoteForEngine.value) {
-      return await removeMyVote();
-    }
-    return await submitMultiVote();
-  }
 
     // Deliberative and option-target paths unchanged.
     const inquiryIdForVote =
@@ -1677,7 +1635,8 @@ const submitSingleVote = async (
    *     Case 4 aggregate → populate the maps from the aggregate.
    *     Case 1 per‑inquiry rows don't feed the form (deliberative votes).
    */
-  function loadUserVotesForEngine(engineId: number) {
+  function loadUserVotesForEngine(engineId: number, reset = false) {
+    if (reset) resetSelections();
     const userId = sessionStore.currentUser?.id;
     if (!userId) return;
 
@@ -1869,86 +1828,176 @@ const submitSingleVote = async (
    * Case 3, because the aggregate is still one row per engine (per inquiry).
    */
 
-const loadResults = async () => {
-  const engineIdValue = currentEngine.value?.id;
-  if (!engineIdValue) {
-    engineResult.value = null;
-    return;
-  }
-
-  let engineResults = resultStore.getResultsByEngine(engineIdValue);
-  if (engineResults.length === 0) {
-    try {
-      await resultStore.loadEngineResults(engineIdValue);
-      engineResults = resultStore.getResultsByEngine(engineIdValue);
-    } catch {
-      /* best-effort */
+  const loadResults = async (): Promise<void> => {
+    const engine = currentEngine.value;
+    if (!engine) {
+      engineResult.value = null;
+      return;
     }
-  }
+    const engineIdValue = engine.id;
 
-  if (targetType === "inquiry") {
-    // Group engine → 'inquirygroup' row scoped to this group.
-    const groupRow = engineResults.find(
+    let engineResults = resultStore.getResultsByEngine(engineIdValue);
+    if (engineResults.length === 0) {
+      try {
+        await resultStore.loadEngineResults(engineIdValue);
+      } catch {
+        /* best-effort */
+      }
+      // ⚠️ stale-engine guard — engine may have changed during the fetch
+      if (currentEngine.value?.id !== engineIdValue) return;
+      engineResults = resultStore.getResultsByEngine(engineIdValue);
+    }
+
+    // Derive target scope from the engine itself — this is the source of truth,
+    // not the composable's `targetType` or the reactive `parentId`.
+    const resultTargetType: "inquiry" | "inquirygroup" =
+      engine.target_type === "inquiry" ? "inquirygroup" : "inquiry";
+    const resultTargetId: number =
+      engine.target_type === "inquiry"
+        ? engine.inquiry_group_id
+        : engine.inquiry_id;
+
+    const row = engineResults.find(
       (r) =>
-        r.target_type === "inquirygroup" &&
-        r.target_id === parentId.value &&
+        r.target_type === resultTargetType &&
+        r.target_id === resultTargetId &&
         r.support_engine_id === engineIdValue,
     );
-    engineResult.value = groupRow?.result ?? null;
-    return;
-  }
+    if (row) {
+      engineResult.value = row.result;
+      return;
+    }
 
-  // Option target → 'inquiry' row scoped to this inquiry.
-  const inquiryRow = engineResults.find(
-    (r) =>
-      r.target_type === "inquiry" &&
-      r.target_id === parentId.value &&
-      r.support_engine_id === engineIdValue,
-  );
-  if (inquiryRow) {
-    engineResult.value = inquiryRow.result;
-    return;
-  }
+    // Fallback: entity store snapshot from a mutation response
+    // (only meaningful for option-target engines — the aggregate lives on the inquiry)
+    if (engine.target_type === "option") {
+      const entry = inquiryStore.status?.supportResult?.find(
+        (r) =>
+          r.support_engine_id === engineIdValue && r.target_type === "inquiry",
+      );
+      engineResult.value = entry?.result ?? null;
+      return;
+    }
 
-  // Fallback for case 3a — entity store snapshot from a mutation response.
-  const entry = inquiryStore.status?.supportResult?.find(
-    (r) =>
-      r.support_engine_id === engineIdValue && r.target_type === "inquiry",
-  );
-  engineResult.value = entry?.result ?? null;
-};
+    engineResult.value = null;
+  };
 
-  // ─── Hydration watcher ───
+  // -----------------------------------------------------------------
+  // Engine loading
+  //
+  // `availableEngines` only *filters* engineStore.engines — nothing was
+  // populating them for this context, so vote views mounted with an
+  // empty engine list. Dispatch on targetType, matching how the store
+  // scopes engines:
+  //   targetType = 'option'  → engines live on inquiry_id   (loadEnginesByInquiry)
+  //   targetType = 'inquiry' → engines live on inquiry_group_id (loadEnginesByInquiryGroup)
+  // -----------------------------------------------------------------
+  // Re-fetch aggregate results when the current engine changes.
   watch(
-    () => supportsForContext.value,
-    () => {
-      const id = currentEngine.value?.id;
-      if (id) loadUserVotesForEngine(id);
+    () => parentId.value,
+    async (pid) => {
+      if (!pid) return;
+      await loadSupportsForContext();
     },
-    { deep: true },
+    { immediate: true },
+  );
+
+  // For inquiry target, the group may finish loading *after* parentId arrives.
+  watch(
+    () => {
+      if (targetType !== "inquiry") return "";
+      const pid = parentId.value;
+      if (!pid) return "";
+      const group = inquiryGroupsStore.byId(pid);
+      return group?.inquiryIds?.join(",") ?? "";
+    },
+    async (ids) => {
+      if (ids) await loadSupportsForContext();
+    },
   );
 
   watch(
-    () => currentEngine.value?.id,
-    async (id) => {
-      if (!id) {
-        engineResult.value = null;
-        return;
-      }
-      loadUserVotesForEngine(id);
-      await loadResults();
+    () => engineStore.loading,
+    (v) => {
+      loadingEngines.value = v;
     },
     { immediate: true },
   );
 
   watch(
-    () =>
-      resultStore.results
-        .map((r) => `${r.support_engine_id}:${r.id}`)
-        .join("|"),
-    () => void loadResults(),
-    { deep: true },
+    currentEngine,
+    (engine) => {
+      if (engine) engineStore.setCurrentEngine(engine);
+    },
+    { immediate: true },
   );
+
+  watch(
+    availableEngines,
+    (engines) => {
+      if (!engines.length) {
+        if (selectedEngineId.value !== null) selectedEngineId.value = null;
+        return;
+      }
+      if (
+        selectedEngineId.value &&
+        engines.some((e) => e.id === selectedEngineId.value)
+      ) {
+        return;
+      }
+      const active = engines.find((e) => e.status === "active");
+      selectedEngineId.value = (active ?? engines[0]).id;
+    },
+    { immediate: true },
+  );
+
+  // ---- single authoritative engine-change trigger ----
+watch(
+  () => currentEngine.value?.id ?? null,
+  async (id, prev) => {
+    if (id === prev) return;
+    if (!id) {
+      engineResult.value = null;
+      return;
+    }
+    loadUserVotesForEngine(id, true);
+    await loadResults();
+  },
+  { immediate: true },
+);
+
+// ---- reload only when the *target set* of the current engine changes ----
+watch(
+  () => currentEngine.value?.target_ids?.slice() ?? [],
+  async () => {
+    if (currentEngine.value?.id) await loadResults();
+  },
+);
+
+// ---- single-flight guard inside loadResults ----
+let lastRequestedEngine: number | null = null;
+let inFlight: Promise<void> | null = null;
+
+
+  watch(
+    () => parentId.value,
+    async (pid) => {
+      if (!pid || pid <= 0) return;
+      if (targetType === "inquiry") {
+        await engineStore.loadEnginesByInquiryGroup(pid);
+      } else {
+        await engineStore.loadEnginesByInquiry(pid);
+      }
+    },
+    { immediate: true },
+  );
+
+watch(
+  () => resultStore.results.filter(
+    (r) => r.support_engine_id === currentEngine.value?.id,
+  ).length,
+  () => void loadResults(),
+);
 
   watch(
     () =>

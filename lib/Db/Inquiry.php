@@ -1011,8 +1011,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 		if ($this->getIsDelegatedAdmin()) {
 			return true;
 		}
-
-		return false;
+	return $this->userSession->getCurrentUser()->getIsAdmin();
 	}
 
 	private function getAllowTakeOver(): bool

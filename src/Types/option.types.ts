@@ -12,9 +12,11 @@ import type { FamilyStatus } from "./index.ts";
 // OPTION STATUS
 // ============================================================================
 
-export type OptionStatus = "draft" | "published" | "archived" | "deleted";
+export type OptionStatus =
+  | 'draft' | 'published' | 'archived' | 'deleted'
+  | (string & {});
 
-export type OptionConfiguration = {
+  export type OptionConfiguration = {
   visibility: "private" | "everyone" | "groups" | "participants";
   showResults: string;
   allowComment: number | null;
@@ -63,7 +65,6 @@ export type OptionCurrentStatus = {
   trendingScore: number;
   optionStatus: string;
   supportResult: SupportResult | null;
-  publicationStatus: "draft" | "pending" | "published" | "archived" | "deleted";
 };
 
 export type CurrentUserOptionStatus = {
