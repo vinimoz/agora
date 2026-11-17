@@ -11,6 +11,8 @@ namespace OCA\Agora\Migration;
 
 use OCA\Agora\Db\IndexDefinitions;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -27,6 +29,46 @@ use OCP\Migration\SimpleMigrationStep;
  */
 class Version01071620260105120000 extends SimpleMigrationStep
 {
+    public function __construct(
+        private IDBConnection $connection,
+    ) {
+    }
+
+    /** Delete orphan rows first, as the CASCADE would have: adding the FK fails on them. */
+    public function preSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
+    {
+        $schema = $schemaClosure();
+        foreach (IndexDefinitions::FK_INDICES as $parentName => $children) {
+            if (!$schema->hasTable($parentName)) {
+                continue;
+            }
+            foreach ($children as $childName => $fk) {
+                $column = $fk['constraintColumn'] ?? null;
+                if ($column === null || !$schema->hasTable($childName)
+                    || !$schema->getTable($childName)->hasColumn($column)) {
+                    continue;
+                }
+                $deleted = $this->deleteOrphans($parentName, $childName, $column);
+                if ($deleted > 0) {
+                    $output->info("Agora 1.7.16: deleted {$deleted} orphan rows from {$childName}.{$column}");
+                }
+            }
+        }
+    }
+
+    private function deleteOrphans(string $parentName, string $childName, string $column): int
+    {
+        $parentIds = $this->connection->getQueryBuilder();
+        $parentIds->select('id')->from($parentName);
+
+        $qb = $this->connection->getQueryBuilder();
+        $qb->delete($childName)
+            // 0 means "no parent" for some rows (group attachments): keep them
+            ->where($qb->expr()->gt($column, $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
+            ->andWhere($qb->expr()->notIn($column, $qb->createFunction($parentIds->getSQL())));
+        return $qb->executeStatement();
+    }
+
     public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper
     {
         $schema = $schemaClosure();
