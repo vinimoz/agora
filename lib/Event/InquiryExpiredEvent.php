@@ -15,7 +15,7 @@ class InquiryExpiredEvent extends InquiryEvent
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
-        protected Inquiry $inquiry,
+        Inquiry $inquiry,
     ) {
         parent::__construct($inquiry);
         $this->eventId = self::EXPIRE;
