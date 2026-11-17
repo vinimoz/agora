@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace OCA\Agora\Migration;
 
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
@@ -222,6 +223,8 @@ class Version01080020260707120001 extends SimpleMigrationStep
             }
 
             $qb = $this->connection->getQueryBuilder();
+            // JSON cannot be compared to a string on PostgreSQL: compare as text
+            $current = $qb->expr()->castColumn('statuses', IQueryBuilder::PARAM_STR);
             $qb->update('agora_inq_families')
                 ->set('statuses', $qb->createNamedParameter($encoded))
                 ->where($qb->expr()->eq(
@@ -230,8 +233,8 @@ class Version01080020260707120001 extends SimpleMigrationStep
                 ))
                 ->andWhere($qb->expr()->orX(
                     $qb->expr()->isNull('statuses'),
-                    $qb->expr()->eq('statuses', $qb->createNamedParameter('')),
-                    $qb->expr()->eq('statuses', $qb->createNamedParameter('[]'))
+                    $qb->expr()->eq($current, $qb->createNamedParameter('')),
+                    $qb->expr()->eq($current, $qb->createNamedParameter('[]'))
                 ));
 
             $updated = $qb->executeStatement();
