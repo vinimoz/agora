@@ -74,7 +74,9 @@ class HomeImageService
 		$node = $folder->newFile($filename);
 		$stream = fopen($upload['tmp_name'], 'rb');
 		$node->putContent($stream);
-		fclose($stream);
+		if (is_resource($stream)) {
+		    fclose($stream);
+		}
 
 		$data = $config->getData() ?? [];
 		if (!isset($data[$slot]) || !is_array($data[$slot])) {
