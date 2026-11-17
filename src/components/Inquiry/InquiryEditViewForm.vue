@@ -38,6 +38,7 @@ import {
   canSupport,
   canComment,
   canEdit,
+  canParticipate,
   canView,
   createInquiryContext,
 } from "../../utils/permissions.ts";
@@ -391,27 +392,6 @@ onUnmounted(() => {
   unsubscribe(Event.UpdateComments, onCommentsUpdated);
 });
 
-// Event subscriptions
-/* onMounted(async () => {
-  if (!canView(context.value)) {
-    hasAccess.value = false
-    showError('Error you cannot view this inquiry !')
-    router.push({ name: 'list', params: { type: 'relevant' } })
-    return
-  }
-
-  if (inquiryStore.coverId) {
-    currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
-  }
-
-  if (inquiriesStore.inquiries.length === 0) {
-    inquiriesStore.setFamilyType(inquiryStore.family)
-    inquiriesStore.load()
-  }
-
-  subscribe(Event.UpdateComments, onCommentsUpdated)
-  isLoaded.value = true
-})*/
 onMounted(async () => {
   // 1. If the shell passed us an inquiry, load it into the store first.
   //    The store is the single source of truth for the rest of the component.
@@ -545,6 +525,12 @@ const canSupportInquiry = computed(() =>
 const canEditInquiry = computed(() =>
   // You might have a context or permission check here
   context.value ? canEdit(context.value) : false,
+);
+
+
+const canParticipateInquiry = computed(() =>
+  // You might have a context or permission check here
+  context.value ? canParticipate(context.value) : false,
 );
 
 // Format date
@@ -1119,7 +1105,7 @@ const expirationDate = computed({
     </div>
 
     <OptionEditView
-      v-if="canEditInquiry"
+      v-if="canParticipateInquiry"
       :has-visible-families="hasVisibleFamilies"
     />
   </div>

@@ -376,13 +376,13 @@
       </template>
     </NcDialog>
 
-    <SupportsDetailModal
+    <!-- <SupportsDetailModal
       v-if="showSupportsModal"
       :item-id="selectedItemId"
       :inquiry-id="effectiveParentId ?? 0"
       :display-vote="true"
       @close="showSupportsModal = false"
-    />
+      /> -->
 
     <EngineSelectorModal
       v-if="showCreateEngineModal"
@@ -463,7 +463,7 @@ import VoteCardsLayout from "../Vote/VoteCardsLayout.vue";
 import VoteResultsLayout from "../Vote/VoteResultsLayout.vue";
 import EngineSelectorModal from "../Modals/EngineSelectorModal.vue";
 import AddItemToFamily from "../Modals/AddItemToFamily.vue";
-import SupportsDetailModal from "../Modals/SupportsDetailModal.vue";
+// import SupportsDetailModal from "../Modals/SupportsDetailModal.vue";
 import { ENGINE_DEFINITIONS } from "../../Types/votingType";
 import { showSuccess } from "@nextcloud/dialogs";
 import { getItemsForFamily } from "../../helpers/modules/itemHelpers";

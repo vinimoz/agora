@@ -136,12 +136,10 @@ export interface PermissionContext {
   contentType: ContentType;
   isOwner: boolean;
 
-  // Visibilité — source unique
   visibilityLevel: VisibilityType;
   visibilityGroups: string[];
   visibilityUsers: string[];
 
-  // Blocages
   isLocked: boolean;
   isExpired: boolean;
   isDeleted: boolean;
@@ -369,6 +367,15 @@ export function canView(ctx: PermissionContext): boolean {
   const appSettings = useAppSettingsStore();
 
   if (!ctx) return false;
+ 
+   console.log(" CTX CAN VIEW ", ctx)
+   console.log(" ALLOW PUBLIC ACCESS ", appSettings.allowPublicAccess)
+
+  if ( (ctx.userType === UserType.Admin) ||  (ctx.userType === UserType.Moderator) ) return true
+
+  if ( ctx.userType === UserType.Admin ) {
+    return ctx.visibilityLevel === "everyone" && appSettings.allowPublicAccess;
+  }
 
   if (ctx.isDeleted) {
     return [UserType.Moderator, UserType.Admin, UserType.Owner].includes(

@@ -35,7 +35,7 @@ const tagline = computed(() => HOME_DEFAULTS.hero?.tagline || "");
 /* ------------------------------------------------------------------ */
 /* USER ROLES                                                          */
 /* ------------------------------------------------------------------ */
-const isAdmin = computed(() => sessionStore.currentUser?.isAdmin === true);
+const isAdmin = computed(() => sessionStore.currentUser?.isAdmin === true || sessionStore.currentUser?.isModerator);
 const isManager = computed(
   () => isAdmin.value || sessionStore.currentUser?.isGroupEditor === true,
 );

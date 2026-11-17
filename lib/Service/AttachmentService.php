@@ -30,6 +30,9 @@ use OCA\Agora\Model\Group\Group;
 
 class AttachmentService
 {
+    private const READ = \OCP\Constants::PERMISSION_READ;
+    private const UPDATE = \OCP\Constants::PERMISSION_UPDATE;
+    private const SHARE = \OCP\Constants::PERMISSION_SHARE;
     private IRootFolder $rootFolder;
     private IUserSession $userSession;
     private AttachmentMapper $attachmentMapper;
@@ -272,14 +275,15 @@ private function getTargetSharesForEntity(
 ): array {
     $ownerUid = (string) $entity->getOwner();
 
+
     $targets = [
-        [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_MODERATOR, 'permissions' => READ|UPDATE|SHARE ],
-        [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_OFFICIAL,  'permissions' => READ|UPDATE|SHARE ],
+        [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_MODERATOR, 'permissions' => self::READ|self::UPDATE|self::SHARE ],
+        [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_OFFICIAL,  'permissions' => self::READ|self::UPDATE|self::SHARE ],
     ];
 
     // Group attachments: readable by all Agora users
     if ($isGroupAttachment) {
-        $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_USERS, 'permissions' => READ ];
+        $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_USERS, 'permissions' => self::READ ];
         return $targets;
     }
 
@@ -287,20 +291,20 @@ private function getTargetSharesForEntity(
 
     switch ($visibility) {
         case Inquiry::VISIBILITY_EVERYONE:
-            $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_USERS, 'permissions' => READ ];
+            $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => Group::GROUP_USERS, 'permissions' => self::READ ];
             break;
 
         case Inquiry::VISIBILITY_GROUPS:
             foreach ($entity->getVisibilityGroups() as $groupId) {
                 if ($groupId === '') continue;
-                $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => $groupId, 'permissions' => READ ];
+                $targets[] = [ 'type' => IShare::TYPE_GROUP, 'with' => $groupId, 'permissions' => self::READ ];
             }
             break;
 
         case Inquiry::VISIBILITY_USERS:
             foreach ($entity->getVisibilityUsers() as $userId) {
                 if ($userId === '') continue;
-                $targets[] = [ 'type' => IShare::TYPE_USER, 'with' => $userId, 'permissions' => READ ];
+                $targets[] = [ 'type' => IShare::TYPE_USER, 'with' => $userId, 'permissions' => self::READ ];
             }
             break;
 
@@ -310,7 +314,7 @@ private function getTargetSharesForEntity(
             $targets[] = [
                 'type'        => IShare::TYPE_USER,
                 'with'        => $ownerUid,
-                'permissions' => READ|UPDATE|SHARE,
+                'permissions' => self::READ|self::UPDATE|self::SHARE,
             ];
             break;
     }
