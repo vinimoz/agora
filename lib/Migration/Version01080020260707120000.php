@@ -38,10 +38,12 @@ use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
+use OCA\Agora\Db\GroupRelation;
 use OCA\Agora\Db\IndexDefinitions;
 
 class Version01080020260707120000 extends SimpleMigrationStep
@@ -419,6 +421,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
 
 	    // inquiries
 	    if ($this->columnExists(self::S_INQUIRIES, 'access')) {
+		    $this->copyOwnedGroupToVisibility(self::S_INQUIRIES, GroupRelation::TARGET_INQUIRY);
 		    $this->convertTableAccess(self::S_INQUIRIES, $mappings);
 	    } else {
 		    $this->log('  ' . self::S_INQUIRIES . '.access not present — skipping');
@@ -426,6 +429,7 @@ class Version01080020260707120000 extends SimpleMigrationStep
 
 	    // inquiry groups
 	    if ($this->columnExists(self::S_INQUIRIES_GROUP, 'access')) {
+		    $this->copyOwnedGroupToVisibility(self::S_INQUIRIES_GROUP, GroupRelation::TARGET_INQUIRY_GROUP);
 		    $this->convertTableAccess(self::S_INQUIRIES_GROUP, $mappings);
 	    } else {
 		    $this->log('  ' . self::S_INQUIRIES_GROUP . '.access not present — skipping');
@@ -433,6 +437,44 @@ class Version01080020260707120000 extends SimpleMigrationStep
 
 	    // agora_options: no target columns → nothing to convert; will just be dropped
 	    $this->log('  ' . self::S_OPTIONS . ': no target columns — data will be discarded on drop');
+    }
+
+    /** Access 'groups' meant members of owned_group: make it a visibility relation. */
+    private function copyOwnedGroupToVisibility(string $unprefixedTable, string $targetType): void
+    {
+	    if (!$this->columnExists($unprefixedTable, 'owned_group')) {
+		    return;
+	    }
+
+	    $qb = $this->connection->getQueryBuilder();
+	    $qb->select('t.id', 't.owned_group')
+		    ->from($unprefixedTable, 't')
+		    ->leftJoin('t', self::S_GROUP_RELATIONS, 'r', $qb->expr()->andX(
+			    $qb->expr()->eq('r.target_id', 't.id'),
+			    $qb->expr()->eq('r.target_type', $qb->createNamedParameter($targetType)),
+			    $qb->expr()->eq('r.relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY)),
+			    $qb->expr()->eq('r.group_id', 't.owned_group'),
+		    ))
+		    ->where($qb->expr()->eq('t.access', $qb->createNamedParameter('groups')))
+		    ->andWhere($qb->expr()->isNotNull('t.owned_group'))
+		    ->andWhere($qb->expr()->neq('t.owned_group', $qb->createNamedParameter('')))
+		    ->andWhere($qb->expr()->isNull('r.id'));
+	    $rows = $qb->executeQuery()->fetchAll();
+
+	    $now = time();
+	    foreach ($rows as $row) {
+		    $insert = $this->connection->getQueryBuilder();
+		    $insert->insert(self::S_GROUP_RELATIONS)
+			    ->values([
+				    'target_type' => $insert->createNamedParameter($targetType),
+				    'target_id' => $insert->createNamedParameter((int)$row['id'], IQueryBuilder::PARAM_INT),
+				    'relation_type' => $insert->createNamedParameter(GroupRelation::RELATION_VISIBILITY),
+				    'group_id' => $insert->createNamedParameter($row['owned_group']),
+				    'created_at' => $insert->createNamedParameter($now, IQueryBuilder::PARAM_INT),
+			    ])
+			    ->executeStatement();
+	    }
+	    $this->log('  • ' . $unprefixedTable . ': ' . count($rows) . ' owned groups copied to visibility groups');
     }
 
     private function convertTableAccess(string $unprefixedTable, array $mappings): void
