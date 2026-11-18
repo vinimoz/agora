@@ -196,8 +196,15 @@ class AppSettings implements JsonSerializable
 			$resolved = $this->homeConfigService->resolveForOrganization(
 				$this->getOrganizationType()
 			);
+			$this->logger->warning(
+				'FAIL TO RESOLV',
+				[
+					'organization_type' => $this->getOrganizationType(),
+					'resolved' => $resolved,
+				]);
 
 			return $resolved === [] ? null : $resolved;
+
 		} catch (\Throwable $e) {
 			$this->logger->warning(
 				'Failed to resolve home config',
@@ -233,9 +240,7 @@ class AppSettings implements JsonSerializable
 			'optionFamilyTab' =>  $this->optionFamilyService?->findAll() ?? [],
 			'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
 			'inquiryTypeRights' => $this->getInquiryTypeRights(),
-			'organization' => [
-				'type' => $this->getOrganizationType(),
-			],
+			'organizationType' => $this->getOrganizationType(),
 			'home' => $this->getHomeConfig(),
 		];
 
@@ -246,14 +251,14 @@ class AppSettings implements JsonSerializable
 		return array_merge($appSettingsArray, $this->getPublicAppSettings());
 	}
 
-public function setOrganizationType(string $type): void
-{
-    $allowed = ['municipality', 'university', 'association', 'cooperative', 'company'];
-    if (!in_array($type, $allowed, true)) {
-        throw new \InvalidArgumentException("Invalid organization type: {$type}");
-    }
-    $this->setStringSetting(self::SETTING_ORGANIZATION_TYPE, $type);
-}
+	public function setOrganizationType(string $type): void
+	{
+		$allowed = ['municipality', 'university', 'association', 'cooperative', 'company'];
+		if (!in_array($type, $allowed, true)) {
+			throw new \InvalidArgumentException("Invalid organization type: {$type}");
+		}
+		$this->setStringSetting(self::SETTING_ORGANIZATION_TYPE, $type);
+	}
 
 	public function getModeratorRights(): array
 	{
@@ -847,6 +852,8 @@ public function setOrganizationType(string $type): void
 			self::SETTING_INQUIRY_TYPE_RIGHTS => $this->getInquiryTypeRights(),
 			self::SETTING_MODERATOR_RIGHTS => $this->getModeratorRights(),
 			self::SETTING_OFFICIAL_RIGHTS => $this->getOfficialRights(),
+			self::SETTING_ORGANIZATION_TYPE => $this->getOrganizationType(),
+			self::SETTING_HOME => $this->getHomeConfig(),
 		];
 	}
 

@@ -22,6 +22,7 @@ import type {
   HomeConfig,
   HomeConfigPayload,
   HomeConfigRecord,
+  HomeImageSlot
 } from "../../Types/appSettings.types";
 
 import type { InquiryGroupType } from "../../Types/inquiryGroups.types.js";
@@ -573,36 +574,12 @@ const appSettings = {
     });
   },
 
-  /**
-   * PUT /apps/agora/home-config/instance
-   *
-   * The override row is (config_key='default', role='instance'). Backend
-   * replaces `data` wholesale, but since the override is merged on top of
-   * the template via array_replace_recursive, sending a *partial* override
-   * is the correct usage.
-   */
-  updateHomeInstance(
-    data: Partial<HomeConfig>,
-    label?: string,
-    description?: string,
-  ): Promise<AxiosResponse<{ config: HomeConfigRecord }>> {
-    return httpInstance.request({
-      method: "PUT",
-      url: "home-config/instance/update",
-      data: { data, label, description },
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.updateHomeInstance.name
-        ].handleRequestCancellation().token,
-    });
-  },
-
   // ============================================================
   // HOME IMAGES (IAppData)
   // ============================================================
   uploadHomeImage(
     configId: number,
-    slot: string,
+    slot: HomeImageSlot,
     file: File,
   ): Promise<
     AxiosResponse<{
@@ -617,7 +594,6 @@ const appSettings = {
       method: "POST",
       url: `home-config/${configId}/images/${slot}`,
       data: formData,
-      headers: { "Content-Type": "multipart/form-data" },
       cancelToken:
         cancelTokenHandlerObject[
           this.uploadHomeImage.name
@@ -627,7 +603,7 @@ const appSettings = {
 
   deleteHomeImage(
     configId: number,
-    slot: string,
+    slot: HomeImageSlot,
   ): Promise<AxiosResponse<{ config: HomeConfigRecord | null }>> {
     return httpInstance.request({
       method: "DELETE",
@@ -644,7 +620,7 @@ const appSettings = {
    * The `version` query is a cache-buster — pass `config.updated` (or
    * `created`) so browsers refresh after an admin replaces the file.
    */
-  homeImageUrl(configId: number, slot: string, version?: number): string {
+  homeImageUrl(configId: number, slot: HomeImageSlot, version?: number): string {
     const base = generateUrl(
       `/apps/agora/home-config/${configId}/images/${slot}`,
     );

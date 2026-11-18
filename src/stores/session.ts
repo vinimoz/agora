@@ -249,6 +249,8 @@ export const useSessionStore = defineStore("session", {
                 state.optionFamilyTab = this.appSettings?.optionFamilyTab || [];
                 state.categoryTab = this.appSettings?.categoryTab || [];
                 state.locationTab = this.appSettings?.locationTab || [];
+                state.organizationType = this.appSettings?.organizationType || '';
+                state.home = this.appSettings?.home || [];
               });
             }
           } catch (storeError) {

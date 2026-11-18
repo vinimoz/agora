@@ -53,7 +53,7 @@ class HomeConfigController extends BaseController
 		return $this->response(
 			fn () => [
 				'organization_type' => $organizationType,
-				'home' => $this->homeConfigService->resolveForOrganization($organizationType),
+				'config' => $this->homeConfigService->resolveForOrganization($organizationType),
 			]
 		);
 	}
@@ -101,6 +101,7 @@ class HomeConfigController extends BaseController
 		return $this->response(
 			fn () => [
 				'configs' => $this->homeConfigService->findAll(),
+				'organization' => $this->homeConfigService->findAll(),
 			]
 		);
 	}
@@ -187,48 +188,6 @@ class HomeConfigController extends BaseController
 				),
 			]
 		);
-	}
-
-	/**
-	 * Convenience: update the single instance override.
-	 *
-	 * Resolves to the row (config_key='default', role='instance') and
-	 * patches its `data`. Creates the row if it somehow doesn't exist
-	 * (e.g. after a manual DB reset) so admins never have to know the ID.
-	 *
-	 * PUT /apps/agora/home-config/instance
-	 */
-	#[FrontpageRoute(verb: 'PUT', url: '/home-config/instance/update')]
-	public function updateInstance(
-		array $data,
-		?string $label = null,
-		?string $description = null,
-	): JSONResponse {
-		return $this->response(function () use ($data, $label, $description) {
-			try {
-				$config = $this->homeConfigService->findByKeyAndRole(
-					'default',
-					HomeConfig::ROLE_INSTANCE
-				);
-			} catch (\OCP\AppFramework\Db\DoesNotExistException) {
-				$config = $this->homeConfigService->create(
-					configKey: 'default',
-					role: HomeConfig::ROLE_INSTANCE,
-					label: $label ?? 'Instance override',
-					description: $description ?? 'Admin-specific home override (merged on top of the org-type template).',
-					data: $data,
-				);
-				return ['config' => $config];
-			}
-
-			$updated = $this->homeConfigService->update(
-				$config->getId(),
-				$label,
-				$description,
-				$data,
-			);
-			return ['config' => $updated];
-		});
 	}
 
 	/**

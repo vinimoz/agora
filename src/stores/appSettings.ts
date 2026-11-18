@@ -29,8 +29,6 @@ import type {
 import type {
   AppSettings,
   InquiryStatusDefinition,
-  OrganizationConfig,
-  HomeConfig,
   HomeConfigRecord,
   HomeConfigPayload,
 } from "../Types/appSettings.types";
@@ -79,7 +77,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
     unrestrictedOwnerGroups: [],
     homeConfigs: [] as HomeConfigRecord[],
     home: undefined,
-    organization: { type: "municipality" } as OrganizationConfig,
+    organizationType: '', 
     categoryTab: [],
     inquiryTypeTab: [],
     inquiryOptionTypeTab: [],
@@ -119,81 +117,104 @@ export const useAppSettingsStore = defineStore("appSettings", {
     optionTypeTab: (state) => state.inquiryOptionTypeTab,
 
     getOrganizationType: (state): OrganizationType =>
-      state.organization?.type ?? "municipality",
+      state.organizationType ?? "municipality",
 
     getHomeConfig: (state): HomeConfig | undefined => state.home,
   },
 
   actions: {
-    // ============================================================
-    // ADMIN — HOME CONFIG CRUD
-    // ============================================================
-    async loadHomeConfigs(): Promise<void> {
-      this.status.loadingHomeConfigs = true;
-      try {
-        const response = await AppSettingsAPI.getHomeConfigs();
-        this.homeConfigs = response.data.configs;
-      } catch (error) {
-        Logger.error("Error loading home configs", { error });
-        throw error;
-      } finally {
-        this.status.loadingHomeConfigs = false;
-      }
-    },
+	  upsertHomeConfig(record: HomeConfigRecord): void {
+    const index = this.homeConfigs.findIndex(
+        (item) => item.id === record.id,
+    )
 
-    async createHomeConfigRecord(
-      payload: HomeConfigPayload,
-    ): Promise<HomeConfigRecord> {
-      const response = await AppSettingsAPI.createHomeConfig(payload);
-      const record = response.data.config as HomeConfigRecord;
-      this.homeConfigs.push(record);
-      return record;
-    },
+    if (index === -1) {
+        this.homeConfigs.push(record)
+    } else {
+        this.homeConfigs[index] = record
+    }
+},
+// ============================================================
+// ADMIN — HOME CONFIG CRUD
+// ============================================================
 
-    async saveHomeConfigRecord(
-      id: number,
-      payload: HomeConfigPayload,
-    ): Promise<HomeConfigRecord> {
-      const response = await AppSettingsAPI.updateHomeConfigRecord(id, payload);
-      const record = response.data.config as HomeConfigRecord;
-      const idx = this.homeConfigs.findIndex((c) => c.id === id);
-      if (idx !== -1) this.homeConfigs[idx] = record;
-      return record;
-    },
+async loadHomeConfigs(): Promise<void> {
+    this.status.loadingHomeConfigs = true
 
-    async deleteHomeConfigRecord(id: number): Promise<void> {
-      await AppSettingsAPI.deleteHomeConfigRecord(id);
-      this.homeConfigs = this.homeConfigs.filter((c) => c.id !== id);
-    },
+    try {
+        const response = await AppSettingsAPI.getHomeConfigs()
+        this.homeConfigs = response.data.configs
+    } catch (error) {
+        Logger.error("Error loading home configs", { error })
+        throw error
+    } finally {
+        this.status.loadingHomeConfigs = false
+    }
+},
 
-    async uploadHomeImage(
-      configId: number,
-      slot: string,
-      file: File,
-    ): Promise<HomeConfigRecord> {
-      const response = await AppSettingsAPI.uploadHomeImage(
+async createHomeConfigRecord(
+    payload: HomeConfigPayload,
+): Promise<HomeConfigRecord> {
+    const response = await AppSettingsAPI.createHomeConfig(payload)
+    const record = response.data.config as HomeConfigRecord
+
+    this.upsertHomeConfig(record)
+
+    return record
+},
+
+async saveHomeConfigRecord(
+    id: number,
+    payload: HomeConfigPayload,
+): Promise<HomeConfigRecord> {
+    const response = await AppSettingsAPI.updateHomeConfigRecord(id, payload)
+    const record = response.data.config as HomeConfigRecord
+
+    this.upsertHomeConfig(record)
+
+    return record
+},
+
+async uploadHomeImage(
+    configId: number,
+    slot: "hero" | "promo",
+    file: File,
+): Promise<HomeConfigRecord> {
+    const response = await AppSettingsAPI.uploadHomeImage(
         configId,
         slot,
         file,
-      );
-      const record = response.data.config as HomeConfigRecord;
-      const idx = this.homeConfigs.findIndex((c) => c.id === configId);
-      if (idx !== -1) this.homeConfigs[idx] = record;
-      return record;
-    },
+    )
+    const record = response.data.config as HomeConfigRecord
 
-    async deleteHomeImage(
-      configId: number,
-      slot: string,
-    ): Promise<HomeConfigRecord | null> {
-      const response = await AppSettingsAPI.deleteHomeImage(configId, slot);
-      const record = (response.data.config as HomeConfigRecord) ?? null;
-      if (record) {
-        const idx = this.homeConfigs.findIndex((c) => c.id === configId);
-        if (idx !== -1) this.homeConfigs[idx] = record;
-      }
-      return record;
-    },
+    this.upsertHomeConfig(record)
+
+    return record
+},
+
+async deleteHomeImage(
+    configId: number,
+    slot: "hero" | "promo",
+): Promise<HomeConfigRecord | null> {
+    const response = await AppSettingsAPI.deleteHomeImage(configId, slot)
+    const record = (response.data.config as HomeConfigRecord) ?? null
+
+    if (record) {
+        this.upsertHomeConfig(record)
+    }
+
+    return record
+},
+
+async deleteHomeConfigRecord(id: number): Promise<void> {
+    await AppSettingsAPI.deleteHomeConfigRecord(id)
+
+    this.homeConfigs = this.homeConfigs.filter(
+        (item) => item.id !== id,
+    )
+},
+
+
 
     initializeInquiryTypeRights(inquiryType: string) {
       if (!this.inquiryTypeRights[inquiryType]) {
@@ -256,501 +277,485 @@ export const useAppSettingsStore = defineStore("appSettings", {
      * `load()`.
      */
     async updateOrganizationType(type: OrganizationType): Promise<void> {
-      const previous = this.organization;
-      this.organization = { ...(previous ?? {}), type } as OrganizationConfig;
+      const previous = this.organizationType;
+      this.organizationType = type;
 
       try {
         await this.write();
       } catch (error) {
-        this.organization = previous;
+        this.organizationType = previous;
         Logger.error("Error updating organization type", { error, type });
         throw error;
       }
     },
 
-    /**
-     * Update the instance home override.
-     *
-     * Sends only `data` — the backend keeps the config row in
-     * `agora_home_configs` under (config_key='default', role='instance').
-     * See HomeConfigController::updateInstance().
-     *
-     * The server pre-merges template + override before sending `home`,
-     * so the store holds the fully resolved config. This action updates
-     * the override layer only; the UI should re-fetch after success if
-     * it needs the newly merged result.
-     */
-    async updateHomeConfig(data: Partial<HomeConfig>): Promise<void> {
-      const previous = this.home;
-      // Optimistic local merge so the UI reacts immediately. A subsequent
-      // load() overwrites with the server's fully merged result.
-      this.home = previous ? { ...previous, ...data } : (data as HomeConfig);
+    // ============================================================
+    // HOME / ORGANIZATION
+    // ============================================================
 
-      try {
-        await AppSettingsAPI.updateHomeInstance(data);
-      } catch (error) {
-        this.home = previous;
-        Logger.error("Error updating home config", { error, data });
-        throw error;
-      }
-    },
+    /**
+     * Change the organization type for this installation.
+     *
+     * The Home configuration is resolved from the corresponding
+     * organization template by the backend.
+     */
 
     loadGroups(query: string): void {
-      const debouncedLoad = this.$debounce(async () => {
-        this.status.loadingGroups = true;
+	    const debouncedLoad = this.$debounce(async () => {
+		    this.status.loadingGroups = true;
 
-        try {
-          const response = await AppSettingsAPI.getGroups(query);
-          this.groups = response.data.groups;
-          this.status.loadingGroups = false;
-        } catch (error) {
-          if ((error as AxiosError)?.code === "ERR_CANCELED") {
-            return;
-          }
-          Logger.error("Error getting groups", { error });
-          this.status.loadingGroups = false;
-        }
-      }, 500);
+		    try {
+			    const response = await AppSettingsAPI.getGroups(query);
+			    this.groups = response.data.groups;
+			    this.status.loadingGroups = false;
+		    } catch (error) {
+			    if ((error as AxiosError)?.code === "ERR_CANCELED") {
+				    return;
+			    }
+			    Logger.error("Error getting groups", { error });
+			    this.status.loadingGroups = false;
+		    }
+	    }, 500);
 
-      debouncedLoad();
+	    debouncedLoad();
     },
     // STORE FOR MODERATION STATUS
 
     // Get statuses for a specific inquiry type
     getStatusesForInquiryType(inquiryType: string): InquiryStatusDefinition[] {
-      return this.inquiryStatusTab
-        .filter((status) => status.inquiryType === inquiryType)
-        .sort((a, b) => (a.order || 0) - (b.order || 0));
+	    return this.inquiryStatusTab
+	    .filter((status) => status.inquiryType === inquiryType)
+	    .sort((a, b) => (a.order || 0) - (b.order || 0));
     },
 
     // Get specific status details by key
     getStatusByKey(
-      inquiryType: string,
-      statusKey: string,
+	    inquiryType: string,
+	    statusKey: string,
     ): InquiryStatusDefinition | undefined {
-      return this.inquiryStatusTab.find(
-        (status) =>
-          status.inquiryType === inquiryType && status.statusKey === statusKey,
-      );
+	    return this.inquiryStatusTab.find(
+		    (status) =>
+		    status.inquiryType === inquiryType && status.statusKey === statusKey,
+	    );
     },
 
     // Add a new status for an inquiry type
     async addStatusForInquiryType(
-      inquiryType: string,
-      status: Omit<InquiryStatusDefinition, "inquiryType" | "order">,
+	    inquiryType: string,
+	    status: Omit<InquiryStatusDefinition, "inquiryType" | "order">,
     ): Promise<void> {
-      const existingStatuses = this.getStatusesForInquiryType(inquiryType);
-      const newOrder = existingStatuses.length;
-      const newStatus = {
-        inquiryType,
-        ...status,
-        order: newOrder,
-      } as InquiryStatusDefinition;
+	    const existingStatuses = this.getStatusesForInquiryType(inquiryType);
+	    const newOrder = existingStatuses.length;
+	    const newStatus = {
+		    inquiryType,
+		    ...status,
+		    order: newOrder,
+	    } as InquiryStatusDefinition;
 
-      try {
-        const response = await AppSettingsAPI.addInquiryStatus(newStatus);
-        if (response.data.inquiryStatus) {
-          this.inquiryStatusTab.push(response.data.inquiryStatus);
-        } else {
-          this.inquiryStatusTab.push(newStatus);
-        }
-      } catch (error) {
-        Logger.error("Error adding inquiry status", { error });
-        this.inquiryStatusTab.push(newStatus);
-      }
+	    try {
+		    const response = await AppSettingsAPI.addInquiryStatus(newStatus);
+		    if (response.data.inquiryStatus) {
+			    this.inquiryStatusTab.push(response.data.inquiryStatus);
+		    } else {
+			    this.inquiryStatusTab.push(newStatus);
+		    }
+	    } catch (error) {
+		    Logger.error("Error adding inquiry status", { error });
+		    this.inquiryStatusTab.push(newStatus);
+	    }
     },
 
     // Update a status for an inquiry type
     async updateStatusForInquiryType(
-      inquiryType: string,
-      statusId: string,
-      updates: Partial<InquiryStatusDefinition>,
+	    inquiryType: string,
+	    statusId: string,
+	    updates: Partial<InquiryStatusDefinition>,
     ): Promise<void> {
-      const index = this.inquiryStatusTab.findIndex(
-        (s) =>
-          s.inquiryType === inquiryType && String(s.id) === String(statusId),
-      );
+	    const index = this.inquiryStatusTab.findIndex(
+		    (s) =>
+		    s.inquiryType === inquiryType && String(s.id) === String(statusId),
+	    );
 
-      if (index === -1) {
-        return;
-      }
-      const originalStatus = { ...this.inquiryStatusTab[index] };
-      this.inquiryStatusTab[index] = {
-        ...this.inquiryStatusTab[index],
-        ...updates,
-      };
+	    if (index === -1) {
+		    return;
+	    }
+	    const originalStatus = { ...this.inquiryStatusTab[index] };
+	    this.inquiryStatusTab[index] = {
+		    ...this.inquiryStatusTab[index],
+		    ...updates,
+	    };
 
-      try {
-        await AppSettingsAPI.updateInquiryStatus(statusId, {
-          ...originalStatus,
-          ...updates,
-        });
-      } catch (error) {
-        Logger.error("Error updating inquiry status", { error });
-        this.inquiryStatusTab[index] = originalStatus;
-      }
+	    try {
+		    await AppSettingsAPI.updateInquiryStatus(statusId, {
+			    ...originalStatus,
+			    ...updates,
+		    });
+	    } catch (error) {
+		    Logger.error("Error updating inquiry status", { error });
+		    this.inquiryStatusTab[index] = originalStatus;
+	    }
     },
 
     // Delete a status for an inquiry type
     async deleteStatusForInquiryType(
-      inquiryType: string,
-      statusId: string,
+	    inquiryType: string,
+	    statusId: string,
     ): Promise<void> {
-      const backupIndex = this.inquiryStatusTab.findIndex(
-        (s) =>
-          s.inquiryType === inquiryType && String(s.id) === String(statusId),
-      );
-      if (backupIndex === -1) return;
-      const backupStatus = { ...this.inquiryStatusTab[backupIndex] };
+	    const backupIndex = this.inquiryStatusTab.findIndex(
+		    (s) =>
+		    s.inquiryType === inquiryType && String(s.id) === String(statusId),
+	    );
+	    if (backupIndex === -1) return;
+	    const backupStatus = { ...this.inquiryStatusTab[backupIndex] };
 
-      this.inquiryStatusTab = this.inquiryStatusTab.filter(
-        (s) =>
-          !(s.inquiryType === inquiryType && String(s.id) === String(statusId)),
-      );
-      this.reorderStatuses(inquiryType);
+	    this.inquiryStatusTab = this.inquiryStatusTab.filter(
+		    (s) =>
+		    !(s.inquiryType === inquiryType && String(s.id) === String(statusId)),
+	    );
+	    this.reorderStatuses(inquiryType);
 
-      try {
-        await AppSettingsAPI.deleteInquiryStatus(statusId);
-      } catch (error) {
-        Logger.error("Error deleting inquiry status", { error });
-        this.inquiryStatusTab.splice(backupIndex, 0, backupStatus);
-        this.reorderStatuses(inquiryType);
-      }
+	    try {
+		    await AppSettingsAPI.deleteInquiryStatus(statusId);
+	    } catch (error) {
+		    Logger.error("Error deleting inquiry status", { error });
+		    this.inquiryStatusTab.splice(backupIndex, 0, backupStatus);
+		    this.reorderStatuses(inquiryType);
+	    }
     },
 
     // Reorder statuses for an inquiry type
     reorderStatuses(inquiryType: string): void {
-      const statuses = this.getStatusesForInquiryType(inquiryType);
-      statuses.forEach((status, index) => {
-        const globalIndex = this.inquiryStatusTab.findIndex(
-          (s) => s.inquiryType === inquiryType && s.id === status.id,
-        );
-        if (globalIndex !== -1)
-          this.inquiryStatusTab[globalIndex].order = index;
-      });
+	    const statuses = this.getStatusesForInquiryType(inquiryType);
+	    statuses.forEach((status, index) => {
+		    const globalIndex = this.inquiryStatusTab.findIndex(
+			    (s) => s.inquiryType === inquiryType && s.id === status.id,
+		    );
+			    if (globalIndex !== -1)
+				    this.inquiryStatusTab[globalIndex].order = index;
+	    });
     },
 
     // Move status up in order
     moveStatusUp(inquiryType: string, statusId: string): void {
-      const statuses = this.getStatusesForInquiryType(inquiryType);
-      const i = statuses.findIndex((s) => String(s.id) === String(statusId));
-      if (i <= 0) return;
-      const prev = statuses[i - 1],
-        cur = statuses[i];
-      const pgi = this.inquiryStatusTab.findIndex(
-        (s) => s.inquiryType === inquiryType && s.id === prev.id,
-      );
-      const cgi = this.inquiryStatusTab.findIndex(
-        (s) => s.inquiryType === inquiryType && s.id === cur.id,
-      );
-      if (pgi === -1 || cgi === -1) return;
-      const tmp = this.inquiryStatusTab[cgi].order;
-      this.inquiryStatusTab[cgi].order = this.inquiryStatusTab[pgi].order;
-      this.inquiryStatusTab[pgi].order = tmp;
-      this.reorderStatuses(inquiryType);
+	    const statuses = this.getStatusesForInquiryType(inquiryType);
+	    const i = statuses.findIndex((s) => String(s.id) === String(statusId));
+	    if (i <= 0) return;
+	    const prev = statuses[i - 1],
+		    cur = statuses[i];
+	    const pgi = this.inquiryStatusTab.findIndex(
+		    (s) => s.inquiryType === inquiryType && s.id === prev.id,
+	    );
+		    const cgi = this.inquiryStatusTab.findIndex(
+			    (s) => s.inquiryType === inquiryType && s.id === cur.id,
+		    );
+			    if (pgi === -1 || cgi === -1) return;
+			    const tmp = this.inquiryStatusTab[cgi].order;
+			    this.inquiryStatusTab[cgi].order = this.inquiryStatusTab[pgi].order;
+			    this.inquiryStatusTab[pgi].order = tmp;
+			    this.reorderStatuses(inquiryType);
     },
 
     moveStatusDown(inquiryType: string, statusId: string): void {
-      const statuses = this.getStatusesForInquiryType(inquiryType);
-      const i = statuses.findIndex((s) => String(s.id) === String(statusId));
-      if (i === -1 || i >= statuses.length - 1) return;
-      const next = statuses[i + 1],
-        cur = statuses[i];
-      const ngi = this.inquiryStatusTab.findIndex(
-        (s) => s.inquiryType === inquiryType && s.id === next.id,
-      );
-      const cgi = this.inquiryStatusTab.findIndex(
-        (s) => s.inquiryType === inquiryType && s.id === cur.id,
-      );
-      if (ngi === -1 || cgi === -1) return;
-      const tmp = this.inquiryStatusTab[cgi].order;
-      this.inquiryStatusTab[cgi].order = this.inquiryStatusTab[ngi].order;
-      this.inquiryStatusTab[ngi].order = tmp;
-      this.reorderStatuses(inquiryType);
+	    const statuses = this.getStatusesForInquiryType(inquiryType);
+	    const i = statuses.findIndex((s) => String(s.id) === String(statusId));
+	    if (i === -1 || i >= statuses.length - 1) return;
+	    const next = statuses[i + 1],
+		    cur = statuses[i];
+	    const ngi = this.inquiryStatusTab.findIndex(
+		    (s) => s.inquiryType === inquiryType && s.id === next.id,
+	    );
+		    const cgi = this.inquiryStatusTab.findIndex(
+			    (s) => s.inquiryType === inquiryType && s.id === cur.id,
+		    );
+			    if (ngi === -1 || cgi === -1) return;
+			    const tmp = this.inquiryStatusTab[cgi].order;
+			    this.inquiryStatusTab[cgi].order = this.inquiryStatusTab[ngi].order;
+			    this.inquiryStatusTab[ngi].order = tmp;
+			    this.reorderStatuses(inquiryType);
     },
 
     // STORE FOR CATEGORY AND LOCATION MANAGEMENT
     async addCategory(name: string, parentId: number = 0): Promise<void> {
-      const maxId =
-        this.categoryTab.length > 0
-          ? Math.max(...this.categoryTab.map((c) => c.id))
-          : 0;
-      const newId = maxId + 1;
+	    const maxId =
+		    this.categoryTab.length > 0
+			    ? Math.max(...this.categoryTab.map((c) => c.id))
+			    : 0;
+			    const newId = maxId + 1;
 
-      try {
-        await AppSettingsAPI.addCategory({
-          name,
-          parentId,
-        });
+			    try {
+				    await AppSettingsAPI.addCategory({
+					    name,
+					    parentId,
+				    });
 
-        this.categoryTab.push({
-          id: newId,
-          name,
-          parentId,
-        });
-      } catch (error) {
-        Logger.error("Error getting appSettings", { error });
-      }
+				    this.categoryTab.push({
+					    id: newId,
+					    name,
+					    parentId,
+				    });
+			    } catch (error) {
+				    Logger.error("Error getting appSettings", { error });
+			    }
     },
 
     async updateCategory(
-      id: number,
-      name: string,
-      parentId: number,
+	    id: number,
+	    name: string,
+	    parentId: number,
     ): Promise<void> {
-      const category = this.categoryTab.find((c) => c.id === id);
-      try {
-        await AppSettingsAPI.updateCategory(id, name, parentId);
+	    const category = this.categoryTab.find((c) => c.id === id);
+	    try {
+		    await AppSettingsAPI.updateCategory(id, name, parentId);
 
-        if (category) {
-          category.name = name;
-          category.parentId = parentId;
-        }
-      } catch (error) {
-        Logger.error("Error getting appSettings", { error });
-      }
+		    if (category) {
+			    category.name = name;
+			    category.parentId = parentId;
+		    }
+	    } catch (error) {
+		    Logger.error("Error getting appSettings", { error });
+	    }
     },
 
     async deleteCategory(id: number): Promise<void> {
-      const deleteRecursive = (categoryId: number) => {
-        const children = this.categoryTab.filter(
-          (c) => c.parentId === categoryId,
-        );
+	    const deleteRecursive = (categoryId: number) => {
+		    const children = this.categoryTab.filter(
+			    (c) => c.parentId === categoryId,
+		    );
 
-        children.forEach((child) => {
-          deleteRecursive(child.id);
-        });
+			    children.forEach((child) => {
+				    deleteRecursive(child.id);
+			    });
 
-        this.categoryTab = this.categoryTab.filter((c) => c.id !== categoryId);
-      };
-      try {
-        await AppSettingsAPI.deleteCategory(String(id));
-        deleteRecursive(id);
-      } catch (error) {
-        Logger.error("Error deleting category", { error });
-      }
+			    this.categoryTab = this.categoryTab.filter((c) => c.id !== categoryId);
+	    };
+	    try {
+		    await AppSettingsAPI.deleteCategory(String(id));
+		    deleteRecursive(id);
+	    } catch (error) {
+		    Logger.error("Error deleting category", { error });
+	    }
     },
 
     async addLocation(name: string, parentId: number = 0): Promise<void> {
-      const maxId =
-        this.locationTab.length > 0
-          ? Math.max(...this.locationTab.map((l) => l.id))
-          : 0;
-      const newId = maxId + 1;
+	    const maxId =
+		    this.locationTab.length > 0
+			    ? Math.max(...this.locationTab.map((l) => l.id))
+			    : 0;
+			    const newId = maxId + 1;
 
-      try {
-        await AppSettingsAPI.addLocation({
-          name,
-          parentId,
-        });
+			    try {
+				    await AppSettingsAPI.addLocation({
+					    name,
+					    parentId,
+				    });
 
-        this.locationTab.push({
-          id: newId,
-          name,
-          parentId,
-        });
-      } catch (error) {
-        Logger.error("Error getting appSettings", { error });
-      }
+				    this.locationTab.push({
+					    id: newId,
+					    name,
+					    parentId,
+				    });
+			    } catch (error) {
+				    Logger.error("Error getting appSettings", { error });
+			    }
     },
 
     async updateLocation(
-      id: number,
-      name: string,
-      parentId: number,
+	    id: number,
+	    name: string,
+	    parentId: number,
     ): Promise<void> {
-      const location = this.locationTab.find((l) => l.id === id);
-      try {
-        await AppSettingsAPI.updateLocation(id, name, parentId);
+	    const location = this.locationTab.find((l) => l.id === id);
+	    try {
+		    await AppSettingsAPI.updateLocation(id, name, parentId);
 
-        if (location) {
-          location.name = name;
-          location.parentId = parentId;
-        }
-      } catch (error) {
-        Logger.error("Error getting appSettings", { error });
-      }
+		    if (location) {
+			    location.name = name;
+			    location.parentId = parentId;
+		    }
+	    } catch (error) {
+		    Logger.error("Error getting appSettings", { error });
+	    }
     },
 
     async deleteLocation(id: number): Promise<void> {
-      const deleteRecursive = (locationId: number) => {
-        const children = this.locationTab.filter(
-          (l) => l.parentId === locationId,
-        );
+	    const deleteRecursive = (locationId: number) => {
+		    const children = this.locationTab.filter(
+			    (l) => l.parentId === locationId,
+		    );
 
-        children.forEach((child) => {
-          deleteRecursive(child.id);
-        });
+			    children.forEach((child) => {
+				    deleteRecursive(child.id);
+			    });
 
-        this.locationTab = this.locationTab.filter((l) => l.id !== locationId);
-      };
+			    this.locationTab = this.locationTab.filter((l) => l.id !== locationId);
+	    };
 
-      try {
-        await AppSettingsAPI.deleteLocation(String(id));
+	    try {
+		    await AppSettingsAPI.deleteLocation(String(id));
 
-        deleteRecursive(id);
-      } catch (error) {
-        Logger.error("Error deleting location", { error });
-      }
+		    deleteRecursive(id);
+	    } catch (error) {
+		    Logger.error("Error deleting location", { error });
+	    }
     },
 
     async addFamily(familyData: {
-      family_type: string;
-      label: string;
-      description?: string;
-      icon?: string;
-      sort_order?: number;
+	    family_type: string;
+	    label: string;
+	    description?: string;
+	    icon?: string;
+	    sort_order?: number;
     }): Promise<void> {
-      const maxId =
-        this.inquiryFamilyTab.length > 0
-          ? Math.max(...this.inquiryFamilyTab.map((f) => f.id))
-          : 0;
-      const newId = maxId + 1;
+	    const maxId =
+		    this.inquiryFamilyTab.length > 0
+			    ? Math.max(...this.inquiryFamilyTab.map((f) => f.id))
+			    : 0;
+			    const newId = maxId + 1;
 
-      try {
-        await AppSettingsAPI.addInquiryFamily({
-          ...familyData,
-          created: Date.now(),
-        });
-        this.inquiryFamilyTab.push({
-          id: newId,
-          family_type: familyData.family_type,
-          label: familyData.label,
-          description: familyData.description,
-          icon: familyData.icon ?? "File",
-          sort_order: familyData.sort_order ?? 999,
-          ui: [],
-          features: [],
-          rules: [],
-          actions: [],
-          statuses: [],
-          created: Date.now(),
-        });
-      } catch (error) {
-        Logger.error("Error adding inquiry family", { error });
-      }
+			    try {
+				    await AppSettingsAPI.addInquiryFamily({
+					    ...familyData,
+					    created: Date.now(),
+				    });
+				    this.inquiryFamilyTab.push({
+					    id: newId,
+					    family_type: familyData.family_type,
+					    label: familyData.label,
+					    description: familyData.description,
+					    icon: familyData.icon ?? "File",
+					    sort_order: familyData.sort_order ?? 999,
+					    ui: [],
+					    features: [],
+					    rules: [],
+					    actions: [],
+					    statuses: [],
+					    created: Date.now(),
+				    });
+			    } catch (error) {
+				    Logger.error("Error adding inquiry family", { error });
+			    }
     },
 
     async updateFamily(
-      id: number,
-      familyData: {
-        family_type?: string;
-        label?: string;
-        description?: string;
-        icon?: string;
-        sort_order?: number;
-      },
+	    id: number,
+	    familyData: {
+		    family_type?: string;
+		    label?: string;
+		    description?: string;
+		    icon?: string;
+		    sort_order?: number;
+	    },
     ): Promise<void> {
-      const family = this.inquiryFamilyTab.find((f) => f.id === id);
-      try {
-        await AppSettingsAPI.updateInquiryFamily(id, familyData);
+	    const family = this.inquiryFamilyTab.find((f) => f.id === id);
+	    try {
+		    await AppSettingsAPI.updateInquiryFamily(id, familyData);
 
-        if (family) {
-          Object.assign(family, familyData);
-        }
-      } catch (error) {
-        Logger.error("Error updating inquiry family", { error });
-      }
+		    if (family) {
+			    Object.assign(family, familyData);
+		    }
+	    } catch (error) {
+		    Logger.error("Error updating inquiry family", { error });
+	    }
     },
 
     async deleteFamily(id: number): Promise<void> {
-      try {
-        await AppSettingsAPI.deleteInquiryFamily(id);
-        this.inquiryFamilyTab = this.inquiryFamilyTab.filter(
-          (f) => f.id !== id,
-        );
-      } catch (error) {
-        Logger.error("Error deleting inquiry family", { error });
-      }
+	    try {
+		    await AppSettingsAPI.deleteInquiryFamily(id);
+		    this.inquiryFamilyTab = this.inquiryFamilyTab.filter(
+			    (f) => f.id !== id,
+		    );
+	    } catch (error) {
+		    Logger.error("Error deleting inquiry family", { error });
+	    }
     },
     // ============================================================
     // INQUIRY GROUP TYPE MANAGEMENT
     // ============================================================
 
     async addInquiryGroupType(typeData: {
-      group_type: string;
-      family: string;
-      label: string;
-      icon?: string;
-      description?: string;
-      fields?: unknown[];
-      allowed_inquiry_types?: string[];
-      allowed_response?: string[];
-      ui?: Record<string, unknown>;
-      rules?: Record<string, unknown>;
-      features?: string[];
-      actions?: Array<{ key: string; label: string; icon?: string }>;
-      is_root?: boolean;
-      sort_order?: number;
+	    group_type: string;
+	    family: string;
+	    label: string;
+	    icon?: string;
+	    description?: string;
+	    fields?: unknown[];
+	    allowed_inquiry_types?: string[];
+	    allowed_response?: string[];
+	    ui?: Record<string, unknown>;
+	    rules?: Record<string, unknown>;
+	    features?: string[];
+	    actions?: Array<{ key: string; label: string; icon?: string }>;
+	    is_root?: boolean;
+	    sort_order?: number;
     }): Promise<void> {
-      const maxId =
-        this.inquiryGroupTypeTab.length > 0
-          ? Math.max(...this.inquiryGroupTypeTab.map((t) => Number(t.id)))
-          : 0;
-      const newId = maxId + 1;
+	    const maxId =
+		    this.inquiryGroupTypeTab.length > 0
+			    ? Math.max(...this.inquiryGroupTypeTab.map((t) => Number(t.id)))
+			    : 0;
+			    const newId = maxId + 1;
 
-      try {
-        const response = await AppSettingsAPI.addInquiryGroupType({
-          ...typeData,
-          created: Date.now(),
-        });
-        const saved = response.data?.groupType ?? {
-          id: newId,
-          ...typeData,
-          created: Date.now(),
-        };
-        this.inquiryGroupTypeTab.push(saved as InquiryGroupType);
-      } catch (error) {
-        Logger.error("Error adding inquiry group type", { error });
-        throw error;
-      }
+			    try {
+				    const response = await AppSettingsAPI.addInquiryGroupType({
+					    ...typeData,
+					    created: Date.now(),
+				    });
+				    const saved = response.data?.groupType ?? {
+					    id: newId,
+					    ...typeData,
+					    created: Date.now(),
+				    };
+				    this.inquiryGroupTypeTab.push(saved as InquiryGroupType);
+			    } catch (error) {
+				    Logger.error("Error adding inquiry group type", { error });
+				    throw error;
+			    }
     },
 
     async updateInquiryGroupType(
-      id: number,
-      typeData: {
-        group_type?: string;
-        family?: string;
-        label?: string;
-        icon?: string;
-        description?: string;
-        fields?: unknown[];
-        allowed_inquiry_types?: string[];
-        allowed_response?: string[];
-        ui?: Record<string, unknown>;
-        rules?: Record<string, unknown>;
-        features?: string[];
-        actions?: Array<{ key: string; label: string; icon?: string }>;
-        is_root?: boolean;
-        sort_order?: number;
-      },
+	    id: number,
+	    typeData: {
+		    group_type?: string;
+		    family?: string;
+		    label?: string;
+		    icon?: string;
+		    description?: string;
+		    fields?: unknown[];
+		    allowed_inquiry_types?: string[];
+		    allowed_response?: string[];
+		    ui?: Record<string, unknown>;
+		    rules?: Record<string, unknown>;
+		    features?: string[];
+		    actions?: Array<{ key: string; label: string; icon?: string }>;
+		    is_root?: boolean;
+		    sort_order?: number;
+	    },
     ): Promise<void> {
-      const type = this.inquiryGroupTypeTab.find((t) => t.id === id);
-      try {
-        await AppSettingsAPI.updateInquiryGroupType(id, typeData);
-        if (type) {
-          Object.assign(type, typeData);
-        }
-      } catch (error) {
-        Logger.error("Error updating inquiry group type", { error });
-        throw error;
-      }
+	    const type = this.inquiryGroupTypeTab.find((t) => t.id === id);
+	    try {
+		    await AppSettingsAPI.updateInquiryGroupType(id, typeData);
+		    if (type) {
+			    Object.assign(type, typeData);
+		    }
+	    } catch (error) {
+		    Logger.error("Error updating inquiry group type", { error });
+		    throw error;
+	    }
     },
 
     async deleteInquiryGroupType(id: number): Promise<void> {
-      try {
-        await AppSettingsAPI.deleteInquiryGroupType(id);
-        this.inquiryGroupTypeTab = this.inquiryGroupTypeTab.filter(
-          (t) => t.id !== id,
-        );
-      } catch (error) {
-        Logger.error("Error deleting inquiry group type", { error });
-        throw error;
-      }
+	    try {
+		    await AppSettingsAPI.deleteInquiryGroupType(id);
+		    this.inquiryGroupTypeTab = this.inquiryGroupTypeTab.filter(
+			    (t) => t.id !== id,
+		    );
+	    } catch (error) {
+		    Logger.error("Error deleting inquiry group type", { error });
+		    throw error;
+	    }
     },
 
     getGroupTypesByFamily(family: string): InquiryGroupType[] {
-      return this.inquiryGroupTypeTab.filter((t) => t.family === family);
+	    return this.inquiryGroupTypeTab.filter((t) => t.family === family);
     },
 
     // ============================================================
@@ -758,251 +763,251 @@ export const useAppSettingsStore = defineStore("appSettings", {
     // ============================================================
 
     async addOptionType(typeData: {
-      option_type: string;
-      family: string;
-      label: string;
-      icon?: string;
-      description?: string;
-      fields?: unknown[];
-      allowed_response?: unknown[];
-      statuses?: unknown[];
-      allow_comment?: boolean;
-      support_feature?: string;
-      use_title?: boolean;
+	    option_type: string;
+	    family: string;
+	    label: string;
+	    icon?: string;
+	    description?: string;
+	    fields?: unknown[];
+	    allowed_response?: unknown[];
+	    statuses?: unknown[];
+	    allow_comment?: boolean;
+	    support_feature?: string;
+	    use_title?: boolean;
     }): Promise<void> {
-      const maxId =
-        this.inquiryOptionTypeTab.length > 0
-          ? Math.max(...this.inquiryOptionTypeTab.map((t) => t.id))
-          : 0;
-      const newId = maxId + 1;
+	    const maxId =
+		    this.inquiryOptionTypeTab.length > 0
+			    ? Math.max(...this.inquiryOptionTypeTab.map((t) => t.id))
+			    : 0;
+			    const newId = maxId + 1;
 
-      try {
-        const response = await AppSettingsAPI.addOptionType({
-          ...typeData,
-          created: Date.now(),
-        });
-        const saved = response.data?.optionType ?? {
-          id: newId,
-          ...typeData,
-          created: Date.now(),
-        };
-        this.inquiryOptionTypeTab.push(saved as InquiryOptionType);
-      } catch (error) {
-        Logger.error("Error adding option type", { error });
-        throw error;
-      }
+			    try {
+				    const response = await AppSettingsAPI.addOptionType({
+					    ...typeData,
+					    created: Date.now(),
+				    });
+				    const saved = response.data?.optionType ?? {
+					    id: newId,
+					    ...typeData,
+					    created: Date.now(),
+				    };
+				    this.inquiryOptionTypeTab.push(saved as InquiryOptionType);
+			    } catch (error) {
+				    Logger.error("Error adding option type", { error });
+				    throw error;
+			    }
     },
 
     async updateOptionType(
-      id: number,
-      typeData: {
-        option_type?: string;
-        family?: string;
-        label?: string;
-        icon?: string;
-        description?: string;
-        fields?: unknown[];
-        allowed_response?: unknown[];
-        statuses?: unknown[];
-        allow_comment?: boolean;
-        support_feature?: string;
-        use_title?: boolean;
-      },
+	    id: number,
+	    typeData: {
+		    option_type?: string;
+		    family?: string;
+		    label?: string;
+		    icon?: string;
+		    description?: string;
+		    fields?: unknown[];
+		    allowed_response?: unknown[];
+		    statuses?: unknown[];
+		    allow_comment?: boolean;
+		    support_feature?: string;
+		    use_title?: boolean;
+	    },
     ): Promise<void> {
-      const type = this.inquiryOptionTypeTab.find((t) => t.id === id);
-      try {
-        await AppSettingsAPI.updateOptionType(id, typeData);
-        if (type) {
-          Object.assign(type, typeData);
-        }
-      } catch (error) {
-        Logger.error("Error updating option type", { error });
-        throw error;
-      }
+	    const type = this.inquiryOptionTypeTab.find((t) => t.id === id);
+	    try {
+		    await AppSettingsAPI.updateOptionType(id, typeData);
+		    if (type) {
+			    Object.assign(type, typeData);
+		    }
+	    } catch (error) {
+		    Logger.error("Error updating option type", { error });
+		    throw error;
+	    }
     },
 
     async deleteOptionType(id: number): Promise<void> {
-      try {
-        await AppSettingsAPI.deleteOptionType(id);
-        this.inquiryOptionTypeTab = this.inquiryOptionTypeTab.filter(
-          (t) => t.id !== id,
-        );
-      } catch (error) {
-        Logger.error("Error deleting option type", { error });
-        throw error;
-      }
+	    try {
+		    await AppSettingsAPI.deleteOptionType(id);
+		    this.inquiryOptionTypeTab = this.inquiryOptionTypeTab.filter(
+			    (t) => t.id !== id,
+		    );
+	    } catch (error) {
+		    Logger.error("Error deleting option type", { error });
+		    throw error;
+	    }
     },
 
     // STORE FOR OPTION FAMILY MANAGEMENT
     async addOptionFamily(familyData: {
-      family_type: string;
-      label: string;
-      description?: string;
-      icon?: string;
-      sort_order?: number;
-      ui?: Record<string, unknown>;
-      rules?: Record<string, unknown>;
-      features?: string[];
-      actions?: Array<{ key: string; label: string; icon?: string }>;
+	    family_type: string;
+	    label: string;
+	    description?: string;
+	    icon?: string;
+	    sort_order?: number;
+	    ui?: Record<string, unknown>;
+	    rules?: Record<string, unknown>;
+	    features?: string[];
+	    actions?: Array<{ key: string; label: string; icon?: string }>;
     }): Promise<void> {
-      try {
-        const response = await AppSettingsAPI.addOptionFamily({
-          ...familyData,
-          created: Date.now(),
-        });
-        const saved = response.data?.family ?? {
-          id: Date.now(),
-          ...familyData,
-          created: Date.now(),
-        };
-        this.optionFamilyTab.push(saved as OptionFamily);
-      } catch (error) {
-        Logger.error("Error adding option family", { error });
-        throw error;
-      }
+	    try {
+		    const response = await AppSettingsAPI.addOptionFamily({
+			    ...familyData,
+			    created: Date.now(),
+		    });
+		    const saved = response.data?.family ?? {
+			    id: Date.now(),
+			    ...familyData,
+			    created: Date.now(),
+		    };
+		    this.optionFamilyTab.push(saved as OptionFamily);
+	    } catch (error) {
+		    Logger.error("Error adding option family", { error });
+		    throw error;
+	    }
     },
 
     async updateOptionFamily(
-      id: number,
-      familyData: {
-        family_type?: string;
-        label?: string;
-        description?: string;
-        icon?: string;
-        sort_order?: number;
-        ui?: Record<string, unknown>;
-        rules?: Record<string, unknown>;
-        features?: string[];
-        actions?: Array<{ key: string; label: string; icon?: string }>;
-      },
+	    id: number,
+	    familyData: {
+		    family_type?: string;
+		    label?: string;
+		    description?: string;
+		    icon?: string;
+		    sort_order?: number;
+		    ui?: Record<string, unknown>;
+		    rules?: Record<string, unknown>;
+		    features?: string[];
+		    actions?: Array<{ key: string; label: string; icon?: string }>;
+	    },
     ): Promise<void> {
-      const family = this.optionFamilyTab.find((f) => f.id === id);
-      try {
-        await AppSettingsAPI.updateOptionFamily(id, familyData);
-        if (family) Object.assign(family, familyData);
-      } catch (error) {
-        Logger.error("Error updating option family", { error });
-        throw error;
-      }
+	    const family = this.optionFamilyTab.find((f) => f.id === id);
+	    try {
+		    await AppSettingsAPI.updateOptionFamily(id, familyData);
+		    if (family) Object.assign(family, familyData);
+	    } catch (error) {
+		    Logger.error("Error updating option family", { error });
+		    throw error;
+	    }
     },
 
     async deleteOptionFamily(id: number): Promise<void> {
-      try {
-        await AppSettingsAPI.deleteOptionFamily(id);
-        this.optionFamilyTab = this.optionFamilyTab.filter((f) => f.id !== id);
-      } catch (error) {
-        Logger.error("Error deleting option family", { error });
-      }
+	    try {
+		    await AppSettingsAPI.deleteOptionFamily(id);
+		    this.optionFamilyTab = this.optionFamilyTab.filter((f) => f.id !== id);
+	    } catch (error) {
+		    Logger.error("Error deleting option family", { error });
+	    }
     },
 
     async addInquiryType(typeData: {
-      inquiry_type: string;
-      family: string;
-      label: string;
-      icon?: string;
-      description?: string;
-      fields?: string;
-      allowed_response?: string;
-      allowed_transformation?: string;
-      allowed_option_type?: string;
+	    inquiry_type: string;
+	    family: string;
+	    label: string;
+	    icon?: string;
+	    description?: string;
+	    fields?: string;
+	    allowed_response?: string;
+	    allowed_transformation?: string;
+	    allowed_option_type?: string;
     }): Promise<void> {
-      const maxId =
-        this.inquiryTypeTab.length > 0
-          ? Math.max(...this.inquiryTypeTab.map((t) => t.id))
-          : 0;
-      const newId = maxId + 1;
+	    const maxId =
+		    this.inquiryTypeTab.length > 0
+			    ? Math.max(...this.inquiryTypeTab.map((t) => t.id))
+			    : 0;
+			    const newId = maxId + 1;
 
-      try {
-        await AppSettingsAPI.addInquiryType({
-          ...typeData,
-          created: Date.now(),
-        });
+			    try {
+				    await AppSettingsAPI.addInquiryType({
+					    ...typeData,
+					    created: Date.now(),
+				    });
 
-        this.inquiryTypeTab.push({
-          id: newId,
-          ...typeData,
-          created: Date.now(),
-        } as unknown as InquiryType);
-      } catch (error) {
-        Logger.error("Error adding inquiry type", { error });
-      }
+				    this.inquiryTypeTab.push({
+					    id: newId,
+					    ...typeData,
+					    created: Date.now(),
+				    } as unknown as InquiryType);
+			    } catch (error) {
+				    Logger.error("Error adding inquiry type", { error });
+			    }
     },
 
     async updateInquiryType(
-      id: number,
-      typeData: {
-        inquiry_type?: string;
-        family?: string;
-        label?: string;
-        icon?: string;
-        description?: string;
-        fields?: string;
-        allowed_response?: string;
-        allowed_transformation?: string;
-        allowed_option_type?: string;
-      },
+	    id: number,
+	    typeData: {
+		    inquiry_type?: string;
+		    family?: string;
+		    label?: string;
+		    icon?: string;
+		    description?: string;
+		    fields?: string;
+		    allowed_response?: string;
+		    allowed_transformation?: string;
+		    allowed_option_type?: string;
+	    },
     ): Promise<void> {
-      const type = this.inquiryTypeTab.find((t) => t.id === id);
-      try {
-        await AppSettingsAPI.updateInquiryType(id, typeData);
+	    const type = this.inquiryTypeTab.find((t) => t.id === id);
+	    try {
+		    await AppSettingsAPI.updateInquiryType(id, typeData);
 
-        if (type) {
-          Object.assign(type, typeData);
-        }
-      } catch (error) {
-        Logger.error("Error updating inquiry type", { error });
-      }
+		    if (type) {
+			    Object.assign(type, typeData);
+		    }
+	    } catch (error) {
+		    Logger.error("Error updating inquiry type", { error });
+	    }
     },
 
     async deleteType(id: number): Promise<void> {
-      try {
-        await AppSettingsAPI.deleteInquiryType(id);
-        this.inquiryTypeTab = this.inquiryTypeTab.filter((t) => t.id !== id);
-      } catch (error) {
-        Logger.error("Error deleting inquiry type", { error });
-      }
+	    try {
+		    await AppSettingsAPI.deleteInquiryType(id);
+		    this.inquiryTypeTab = this.inquiryTypeTab.filter((t) => t.id !== id);
+	    } catch (error) {
+		    Logger.error("Error deleting inquiry type", { error });
+	    }
     },
 
     // Helper to build tree structure from flat list
     buildTree<T extends { id: number; parentId: number | null }>(
-      items: T[],
-      parentId: number = 0,
+	    items: T[],
+	    parentId: number = 0,
     ): (T & { children: T[] })[] {
-      return items
-        .filter((item) => item.parentId === parentId)
-        .map((item) => ({
-          ...item,
-          children: this.buildTree(items, item.id),
-        }));
-    },
+		    return items
+		    .filter((item) => item.parentId === parentId)
+		    .map((item) => ({
+			    ...item,
+			    children: this.buildTree(items, item.id),
+		    }));
+	    },
 
-    // Get parent options for select dropdowns
-    getParentOptions(
-      type: "category" | "location",
-      excludeId: number | null = null,
-    ) {
-      const items = type === "category" ? this.categoryTab : this.locationTab;
-      const tree = this.buildTree(items);
+	    // Get parent options for select dropdowns
+	    getParentOptions(
+		    type: "category" | "location",
+		    excludeId: number | null = null,
+	    ) {
+			    const items = type === "category" ? this.categoryTab : this.locationTab;
+			    const tree = this.buildTree(items);
 
-      const options = [{ id: 0, name: t("agora", "No parent") }];
+			    const options = [{ id: 0, name: t("agora", "No parent") }];
 
-      const flattenTree = (nodes: BaseEntry[], level = 0) => {
-        let results: BaseEntry[] = [];
-        nodes.forEach((node) => {
-          if (node.id !== excludeId) {
-            results.push({
-              id: node.id,
-              name: `${"--".repeat(level)} ${node.name}`,
-            });
-          }
-          if (node.children && node.children.length > 0) {
-            results = results.concat(flattenTree(node.children, level + 1));
-          }
-        });
-        return results;
-      };
+			    const flattenTree = (nodes: BaseEntry[], level = 0) => {
+				    let results: BaseEntry[] = [];
+				    nodes.forEach((node) => {
+					    if (node.id !== excludeId) {
+						    results.push({
+							    id: node.id,
+							    name: `${"--".repeat(level)} ${node.name}`,
+						    });
+					    }
+					    if (node.children && node.children.length > 0) {
+						    results = results.concat(flattenTree(node.children, level + 1));
+					    }
+				    });
+				    return results;
+			    };
 
-      return options.concat(flattenTree(tree as unknown as BaseEntry[]));
-    },
+			    return options.concat(flattenTree(tree as unknown as BaseEntry[]));
+		    },
   },
 });

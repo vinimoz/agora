@@ -3,17 +3,16 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from "vue";
+
+import { computed, onMounted, reactive, ref } from "vue";
 import { t } from "@nextcloud/l10n";
 import NcButton from "@nextcloud/vue/components/NcButton";
 import NcInputField from "@nextcloud/vue/components/NcInputField";
-import NcSelect from "@nextcloud/vue/components/NcSelect";
 import { showError, showSuccess } from "@nextcloud/dialogs";
 import { useAppSettingsStore } from "../../../stores/appSettings.ts";
 import { AppSettingsAPI } from "../../../Api/index.ts";
 import {
   getHomeTemplate,
-  HOME_TEMPLATES,
 } from "../../../composables/homeDefaults";
 import {
   ORGANIZATION_TYPES,
@@ -29,7 +28,33 @@ import type {
 
 const store = useAppSettingsStore();
 
-// ── Org type helpers ───────────────────────────────────────
+type HomeImageSlot = "hero" | "promo";
+
+interface SectionLabelRow {
+  key: string;
+  value: string;
+}
+
+interface TemplateRow {
+  key: OrganizationType;
+  label: string;
+  description: string;
+  isDefault: boolean;
+  record?: HomeConfigRecord;
+}
+
+type FormState = {
+  id: number | null;
+  configKey: OrganizationType;
+  label: string;
+  description: string;
+  sortOrder: number;
+  data: HomeConfigData;
+  rawJson: string;
+};
+
+// ── Organization types ─────────────────────────────────────
+
 function orgTypeLabel(key: OrganizationType): string {
   const labels: Record<OrganizationType, string> = {
     municipality: t("agora", "Municipality"),
@@ -38,133 +63,68 @@ function orgTypeLabel(key: OrganizationType): string {
     cooperative: t("agora", "Cooperative"),
     company: t("agora", "Company"),
   };
+
   return labels[key];
 }
 
-function isOrgType(v: unknown): v is OrganizationType {
+function isOrgType(value: unknown): value is OrganizationType {
   return (
-    typeof v === "string" &&
-    (ORGANIZATION_TYPES as readonly string[]).includes(v)
+    typeof value === "string"
+    && (ORGANIZATION_TYPES as readonly string[]).includes(value)
   );
 }
 
-function currentOrgType(): OrganizationType {
-  const c = store.getOrganizationType;
-  return isOrgType(c) ? c : "municipality";
-}
-
-// ── Filters ────────────────────────────────────────────────
-const roleOptions = [
-  { id: "all", label: t("agora", "All") },
-  { id: "template", label: t("agora", "Templates") },
-  { id: "instance", label: t("agora", "Instance") },
-];
-const roleFilter = ref<"all" | "template" | "instance">("all");
-
-// ── Unified row model ──────────────────────────────────────
-interface UnifiedRow {
-  /** DB id, or null for a bundled template */
-  id: number | null;
-  source: "bundled" | "db";
-  configKey: string;
-  role: "template" | "instance";
-  label: string;
-  description: string;
-  sortOrder: number;
-  updated: number | null;
-  isDefault: boolean;
-  isBundled: boolean;
-  /** DB record for `source === "db"` rows */
-  record?: HomeConfigRecord;
-}
-
-const activeType = computed<OrganizationType>(() => currentOrgType());
-
-const allTemplates = computed<UnifiedRow[]>(() => {
-  const active = activeType.value;
-  const rows: UnifiedRow[] = [];
-
-  // ── 1. Bundled templates (read-only, non-removable) ──────
-  for (const key of ORGANIZATION_TYPES) {
-    const override = store.homeConfigs.find(
-      (c) => c.role === "template" && c.config_key === key,
-    );
-    rows.push({
-      id: null,
-      source: "bundled",
-      configKey: key,
-      role: "template",
-      label: orgTypeLabel(key),
-      description: override
-        ? t("agora", "Overridden by DB template #{id}", { id: override.id })
-        : t("agora", "Shipped template — cannot be removed"),
-      sortOrder: 0,
-      updated: null,
-      // Bundled row is only “default” when no DB override exists
-      isDefault: active === key && !override,
-      isBundled: true,
-    });
-  }
-
-  // ── 2. DB templates / instance rows ──────────────────────
-  for (const rec of store.homeConfigs) {
-    const isTemplate = rec.role === "template";
-    rows.push({
-      id: rec.id,
-      source: "db",
-      configKey: rec.config_key,
-      role: rec.role,
-      label: rec.label,
-      description: rec.description ?? "",
-      sortOrder: rec.sort_order,
-      updated: rec.updated ?? null,
-      isDefault: isTemplate && rec.config_key === active,
-      isBundled: false,
-      record: rec,
-    });
-  }
-
-  // ── 3. Filter ────────────────────────────────────────────
-  if (roleFilter.value === "all") return rows;
-  return rows.filter((r) => r.role === roleFilter.value);
+const activeType = computed<OrganizationType>(() => {
+  const type = store.getOrganizationType;
+  return isOrgType(type) ? type : "municipality";
 });
 
-function getOverrideRecord(key: string): HomeConfigRecord | undefined {
-  return store.homeConfigs.find(
-    (c) => c.role === "template" && c.config_key === key,
-  );
-}
+// ── Template list ──────────────────────────────────────────
+
+const allTemplates = computed<TemplateRow[]>(() =>
+  ORGANIZATION_TYPES.map((key) => {
+    const record = store.homeConfigs.find(
+      (config) => config.config_key === key,
+    );
+
+    return {
+      key,
+      label: record?.label ?? orgTypeLabel(key),
+      description: record?.description
+        ?? t("agora", "Default template provided by Agora"),
+      isDefault: activeType.value === key,
+      record,
+    };
+  }),
+);
+
+onMounted(() => {
+  store.loadHomeConfigs().catch(() => {
+    showError(t("agora", "Could not load home configurations"));
+  });
+});
 
 // ── Editor state ───────────────────────────────────────────
-type FormState = {
-  id: number | null;
-  configKey: string;
-  role: "template" | "instance";
-  label: string;
-  description: string;
-  sortOrder: number;
-  data: HomeConfigData;
-  rawJson: string;
-};
 
 const isEditorOpen = ref(false);
-const isEditMode = ref(false);
 const activeTab = ref("general");
 const saving = ref(false);
-const slotInputs = ref({});
+
+const slotInputs = ref<
+  Partial<Record<HomeImageSlot, HTMLInputElement | null>>
+>({});
+
+const sectionLabelRows = ref<SectionLabelRow[]>([]);
 
 const form = reactive<FormState>({
   id: null,
   configKey: "municipality",
-  role: "template",
   label: "",
   description: "",
   sortOrder: 0,
   data: {},
   rawJson: "{}",
 });
-
-const sectionLabelRows = ref([]);
 
 const tabs = [
   { id: "general", label: t("agora", "General") },
@@ -176,60 +136,69 @@ const tabs = [
   { id: "advanced", label: t("agora", "Advanced (JSON)") },
 ];
 
-onMounted(() => {
-  store
-    .loadHomeConfigs()
-    .catch(() => showError(t("agora", "Could not load home configurations")));
-});
-
 // ── Template ⇄ data adapters ───────────────────────────────
-function templateToData(tpl: HomeConfig): HomeConfigData {
+
+function templateToData(template: HomeConfig): HomeConfigData {
   return {
-    sections: [...tpl.sections],
-    sectionLabels: { ...(tpl.sectionLabels ?? {}) },
+    sections: [...template.sections],
+    sectionLabels: { ...(template.sectionLabels ?? {}) },
     hero: {
-      title: tpl.hero.title,
-      subtitle: tpl.hero.subtitle,
-      // Intentionally NOT copying tpl.hero.backgroundUrl: bundled asset,
-      // not a filename — merged config keeps it as fallback.
-      actions: (tpl.hero.actions ?? []).map((a) => ({
-        label: a.label ?? "",
-        url: a.url ?? "",
-        type: a.type ?? "primary",
-        icon: a.icon,
+      title: template.hero.title,
+      subtitle: template.hero.subtitle,
+      // Bundled images are not stored as uploaded filenames.
+      actions: (template.hero.actions ?? []).map((action) => ({
+        label: action.label ?? "",
+        url: action.url ?? "",
+        type: action.type ?? "primary",
+        icon: action.icon,
       })),
     },
     promo: {
-      title: tpl.promo.title,
-      description: tpl.promo.text,
-      cta: { label: tpl.promo.cta },
+      title: template.promo.title,
+      description: template.promo.text,
+      cta: { label: template.promo.cta },
     },
     relevance: {
-      tiers: tpl.relevance.tiers.map((tr) => ({ key: tr.key, label: tr.label })),
-      weights: { ...tpl.relevance.weights },
+      tiers: template.relevance.tiers.map((tier) => ({
+        key: tier.key,
+        label: tier.label,
+      })),
+      weights: { ...template.relevance.weights },
     },
   };
 }
 
-function mergeWithTemplate(partial: Partial<HomeConfigData>): HomeConfigData {
-  const base = templateToData(getHomeTemplate(currentOrgType()));
+function mergeWithTemplate(
+  partial: Partial<HomeConfigData>,
+  key: OrganizationType,
+): HomeConfigData {
+  const base = templateToData(getHomeTemplate(key));
+
   return {
     sections: partial.sections ?? base.sections,
-    sectionLabels: { ...base.sectionLabels, ...(partial.sectionLabels ?? {}) },
+    sectionLabels: {
+      ...base.sectionLabels,
+      ...(partial.sectionLabels ?? {}),
+    },
     hero: {
       ...base.hero,
       ...(partial.hero ?? {}),
-      actions: (partial.hero?.actions ?? base.hero.actions ?? []).map((a) => ({
-        label: a.label ?? "",
-        url: a.url ?? "",
-        type: a.type ?? "primary",
-        icon: a.icon,
-      })),
+      actions: (partial.hero?.actions ?? base.hero.actions ?? []).map(
+        (action) => ({
+          label: action.label ?? "",
+          url: action.url ?? "",
+          type: action.type ?? "primary",
+          icon: action.icon,
+        }),
+      ),
     },
     promo: {
       ...base.promo,
       ...(partial.promo ?? {}),
-      cta: { ...base.promo.cta, ...(partial.promo?.cta ?? {}) },
+      cta: {
+        ...base.promo.cta,
+        ...(partial.promo?.cta ?? {}),
+      },
     },
     relevance: {
       tiers: partial.relevance?.tiers ?? base.relevance.tiers,
@@ -241,65 +210,53 @@ function mergeWithTemplate(partial: Partial<HomeConfigData>): HomeConfigData {
   };
 }
 
-// ── Open / close ───────────────────────────────────────────
-function openCreate() {
-  isEditMode.value = false;
+// ── Open / close editor ────────────────────────────────────
+
+function customizeTemplate(row: TemplateRow) {
+  const data = templateToData(getHomeTemplate(row.key));
+
   isEditorOpen.value = true;
   activeTab.value = "general";
-  const orgType = currentOrgType();
-  const defaultData = templateToData(getHomeTemplate(orgType));
+
   Object.assign(form, {
     id: null,
-    configKey: orgType,
-    role: "template",
-    label: `${orgTypeLabel(orgType)} (${t("agora", "custom")})`,
+    configKey: row.key,
+    label: row.label,
     description: "",
     sortOrder: 0,
-    data: defaultData,
-    rawJson: JSON.stringify(defaultData, null, 2),
+    data,
+    rawJson: JSON.stringify(data, null, 2),
   });
-  loadSectionLabelRows();
-}
 
-/** Turn a bundled template into a DB override — seeds the editor. */
-function customizeBundled(row: UnifiedRow) {
-  const key = row.configKey as OrganizationType;
-  const defaultData = templateToData(getHomeTemplate(key));
-  isEditMode.value = false;
-  isEditorOpen.value = true;
-  activeTab.value = "general";
-  Object.assign(form, {
-    id: null,
-    configKey: key,
-    role: "template",
-    label: `${orgTypeLabel(key)} (${t("agora", "custom")})`,
-    description: t(
-      "agora",
-      "Customized override of the bundled {type} template",
-      { type: orgTypeLabel(key) },
-    ),
-    sortOrder: 0,
-    data: defaultData,
-    rawJson: JSON.stringify(defaultData, null, 2),
-  });
   loadSectionLabelRows();
 }
 
 function openEdit(record: HomeConfigRecord) {
-  isEditMode.value = true;
+  const key = record.config_key;
+
+  if (!isOrgType(key)) {
+    showError(t("agora", "Unknown organization type"));
+    return;
+  }
+
+  const data = mergeWithTemplate(
+    JSON.parse(JSON.stringify(record.data ?? {})) as Partial<HomeConfigData>,
+    key,
+  );
+
   isEditorOpen.value = true;
   activeTab.value = "general";
-  const data = mergeWithTemplate(JSON.parse(JSON.stringify(record.data ?? {})));
+
   Object.assign(form, {
     id: record.id,
-    configKey: record.config_key,
-    role: record.role,
+    configKey: key,
     label: record.label,
     description: record.description ?? "",
     sortOrder: record.sort_order,
     data,
     rawJson: JSON.stringify(data, null, 2),
   });
+
   loadSectionLabelRows();
 }
 
@@ -307,107 +264,149 @@ function closeEditor() {
   isEditorOpen.value = false;
 }
 
-// Keep configKey in sync with role
-watch(
-  () => form.role,
-  (role) => {
-    if (role === "instance") {
-      form.configKey = "default";
-    } else if (!isOrgType(form.configKey)) {
-      form.configKey = currentOrgType();
-    }
-  },
-);
+// ── Default template ───────────────────────────────────────
 
-// ── Set as default ─────────────────────────────────────────
-async function setAsDefault(row: UnifiedRow) {
-  if (row.role !== "template") {
-    showError(t("agora", "Only templates can be set as default"));
+async function setAsDefault(row: TemplateRow) {
+  if (row.isDefault) {
     return;
   }
-  if (!isOrgType(row.configKey)) {
-    showError(
-      t(
-        "agora",
-        "Only templates whose key is an organization type can be default. Recognized: {types}",
-        { types: ORGANIZATION_TYPES.join(", ") },
-      ),
-    );
-    return;
-  }
+
   try {
-    await store.updateOrganizationType(row.configKey);
+    await store.updateOrganizationType(row.key);
     showSuccess(
-      t("agora", "Default template set to “{label}”", { label: row.label }),
+      t("agora", "Home template set to {label}", {
+        label: row.label,
+      }),
     );
   } catch {
-    showError(t("agora", "Could not update the default template"));
+    showError(t("agora", "Could not update the default home template"));
   }
 }
 
-// ── Helpers ────────────────────────────────────────────────
-function getSlot(slot: keyof HomeConfigData) {
-  if (!form.data[slot] || typeof form.data[slot] !== "object") {
-    (form.data as Record<string, unknown>)[slot] = {};
-  }
-  return (form.data as Record<string, any>)[slot];
+// ── Template data helpers ──────────────────────────────────
+
+async function ensureRecordExists(): Promise<number> {
+    if (form.id !== null) {
+        return form.id
+    }
+
+    if (!form.label.trim()) {
+        throw new Error(t("agora", "Display label is required"))
+    }
+
+    applySectionLabelRows()
+
+    const payload: HomeConfigPayload = {
+        configKey: form.configKey,
+        label: form.label,
+        description: form.description || null,
+        data: form.data,
+        sortOrder: Number(form.sortOrder) || 0,
+    }
+
+    const record = await store.createHomeConfigRecord(payload)
+
+    form.id = record.id
+
+    return record.id
+}
+
+// ── Template data helpers ──────────────────────────────────
+
+function getSlot(slot: "hero"): NonNullable<HomeConfigData["hero"]>
+function getSlot(slot: "promo"): NonNullable<HomeConfigData["promo"]>
+function getSlot(
+    slot: HomeImageSlot,
+): NonNullable<HomeConfigData["hero"]>
+    | NonNullable<HomeConfigData["promo"]>
+
+function getSlot(slot: HomeImageSlot) {
+    if (slot === "hero") {
+        form.data.hero ??= {}
+        return form.data.hero
+    }
+
+    form.data.promo ??= {}
+    return form.data.promo
 }
 
 function resetSection(section: keyof HomeConfigData) {
-  const tpl = templateToData(getHomeTemplate(currentOrgType()));
-  if (section === "sections" || section === "sectionLabels") {
-    (form.data as any)[section] = tpl[section];
-  } else {
-    (form.data as any)[section] = { ...(tpl[section] as object) };
+  const defaults = templateToData(getHomeTemplate(form.configKey));
+  const value = defaults[section];
+
+  Object.assign(form.data, { [section]: value });
+
+  if (section === "sectionLabels") {
+    loadSectionLabelRows();
   }
-  if (section === "sectionLabels") loadSectionLabelRows();
+
   refreshRawFromData();
 }
 
 // ── Section labels ─────────────────────────────────────────
+
 function loadSectionLabelRows() {
-  sectionLabelRows.value = Object.entries(form.data.sectionLabels ?? {}).map(
-    ([key, value]) => ({ key, value: String(value) }),
-  );
+  sectionLabelRows.value = Object.entries(
+    form.data.sectionLabels ?? {},
+  ).map(([key, value]) => ({
+    key,
+    value: String(value),
+  }));
 }
+
 function addSectionLabel() {
   sectionLabelRows.value.push({ key: "", value: "" });
 }
-function removeSectionLabel(i) {
-  sectionLabelRows.value.splice(i, 1);
+
+function removeSectionLabel(index: number) {
+  sectionLabelRows.value.splice(index, 1);
 }
+
 function applySectionLabelRows() {
-  const map = {};
+  const labels: Record<string, string> = {};
+
   for (const row of sectionLabelRows.value) {
-    if (row.key.trim()) map[row.key.trim()] = row.value;
+    const key = row.key.trim();
+
+    if (key) {
+      labels[key] = row.value;
+    }
   }
-  form.data.sectionLabels = map;
+
+  form.data.sectionLabels = labels;
 }
 
 // ── Relevance / sections JSON editors ──────────────────────
-function getRelevanceTiersJson() {
+
+function getRelevanceTiersJson(): string {
   return JSON.stringify(form.data.relevance?.tiers ?? [], null, 2);
 }
-function setRelevanceTiersJson(json) {
-  if (!form.data.relevance) form.data.relevance = {};
+
+function setRelevanceTiersJson(json: string) {
+  form.data.relevance ??= {};
   form.data.relevance.tiers = safeParse(json, []);
 }
-function getRelevanceWeightsJson() {
+
+function getRelevanceWeightsJson(): string {
   return JSON.stringify(form.data.relevance?.weights ?? {}, null, 2);
 }
-function setRelevanceWeightsJson(json) {
-  if (!form.data.relevance) form.data.relevance = {};
+
+function setRelevanceWeightsJson(json: string) {
+  form.data.relevance ??= {};
   form.data.relevance.weights = safeParse(json, {});
 }
-function getSectionsJson() {
+
+function getSectionsJson(): string {
   return JSON.stringify(form.data.sections ?? [], null, 2);
 }
-function setSectionsJson(json) {
+
+function setSectionsJson(json: string) {
   form.data.sections = safeParse(json, []);
 }
-function safeParse(json, fallback) {
+
+function safeParse<T>(json: string, fallback: T): T {
   try {
-    return JSON.parse(json);
+    return JSON.parse(json) as T;
   } catch {
     return fallback;
   }
@@ -415,13 +414,27 @@ function safeParse(json, fallback) {
 
 function applyRawJson() {
   try {
-    const parsed = JSON.parse(form.rawJson);
-    form.data = mergeWithTemplate(parsed);
+    const parsed: unknown = JSON.parse(form.rawJson);
+
+    if (
+      parsed === null
+      || typeof parsed !== "object"
+      || Array.isArray(parsed)
+    ) {
+      throw new Error(t("agora", "The configuration must be a JSON object"));
+    }
+
+    form.data = mergeWithTemplate(
+      parsed as Partial<HomeConfigData>,
+      form.configKey,
+    );
+
     loadSectionLabelRows();
     refreshRawFromData();
     showSuccess(t("agora", "JSON applied"));
-  } catch (err) {
-    showError(t("agora", "Invalid JSON: {msg}", { msg: err.message }));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    showError(t("agora", "Invalid JSON: {msg}", { msg: message }));
   }
 }
 
@@ -429,139 +442,189 @@ function refreshRawFromData() {
   form.rawJson = JSON.stringify(form.data, null, 2);
 }
 
-// ── Hero CTA ───────────────────────────────────────────────
+// ── Hero actions ──────────────────────────────────────────
+
 function addHeroAction() {
-  getSlot("hero").actions ??= [];
-  getSlot("hero").actions.push({ label: "", url: "", type: "primary" });
+  const hero = getSlot("hero");
+  hero.actions ??= [];
+  hero.actions.push({
+    label: "",
+    url: "",
+    type: "primary",
+  });
 }
-function removeHeroAction(i) {
-  getSlot("hero").actions.splice(i, 1);
+
+function removeHeroAction(index: number) {
+  getSlot("hero").actions?.splice(index, 1);
 }
 
 // ── Images ─────────────────────────────────────────────────
-function hasUploadedImage(slot: "hero" | "promo"): boolean {
-  return !!((form.data as Record<string, any>)[slot]?.image);
+
+function hasUploadedImage(slot: HomeImageSlot): boolean {
+  return Boolean(getSlot(slot).image);
 }
 
-/** Preview URL: uploaded file if present, else bundled asset for context. */
-function slotImageUrl(slot: "hero" | "promo"): string | null {
+function slotImageUrl(slot: HomeImageSlot): string | null {
   if (form.id !== null && hasUploadedImage(slot)) {
-    const record = store.homeConfigs.find((c) => c.id === form.id);
+    const record = store.homeConfigs.find(
+      (config) => config.id === form.id,
+    );
+
     return AppSettingsAPI.homeImageUrl(
       form.id,
       slot,
       record?.updated ?? record?.created ?? 0,
     );
   }
-  const tpl = getHomeTemplate(currentOrgType());
-  return slot === "hero" ? tpl.hero.backgroundUrl : tpl.promo.imageUrl;
+
+  const template = getHomeTemplate(form.configKey);
+
+  return slot === "hero"
+    ? template.hero.backgroundUrl
+    : template.promo.imageUrl;
 }
 
-function isBundledImage(slot: "hero" | "promo"): boolean {
+function isBundledImage(slot: HomeImageSlot): boolean {
   return !hasUploadedImage(slot);
 }
 
-function triggerSlotInput(slot) {
+function triggerSlotInput(slot: HomeImageSlot) {
   slotInputs.value[slot]?.click();
 }
 
-async function onImageSelected(event, slot) {
-  const file = event.target.files?.[0];
-  event.target.value = "";
-  if (!file || form.id === null) return;
-  try {
-    const record = await store.uploadHomeImage(form.id, slot, file);
-    if (!(form.data as any)[slot]) (form.data as any)[slot] = {};
-    (form.data as any)[slot].image = (record.data as any)?.[slot]?.image;
-    showSuccess(t("agora", "Image uploaded"));
-  } catch (err) {
-    showError(t("agora", "Upload failed: {msg}", { msg: err?.message ?? "" }));
-  }
+async function onImageSelected(event: Event, slot: HomeImageSlot) {
+    const input = event.target
+
+    if (!(input instanceof HTMLInputElement)) {
+        return
+    }
+
+    const file = input.files?.[0]
+    input.value = ""
+
+    if (!file) {
+        return
+    }
+
+    try {
+        // Create the configuration record automatically if needed.
+        const recordId = await ensureRecordExists()
+
+        const record = await store.uploadHomeImage(
+            recordId,
+            slot,
+            file,
+        )
+
+        const image = record.data?.[slot]?.image
+
+        if (slot === "hero") {
+            form.data.hero ??= {}
+            form.data.hero.image = image
+        } else {
+            form.data.promo ??= {}
+            form.data.promo.image = image
+        }
+
+        refreshRawFromData()
+
+        showSuccess(t("agora", "Image uploaded"))
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+
+        showError(t("agora", "Upload failed: {msg}", { msg: message }))
+    }
 }
 
-async function removeImage(slot) {
-  if (form.id === null) return;
-  if (!confirm(t("agora", "Remove this image?"))) return;
+async function removeImage(slot: HomeImageSlot) {
+  if (form.id === null) {
+    return;
+  }
+
+  if (!confirm(t("agora", "Remove this image?"))) {
+    return;
+  }
+
   try {
     await store.deleteHomeImage(form.id, slot);
-    if ((form.data as any)[slot]) delete (form.data as any)[slot].image;
+
+    if (slot === "hero") {
+      if (form.data.hero) {
+        delete form.data.hero.image;
+      }
+    } else if (form.data.promo) {
+      delete form.data.promo.image;
+    }
+
+    refreshRawFromData();
     showSuccess(t("agora", "Image removed"));
   } catch {
     showError(t("agora", "Could not remove image"));
   }
 }
 
-// ── Save ───────────────────────────────────────────────────
+// ── Save / reset ───────────────────────────────────────────
+
 async function save() {
   if (!form.label.trim()) {
     showError(t("agora", "Display label is required"));
     return;
   }
-  if (!isEditMode.value && !form.configKey.trim()) {
-    showError(t("agora", "Config key is required"));
-    return;
-  }
-  // Duplicate guard (role + config_key must be unique)
-  if (!isEditMode.value) {
-    const dup = store.homeConfigs.find(
-      (c) => c.role === form.role && c.config_key === form.configKey,
-    );
-    if (dup) {
-      showError(
-        t(
-          "agora",
-          "A {role} template with key “{key}” already exists (#{id}).",
-          { role: form.role, key: form.configKey, id: dup.id },
-        ),
-      );
-      return;
-    }
-  }
+
   applySectionLabelRows();
-  saving.value = true;
+
   const payload: HomeConfigPayload = {
     configKey: form.configKey,
-    role: form.role,
     label: form.label,
     description: form.description || null,
     data: form.data,
     sortOrder: Number(form.sortOrder) || 0,
   };
+
+  saving.value = true;
+
   try {
-    if (isEditMode.value) {
-      await store.saveHomeConfigRecord(form.id, payload);
-      showSuccess(t("agora", "Template saved"));
-    } else {
-      await store.createHomeConfigRecord(payload);
-      showSuccess(t("agora", "Template created"));
-    }
+if (form.id !== null) {
+    await store.saveHomeConfigRecord(form.id, payload)
+} else {
+    await store.createHomeConfigRecord(payload)
+}
+    showSuccess(t("agora", "Template saved"));
     closeEditor();
-  } catch (err) {
-    showError(t("agora", "Save failed: {msg}", { msg: err?.message ?? "" }));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    showError(t("agora", "Save failed: {msg}", { msg: message }));
   } finally {
     saving.value = false;
   }
 }
 
-async function remove(record: HomeConfigRecord) {
+async function resetTemplate(row: TemplateRow) {
+  if (!row.record) {
+    return;
+  }
+
   if (
     !confirm(
-      t("agora", "Delete template “{label}” and all of its images?", {
-        label: record.label,
-      }),
+      t(
+        "agora",
+        "Restore the original Agora template for {label}? Your customizations and uploaded images will be deleted.",
+        { label: row.label },
+      ),
     )
   ) {
     return;
   }
+
   try {
-    await store.deleteHomeConfigRecord(record.id);
-    showSuccess(t("agora", "Deleted"));
+    await store.deleteHomeConfigRecord(row.record.id);
+    showSuccess(t("agora", "Template restored to Agora defaults"));
   } catch {
-    showError(t("agora", "Delete failed"));
+    showError(t("agora", "Could not restore the template"));
   }
 }
-</script>
 
+</script>
 <template>
   <div class="home-config-manager">
     <div class="toolbar">
@@ -571,41 +634,19 @@ async function remove(record: HomeConfigRecord) {
           {{
             t(
               "agora",
-              "Bundled templates ship with the installation and cannot be removed. " +
-                "Custom templates are stored in the database. " +
-                "The default template is the one currently used to render the home page.",
+              "Customize the templates provided by Agora and choose which one is used for the home page.",
             )
           }}
         </p>
-      </div>
-      <div class="toolbar-actions">
-        <NcSelect
-          v-model="roleFilter"
-          :options="roleOptions"
-          :reduce="(opt) => opt.id"
-          label="label"
-          :input-label="t('agora', 'Filter by role')"
-          :label-outside="true"
-          :clearable="false"
-        />
-        <NcButton
-          type="primary"
-          @click="openCreate"
-        >
-          {{ t("agora", "New template") }}
-        </NcButton>
       </div>
     </div>
 
     <table class="config-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>{{ t("agora", "Key") }}</th>
-          <th>{{ t("agora", "Role") }}</th>
-          <th>{{ t("agora", "Label") }}</th>
-          <th>{{ t("agora", "Sort") }}</th>
-          <th>{{ t("agora", "Updated") }}</th>
+          <th>{{ t("agora", "Organization type") }}</th>
+          <th>{{ t("agora", "Description") }}</th>
+          <th>{{ t("agora", "Status") }}</th>
           <th>{{ t("agora", "Default") }}</th>
           <th />
         </tr>
@@ -613,44 +654,23 @@ async function remove(record: HomeConfigRecord) {
       <tbody>
         <tr
           v-for="row in allTemplates"
-          :key="row.source === 'bundled' ? `b-${row.configKey}` : `db-${row.id}`"
-          :class="{
-            'is-default': row.isDefault,
-            'is-bundled': row.isBundled,
-          }"
+          :key="row.key"
+          :class="{ 'is-default': row.isDefault }"
         >
           <td>
-            <span v-if="row.isBundled" class="muted">—</span>
-            <span v-else>{{ row.id }}</span>
-          </td>
-          <td>
-            <code>{{ row.configKey }}</code>
-          </td>
-          <td>
-            <span
-              class="badge"
-              :class="`badge-${row.role}`"
-            >{{ row.role }}</span>
-            <span
-              v-if="row.isBundled"
-              class="badge badge-bundled"
-            >{{ t("agora", "Bundled") }}</span>
-          </td>
-          <td>
-            {{ row.label }}
-            <div
-              v-if="row.description"
-              class="row-description"
-            >
-              {{ row.description }}
+            <strong>{{ row.label }}</strong>
+            <div class="row-description">
+              <code>{{ row.key }}</code>
             </div>
           </td>
-          <td>{{ row.sortOrder }}</td>
+          <td>{{ row.description }}</td>
           <td>
-            <span v-if="row.updated">
-              {{ new Date(row.updated * 1000).toLocaleString() }}
+            <span v-if="row.record" class="badge badge-customized">
+              {{ t("agora", "Customized") }}
             </span>
-            <span v-else class="muted">—</span>
+            <span v-else class="badge">
+              {{ t("agora", "Original") }}
+            </span>
           </td>
           <td>
             <span v-if="row.isDefault" class="default-badge">
@@ -658,63 +678,44 @@ async function remove(record: HomeConfigRecord) {
             </span>
           </td>
           <td class="row-actions">
-            <!-- Bundled: customize / edit override -->
-            <template v-if="row.isBundled">
-              <NcButton
-                v-if="!getOverrideRecord(row.configKey)"
-                @click="customizeBundled(row)"
-              >
-                {{ t("agora", "Customize") }}
-              </NcButton>
-              <NcButton
-                v-else
-                @click="openEdit(getOverrideRecord(row.configKey)!)"
-              >
-                {{ t("agora", "Edit override") }}
-              </NcButton>
-            </template>
+            <NcButton
+              v-if="row.record"
+              @click="openEdit(row.record)"
+            >
+              {{ t("agora", "Edit") }}
+            </NcButton>
+            <NcButton
+              v-else
+              @click="customizeTemplate(row)"
+            >
+              {{ t("agora", "Customize") }}
+            </NcButton>
 
-            <!-- DB: set as default / edit / delete -->
-            <template v-else>
-              <NcButton
-                v-if="!row.isDefault && row.role === 'template' && isOrgType(row.configKey)"
-                @click="setAsDefault(row)"
-              >
-                {{ t("agora", "Set as default") }}
-              </NcButton>
-              <NcButton @click="openEdit(row.record!)">
-                {{ t("agora", "Edit") }}
-              </NcButton>
-              <NcButton
-                type="error"
-                @click="remove(row.record!)"
-              >
-                {{ t("agora", "Delete") }}
-              </NcButton>
-            </template>
-          </td>
-        </tr>
-        <tr v-if="!allTemplates.length">
-          <td colspan="8" class="empty">
-            {{ t("agora", "No templates match the current filter.") }}
+            <NcButton
+              v-if="!row.isDefault"
+              @click="setAsDefault(row)"
+            >
+              {{ t("agora", "Set as default") }}
+            </NcButton>
+
+            <NcButton
+              v-if="row.record"
+              type="error"
+              @click="resetTemplate(row)"
+            >
+              {{ t("agora", "Restore defaults") }}
+            </NcButton>
           </td>
         </tr>
       </tbody>
     </table>
+
 
     <!-- ─────────────────────────────────────────────────────
          Editor modal (unchanged except for image preview)
          ───────────────────────────────────────────────────── -->
     <div v-if="isEditorOpen" class="modal-overlay">
       <div class="modal-content">
-        <h3>
-          {{
-            isEditMode
-              ? t("agora", "Edit template #{id}", { id: form.id })
-              : t("agora", "New template")
-          }}
-        </h3>
-
         <nav class="tabs">
           <button
             v-for="tab in tabs"
@@ -729,51 +730,28 @@ async function remove(record: HomeConfigRecord) {
         <!-- General -->
         <section v-if="activeTab === 'general'" class="tab-body">
           <div class="form-row">
-            <NcInputField
-              v-model="form.configKey"
-              :label="t('agora', 'Config key')"
-              :placeholder="t('agora', 'E.g., default, university, municipality')"
-              :disabled="isEditMode || form.role === 'instance'"
-              required
-            />
-            <NcSelect
-              v-model="form.role"
-              :options="[
-                { id: 'template', label: t('agora', 'Template') },
-                { id: 'instance', label: t('agora', 'Instance override') },
-              ]"
-              :reduce="(opt) => opt.id"
-              label="label"
-              :input-label="t('agora', 'Role')"
-              :label-outside="true"
-              :clearable="false"
-              :disabled="isEditMode"
-            />
-            <NcInputField
-              v-model.number="form.sortOrder"
-              :label="t('agora', 'Sort order')"
-              type="number"
-              :min="0"
-            />
-          </div>
-          <NcInputField
-            v-model="form.label"
-            :label="t('agora', 'Display label')"
-            required
-          />
-          <NcInputField
-            v-model="form.description"
-            :label="t('agora', 'Description')"
-            type="textarea"
-          />
-          <p v-if="form.role === 'instance'" class="hint">
-            {{
-              t(
-                "agora",
-                "The instance override is applied on top of whichever template is set as default.",
-              )
-            }}
-          </p>
+  <NcInputField
+    :model-value="orgTypeLabel(form.configKey)"
+    :label="t('agora', 'Organization type')"
+    disabled
+  />
+  <NcInputField
+    v-model.number="form.sortOrder"
+    :label="t('agora', 'Sort order')"
+    type="number"
+    :min="0"
+  />
+</div>
+<NcInputField
+  v-model="form.label"
+  :label="t('agora', 'Display label')"
+  required
+/>
+<NcInputField
+  v-model="form.description"
+  :label="t('agora', 'Description')"
+  type="textarea"
+/>
         </section>
 
         <!-- Hero -->
@@ -811,20 +789,17 @@ async function remove(record: HomeConfigRecord) {
                 {{ t("agora", "Bundled default — upload to override") }}
               </p>
               <input
-                :ref="(el) => (slotInputs['hero'] = el)"
+       	        :ref="(el) => (slotInputs.hero = el as HTMLInputElement | null)"
                 type="file"
                 accept="image/*"
                 class="hidden"
                 @change="(e) => onImageSelected(e, 'hero')"
               >
               <NcButton
-                :disabled="form.id === null"
                 @click="triggerSlotInput('hero')"
               >
                 {{
-                  form.id === null
-                    ? t("agora", "Save first to upload")
-                    : t("agora", "Upload")
+                     t("agora", "Upload")
                 }}
               </NcButton>
               <NcButton
@@ -901,20 +876,17 @@ async function remove(record: HomeConfigRecord) {
                 {{ t("agora", "Bundled default — upload to override") }}
               </p>
               <input
-                :ref="(el) => (slotInputs['promo'] = el)"
+                :ref="(el) => (slotInputs.promo = el as HTMLInputElement | null)"
                 type="file"
                 accept="image/*"
                 class="hidden"
                 @change="(e) => onImageSelected(e, 'promo')"
               >
               <NcButton
-                :disabled="form.id === null"
                 @click="triggerSlotInput('promo')"
               >
                 {{
-                  form.id === null
-                    ? t("agora", "Save first to upload")
-                    : t("agora", "Upload")
+                    t("agora", "Upload")
                 }}
               </NcButton>
               <NcButton

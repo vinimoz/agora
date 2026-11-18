@@ -73,7 +73,6 @@ class SettingsService
      */
     public function writeAppSettings(array $settingsArray): void
     {
-	$this->appSettings->setOrganizationType($settingsArray['organization']['type']);
         // Boolean settings
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_SHOW_MAIL_ADDRESSES, $settingsArray[AppSettings::SETTING_SHOW_MAIL_ADDRESSES]);
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_PUBLIC_SHARES, $settingsArray[AppSettings::SETTING_ALLOW_PUBLIC_SHARES]);
@@ -108,6 +107,7 @@ class SettingsService
         $this->appSettings->setIntegerSetting(AppSettings::SETTING_AUTO_EXPIRE_OFFSET_DAYS, intval($settingsArray[AppSettings::SETTING_AUTO_EXPIRE_OFFSET_DAYS]));
 
         // String settings
+        $this->appSettings->setStringSetting(AppSettings::SETTING_ORGANIZATION_TYPE, $settingsArray[AppSettings::SETTING_ORGANIZATION_TYPE]);
         $this->appSettings->setStringSetting(AppSettings::SETTING_UPDATE_TYPE, $settingsArray[AppSettings::SETTING_UPDATE_TYPE]);
         $this->appSettings->setStringSetting(AppSettings::SETTING_PRIVACY_URL, $settingsArray[AppSettings::SETTING_PRIVACY_URL]);
         $this->appSettings->setStringSetting(AppSettings::SETTING_IMPRINT_URL, $settingsArray[AppSettings::SETTING_IMPRINT_URL]);

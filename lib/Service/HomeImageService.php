@@ -24,9 +24,16 @@ class HomeImageService
 		'image/png'     => 'png',
 		'image/jpeg'    => 'jpg',
 		'image/webp'    => 'webp',
-		'image/svg+xml' => 'svg',
 	];
 	private const MAX_BYTES = 5 * 1024 * 1024;
+
+	private const SLOTS = [
+		'hero',
+		'promo',
+		'logo',
+		'background',
+	];
+
 
 	public function __construct(
 		private IAppData $appData,
@@ -46,9 +53,12 @@ class HomeImageService
 	 */
 	public function upload(int $configId, string $slot, array $upload): HomeConfig
 	{
-		if (!preg_match('/^[a-z][a-z0-9_-]{0,31}$/', $slot)) {
-			throw new \InvalidArgumentException('Invalid slot name');
-		}
+		$this->logger->warning('Home image upload slot received', [
+    'slot' => $slot,
+    'length' => strlen($slot),
+    'hex' => bin2hex($slot),
+		]);
+		$this->validateSlot($slot);
 		if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
 			throw new \InvalidArgumentException('Upload failed');
 		}
@@ -72,10 +82,16 @@ class HomeImageService
 		}
 
 		$node = $folder->newFile($filename);
-		$stream = fopen($upload['tmp_name'], 'rb');
-		$node->putContent($stream);
+		$content = file_get_contents($upload['tmp_name']);
+
+		if ($content === false) {
+			throw new \RuntimeException('Unable to read uploaded image');
+		}
+
+		$node->putContent($content);
+
 		if (is_resource($stream)) {
-		    fclose($stream);
+			fclose($stream);
 		}
 
 		$data = $config->getData() ?? [];
@@ -86,6 +102,13 @@ class HomeImageService
 		$config->setData($data);
 		$config->setUpdated(time());
 		return $this->mapper->update($config);
+	}
+
+	private function validateSlot(string $slot): void
+	{
+		if (!in_array($slot, self::SLOTS, true)) {
+			throw new \InvalidArgumentException('Invalid image slot');
+		}
 	}
 
 	public function deleteSlot(int $configId, string $slot): ?HomeConfig
@@ -118,6 +141,7 @@ class HomeImageService
 	public function getFile(int $configId, string $slot): ?ISimpleFile
 	{
 		try {
+			$this->validateSlot($slot);
 			$folder = $this->appData->getFolder($this->folderName($configId));
 		} catch (NotFoundException) {
 			return null;
@@ -142,6 +166,8 @@ class HomeImageService
 	/** Public URL for a given slot — matches the route in HomeImageController. */
 	public function url(int $configId, string $slot): string
 	{
+		$this->validateSlot($slot);
+
 		return sprintf('/apps/agora/home-config/%d/images/%s', $configId, $slot);
 	}
 

@@ -174,6 +174,9 @@ class HomeConfigService
 	public function resolveForOrganization(string $organizationType): array
 	{
 		$template = null;
+ 	     $this->logger->warning('Organization fil', [
+	    'config_key' => $organizationType,]);
+
 		try {
 			$template = $this->mapper->findByKeyAndRole(
 				$organizationType,

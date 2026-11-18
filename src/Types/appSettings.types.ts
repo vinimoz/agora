@@ -29,13 +29,6 @@ export type Group = {
   type: string;
 };
 
-export interface OrganizationConfig {
-  /** Which organization template this deployment (or tenant) uses. */
-  type: OrganizationType;
-  tenantId?: number;
-  displayName?: string;
-}
-
 // ============================================================================
 // HOME / NAVIGATION
 // ============================================================================
@@ -91,6 +84,8 @@ export interface HeroActionConfig {
   hint?: string;
 }
 
+export type HomeImageSlot = "hero" | "promo"
+
 /** The data blob stored on a HomeConfig row (merged server-side). */
 export interface HomeConfigData {
   hero?: {
@@ -118,7 +113,11 @@ export interface HomeConfigData {
     imageUpdated?: number;
     cta?: { label?: string; url?: string };
   };
-  logo?: { image?: string; imageUrl?: string; imageConfigId?: number };
+  logo?: {
+    image?: string;
+    imageUrl?: string;
+    imageConfigId?: number;
+  };
   relevance?: {
     tiers?: RelevanceTierLabel[];
     weights?: Partial<RelevanceWeights>;
@@ -132,7 +131,6 @@ export interface HomeConfigData {
 export interface HomeConfigRecord {
   id: number;
   config_key: string;
-  role: "template" | "instance";
   label: string;
   description: string | null;
   data: HomeConfigData;
@@ -144,13 +142,13 @@ export interface HomeConfigRecord {
 /** Payload accepted by POST /home-config and PUT /home-config/{id}. */
 export interface HomeConfigPayload {
   configKey: string;
-  role: "template" | "instance";
   label: string;
   description?: string | null;
   data?: HomeConfigData;
   sortOrder?: number;
 }
 
+/** Resolved Home configuration consumed by the landing page. */
 export interface HomeHeroConfig {
   cityName: string;
   tagline: string;
@@ -252,7 +250,7 @@ export type AppSettings = {
   unrestrictedOwnerGroups: string[];
   home?: HomeConfig;
   homeConfigs: HomeConfigRecord[];
-  organization?: OrganizationConfig;
+  organizationType: string;
   navigation?: NavigationConfig;
   categoryTab: Category[];
   locationTab: Location[];
