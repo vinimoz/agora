@@ -24,7 +24,7 @@
             v-model="selectedOption"
             type="options"
             :inquiry-id="inquiryId"
-            :placeholder="t('agora', 'Search by title or #id …')"
+            :placeholder="t('agora', 'Search by title or #ID …')"
             class="search-select"
           />
         </div>
