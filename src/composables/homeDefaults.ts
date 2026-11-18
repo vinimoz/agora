@@ -65,7 +65,6 @@ const municipalityDefaults: HomeConfig = {
   ],
 
   hero: {
-    cityName: "Take back your authority",
     tagline: "Together, let's build tomorrow",
     title: "Welcome to Agora",
     subtitle: "Your civic space for a more direct and participatory democracy",

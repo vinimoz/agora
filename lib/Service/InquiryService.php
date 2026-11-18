@@ -752,7 +752,6 @@ public function listInquiries(): array
 	 */
 	public function delete(int $inquiryId): Inquiry
 	{
-		$this->inquiryMapper->beginTransaction();
 
 		try {
 			try {
@@ -798,7 +797,6 @@ public function listInquiries(): array
 
 			$this->inquiryMapper->delete($this->inquiry);
 
-			$this->inquiryMapper->commit();
 			return $this->inquiry;
 
 		} catch (\Exception $e) {

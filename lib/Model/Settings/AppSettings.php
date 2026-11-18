@@ -196,13 +196,6 @@ class AppSettings implements JsonSerializable
 			$resolved = $this->homeConfigService->resolveForOrganization(
 				$this->getOrganizationType()
 			);
-			$this->logger->warning(
-				'FAIL TO RESOLV',
-				[
-					'organization_type' => $this->getOrganizationType(),
-					'resolved' => $resolved,
-				]);
-
 			return $resolved === [] ? null : $resolved;
 
 		} catch (\Throwable $e) {

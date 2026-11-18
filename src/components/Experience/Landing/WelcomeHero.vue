@@ -1,6 +1,7 @@
-/** * SPDX-FileCopyrightText: 2026 Nextcloud contributors *
-SPDX-License-Identifier: AGPL-3.0-or-later */
-
+<!-- 
+SPDX-FileCopyrightText: 2026 Nextcloud contributors 
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <template>
   <div
     class="welcome-hero"
@@ -40,7 +41,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later */
         </div>
         <div class="stat">
           <span class="stat-value">{{ stats.owned }}</span>
-          <span class="stat-label">{{ t("agora", "Your inquiries") }}</span>
+          <span class="stat-label">{{ t("agora", "Yours") }}</span>
         </div>
         <div class="stat">
           <span class="stat-value">{{ stats.groupInquiries }}</span>
@@ -114,7 +115,7 @@ const subtitle = computed(
     props.subtitle ||
     t(
       "agora",
-      "Your civic space for a more direct and participatory democracy",
+      "Your space",
     ),
 );
 

@@ -29,7 +29,7 @@ const sessionStore = useSessionStore();
 /* ------------------------------------------------------------------ */
 /* BRANDING — driven by homeDefaults.hero                              */
 /* ------------------------------------------------------------------ */
-const cityName = computed(() => HOME_DEFAULTS.hero?.cityName || "Agora");
+const cityName = computed(() => "Agora");
 const tagline = computed(() => HOME_DEFAULTS.hero?.tagline || "");
 
 /* ------------------------------------------------------------------ */

@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later */
       :inquiry="inquiry"
       :mode="mode"
     />
-    <template #actions>
+<!--    <template #actions>
       <NcButton
         v-if="mode === 'view' && canEdit"
         @click="mode = 'edit'"
@@ -24,7 +24,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later */
       >
         {{ t("agora", "Back to summary") }}
       </NcButton>
-    </template>
+</template> -->
   </NcAppSidebar>
 
   <NcDialog
@@ -77,10 +77,11 @@ const mode = ref<"view" | "edit">("view");
 
 // "Can this user edit?" is a prop of the inquiry itself
 // (currentUserStatus / permissions are on the object — no store needed).
-const canEdit = computed(() => {
+/*const canEdit = computed(() => {
   const s = (inquiry.value as any)?.currentUserStatus;
   return !!(s?.isOwner || s?.isEditor || s?.isAdmin);
 });
+*/
 
 function open(payload: {
   inquiry: Inquiry;
