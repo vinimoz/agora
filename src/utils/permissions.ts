@@ -240,14 +240,30 @@ export function createOptionContext(
 ): PermissionContext | null {
   const parentCtx = createInquiryContext(parentInquiry);
   if (!parentCtx) return null;
+console.log(" CAN EDIT OPTON ")
+
+  const supportFeature = option.supportFeature
+  const allowComment = option.allowComment
 
   return {
-    ...parentCtx, // hérite visibilité, blocages, modération, famille
+    ...parentCtx,
+    userType: getCurrentUserType(),
     contentType: ContentType.Option,
     isOwner: isContentOwner(option.owner.id),
+    isPublic: true,
+    isLocked: false,
+    isExpired: false,
+    isDeleted: option.isDeleted || false,
+    isArchived: option.isArchived || false,
+    hasGroupRestrictions: false,
+    userGroups: getCurrentUserGroups(),
+    allowedGroups: [],
     optionType: option.type,
-  };
+    supportFeature,
+    allowComment,
+  }
 }
+
 
 export function createInquiryGroupContext(
   group: InquiryGroup,
@@ -266,7 +282,6 @@ export function createInquiryGroupContext(
     isDeleted: (group.deleted ?? 0) > 0,
     isArchived: group.status.groupStatus === "archived",
 
-    // Pas de moderationStatus sur les InquiryGroup
   };
 }
 
@@ -464,14 +479,16 @@ export function canComment(ctx: PermissionContext): boolean {
 
 export function canEdit(ctx: PermissionContext): boolean {
   if (!ctx) return false;
+  
+  if (ctx.isLocked || ctx.isArchived || ctx.isDeleted) return false;
+  console.log(" CONSOLE LOG CAN EDIT ", ctx) 
   if (ctx.contentType === ContentType.InquiryGroup) {
-    if (ctx.isArchived || ctx.isDeleted) return false;
+    
     if (ctx.isOwner || ctx.userType === UserType.Admin) return true;
     return useSessionStore().currentUser.isGroupEditor === true;
   }
 
   // --- Contenus classiques ---
-  if (ctx.isLocked || ctx.isArchived || ctx.isDeleted) return false;
   if (ctx.moderationStatus === "rejected" || ctx.moderationStatus === "pending")
     return false;
 
@@ -788,11 +805,32 @@ export function canManageGroupPermissions(ctx: PermissionContext): boolean {
 
 /* ============================================================
  * ============================================================ */
+/**
+ * Check if user can edit an option
+ * @param context
+ */
+export function canEditOption(context: PermissionContext): boolean {
+    // Only for options
+   console.log(" CAN EDIT OPTION PERMISSION ",context)
 
-export function canEditOption(ctx: PermissionContext): boolean {
-  if (ctx.contentType !== ContentType.Option) return false;
-  return canEdit(ctx);
+    if (context.contentType !== ContentType.Option) {
+        return false
+    }
+
+    // Content blocking check
+    if (context.isLocked || context.isArchived || context.isDeleted) {
+        return false
+    }
+
+    // Only admin or owner can edit options
+    if (context.userType === UserType.Admin || context.isOwner) {
+        return true
+    }
+
+
+    return false
 }
+
 
 export function canDeleteOption(ctx: PermissionContext): boolean {
   if (ctx.contentType !== ContentType.Option) return false;

@@ -454,6 +454,7 @@ import MiscFieldsEditor from "../Options/MiscFieldsEditor.vue";
 import { useCommentsStore } from "../../stores/comments";
 import { useOptionsStore } from "../../stores/options";
 import { useOptionStore } from "../../stores/option";
+import { useInquiriesStore } from "../../stores/inquiries";
 import { useSessionStore } from "../../stores/session";
 import { InquiryOptionIcons } from "../../utils/icons.ts";
 import { SupportFeature } from "../Base/index.ts";
@@ -501,6 +502,7 @@ const emit = defineEmits<{
 const optionsStore = useOptionsStore();
 const optionStore = useOptionStore();
 const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore();
 const commentsStore = useCommentsStore();
 
 // State
@@ -589,9 +591,10 @@ const availableResponseTypes = computed(() =>
 // Create context once as computed
 const optionContext = computed(() => {
   if (!optionStore?.id) return null;
-  return createOptionContext(toRaw(optionStore));
+  return createOptionContext(toRaw(optionStore),inquiriesStore.getInquiryById(props.inquiryId));
 });
 
+console.log(" OPTION DETAIL MODAL ",props.inquiryId)
 const canEdit = computed(() =>
   optionContext.value ? canEditOption(optionContext.value) : false,
 );

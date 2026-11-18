@@ -433,8 +433,11 @@ import { getFamilyColor } from "../../helpers/modules/InquiryOptionHelper";
 
 import {
   createOptionContext,
+  createInquiryContext,
   canEditOption,
+  canEdit,
   canDeleteOption,
+  canDelete,
 } from "../../utils/permissions.ts";
 import type { Item } from "../../Types/index.ts";
 import {
@@ -457,7 +460,7 @@ import DeleteConfirmationDialog from "../Modals/DeleteConfirmationDialog.vue";
 
 export type TargetType = "option" | "inquiry";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   item: Item;
   parentId: number;
   targetType: TargetType;
@@ -471,7 +474,18 @@ const props = defineProps<{
   textMaxLength?: number;
   progressBar?: boolean;
   familyType?: string;
-}>();
+}>(), {
+  compact: false,
+  inline: false,
+  official: false,
+  highlight: false,
+  showPoll: true,
+  showAction: true,
+  preventClick: false,
+  textMaxLength: 200,
+  progressBar: false,
+  familyType: undefined,
+});
 
 const emit = defineEmits<{
   click: [item: Item];
@@ -485,7 +499,7 @@ const emit = defineEmits<{
 }>();
 
 // ---- Raw object still needed for helpers that predate unification ----
-const raw = computed(() => (props.item as any).raw ?? props.item);
+const raw = computed(() => (props.item as Item).raw ?? props.item);
 
 const itemTitle = computed(() => props.item.title);
 const itemType = computed(() => props.item.type);
@@ -514,18 +528,45 @@ const inquiriesStore = useInquiriesStore();
 // ---- SupportFeature still wants the raw object ----
 const supportItem = computed(() => raw.value);
 
+console.log(" ITEM CARD : TAGET TYPE ", props.item)
 const itemContext = computed(() => {
+  
   if (!props.item || !raw.value) return null;
-  return createOptionContext(raw.value);
+  if (props.targetType === 'inquiry')
+  return createInquiryContext(raw.value);
+  else
+  return createOptionContext(raw.value,inquiriesStore.getInquiryById(props.parentId));
 });
 
-const canEdit = computed(() =>
-  itemContext.value ? canEditOption(itemContext.value) : false,
-);
-const canDelete = computed(() =>
-  itemContext.value ? canDeleteOption(itemContext.value) : false,
-);
-const canEditOrDelete = computed(() => canEdit.value || canDelete.value);
+console.log(" ITEM CARD : ITEM CONTEXT ", itemContext.value)
+
+const canEditItem = computed(() => {
+  if ( props.targetType === 'inquiry' ) {
+    return itemContext.value
+      ? canEdit(itemContext.value)
+      : false;
+  } else {
+    return itemContext.value
+      ? canEditOption(itemContext.value,props.parentId)
+      : false;
+     }
+});
+
+const canDeleteItem = computed(() => {
+  if (props.targetType === 'inquiry') {
+    return itemContext.value
+      ? canDelete(itemContext.value)
+      : false;
+  } else {
+    return itemContext.value
+      ? canDeleteOption(itemContext.value)
+      : false;
+  }
+});
+
+const canEditOrDelete = computed(() => canEditItem.value || canDeleteItem.value);
+
+console.log(" CAN EDIT OR DELETE INTO ITEM CARD  ", canEditOrDelete.value)
 
 // ---- Type lookups stay the same ----
 const isInquiryItem = computed(() => props.targetType === "inquiry");
@@ -576,8 +617,6 @@ const itemTypeColor = computed(() => {
   }
   return getOptionTypeColor(itemType.value, allItemTypes.value);
 });
-
-
 
 const showTitle = computed(() =>
   props.targetType === "inquiry"

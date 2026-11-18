@@ -1008,6 +1008,7 @@ import DOMPurify from "dompurify";
 import { useOptionsStore } from "../../stores/options";
 import { useSessionStore } from "../../stores/session";
 import { useOptionStore } from "../../stores/option";
+import { useInquiriesStore } from "../../stores/inquiries";
 import { InquiryOptionIcons } from "../../utils/icons.ts";
 import { showSuccess, showError } from "@nextcloud/dialogs";
 import {
@@ -1062,6 +1063,7 @@ const emit = defineEmits<{
 const optionsStore = useOptionsStore();
 const sessionStore = useSessionStore();
 const optionStore = useOptionStore();
+const inquiriesStore = useInquiriesStore();
 
 // State
 const activeNodeId = ref<number | null>(null);
@@ -1184,9 +1186,11 @@ const canEditNode = (node: Option): boolean => {
     isArchived: node.isArchived || false,
   };
 
-  const context = createOptionContext(optionLike);
+  const context = createOptionContext(optionLike , inquiriesStore.getInquiryById(props.parentId));
   return canEditOption(context);
 };
+
+console.log(" CAN EDIT NODE ",canEditNode.value)
 
 const canCommentOnNode = (node: Option): boolean => {
   if (!node) return false;

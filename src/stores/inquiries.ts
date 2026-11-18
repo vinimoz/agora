@@ -369,6 +369,61 @@ export const useInquiriesStore = defineStore("inquiries", {
   }),
 
   getters: {
+
+    /**
+     * Index inquiries by type.
+     */
+    byType: (state): Record<string, Inquiry[]> => {
+        const map: Record<string, Inquiry[]> = {};
+
+        state.inquiries.forEach((inquiry) => {
+            if (!inquiry?.type) return;
+
+            (map[inquiry.type] ??= []).push(inquiry);
+        });
+
+        return map;
+    },
+
+    /**
+     * Get inquiry by ID.
+     */
+    getInquiryById(): (id: number) => Inquiry | undefined {
+        return (id: number) => this.byId[id];
+    },
+
+    /**
+     * Get inquiries by type.
+     */
+    getInquiriesByType(): (type: string) => Inquiry[] {
+        return (type: string) => this.byType[type] ?? [];
+    },
+
+    /**
+     * Get inquiries by parent ID.
+     */
+    getInquiriesByParentId: (state) => (parentId: number) =>
+        state.inquiries.filter(
+            (inquiry) => inquiry.parentId === parentId,
+        ),
+
+    /**
+     * Get inquiries by family.
+     */
+    getInquiriesByFamily: (state) => (family: string) =>
+        state.inquiries.filter(
+            (inquiry) => inquiry.family === family,
+        ),
+
+    /**
+     * Get inquiries by group.
+     */
+    getInquiriesByGroup: (state) => (groupId: number) =>
+        state.inquiries.filter(
+            (inquiry) => inquiry.groupId === groupId,
+        ),
+
+
     byId: (state) => {
       const map: Record<number, Inquiry> = {};
 
