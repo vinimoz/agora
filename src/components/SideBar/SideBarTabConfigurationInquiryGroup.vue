@@ -79,6 +79,7 @@ const loadGroup = async () => {
     lastSaveData = JSON.stringify(getSaveableData())
   } catch (error) {
     console.error('Failed to load group:', error)
+    // TRANSLATORS Error when loading the data of one inquiry group (a group of inquiries, not a user group) fails
     showError(t('agora', 'Failed to load group data'))
   } finally {
     loading.value = false

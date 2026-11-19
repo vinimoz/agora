@@ -28,6 +28,7 @@
         <div class="metric">
           <component :is="InquiryOptionIcons.Users" :size="16" />
           <span>{{ metrics.participants || 0 }}</span>
+          <!-- TRANSLATORS Label shown below the number of participants of a debate -->
           <span class="metric-label">{{ t('agora', 'participants') }}</span>
         </div>
         <div class="metric-divider"></div>

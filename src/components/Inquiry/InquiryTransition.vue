@@ -247,6 +247,7 @@ const loadInquiryData = async () => {
             <template #icon>
               <component :is="InquiryGeneralIcons.Table" size="16" />
             </template>
+            <!-- TRANSLATORS Display mode for child inquiries: grid (table) view, the other option is "List" -->
             {{ !isMobile ? t('agora', 'Grid') : '' }}
           </NcCheckboxRadioSwitch>
           

@@ -452,6 +452,7 @@ const currentIconComponent = computed(() => {
 const selectedTypeData = computed(() => getInquiryGroupTypeData(currentGroupType.value, sessionStore.appSettings.inquiryGroupTypeTab))
 
 const selectedTypeLabel = computed(() => 
+  // TRANSLATORS Type of inquiry group: a general assembly or meeting
   selectedTypeData.value?.label ? t('agora', selectedTypeData.value.label) : t('agora', 'Assembly')
 )
 
