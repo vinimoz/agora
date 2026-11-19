@@ -34,26 +34,26 @@ class InquiryGroupMapper extends QBMapper
 	}
 
 	/**
- * List all InquiryGroups (no soft-delete filter — use findActive() for that).
- *
- * @return InquiryGroup[]
- */
-public function list(): array
-{
-    $qb = $this->buildQuery();
-    $qb->orderBy('title', 'ASC')
-       ->addOrderBy(self::TABLE . '.id', 'ASC');
+	 * List all InquiryGroups (no soft-delete filter — use findActive() for that).
+	 *
+	 * @return InquiryGroup[]
+	 */
+	public function list(): array
+	{
+		$qb = $this->buildQuery();
+		$qb->orderBy('title', 'ASC')
+     ->addOrderBy(self::TABLE . '.id', 'ASC');
 
-    $inquiryGroups = $this->findEntities($qb);
+		$inquiryGroups = $this->findEntities($qb);
 
-    // Batched hydration — one query per relation type, never per row.
-    $this->loadDynamicFieldsForMultiple($inquiryGroups);   
-    $this->loadVisibilityGroupsForMultiple($inquiryGroups); 
-    $this->loadVisibilityUsersForMultiple($inquiryGroups);  
-    $this->loadInquiryIdsForMultiple($inquiryGroups);        
+		// Batched hydration — one query per relation type, never per row.
+		$this->loadDynamicFieldsForMultiple($inquiryGroups);   
+		$this->loadVisibilityGroupsForMultiple($inquiryGroups); 
+		$this->loadVisibilityUsersForMultiple($inquiryGroups);  
+		$this->loadInquiryIdsForMultiple($inquiryGroups);        
 
-    return $inquiryGroups;
-}
+		return $inquiryGroups;
+	}
 	/**
 	 * Find an InquiryGroup by its ID
 	 */
@@ -79,8 +79,8 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(self::TABLE . '.*')
-			->from($this->getTableName(), self::TABLE)
-			->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+     ->from($this->getTableName(), self::TABLE)
+     ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		if (!$getDeleted) {
 			$qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
@@ -105,8 +105,8 @@ public function list(): array
 	{
 		$qb = $this->buildQuery();
 		$qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0)))
-			->orderBy('created', 'ASC')
-			->addOrderBy('title', 'ASC');
+     ->orderBy('created', 'ASC')
+     ->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
@@ -121,9 +121,9 @@ public function list(): array
 	{
 		$qb = $this->buildQuery();
 		$qb->where($qb->expr()->lt(self::TABLE . '.expire', $qb->createNamedParameter(time(), IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->isNotNull(self::TABLE . '.expire'))
-			->orderBy('created', 'ASC')
-			->addOrderBy('title', 'ASC');
+     ->andWhere($qb->expr()->isNotNull(self::TABLE . '.expire'))
+     ->orderBy('created', 'ASC')
+     ->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
@@ -138,10 +138,10 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('group_id')
-			->from(GroupRelation::TABLE)
-			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+     ->from(GroupRelation::TABLE)
+     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
 
 		$result = $qb->executeQuery();
 		$groupIds = $result->fetchAll(\PDO::FETCH_COLUMN);
@@ -167,14 +167,14 @@ public function list(): array
 
 			$qb = $this->db->getQueryBuilder();
 			$qb->insert(GroupRelation::TABLE)
-				->values([
-					'target_type' => $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
-					'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
-					'relation_type' => $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
-					'group_id' => $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_STR),
-					'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
-				])
-				->executeStatement();
+      ->values([
+	      'target_type' => $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
+	      'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
+	      'relation_type' => $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
+	      'group_id' => $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_STR),
+	      'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
+      ])
+      ->executeStatement();
 		}
 	}
 
@@ -182,9 +182,9 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete(GroupRelation::TABLE)
-			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
 
 		return $qb->executeStatement();
 	}
@@ -199,10 +199,10 @@ public function list(): array
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('target_id', 'group_id')
-			->from(GroupRelation::TABLE)
-			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
+     ->from(GroupRelation::TABLE)
+     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(GroupRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(GroupRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$result = $qb->executeQuery();
 		$rows = $result->fetchAll();
@@ -223,10 +223,10 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('user_id')
-			->from(UserRelation::TABLE)
-			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+     ->from(UserRelation::TABLE)
+     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
 
 		$result = $qb->executeQuery();
 		$userIds = $result->fetchAll(\PDO::FETCH_COLUMN);
@@ -252,14 +252,14 @@ public function list(): array
 
 			$qb = $this->db->getQueryBuilder();
 			$qb->insert(UserRelation::TABLE)
-				->values([
-					'target_type' => $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
-					'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
-					'relation_type' => $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
-					'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
-					'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
-				])
-				->executeStatement();
+      ->values([
+	      'target_type' => $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR),
+	      'target_id' => $qb->createNamedParameter($inquiryGroup->getId(), IQueryBuilder::PARAM_INT),
+	      'relation_type' => $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR),
+	      'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
+	      'created_at' => $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT),
+      ])
+      ->executeStatement();
 		}
 	}
 
@@ -267,9 +267,9 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete(UserRelation::TABLE)
-			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
+     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)));
 
 		return $qb->executeStatement();
 	}
@@ -284,10 +284,10 @@ public function list(): array
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('target_id', 'user_id')
-			->from(UserRelation::TABLE)
-			->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
-			->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
+     ->from(UserRelation::TABLE)
+     ->where($qb->expr()->eq('target_type', $qb->createNamedParameter(UserRelation::TARGET_INQUIRY_GROUP, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->eq('relation_type', $qb->createNamedParameter(UserRelation::RELATION_VISIBILITY, IQueryBuilder::PARAM_STR)))
+     ->andWhere($qb->expr()->in('target_id', $qb->createNamedParameter($groupIds, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$result = $qb->executeQuery();
 		$rows = $result->fetchAll();
@@ -311,9 +311,9 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->insert(InquiryGroup::RELATION_TABLE)
-			->setValue('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
-			->setValue('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT))
-			->executeStatement();
+     ->setValue('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
+     ->setValue('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT))
+     ->executeStatement();
 	}
 
 	/**
@@ -323,13 +323,13 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete(InquiryGroup::RELATION_TABLE)
-			->where(
-				$qb->expr()->andX(
-					$qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)),
-					$qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT))
-				)
-			)
-			->executeStatement();
+     ->where(
+	     $qb->expr()->andX(
+		     $qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)),
+		     $qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT))
+	     )
+     )
+     ->executeStatement();
 	}
 
 	/**
@@ -350,10 +350,10 @@ public function list(): array
 			foreach ($inquiryIds as $index => $inquiryId) {
 				$qb = $this->db->getQueryBuilder();
 				$qb->update(InquiryGroup::RELATION_TABLE)
-					->set('order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT))
-					->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-					->andWhere($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-					->executeStatement();
+       ->set('order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT))
+       ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+       ->andWhere($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+       ->executeStatement();
 			}
 			return;
 		}
@@ -363,8 +363,8 @@ public function list(): array
 		try {
 			$qb = $this->db->getQueryBuilder();
 			$qb->delete(InquiryGroup::RELATION_TABLE)
-				->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
-				->executeStatement();
+      ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)))
+      ->executeStatement();
 
 			foreach ($inquiryIds as $inquiryId) {
 				$this->addInquiryToGroup($inquiryId, $groupId);
@@ -406,14 +406,14 @@ public function list(): array
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete(InquiryGroup::TABLE)
-			->where(
-				$qb->expr()->notIn(
-					'id',
-					$qb->createFunction($subquery->getSQL()),
-					IQueryBuilder::PARAM_INT_ARRAY
-				)
-			)
-			->executeStatement();
+     ->where(
+	     $qb->expr()->notIn(
+		     'id',
+		     $qb->createFunction($subquery->getSQL()),
+		     IQueryBuilder::PARAM_INT_ARRAY
+	     )
+     )
+     ->executeStatement();
 	}
 
 	/**
@@ -423,8 +423,8 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('inquiry_id')
-			->from(InquiryGroup::RELATION_TABLE)
-			->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)));
+     ->from(InquiryGroup::RELATION_TABLE)
+     ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)));
 
 		$result = $qb->executeQuery();
 		$inquiryIds = [];
@@ -440,8 +440,8 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select($qb->func()->count('*', 'count'))
-			->from(InquiryGroup::RELATION_TABLE)
-			->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)));
+     ->from(InquiryGroup::RELATION_TABLE)
+     ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId, IQueryBuilder::PARAM_INT)));
 
 		$result = $qb->executeQuery();
 		$count = (int) $result->fetchOne();
@@ -457,8 +457,8 @@ public function list(): array
 	{
 		$qb = $this->buildQuery();
 		$qb->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
-			->orderBy('created', 'ASC')
-			->addOrderBy('title', 'ASC');
+     ->orderBy('created', 'ASC')
+     ->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
@@ -473,8 +473,8 @@ public function list(): array
 	{
 		$qb = $this->buildQuery();
 		$qb->where($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type, IQueryBuilder::PARAM_STR)))
-			->orderBy('created', 'ASC')
-			->addOrderBy('title', 'ASC');
+     ->orderBy('created', 'ASC')
+     ->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
@@ -489,8 +489,8 @@ public function list(): array
 	{
 		$qb = $this->buildQuery();
 		$qb->where($qb->expr()->eq(self::TABLE . '.group_status', $qb->createNamedParameter($status, IQueryBuilder::PARAM_STR)))
-			->orderBy('created', 'ASC')
-			->addOrderBy('title', 'ASC');
+     ->orderBy('created', 'ASC')
+     ->addOrderBy('title', 'ASC');
 
 		$inquiryGroups = $this->findEntities($qb);
 		$this->loadDynamicFieldsForMultiple($inquiryGroups);
@@ -516,8 +516,8 @@ public function list(): array
 
 		$deleteQb = $this->db->getQueryBuilder();
 		$deleteQb->delete(InquiryGroupMisc::TABLE)
-			->where($deleteQb->expr()->eq('inquiry_group_id', $deleteQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
-			->executeStatement();
+	   ->where($deleteQb->expr()->eq('inquiry_group_id', $deleteQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
+	   ->executeStatement();
 
 		foreach ($fieldsDefinition as $fieldDef) {
 			if (!isset($fieldDef['key'])) {
@@ -538,12 +538,12 @@ public function list(): array
 
 			$insertQb = $this->db->getQueryBuilder();
 			$insertQb->insert(InquiryGroupMisc::TABLE)
-				->values([
-					'inquiry_group_id' => $insertQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
-					'key' => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-					'value' => $insertQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR),
-				])
-				->executeStatement();
+	    ->values([
+		    'inquiry_group_id' => $insertQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
+		    'key' => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+		    'value' => $insertQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR),
+	    ])
+	    ->executeStatement();
 
 			$inquiryGroup->setMiscField($key, $value);
 		}
@@ -569,28 +569,28 @@ public function list(): array
 
 			$selectQb = $this->db->getQueryBuilder();
 			$existing = $selectQb->select('id')
-				->from(InquiryGroupMisc::TABLE)
-				->where($selectQb->expr()->eq('inquiry_group_id', $selectQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
-				->andWhere($selectQb->expr()->eq('key', $selectQb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
-				->executeQuery()
-				->fetchOne();
+			->from(InquiryGroupMisc::TABLE)
+			->where($selectQb->expr()->eq('inquiry_group_id', $selectQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)))
+			->andWhere($selectQb->expr()->eq('key', $selectQb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
+			->executeQuery()
+			->fetchOne();
 
-			if ($existing !== false && $existing !== null) {
-				$updateQb = $this->db->getQueryBuilder();
-				$updateQb->update(InquiryGroupMisc::TABLE)
-					->set('value', $updateQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR))
-					->where($updateQb->expr()->eq('id', $updateQb->createNamedParameter((int) $existing, IQueryBuilder::PARAM_INT)))
-					->executeStatement();
-			} else {
-				$insertQb = $this->db->getQueryBuilder();
-				$insertQb->insert(InquiryGroupMisc::TABLE)
-					->values([
-						'inquiry_group_id' => $insertQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
-						'key' => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-						'value' => $insertQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR),
-					])
-					->executeStatement();
-			}
+		if ($existing !== false && $existing !== null) {
+			$updateQb = $this->db->getQueryBuilder();
+			$updateQb->update(InquiryGroupMisc::TABLE)
+	    ->set('value', $updateQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR))
+	    ->where($updateQb->expr()->eq('id', $updateQb->createNamedParameter((int) $existing, IQueryBuilder::PARAM_INT)))
+	    ->executeStatement();
+		} else {
+			$insertQb = $this->db->getQueryBuilder();
+			$insertQb->insert(InquiryGroupMisc::TABLE)
+	    ->values([
+		    'inquiry_group_id' => $insertQb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT),
+		    'key' => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+		    'value' => $insertQb->createNamedParameter((string) $value, IQueryBuilder::PARAM_STR),
+	    ])
+	    ->executeStatement();
+		}
 
 			$inquiryGroup->setMiscField($key, $value);
 		}
@@ -605,43 +605,43 @@ public function list(): array
 		}
 
 		switch ($type) {
-			case 'integer':
-			case 'int':
-			case 'number':
-				return (int) $value;
+		case 'integer':
+		case 'int':
+		case 'number':
+			return (int) $value;
 
-			case 'boolean':
-			case 'bool':
-			case 'checkbox':
-				return (bool) $value;
+		case 'boolean':
+		case 'bool':
+		case 'checkbox':
+			return (bool) $value;
 
-			case 'float':
-			case 'double':
-				return (float) $value;
+		case 'float':
+		case 'double':
+			return (float) $value;
 
-			case 'datetime':
-				return is_numeric($value) ? (int) $value : $value;
+		case 'datetime':
+			return is_numeric($value) ? (int) $value : $value;
 
-			case 'json':
-			case 'array':
-			case 'multiselect':
-			case 'users':
-				if (is_array($value) || is_object($value)) {
-					return json_encode($value);
-				}
+		case 'json':
+		case 'array':
+		case 'multiselect':
+		case 'users':
+			if (is_array($value) || is_object($value)) {
+				return json_encode($value);
+			}
+			return $value;
+
+		case 'enum':
+			$allowed = $fieldDef['allowed_values'] ?? [];
+			if (in_array($value, $allowed, true)) {
 				return $value;
+			}
+			return $fieldDef['default'] ?? null;
 
-			case 'enum':
-				$allowed = $fieldDef['allowed_values'] ?? [];
-				if (in_array($value, $allowed, true)) {
-					return $value;
-				}
-				return $fieldDef['default'] ?? null;
-
-			case 'string':
-			case 'text':
-			default:
-				return (string) $value;
+		case 'string':
+		case 'text':
+		default:
+		return (string) $value;
 		}
 	}
 
@@ -651,8 +651,8 @@ public function list(): array
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-			->from(InquiryGroupMisc::TABLE)
-			->where($qb->expr()->eq('inquiry_group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)));
+     ->from(InquiryGroupMisc::TABLE)
+     ->where($qb->expr()->eq('inquiry_group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)));
 
 		$stmt = $qb->executeQuery();
 		$storedData = $stmt->fetchAll();
@@ -675,8 +675,8 @@ public function list(): array
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-			->from(InquiryGroupMisc::TABLE)
-			->where($qb->expr()->in('inquiry_group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+     ->from(InquiryGroupMisc::TABLE)
+     ->where($qb->expr()->in('inquiry_group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$stmt = $qb->executeQuery();
 		$allData = $stmt->fetchAll();
@@ -704,7 +704,7 @@ public function list(): array
 	{
 		$qb = $this->db->getQueryBuilder();
 		$qb->select(self::TABLE . '.*')
-			->from($this->getTableName(), self::TABLE);
+     ->from($this->getTableName(), self::TABLE);
 
 		return $qb;
 	}
@@ -724,8 +724,8 @@ public function list(): array
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
-			->from(InquiryGroup::RELATION_TABLE)
-			->where($qb->expr()->in('group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+     ->from(InquiryGroup::RELATION_TABLE)
+     ->where($qb->expr()->in('group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$stmt = $qb->executeQuery();
 		$allData = $stmt->fetchAll();

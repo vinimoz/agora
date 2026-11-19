@@ -102,6 +102,20 @@ export interface InquiryGroupConfiguration {
   ui: InquiryGroupUIConfig;
 }
 
+export interface UpdateInquiryGroupPayload {
+  title?: string;
+  titleExt?: string;
+  description?: string;
+  type?: string;
+  parentId?: number | null;
+  ownedGroup?: string;
+  groupStatus?: InquiryGroupWorkflowStatus;
+  expire?: number | null;
+  coverId: number | null;
+  miscFields?: Record<string, unknown>;
+  configuration?: InquiryGroupConfiguration;
+}
+
 // ===== INQUIRY GROUP TYPE =====
 export interface InquiryGroupType {
   id: number | string;

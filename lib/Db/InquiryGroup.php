@@ -184,15 +184,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     }
 
 
-    public function getProtected(): bool
-    {
-        return $this->protected ?? false;
-    }
-
-    public function setProtected(bool $protected): void
-    {
-        $this->protected = $protected ?? false;
-    }
 
     // ── Support ───────────────────────────────────────────────────────
 
@@ -573,7 +564,6 @@ public function getPermissionsArray(): array
             'expire' => $this->getExpire(),
             'metadata' => $this->getMetadata(),
             'coverId' => $this->getCoverId(),
-            'protected' => $this->getProtected(),
             'inquiryIds' => $this->getInquiryIds(),
             'childs' => $this->getChilds(),
             'slug' => $this->getSlug(),

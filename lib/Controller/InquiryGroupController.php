@@ -179,8 +179,7 @@ class InquiryGroupController extends BaseController
     public function updateGroup(int $inquiryGroupId): JSONResponse
     {
         try {
-            $rawData = $this->request->getParams('updateData');
-            $data = $rawData;
+            $data = $this->request->getParams('data');
 
 	    $visibilityGroups = null;
 	    $visibilityUsers = null;
@@ -196,24 +195,26 @@ class InquiryGroupController extends BaseController
 
 	    $this->logger->error('UPDATE GROUP', ['data' => $data]);
 	    return $this->response(
-		    fn () => [
-			    'inquiryGroup' => $this->inquiryGroupService->updateGroup(
-				    inquiryGroupId: $inquiryGroupId,
-				    title: $data['title'] ?? null,
-				    titleExt: $data['titleExt'] ?? null,
-				    description: $data['description'] ?? null,
-				    type: $data['type'] ?? null,
-				    parentId: $data['parentId'] ?? null,
-				    protected: $data['protected'] ?? null,
-				    groupStatus: $data['groupStatus'] ?? null,
-				    expire: $data['expire'] ?? null,
-				    miscFields: $data['miscFields'] ?? null,
-				    visibility: $data['configuration']['visibility'] ?? null,
-				    visibilityGroups: $visibilityGroups,
-				    visibilityUsers: $visibilityUsers,
-			    ),
-		    ]
-	    );
+            fn () => [
+                'inquiryGroup' => $this->inquiryGroupService->updateGroup(
+                    inquiryGroupId: $inquiryGroupId,
+                    title: $data['title'] ?? null,
+                    titleExt: $data['titleExt'] ?? null,
+                    description: $data['description'] ?? null,
+                    type: $data['type'] ?? null,
+		    parentId: $data['parentId'] ?? null,
+		    protected: array_key_exists('protected', $data['configuration'] ?? [])
+    ? filter_var($data['configuration']['protected'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)
+    : null,
+                    groupStatus: $data['groupStatus'] ?? 'draft',
+                    expire: $data['expire'] ?? null,
+                    miscFields: $data['miscFields'] ?? null,
+                    visibility: $data['configuration']['visibility'] ?? null,
+                    visibilityGroups: $data['configuration']['visibilityGroups'] ?? null,
+                    visibilityUsers: $data['configuration']['visibilityUsers'] ?? null,
+                ),
+            ],
+        );
 	} catch (\InvalidArgumentException $e) {
 		return new JSONResponse(
 			['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],

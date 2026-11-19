@@ -7,6 +7,7 @@ import { t } from "@nextcloud/l10n";
 import { showError } from "@nextcloud/dialogs";
 import { emit } from "@nextcloud/event-bus";
 import { AxiosError } from "axios";
+import { UpdateInquiryGroupPayload } from "../Types/inquiryGroup.types.ts";
 
 import { Logger } from "../helpers/index.ts";
 import { InquiryGroupsAPI } from "../Api/index.ts";
@@ -43,7 +44,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
     description: "",
     ownedGroup: "",
     metadata: null as string | null,
-    protected_: false,
     order: 0,
     expire: null as number | null,
     type: "default",
@@ -325,7 +325,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         userId: sessionStore.currentUser.id,
         userRole: sessionStore.currentUser.type,
         canEdit: this.permissions.edit,
-        isProtected: this.protected_,
+        isProtected: this.configuration.protected,
       };
     },
 
@@ -365,7 +365,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         expire: this.expire,
         metadata: this.metadata,
         coverId: this.coverId,
-        protected: this.protected_,
+        protected: this.configuration.protected,
         inquiryIds: this.inquiryIds,
         childs: this.childs,
         slug: this.slug,
@@ -539,7 +539,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       const isOwner = this.owner.id === sessionStore.currentUser.id;
       const isAdmin = sessionStore.currentUser.isAdmin;
       const isGroupEditor = sessionStore.currentUser.isGroupEditor;
-      const isProtected = this.protected_;
+      const isProtected = this.configuration.protected;
 
       this.permissions = {
         view: true,
@@ -572,8 +572,8 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       if (data.ownedGroup !== undefined)
         this.ownedGroup = data.ownedGroup || "";
       if (data.metadata !== undefined) this.metadata = data.metadata || null;
-      if (data.protected !== undefined)
-        this.protected_ = data.protected || false;
+      if (data.configuration.protected !== undefined)
+        this.configuration.protected = data.configuration.protected || false;
       if (data.order !== undefined) this.order = data.order || 0;
       if (data.expire !== undefined) this.expire = data.expire || null;
       if (data.type !== undefined) this.type = data.type || "default";
@@ -644,7 +644,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         expire: null,
         supportEngine: [] as SupportEngine[],
         description: "",
-        protected: false,
         titleExt: null,
         ui: {
           experience: "dashboard",
@@ -671,7 +670,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       this.description = "";
       this.ownedGroup = "";
       this.metadata = null;
-      this.protected_ = false;
+      this.configuration.protected = false;
       this.order = 0;
       this.expire = null;
       this.type = "default";
@@ -786,7 +785,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
 
     /**
      * Update the current inquiry group
-     */
     async update(payload: {
       title?: string;
       titleExt?: string;
@@ -800,17 +798,17 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       configuration?: InquiryGroupConfiguration;
     }): Promise<InquiryGroup | void> {
       try {
-        const response = await InquiryGroupsAPI.updateGroup(this.id, {
-          title: payload.title ?? "",
-          titleExt: payload.titleExt ?? "",
-          description: payload.description ?? "",
-          type: payload.type,
-          parentId: payload.parentId,
-          protected: payload.protected,
-          ownedGroup: payload.ownedGroup ?? "",
-          groupStatus: payload.groupStatus ?? this.status.groupStatus,
-          expire: payload.expire,
-          configuration: payload.configuration,
+	      const response = await InquiryGroupsAPI.updateGroup(this.id, {
+      title: payload.title ?? this.title,
+      titleExt: payload.titleExt ?? this.titleExt,
+      description: payload.description ?? this.description,
+      type: payload.type ?? this.type,
+      parentId: payload.parentId ?? this.parentId,
+      protected: payload.protected ?? this.configuration.protected,
+      ownedGroup: payload.ownedGroup ?? this.ownedGroup,
+      groupStatus: payload.groupStatus ?? this.status.groupStatus,
+      expire: payload.expire ?? this.expire,
+      configuration: payload.configuration ?? this.configuration,
         } as Parameters<typeof InquiryGroupsAPI.updateGroup>[1]);
 
         if (response.data?.inquiryGroup) {
@@ -831,10 +829,36 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         throw error;
       }
     },
+*/
+async update(
+  payload: UpdateInquiryGroupPayload,
+): Promise<void> {
+  if (this.id === 0) return
+
+  this.updating = true
+
+  try {
+    const response = await InquiryGroupsAPI.updateGroup(
+      this.id,
+      payload,
+    )
+
+    if (response.data?.inquiryGroup) {
+      this.patchFromResponse(response.data.inquiryGroup)
+    }
+  } catch (error) {
+    Logger.error('Error updating inquiry group', {
+      error,
+      payload,
+    })
+    throw error
+  } finally {
+    this.updating = false
+  }
+},
 
     /**
      * Update configuration only
-     */
     async updateConfiguration(
       configUpdate: Partial<InquiryGroupConfiguration>,
     ): Promise<void> {
@@ -860,6 +884,20 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         this.updating = false;
       }
     },
+     */
+async updateConfiguration(
+  configUpdate: Partial<InquiryGroupConfiguration>,
+): Promise<void> {
+  if (this.id === 0) return
+
+  await this.update({
+    configuration: {
+      ...this.configuration,
+      ...configUpdate,
+    },
+  })
+},
+
 
     /**
      * Update visibility
@@ -964,7 +1002,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
           description: this.description,
           type: this.type,
           parentId: this.parentId || undefined,
-          protected: this.protected_,
           ownedGroup: this.ownedGroup,
           groupStatus: this.status.groupStatus,
           configuration: this.configuration,

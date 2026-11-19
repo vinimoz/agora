@@ -18,6 +18,7 @@ import { InquiryGroupsAPI } from "../Api";
 import { AxiosError } from "axios";
 import { Logger } from "../helpers";
 import { t } from "@nextcloud/l10n";
+import { UpdateInquiryGroupPayload } from "../Types/inquiryGroup.types.ts";
 
 export const useInquiryGroupsStore = defineStore("inquiryGroups", () => {
   const inquiryGroups = ref<InquiryGroup[]>([]);

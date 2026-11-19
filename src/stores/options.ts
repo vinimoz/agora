@@ -338,14 +338,84 @@ export const useOptionsStore = defineStore("options", {
   },
 
   actions: {
+    /**
+     * Add a new option to the store.
+     */
+    addOption(option: Option): void {
+        const existingIndex = this.options.findIndex(
+            (o) => o.id === option.id,
+        );
+
+        if (existingIndex !== -1) {
+            this.options[existingIndex] = option;
+            return;
+        }
+
+        this.options.push(option);
+    },
+
+    /*// Update a single option in the store
+    updateOption(payload: { option: Option }): void {
+      const index = this.options.findIndex(
+        (option) => option.id === payload.option.id,
+      );
+
+      if (index < 0) {
+        this.options.push(payload.option);
+      } else {
+        this.options.splice(index, 1, payload.option);
+      }
+
+      // Reorganize after update
+      this.organizeByFamily();
+    },*/
+
+    /**
+     * Update an existing option.
+     */
+    updateOption(option: Option): void {
+        const index = this.options.findIndex(
+            (o) => o.id === option.id,
+        );
+
+        if (index === -1) {
+            this.options.push(option);
+            return;
+        }
+
+        this.options[index] = {
+            ...this.options[index],
+            ...option,
+        };
+    },
+
+    /**
+     * Remove an option by ID.
+     */
+    removeOption(id: number): void {
+        this.options = this.options.filter(
+            (option) => option.id !== id,
+        );
+    },
+
+    /**
+     * Replace all options.
+     */
+    setOptions(options: Option[]): void {
+        this.options = options;
+    },
+
+    /**
+     * Remove all options.
+     */
+    clearOptions(): void {
+        this.options = [];
+    },
+
     reset(): void {
       this.$reset();
     },
 
-    removeOption(optionId: number): void {
-      this.options = this.options.filter((opt) => opt.id !== optionId);
-      this.organizeByFamily();
-    },
 
     forceUpdateCommentCount(optionId?: number) {
       const commentsStore = useCommentsStore();
@@ -650,21 +720,6 @@ export const useOptionsStore = defineStore("options", {
       this.groups = groups.sort((a, b) => a.id - b.id);
     },
 
-    // Update a single option in the store
-    updateOption(payload: { option: Option }): void {
-      const index = this.options.findIndex(
-        (option) => option.id === payload.option.id,
-      );
-
-      if (index < 0) {
-        this.options.push(payload.option);
-      } else {
-        this.options.splice(index, 1, payload.option);
-      }
-
-      // Reorganize after update
-      this.organizeByFamily();
-    },
 
     // Add a new option with type validation
     async add(payload: {

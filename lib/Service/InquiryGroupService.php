@@ -132,7 +132,6 @@ class InquiryGroupService
 
 		return $inquiryGroup;
 	}
-
 	public function updateGroup(
 		int $inquiryGroupId,
 		?string $title = null,
@@ -141,7 +140,7 @@ class InquiryGroupService
 		?string $type = null,
 		?int $parentId = null,
 		?bool $protected = null,
-		?string $groupStatus = null,
+		?string $groupStatus = 'draft',
 		?int $expire = null,
 		?array $miscFields = null,
 		?string $visibility = null,
@@ -194,6 +193,9 @@ class InquiryGroupService
 				$inquiryGroup->setVisibilityUsers($visibilityUsers);
 				$this->inquiryGroupMapper->saveVisibilityUsers($inquiryGroup);
 			}
+
+			$this->logger->error('WHAT WE UPDATE GROUP SERVICE', ['inquiryGroup' => $inquiryGroup]);
+
 
 			$inquiryGroup = $this->inquiryGroupMapper->update($inquiryGroup);
 

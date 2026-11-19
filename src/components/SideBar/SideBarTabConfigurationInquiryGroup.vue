@@ -37,8 +37,8 @@ const autoSaving = ref(false);
 const imageFileInput = ref<HTMLInputElement | null>(null);
 const currentCoverUrl = ref("");
 
+const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 // Auto-save debouncing
-const saveTimeout = ref<Record<string, ReturnType<typeof setTimeout>>>({});
 let lastSaveData = "";
 
 // Form validation
@@ -51,9 +51,10 @@ const formErrors = ref({
 const isProtected = computed({
   get: () => inquiryGroupStore.configuration.protected,
   set: (value: boolean) => {
-    inquiryGroupStore.configuration.protected = value;
+    inquiryGroupStore.configuration.protected = value
+    // watcher handles the save; don't call updateConfiguration here
   },
-});
+})
 
 // Computed
 const availableGroupStatuses = computed(() => [
@@ -134,10 +135,16 @@ const getSaveableData = () => ({
   title: inquiryGroupStore.title.trim(),
   titleExt: inquiryGroupStore.titleExt.trim(),
   description: inquiryGroupStore.description.trim(),
-  groupStatus: inquiryGroupStore.status.groupStatus,
+  groupStatus:
+    typeof inquiryGroupStore.status.groupStatus === 'object'
+      ? (inquiryGroupStore.status.groupStatus as any)?.id
+      : inquiryGroupStore.status.groupStatus,
   expire: inquiryGroupStore.expire,
   coverId: inquiryGroupStore.coverId,
-  protected: inquiryGroupStore.configuration.protected,
+  configuration: {
+    ...inquiryGroupStore.configuration,   
+    protected: inquiryGroupStore.configuration.protected,
+  },
 });
 
 /**
@@ -278,17 +285,13 @@ const autoSaveGroup = async () => {
 };
 
 const debouncedSave = () => {
-  if (!canEditFromContext.value) return;
-
-  // Clear any existing timeout
+  if (!canEditFromContext.value) return
   if (saveTimeout.value) {
-    clearTimeout(saveTimeout);
+    clearTimeout(saveTimeout.value)
   }
-
-  // Set new timeout for auto-save (1 second delay)
   saveTimeout.value = setTimeout(() => {
-    autoSaveGroup();
-  }, 1000);
+    autoSaveGroup()
+  }, 1000)
 };
 
 const removeCoverImage = async () => {
@@ -326,22 +329,26 @@ const getFormFieldState = (field: keyof typeof formErrors) => ({
 });
 
 // Watchers for auto-save
-watch(() => inquiryGroupStore.title, debouncedSave, { deep: true });
-watch(() => inquiryGroupStore.titleExt, debouncedSave, { deep: true });
-watch(() => inquiryGroupStore.description, debouncedSave, { deep: true });
-watch(() => inquiryGroupStore.status.groupStatus, debouncedSave, {
-  deep: true,
-});
-watch(() => inquiryGroupStore.expire, debouncedSave, { deep: true });
-watch(() => inquiryGroupStore.coverId, debouncedSave, { deep: true });
-watch(() => inquiryGroupStore.configuration.protected, debouncedSave);
+watch(
+  () => [
+    inquiryGroupStore.title,
+    inquiryGroupStore.titleExt,
+    inquiryGroupStore.description,
+    inquiryGroupStore.status.groupStatus,
+    inquiryGroupStore.expire,
+    inquiryGroupStore.coverId,
+    inquiryGroupStore.configuration.protected,
+  ],
+  debouncedSave,
+)
 
 // Cleanup on unmount
+
 onUnmounted(() => {
   if (saveTimeout.value) {
-    clearTimeout(saveTimeout);
+    clearTimeout(saveTimeout.value)
   }
-});
+})
 
 // Lifecycle
 onMounted(() => {
@@ -486,7 +493,7 @@ onMounted(() => {
           :label="t('agora', 'Title') + ' *'"
           :placeholder="t('agora', 'Enter group title')"
           :maxlength="200"
-          :disabled="!canEditFromContext || autoSaving"
+          :disabled="!canEditFromContext"
           :error="getFormFieldState('title').error"
           :success="getFormFieldState('title').success"
           :helper-text="getFormFieldState('title').helperText"
@@ -503,7 +510,7 @@ onMounted(() => {
           :label="t('agora', 'Extended title')"
           :placeholder="t('agora', 'Optional extended title')"
           :maxlength="200"
-          :disabled="!canEditFromContext || autoSaving"
+          :disabled="!canEditFromContext"
           :error="getFormFieldState('titleExt').error"
           :success="getFormFieldState('titleExt').success"
           :helper-text="getFormFieldState('titleExt').helperText"
@@ -528,7 +535,7 @@ onMounted(() => {
           v-model="inquiryGroupStore.description"
           :placeholder="t('agora', 'Enter group description …')"
           :rows="10"
-          :disabled="!canEditFromContext || autoSaving"
+          :disabled="!canEditFromContext"
           class="form-textarea large"
         />
         <div class="character-count">
@@ -559,8 +566,9 @@ onMounted(() => {
           <NcSelect
             v-model="inquiryGroupStore.status.groupStatus"
             :options="statusOptions"
+	      :value-key="'id'"
             :clearable="false"
-            :disabled="!canEditFromContext || autoSaving"
+            :disabled="!canEditFromContext"
             :label-outside="true"
             :aria-label-combobox="t('agora', 'Status')"
             class="form-select"

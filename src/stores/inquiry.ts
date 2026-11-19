@@ -497,12 +497,11 @@ export const useInquiryStore = defineStore("inquiry", {
       return debouncedUpdate();
     },
 
-    async updateMiscField(
-      key: string,
-      value: { key: string; value: string },
-    ): Promise<void> {
+    async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {
       try {
-        await InquiriesAPI.updateMiscField(this.id, value);
+	     console.log(" Misc FIELLLLLLLLLLLLD ", key)
+	     console.log(" Misc FIELLLLLLLLLLLLD ", value)
+        await InquiriesAPI.updateMiscField(this.id,  {  key,  value } );
         this.miscFields[key] = value;
         this.syncToCollectionStore();
       } catch (error) {

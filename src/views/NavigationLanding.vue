@@ -62,6 +62,13 @@ interface NavItem {
   visible?: () => boolean;
 }
 
+const selectedGroupType = computed(
+  () =>
+    (route.query.selectedGroupType as string) ||
+    currentGroup.value?.type ||
+    null,
+);
+
 /* ------------------------------------------------------------------ */
 /* MY ACTIVITY — personal shortcuts                                    */
 /* ------------------------------------------------------------------ */
@@ -403,9 +410,6 @@ function isChildActive(child: NavChild): boolean {
   return true;
 }
 
-function isSpaceFamilyActive(key: string): boolean {
-  return route.name === "group-list" && route.query.family === key;
-}
 
 function isActive(item: NavItem): boolean {
   if (item.key === "landing") {
@@ -481,11 +485,18 @@ function goToFamily(key: string) {
 function goToFamilySpaces(key: string) {
   inquiriesStore.setFamilyType(key);
   router.push({
-    name: "group-list",
-    params: { slug: "" },
+    name: "explore-spaces",              // was: "group-list"
     query: { family: key, viewMode: "group" },
   });
 }
+
+function isSpaceFamilyActive(key: string): boolean {
+  return (
+    (route.name === "explore-spaces" || route.name === "group-list") &&
+    route.query.family === key
+  );
+}
+
 
 function goToAllSpaces() {
   router.push({ name: "explore-spaces" });

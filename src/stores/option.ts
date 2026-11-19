@@ -744,10 +744,13 @@ export const useOptionStore = defineStore("option", {
           );
 
           updatedOption = response?.data?.option;
-
+	   
           if (!updatedOption?.id) {
             throw new Error("No option returned from API");
           }
+
+          const optionsStore = useOptionsStore();
+	  optionsStore.updateOption(updatedOption)
 
           return updatedOption;
         } catch (error) {
@@ -862,6 +865,9 @@ export const useOptionStore = defineStore("option", {
 
         await OptionsAPI.deleteOption(this.id);
 
+          const optionsStore = useOptionsStore();
+	  optionsStore.removeOption(this.Id)
+
         emit(Event.OptionDeleted, {
           store: "option",
           optionId: this.id,
@@ -925,6 +931,10 @@ export const useOptionStore = defineStore("option", {
           this.$patch((state) => {
             Object.assign(state, response.data.option);
           });
+
+          const optionsStore = useOptionsStore();
+	  optionsStore.updateOption(response.data.option)
+
           this.initializeTypeInfo();
           emit(Event.UpdateOptions, {
             store: "option",

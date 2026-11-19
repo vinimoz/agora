@@ -434,12 +434,15 @@ export function getAllowedResponseGroupTypes(
  * @param inquiryTypes
  */
 export function getAvailableGroupFields(
-  inquiryType: string,
-  inquiryTypes: InquiryType[],
+  inquiryGroupType: string,
+  inquiryGroupTypes: InquiryGroupType[],
 ): string[] {
-  const currentType = inquiryTypes.find((t) => t.inquiry_type === inquiryType);
+  const currentType = inquiryGroupTypes.find((t) => t.group_type === inquiryGroupType);
   if (!currentType || !currentType.fields) return [];
 
+  console.log(" GET AVAILABLE GRP FIELDS " , inquiryGroupType)
+  console.log(" GET AVAILABLE GRP FIELDS TYPES " , inquiryGroupTypes)
+  
   // Parse fields if it's a string (JSON)
   let fields: string[] = [];
   if (typeof currentType.fields === "string") {
