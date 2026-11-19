@@ -133,7 +133,7 @@
           </span>
           <span v-if="participantCount > 0" class="stat">
             <component :is="InquiryOptionIcons.Users" :size="12" />
-            {{ participantCount }} {{ t('agora', 'participants') }}
+            {{ n('agora', '%n participant', '%n participants', participantCount) }}
 	  </span>
 	</div>
       </div>
@@ -603,6 +603,7 @@ const getStatusLabel = (status?: string) => {
   const labels: Record<string, string> = {
     open: t('agora', 'Open'),
     under_discussion: t('agora', 'Under Discussion'),
+    // TRANSLATORS Status of a proposal: the point has been dealt with / taken into account
     addressed: t('agora', 'Addressed'),
     withdrawn: t('agora', 'Withdrawn'),
     accepted: t('agora', 'Accepted'),

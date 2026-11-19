@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { t } from '@nextcloud/l10n'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+import { showError, showInfo } from '@nextcloud/dialogs'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
@@ -104,7 +104,8 @@ const exportResults = async () => {
     // Simulate API call
    // await new Promise(resolve => setTimeout(resolve, 1000))
     
-    showSuccess(t('agora', 'To be implemented, results exported successfully as {format}', { 
+    // TRANSLATORS {format} is the export format in capitals, e.g. "CSV"
+    showInfo(t('agora', 'Exporting results as {format} is not available yet', { 
       format: exportFormat.value.toUpperCase() 
     }))
     
