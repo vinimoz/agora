@@ -606,7 +606,7 @@ defineExpose({ editingType, newType })
               v-model="newStatus.status_key"
               :label="t('agora', 'Status key')"
               :label-outside="true"
-              :placeholder="t('agora', 'status_key')"
+              :placeholder="'status_key'"
             />
             <NcInputField
               v-model="newStatus.label"
@@ -773,7 +773,7 @@ defineExpose({ editingType, newType })
               v-model="newStatus.status_key"
               :label="t('agora', 'Status key')"
               :label-outside="true"
-              :placeholder="t('agora', 'status_key')"
+              :placeholder="'status_key'"
             />
             <NcInputField
               v-model="newStatus.label"

@@ -7,7 +7,7 @@
     <!-- Header Section - Presentation -->
     <section class="presentation-section">
       <div class="presentation-content">
-        <h1 class="presentation-title">{{ t('agora','Présentation') }}</h1>
+        <h1 class="presentation-title">{{ t('agora', 'Presentation') }}</h1>
         
         <div v-if="group.description" class="description-container">
           <div class="description-content" :class="{ expanded: isDescriptionExpanded }">
@@ -116,7 +116,7 @@
       <!-- Right Sidebar - Fixed width, stretches to match height -->
       <aside v-if="hasSidebarInquiries" class="layout-sidebar">
         <div class="sidebar-header">
-          <h2 class="sidebar-title">{{ t('agora', 'Enquêtes') }}</h2>
+          <h2 class="sidebar-title">{{ t('agora', 'Inquiries') }}</h2>
           <span class="inquiry-count">{{ sidebarInquiries.length }}</span>
         </div>
 
