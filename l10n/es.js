@@ -402,6 +402,7 @@ OC.L10N.register(
     "Unknown" : "Desconocido",
     "Remove" : "Quitar",
     "Add" : "Añadir",
+    "Presentation" : "Presentación",
     "Show less" : "Ver menos",
     "Read more" : "Leer más",
     "{hours}h" : "{hours}h",
