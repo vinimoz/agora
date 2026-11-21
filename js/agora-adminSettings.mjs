@@ -3,7 +3,7 @@
   try {
     if (typeof document != "undefined") {
       var elementStyle = document.createElement("style");
-      elementStyle.appendChild(document.createTextNode('@charset "UTF-8";\n.use-case-selection[data-v-cbe6b281] {\n  padding: 20px;\n}\n.use-case-header[data-v-cbe6b281] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.use-case-header h2[data-v-cbe6b281] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.use-case-header .subtitle[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.use-case-grid[data-v-cbe6b281] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 20px;\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.use-case-card[data-v-cbe6b281] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.use-case-card[data-v-cbe6b281]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.use-case-card.selected[data-v-cbe6b281] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.card-icon[data-v-cbe6b281] {\n  font-size: 48px;\n  margin-bottom: 16px;\n  text-align: center;\n}\n.card-title[data-v-cbe6b281] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.card-description[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.card-examples[data-v-cbe6b281] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.card-examples li[data-v-cbe6b281] {\n  padding: 4px 0;\n  padding-left: 20px;\n  position: relative;\n}\n.card-examples li[data-v-cbe6b281]::before {\n  content: "•";\n  position: absolute;\n  left: 8px;\n  color: var(--color-primary-element);\n}\n.selected-indicator[data-v-cbe6b281] {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-indicator .check-icon[data-v-cbe6b281] {\n  font-size: 14px;\n}.template-selection[data-v-4e395d60] {\n  padding: 20px;\n}\n.template-header[data-v-4e395d60] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.template-header h2[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.template-header .subtitle[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.upload-section[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 20px;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n}\n.upload-section .upload-error[data-v-4e395d60],\n.upload-section .upload-success[data-v-4e395d60] {\n  width: 100%;\n  max-width: 600px;\n}\n.help-section[data-v-4e395d60] {\n  width: 100%;\n  max-width: 700px;\n  margin-top: 20px;\n}\n.help-content[data-v-4e395d60] {\n  margin-top: 16px;\n  padding: 20px;\n  background: var(--color-main-background);\n  border-radius: var(--border-radius-large);\n  border: 1px solid var(--color-border);\n}\n.help-actions[data-v-4e395d60] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  margin: 16px 0;\n}\n.help-instructions[data-v-4e395d60] {\n  text-align: left;\n  margin-top: 20px;\n}\n.help-instructions h4[data-v-4e395d60] {\n  font-size: 14px;\n  font-weight: 600;\n  margin: 16px 0 8px 0;\n  color: var(--color-main-text);\n}\n.help-instructions ol[data-v-4e395d60],\n.help-instructions ul[data-v-4e395d60] {\n  margin: 8px 0;\n  padding-left: 24px;\n}\n.help-instructions ol li[data-v-4e395d60],\n.help-instructions ul li[data-v-4e395d60] {\n  margin: 6px 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.help-instructions .ai-list[data-v-4e395d60] {\n  list-style: none;\n  padding-left: 0;\n}\n.help-instructions .ai-list li[data-v-4e395d60] {\n  margin: 10px 0;\n  padding-left: 12px;\n}\n.help-instructions .ai-list li strong[data-v-4e395d60] {\n  color: var(--color-main-text);\n}\n.divider[data-v-4e395d60] {\n  text-align: center;\n  margin: 30px 0;\n  position: relative;\n}\n.divider[data-v-4e395d60]::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 50%;\n  height: 1px;\n  background: var(--color-border);\n  z-index: 0;\n}\n.divider span[data-v-4e395d60] {\n  background: var(--color-main-background);\n  padding: 0 16px;\n  color: var(--color-text-maxcontrast);\n  font-size: 13px;\n  position: relative;\n  z-index: 1;\n}\n.template-list[data-v-4e395d60] {\n  display: grid;\n  gap: 16px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.template-card[data-v-4e395d60] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.template-card[data-v-4e395d60]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n}\n.template-card.selected[data-v-4e395d60] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.template-card-header[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 12px;\n}\n.template-name[data-v-4e395d60] {\n  font-size: 18px;\n  font-weight: 600;\n  margin: 0;\n}\n.template-version[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  background: var(--color-background-dark);\n  padding: 2px 8px;\n  border-radius: var(--border-radius-pill);\n}\n.template-description[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.template-meta[data-v-4e395d60] {\n  margin-bottom: 16px;\n  padding-bottom: 16px;\n  border-bottom: 1px solid var(--color-border);\n}\n.meta-item[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 8px;\n  font-size: 13px;\n}\n.meta-label[data-v-4e395d60] {\n  font-weight: 600;\n  margin-right: 8px;\n  min-width: 80px;\n}\n.meta-value[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n}\n.template-stats[data-v-4e395d60] {\n  display: flex;\n  gap: 20px;\n  justify-content: space-around;\n}\n.stat-item[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  text-align: center;\n}\n.stat-value[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  color: var(--color-primary-element);\n}\n.stat-label[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 4px;\n}\n.selected-badge[data-v-4e395d60] {\n  position: absolute;\n  top: 16px;\n  right: 16px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-badge .check-icon[data-v-4e395d60] {\n  font-size: 14px;\n}.language-selection[data-v-e6e1081e] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.language-header[data-v-e6e1081e] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.language-header h2[data-v-e6e1081e] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.language-header .subtitle[data-v-e6e1081e] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.language-note[data-v-e6e1081e] {\n  margin-bottom: 30px;\n}\n.language-grid[data-v-e6e1081e] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n  gap: 16px;\n  margin-bottom: 30px;\n}\n.language-card[data-v-e6e1081e] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.language-card[data-v-e6e1081e]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.language-card.selected[data-v-e6e1081e] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  background: var(--color-primary-element-light);\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.language-flag[data-v-e6e1081e] {\n  font-size: 32px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n  margin-bottom: 8px;\n}\n.language-name[data-v-e6e1081e] {\n  font-size: 14px;\n  font-weight: 600;\n}\n.selected-check[data-v-e6e1081e] {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  width: 24px;\n  height: 24px;\n  background: var(--color-primary-element);\n  color: white;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 14px;\n}\n.selection-summary[data-v-e6e1081e] {\n  text-align: center;\n  padding: 16px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  font-size: 16px;\n}\n.selection-summary strong[data-v-e6e1081e] {\n  margin-right: 8px;\n}.preview-step[data-v-1aff519f] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.preview-header[data-v-1aff519f] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.preview-header h2[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.preview-header .subtitle[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.loading-state[data-v-1aff519f] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-loading[data-v-1aff519f] {\n  text-align: center;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n  margin-bottom: 20px;\n}\n.analysis-loading p[data-v-1aff519f] {\n  margin-top: 12px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-error[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.duplicate-notice[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.summary-card[data-v-1aff519f] {\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 24px;\n}\n.summary-card h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n  color: var(--color-primary-element);\n}\n.summary-stats[data-v-1aff519f] {\n  display: flex;\n  gap: 32px;\n  justify-content: center;\n}\n.stat-item[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 4px;\n}\n.stat-icon[data-v-1aff519f] {\n  font-size: 32px;\n}\n.stat-value[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n}\n.stat-value.stat-new[data-v-1aff519f] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-new[data-v-1aff519f] {\n    color: #3fb950;\n}\n}\n.stat-value.stat-existing[data-v-1aff519f] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-existing[data-v-1aff519f] {\n    color: #e09b13;\n}\n}\n.stat-label[data-v-1aff519f] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  text-transform: uppercase;\n}\n.sections-container[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.section-block[data-v-1aff519f] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n}\n.section-header[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 16px 20px;\n  cursor: pointer;\n  background: var(--color-background-hover);\n  transition: background 0.2s ease;\n}\n.section-header[data-v-1aff519f]:hover {\n  background: var(--color-background-dark);\n}\n.section-title[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.section-title h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin: 0;\n}\n.section-icon[data-v-1aff519f] {\n  font-size: 20px;\n}\n.section-count[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.section-status[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  margin-left: auto;\n}\n.status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 8px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.status-badge.status-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.status-badge.status-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.expand-icon[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 12px;\n}\n.section-content[data-v-1aff519f] {\n  padding: 12px;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.item-row[data-v-1aff519f] {\n  background: var(--color-background-hover);\n  border: 1px solid var(--color-border);\n  border-radius: var(--border-radius);\n  padding: 12px 16px;\n}\n.item-view[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 16px;\n}\n.item-info[data-v-1aff519f] {\n  flex: 1;\n}\n.item-header-row[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 4px;\n}\n.item-label[data-v-1aff519f] {\n  font-size: 15px;\n  font-weight: 600;\n  flex: 1;\n}\n.item-status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 10px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.item-status-badge.badge-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.item-status-badge.badge-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.item-type[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  font-family: monospace;\n  margin-bottom: 4px;\n}\n.item-description[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 8px;\n}\n.item-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n}\n.item-edit[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n.edit-form[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.edit-field[data-v-1aff519f] {\n  width: 100%;\n}\n.edit-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  justify-content: flex-end;\n}.summary-step[data-v-13b1c365] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.summary-header[data-v-13b1c365] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.summary-header h2[data-v-13b1c365] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.summary-header .subtitle[data-v-13b1c365] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.warning-note[data-v-13b1c365] {\n  margin-bottom: 30px;\n}\n.summary-box[data-v-13b1c365] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n}\n.summary-box h3[data-v-13b1c365] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 20px;\n  text-align: center;\n  color: var(--color-primary-element);\n}\n.summary-item[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 12px 0;\n}\n.summary-item .label[data-v-13b1c365] {\n  font-weight: 600;\n  color: var(--color-text-maxcontrast);\n}\n.summary-item .value[data-v-13b1c365] {\n  font-weight: 500;\n}\n.summary-divider[data-v-13b1c365] {\n  height: 1px;\n  background: var(--color-border);\n  margin: 16px 0;\n}\n.summary-total[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 16px;\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius);\n  font-size: 18px;\n  font-weight: 600;\n}\n.summary-total .value[data-v-13b1c365] {\n  color: var(--color-primary-element);\n}.importing-step[data-v-38620be8] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 400px;\n  padding: 40px;\n}\n.importing-content[data-v-38620be8] {\n  text-align: center;\n  max-width: 500px;\n}\n.importing-content h2[data-v-38620be8] {\n  font-size: 24px;\n  font-weight: 600;\n  margin: 24px 0 16px;\n}\n.importing-content .importing-message[data-v-38620be8] {\n  font-size: 16px;\n  color: var(--color-text-maxcontrast);\n  margin-bottom: 8px;\n}\n.importing-content .importing-submessage[data-v-38620be8] {\n  font-size: 14px;\n  color: var(--color-text-maxcontrast);\n}.results-step[data-v-0e206bd8] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.results-header[data-v-0e206bd8] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.results-header .success-icon[data-v-0e206bd8],\n.results-header .warning-icon[data-v-0e206bd8] {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 48px;\n  margin: 0 auto 20px;\n}\n.results-header .success-icon[data-v-0e206bd8] {\n  background: #1a7f37;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .success-icon[data-v-0e206bd8] {\n    background: #3fb950;\n}\n}\n.results-header .warning-icon[data-v-0e206bd8] {\n  background: #9a6700;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .warning-icon[data-v-0e206bd8] {\n    background: #e09b13;\n}\n}\n.results-header h2[data-v-0e206bd8] {\n  font-size: 28px;\n  font-weight: 600;\n}\n.result-section[data-v-0e206bd8] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 20px;\n}\n.result-section h3[data-v-0e206bd8] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n}\n.result-section.success-section[data-v-0e206bd8] {\n  border-color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section[data-v-0e206bd8] {\n    border-color: #3fb950;\n}\n}\n.result-section.success-section h3[data-v-0e206bd8] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section h3[data-v-0e206bd8] {\n    color: #3fb950;\n}\n}\n.result-section.skipped-section[data-v-0e206bd8] {\n  border-color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section[data-v-0e206bd8] {\n    border-color: #e09b13;\n}\n}\n.result-section.skipped-section h3[data-v-0e206bd8] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section h3[data-v-0e206bd8] {\n    color: #e09b13;\n}\n}\n.result-section.error-section[data-v-0e206bd8] {\n  border-color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section[data-v-0e206bd8] {\n    border-color: #f85149;\n}\n}\n.result-section.error-section h3[data-v-0e206bd8] {\n  color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section h3[data-v-0e206bd8] {\n    color: #f85149;\n}\n}\n.result-list[data-v-0e206bd8] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  max-height: 200px;\n  overflow-y: auto;\n}\n.result-list li[data-v-0e206bd8] {\n  padding: 8px 12px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  margin-bottom: 8px;\n  font-size: 14px;\n  font-family: monospace;\n}\n.result-list li[data-v-0e206bd8]:last-child {\n  margin-bottom: 0;\n}\n.results-actions[data-v-0e206bd8] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  padding-top: 30px;\n  border-top: 1px solid var(--color-border);\n}.wizard-container[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  min-height: 500px;\n  padding: 20px;\n}\n.wizard-progress[data-v-d2f4206c] {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 40px;\n  padding: 0 20px;\n}\n.progress-step[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex: 1;\n  position: relative;\n}\n.progress-step[data-v-d2f4206c]:not(:last-child)::after {\n  content: "";\n  position: absolute;\n  top: 18px;\n  left: 50%;\n  right: -50%;\n  height: 2px;\n  background-color: var(--color-border-dark);\n  z-index: -1;\n}\n.progress-step.completed[data-v-d2f4206c]::after {\n  background-color: var(--color-primary-element);\n}\n.progress-dot[data-v-d2f4206c] {\n  width: 36px;\n  height: 36px;\n  border-radius: 50%;\n  background-color: var(--color-background-dark);\n  border: 2px solid var(--color-border-dark);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: 600;\n  margin-bottom: 8px;\n  position: relative;\n  z-index: 1;\n}\n.progress-step.active .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-step.completed .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-label[data-v-d2f4206c] {\n  font-size: 12px;\n  text-align: center;\n  color: var(--color-text-maxcontrast);\n}\n.progress-step.active .progress-label[data-v-d2f4206c] {\n  color: var(--color-main-text);\n  font-weight: 600;\n}\n.wizard-content[data-v-d2f4206c] {\n  flex: 1;\n  overflow-y: auto;\n  padding: 20px 0;\n}\n.wizard-actions[data-v-d2f4206c] {\n  display: flex;\n  gap: 12px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.spacer[data-v-d2f4206c] {\n  flex: 1;\n}.disclaimer_group {\n  display: flex;\n  align-items: center;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.disclaimer_group .grow_title {\n  display: flex;\n  flex-grow: 1;\n  margin-inline-end: 12px;\n}\n.disclaimer_group .grow_title .material-design-icon {\n  margin-inline-start: 4px;\n}.user_settings {\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.user_settings .job_buttons_section {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n}\n.user_settings .job_hints p {\n  margin-bottom: 0.5em;\n}\n.families-manager[data-v-b0578289] {\n  padding: 20px;\n}\n.families-list[data-v-b0578289] {\n  margin-bottom: 30px;\n}\n.families-list h3[data-v-b0578289] {\n  margin-bottom: 15px;\n  color: var(--color-text-lighter);\n}\n.family-item[data-v-b0578289] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  margin-bottom: 10px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  cursor: pointer;\n  transition: background-color 0.2s ease;\n}\n.family-item[data-v-b0578289]:hover {\n  background: var(--color-background-hover);\n}\n.family-content[data-v-b0578289] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  flex: 1;\n}\n.family-icon[data-v-b0578289] {\n  width: 50px;\n  height: 50px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 10px;\n  font-size: 24px;\n  flex-shrink: 0;\n}\n.family-info h4[data-v-b0578289] {\n  margin: 0 0 5px 0;\n  color: var(--color-text-light);\n}\n.family-type[data-v-b0578289] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.family-description[data-v-b0578289] {\n  margin: 5px 0 0 0;\n  color: var(--color-text-lighter);\n}\n.family-stats[data-v-b0578289] {\n  margin-top: 8px;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n}\n.types-count[data-v-b0578289] {\n  font-size: 0.8em;\n  color: var(--color-primary);\n  background: var(--color-primary-element-light);\n  padding: 2px 8px;\n  border-radius: 12px;\n}\n.group-types-count[data-v-b0578289] {\n  font-size: 0.8em;\n  background: #d4f5e1;\n  color: #1b7a45;\n  padding: 2px 8px;\n  border-radius: 12px;\n}\n.family-actions[data-v-b0578289] {\n  display: flex;\n  gap: 10px;\n}\n.add-family-form[data-v-b0578289] {\n  padding: 20px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-b0578289] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.form-row[data-v-b0578289] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 15px;\n  align-items: start;\n}\n.form-field[data-v-b0578289] {\n  margin: 0;\n}\n.full-width[data-v-b0578289] {\n  grid-column: 1 / -1;\n}\n.form-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-start;\n}\n.modal-overlay[data-v-b0578289] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-b0578289] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 800px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-b0578289] {\n  width: 900px;\n  max-width: 95vw;\n}\n.modal-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 20px;\n}\n\n.inquiry-types-manager[data-v-f2f32798] {\n  padding: 20px;\n  max-width: 1200px;\n}\n\n/* ============ HEADER ============ */\n.manager-header[data-v-f2f32798] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-end;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.header-text[data-v-f2f32798] {\n  flex: 1;\n  min-width: 280px;\n}\n.back-btn[data-v-f2f32798] {\n  margin-bottom: 12px;\n}\n.manager-header h2[data-v-f2f32798] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-f2f32798] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-f2f32798] {\n  display: flex;\n  align-items: flex-end;\n  gap: 16px;\n  flex-wrap: wrap;\n}\n.family-stats[data-v-f2f32798] {\n  display: flex;\n  gap: 10px;\n}\n.stat-block[data-v-f2f32798] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  min-width: 90px;\n  padding: 8px 14px;\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  border: 1px solid var(--color-border);\n}\n.stat-block.accent[data-v-f2f32798] {\n  background: var(--color-primary-element-light);\n  border-color: var(--color-primary-element);\n}\n.stat-value[data-v-f2f32798] {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: var(--color-primary);\n  line-height: 1.1;\n}\n.stat-block.accent .stat-value[data-v-f2f32798] {\n  color: var(--color-primary);\n}\n.stat-label[data-v-f2f32798] {\n  font-size: 0.72em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--color-text-lighter);\n}\n.search-field[data-v-f2f32798] {\n  width: 240px;\n}\n\n/* ============ TYPES LIST ============ */\n.types-list[data-v-f2f32798] {\n  margin-bottom: 40px;\n}\n.count-badge[data-v-f2f32798] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.type-card[data-v-f2f32798] {\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  margin-bottom: 10px;\n  overflow: hidden;\n  transition: background 0.2s;\n  border: 2px solid transparent;\n}\n.type-card[data-v-f2f32798]:hover {\n  background: var(--color-background-hover);\n}\n.type-card.expanded[data-v-f2f32798] {\n  border-color: var(--color-primary-element);\n}\n.type-row[data-v-f2f32798] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-f2f32798] {\n  width: 44px;\n  height: 44px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-f2f32798] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-f2f32798] {\n  margin: 0;\n}\n.type-key[data-v-f2f32798] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-f2f32798] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.usage-badge[data-v-f2f32798] {\n  font-size: 0.72em;\n  background: var(--color-success, #2ecc71);\n  color: white;\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.type-description[data-v-f2f32798] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-f2f32798] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.type-actions[data-v-f2f32798] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n}\n\n/* ============ DETAILS ============ */\n.type-details[data-v-f2f32798] {\n  padding: 0 16px 20px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));\n  gap: 18px;\n}\n.detail-section h5[data-v-f2f32798] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section.full-width[data-v-f2f32798] {\n  grid-column: 1 / -1;\n}\n.group-pill[data-v-f2f32798] {\n  background: var(--color-success, #2ecc71) !important;\n  color: white !important;\n}\n\n/* ============ ADD FORM ============ */\n.add-type-form[data-v-f2f32798] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 12px;\n}\n.form-grid[data-v-f2f32798] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-f2f32798] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-f2f32798] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-f2f32798] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-f2f32798] > * {\n  flex: 1;\n  min-width: 140px;\n}\n.inline-editor[data-v-f2f32798] .button-vue {\n  flex: 0 0 auto;\n}\n\n/* ============ PILLS ============ */\n.pill-list[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-f2f32798] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-f2f32798] {\n  cursor: pointer;\n}\n.pill.removable[data-v-f2f32798]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.form-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-f2f32798] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-f2f32798] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* ============ MODAL ============ */\n.modal-overlay[data-v-f2f32798] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-f2f32798] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-f2f32798] {\n  width: 1000px;\n}\n.modal-header[data-v-f2f32798] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-f2f32798] {\n  margin: 0;\n}\n.tabs[data-v-f2f32798] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n  flex-wrap: wrap;\n}\n.tab[data-v-f2f32798] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-f2f32798] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-f2f32798] {\n  min-height: 220px;\n}\n.modal-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n  padding-top: 16px;\n  border-top: 1px solid var(--color-border);\n}\n\n.option-families-manager[data-v-42dbd4d0] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n}\n.manager-header h2[data-v-42dbd4d0] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.search-field[data-v-42dbd4d0] {\n  width: 260px;\n}\n.count-badge[data-v-42dbd4d0] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.families-list[data-v-42dbd4d0] {\n  margin-bottom: 40px;\n}\n.family-card[data-v-42dbd4d0] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 12px;\n  overflow: hidden;\n  transition: background 0.15s ease;\n}\n.family-card[data-v-42dbd4d0]:hover {\n  background: var(--color-background-hover);\n}\n.family-row[data-v-42dbd4d0] {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  padding: 16px;\n  cursor: pointer;\n}\n.family-icon[data-v-42dbd4d0] {\n  width: 48px;\n  height: 48px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  border-radius: 12px;\n  flex-shrink: 0;\n}\n.family-info[data-v-42dbd4d0] {\n  flex: 1;\n  min-width: 0;\n}\n.family-title-row[data-v-42dbd4d0] {\n  display: flex;\n  align-items: baseline;\n  gap: 10px;\n}\n.family-title-row h4[data-v-42dbd4d0] {\n  margin: 0;\n}\n.family-type[data-v-42dbd4d0] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n}\n.family-description[data-v-42dbd4d0] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.family-stats[data-v-42dbd4d0] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-42dbd4d0] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.types[data-v-42dbd4d0] {\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n}\n.stat-chip.layout[data-v-42dbd4d0] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.family-actions[data-v-42dbd4d0] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.family-details[data-v-42dbd4d0] {\n  padding: 0 16px 16px 80px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-42dbd4d0] {\n  margin: 0 0 6px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section pre[data-v-42dbd4d0] {\n  background: var(--color-background-darker, #1a1a1a);\n  color: var(--color-text-light);\n  padding: 10px;\n  border-radius: 6px;\n  font-size: 0.8em;\n  overflow: auto;\n  max-height: 200px;\n  margin: 0;\n}\n.add-family-form[data-v-42dbd4d0] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 30px;\n}\n.form-grid[data-v-42dbd4d0] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.form-field[data-v-42dbd4d0] {\n  margin: 0;\n}\n.full-width[data-v-42dbd4d0] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-42dbd4d0] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-42dbd4d0] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n}\n.inline-editor .inline-input[data-v-42dbd4d0] {\n  flex: 1;\n}\n.inline-editor.action-editor[data-v-42dbd4d0] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr auto;\n  gap: 8px;\n}\n.pill-list[data-v-42dbd4d0] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-42dbd4d0] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-42dbd4d0] {\n  cursor: pointer;\n}\n.pill.removable[data-v-42dbd4d0]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.action-list[data-v-42dbd4d0] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.action-list li[data-v-42dbd4d0] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.action-list code[data-v-42dbd4d0] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-42dbd4d0] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* ============ MODAL ============ */\n.modal-overlay[data-v-42dbd4d0] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-42dbd4d0] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n}\n.modal-header[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-42dbd4d0] {\n  margin: 0;\n}\n.tabs[data-v-42dbd4d0] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n}\n.tab[data-v-42dbd4d0] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-42dbd4d0] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-42dbd4d0] {\n  min-height: 220px;\n}\n.help-text[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n  margin: 0 0 10px 0;\n}\n.json-editor[data-v-42dbd4d0] {\n  width: 100%;\n  font-family: monospace;\n  font-size: 0.85em;\n  padding: 12px;\n  border-radius: 6px;\n  border: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  color: var(--color-text-light);\n  resize: vertical;\n}\n.modal-actions[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.option-types-manager[data-v-0457f204] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-0457f204] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.manager-header h2[data-v-0457f204] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-0457f204] {\n  display: flex;\n  gap: 10px;\n  align-items: flex-end;\n}\n.filter-select[data-v-0457f204] {\n  min-width: 200px;\n}\n.search-field[data-v-0457f204] {\n  width: 240px;\n}\n.count-badge[data-v-0457f204] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.types-list[data-v-0457f204] {\n  margin-bottom: 40px;\n}\n.type-card[data-v-0457f204] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 10px;\n  overflow: hidden;\n}\n.type-card[data-v-0457f204]:hover {\n  background: var(--color-background-hover);\n}\n.type-row[data-v-0457f204] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-0457f204] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-0457f204] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-0457f204] {\n  margin: 0;\n}\n.type-key[data-v-0457f204] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-0457f204] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.type-description[data-v-0457f204] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-0457f204] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.support[data-v-0457f204] {\n  background: var(--color-success, #2ecc71);\n  color: white;\n}\n.stat-chip.title-flag[data-v-0457f204] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.type-actions[data-v-0457f204] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.type-details[data-v-0457f204] {\n  padding: 0 16px 16px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-0457f204] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.mini-table[data-v-0457f204] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.85em;\n}\n.mini-table th[data-v-0457f204],\n.mini-table td[data-v-0457f204] {\n  padding: 6px 8px;\n  text-align: left;\n  border-bottom: 1px solid var(--color-border);\n}\n.mini-table th[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  font-weight: 500;\n}\n.add-type-form[data-v-0457f204] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n}\n.form-grid[data-v-0457f204] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-0457f204] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-0457f204] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-0457f204] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-0457f204] > * {\n  flex: 1;\n  min-width: 120px;\n}\n.inline-editor.field-editor[data-v-0457f204] {\n  display: grid;\n  grid-template-columns: 1.2fr 1.2fr 1fr auto auto;\n  gap: 8px;\n  align-items: flex-end;\n}\n.pill-list[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-0457f204] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-0457f204] {\n  cursor: pointer;\n}\n.pill.removable[data-v-0457f204]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.field-list[data-v-0457f204] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.field-list li[data-v-0457f204] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list code[data-v-0457f204] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-0457f204] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-0457f204] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* MODAL */\n.modal-overlay[data-v-0457f204] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-0457f204] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-header[data-v-0457f204] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-0457f204] {\n  margin: 0;\n}\n.tabs[data-v-0457f204] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n}\n.tab[data-v-0457f204] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-0457f204] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-0457f204] {\n  min-height: 220px;\n}\n.modal-actions[data-v-0457f204] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.group-types-manager[data-v-2a51940c] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-2a51940c] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.manager-header h2[data-v-2a51940c] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-2a51940c] {\n  display: flex;\n  gap: 10px;\n  align-items: flex-end;\n}\n.filter-select[data-v-2a51940c] {\n  min-width: 200px;\n}\n.search-field[data-v-2a51940c] {\n  width: 240px;\n}\n.count-badge[data-v-2a51940c] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.types-list[data-v-2a51940c] {\n  margin-bottom: 40px;\n}\n.type-card[data-v-2a51940c] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 10px;\n  overflow: hidden;\n}\n.type-card[data-v-2a51940c]:hover {\n  background: var(--color-background-hover);\n}\n.type-row[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-2a51940c] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-2a51940c] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-2a51940c] {\n  margin: 0;\n}\n.type-key[data-v-2a51940c] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-2a51940c] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.root-badge[data-v-2a51940c] {\n  font-size: 0.72em;\n  background: var(--color-success, #2ecc71);\n  color: white;\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n}\n.type-description[data-v-2a51940c] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-2a51940c] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.layout[data-v-2a51940c] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.type-actions[data-v-2a51940c] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.type-details[data-v-2a51940c] {\n  padding: 0 16px 16px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-2a51940c] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section pre[data-v-2a51940c] {\n  background: var(--color-background-darker, #1a1a1a);\n  color: var(--color-text-light);\n  padding: 10px;\n  border-radius: 6px;\n  font-size: 0.8em;\n  overflow: auto;\n  max-height: 200px;\n  margin: 0;\n}\n.mini-table[data-v-2a51940c] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.85em;\n}\n.mini-table th[data-v-2a51940c],\n.mini-table td[data-v-2a51940c] {\n  padding: 6px 8px;\n  text-align: left;\n  border-bottom: 1px solid var(--color-border);\n}\n.mini-table th[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-weight: 500;\n}\n.add-type-form[data-v-2a51940c] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n}\n.form-grid[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-2a51940c] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-2a51940c] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-2a51940c] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-2a51940c] > * {\n  flex: 1;\n  min-width: 120px;\n}\n.inline-editor.field-editor[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: 1.2fr 1.2fr 1fr auto auto;\n  gap: 8px;\n  align-items: flex-end;\n}\n.inline-editor.action-editor[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr auto;\n  gap: 8px;\n}\n.pill-list[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-2a51940c] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-2a51940c] {\n  cursor: pointer;\n}\n.pill.removable[data-v-2a51940c]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.action-list[data-v-2a51940c] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.action-list li[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list[data-v-2a51940c] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.field-list li[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list code[data-v-2a51940c],\n.action-list code[data-v-2a51940c] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-2a51940c] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-2a51940c] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n.help-text[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n  margin: 0 0 10px 0;\n}\n\n/* MODAL */\n.modal-overlay[data-v-2a51940c] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-2a51940c] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-header[data-v-2a51940c] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-2a51940c] {\n  margin: 0;\n}\n.tabs[data-v-2a51940c] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n  flex-wrap: wrap;\n}\n.tab[data-v-2a51940c] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-2a51940c] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-2a51940c] {\n  min-height: 220px;\n}\n.json-editor[data-v-2a51940c] {\n  width: 100%;\n  font-family: monospace;\n  font-size: 0.85em;\n  padding: 12px;\n  border-radius: 6px;\n  border: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  color: var(--color-text-light);\n  resize: vertical;\n}\n.modal-actions[data-v-2a51940c] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.type-rights[data-v-60290e39] {\n  padding: 20px;\n}\n.header[data-v-60290e39] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-60290e39] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.description[data-v-60290e39] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.settings-container[data-v-60290e39] {\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.settings-list[data-v-60290e39] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.setting-item[data-v-60290e39] {\n  padding: 15px;\n  background-color: var(--color-background-darker);\n  border-radius: 8px;\n}\n.setting-item label[data-v-60290e39] {\n  display: block;\n  margin-bottom: 8px;\n  font-weight: bold;\n}\n.editor-select[data-v-60290e39] {\n  max-width: 250px;\n  margin-top: 8px;\n}\n.setting-description[data-v-60290e39] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n.engine-mode-setting[data-v-60290e39] {\n  margin-left: 24px;\n  border-left: 2px solid var(--color-border);\n  padding-left: 16px;\n}\n.setting-label[data-v-60290e39] {\n  font-weight: 600;\n  margin-bottom: 12px;\n  color: var(--color-text-lighter);\n}\n.engine-picker[data-v-60290e39] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  padding: 10px 12px;\n  background: var(--color-main-background);\n  border: 1px solid var(--color-border);\n  border-radius: 8px;\n}\n.engine-picker-info[data-v-60290e39] {\n  display: flex;\n  align-items: baseline;\n  gap: 6px;\n}\n.engine-name[data-v-60290e39] {\n  font-weight: 600;\n  color: var(--color-main-text);\n}\n.engine-id[data-v-60290e39] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n}\n\n.type-status[data-v-832d89d2] {\n  padding: 20px;\n}\n.header[data-v-832d89d2] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-832d89d2] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.description[data-v-832d89d2] {\n  margin-bottom: 25px;\n  color: var(--color-text-lighter);\n}\n.status-management[data-v-832d89d2] {\n  max-width: 1000px;\n}\n.status-list[data-v-832d89d2] {\n  margin-bottom: 30px;\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.empty-state[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n.status-items[data-v-832d89d2] {\n  display: flex;\n  flex-direction: column;\n  gap: 15px;\n}\n.status-item[data-v-832d89d2] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  background-color: var(--color-background-darker);\n  border-radius: 8px;\n  border-left: 4px solid var(--color-primary);\n}\n.status-content[data-v-832d89d2] {\n  display: flex;\n  align-items: flex-start;\n  gap: 15px;\n  flex: 1;\n}\n.status-icon[data-v-832d89d2] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background-color: var(--color-primary);\n  color: white;\n  border-radius: 8px;\n  flex-shrink: 0;\n}\n.status-icon[data-v-832d89d2] svg {\n  fill: white;\n}\n.status-info h4[data-v-832d89d2] {\n  margin: 0 0 5px 0;\n  font-weight: 600;\n}\n.status-key[data-v-832d89d2] {\n  margin: 0 0 8px 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  font-family: monospace;\n}\n.status-description[data-v-832d89d2] {\n  margin: 0 0 10px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.95em;\n}\n.status-properties[data-v-832d89d2] {\n  display: flex;\n  gap: 10px;\n}\n.status-badge[data-v-832d89d2] {\n  padding: 4px 8px;\n  border-radius: 12px;\n  font-size: 0.8em;\n  font-weight: 600;\n}\n.status-badge.final[data-v-832d89d2] {\n  background-color: var(--color-success);\n  color: white;\n}\n.status-badge.non-final[data-v-832d89d2] {\n  background-color: var(--color-warning);\n  color: white;\n}\n.status-actions[data-v-832d89d2] {\n  display: flex;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.add-status-form[data-v-832d89d2] {\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-832d89d2] {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 20px;\n  align-items: start;\n}\n.checkbox-field[data-v-832d89d2] {\n  grid-column: span 2;\n}\n.field-description[data-v-832d89d2] {\n  margin: 5px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n}\n.modal-overlay[data-v-832d89d2] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 1000;\n}\n.modal-content[data-v-832d89d2] {\n  background-color: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 600px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-actions[data-v-832d89d2] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.no-selection[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n@media (max-width: 768px) {\n.form-grid[data-v-832d89d2] {\n    grid-template-columns: 1fr;\n}\n.status-item[data-v-832d89d2] {\n    flex-direction: column;\n    align-items: stretch;\n    gap: 15px;\n}\n.status-actions[data-v-832d89d2] {\n    justify-content: center;\n}\n}\n\n.type-settings-modal[data-v-077dce28] {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  min-height: 600px;\n  width: 100%;\n}\n.modal-header[data-v-077dce28] {\n  padding: 25px;\n  border-bottom: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  flex-shrink: 0;\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.type-info[data-v-077dce28] {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n}\n.type-icon[data-v-077dce28] {\n  width: 60px;\n  height: 60px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 12px;\n  font-size: 28px;\n  flex-shrink: 0;\n}\n.type-details h3[data-v-077dce28] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-light);\n  font-size: 1.5em;\n  font-weight: 600;\n}\n.type-key[data-v-077dce28] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 1em;\n  background: var(--color-background-darker);\n  padding: 4px 8px;\n  border-radius: 4px;\n  display: inline-block;\n}\n.close-button[data-v-077dce28] {\n  background: var(--color-background-darker);\n  border: 1px solid var(--color-border);\n  padding: 8px 16px;\n  border-radius: 4px;\n  cursor: pointer;\n  color: var(--color-text-light);\n}\n.close-button[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n}\n\n/* Menu simple */\n.simple-menu[data-v-077dce28] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n}\n.menu-item[data-v-077dce28] {\n  flex: 1;\n  background: none;\n  border: none;\n  padding: 16px 20px;\n  color: var(--color-text-lighter);\n  cursor: pointer;\n  transition: all 0.2s ease;\n  border-bottom: 3px solid transparent;\n  font-size: 1em;\n  font-weight: 500;\n}\n.menu-item[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n}\n.menu-item.active[data-v-077dce28] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  background: var(--color-background-darker);\n}\n\n/* Contenu */\n.settings-content[data-v-077dce28] {\n  flex: 1;\n  padding: 30px;\n  overflow-y: auto;\n  background: var(--color-main-background);\n}\n\n.admin-settings-container[data-v-cd782848] {\n  min-height: 600px;\n  background: var(--color-main-background);\n  padding: 20px;\n}\n\n/* ---------- LEVEL 1 ---------- */\n.domain-tabs[data-v-cd782848] {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 24px;\n}\n.domain-tab[data-v-cd782848] {\n  flex: 1;\n  padding: 14px 20px;\n  background: var(--color-background-dark);\n  border: 2px solid transparent;\n  border-radius: 8px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  font-size: 1.05em;\n  font-weight: 600;\n  text-align: center;\n  transition: all 0.15s ease;\n}\n.domain-tab[data-v-cd782848]:hover {\n  background: var(--color-background-hover);\n  color: var(--color-main-text);\n}\n.domain-tab.active[data-v-cd782848] {\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  border-color: var(--color-primary);\n}\n\n/* ---------- LEVEL 2 — Family header ---------- */\n.family-header[data-v-cd782848] {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n  padding: 16px 20px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 16px;\n}\n.family-title[data-v-cd782848] {\n  display: flex;\n  align-items: baseline;\n  gap: 10px;\n  flex: 1;\n  min-width: 0;\n}\n.family-title h2[data-v-cd782848] {\n  margin: 0;\n  font-size: 1.15em;\n}\n.family-key[data-v-cd782848] {\n  font-size: 0.85em;\n  background: var(--color-background-hover);\n  padding: 2px 8px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n\n/* ---------- LEVEL 2 — Sub-tabs ---------- */\n.sub-tabs[data-v-cd782848] {\n  display: flex;\n  gap: 2px;\n  border-bottom: 2px solid var(--color-border);\n  margin-bottom: 24px;\n}\n.sub-tabs.single[data-v-cd782848] {\n  border-bottom: 1px solid var(--color-border);\n}\n.sub-tab[data-v-cd782848] {\n  background: transparent;\n  border: none;\n  padding: 12px 22px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 3px solid transparent;\n  font-size: 0.95em;\n  font-weight: 500;\n  margin-bottom: -2px;\n  transition: all 0.15s ease;\n}\n.sub-tab[data-v-cd782848]:hover:not(:disabled) {\n  color: var(--color-main-text);\n  background: var(--color-background-hover);\n}\n.sub-tab.active[data-v-cd782848] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.sub-tab[data-v-cd782848]:disabled {\n  cursor: default;\n  opacity: 1;\n}\n\n/* ---------- Content ---------- */\n.settings-content[data-v-cd782848] {\n  flex: 1;\n  overflow-y: auto;\n}\n[data-v-cd782848] .large-modal {\n  --width: 95vw;\n  --height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n[data-v-cd782848] .large-modal .modal-container {\n  width: 95vw;\n  height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n\n.tree-item[data-v-37a5142a] {\n  margin-bottom: 8px;\n}\n.tree-node[data-v-37a5142a] {\n  display: flex;\n  align-items: center;\n  padding: 8px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.tree-label[data-v-37a5142a] {\n  flex-grow: 1;\n  font-weight: bold;\n}\n.tree-actions[data-v-37a5142a] {\n  display: flex;\n  gap: 8px;\n}\n.tree-children[data-v-37a5142a] {\n  margin-left: 20px;\n  margin-top: 8px;\n}\n\n.category-location-manager[data-v-da2e3bfe] {\n  padding: 0;\n  max-width: 1200px;\n  margin: 0 auto;\n  height: auto;\n  min-height: 80vh;\n  background: var(--color-main-background);\n  border-radius: 12px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n}\n\n/* Menu simple appliqué aux tabs - Style forcé */\n.tabs[data-v-da2e3bfe] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n  border-radius: 12px 12px 0 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n  flex: 1 !important;\n  background: none !important;\n  border: none !important;\n  padding: 16px 20px !important;\n  color: var(--color-text-lighter) !important;\n  cursor: pointer;\n  transition: all 0.2s ease !important;\n  border-bottom: 3px solid transparent !important;\n  font-size: 1em !important;\n  font-weight: 500 !important;\n  margin: 0 !important;\n  border-radius: 0 !important;\n  box-shadow: none !important;\n  min-height: auto !important;\n  display: flex !important;\n  align-items: center !important;\n  justify-content: center !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue:hover {\n  background: var(--color-background-hover) !important;\n  color: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n  color: var(--color-primary) !important;\n  border-bottom-color: var(--color-primary) !important;\n  background: var(--color-background-darker) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary {\n  --button-background-hover: var(--color-background-hover) !important;\n  --button-color-hover: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary.active {\n  --button-background: var(--color-background-darker) !important;\n  --button-color: var(--color-primary) !important;\n  --button-border-color: transparent !important;\n}\n.tab-content[data-v-da2e3bfe] {\n  margin-top: 0;\n  background: var(--color-main-background);\n  border-radius: 0 0 12px 12px;\n  padding: 30px;\n  height: auto;\n  overflow: visible;\n  flex: 1;\n}\n.add-form[data-v-da2e3bfe] {\n  margin-bottom: 30px;\n  padding: 25px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  border: 1px solid var(--color-border);\n}\n.add-form h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n}\n.form-fields[data-v-da2e3bfe] {\n  display: flex;\n  gap: 15px;\n  align-items: end;\n  flex-wrap: wrap;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n.form-fields .nc-select[data-v-da2e3bfe] {\n  flex: 1;\n  min-width: 200px;\n}\n.tree-view[data-v-da2e3bfe] {\n  margin-top: 30px;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tree-view h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n  padding-bottom: 10px;\n  border-bottom: 2px solid var(--color-border);\n}\n.tree-container[data-v-da2e3bfe] {\n  margin-top: 15px;\n  border: 1px solid var(--color-border);\n  border-radius: 8px;\n  padding: 20px;\n  background: var(--color-background-dark);\n  max-height: 500px;\n  overflow-y: auto;\n  flex: 1;\n}\n.loading[data-v-da2e3bfe],\n.error[data-v-da2e3bfe] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n  font-size: 16px;\n}\n.error[data-v-da2e3bfe] {\n  color: var(--color-error);\n  background: var(--color-error-background);\n  border: 1px solid var(--color-error-border);\n  border-radius: 8px;\n  margin: 20px 0;\n}\n.modal[data-v-da2e3bfe] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n  backdrop-filter: blur(4px);\n}\n.modal-content[data-v-da2e3bfe] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  min-width: 400px;\n  max-width: 500px;\n  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);\n  border: 1px solid var(--color-border);\n  max-height: 80vh;\n  overflow-y: auto;\n}\n.modal-content h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 20px;\n}\n.modal-actions[data-v-da2e3bfe] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 12px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  max-height: calc(100vh - 100px);\n  overflow-y: auto;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n/* Responsive design */\n@media (max-width: 768px) {\n.category-location-manager[data-v-da2e3bfe] {\n    padding: 0;\n    min-height: auto;\n    margin: 10px;\n}\n.tabs[data-v-da2e3bfe] {\n    flex-direction: column;\n    gap: 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n    padding: 16px 20px !important;\n    border-bottom: 2px solid transparent !important;\n    border-right: 3px solid transparent !important;\n    text-align: left !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n    border-bottom-color: transparent !important;\n    border-right-color: var(--color-primary) !important;\n}\n.tab-content[data-v-da2e3bfe] {\n    padding: 20px;\n}\n.form-fields[data-v-da2e3bfe] {\n    flex-direction: column;\n    align-items: stretch;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n  .form-fields .nc-select[data-v-da2e3bfe] {\n    min-width: auto;\n}\n.modal-content[data-v-da2e3bfe] {\n    min-width: auto;\n    margin: 20px;\n    padding: 20px;\n    max-height: 70vh;\n}\n.tree-container[data-v-da2e3bfe] {\n    max-height: 400px;\n}\n}\n.tab-content[data-v-da2e3bfe] {\n  animation: fadeIn-da2e3bfe 0.3s ease-in-out;\n}\n@keyframes fadeIn-da2e3bfe {\nfrom {\n    opacity: 0;\n    transform: translateY(10px);\n}\nto {\n    opacity: 1;\n    transform: translateY(0);\n}\n}\n.category-location-manager[data-v-da2e3bfe] {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tab-content[data-v-da2e3bfe] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n.rights-management[data-v-fb7cbc5e] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-fb7cbc5e] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-fb7cbc5e] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-fb7cbc5e] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-fb7cbc5e] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n\n.rights-management[data-v-14c25bb2] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-14c25bb2] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-14c25bb2] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-14c25bb2] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-14c25bb2] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n.clean-instance-section[data-v-ee1ac32d] {\n  margin-top: 24px;\n  border: 2px solid var(--color-error);\n}\n.clean-instance-section .danger-warning[data-v-ee1ac32d] {\n  background-color: var(--color-background-darker);\n  padding: 16px;\n  border-radius: 8px;\n}\n.clean-instance-section .danger-warning .warning-title[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  font-size: 1.2em;\n  margin-bottom: 12px;\n}\n.clean-instance-section .danger-warning .warning-highlight[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  margin: 8px 0;\n}\n.clean-instance-section .job_buttons_section[data-v-ee1ac32d] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n  padding: 0 16px 16px 16px;\n}\n.clean-instance-section .danger-icon[data-v-ee1ac32d] {\n  margin-right: 4px;\n}'));
+      elementStyle.appendChild(document.createTextNode('@charset "UTF-8";\n.use-case-selection[data-v-cbe6b281] {\n  padding: 20px;\n}\n.use-case-header[data-v-cbe6b281] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.use-case-header h2[data-v-cbe6b281] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.use-case-header .subtitle[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.use-case-grid[data-v-cbe6b281] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 20px;\n  max-width: 1200px;\n  margin: 0 auto;\n}\n.use-case-card[data-v-cbe6b281] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.use-case-card[data-v-cbe6b281]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.use-case-card.selected[data-v-cbe6b281] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.card-icon[data-v-cbe6b281] {\n  font-size: 48px;\n  margin-bottom: 16px;\n  text-align: center;\n}\n.card-title[data-v-cbe6b281] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.card-description[data-v-cbe6b281] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.card-examples[data-v-cbe6b281] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.card-examples li[data-v-cbe6b281] {\n  padding: 4px 0;\n  padding-left: 20px;\n  position: relative;\n}\n.card-examples li[data-v-cbe6b281]::before {\n  content: "•";\n  position: absolute;\n  left: 8px;\n  color: var(--color-primary-element);\n}\n.selected-indicator[data-v-cbe6b281] {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-indicator .check-icon[data-v-cbe6b281] {\n  font-size: 14px;\n}.template-selection[data-v-4e395d60] {\n  padding: 20px;\n}\n.template-header[data-v-4e395d60] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.template-header h2[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.template-header .subtitle[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.upload-section[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 20px;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n}\n.upload-section .upload-error[data-v-4e395d60],\n.upload-section .upload-success[data-v-4e395d60] {\n  width: 100%;\n  max-width: 600px;\n}\n.help-section[data-v-4e395d60] {\n  width: 100%;\n  max-width: 700px;\n  margin-top: 20px;\n}\n.help-content[data-v-4e395d60] {\n  margin-top: 16px;\n  padding: 20px;\n  background: var(--color-main-background);\n  border-radius: var(--border-radius-large);\n  border: 1px solid var(--color-border);\n}\n.help-actions[data-v-4e395d60] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  margin: 16px 0;\n}\n.help-instructions[data-v-4e395d60] {\n  text-align: left;\n  margin-top: 20px;\n}\n.help-instructions h4[data-v-4e395d60] {\n  font-size: 14px;\n  font-weight: 600;\n  margin: 16px 0 8px 0;\n  color: var(--color-main-text);\n}\n.help-instructions ol[data-v-4e395d60],\n.help-instructions ul[data-v-4e395d60] {\n  margin: 8px 0;\n  padding-left: 24px;\n}\n.help-instructions ol li[data-v-4e395d60],\n.help-instructions ul li[data-v-4e395d60] {\n  margin: 6px 0;\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n}\n.help-instructions .ai-list[data-v-4e395d60] {\n  list-style: none;\n  padding-left: 0;\n}\n.help-instructions .ai-list li[data-v-4e395d60] {\n  margin: 10px 0;\n  padding-left: 12px;\n}\n.help-instructions .ai-list li strong[data-v-4e395d60] {\n  color: var(--color-main-text);\n}\n.divider[data-v-4e395d60] {\n  text-align: center;\n  margin: 30px 0;\n  position: relative;\n}\n.divider[data-v-4e395d60]::before {\n  content: "";\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 50%;\n  height: 1px;\n  background: var(--color-border);\n  z-index: 0;\n}\n.divider span[data-v-4e395d60] {\n  background: var(--color-main-background);\n  padding: 0 16px;\n  color: var(--color-text-maxcontrast);\n  font-size: 13px;\n  position: relative;\n  z-index: 1;\n}\n.template-list[data-v-4e395d60] {\n  display: grid;\n  gap: 16px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.template-card[data-v-4e395d60] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.template-card[data-v-4e395d60]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n}\n.template-card.selected[data-v-4e395d60] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.template-card-header[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 12px;\n}\n.template-name[data-v-4e395d60] {\n  font-size: 18px;\n  font-weight: 600;\n  margin: 0;\n}\n.template-version[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  background: var(--color-background-dark);\n  padding: 2px 8px;\n  border-radius: var(--border-radius-pill);\n}\n.template-description[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n  margin-bottom: 16px;\n}\n.template-meta[data-v-4e395d60] {\n  margin-bottom: 16px;\n  padding-bottom: 16px;\n  border-bottom: 1px solid var(--color-border);\n}\n.meta-item[data-v-4e395d60] {\n  display: flex;\n  align-items: center;\n  margin-bottom: 8px;\n  font-size: 13px;\n}\n.meta-label[data-v-4e395d60] {\n  font-weight: 600;\n  margin-right: 8px;\n  min-width: 80px;\n}\n.meta-value[data-v-4e395d60] {\n  color: var(--color-text-maxcontrast);\n}\n.template-stats[data-v-4e395d60] {\n  display: flex;\n  gap: 20px;\n  justify-content: space-around;\n}\n.stat-item[data-v-4e395d60] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  text-align: center;\n}\n.stat-value[data-v-4e395d60] {\n  font-size: 24px;\n  font-weight: 600;\n  color: var(--color-primary-element);\n}\n.stat-label[data-v-4e395d60] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 4px;\n}\n.selected-badge[data-v-4e395d60] {\n  position: absolute;\n  top: 16px;\n  right: 16px;\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  padding: 4px 12px;\n  border-radius: var(--border-radius-pill);\n  font-size: 12px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.selected-badge .check-icon[data-v-4e395d60] {\n  font-size: 14px;\n}.language-selection[data-v-e6e1081e] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.language-header[data-v-e6e1081e] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.language-header h2[data-v-e6e1081e] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.language-header .subtitle[data-v-e6e1081e] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.language-note[data-v-e6e1081e] {\n  margin-bottom: 30px;\n}\n.language-grid[data-v-e6e1081e] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n  gap: 16px;\n  margin-bottom: 30px;\n}\n.language-card[data-v-e6e1081e] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n}\n.language-card[data-v-e6e1081e]:hover {\n  border-color: var(--color-primary-element);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n  transform: translateY(-2px);\n}\n.language-card.selected[data-v-e6e1081e] {\n  border-color: var(--color-primary-element);\n  border-width: 3px;\n  background: var(--color-primary-element-light);\n  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);\n}\n.language-flag[data-v-e6e1081e] {\n  font-size: 32px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n  margin-bottom: 8px;\n}\n.language-name[data-v-e6e1081e] {\n  font-size: 14px;\n  font-weight: 600;\n}\n.selected-check[data-v-e6e1081e] {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  width: 24px;\n  height: 24px;\n  background: var(--color-primary-element);\n  color: white;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 14px;\n}\n.selection-summary[data-v-e6e1081e] {\n  text-align: center;\n  padding: 16px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  font-size: 16px;\n}\n.selection-summary strong[data-v-e6e1081e] {\n  margin-right: 8px;\n}.preview-step[data-v-1aff519f] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.preview-header[data-v-1aff519f] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.preview-header h2[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.preview-header .subtitle[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.loading-state[data-v-1aff519f] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-loading[data-v-1aff519f] {\n  text-align: center;\n  padding: 20px;\n  background: var(--color-background-hover);\n  border-radius: var(--border-radius-large);\n  margin-bottom: 20px;\n}\n.analysis-loading p[data-v-1aff519f] {\n  margin-top: 12px;\n  color: var(--color-text-maxcontrast);\n}\n.analysis-error[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.duplicate-notice[data-v-1aff519f] {\n  margin-bottom: 20px;\n}\n.summary-card[data-v-1aff519f] {\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 24px;\n}\n.summary-card h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n  color: var(--color-primary-element);\n}\n.summary-stats[data-v-1aff519f] {\n  display: flex;\n  gap: 32px;\n  justify-content: center;\n}\n.stat-item[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 4px;\n}\n.stat-icon[data-v-1aff519f] {\n  font-size: 32px;\n}\n.stat-value[data-v-1aff519f] {\n  font-size: 24px;\n  font-weight: 700;\n  color: var(--color-primary-element);\n}\n.stat-value.stat-new[data-v-1aff519f] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-new[data-v-1aff519f] {\n    color: #3fb950;\n}\n}\n.stat-value.stat-existing[data-v-1aff519f] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.stat-value.stat-existing[data-v-1aff519f] {\n    color: #e09b13;\n}\n}\n.stat-label[data-v-1aff519f] {\n  font-size: 12px;\n  color: var(--color-text-maxcontrast);\n  text-transform: uppercase;\n}\n.sections-container[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.section-block[data-v-1aff519f] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n}\n.section-header[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 16px 20px;\n  cursor: pointer;\n  background: var(--color-background-hover);\n  transition: background 0.2s ease;\n}\n.section-header[data-v-1aff519f]:hover {\n  background: var(--color-background-dark);\n}\n.section-title[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.section-title h3[data-v-1aff519f] {\n  font-size: 16px;\n  font-weight: 600;\n  margin: 0;\n}\n.section-icon[data-v-1aff519f] {\n  font-size: 20px;\n}\n.section-count[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.section-status[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  margin-left: auto;\n}\n.status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 8px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.status-badge.status-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.status-badge.status-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.expand-icon[data-v-1aff519f] {\n  color: var(--color-text-maxcontrast);\n  font-size: 12px;\n}\n.section-content[data-v-1aff519f] {\n  padding: 12px;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.item-row[data-v-1aff519f] {\n  background: var(--color-background-hover);\n  border: 1px solid var(--color-border);\n  border-radius: var(--border-radius);\n  padding: 12px 16px;\n}\n.item-view[data-v-1aff519f] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 16px;\n}\n.item-info[data-v-1aff519f] {\n  flex: 1;\n}\n.item-header-row[data-v-1aff519f] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 4px;\n}\n.item-label[data-v-1aff519f] {\n  font-size: 15px;\n  font-weight: 600;\n  flex: 1;\n}\n.item-status-badge[data-v-1aff519f] {\n  font-size: 11px;\n  padding: 3px 10px;\n  border-radius: var(--border-radius-pill);\n  font-weight: 600;\n}\n.item-status-badge.badge-new[data-v-1aff519f] {\n  background-color: rgba(var(--color-success-rgb), 0.15);\n  color: var(--color-success-text);\n  border: 1px solid var(--color-success);\n}\n.item-status-badge.badge-existing[data-v-1aff519f] {\n  background-color: rgba(var(--color-warning-rgb), 0.15);\n  color: var(--color-warning-text);\n  border: 1px solid var(--color-warning);\n}\n.item-type[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  font-family: monospace;\n  margin-bottom: 4px;\n}\n.item-description[data-v-1aff519f] {\n  font-size: 13px;\n  color: var(--color-text-maxcontrast);\n  margin-top: 8px;\n}\n.item-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n}\n.item-edit[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n.edit-form[data-v-1aff519f] {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n.edit-field[data-v-1aff519f] {\n  width: 100%;\n}\n.edit-actions[data-v-1aff519f] {\n  display: flex;\n  gap: 8px;\n  justify-content: flex-end;\n}.summary-step[data-v-13b1c365] {\n  padding: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n}\n.summary-header[data-v-13b1c365] {\n  text-align: center;\n  margin-bottom: 30px;\n}\n.summary-header h2[data-v-13b1c365] {\n  font-size: 24px;\n  font-weight: 600;\n  margin-bottom: 8px;\n}\n.summary-header .subtitle[data-v-13b1c365] {\n  color: var(--color-text-maxcontrast);\n  font-size: 14px;\n}\n.warning-note[data-v-13b1c365] {\n  margin-bottom: 30px;\n}\n.summary-box[data-v-13b1c365] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 24px;\n}\n.summary-box h3[data-v-13b1c365] {\n  font-size: 18px;\n  font-weight: 600;\n  margin-bottom: 20px;\n  text-align: center;\n  color: var(--color-primary-element);\n}\n.summary-item[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 12px 0;\n}\n.summary-item .label[data-v-13b1c365] {\n  font-weight: 600;\n  color: var(--color-text-maxcontrast);\n}\n.summary-item .value[data-v-13b1c365] {\n  font-weight: 500;\n}\n.summary-divider[data-v-13b1c365] {\n  height: 1px;\n  background: var(--color-border);\n  margin: 16px 0;\n}\n.summary-total[data-v-13b1c365] {\n  display: flex;\n  justify-content: space-between;\n  padding: 16px;\n  background: var(--color-primary-element-light);\n  border-radius: var(--border-radius);\n  font-size: 18px;\n  font-weight: 600;\n}\n.summary-total .value[data-v-13b1c365] {\n  color: var(--color-primary-element);\n}.importing-step[data-v-38620be8] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 400px;\n  padding: 40px;\n}\n.importing-content[data-v-38620be8] {\n  text-align: center;\n  max-width: 500px;\n}\n.importing-content h2[data-v-38620be8] {\n  font-size: 24px;\n  font-weight: 600;\n  margin: 24px 0 16px;\n}\n.importing-content .importing-message[data-v-38620be8] {\n  font-size: 16px;\n  color: var(--color-text-maxcontrast);\n  margin-bottom: 8px;\n}\n.importing-content .importing-submessage[data-v-38620be8] {\n  font-size: 14px;\n  color: var(--color-text-maxcontrast);\n}.results-step[data-v-0e206bd8] {\n  padding: 20px;\n  max-width: 900px;\n  margin: 0 auto;\n}\n.results-header[data-v-0e206bd8] {\n  text-align: center;\n  margin-bottom: 40px;\n}\n.results-header .success-icon[data-v-0e206bd8],\n.results-header .warning-icon[data-v-0e206bd8] {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 48px;\n  margin: 0 auto 20px;\n}\n.results-header .success-icon[data-v-0e206bd8] {\n  background: #1a7f37;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .success-icon[data-v-0e206bd8] {\n    background: #3fb950;\n}\n}\n.results-header .warning-icon[data-v-0e206bd8] {\n  background: #9a6700;\n  color: white;\n}\n@media (prefers-color-scheme: dark) {\n.results-header .warning-icon[data-v-0e206bd8] {\n    background: #e09b13;\n}\n}\n.results-header h2[data-v-0e206bd8] {\n  font-size: 28px;\n  font-weight: 600;\n}\n.result-section[data-v-0e206bd8] {\n  background: var(--color-main-background);\n  border: 2px solid var(--color-border);\n  border-radius: var(--border-radius-large);\n  padding: 20px;\n  margin-bottom: 20px;\n}\n.result-section h3[data-v-0e206bd8] {\n  font-size: 16px;\n  font-weight: 600;\n  margin-bottom: 16px;\n}\n.result-section.success-section[data-v-0e206bd8] {\n  border-color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section[data-v-0e206bd8] {\n    border-color: #3fb950;\n}\n}\n.result-section.success-section h3[data-v-0e206bd8] {\n  color: #1a7f37;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.success-section h3[data-v-0e206bd8] {\n    color: #3fb950;\n}\n}\n.result-section.skipped-section[data-v-0e206bd8] {\n  border-color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section[data-v-0e206bd8] {\n    border-color: #e09b13;\n}\n}\n.result-section.skipped-section h3[data-v-0e206bd8] {\n  color: #9a6700;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.skipped-section h3[data-v-0e206bd8] {\n    color: #e09b13;\n}\n}\n.result-section.error-section[data-v-0e206bd8] {\n  border-color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section[data-v-0e206bd8] {\n    border-color: #f85149;\n}\n}\n.result-section.error-section h3[data-v-0e206bd8] {\n  color: #d73a49;\n}\n@media (prefers-color-scheme: dark) {\n.result-section.error-section h3[data-v-0e206bd8] {\n    color: #f85149;\n}\n}\n.result-list[data-v-0e206bd8] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  max-height: 200px;\n  overflow-y: auto;\n}\n.result-list li[data-v-0e206bd8] {\n  padding: 8px 12px;\n  background: var(--color-background-dark);\n  border-radius: var(--border-radius);\n  margin-bottom: 8px;\n  font-size: 14px;\n  font-family: monospace;\n}\n.result-list li[data-v-0e206bd8]:last-child {\n  margin-bottom: 0;\n}\n.results-actions[data-v-0e206bd8] {\n  display: flex;\n  gap: 12px;\n  justify-content: center;\n  padding-top: 30px;\n  border-top: 1px solid var(--color-border);\n}.wizard-container[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  min-height: 500px;\n  padding: 20px;\n}\n.wizard-progress[data-v-d2f4206c] {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 40px;\n  padding: 0 20px;\n}\n.progress-step[data-v-d2f4206c] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  flex: 1;\n  position: relative;\n}\n.progress-step[data-v-d2f4206c]:not(:last-child)::after {\n  content: "";\n  position: absolute;\n  top: 18px;\n  left: 50%;\n  right: -50%;\n  height: 2px;\n  background-color: var(--color-border-dark);\n  z-index: -1;\n}\n.progress-step.completed[data-v-d2f4206c]::after {\n  background-color: var(--color-primary-element);\n}\n.progress-dot[data-v-d2f4206c] {\n  width: 36px;\n  height: 36px;\n  border-radius: 50%;\n  background-color: var(--color-background-dark);\n  border: 2px solid var(--color-border-dark);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: 600;\n  margin-bottom: 8px;\n  position: relative;\n  z-index: 1;\n}\n.progress-step.active .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-step.completed .progress-dot[data-v-d2f4206c] {\n  background-color: var(--color-primary-element);\n  border-color: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n}\n.progress-label[data-v-d2f4206c] {\n  font-size: 12px;\n  text-align: center;\n  color: var(--color-text-maxcontrast);\n}\n.progress-step.active .progress-label[data-v-d2f4206c] {\n  color: var(--color-main-text);\n  font-weight: 600;\n}\n.wizard-content[data-v-d2f4206c] {\n  flex: 1;\n  overflow-y: auto;\n  padding: 20px 0;\n}\n.wizard-actions[data-v-d2f4206c] {\n  display: flex;\n  gap: 12px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.spacer[data-v-d2f4206c] {\n  flex: 1;\n}.disclaimer_group {\n  display: flex;\n  align-items: center;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.disclaimer_group .grow_title {\n  display: flex;\n  flex-grow: 1;\n  margin-inline-end: 12px;\n}\n.disclaimer_group .grow_title .material-design-icon {\n  margin-inline-start: 4px;\n}.user_settings {\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.user_settings .job_buttons_section {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n}\n.user_settings .job_hints p {\n  margin-bottom: 0.5em;\n}\n.families-manager[data-v-b0578289] {\n  padding: 20px;\n}\n.families-list[data-v-b0578289] {\n  margin-bottom: 30px;\n}\n.families-list h3[data-v-b0578289] {\n  margin-bottom: 15px;\n  color: var(--color-text-lighter);\n}\n.family-item[data-v-b0578289] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  margin-bottom: 10px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  cursor: pointer;\n  transition: background-color 0.2s ease;\n}\n.family-item[data-v-b0578289]:hover {\n  background: var(--color-background-hover);\n}\n.family-content[data-v-b0578289] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  flex: 1;\n}\n.family-icon[data-v-b0578289] {\n  width: 50px;\n  height: 50px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 10px;\n  font-size: 24px;\n  flex-shrink: 0;\n}\n.family-info h4[data-v-b0578289] {\n  margin: 0 0 5px 0;\n  color: var(--color-text-light);\n}\n.family-type[data-v-b0578289] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.family-description[data-v-b0578289] {\n  margin: 5px 0 0 0;\n  color: var(--color-text-lighter);\n}\n.family-stats[data-v-b0578289] {\n  margin-top: 8px;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n}\n.types-count[data-v-b0578289] {\n  font-size: 0.8em;\n  color: var(--color-primary);\n  background: var(--color-primary-element-light);\n  padding: 2px 8px;\n  border-radius: 12px;\n}\n.group-types-count[data-v-b0578289] {\n  font-size: 0.8em;\n  background: #d4f5e1;\n  color: #1b7a45;\n  padding: 2px 8px;\n  border-radius: 12px;\n}\n.family-actions[data-v-b0578289] {\n  display: flex;\n  gap: 10px;\n}\n.add-family-form[data-v-b0578289] {\n  padding: 20px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-b0578289] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.form-row[data-v-b0578289] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 15px;\n  align-items: start;\n}\n.form-field[data-v-b0578289] {\n  margin: 0;\n}\n.full-width[data-v-b0578289] {\n  grid-column: 1 / -1;\n}\n.form-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-start;\n}\n.modal-overlay[data-v-b0578289] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-b0578289] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 800px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-b0578289] {\n  width: 900px;\n  max-width: 95vw;\n}\n.modal-actions[data-v-b0578289] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 20px;\n}\n\n.inquiry-types-manager[data-v-f2f32798] {\n  padding: 20px;\n  max-width: 1200px;\n}\n\n/* ============ HEADER ============ */\n.manager-header[data-v-f2f32798] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-end;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.header-text[data-v-f2f32798] {\n  flex: 1;\n  min-width: 280px;\n}\n.back-btn[data-v-f2f32798] {\n  margin-bottom: 12px;\n}\n.manager-header h2[data-v-f2f32798] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-f2f32798] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-f2f32798] {\n  display: flex;\n  align-items: flex-end;\n  gap: 16px;\n  flex-wrap: wrap;\n}\n.family-stats[data-v-f2f32798] {\n  display: flex;\n  gap: 10px;\n}\n.stat-block[data-v-f2f32798] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  min-width: 90px;\n  padding: 8px 14px;\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  border: 1px solid var(--color-border);\n}\n.stat-block.accent[data-v-f2f32798] {\n  background: var(--color-primary-element-light);\n  border-color: var(--color-primary-element);\n}\n.stat-value[data-v-f2f32798] {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: var(--color-primary);\n  line-height: 1.1;\n}\n.stat-block.accent .stat-value[data-v-f2f32798] {\n  color: var(--color-primary);\n}\n.stat-label[data-v-f2f32798] {\n  font-size: 0.72em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--color-text-lighter);\n}\n.search-field[data-v-f2f32798] {\n  width: 240px;\n}\n\n/* ============ TYPES LIST ============ */\n.types-list[data-v-f2f32798] {\n  margin-bottom: 40px;\n}\n.count-badge[data-v-f2f32798] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.type-card[data-v-f2f32798] {\n  background: var(--color-background-dark);\n  border-radius: 12px;\n  margin-bottom: 10px;\n  overflow: hidden;\n  transition: background 0.2s;\n  border: 2px solid transparent;\n}\n.type-card[data-v-f2f32798]:hover {\n  background: var(--color-background-hover);\n}\n.type-card.expanded[data-v-f2f32798] {\n  border-color: var(--color-primary-element);\n}\n.type-row[data-v-f2f32798] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-f2f32798] {\n  width: 44px;\n  height: 44px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-f2f32798] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-f2f32798] {\n  margin: 0;\n}\n.type-key[data-v-f2f32798] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-f2f32798] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.usage-badge[data-v-f2f32798] {\n  font-size: 0.72em;\n  background: var(--color-success, #2ecc71);\n  color: white;\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.type-description[data-v-f2f32798] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-f2f32798] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.type-actions[data-v-f2f32798] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n}\n\n/* ============ DETAILS ============ */\n.type-details[data-v-f2f32798] {\n  padding: 0 16px 20px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));\n  gap: 18px;\n}\n.detail-section h5[data-v-f2f32798] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section.full-width[data-v-f2f32798] {\n  grid-column: 1 / -1;\n}\n.group-pill[data-v-f2f32798] {\n  background: var(--color-success, #2ecc71) !important;\n  color: white !important;\n}\n\n/* ============ ADD FORM ============ */\n.add-type-form[data-v-f2f32798] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 12px;\n}\n.form-grid[data-v-f2f32798] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-f2f32798] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-f2f32798] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-f2f32798] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-f2f32798] > * {\n  flex: 1;\n  min-width: 140px;\n}\n.inline-editor[data-v-f2f32798] .button-vue {\n  flex: 0 0 auto;\n}\n\n/* ============ PILLS ============ */\n.pill-list[data-v-f2f32798] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-f2f32798] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-f2f32798] {\n  cursor: pointer;\n}\n.pill.removable[data-v-f2f32798]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.form-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-f2f32798] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-f2f32798] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* ============ MODAL ============ */\n.modal-overlay[data-v-f2f32798] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-f2f32798] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-content.large-modal[data-v-f2f32798] {\n  width: 1000px;\n}\n.modal-header[data-v-f2f32798] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-f2f32798] {\n  margin: 0;\n}\n.tabs[data-v-f2f32798] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n  flex-wrap: wrap;\n}\n.tab[data-v-f2f32798] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-f2f32798] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-f2f32798] {\n  min-height: 220px;\n}\n.modal-actions[data-v-f2f32798] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n  padding-top: 16px;\n  border-top: 1px solid var(--color-border);\n}\n\n.option-families-manager[data-v-42dbd4d0] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n}\n.manager-header h2[data-v-42dbd4d0] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.search-field[data-v-42dbd4d0] {\n  width: 260px;\n}\n.count-badge[data-v-42dbd4d0] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.families-list[data-v-42dbd4d0] {\n  margin-bottom: 40px;\n}\n.family-card[data-v-42dbd4d0] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 12px;\n  overflow: hidden;\n  transition: background 0.15s ease;\n}\n.family-card[data-v-42dbd4d0]:hover {\n  background: var(--color-background-hover);\n}\n.family-row[data-v-42dbd4d0] {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  padding: 16px;\n  cursor: pointer;\n}\n.family-icon[data-v-42dbd4d0] {\n  width: 48px;\n  height: 48px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  border-radius: 12px;\n  flex-shrink: 0;\n}\n.family-info[data-v-42dbd4d0] {\n  flex: 1;\n  min-width: 0;\n}\n.family-title-row[data-v-42dbd4d0] {\n  display: flex;\n  align-items: baseline;\n  gap: 10px;\n}\n.family-title-row h4[data-v-42dbd4d0] {\n  margin: 0;\n}\n.family-type[data-v-42dbd4d0] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n}\n.family-description[data-v-42dbd4d0] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.family-stats[data-v-42dbd4d0] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-42dbd4d0] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.types[data-v-42dbd4d0] {\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n}\n.stat-chip.layout[data-v-42dbd4d0] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.family-actions[data-v-42dbd4d0] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.family-details[data-v-42dbd4d0] {\n  padding: 0 16px 16px 80px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-42dbd4d0] {\n  margin: 0 0 6px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section pre[data-v-42dbd4d0] {\n  background: var(--color-background-darker, #1a1a1a);\n  color: var(--color-text-light);\n  padding: 10px;\n  border-radius: 6px;\n  font-size: 0.8em;\n  overflow: auto;\n  max-height: 200px;\n  margin: 0;\n}\n.add-family-form[data-v-42dbd4d0] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 30px;\n}\n.form-grid[data-v-42dbd4d0] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.form-field[data-v-42dbd4d0] {\n  margin: 0;\n}\n.full-width[data-v-42dbd4d0] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-42dbd4d0] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-42dbd4d0] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n}\n.inline-editor .inline-input[data-v-42dbd4d0] {\n  flex: 1;\n}\n.inline-editor.action-editor[data-v-42dbd4d0] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr auto;\n  gap: 8px;\n}\n.pill-list[data-v-42dbd4d0] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-42dbd4d0] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-42dbd4d0] {\n  cursor: pointer;\n}\n.pill.removable[data-v-42dbd4d0]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.action-list[data-v-42dbd4d0] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.action-list li[data-v-42dbd4d0] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.action-list code[data-v-42dbd4d0] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-42dbd4d0] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* ============ MODAL ============ */\n.modal-overlay[data-v-42dbd4d0] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-42dbd4d0] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n}\n.modal-header[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-42dbd4d0] {\n  margin: 0;\n}\n.tabs[data-v-42dbd4d0] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n}\n.tab[data-v-42dbd4d0] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-42dbd4d0] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-42dbd4d0] {\n  min-height: 220px;\n}\n.help-text[data-v-42dbd4d0] {\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n  margin: 0 0 10px 0;\n}\n.json-editor[data-v-42dbd4d0] {\n  width: 100%;\n  font-family: monospace;\n  font-size: 0.85em;\n  padding: 12px;\n  border-radius: 6px;\n  border: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  color: var(--color-text-light);\n  resize: vertical;\n}\n.modal-actions[data-v-42dbd4d0] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.option-types-manager[data-v-0457f204] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-0457f204] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.manager-header h2[data-v-0457f204] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-0457f204] {\n  display: flex;\n  gap: 10px;\n  align-items: flex-end;\n}\n.filter-select[data-v-0457f204] {\n  min-width: 200px;\n}\n.search-field[data-v-0457f204] {\n  width: 240px;\n}\n.count-badge[data-v-0457f204] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.types-list[data-v-0457f204] {\n  margin-bottom: 40px;\n}\n.type-card[data-v-0457f204] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 10px;\n  overflow: hidden;\n}\n.type-card[data-v-0457f204]:hover {\n  background: var(--color-background-hover);\n}\n.type-row[data-v-0457f204] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-0457f204] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-0457f204] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-0457f204] {\n  margin: 0;\n}\n.type-key[data-v-0457f204] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-0457f204] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.type-description[data-v-0457f204] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-0457f204] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.support[data-v-0457f204] {\n  background: var(--color-success, #2ecc71);\n  color: white;\n}\n.stat-chip.title-flag[data-v-0457f204] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.type-actions[data-v-0457f204] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.type-details[data-v-0457f204] {\n  padding: 0 16px 16px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-0457f204] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.mini-table[data-v-0457f204] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.85em;\n}\n.mini-table th[data-v-0457f204],\n.mini-table td[data-v-0457f204] {\n  padding: 6px 8px;\n  text-align: left;\n  border-bottom: 1px solid var(--color-border);\n}\n.mini-table th[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  font-weight: 500;\n}\n.add-type-form[data-v-0457f204] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n}\n.form-grid[data-v-0457f204] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-0457f204] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-0457f204] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-0457f204] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-0457f204] > * {\n  flex: 1;\n  min-width: 120px;\n}\n.inline-editor.field-editor[data-v-0457f204] {\n  display: grid;\n  grid-template-columns: 1.2fr 1.2fr 1fr auto auto;\n  gap: 8px;\n  align-items: flex-end;\n}\n.pill-list[data-v-0457f204] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-0457f204] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-0457f204] {\n  cursor: pointer;\n}\n.pill.removable[data-v-0457f204]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.field-list[data-v-0457f204] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.field-list li[data-v-0457f204] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list code[data-v-0457f204] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-0457f204] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-0457f204] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-0457f204] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n\n/* MODAL */\n.modal-overlay[data-v-0457f204] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-0457f204] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-header[data-v-0457f204] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-0457f204] {\n  margin: 0;\n}\n.tabs[data-v-0457f204] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n}\n.tab[data-v-0457f204] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-0457f204] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-0457f204] {\n  min-height: 220px;\n}\n.modal-actions[data-v-0457f204] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.group-types-manager[data-v-2a51940c] {\n  padding: 20px;\n  max-width: 1200px;\n}\n.manager-header[data-v-2a51940c] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 20px;\n  margin-bottom: 30px;\n  flex-wrap: wrap;\n}\n.manager-header h2[data-v-2a51940c] {\n  margin: 0 0 6px 0;\n}\n.description[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  margin: 0;\n  max-width: 720px;\n}\n.header-actions[data-v-2a51940c] {\n  display: flex;\n  gap: 10px;\n  align-items: flex-end;\n}\n.filter-select[data-v-2a51940c] {\n  min-width: 200px;\n}\n.search-field[data-v-2a51940c] {\n  width: 240px;\n}\n.count-badge[data-v-2a51940c] {\n  font-size: 0.8em;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 2px 8px;\n  border-radius: 10px;\n  margin-left: 8px;\n}\n.types-list[data-v-2a51940c] {\n  margin-bottom: 40px;\n}\n.type-card[data-v-2a51940c] {\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 10px;\n  overflow: hidden;\n}\n.type-card[data-v-2a51940c]:hover {\n  background: var(--color-background-hover);\n}\n.type-row[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  padding: 14px 16px;\n  cursor: pointer;\n}\n.type-icon[data-v-2a51940c] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  border-radius: 10px;\n  flex-shrink: 0;\n}\n.type-info[data-v-2a51940c] {\n  flex: 1;\n  min-width: 0;\n}\n.type-title-row[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  gap: 8px;\n}\n.type-title-row h4[data-v-2a51940c] {\n  margin: 0;\n}\n.type-key[data-v-2a51940c] {\n  font-size: 0.82em;\n  background: var(--color-background-hover);\n  padding: 2px 6px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n.family-badge[data-v-2a51940c] {\n  font-size: 0.75em;\n  background: var(--color-primary);\n  color: var(--color-primary-text);\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.root-badge[data-v-2a51940c] {\n  font-size: 0.72em;\n  background: var(--color-success, #2ecc71);\n  color: white;\n  padding: 2px 8px;\n  border-radius: 10px;\n  text-transform: uppercase;\n}\n.type-description[data-v-2a51940c] {\n  margin: 4px 0 0 0;\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n}\n.type-stats[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 8px;\n}\n.stat-chip[data-v-2a51940c] {\n  font-size: 0.78em;\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n  padding: 2px 8px;\n  border-radius: 10px;\n}\n.stat-chip.layout[data-v-2a51940c] {\n  background: var(--color-warning, #f5a623);\n  color: white;\n}\n.type-actions[data-v-2a51940c] {\n  display: flex;\n  gap: 6px;\n  flex-shrink: 0;\n}\n.type-details[data-v-2a51940c] {\n  padding: 0 16px 16px 70px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n  gap: 16px;\n}\n.detail-section h5[data-v-2a51940c] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.85em;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n}\n.detail-section pre[data-v-2a51940c] {\n  background: var(--color-background-darker, #1a1a1a);\n  color: var(--color-text-light);\n  padding: 10px;\n  border-radius: 6px;\n  font-size: 0.8em;\n  overflow: auto;\n  max-height: 200px;\n  margin: 0;\n}\n.mini-table[data-v-2a51940c] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.85em;\n}\n.mini-table th[data-v-2a51940c],\n.mini-table td[data-v-2a51940c] {\n  padding: 6px 8px;\n  text-align: left;\n  border-bottom: 1px solid var(--color-border);\n}\n.mini-table th[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-weight: 500;\n}\n.add-type-form[data-v-2a51940c] {\n  padding: 24px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n}\n.form-grid[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n}\n.full-width[data-v-2a51940c] {\n  grid-column: 1 / -1;\n}\n.field-label[data-v-2a51940c] {\n  display: block;\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-bottom: 6px;\n  font-weight: 500;\n}\n.inline-editor[data-v-2a51940c] {\n  display: flex;\n  gap: 8px;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.inline-editor[data-v-2a51940c] > * {\n  flex: 1;\n  min-width: 120px;\n}\n.inline-editor.field-editor[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: 1.2fr 1.2fr 1fr auto auto;\n  gap: 8px;\n  align-items: flex-end;\n}\n.inline-editor.action-editor[data-v-2a51940c] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr auto;\n  gap: 8px;\n}\n.pill-list[data-v-2a51940c] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 10px;\n  padding: 0;\n  list-style: none;\n}\n.pill[data-v-2a51940c] {\n  display: inline-block;\n  background: var(--color-primary-element-light);\n  color: var(--color-primary);\n  padding: 3px 10px;\n  border-radius: 12px;\n  font-size: 0.82em;\n}\n.pill.removable[data-v-2a51940c] {\n  cursor: pointer;\n}\n.pill.removable[data-v-2a51940c]:hover {\n  background: var(--color-error);\n  color: white;\n}\n.action-list[data-v-2a51940c] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.action-list li[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list[data-v-2a51940c] {\n  list-style: none;\n  padding: 0;\n  margin: 10px 0 0 0;\n}\n.field-list li[data-v-2a51940c] {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 0;\n  border-bottom: 1px solid var(--color-border);\n  font-size: 0.9em;\n}\n.field-list code[data-v-2a51940c],\n.action-list code[data-v-2a51940c] {\n  background: var(--color-background-hover);\n  padding: 1px 6px;\n  border-radius: 4px;\n  font-size: 0.85em;\n}\n.form-actions[data-v-2a51940c] {\n  display: flex;\n  justify-content: flex-start;\n}\n.empty-state[data-v-2a51940c] {\n  padding: 30px;\n  text-align: center;\n  color: var(--color-text-lighter);\n  background: var(--color-background-dark);\n  border-radius: 8px;\n}\n.muted[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-style: italic;\n  font-size: 0.9em;\n}\n.help-text[data-v-2a51940c] {\n  color: var(--color-text-lighter);\n  font-size: 0.9em;\n  margin: 0 0 10px 0;\n}\n\n/* MODAL */\n.modal-overlay[data-v-2a51940c] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-2a51940c] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 900px;\n  max-width: 95vw;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-header[data-v-2a51940c] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 16px;\n}\n.modal-header h3[data-v-2a51940c] {\n  margin: 0;\n}\n.tabs[data-v-2a51940c] {\n  display: flex;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 20px;\n  flex-wrap: wrap;\n}\n.tab[data-v-2a51940c] {\n  background: transparent;\n  border: none;\n  padding: 10px 16px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 2px solid transparent;\n  text-transform: capitalize;\n}\n.tab.active[data-v-2a51940c] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-panel[data-v-2a51940c] {\n  min-height: 220px;\n}\n.json-editor[data-v-2a51940c] {\n  width: 100%;\n  font-family: monospace;\n  font-size: 0.85em;\n  padding: 12px;\n  border-radius: 6px;\n  border: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  color: var(--color-text-light);\n  resize: vertical;\n}\n.modal-actions[data-v-2a51940c] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 24px;\n}\n\n.type-rights[data-v-60290e39] {\n  padding: 20px;\n}\n.header[data-v-60290e39] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-60290e39] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.description[data-v-60290e39] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.settings-container[data-v-60290e39] {\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.settings-list[data-v-60290e39] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.setting-item[data-v-60290e39] {\n  padding: 15px;\n  background-color: var(--color-background-darker);\n  border-radius: 8px;\n}\n.setting-item label[data-v-60290e39] {\n  display: block;\n  margin-bottom: 8px;\n  font-weight: bold;\n}\n.editor-select[data-v-60290e39] {\n  max-width: 250px;\n  margin-top: 8px;\n}\n.setting-description[data-v-60290e39] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n.engine-mode-setting[data-v-60290e39] {\n  margin-left: 24px;\n  border-left: 2px solid var(--color-border);\n  padding-left: 16px;\n}\n.setting-label[data-v-60290e39] {\n  font-weight: 600;\n  margin-bottom: 12px;\n  color: var(--color-text-lighter);\n}\n.engine-picker[data-v-60290e39] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  padding: 10px 12px;\n  background: var(--color-main-background);\n  border: 1px solid var(--color-border);\n  border-radius: 8px;\n}\n.engine-picker-info[data-v-60290e39] {\n  display: flex;\n  align-items: baseline;\n  gap: 6px;\n}\n.engine-name[data-v-60290e39] {\n  font-weight: 600;\n  color: var(--color-main-text);\n}\n.engine-id[data-v-60290e39] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n}\n\n.type-status[data-v-832d89d2] {\n  padding: 20px;\n}\n.header[data-v-832d89d2] {\n  display: flex;\n  align-items: center;\n  gap: 15px;\n  margin-bottom: 25px;\n}\n.header h2[data-v-832d89d2] {\n  margin: 0;\n  color: var(--color-text-light);\n}\n.description[data-v-832d89d2] {\n  margin-bottom: 25px;\n  color: var(--color-text-lighter);\n}\n.status-management[data-v-832d89d2] {\n  max-width: 1000px;\n}\n.status-list[data-v-832d89d2] {\n  margin-bottom: 30px;\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.empty-state[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n.status-items[data-v-832d89d2] {\n  display: flex;\n  flex-direction: column;\n  gap: 15px;\n}\n.status-item[data-v-832d89d2] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 15px;\n  background-color: var(--color-background-darker);\n  border-radius: 8px;\n  border-left: 4px solid var(--color-primary);\n}\n.status-content[data-v-832d89d2] {\n  display: flex;\n  align-items: flex-start;\n  gap: 15px;\n  flex: 1;\n}\n.status-icon[data-v-832d89d2] {\n  width: 40px;\n  height: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background-color: var(--color-primary);\n  color: white;\n  border-radius: 8px;\n  flex-shrink: 0;\n}\n.status-icon[data-v-832d89d2] svg {\n  fill: white;\n}\n.status-info h4[data-v-832d89d2] {\n  margin: 0 0 5px 0;\n  font-weight: 600;\n}\n.status-key[data-v-832d89d2] {\n  margin: 0 0 8px 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  font-family: monospace;\n}\n.status-description[data-v-832d89d2] {\n  margin: 0 0 10px 0;\n  color: var(--color-text-lighter);\n  font-size: 0.95em;\n}\n.status-properties[data-v-832d89d2] {\n  display: flex;\n  gap: 10px;\n}\n.status-badge[data-v-832d89d2] {\n  padding: 4px 8px;\n  border-radius: 12px;\n  font-size: 0.8em;\n  font-weight: 600;\n}\n.status-badge.final[data-v-832d89d2] {\n  background-color: var(--color-success);\n  color: white;\n}\n.status-badge.non-final[data-v-832d89d2] {\n  background-color: var(--color-warning);\n  color: white;\n}\n.status-actions[data-v-832d89d2] {\n  display: flex;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.add-status-form[data-v-832d89d2] {\n  padding: 20px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.form-grid[data-v-832d89d2] {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 20px;\n  align-items: start;\n}\n.checkbox-field[data-v-832d89d2] {\n  grid-column: span 2;\n}\n.field-description[data-v-832d89d2] {\n  margin: 5px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n}\n.modal-overlay[data-v-832d89d2] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  z-index: 1000;\n}\n.modal-content[data-v-832d89d2] {\n  background-color: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  width: 600px;\n  max-width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n.modal-actions[data-v-832d89d2] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.no-selection[data-v-832d89d2] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n}\n@media (max-width: 768px) {\n.form-grid[data-v-832d89d2] {\n    grid-template-columns: 1fr;\n}\n.status-item[data-v-832d89d2] {\n    flex-direction: column;\n    align-items: stretch;\n    gap: 15px;\n}\n.status-actions[data-v-832d89d2] {\n    justify-content: center;\n}\n}\n\n.type-settings-modal[data-v-077dce28] {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  min-height: 600px;\n  width: 100%;\n}\n.modal-header[data-v-077dce28] {\n  padding: 25px;\n  border-bottom: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  flex-shrink: 0;\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.type-info[data-v-077dce28] {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n}\n.type-icon[data-v-077dce28] {\n  width: 60px;\n  height: 60px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-primary);\n  color: white;\n  border-radius: 12px;\n  font-size: 28px;\n  flex-shrink: 0;\n}\n.type-details h3[data-v-077dce28] {\n  margin: 0 0 8px 0;\n  color: var(--color-text-light);\n  font-size: 1.5em;\n  font-weight: 600;\n}\n.type-key[data-v-077dce28] {\n  margin: 0;\n  font-family: monospace;\n  color: var(--color-text-lighter);\n  font-size: 1em;\n  background: var(--color-background-darker);\n  padding: 4px 8px;\n  border-radius: 4px;\n  display: inline-block;\n}\n.close-button[data-v-077dce28] {\n  background: var(--color-background-darker);\n  border: 1px solid var(--color-border);\n  padding: 8px 16px;\n  border-radius: 4px;\n  cursor: pointer;\n  color: var(--color-text-light);\n}\n.close-button[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n}\n\n/* Menu simple */\n.simple-menu[data-v-077dce28] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n}\n.menu-item[data-v-077dce28] {\n  flex: 1;\n  background: none;\n  border: none;\n  padding: 16px 20px;\n  color: var(--color-text-lighter);\n  cursor: pointer;\n  transition: all 0.2s ease;\n  border-bottom: 3px solid transparent;\n  font-size: 1em;\n  font-weight: 500;\n}\n.menu-item[data-v-077dce28]:hover {\n  background: var(--color-background-hover);\n  color: var(--color-text-light);\n}\n.menu-item.active[data-v-077dce28] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  background: var(--color-background-darker);\n}\n\n/* Contenu */\n.settings-content[data-v-077dce28] {\n  flex: 1;\n  padding: 30px;\n  overflow-y: auto;\n  background: var(--color-main-background);\n}\n\n.admin-settings-container[data-v-cd782848] {\n  min-height: 600px;\n  background: var(--color-main-background);\n  padding: 20px;\n}\n\n/* ---------- LEVEL 1 ---------- */\n.domain-tabs[data-v-cd782848] {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 24px;\n}\n.domain-tab[data-v-cd782848] {\n  flex: 1;\n  padding: 14px 20px;\n  background: var(--color-background-dark);\n  border: 2px solid transparent;\n  border-radius: 8px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  font-size: 1.05em;\n  font-weight: 600;\n  text-align: center;\n  transition: all 0.15s ease;\n}\n.domain-tab[data-v-cd782848]:hover {\n  background: var(--color-background-hover);\n  color: var(--color-main-text);\n}\n.domain-tab.active[data-v-cd782848] {\n  background: var(--color-primary-element);\n  color: var(--color-primary-element-text);\n  border-color: var(--color-primary);\n}\n\n/* ---------- LEVEL 2 — Family header ---------- */\n.family-header[data-v-cd782848] {\n  display: flex;\n  align-items: center;\n  gap: 20px;\n  padding: 16px 20px;\n  background: var(--color-background-dark);\n  border-radius: 10px;\n  margin-bottom: 16px;\n}\n.family-title[data-v-cd782848] {\n  display: flex;\n  align-items: baseline;\n  gap: 10px;\n  flex: 1;\n  min-width: 0;\n}\n.family-title h2[data-v-cd782848] {\n  margin: 0;\n  font-size: 1.15em;\n}\n.family-key[data-v-cd782848] {\n  font-size: 0.85em;\n  background: var(--color-background-hover);\n  padding: 2px 8px;\n  border-radius: 4px;\n  color: var(--color-text-lighter);\n}\n\n/* ---------- LEVEL 2 — Sub-tabs ---------- */\n.sub-tabs[data-v-cd782848] {\n  display: flex;\n  gap: 2px;\n  border-bottom: 2px solid var(--color-border);\n  margin-bottom: 24px;\n}\n.sub-tabs.single[data-v-cd782848] {\n  border-bottom: 1px solid var(--color-border);\n}\n.sub-tab[data-v-cd782848] {\n  background: transparent;\n  border: none;\n  padding: 12px 22px;\n  cursor: pointer;\n  color: var(--color-text-lighter);\n  border-bottom: 3px solid transparent;\n  font-size: 0.95em;\n  font-weight: 500;\n  margin-bottom: -2px;\n  transition: all 0.15s ease;\n}\n.sub-tab[data-v-cd782848]:hover:not(:disabled) {\n  color: var(--color-main-text);\n  background: var(--color-background-hover);\n}\n.sub-tab.active[data-v-cd782848] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.sub-tab[data-v-cd782848]:disabled {\n  cursor: default;\n  opacity: 1;\n}\n\n/* ---------- Content ---------- */\n.settings-content[data-v-cd782848] {\n  flex: 1;\n  overflow-y: auto;\n}\n[data-v-cd782848] .large-modal {\n  --width: 95vw;\n  --height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n[data-v-cd782848] .large-modal .modal-container {\n  width: 95vw;\n  height: 90vh;\n  max-width: 1200px;\n  max-height: 800px;\n}\n\n.tree-item[data-v-37a5142a] {\n  margin-bottom: 8px;\n}\n.tree-node[data-v-37a5142a] {\n  display: flex;\n  align-items: center;\n  padding: 8px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.tree-label[data-v-37a5142a] {\n  flex-grow: 1;\n  font-weight: bold;\n}\n.tree-actions[data-v-37a5142a] {\n  display: flex;\n  gap: 8px;\n}\n.tree-children[data-v-37a5142a] {\n  margin-left: 20px;\n  margin-top: 8px;\n}\n\n.category-location-manager[data-v-da2e3bfe] {\n  padding: 0;\n  max-width: 1200px;\n  margin: 0 auto;\n  height: auto;\n  min-height: 80vh;\n  background: var(--color-main-background);\n  border-radius: 12px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n}\n\n/* Menu simple appliqué aux tabs - Style forcé */\n.tabs[data-v-da2e3bfe] {\n  display: flex;\n  background: var(--color-background-dark);\n  border-bottom: 1px solid var(--color-border);\n  padding: 0;\n  flex-shrink: 0;\n  border-radius: 12px 12px 0 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n  flex: 1 !important;\n  background: none !important;\n  border: none !important;\n  padding: 16px 20px !important;\n  color: var(--color-text-lighter) !important;\n  cursor: pointer;\n  transition: all 0.2s ease !important;\n  border-bottom: 3px solid transparent !important;\n  font-size: 1em !important;\n  font-weight: 500 !important;\n  margin: 0 !important;\n  border-radius: 0 !important;\n  box-shadow: none !important;\n  min-height: auto !important;\n  display: flex !important;\n  align-items: center !important;\n  justify-content: center !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue:hover {\n  background: var(--color-background-hover) !important;\n  color: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n  color: var(--color-primary) !important;\n  border-bottom-color: var(--color-primary) !important;\n  background: var(--color-background-darker) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary {\n  --button-background-hover: var(--color-background-hover) !important;\n  --button-color-hover: var(--color-text-light) !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue--vue-secondary.active {\n  --button-background: var(--color-background-darker) !important;\n  --button-color: var(--color-primary) !important;\n  --button-border-color: transparent !important;\n}\n.tab-content[data-v-da2e3bfe] {\n  margin-top: 0;\n  background: var(--color-main-background);\n  border-radius: 0 0 12px 12px;\n  padding: 30px;\n  height: auto;\n  overflow: visible;\n  flex: 1;\n}\n.add-form[data-v-da2e3bfe] {\n  margin-bottom: 30px;\n  padding: 25px;\n  background: var(--color-background-dark);\n  border-radius: 8px;\n  border: 1px solid var(--color-border);\n}\n.add-form h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n}\n.form-fields[data-v-da2e3bfe] {\n  display: flex;\n  gap: 15px;\n  align-items: end;\n  flex-wrap: wrap;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n.form-fields .nc-select[data-v-da2e3bfe] {\n  flex: 1;\n  min-width: 200px;\n}\n.tree-view[data-v-da2e3bfe] {\n  margin-top: 30px;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tree-view h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 18px;\n  padding-bottom: 10px;\n  border-bottom: 2px solid var(--color-border);\n}\n.tree-container[data-v-da2e3bfe] {\n  margin-top: 15px;\n  border: 1px solid var(--color-border);\n  border-radius: 8px;\n  padding: 20px;\n  background: var(--color-background-dark);\n  max-height: 500px;\n  overflow-y: auto;\n  flex: 1;\n}\n.loading[data-v-da2e3bfe],\n.error[data-v-da2e3bfe] {\n  text-align: center;\n  padding: 40px;\n  color: var(--color-text-lighter);\n  font-size: 16px;\n}\n.error[data-v-da2e3bfe] {\n  color: var(--color-error);\n  background: var(--color-error-background);\n  border: 1px solid var(--color-error-border);\n  border-radius: 8px;\n  margin: 20px 0;\n}\n.modal[data-v-da2e3bfe] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n  backdrop-filter: blur(4px);\n}\n.modal-content[data-v-da2e3bfe] {\n  background: var(--color-main-background);\n  padding: 30px;\n  border-radius: 12px;\n  min-width: 400px;\n  max-width: 500px;\n  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);\n  border: 1px solid var(--color-border);\n  max-height: 80vh;\n  overflow-y: auto;\n}\n.modal-content h3[data-v-da2e3bfe] {\n  margin: 0 0 20px 0;\n  color: var(--color-text);\n  font-weight: 600;\n  font-size: 20px;\n}\n.modal-actions[data-v-da2e3bfe] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 12px;\n  margin-top: 25px;\n  padding-top: 20px;\n  border-top: 1px solid var(--color-border);\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  max-height: calc(100vh - 100px);\n  overflow-y: auto;\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n/* Responsive design */\n@media (max-width: 768px) {\n.category-location-manager[data-v-da2e3bfe] {\n    padding: 0;\n    min-height: auto;\n    margin: 10px;\n}\n.tabs[data-v-da2e3bfe] {\n    flex-direction: column;\n    gap: 0;\n}\n.tabs[data-v-da2e3bfe] .button-vue {\n    padding: 16px 20px !important;\n    border-bottom: 2px solid transparent !important;\n    border-right: 3px solid transparent !important;\n    text-align: left !important;\n}\n.tabs[data-v-da2e3bfe] .button-vue.active {\n    border-bottom-color: transparent !important;\n    border-right-color: var(--color-primary) !important;\n}\n.tab-content[data-v-da2e3bfe] {\n    padding: 20px;\n}\n.form-fields[data-v-da2e3bfe] {\n    flex-direction: column;\n    align-items: stretch;\n}\n.form-fields .nc-input-field[data-v-da2e3bfe],\n  .form-fields .nc-select[data-v-da2e3bfe] {\n    min-width: auto;\n}\n.modal-content[data-v-da2e3bfe] {\n    min-width: auto;\n    margin: 20px;\n    padding: 20px;\n    max-height: 70vh;\n}\n.tree-container[data-v-da2e3bfe] {\n    max-height: 400px;\n}\n}\n.tab-content[data-v-da2e3bfe] {\n  animation: fadeIn-da2e3bfe 0.3s ease-in-out;\n}\n@keyframes fadeIn-da2e3bfe {\nfrom {\n    opacity: 0;\n    transform: translateY(10px);\n}\nto {\n    opacity: 1;\n    transform: translateY(0);\n}\n}\n.category-location-manager[data-v-da2e3bfe] {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.category-location-manager > div[data-v-da2e3bfe]:last-child {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n.tab-content[data-v-da2e3bfe] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n.rights-management[data-v-fb7cbc5e] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-fb7cbc5e] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-fb7cbc5e] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-fb7cbc5e] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-fb7cbc5e] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n\n.rights-management[data-v-14c25bb2] {\n  padding: 20px;\n  max-width: 700px;\n}\n.description[data-v-14c25bb2] {\n  color: var(--color-text-lighter);\n  margin-bottom: 25px;\n}\n.rights-list[data-v-14c25bb2] {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n.right-item[data-v-14c25bb2] {\n  padding: 15px;\n  background-color: var(--color-background-dark);\n  border-radius: 8px;\n}\n.right-description[data-v-14c25bb2] {\n  margin: 8px 0 0 0;\n  font-size: 0.9em;\n  color: var(--color-text-lighter);\n  padding-left: 36px;\n}\n.clean-instance-section[data-v-ee1ac32d] {\n  margin-top: 24px;\n  border: 2px solid var(--color-error);\n}\n.clean-instance-section .danger-warning[data-v-ee1ac32d] {\n  background-color: var(--color-background-darker);\n  padding: 16px;\n  border-radius: 8px;\n}\n.clean-instance-section .danger-warning .warning-title[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  font-size: 1.2em;\n  margin-bottom: 12px;\n}\n.clean-instance-section .danger-warning .warning-highlight[data-v-ee1ac32d] {\n  font-weight: bold;\n  color: var(--color-error);\n  margin: 8px 0;\n}\n.clean-instance-section .job_buttons_section[data-v-ee1ac32d] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n  gap: 12px;\n  padding: 0 16px 16px 16px;\n}\n.clean-instance-section .danger-icon[data-v-ee1ac32d] {\n  margin-right: 4px;\n}\n.home-config-manager[data-v-76c6f1a8] {\n  padding: 20px;\n}\n.toolbar[data-v-76c6f1a8] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 16px;\n  margin-bottom: 20px;\n}\n.toolbar-actions[data-v-76c6f1a8] {\n  display: flex;\n  gap: 12px;\n  align-items: center;\n}\n.description[data-v-76c6f1a8] {\n  color: var(--color-text-lighter);\n  margin: 4px 0 0 0;\n}\n.hint[data-v-76c6f1a8] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin: 0 0 4px;\n}\n.config-table[data-v-76c6f1a8] {\n  width: 100%;\n  border-collapse: collapse;\n}\n.config-table th[data-v-76c6f1a8],\n.config-table td[data-v-76c6f1a8] {\n  padding: 8px 10px;\n  text-align: left;\n  border-bottom: 1px solid var(--color-border);\n  vertical-align: top;\n}\n.config-table tr.is-default[data-v-76c6f1a8] {\n  background: var(--color-primary-element-light, #e6f0ff);\n}\n.config-table tr.is-bundled td[data-v-76c6f1a8] {\n  color: var(--color-text-lighter);\n}\n.config-table .empty[data-v-76c6f1a8] {\n  text-align: center;\n  padding: 20px;\n  color: var(--color-text-lighter);\n}\n.row-actions[data-v-76c6f1a8] {\n  display: flex;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.badge[data-v-76c6f1a8] {\n  display: inline-block;\n  padding: 2px 8px;\n  border-radius: 10px;\n  font-size: 0.8em;\n  font-weight: 500;\n  margin-right: 4px;\n  background: var(--color-background-hover);\n  color: var(--color-text-lighter);\n}\n.badge-template[data-v-76c6f1a8] {\n  background: var(--color-primary-element-light, #e6f0ff);\n  color: var(--color-primary);\n}\n.badge-instance[data-v-76c6f1a8] {\n  background: #fef3c7;\n  color: #92400e;\n}\n.badge-bundled[data-v-76c6f1a8] {\n  background: #f3e8ff;\n  color: #6b21a8;\n}\n.default-badge[data-v-76c6f1a8] {\n  color: var(--color-primary);\n  font-weight: 600;\n  white-space: nowrap;\n}\n.row-description[data-v-76c6f1a8] {\n  font-size: 0.85em;\n  color: var(--color-text-lighter);\n  margin-top: 2px;\n}\n.muted[data-v-76c6f1a8] {\n  color: var(--color-text-lighter);\n}\n.modal-overlay[data-v-76c6f1a8] {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n.modal-content[data-v-76c6f1a8] {\n  background: var(--color-main-background);\n  padding: 24px;\n  border-radius: 12px;\n  width: 960px;\n  max-width: 95vw;\n  max-height: 92vh;\n  overflow-y: auto;\n}\n.tabs[data-v-76c6f1a8] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n  border-bottom: 1px solid var(--color-border);\n  margin-bottom: 16px;\n}\n.tabs button[data-v-76c6f1a8] {\n  padding: 8px 14px;\n  background: transparent;\n  border: none;\n  cursor: pointer;\n  border-bottom: 2px solid transparent;\n  color: var(--color-text-lighter);\n}\n.tabs button.active[data-v-76c6f1a8] {\n  color: var(--color-primary);\n  border-bottom-color: var(--color-primary);\n  font-weight: 600;\n}\n.tab-body[data-v-76c6f1a8] {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n  min-height: 240px;\n}\n.form-row[data-v-76c6f1a8] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 12px;\n}\n.kv-row[data-v-76c6f1a8] {\n  display: grid;\n  grid-template-columns: 1fr 1fr auto;\n  gap: 8px;\n  align-items: end;\n}\n.cta-row[data-v-76c6f1a8] {\n  display: grid;\n  grid-template-columns: 1fr 1fr 120px auto;\n  gap: 8px;\n  align-items: end;\n  margin-bottom: 8px;\n}\n.image-block[data-v-76c6f1a8] {\n  display: flex;\n  gap: 16px;\n  align-items: center;\n}\n.image-block .preview[data-v-76c6f1a8] {\n  max-width: 260px;\n  max-height: 140px;\n  border-radius: 6px;\n}\n.image-block .placeholder[data-v-76c6f1a8] {\n  width: 260px;\n  height: 140px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--color-background-hover);\n  color: var(--color-text-lighter);\n  border-radius: 6px;\n}\n.image-block .actions[data-v-76c6f1a8] {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.hidden[data-v-76c6f1a8] {\n  display: none;\n}\n.json-editor[data-v-76c6f1a8] {\n  width: 100%;\n  min-height: 140px;\n  font-family: monospace;\n  font-size: 13px;\n  padding: 8px;\n  border-radius: 6px;\n  border: 1px solid var(--color-border);\n  background: var(--color-background-dark);\n  color: var(--color-main-text);\n}\n.json-editor.large[data-v-76c6f1a8] {\n  min-height: 320px;\n}\n.advanced-actions[data-v-76c6f1a8] {\n  display: flex;\n  gap: 12px;\n}\n.modal-actions[data-v-76c6f1a8] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n  margin-top: 20px;\n}'));
       document.head.appendChild(elementStyle);
     }
   } catch (e) {
@@ -12,14 +12,14 @@
 })();
 const appName = "agora";
 const appVersion = "1.8.0";
-import { a0 as defineStore, D as generateOcsUrl, C as cancelableClient, d as defineComponent, V as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, I as Fragment, P as renderList, M as normalizeClass, O as createTextVNode, k as createCommentVNode, b as computed, B as onMounted, v as ref, J as NcButton, aL as NcEmptyContent, H as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, $ as NcModal, h as resolveDynamicComponent, m as mergeProps, a7 as withDirectives, a8 as vShow, aW as vModelText, a1 as purify_default, a2 as withModifiers, au as withKeys, ay as resolveComponent, n as normalizeStyle, W as normalizeProps, X as guardReactiveProps, Y as createApp, Z as pinia } from "./NcEmptyContent-zcbErVyJ.chunk.mjs";
-import { I as InputDiv, j as NcAppSettingsDialog, N as NcSettingsSection } from "./be-tarask-BJ-91Qvl.chunk.mjs";
-import { L as Logger, j as useAppSettingsStore, k as gfmHeadingId, l as k, m as adminJobs, I as InquiryGeneralIcons, s as showError, a as showSuccess, n as InquiryOptionIcons, E as ENGINE_DEFINITIONS, S as StatusIcons } from "./NcDashboardWidget-CgDfA4dU.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-B-vyjuqF.chunk.mjs";
-import { a as NcCheckboxRadioSwitch } from "./NcRichText-cwcSz5Cs.chunk.mjs";
-import { _ as _sfc_main$E, N as NcSelect, a as NcInputField } from "./referencePickerModal-Bj01bKRU.chunk.mjs";
-import "./NcProfileHoverCard-CfI0JNf3.chunk.mjs";
-import { c as createLucideIcon, N as NcNoteCard, a as NcTextArea, E as EngineSelectorModal, R as RadioGroupDiv, b as CardDiv } from "./markdown-BtSyVUZQ.chunk.mjs";
+import { a0 as defineStore, D as generateOcsUrl, C as cancelableClient, d as defineComponent, V as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, I as Fragment, P as renderList, M as normalizeClass, O as createTextVNode, k as createCommentVNode, b as computed, B as onMounted, v as ref, J as NcButton, aL as NcEmptyContent, H as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, $ as NcModal, h as resolveDynamicComponent, m as mergeProps, a7 as withDirectives, a8 as vShow, aW as vModelText, a1 as purify_default, a2 as withModifiers, au as withKeys, ay as resolveComponent, n as normalizeStyle, aZ as reactive, W as normalizeProps, X as guardReactiveProps, Y as createApp, Z as pinia } from "./NcEmptyContent-1duUFQhY.chunk.mjs";
+import { I as InputDiv, j as NcAppSettingsDialog, N as NcSettingsSection } from "./be-tarask-3Xk940aQ.chunk.mjs";
+import { L as Logger, j as useAppSettingsStore, l as gfmHeadingId, k, m as adminJobs, I as InquiryGeneralIcons, s as showError, a as showSuccess, n as InquiryOptionIcons, E as ENGINE_DEFINITIONS, S as StatusIcons, o as appSettings } from "./NcDashboardWidget-CbjbEfSD.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-BkKw6jH0.chunk.mjs";
+import { a as NcCheckboxRadioSwitch } from "./NcRichText-C6H3fuO_.chunk.mjs";
+import { _ as _sfc_main$F, N as NcSelect, a as NcInputField } from "./referencePickerModal-CbCg3pQA.chunk.mjs";
+import "./NcProfileHoverCard-D1W-FElA.chunk.mjs";
+import { c as createLucideIcon, N as NcNoteCard, a as NcTextArea, E as EngineSelectorModal, R as RadioGroupDiv, b as CardDiv, O as ORGANIZATION_TYPES, g as getHomeTemplate } from "./markdown-7_xgsRJX.chunk.mjs";
 /**
  * @license lucide-vue-next v0.566.0 - ISC
  *
@@ -142,18 +142,24 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     },
     async loadTemplateDetails(identifier) {
       try {
-        const url = generateOcsUrl(`/apps/agora/api/v1.0/templates/${identifier}`);
+        const url = generateOcsUrl(
+          `/apps/agora/api/v1.0/templates/${identifier}`
+        );
         const response = await cancelableClient.get(url);
         const raw = response.data?.ocs?.data;
         this.selectedTemplate = typeof raw === "object" && raw !== null && typeof raw.name === "string" ? raw : null;
       } catch (error) {
-        Logger.error("Failed to load template details", { error: String(error) });
+        Logger.error("Failed to load template details", {
+          error: String(error)
+        });
         throw error;
       }
     },
     async checkDatabaseEmpty() {
       try {
-        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/check-empty");
+        const url = generateOcsUrl(
+          "/apps/agora/api/v1.0/templates/check-empty"
+        );
         const response = await cancelableClient.get(url);
         const raw = response.data?.ocs?.data;
         this.isDatabaseEmpty = raw?.empty === true;
@@ -169,7 +175,9 @@ const useTemplateWizardStore = defineStore("templateWizard", {
       this.importError = null;
       this.currentStep = "importing";
       try {
-        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/import-data");
+        const url = generateOcsUrl(
+          "/apps/agora/api/v1.0/templates/import-data"
+        );
         const response = await cancelableClient.post(url, {
           templateData: this.editableData,
           language: this.selectedLanguage
@@ -245,20 +253,34 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     prepareEditableData() {
       const template = this.selectedTemplate?.content || this.customTemplate;
       if (!template || !this.selectedLanguage) {
-        Logger.error("Cannot prepare editable data: missing template or language");
+        Logger.error(
+          "Cannot prepare editable data: missing template or language"
+        );
         return;
       }
       const cloned = JSON.parse(JSON.stringify(template));
-      this.editableData = this.extractLanguageText(cloned, this.selectedLanguage);
+      this.editableData = this.extractLanguageText(
+        cloned,
+        this.selectedLanguage
+      );
     },
     extractLanguageText(template, language) {
       return {
         template_info: template.template_info,
-        inquiry_families: this.extractSection(template.inquiry_families, language),
+        inquiry_families: this.extractSection(
+          template.inquiry_families,
+          language
+        ),
         inquiry_types: this.extractSection(template.inquiry_types, language),
-        inquiry_statuses: this.extractSection(template.inquiry_statuses, language),
+        inquiry_statuses: this.extractSection(
+          template.inquiry_statuses,
+          language
+        ),
         option_types: this.extractSection(template.option_types, language),
-        inquiry_group_types: this.extractSection(template.inquiry_group_types, language),
+        inquiry_group_types: this.extractSection(
+          template.inquiry_group_types,
+          language
+        ),
         categories: this.extractSection(template.categories, language),
         locations: this.extractSection(template.locations, language)
       };
@@ -290,9 +312,24 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     isMultiLangObject(obj) {
       const keys = Object.keys(obj);
       if (keys.length === 0) return false;
-      const langKeys = ["en", "fr", "de", "gsw", "it", "es", "pt", "nl", "ru", "zh", "ja", "ko"];
+      const langKeys = [
+        "en",
+        "fr",
+        "de",
+        "gsw",
+        "it",
+        "es",
+        "pt",
+        "nl",
+        "ru",
+        "zh",
+        "ja",
+        "ko"
+      ];
       if (!keys.some((k2) => langKeys.includes(k2))) return false;
-      return keys.every((k2) => langKeys.includes(k2) && typeof obj[k2] === "string");
+      return keys.every(
+        (k2) => langKeys.includes(k2) && typeof obj[k2] === "string"
+      );
     },
     pickLanguage(obj, language) {
       const direct = obj[language];
@@ -334,7 +371,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     }
   }
 });
-const _sfc_main$D = /* @__PURE__ */ defineComponent({
+const _sfc_main$E = /* @__PURE__ */ defineComponent({
   __name: "StepUseCaseSelection",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -343,7 +380,10 @@ const _sfc_main$D = /* @__PURE__ */ defineComponent({
       {
         id: "citizen_participation",
         title: translate("agora", "Citizen participation"),
-        description: translate("agora", "For municipalities, cantons, communes and government entities"),
+        description: translate(
+          "agora",
+          "For municipalities, cantons, communes and government entities"
+        ),
         icon: "🏛️",
         examples: [
           translate("agora", "Deliberative processes (debates, proposals, petitions)"),
@@ -355,7 +395,10 @@ const _sfc_main$D = /* @__PURE__ */ defineComponent({
       {
         id: "enterprise",
         title: translate("agora", "Enterprise & business"),
-        description: translate("agora", "For companies, departments and business operations"),
+        description: translate(
+          "agora",
+          "For companies, departments and business operations"
+        ),
         icon: "🏢",
         examples: [
           translate("agora", "It services (ideas, automation, service requests)"),
@@ -367,7 +410,10 @@ const _sfc_main$D = /* @__PURE__ */ defineComponent({
       {
         id: "education",
         title: translate("agora", "Education & research"),
-        description: translate("agora", "For schools, universities and research institutions"),
+        description: translate(
+          "agora",
+          "For schools, universities and research institutions"
+        ),
         icon: "🎓",
         examples: [
           translate("agora", "Student feedback and suggestions"),
@@ -399,22 +445,22 @@ const _sfc_main$D = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$D = { class: "use-case-selection" };
-const _hoisted_2$v = { class: "use-case-header" };
-const _hoisted_3$p = { class: "subtitle" };
-const _hoisted_4$n = { class: "use-case-grid" };
-const _hoisted_5$j = ["onClick"];
-const _hoisted_6$i = { class: "card-icon" };
-const _hoisted_7$i = { class: "card-title" };
-const _hoisted_8$i = { class: "card-description" };
-const _hoisted_9$g = { class: "card-examples" };
-const _hoisted_10$d = {
+const _hoisted_1$E = { class: "use-case-selection" };
+const _hoisted_2$w = { class: "use-case-header" };
+const _hoisted_3$q = { class: "subtitle" };
+const _hoisted_4$o = { class: "use-case-grid" };
+const _hoisted_5$k = ["onClick"];
+const _hoisted_6$j = { class: "card-icon" };
+const _hoisted_7$j = { class: "card-title" };
+const _hoisted_8$j = { class: "card-description" };
+const _hoisted_9$h = { class: "card-examples" };
+const _hoisted_10$e = {
   key: 0,
   class: "selected-indicator"
 };
-function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$D, [
-    createBaseVNode("div", _hoisted_2$v, [
+function _sfc_render$E(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$E, [
+    createBaseVNode("div", _hoisted_2$w, [
       createBaseVNode(
         "h2",
         null,
@@ -424,13 +470,16 @@ function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$p,
-        toDisplayString($setup.t("agora", "Select the option that best matches your organization's needs")),
+        _hoisted_3$q,
+        toDisplayString($setup.t(
+          "agora",
+          "Select the option that best matches your organization's needs"
+        )),
         1
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_4$n, [
+    createBaseVNode("div", _hoisted_4$o, [
       (openBlock(), createElementBlock(
         Fragment,
         null,
@@ -442,26 +491,26 @@ function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
           }, [
             createBaseVNode(
               "div",
-              _hoisted_6$i,
+              _hoisted_6$j,
               toDisplayString(useCase.icon),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "h3",
-              _hoisted_7$i,
+              _hoisted_7$j,
               toDisplayString(useCase.title),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "p",
-              _hoisted_8$i,
+              _hoisted_8$j,
               toDisplayString(useCase.description),
               1
               /* TEXT */
             ),
-            createBaseVNode("ul", _hoisted_9$g, [
+            createBaseVNode("ul", _hoisted_9$h, [
               (openBlock(true), createElementBlock(
                 Fragment,
                 null,
@@ -478,7 +527,7 @@ function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
                 /* KEYED_FRAGMENT */
               ))
             ]),
-            $setup.wizardStore.selectedUseCase === useCase.id ? (openBlock(), createElementBlock("div", _hoisted_10$d, [
+            $setup.wizardStore.selectedUseCase === useCase.id ? (openBlock(), createElementBlock("div", _hoisted_10$e, [
               _cache[0] || (_cache[0] = createBaseVNode(
                 "span",
                 { class: "check-icon" },
@@ -492,7 +541,7 @@ function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
                 /* TEXT */
               )
             ])) : createCommentVNode("v-if", true)
-          ], 10, _hoisted_5$j);
+          ], 10, _hoisted_5$k);
         }),
         64
         /* STABLE_FRAGMENT */
@@ -500,8 +549,8 @@ function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepUseCaseSelection = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$D], ["__scopeId", "data-v-cbe6b281"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepUseCaseSelection.vue"]]);
-const _sfc_main$C = /* @__PURE__ */ defineComponent({
+const StepUseCaseSelection = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$E], ["__scopeId", "data-v-cbe6b281"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepUseCaseSelection.vue"]]);
+const _sfc_main$D = /* @__PURE__ */ defineComponent({
   __name: "StepTemplateSelection",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -548,7 +597,9 @@ const _sfc_main$C = /* @__PURE__ */ defineComponent({
           throw new Error(response.data.ocs.data.error);
         }
         const schema = response.data.ocs.data;
-        const blob = new Blob([JSON.stringify(schema, null, 2)], { type: "application/json" });
+        const blob = new Blob([JSON.stringify(schema, null, 2)], {
+          type: "application/json"
+        });
         const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = downloadUrl;
@@ -602,68 +653,68 @@ const _sfc_main$C = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$C = { class: "template-selection" };
-const _hoisted_2$u = { class: "template-header" };
-const _hoisted_3$o = {
+const _hoisted_1$D = { class: "template-selection" };
+const _hoisted_2$v = { class: "template-header" };
+const _hoisted_3$p = {
   key: 0,
   class: "subtitle"
 };
-const _hoisted_4$m = {
+const _hoisted_4$n = {
   key: 1,
   class: "subtitle"
 };
-const _hoisted_5$i = {
+const _hoisted_5$j = {
   key: 0,
   class: "upload-section"
 };
-const _hoisted_6$h = { class: "help-section" };
-const _hoisted_7$h = {
+const _hoisted_6$i = { class: "help-section" };
+const _hoisted_7$i = {
   key: 0,
   class: "help-content"
 };
-const _hoisted_8$h = { class: "help-actions" };
-const _hoisted_9$f = { class: "help-instructions" };
-const _hoisted_10$c = { class: "ai-list" };
-const _hoisted_11$c = {
+const _hoisted_8$i = { class: "help-actions" };
+const _hoisted_9$g = { class: "help-instructions" };
+const _hoisted_10$d = { class: "ai-list" };
+const _hoisted_11$d = {
   key: 1,
   class: "divider"
 };
-const _hoisted_12$b = {
+const _hoisted_12$c = {
   key: 4,
   class: "template-list"
 };
-const _hoisted_13$b = ["onClick"];
-const _hoisted_14$b = { class: "template-card-header" };
-const _hoisted_15$a = { class: "template-name" };
-const _hoisted_16$a = { class: "template-version" };
-const _hoisted_17$a = { class: "template-description" };
-const _hoisted_18$9 = { class: "template-meta" };
-const _hoisted_19$9 = { class: "meta-item" };
-const _hoisted_20$9 = { class: "meta-label" };
-const _hoisted_21$9 = { class: "meta-value" };
-const _hoisted_22$9 = { class: "meta-item" };
-const _hoisted_23$7 = { class: "meta-label" };
-const _hoisted_24$7 = { class: "meta-value" };
-const _hoisted_25$7 = { class: "template-stats" };
-const _hoisted_26$6 = { class: "stat-item" };
-const _hoisted_27$6 = { class: "stat-value" };
-const _hoisted_28$6 = { class: "stat-label" };
-const _hoisted_29$6 = { class: "stat-item" };
-const _hoisted_30$6 = { class: "stat-value" };
-const _hoisted_31$6 = { class: "stat-label" };
-const _hoisted_32$6 = { class: "stat-item" };
-const _hoisted_33$6 = { class: "stat-value" };
-const _hoisted_34$6 = { class: "stat-label" };
-const _hoisted_35$6 = { class: "stat-item" };
-const _hoisted_36$5 = { class: "stat-value" };
-const _hoisted_37$5 = { class: "stat-label" };
-const _hoisted_38$5 = {
+const _hoisted_13$c = ["onClick"];
+const _hoisted_14$c = { class: "template-card-header" };
+const _hoisted_15$b = { class: "template-name" };
+const _hoisted_16$b = { class: "template-version" };
+const _hoisted_17$b = { class: "template-description" };
+const _hoisted_18$a = { class: "template-meta" };
+const _hoisted_19$a = { class: "meta-item" };
+const _hoisted_20$a = { class: "meta-label" };
+const _hoisted_21$a = { class: "meta-value" };
+const _hoisted_22$a = { class: "meta-item" };
+const _hoisted_23$8 = { class: "meta-label" };
+const _hoisted_24$8 = { class: "meta-value" };
+const _hoisted_25$8 = { class: "template-stats" };
+const _hoisted_26$7 = { class: "stat-item" };
+const _hoisted_27$7 = { class: "stat-value" };
+const _hoisted_28$7 = { class: "stat-label" };
+const _hoisted_29$7 = { class: "stat-item" };
+const _hoisted_30$7 = { class: "stat-value" };
+const _hoisted_31$7 = { class: "stat-label" };
+const _hoisted_32$7 = { class: "stat-item" };
+const _hoisted_33$7 = { class: "stat-value" };
+const _hoisted_34$7 = { class: "stat-label" };
+const _hoisted_35$7 = { class: "stat-item" };
+const _hoisted_36$6 = { class: "stat-value" };
+const _hoisted_37$6 = { class: "stat-label" };
+const _hoisted_38$6 = {
   key: 0,
   class: "selected-badge"
 };
-function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$C, [
-    createBaseVNode("div", _hoisted_2$u, [
+function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$D, [
+    createBaseVNode("div", _hoisted_2$v, [
       createBaseVNode(
         "h2",
         null,
@@ -673,20 +724,20 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       $setup.wizardStore.selectedUseCase === "custom" ? (openBlock(), createElementBlock(
         "p",
-        _hoisted_3$o,
+        _hoisted_3$p,
         toDisplayString($setup.t("agora", "Choose a pre-configured template or upload your own")),
         1
         /* TEXT */
       )) : (openBlock(), createElementBlock(
         "p",
-        _hoisted_4$m,
+        _hoisted_4$n,
         toDisplayString($setup.t("agora", "Choose a pre-configured template for your use case")),
         1
         /* TEXT */
       ))
     ]),
     createCommentVNode(" Custom Template Upload Section - Only for Custom Setup "),
-    $setup.wizardStore.selectedUseCase === "custom" ? (openBlock(), createElementBlock("div", _hoisted_5$i, [
+    $setup.wizardStore.selectedUseCase === "custom" ? (openBlock(), createElementBlock("div", _hoisted_5$j, [
       createVNode($setup["NcButton"], {
         type: "secondary",
         onClick: $setup.triggerFileUpload
@@ -756,7 +807,7 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
       })) : createCommentVNode("v-if", true),
       createCommentVNode(" Help Section for Creating Templates "),
-      createBaseVNode("div", _hoisted_6$h, [
+      createBaseVNode("div", _hoisted_6$i, [
         createVNode($setup["NcButton"], {
           type: "tertiary",
           onClick: $setup.toggleHelp
@@ -782,7 +833,7 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
           _: 1
           /* STABLE */
         }),
-        $setup.showHelp ? (openBlock(), createElementBlock("div", _hoisted_7$h, [
+        $setup.showHelp ? (openBlock(), createElementBlock("div", _hoisted_7$i, [
           createVNode($setup["NcNoteCard"], { type: "info" }, {
             default: withCtx(() => [
               createBaseVNode(
@@ -799,7 +850,7 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
           }),
-          createBaseVNode("div", _hoisted_8$h, [
+          createBaseVNode("div", _hoisted_8$i, [
             createVNode($setup["NcButton"], {
               type: "primary",
               onClick: $setup.downloadSchema
@@ -847,7 +898,7 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
               /* STABLE */
             })
           ]),
-          createBaseVNode("div", _hoisted_9$f, [
+          createBaseVNode("div", _hoisted_9$g, [
             createBaseVNode(
               "h4",
               null,
@@ -883,7 +934,10 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
               createBaseVNode(
                 "li",
                 null,
-                toDisplayString($setup.t("agora", "Copy the generated json and save it as a .json file")),
+                toDisplayString($setup.t(
+                  "agora",
+                  "Copy the generated json and save it as a .json file"
+                )),
                 1
                 /* TEXT */
               ),
@@ -902,7 +956,7 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
               1
               /* TEXT */
             ),
-            createBaseVNode("ul", _hoisted_10$c, [
+            createBaseVNode("ul", _hoisted_10$d, [
               createBaseVNode("li", null, [
                 _cache[3] || (_cache[3] = createBaseVNode(
                   "strong",
@@ -954,7 +1008,10 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
                   /* CACHED */
                 )),
                 createTextVNode(
-                  " " + toDisplayString($setup.t("agora", "Best for privacy-sensitive use cases (ollama, lm studio)")),
+                  " " + toDisplayString($setup.t(
+                    "agora",
+                    "Best for privacy-sensitive use cases (ollama, lm studio)"
+                  )),
                   1
                   /* TEXT */
                 )
@@ -964,7 +1021,7 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
         ])) : createCommentVNode("v-if", true)
       ])
     ])) : createCommentVNode("v-if", true),
-    $setup.wizardStore.selectedUseCase === "custom" && !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_11$c, [
+    $setup.wizardStore.selectedUseCase === "custom" && !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_11$d, [
       createBaseVNode(
         "span",
         null,
@@ -992,27 +1049,29 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
       ])]),
       _: 1
       /* STABLE */
-    }, 8, ["name", "description"])) : !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_12$b, [
+    }, 8, ["name", "description"])) : !$setup.wizardStore.customTemplate ? (openBlock(), createElementBlock("div", _hoisted_12$c, [
       (openBlock(true), createElementBlock(
         Fragment,
         null,
         renderList($setup.templates, (template) => {
           return openBlock(), createElementBlock("div", {
             key: template.name,
-            class: normalizeClass(["template-card", { selected: $setup.wizardStore.selectedTemplate?.name === template.name }]),
+            class: normalizeClass(["template-card", {
+              selected: $setup.wizardStore.selectedTemplate?.name === template.name
+            }]),
             onClick: ($event) => $setup.selectTemplate(template)
           }, [
-            createBaseVNode("div", _hoisted_14$b, [
+            createBaseVNode("div", _hoisted_14$c, [
               createBaseVNode(
                 "h3",
-                _hoisted_15$a,
+                _hoisted_15$b,
                 toDisplayString(template.name),
                 1
                 /* TEXT */
               ),
               createBaseVNode(
                 "span",
-                _hoisted_16$a,
+                _hoisted_16$b,
                 "v" + toDisplayString(template.version),
                 1
                 /* TEXT */
@@ -1020,112 +1079,112 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
             ]),
             createBaseVNode(
               "p",
-              _hoisted_17$a,
+              _hoisted_17$b,
               toDisplayString(template.description),
               1
               /* TEXT */
             ),
-            createBaseVNode("div", _hoisted_18$9, [
-              createBaseVNode("div", _hoisted_19$9, [
+            createBaseVNode("div", _hoisted_18$a, [
+              createBaseVNode("div", _hoisted_19$a, [
                 createBaseVNode(
                   "span",
-                  _hoisted_20$9,
+                  _hoisted_20$a,
                   toDisplayString($setup.t("agora", "Author:")),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_21$9,
+                  _hoisted_21$a,
                   toDisplayString(template.author),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_22$9, [
+              createBaseVNode("div", _hoisted_22$a, [
                 createBaseVNode(
                   "span",
-                  _hoisted_23$7,
+                  _hoisted_23$8,
                   toDisplayString($setup.t("agora", "Languages:")),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_24$7,
+                  _hoisted_24$8,
                   toDisplayString(template.available_languages.join(", ")),
                   1
                   /* TEXT */
                 )
               ])
             ]),
-            createBaseVNode("div", _hoisted_25$7, [
-              createBaseVNode("div", _hoisted_26$6, [
+            createBaseVNode("div", _hoisted_25$8, [
+              createBaseVNode("div", _hoisted_26$7, [
                 createBaseVNode(
                   "span",
-                  _hoisted_27$6,
+                  _hoisted_27$7,
                   toDisplayString(template.counts.inquiry_families),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_28$6,
+                  _hoisted_28$7,
                   toDisplayString($setup.t("agora", "Families")),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_29$6, [
+              createBaseVNode("div", _hoisted_29$7, [
                 createBaseVNode(
                   "span",
-                  _hoisted_30$6,
+                  _hoisted_30$7,
                   toDisplayString(template.counts.inquiry_types),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_31$6,
+                  _hoisted_31$7,
                   toDisplayString($setup.t("agora", "Types")),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_32$6, [
+              createBaseVNode("div", _hoisted_32$7, [
                 createBaseVNode(
                   "span",
-                  _hoisted_33$6,
+                  _hoisted_33$7,
                   toDisplayString(template.counts.inquiry_statuses),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_34$6,
+                  _hoisted_34$7,
                   toDisplayString($setup.t("agora", "Statuses")),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_35$6, [
+              createBaseVNode("div", _hoisted_35$7, [
                 createBaseVNode(
                   "span",
-                  _hoisted_36$5,
+                  _hoisted_36$6,
                   toDisplayString(template.counts.categories),
                   1
                   /* TEXT */
                 ),
                 createBaseVNode(
                   "span",
-                  _hoisted_37$5,
+                  _hoisted_37$6,
                   toDisplayString($setup.t("agora", "Categories")),
                   1
                   /* TEXT */
                 )
               ])
             ]),
-            $setup.wizardStore.selectedTemplate?.name === template.name ? (openBlock(), createElementBlock("div", _hoisted_38$5, [
+            $setup.wizardStore.selectedTemplate?.name === template.name ? (openBlock(), createElementBlock("div", _hoisted_38$6, [
               _cache[8] || (_cache[8] = createBaseVNode(
                 "span",
                 { class: "check-icon" },
@@ -1139,7 +1198,7 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
                 /* TEXT */
               )
             ])) : createCommentVNode("v-if", true)
-          ], 10, _hoisted_13$b);
+          ], 10, _hoisted_13$c);
         }),
         128
         /* KEYED_FRAGMENT */
@@ -1147,8 +1206,8 @@ function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepTemplateSelection = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$C], ["__scopeId", "data-v-4e395d60"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepTemplateSelection.vue"]]);
-const _sfc_main$B = /* @__PURE__ */ defineComponent({
+const StepTemplateSelection = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$D], ["__scopeId", "data-v-4e395d60"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepTemplateSelection.vue"]]);
+const _sfc_main$C = /* @__PURE__ */ defineComponent({
   __name: "StepLanguageSelection",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -1177,24 +1236,24 @@ const _sfc_main$B = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$B = { class: "language-selection" };
-const _hoisted_2$t = { class: "language-header" };
-const _hoisted_3$n = { class: "subtitle" };
-const _hoisted_4$l = { class: "language-grid" };
-const _hoisted_5$h = ["onClick"];
-const _hoisted_6$g = { class: "language-flag" };
-const _hoisted_7$g = { class: "language-name" };
-const _hoisted_8$g = {
+const _hoisted_1$C = { class: "language-selection" };
+const _hoisted_2$u = { class: "language-header" };
+const _hoisted_3$o = { class: "subtitle" };
+const _hoisted_4$m = { class: "language-grid" };
+const _hoisted_5$i = ["onClick"];
+const _hoisted_6$h = { class: "language-flag" };
+const _hoisted_7$h = { class: "language-name" };
+const _hoisted_8$h = {
   key: 0,
   class: "selected-check"
 };
-const _hoisted_9$e = {
+const _hoisted_9$f = {
   key: 0,
   class: "selection-summary"
 };
-function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$B, [
-    createBaseVNode("div", _hoisted_2$t, [
+function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$C, [
+    createBaseVNode("div", _hoisted_2$u, [
       createBaseVNode(
         "h2",
         null,
@@ -1204,7 +1263,7 @@ function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$n,
+        _hoisted_3$o,
         toDisplayString($setup.t("agora", "Select the language for your template content")),
         1
         /* TEXT */
@@ -1229,7 +1288,7 @@ function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }),
-    createBaseVNode("div", _hoisted_4$l, [
+    createBaseVNode("div", _hoisted_4$m, [
       (openBlock(true), createElementBlock(
         Fragment,
         null,
@@ -1241,26 +1300,26 @@ function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
           }, [
             createBaseVNode(
               "div",
-              _hoisted_6$g,
+              _hoisted_6$h,
               toDisplayString(lang.toUpperCase()),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "div",
-              _hoisted_7$g,
+              _hoisted_7$h,
               toDisplayString($setup.getLanguageName(lang)),
               1
               /* TEXT */
             ),
-            $setup.wizardStore.selectedLanguage === lang ? (openBlock(), createElementBlock("div", _hoisted_8$g, " ✓ ")) : createCommentVNode("v-if", true)
-          ], 10, _hoisted_5$h);
+            $setup.wizardStore.selectedLanguage === lang ? (openBlock(), createElementBlock("div", _hoisted_8$h, " ✓ ")) : createCommentVNode("v-if", true)
+          ], 10, _hoisted_5$i);
         }),
         128
         /* KEYED_FRAGMENT */
       ))
     ]),
-    $setup.wizardStore.selectedLanguage ? (openBlock(), createElementBlock("div", _hoisted_9$e, [
+    $setup.wizardStore.selectedLanguage ? (openBlock(), createElementBlock("div", _hoisted_9$f, [
       createBaseVNode(
         "strong",
         null,
@@ -1276,8 +1335,8 @@ function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepLanguageSelection = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$B], ["__scopeId", "data-v-e6e1081e"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepLanguageSelection.vue"]]);
-const _sfc_main$A = /* @__PURE__ */ defineComponent({
+const StepLanguageSelection = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$C], ["__scopeId", "data-v-e6e1081e"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepLanguageSelection.vue"]]);
+const _sfc_main$B = /* @__PURE__ */ defineComponent({
   __name: "StepPreview",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -1391,18 +1450,25 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     const isEditing = (section, index) => editingItem.value?.section === section && editingItem.value?.index === index;
     const getEditableLabelValue = (section) => {
       if (!editingItemData.value) {
-        console.warn("[TemplateWizard] getEditableLabelValue: editingItemData is null");
+        console.warn(
+          "[TemplateWizard] getEditableLabelValue: editingItemData is null"
+        );
         return "";
       }
       const labelKey = section.itemLabelKey;
       const labelValue = editingItemData.value[labelKey];
       if (labelValue === null || labelValue === void 0) {
-        console.warn("[TemplateWizard] Label value is null/undefined for key:", labelKey);
+        console.warn(
+          "[TemplateWizard] Label value is null/undefined for key:",
+          labelKey
+        );
         return "";
       }
       if (typeof labelValue === "object" && !Array.isArray(labelValue)) {
         const lang = wizardStore.selectedLanguage || "en";
-        const extracted = labelValue[lang] || labelValue.en || Object.values(labelValue).find((v) => typeof v === "string" && v !== "") || "";
+        const extracted = labelValue[lang] || labelValue.en || Object.values(labelValue).find(
+          (v) => typeof v === "string" && v !== ""
+        ) || "";
         return String(extracted);
       }
       return String(labelValue);
@@ -1488,7 +1554,7 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     }, get NcButton() {
       return NcButton;
     }, get NcTextField() {
-      return _sfc_main$E;
+      return _sfc_main$F;
     }, get NcTextArea() {
       return NcTextArea;
     }, get NcNoteCard() {
@@ -1500,89 +1566,89 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$A = { class: "preview-step" };
-const _hoisted_2$s = { class: "preview-header" };
-const _hoisted_3$m = { class: "subtitle" };
-const _hoisted_4$k = {
+const _hoisted_1$B = { class: "preview-step" };
+const _hoisted_2$t = { class: "preview-header" };
+const _hoisted_3$n = { class: "subtitle" };
+const _hoisted_4$l = {
   key: 0,
   class: "loading-state"
 };
-const _hoisted_5$g = {
+const _hoisted_5$h = {
   key: 1,
   class: "preview-content"
 };
-const _hoisted_6$f = {
+const _hoisted_6$g = {
   key: 0,
   class: "analysis-loading"
 };
-const _hoisted_7$f = { class: "summary-card" };
-const _hoisted_8$f = {
+const _hoisted_7$g = { class: "summary-card" };
+const _hoisted_8$g = {
   key: 0,
   class: "summary-stats"
 };
-const _hoisted_9$d = { class: "stat-item" };
-const _hoisted_10$b = { class: "stat-value stat-new" };
-const _hoisted_11$b = { class: "stat-label" };
-const _hoisted_12$a = { class: "stat-item" };
-const _hoisted_13$a = { class: "stat-value stat-existing" };
-const _hoisted_14$a = { class: "stat-label" };
-const _hoisted_15$9 = { class: "stat-item" };
-const _hoisted_16$9 = { class: "stat-value" };
-const _hoisted_17$9 = { class: "stat-label" };
-const _hoisted_18$8 = { class: "stat-item" };
-const _hoisted_19$8 = { class: "stat-value" };
-const _hoisted_20$8 = { class: "stat-label" };
-const _hoisted_21$8 = {
+const _hoisted_9$e = { class: "stat-item" };
+const _hoisted_10$c = { class: "stat-value stat-new" };
+const _hoisted_11$c = { class: "stat-label" };
+const _hoisted_12$b = { class: "stat-item" };
+const _hoisted_13$b = { class: "stat-value stat-existing" };
+const _hoisted_14$b = { class: "stat-label" };
+const _hoisted_15$a = { class: "stat-item" };
+const _hoisted_16$a = { class: "stat-value" };
+const _hoisted_17$a = { class: "stat-label" };
+const _hoisted_18$9 = { class: "stat-item" };
+const _hoisted_19$9 = { class: "stat-value" };
+const _hoisted_20$9 = { class: "stat-label" };
+const _hoisted_21$9 = {
   key: 1,
   class: "summary-stats"
 };
-const _hoisted_22$8 = { class: "stat-item" };
-const _hoisted_23$6 = { class: "stat-value" };
-const _hoisted_24$6 = { class: "stat-label" };
-const _hoisted_25$6 = { class: "stat-item" };
-const _hoisted_26$5 = { class: "stat-value" };
-const _hoisted_27$5 = { class: "stat-label" };
-const _hoisted_28$5 = { class: "sections-container" };
-const _hoisted_29$5 = ["onClick"];
-const _hoisted_30$5 = { class: "section-title" };
-const _hoisted_31$5 = { class: "section-icon" };
-const _hoisted_32$5 = { class: "section-count" };
-const _hoisted_33$5 = {
+const _hoisted_22$9 = { class: "stat-item" };
+const _hoisted_23$7 = { class: "stat-value" };
+const _hoisted_24$7 = { class: "stat-label" };
+const _hoisted_25$7 = { class: "stat-item" };
+const _hoisted_26$6 = { class: "stat-value" };
+const _hoisted_27$6 = { class: "stat-label" };
+const _hoisted_28$6 = { class: "sections-container" };
+const _hoisted_29$6 = ["onClick"];
+const _hoisted_30$6 = { class: "section-title" };
+const _hoisted_31$6 = { class: "section-icon" };
+const _hoisted_32$6 = { class: "section-count" };
+const _hoisted_33$6 = {
   key: 0,
   class: "section-status"
 };
-const _hoisted_34$5 = {
+const _hoisted_34$6 = {
   key: 0,
   class: "status-badge status-new"
 };
-const _hoisted_35$5 = {
+const _hoisted_35$6 = {
   key: 1,
   class: "status-badge status-existing"
 };
-const _hoisted_36$4 = { class: "expand-icon" };
-const _hoisted_37$4 = {
+const _hoisted_36$5 = { class: "expand-icon" };
+const _hoisted_37$5 = {
   key: 0,
   class: "section-content"
 };
-const _hoisted_38$4 = {
+const _hoisted_38$5 = {
   key: 0,
   class: "item-view"
 };
-const _hoisted_39$4 = { class: "item-info" };
-const _hoisted_40$4 = { class: "item-header-row" };
-const _hoisted_41$4 = { class: "item-label" };
-const _hoisted_42$4 = { class: "item-type" };
-const _hoisted_43$4 = {
+const _hoisted_39$5 = { class: "item-info" };
+const _hoisted_40$5 = { class: "item-header-row" };
+const _hoisted_41$5 = { class: "item-label" };
+const _hoisted_42$5 = { class: "item-type" };
+const _hoisted_43$5 = {
   key: 0,
   class: "item-description"
 };
-const _hoisted_44$4 = { class: "item-actions" };
-const _hoisted_45$4 = { class: "item-edit" };
+const _hoisted_44$5 = { class: "item-actions" };
+const _hoisted_45$5 = { class: "item-edit" };
 const _hoisted_46$4 = { class: "edit-form" };
 const _hoisted_47$4 = { class: "edit-actions" };
-function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$A, [
-    createBaseVNode("div", _hoisted_2$s, [
+function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$B, [
+    createBaseVNode("div", _hoisted_2$t, [
       createBaseVNode(
         "h2",
         null,
@@ -1592,13 +1658,13 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$m,
+        _hoisted_3$n,
         toDisplayString($setup.t("agora", "Review and customize the template before import")),
         1
         /* TEXT */
       )
     ]),
-    !$setup.editableData ? (openBlock(), createElementBlock("div", _hoisted_4$k, [
+    !$setup.editableData ? (openBlock(), createElementBlock("div", _hoisted_4$l, [
       createBaseVNode(
         "p",
         null,
@@ -1606,9 +1672,9 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
         1
         /* TEXT */
       )
-    ])) : (openBlock(), createElementBlock("div", _hoisted_5$g, [
+    ])) : (openBlock(), createElementBlock("div", _hoisted_5$h, [
       createCommentVNode(" Duplicate Analysis Loading "),
-      $setup.isAnalyzing ? (openBlock(), createElementBlock("div", _hoisted_6$f, [
+      $setup.isAnalyzing ? (openBlock(), createElementBlock("div", _hoisted_6$g, [
         createVNode($setup["NcLoadingIcon"], { size: 32 }),
         createBaseVNode(
           "p",
@@ -1635,7 +1701,7 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
       })) : createCommentVNode("v-if", true),
       createCommentVNode(" Summary Card with Duplicate Analysis "),
-      createBaseVNode("div", _hoisted_7$f, [
+      createBaseVNode("div", _hoisted_7$g, [
         createBaseVNode(
           "h3",
           null,
@@ -1643,8 +1709,8 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        $setup.duplicateAnalysis ? (openBlock(), createElementBlock("div", _hoisted_8$f, [
-          createBaseVNode("div", _hoisted_9$d, [
+        $setup.duplicateAnalysis ? (openBlock(), createElementBlock("div", _hoisted_8$g, [
+          createBaseVNode("div", _hoisted_9$e, [
             _cache[1] || (_cache[1] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1654,20 +1720,20 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_10$b,
+              _hoisted_10$c,
               toDisplayString($setup.duplicateAnalysis.totals.new),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_11$b,
+              _hoisted_11$c,
               toDisplayString($setup.t("agora", "New items")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_12$a, [
+          createBaseVNode("div", _hoisted_12$b, [
             _cache[2] || (_cache[2] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1677,20 +1743,20 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_13$a,
+              _hoisted_13$b,
               toDisplayString($setup.duplicateAnalysis.totals.existing),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_14$a,
+              _hoisted_14$b,
               toDisplayString($setup.t("agora", "Existing (skipped)")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_15$9, [
+          createBaseVNode("div", _hoisted_15$a, [
             _cache[3] || (_cache[3] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1700,20 +1766,20 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_16$9,
+              _hoisted_16$a,
               toDisplayString($setup.totalItems),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_17$9,
+              _hoisted_17$a,
               toDisplayString($setup.t("agora", "Total items")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_18$8, [
+          createBaseVNode("div", _hoisted_18$9, [
             _cache[4] || (_cache[4] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1723,21 +1789,21 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_19$8,
+              _hoisted_19$9,
               toDisplayString($setup.wizardStore.selectedLanguage),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_20$8,
+              _hoisted_20$9,
               toDisplayString($setup.t("agora", "Language")),
               1
               /* TEXT */
             )
           ])
-        ])) : (openBlock(), createElementBlock("div", _hoisted_21$8, [
-          createBaseVNode("div", _hoisted_22$8, [
+        ])) : (openBlock(), createElementBlock("div", _hoisted_21$9, [
+          createBaseVNode("div", _hoisted_22$9, [
             _cache[5] || (_cache[5] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1747,20 +1813,20 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_23$6,
+              _hoisted_23$7,
               toDisplayString($setup.totalItems),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_24$6,
+              _hoisted_24$7,
               toDisplayString($setup.t("agora", "Total items")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_25$6, [
+          createBaseVNode("div", _hoisted_25$7, [
             _cache[6] || (_cache[6] = createBaseVNode(
               "span",
               { class: "stat-icon" },
@@ -1770,14 +1836,14 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
             )),
             createBaseVNode(
               "span",
-              _hoisted_26$5,
+              _hoisted_26$6,
               toDisplayString($setup.wizardStore.selectedLanguage),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_27$5,
+              _hoisted_27$6,
               toDisplayString($setup.t("agora", "Language")),
               1
               /* TEXT */
@@ -1806,7 +1872,7 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
       })) : createCommentVNode("v-if", true),
       createCommentVNode(" Sections "),
-      createBaseVNode("div", _hoisted_28$5, [
+      createBaseVNode("div", _hoisted_28$6, [
         (openBlock(true), createElementBlock(
           Fragment,
           null,
@@ -1819,10 +1885,10 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "section-header",
                 onClick: ($event) => $setup.toggleSection(section.key)
               }, [
-                createBaseVNode("div", _hoisted_30$5, [
+                createBaseVNode("div", _hoisted_30$6, [
                   createBaseVNode(
                     "span",
-                    _hoisted_31$5,
+                    _hoisted_31$6,
                     toDisplayString(section.icon),
                     1
                     /* TEXT */
@@ -1836,22 +1902,22 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
                   ),
                   createBaseVNode(
                     "span",
-                    _hoisted_32$5,
+                    _hoisted_32$6,
                     "(" + toDisplayString(section.count) + ")",
                     1
                     /* TEXT */
                   ),
-                  $setup.duplicateAnalysis ? (openBlock(), createElementBlock("span", _hoisted_33$5, [
+                  $setup.duplicateAnalysis ? (openBlock(), createElementBlock("span", _hoisted_33$6, [
                     $setup.getSectionStatus(section.key).new > 0 ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_34$5,
+                      _hoisted_34$6,
                       toDisplayString($setup.getSectionStatus(section.key).new) + " new ",
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     $setup.getSectionStatus(section.key).existing > 0 ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_35$5,
+                      _hoisted_35$6,
                       toDisplayString($setup.getSectionStatus(section.key).existing) + " exist ",
                       1
                       /* TEXT */
@@ -1860,13 +1926,13 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
                 ]),
                 createBaseVNode(
                   "span",
-                  _hoisted_36$4,
+                  _hoisted_36$5,
                   toDisplayString($setup.expandedSections[section.key] ? "▼" : "▶"),
                   1
                   /* TEXT */
                 )
-              ], 8, _hoisted_29$5),
-              $setup.expandedSections[section.key] ? (openBlock(), createElementBlock("div", _hoisted_37$4, [
+              ], 8, _hoisted_29$6),
+              $setup.expandedSections[section.key] ? (openBlock(), createElementBlock("div", _hoisted_37$5, [
                 (openBlock(true), createElementBlock(
                   Fragment,
                   null,
@@ -1876,46 +1942,58 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
                       class: "item-row"
                     }, [
                       createCommentVNode(" View Mode "),
-                      !$setup.isEditing(section.key, index) ? (openBlock(), createElementBlock("div", _hoisted_38$4, [
-                        createBaseVNode("div", _hoisted_39$4, [
-                          createBaseVNode("div", _hoisted_40$4, [
+                      !$setup.isEditing(section.key, index) ? (openBlock(), createElementBlock("div", _hoisted_38$5, [
+                        createBaseVNode("div", _hoisted_39$5, [
+                          createBaseVNode("div", _hoisted_40$5, [
                             createBaseVNode(
                               "div",
-                              _hoisted_41$4,
+                              _hoisted_41$5,
                               toDisplayString($setup.getItemLabel(item, section)),
                               1
                               /* TEXT */
                             ),
-                            $setup.duplicateAnalysis && $setup.getItemStatus(section.key, $setup.getItemType(item, section)) !== "unknown" ? (openBlock(), createElementBlock(
+                            $setup.duplicateAnalysis && $setup.getItemStatus(
+                              section.key,
+                              $setup.getItemType(item, section)
+                            ) !== "unknown" ? (openBlock(), createElementBlock(
                               "span",
                               {
                                 key: 0,
                                 class: normalizeClass(["item-status-badge", {
-                                  "badge-new": $setup.getItemStatus(section.key, $setup.getItemType(item, section)) === "new",
-                                  "badge-existing": $setup.getItemStatus(section.key, $setup.getItemType(item, section)) === "existing"
+                                  "badge-new": $setup.getItemStatus(
+                                    section.key,
+                                    $setup.getItemType(item, section)
+                                  ) === "new",
+                                  "badge-existing": $setup.getItemStatus(
+                                    section.key,
+                                    $setup.getItemType(item, section)
+                                  ) === "existing"
                                 }])
                               },
-                              toDisplayString($setup.getItemStatus(section.key, $setup.getItemType(item, section)) === "new" ? "✨ New" : "📋 Exists"),
+                              toDisplayString($setup.getItemStatus(
+                                section.key,
+                                $setup.getItemType(item, section)
+                              ) === "new" ? "✨ New" : "📋 Exists"),
                               3
                               /* TEXT, CLASS */
                             )) : createCommentVNode("v-if", true)
                           ]),
                           createBaseVNode(
                             "div",
-                            _hoisted_42$4,
+                            _hoisted_42$5,
                             toDisplayString($setup.getItemType(item, section)),
                             1
                             /* TEXT */
                           ),
                           item.description ? (openBlock(), createElementBlock(
                             "div",
-                            _hoisted_43$4,
+                            _hoisted_43$5,
                             toDisplayString(item.description),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true)
                         ]),
-                        createBaseVNode("div", _hoisted_44$4, [
+                        createBaseVNode("div", _hoisted_44$5, [
                           createVNode($setup["NcButton"], {
                             type: "tertiary",
                             onClick: ($event) => $setup.startEdit(section.key, index)
@@ -1950,7 +2028,7 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
                         { key: 1 },
                         [
                           createCommentVNode(" Edit Mode "),
-                          createBaseVNode("div", _hoisted_45$4, [
+                          createBaseVNode("div", _hoisted_45$5, [
                             createBaseVNode("div", _hoisted_46$4, [
                               createVNode($setup["NcTextField"], {
                                 modelValue: $setup.editingItemData[section.itemTypeKey],
@@ -2023,8 +2101,8 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
     ]))
   ]);
 }
-const StepPreview = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$A], ["__scopeId", "data-v-1aff519f"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepPreview.vue"]]);
-const _sfc_main$z = /* @__PURE__ */ defineComponent({
+const StepPreview = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$B], ["__scopeId", "data-v-1aff519f"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepPreview.vue"]]);
+const _sfc_main$A = /* @__PURE__ */ defineComponent({
   __name: "StepSummary",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2053,56 +2131,56 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$z = { class: "summary-step" };
-const _hoisted_2$r = { class: "summary-header" };
-const _hoisted_3$l = { class: "subtitle" };
-const _hoisted_4$j = {
+const _hoisted_1$A = { class: "summary-step" };
+const _hoisted_2$s = { class: "summary-header" };
+const _hoisted_3$m = { class: "subtitle" };
+const _hoisted_4$k = {
   key: 0,
   class: "summary-content"
 };
-const _hoisted_5$f = { class: "summary-box" };
-const _hoisted_6$e = { class: "summary-item" };
-const _hoisted_7$e = { class: "label" };
-const _hoisted_8$e = { class: "value" };
-const _hoisted_9$c = { class: "summary-item" };
-const _hoisted_10$a = { class: "label" };
-const _hoisted_11$a = { class: "value" };
-const _hoisted_12$9 = { class: "summary-item" };
-const _hoisted_13$9 = { class: "label" };
-const _hoisted_14$9 = { class: "value" };
-const _hoisted_15$8 = { class: "summary-item" };
-const _hoisted_16$8 = { class: "label" };
-const _hoisted_17$8 = { class: "value" };
-const _hoisted_18$7 = { class: "summary-item" };
-const _hoisted_19$7 = { class: "label" };
-const _hoisted_20$7 = { class: "value" };
-const _hoisted_21$7 = {
+const _hoisted_5$g = { class: "summary-box" };
+const _hoisted_6$f = { class: "summary-item" };
+const _hoisted_7$f = { class: "label" };
+const _hoisted_8$f = { class: "value" };
+const _hoisted_9$d = { class: "summary-item" };
+const _hoisted_10$b = { class: "label" };
+const _hoisted_11$b = { class: "value" };
+const _hoisted_12$a = { class: "summary-item" };
+const _hoisted_13$a = { class: "label" };
+const _hoisted_14$a = { class: "value" };
+const _hoisted_15$9 = { class: "summary-item" };
+const _hoisted_16$9 = { class: "label" };
+const _hoisted_17$9 = { class: "value" };
+const _hoisted_18$8 = { class: "summary-item" };
+const _hoisted_19$8 = { class: "label" };
+const _hoisted_20$8 = { class: "value" };
+const _hoisted_21$8 = {
   key: 0,
   class: "summary-item"
 };
-const _hoisted_22$7 = { class: "label" };
-const _hoisted_23$5 = { class: "value" };
-const _hoisted_24$5 = {
+const _hoisted_22$8 = { class: "label" };
+const _hoisted_23$6 = { class: "value" };
+const _hoisted_24$6 = {
   key: 1,
   class: "summary-item"
 };
-const _hoisted_25$5 = { class: "label" };
-const _hoisted_26$4 = { class: "value" };
-const _hoisted_27$4 = { class: "summary-item" };
-const _hoisted_28$4 = { class: "label" };
-const _hoisted_29$4 = { class: "value" };
-const _hoisted_30$4 = {
+const _hoisted_25$6 = { class: "label" };
+const _hoisted_26$5 = { class: "value" };
+const _hoisted_27$5 = { class: "summary-item" };
+const _hoisted_28$5 = { class: "label" };
+const _hoisted_29$5 = { class: "value" };
+const _hoisted_30$5 = {
   key: 2,
   class: "summary-item"
 };
-const _hoisted_31$4 = { class: "label" };
-const _hoisted_32$4 = { class: "value" };
-const _hoisted_33$4 = { class: "summary-total" };
-const _hoisted_34$4 = { class: "label" };
-const _hoisted_35$4 = { class: "value" };
-function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$z, [
-    createBaseVNode("div", _hoisted_2$r, [
+const _hoisted_31$5 = { class: "label" };
+const _hoisted_32$5 = { class: "value" };
+const _hoisted_33$5 = { class: "summary-total" };
+const _hoisted_34$5 = { class: "label" };
+const _hoisted_35$5 = { class: "value" };
+function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$A, [
+    createBaseVNode("div", _hoisted_2$s, [
       createBaseVNode(
         "h2",
         null,
@@ -2112,7 +2190,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$l,
+        _hoisted_3$m,
         toDisplayString($setup.t("agora", "Please review your selections before importing")),
         1
         /* TEXT */
@@ -2137,8 +2215,8 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }),
-    $setup.template ? (openBlock(), createElementBlock("div", _hoisted_4$j, [
-      createBaseVNode("div", _hoisted_5$f, [
+    $setup.template ? (openBlock(), createElementBlock("div", _hoisted_4$k, [
+      createBaseVNode("div", _hoisted_5$g, [
         createBaseVNode(
           "h3",
           null,
@@ -2146,33 +2224,33 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("div", _hoisted_6$e, [
+        createBaseVNode("div", _hoisted_6$f, [
           createBaseVNode(
             "span",
-            _hoisted_7$e,
+            _hoisted_7$f,
             toDisplayString($setup.t("agora", "Template:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_8$e,
+            _hoisted_8$f,
             toDisplayString($setup.template.name) + " (v" + toDisplayString($setup.template.version) + ")",
             1
             /* TEXT */
           )
         ]),
-        createBaseVNode("div", _hoisted_9$c, [
+        createBaseVNode("div", _hoisted_9$d, [
           createBaseVNode(
             "span",
-            _hoisted_10$a,
+            _hoisted_10$b,
             toDisplayString($setup.t("agora", "Language:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_11$a,
+            _hoisted_11$b,
             toDisplayString($setup.language),
             1
             /* TEXT */
@@ -2185,113 +2263,113 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
           -1
           /* CACHED */
         )),
-        createBaseVNode("div", _hoisted_12$9, [
+        createBaseVNode("div", _hoisted_12$a, [
           createBaseVNode(
             "span",
-            _hoisted_13$9,
+            _hoisted_13$a,
             toDisplayString($setup.t("agora", "Families:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_14$9,
+            _hoisted_14$a,
             toDisplayString($setup.counts.inquiry_families) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        createBaseVNode("div", _hoisted_15$8, [
+        createBaseVNode("div", _hoisted_15$9, [
           createBaseVNode(
             "span",
-            _hoisted_16$8,
+            _hoisted_16$9,
             toDisplayString($setup.t("agora", "Inquiry types:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_17$8,
+            _hoisted_17$9,
             toDisplayString($setup.counts.inquiry_types) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        createBaseVNode("div", _hoisted_18$7, [
+        createBaseVNode("div", _hoisted_18$8, [
           createBaseVNode(
             "span",
-            _hoisted_19$7,
+            _hoisted_19$8,
             toDisplayString($setup.t("agora", "Statuses:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_20$7,
+            _hoisted_20$8,
             toDisplayString($setup.counts.inquiry_statuses) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        $setup.counts.option_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_21$7, [
+        $setup.counts.option_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_21$8, [
           createBaseVNode(
             "span",
-            _hoisted_22$7,
+            _hoisted_22$8,
             toDisplayString($setup.t("agora", "Option types:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_23$5,
+            _hoisted_23$6,
             toDisplayString($setup.counts.option_types) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ])) : createCommentVNode("v-if", true),
-        $setup.counts.inquiry_group_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_24$5, [
+        $setup.counts.inquiry_group_types > 0 ? (openBlock(), createElementBlock("div", _hoisted_24$6, [
           createBaseVNode(
             "span",
-            _hoisted_25$5,
+            _hoisted_25$6,
             toDisplayString($setup.t("agora", "Group types:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_26$4,
+            _hoisted_26$5,
             toDisplayString($setup.counts.inquiry_group_types) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ])) : createCommentVNode("v-if", true),
-        createBaseVNode("div", _hoisted_27$4, [
+        createBaseVNode("div", _hoisted_27$5, [
           createBaseVNode(
             "span",
-            _hoisted_28$4,
+            _hoisted_28$5,
             toDisplayString($setup.t("agora", "Categories:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_29$4,
+            _hoisted_29$5,
             toDisplayString($setup.counts.categories) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
           )
         ]),
-        $setup.counts.locations > 0 ? (openBlock(), createElementBlock("div", _hoisted_30$4, [
+        $setup.counts.locations > 0 ? (openBlock(), createElementBlock("div", _hoisted_30$5, [
           createBaseVNode(
             "span",
-            _hoisted_31$4,
+            _hoisted_31$5,
             toDisplayString($setup.t("agora", "Locations:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_32$4,
+            _hoisted_32$5,
             toDisplayString($setup.counts.locations) + " " + toDisplayString($setup.t("agora", "items")),
             1
             /* TEXT */
@@ -2304,17 +2382,17 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
           -1
           /* CACHED */
         )),
-        createBaseVNode("div", _hoisted_33$4, [
+        createBaseVNode("div", _hoisted_33$5, [
           createBaseVNode(
             "span",
-            _hoisted_34$4,
+            _hoisted_34$5,
             toDisplayString($setup.t("agora", "Total items:")),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_35$4,
+            _hoisted_35$5,
             toDisplayString($setup.totalItems),
             1
             /* TEXT */
@@ -2324,8 +2402,8 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepSummary = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$z], ["__scopeId", "data-v-13b1c365"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepSummary.vue"]]);
-const _sfc_main$y = /* @__PURE__ */ defineComponent({
+const StepSummary = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$A], ["__scopeId", "data-v-13b1c365"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepSummary.vue"]]);
+const _sfc_main$z = /* @__PURE__ */ defineComponent({
   __name: "StepImporting",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2338,13 +2416,13 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$y = { class: "importing-step" };
-const _hoisted_2$q = { class: "importing-content" };
-const _hoisted_3$k = { class: "importing-message" };
-const _hoisted_4$i = { class: "importing-submessage" };
-function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$y, [
-    createBaseVNode("div", _hoisted_2$q, [
+const _hoisted_1$z = { class: "importing-step" };
+const _hoisted_2$r = { class: "importing-content" };
+const _hoisted_3$l = { class: "importing-message" };
+const _hoisted_4$j = { class: "importing-submessage" };
+function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$z, [
+    createBaseVNode("div", _hoisted_2$r, [
       createVNode($setup["NcLoadingIcon"], { size: 80 }),
       createBaseVNode(
         "h2",
@@ -2355,23 +2433,26 @@ function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_3$k,
+        _hoisted_3$l,
         toDisplayString($setup.t("agora", "Please wait while the template is being imported …")),
         1
         /* TEXT */
       ),
       createBaseVNode(
         "p",
-        _hoisted_4$i,
-        toDisplayString($setup.t("agora", "This may take a few moments depending on the template size.")),
+        _hoisted_4$j,
+        toDisplayString($setup.t(
+          "agora",
+          "This may take a few moments depending on the template size."
+        )),
         1
         /* TEXT */
       )
     ])
   ]);
 }
-const StepImporting = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$y], ["__scopeId", "data-v-38620be8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepImporting.vue"]]);
-const _sfc_main$x = /* @__PURE__ */ defineComponent({
+const StepImporting = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$z], ["__scopeId", "data-v-38620be8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepImporting.vue"]]);
+const _sfc_main$y = /* @__PURE__ */ defineComponent({
   __name: "StepResults",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2398,59 +2479,59 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$x = { class: "results-step" };
-const _hoisted_2$p = { class: "results-header" };
-const _hoisted_3$j = {
+const _hoisted_1$y = { class: "results-step" };
+const _hoisted_2$q = { class: "results-header" };
+const _hoisted_3$k = {
   key: 0,
   class: "success-icon"
 };
-const _hoisted_4$h = {
+const _hoisted_4$i = {
   key: 1,
   class: "warning-icon"
 };
-const _hoisted_5$e = { key: 2 };
-const _hoisted_6$d = { key: 3 };
-const _hoisted_7$d = {
+const _hoisted_5$f = { key: 2 };
+const _hoisted_6$e = { key: 3 };
+const _hoisted_7$e = {
   key: 0,
   class: "results-content"
 };
-const _hoisted_8$d = {
+const _hoisted_8$e = {
   key: 0,
   class: "result-section success-section"
 };
-const _hoisted_9$b = { class: "result-list" };
-const _hoisted_10$9 = {
+const _hoisted_9$c = { class: "result-list" };
+const _hoisted_10$a = {
   key: 1,
   class: "result-section skipped-section"
 };
-const _hoisted_11$9 = { class: "result-list" };
-const _hoisted_12$8 = {
+const _hoisted_11$a = { class: "result-list" };
+const _hoisted_12$9 = {
   key: 2,
   class: "result-section error-section"
 };
-const _hoisted_13$8 = { class: "result-list" };
-const _hoisted_14$8 = { class: "results-actions" };
-function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$x, [
-    createBaseVNode("div", _hoisted_2$p, [
-      !$setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_3$j, " ✓ ")) : (openBlock(), createElementBlock("div", _hoisted_4$h, " ⚠ ")),
+const _hoisted_13$9 = { class: "result-list" };
+const _hoisted_14$9 = { class: "results-actions" };
+function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$y, [
+    createBaseVNode("div", _hoisted_2$q, [
+      !$setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_3$k, " ✓ ")) : (openBlock(), createElementBlock("div", _hoisted_4$i, " ⚠ ")),
       !$setup.hasErrors ? (openBlock(), createElementBlock(
         "h2",
-        _hoisted_5$e,
+        _hoisted_5$f,
         toDisplayString($setup.t("agora", "Import complete!")),
         1
         /* TEXT */
       )) : (openBlock(), createElementBlock(
         "h2",
-        _hoisted_6$d,
+        _hoisted_6$e,
         toDisplayString($setup.t("agora", "Import completed with warnings")),
         1
         /* TEXT */
       ))
     ]),
-    $setup.importResult ? (openBlock(), createElementBlock("div", _hoisted_7$d, [
+    $setup.importResult ? (openBlock(), createElementBlock("div", _hoisted_7$e, [
       createCommentVNode(" Success Items "),
-      $setup.hasSuccess ? (openBlock(), createElementBlock("div", _hoisted_8$d, [
+      $setup.hasSuccess ? (openBlock(), createElementBlock("div", _hoisted_8$e, [
         createBaseVNode(
           "h3",
           null,
@@ -2458,7 +2539,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("ul", _hoisted_9$b, [
+        createBaseVNode("ul", _hoisted_9$c, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2477,7 +2558,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ])) : createCommentVNode("v-if", true),
       createCommentVNode(" Skipped Items "),
-      $setup.hasSkipped ? (openBlock(), createElementBlock("div", _hoisted_10$9, [
+      $setup.hasSkipped ? (openBlock(), createElementBlock("div", _hoisted_10$a, [
         createBaseVNode(
           "h3",
           null,
@@ -2485,7 +2566,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("ul", _hoisted_11$9, [
+        createBaseVNode("ul", _hoisted_11$a, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2504,7 +2585,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ])) : createCommentVNode("v-if", true),
       createCommentVNode(" Failed Items "),
-      $setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_12$8, [
+      $setup.hasErrors ? (openBlock(), createElementBlock("div", _hoisted_12$9, [
         createBaseVNode(
           "h3",
           null,
@@ -2512,7 +2593,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("ul", _hoisted_13$8, [
+        createBaseVNode("ul", _hoisted_13$9, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2532,7 +2613,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
       ])) : createCommentVNode("v-if", true)
     ])) : createCommentVNode("v-if", true),
     createCommentVNode(" Action Buttons "),
-    createBaseVNode("div", _hoisted_14$8, [
+    createBaseVNode("div", _hoisted_14$9, [
       createVNode($setup["NcButton"], {
         type: "primary",
         onClick: $setup.goToAgora
@@ -2578,8 +2659,8 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepResults = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$x], ["__scopeId", "data-v-0e206bd8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepResults.vue"]]);
-const _sfc_main$w = /* @__PURE__ */ defineComponent({
+const StepResults = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$y], ["__scopeId", "data-v-0e206bd8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/steps/StepResults.vue"]]);
+const _sfc_main$x = /* @__PURE__ */ defineComponent({
   __name: "TemplateSetupWizard",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2673,21 +2754,21 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$w = { class: "wizard-container" };
-const _hoisted_2$o = {
+const _hoisted_1$x = { class: "wizard-container" };
+const _hoisted_2$p = {
   key: 0,
   class: "wizard-progress"
 };
-const _hoisted_3$i = { class: "progress-dot" };
-const _hoisted_4$g = { key: 0 };
-const _hoisted_5$d = { key: 1 };
-const _hoisted_6$c = { class: "progress-label" };
-const _hoisted_7$c = { class: "wizard-content" };
-const _hoisted_8$c = {
+const _hoisted_3$j = { class: "progress-dot" };
+const _hoisted_4$h = { key: 0 };
+const _hoisted_5$e = { key: 1 };
+const _hoisted_6$d = { class: "progress-label" };
+const _hoisted_7$d = { class: "wizard-content" };
+const _hoisted_8$d = {
   key: 1,
   class: "wizard-actions"
 };
-function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
   return $setup.isOpen ? (openBlock(), createBlock($setup["NcModal"], {
     key: 0,
     "can-close": !$setup.wizardStore.importing,
@@ -2697,9 +2778,9 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
   }, {
     default: withCtx(() => [
       createCommentVNode(" Step Content "),
-      createBaseVNode("div", _hoisted_1$w, [
+      createBaseVNode("div", _hoisted_1$x, [
         createCommentVNode(" Progress Indicator "),
-        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_2$o, [
+        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_2$p, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -2716,10 +2797,10 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
                   }])
                 },
                 [
-                  createBaseVNode("div", _hoisted_3$i, [
-                    index < $setup.wizardStore.currentStepIndex ? (openBlock(), createElementBlock("span", _hoisted_4$g, "✓")) : (openBlock(), createElementBlock(
+                  createBaseVNode("div", _hoisted_3$j, [
+                    index < $setup.wizardStore.currentStepIndex ? (openBlock(), createElementBlock("span", _hoisted_4$h, "✓")) : (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_5$d,
+                      _hoisted_5$e,
                       toDisplayString(index + 1),
                       1
                       /* TEXT */
@@ -2727,7 +2808,7 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   createBaseVNode(
                     "div",
-                    _hoisted_6$c,
+                    _hoisted_6$d,
                     toDisplayString($setup.getStepTitle(step)),
                     1
                     /* TEXT */
@@ -2742,11 +2823,11 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
           ))
         ])) : createCommentVNode("v-if", true),
         createCommentVNode(" Dynamic Step Component "),
-        createBaseVNode("div", _hoisted_7$c, [
+        createBaseVNode("div", _hoisted_7$d, [
           (openBlock(), createBlock(resolveDynamicComponent($setup.currentStepComponent)))
         ]),
         createCommentVNode(" Navigation Buttons "),
-        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_8$c, [
+        $setup.canShowNavigation ? (openBlock(), createElementBlock("div", _hoisted_8$d, [
           $setup.wizardStore.canGoPrevious ? (openBlock(), createBlock($setup["NcButton"], {
             key: 0,
             type: "tertiary",
@@ -2805,8 +2886,8 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 8, ["can-close", "name"])) : createCommentVNode("v-if", true);
 }
-const TemplateSetupWizard = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$w], ["__scopeId", "data-v-d2f4206c"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/TemplateSetupWizard.vue"]]);
-const _sfc_main$v = {
+const TemplateSetupWizard = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$x], ["__scopeId", "data-v-d2f4206c"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Wizard/TemplateSetupWizard.vue"]]);
+const _sfc_main$w = {
   __name: "AdminActivities",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2822,9 +2903,9 @@ const _sfc_main$v = {
     return __returned__;
   }
 };
-const _hoisted_1$v = { class: "user_settings" };
-function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$v, [
+const _hoisted_1$w = { class: "user_settings" };
+function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$w, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.useActivity,
       "onUpdate:modelValue": [
@@ -2845,8 +2926,8 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["modelValue"])
   ]);
 }
-const AdminActivities = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$v], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminActivities.vue"]]);
-const _sfc_main$u = {
+const AdminActivities = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$w], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminActivities.vue"]]);
+const _sfc_main$v = {
   __name: "AdminArchiveInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2864,9 +2945,9 @@ const _sfc_main$u = {
     return __returned__;
   }
 };
-const _hoisted_1$u = { class: "user_settings" };
-function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$u, [
+const _hoisted_1$v = { class: "user_settings" };
+function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$v, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.autoArchive,
       "onUpdate:modelValue": [
@@ -2893,13 +2974,16 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
       type: "number",
       inputmode: "numeric",
       "use-num-modifiers": "",
-      label: $setup.t("agora", "Days after which inquiries should be archived after closing"),
+      label: $setup.t(
+        "agora",
+        "Days after which inquiries should be archived after closing"
+      ),
       onChange: _cache[3] || (_cache[3] = ($event) => $setup.appSettingsStore.write())
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminArchiveInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$u], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminArchiveInquiries.vue"]]);
-const _sfc_main$t = {
+const AdminArchiveInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$v], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminArchiveInquiries.vue"]]);
+const _sfc_main$u = {
   __name: "AdminDeleteInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2917,9 +3001,9 @@ const _sfc_main$t = {
     return __returned__;
   }
 };
-const _hoisted_1$t = { class: "user_settings" };
-function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$t, [
+const _hoisted_1$u = { class: "user_settings" };
+function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$u, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.autoDelete,
       "onUpdate:modelValue": [
@@ -2946,13 +3030,16 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
       type: "number",
       inputmode: "numeric",
       "use-num-modifiers": "",
-      label: $setup.t("agora", "Days after which archived inquiries should be finally deleted"),
+      label: $setup.t(
+        "agora",
+        "Days after which archived inquiries should be finally deleted"
+      ),
       onChange: _cache[3] || (_cache[3] = ($event) => $setup.appSettingsStore.write())
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminDeleteInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$t], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminDeleteInquiries.vue"]]);
-const _sfc_main$s = {
+const AdminDeleteInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$u], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminDeleteInquiries.vue"]]);
+const _sfc_main$t = {
   __name: "AdminExpireInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -2970,9 +3057,9 @@ const _sfc_main$s = {
     return __returned__;
   }
 };
-const _hoisted_1$s = { class: "user_settings" };
-function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$s, [
+const _hoisted_1$t = { class: "user_settings" };
+function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$t, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.autoExpire,
       "onUpdate:modelValue": [
@@ -2999,13 +3086,16 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
       type: "number",
       inputmode: "numeric",
       "use-num-modifiers": "",
-      label: $setup.t("agora", "Days after which inquiries should expire after being opened"),
+      label: $setup.t(
+        "agora",
+        "Days after which inquiries should expire after being opened"
+      ),
       onChange: _cache[3] || (_cache[3] = ($event) => $setup.appSettingsStore.write())
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminExpireInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$s], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminExpireInquiries.vue"]]);
-const _sfc_main$r = {
+const AdminExpireInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$t], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminExpireInquiries.vue"]]);
+const _sfc_main$s = {
   name: "LanguageMarkdownIcon",
   emits: ["click"],
   props: {
@@ -3022,11 +3112,11 @@ const _sfc_main$r = {
     }
   }
 };
-const _hoisted_1$r = ["aria-hidden", "aria-label"];
-const _hoisted_2$n = ["fill", "width", "height"];
-const _hoisted_3$h = { d: "M20.56 18H3.44C2.65 18 2 17.37 2 16.59V7.41C2 6.63 2.65 6 3.44 6H20.56C21.35 6 22 6.63 22 7.41V16.59C22 17.37 21.35 18 20.56 18M6.81 15.19V11.53L8.73 13.88L10.65 11.53V15.19H12.58V8.81H10.65L8.73 11.16L6.81 8.81H4.89V15.19H6.81M19.69 12H17.77V8.81H15.85V12H13.92L16.81 15.28L19.69 12Z" };
-const _hoisted_4$f = { key: 0 };
-function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$s = ["aria-hidden", "aria-label"];
+const _hoisted_2$o = ["fill", "width", "height"];
+const _hoisted_3$i = { d: "M20.56 18H3.44C2.65 18 2 17.37 2 16.59V7.41C2 6.63 2.65 6 3.44 6H20.56C21.35 6 22 6.63 22 7.41V16.59C22 17.37 21.35 18 20.56 18M6.81 15.19V11.53L8.73 13.88L10.65 11.53V15.19H12.58V8.81H10.65L8.73 11.16L6.81 8.81H4.89V15.19H6.81M19.69 12H17.77V8.81H15.85V12H13.92L16.81 15.28L19.69 12Z" };
+const _hoisted_4$g = { key: 0 };
+function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
@@ -3041,20 +3131,20 @@ function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
       height: $props.size,
       viewBox: "0 0 24 24"
     }, [
-      createBaseVNode("path", _hoisted_3$h, [
+      createBaseVNode("path", _hoisted_3$i, [
         $props.title ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_4$f,
+          _hoisted_4$g,
           toDisplayString($props.title),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
       ])
-    ], 8, _hoisted_2$n))
-  ], 16, _hoisted_1$r);
+    ], 8, _hoisted_2$o))
+  ], 16, _hoisted_1$s);
 }
-const LanguageMarkdownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r], ["__file", "/home/vini/Nextcloud/agora1.8.0/node_modules/vue-material-design-icons/LanguageMarkdown.vue"]]);
-const _sfc_main$q = {
+const LanguageMarkdownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$s], ["__file", "/home/vini/Nextcloud/agora1.8.0/node_modules/vue-material-design-icons/LanguageMarkdown.vue"]]);
+const _sfc_main$r = {
   __name: "AdminEmail",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3084,12 +3174,12 @@ const _sfc_main$q = {
     return __returned__;
   }
 };
-const _hoisted_1$q = { class: "user_settings" };
-const _hoisted_2$m = { class: "disclaimer_group" };
-const _hoisted_3$g = { class: "grow_title" };
-const _hoisted_4$e = ["innerHTML"];
-function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$q, [
+const _hoisted_1$r = { class: "user_settings" };
+const _hoisted_2$n = { class: "disclaimer_group" };
+const _hoisted_3$h = { class: "grow_title" };
+const _hoisted_4$f = ["innerHTML"];
+function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$r, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.legalTermsInEmail,
       "onUpdate:modelValue": [
@@ -3108,8 +3198,8 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    createBaseVNode("div", _hoisted_2$m, [
-      createBaseVNode("div", _hoisted_3$g, [
+    createBaseVNode("div", _hoisted_2$n, [
+      createBaseVNode("div", _hoisted_3$h, [
         createBaseVNode(
           "span",
           null,
@@ -3149,17 +3239,18 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
       [vShow, !$setup.preview],
       [vModelText, $setup.appSettingsStore.disclaimer]
     ]),
-    createCommentVNode(" eslint-disable-next-line vue/no-v-html "),
+    createCommentVNode(" eslint-disable vue/no-v-html "),
     withDirectives(createBaseVNode("div", {
       class: "inquiries-markdown",
       innerHTML: $setup.markedDisclaimer
-    }, null, 8, _hoisted_4$e), [
+    }, null, 8, _hoisted_4$f), [
       [vShow, $setup.preview]
-    ])
+    ]),
+    createCommentVNode(" eslint-enable vue/no-v-html ")
   ]);
 }
-const AdminEmail = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminEmail.vue"]]);
-const _sfc_main$p = {
+const AdminEmail = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminEmail.vue"]]);
+const _sfc_main$q = {
   __name: "AdminModeration",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3175,13 +3266,13 @@ const _sfc_main$p = {
     return __returned__;
   }
 };
-const _hoisted_1$p = { class: "user_settings" };
-const _hoisted_2$l = {
+const _hoisted_1$q = { class: "user_settings" };
+const _hoisted_2$m = {
   key: 0,
   class: "settings_details"
 };
-function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$p, [
+function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$q, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.useModeration,
       "onUpdate:modelValue": [
@@ -3200,7 +3291,7 @@ function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    !$setup.appSettingsStore.allowModeration ? (openBlock(), createElementBlock("div", _hoisted_2$l, [
+    !$setup.appSettingsStore.allowModeration ? (openBlock(), createElementBlock("div", _hoisted_2$m, [
       createVNode($setup["NcCheckboxRadioSwitch"], {
         modelValue: $setup.appSettingsStore.officialBypassModeration,
         "onUpdate:modelValue": [
@@ -3222,8 +3313,8 @@ function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminModeration = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminModeration.vue"]]);
-const _sfc_main$o = {
+const AdminModeration = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminModeration.vue"]]);
+const _sfc_main$p = {
   __name: "AdminJobs",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3286,12 +3377,12 @@ const _sfc_main$o = {
     return __returned__;
   }
 };
-const _hoisted_1$o = { class: "user_settings" };
-const _hoisted_2$k = { class: "job_hints" };
-const _hoisted_3$f = { class: "job_buttons_section" };
-function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$o, [
-    createBaseVNode("div", _hoisted_2$k, [
+const _hoisted_1$p = { class: "user_settings" };
+const _hoisted_2$l = { class: "job_hints" };
+const _hoisted_3$g = { class: "job_buttons_section" };
+function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$p, [
+    createBaseVNode("div", _hoisted_2$l, [
       createBaseVNode(
         "p",
         null,
@@ -3319,7 +3410,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_3$f, [
+    createBaseVNode("div", _hoisted_3$g, [
       createVNode($setup["NcButton"], {
         variant: "primary",
         "aria-label": $setup.autoreminder.text,
@@ -3371,8 +3462,8 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminJobs = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminJobs.vue"]]);
-const _sfc_main$n = {
+const AdminJobs = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminJobs.vue"]]);
+const _sfc_main$o = {
   __name: "AdminLegal",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -3404,18 +3495,18 @@ const _sfc_main$n = {
     return __returned__;
   }
 };
-const _hoisted_1$n = { class: "user_settings" };
-const _hoisted_2$j = {
+const _hoisted_1$o = { class: "user_settings" };
+const _hoisted_2$k = {
   key: 0,
   class: "user_settings"
 };
-const _hoisted_3$e = { class: "settings-description" };
-function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_3$f = { class: "settings-description" };
+function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     Fragment,
     null,
     [
-      createBaseVNode("div", _hoisted_1$n, [
+      createBaseVNode("div", _hoisted_1$o, [
         createVNode($setup["NcCheckboxRadioSwitch"], {
           modelValue: $setup.appSettingsStore.useSiteLegalTerms,
           "onUpdate:modelValue": [
@@ -3426,7 +3517,10 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
         }, {
           default: withCtx(() => [
             createTextVNode(
-              toDisplayString($setup.t("agora", "Use the default terms for public inquiries and enable the default footer")),
+              toDisplayString($setup.t(
+                "agora",
+                "Use the default terms for public inquiries and enable the default footer"
+              )),
               1
               /* TEXT */
             )
@@ -3435,11 +3529,14 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
           /* STABLE */
         }, 8, ["modelValue"])
       ]),
-      !$setup.appSettingsStore.useSiteLegalTerms ? (openBlock(), createElementBlock("div", _hoisted_2$j, [
+      !$setup.appSettingsStore.useSiteLegalTerms ? (openBlock(), createElementBlock("div", _hoisted_2$k, [
         createBaseVNode(
           "p",
-          _hoisted_3$e,
-          toDisplayString($setup.t("agora", "If you want to use different terms for public inquiries, enter them below.")),
+          _hoisted_3$f,
+          toDisplayString($setup.t(
+            "agora",
+            "If you want to use different terms for public inquiries, enter them below."
+          )),
           1
           /* TEXT */
         ),
@@ -3466,8 +3563,8 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT */
   );
 }
-const AdminLegal = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminLegal.vue"]]);
-const _sfc_main$m = {
+const AdminLegal = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminLegal.vue"]]);
+const _sfc_main$n = {
   __name: "AdminFamiliesManager",
   emits: ["familySelected"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -3523,7 +3620,9 @@ const _sfc_main$m = {
     };
     const addFamily = async () => {
       if (!newFamily.value.family_type) {
-        showError(translate("agora", "Inquiry family type is mandatory"), { timeout: 2e3 });
+        showError(translate("agora", "Inquiry family type is mandatory"), {
+          timeout: 2e3
+        });
         return;
       }
       await appSettingsStore.addFamily({
@@ -3550,10 +3649,16 @@ const _sfc_main$m = {
       if (family.typesCount > 0 || family.groupTypesCount > 0) {
         const parts = [];
         if (family.typesCount > 0) {
-          parts.push(translate("agora", "{count} inquiry type(s)", { count: family.typesCount }));
+          parts.push(
+            translate("agora", "{count} inquiry type(s)", { count: family.typesCount })
+          );
         }
         if (family.groupTypesCount > 0) {
-          parts.push(translate("agora", "{count} inquiry group(s)", { count: family.groupTypesCount }));
+          parts.push(
+            translate("agora", "{count} inquiry group(s)", {
+              count: family.groupTypesCount
+            })
+          );
         }
         showError(
           translate(
@@ -3591,36 +3696,36 @@ const _sfc_main$m = {
     return __returned__;
   }
 };
-const _hoisted_1$m = { class: "families-manager" };
-const _hoisted_2$i = { class: "description" };
-const _hoisted_3$d = { class: "families-list" };
-const _hoisted_4$d = ["onClick"];
-const _hoisted_5$c = { class: "family-content" };
-const _hoisted_6$b = { class: "family-icon" };
-const _hoisted_7$b = { class: "family-info" };
-const _hoisted_8$b = { class: "family-type" };
-const _hoisted_9$a = {
+const _hoisted_1$n = { class: "families-manager" };
+const _hoisted_2$j = { class: "description" };
+const _hoisted_3$e = { class: "families-list" };
+const _hoisted_4$e = ["onClick"];
+const _hoisted_5$d = { class: "family-content" };
+const _hoisted_6$c = { class: "family-icon" };
+const _hoisted_7$c = { class: "family-info" };
+const _hoisted_8$c = { class: "family-type" };
+const _hoisted_9$b = {
   key: 0,
   class: "family-description"
 };
-const _hoisted_10$8 = { class: "family-stats" };
-const _hoisted_11$8 = { class: "types-count" };
-const _hoisted_12$7 = { class: "group-types-count" };
-const _hoisted_13$7 = { class: "family-actions" };
-const _hoisted_14$7 = { class: "add-family-form" };
-const _hoisted_15$7 = { class: "form-grid" };
-const _hoisted_16$7 = { class: "form-row" };
-const _hoisted_17$7 = { class: "form-actions" };
-const _hoisted_18$6 = {
+const _hoisted_10$9 = { class: "family-stats" };
+const _hoisted_11$9 = { class: "types-count" };
+const _hoisted_12$8 = { class: "group-types-count" };
+const _hoisted_13$8 = { class: "family-actions" };
+const _hoisted_14$8 = { class: "add-family-form" };
+const _hoisted_15$8 = { class: "form-grid" };
+const _hoisted_16$8 = { class: "form-row" };
+const _hoisted_17$8 = { class: "form-actions" };
+const _hoisted_18$7 = {
   key: 0,
   class: "modal-overlay"
 };
-const _hoisted_19$6 = { class: "modal-content large-modal" };
-const _hoisted_20$6 = { class: "form-grid" };
-const _hoisted_21$6 = { class: "form-row" };
-const _hoisted_22$6 = { class: "modal-actions" };
-function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$m, [
+const _hoisted_19$7 = { class: "modal-content large-modal" };
+const _hoisted_20$7 = { class: "form-grid" };
+const _hoisted_21$7 = { class: "form-row" };
+const _hoisted_22$7 = { class: "modal-actions" };
+function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$n, [
     createBaseVNode(
       "h2",
       null,
@@ -3630,7 +3735,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     ),
     createBaseVNode(
       "p",
-      _hoisted_2$i,
+      _hoisted_2$j,
       toDisplayString($setup.t(
         "agora",
         "Manage inquiry families to organize different types of inquiries. Each family can contain multiple inquiry types."
@@ -3639,7 +3744,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
       /* TEXT */
     ),
     createCommentVNode(" Families List "),
-    createBaseVNode("div", _hoisted_3$d, [
+    createBaseVNode("div", _hoisted_3$e, [
       createBaseVNode(
         "h3",
         null,
@@ -3656,11 +3761,11 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
             class: "family-item",
             onClick: ($event) => $setup.selectFamily(family)
           }, [
-            createBaseVNode("div", _hoisted_5$c, [
-              createBaseVNode("div", _hoisted_6$b, [
+            createBaseVNode("div", _hoisted_5$d, [
+              createBaseVNode("div", _hoisted_6$c, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(family.icon)), { size: 20 }))
               ]),
-              createBaseVNode("div", _hoisted_7$b, [
+              createBaseVNode("div", _hoisted_7$c, [
                 createBaseVNode(
                   "h4",
                   null,
@@ -3670,37 +3775,39 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
                 ),
                 createBaseVNode(
                   "p",
-                  _hoisted_8$b,
+                  _hoisted_8$c,
                   toDisplayString(family.family_type),
                   1
                   /* TEXT */
                 ),
                 family.description ? (openBlock(), createElementBlock(
                   "p",
-                  _hoisted_9$a,
+                  _hoisted_9$b,
                   toDisplayString(family.description),
                   1
                   /* TEXT */
                 )) : createCommentVNode("v-if", true),
-                createBaseVNode("div", _hoisted_10$8, [
+                createBaseVNode("div", _hoisted_10$9, [
                   createBaseVNode(
                     "span",
-                    _hoisted_11$8,
+                    _hoisted_11$9,
                     toDisplayString($setup.t("agora", "{count} types", { count: family.typesCount })),
                     1
                     /* TEXT */
                   ),
                   createBaseVNode(
                     "span",
-                    _hoisted_12$7,
-                    toDisplayString($setup.t("agora", "{count} group types", { count: family.groupTypesCount })),
+                    _hoisted_12$8,
+                    toDisplayString($setup.t("agora", "{count} group types", {
+                      count: family.groupTypesCount
+                    })),
                     1
                     /* TEXT */
                   )
                 ])
               ])
             ]),
-            createBaseVNode("div", _hoisted_13$7, [
+            createBaseVNode("div", _hoisted_13$8, [
               createVNode($setup["NcButton"], {
                 onClick: withModifiers(($event) => $setup.startEditing(family), ["stop"])
               }, {
@@ -3728,14 +3835,14 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
                 /* STABLE */
               }, 8, ["onClick"])
             ])
-          ], 8, _hoisted_4$d);
+          ], 8, _hoisted_4$e);
         }),
         128
         /* KEYED_FRAGMENT */
       ))
     ]),
     createCommentVNode(" Add New Family Form "),
-    createBaseVNode("div", _hoisted_14$7, [
+    createBaseVNode("div", _hoisted_14$8, [
       createBaseVNode(
         "h3",
         null,
@@ -3743,8 +3850,8 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
         1
         /* TEXT */
       ),
-      createBaseVNode("div", _hoisted_15$7, [
-        createBaseVNode("div", _hoisted_16$7, [
+      createBaseVNode("div", _hoisted_15$8, [
+        createBaseVNode("div", _hoisted_16$8, [
           createVNode($setup["NcInputField"], {
             modelValue: $setup.newFamily.family_type,
             "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.newFamily.family_type = $event),
@@ -3789,7 +3896,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
           min: 0,
           class: "form-field"
         }, null, 8, ["modelValue", "label"]),
-        createBaseVNode("div", _hoisted_17$7, [
+        createBaseVNode("div", _hoisted_17$8, [
           createVNode($setup["NcButton"], {
             type: "primary",
             disabled: !$setup.newFamily.family_type || !$setup.newFamily.label,
@@ -3809,8 +3916,8 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
       ])
     ]),
     createCommentVNode(" Edit Family Modal "),
-    $setup.editingFamily ? (openBlock(), createElementBlock("div", _hoisted_18$6, [
-      createBaseVNode("div", _hoisted_19$6, [
+    $setup.editingFamily ? (openBlock(), createElementBlock("div", _hoisted_18$7, [
+      createBaseVNode("div", _hoisted_19$7, [
         createBaseVNode(
           "h3",
           null,
@@ -3818,8 +3925,8 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("div", _hoisted_20$6, [
-          createBaseVNode("div", _hoisted_21$6, [
+        createBaseVNode("div", _hoisted_20$7, [
+          createBaseVNode("div", _hoisted_21$7, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.editingFamily.family_type,
               "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.editingFamily.family_type = $event),
@@ -3855,7 +3962,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
             type: "textarea",
             class: "full-width"
           }, null, 8, ["modelValue", "label"]),
-          createBaseVNode("div", _hoisted_22$6, [
+          createBaseVNode("div", _hoisted_22$7, [
             createVNode($setup["NcButton"], {
               onClick: _cache[9] || (_cache[9] = ($event) => $setup.editingFamily = null)
             }, {
@@ -3889,8 +3996,8 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__scopeId", "data-v-b0578289"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminFamiliesManager.vue"]]);
-const _sfc_main$l = /* @__PURE__ */ defineComponent({
+const AdminFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__scopeId", "data-v-b0578289"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminFamiliesManager.vue"]]);
+const _sfc_main$m = /* @__PURE__ */ defineComponent({
   __name: "AdminTypesManager",
   props: {
     selectedFamily: { type: [Object, null], required: false }
@@ -3902,7 +4009,9 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     const emit = __emit;
     const appSettingsStore = useAppSettingsStore();
     const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
-    const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value);
+    const familyLabel = computed(
+      () => props.selectedFamily?.label ?? familyKey.value
+    );
     const searchQuery = ref("");
     const editingType = ref(null);
     const savingType = ref(false);
@@ -3949,7 +4058,9 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     };
     const normalizeArray = (value) => {
       if (Array.isArray(value)) {
-        return value.map((v) => typeof v === "string" ? v : v?.key ?? String(v));
+        return value.map(
+          (v) => typeof v === "string" ? v : v?.key ?? String(v)
+        );
       }
       if (typeof value === "string" && value) {
         try {
@@ -3961,7 +4072,9 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
       }
       return [];
     };
-    const allTypes = computed(() => appSettingsStore.inquiryTypeTab ?? []);
+    const allTypes = computed(
+      () => appSettingsStore.inquiryTypeTab ?? []
+    );
     const familyTypes = computed(
       () => familyKey.value ? allTypes.value.filter((type) => type.family === familyKey.value) : allTypes.value
     );
@@ -4030,13 +4143,19 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
           description: newType.value.description || "",
           fields: JSON.stringify(newType.value.fields),
           allowed_response: JSON.stringify(newType.value.allowed_response),
-          allowed_transformation: JSON.stringify(newType.value.allowed_transformation),
+          allowed_transformation: JSON.stringify(
+            newType.value.allowed_transformation
+          ),
           allowed_option_type: JSON.stringify(newType.value.allowed_option_type)
         });
         showSuccess(translate("agora", "Inquiry type added"));
         newType.value = emptyType();
       } catch (e) {
-        showError(translate("agora", "Failed to add inquiry type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to add inquiry type: {msg}", {
+            msg: e?.message ?? ""
+          })
+        );
       } finally {
         savingType.value = false;
       }
@@ -4072,16 +4191,24 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
         showSuccess(translate("agora", "Inquiry type updated"));
         editingType.value = null;
       } catch (e) {
-        showError(translate("agora", "Failed to update inquiry type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to update inquiry type: {msg}", {
+            msg: e?.message ?? ""
+          })
+        );
       } finally {
         savingType.value = false;
       }
     };
     const deleteType = async (type) => {
       if (!confirm(
-        translate("agora", 'Are you sure you want to delete the inquiry type "{label}"?', {
-          label: type.label || type.inquiry_type
-        })
+        translate(
+          "agora",
+          'Are you sure you want to delete the inquiry type "{label}"?',
+          {
+            label: type.label || type.inquiry_type
+          }
+        )
       )) {
         return;
       }
@@ -4089,7 +4216,11 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
         await appSettingsStore.deleteType(type.id);
         showSuccess(translate("agora", "Inquiry type deleted"));
       } catch (e) {
-        showError(translate("agora", "Failed to delete inquiry type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to delete inquiry type: {msg}", {
+            msg: e?.message ?? ""
+          })
+        );
       }
     };
     const toggleExpand = (id) => {
@@ -4116,7 +4247,11 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     };
     const removeAllowedResponse = (target, index) => removeArrayItem(target, "allowed_response", index);
     const addAllowedTransformation = (target) => {
-      addArrayItem(target, "allowed_transformation", newAllowedTransformation.value);
+      addArrayItem(
+        target,
+        "allowed_transformation",
+        newAllowedTransformation.value
+      );
       newAllowedTransformation.value = "";
     };
     const removeAllowedTransformation = (target, index) => removeArrayItem(target, "allowed_transformation", index);
@@ -4140,84 +4275,84 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$l = { class: "inquiry-types-manager" };
-const _hoisted_2$h = { class: "manager-header" };
-const _hoisted_3$c = { class: "header-text" };
-const _hoisted_4$c = { class: "description" };
-const _hoisted_5$b = { class: "header-actions" };
-const _hoisted_6$a = { class: "family-stats" };
-const _hoisted_7$a = { class: "stat-block" };
-const _hoisted_8$a = { class: "stat-value" };
-const _hoisted_9$9 = { class: "stat-label" };
-const _hoisted_10$7 = { class: "stat-block accent" };
-const _hoisted_11$7 = { class: "stat-value" };
-const _hoisted_12$6 = { class: "stat-label" };
-const _hoisted_13$6 = { class: "types-list" };
-const _hoisted_14$6 = { class: "count-badge" };
-const _hoisted_15$6 = {
+const _hoisted_1$m = { class: "inquiry-types-manager" };
+const _hoisted_2$i = { class: "manager-header" };
+const _hoisted_3$d = { class: "header-text" };
+const _hoisted_4$d = { class: "description" };
+const _hoisted_5$c = { class: "header-actions" };
+const _hoisted_6$b = { class: "family-stats" };
+const _hoisted_7$b = { class: "stat-block" };
+const _hoisted_8$b = { class: "stat-value" };
+const _hoisted_9$a = { class: "stat-label" };
+const _hoisted_10$8 = { class: "stat-block accent" };
+const _hoisted_11$8 = { class: "stat-value" };
+const _hoisted_12$7 = { class: "stat-label" };
+const _hoisted_13$7 = { class: "types-list" };
+const _hoisted_14$7 = { class: "count-badge" };
+const _hoisted_15$7 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_16$6 = ["onClick"];
-const _hoisted_17$6 = { class: "type-icon" };
-const _hoisted_18$5 = { class: "type-info" };
-const _hoisted_19$5 = { class: "type-title-row" };
-const _hoisted_20$5 = { class: "type-key" };
-const _hoisted_21$5 = { class: "family-badge" };
-const _hoisted_22$5 = ["title"];
-const _hoisted_23$4 = {
+const _hoisted_16$7 = ["onClick"];
+const _hoisted_17$7 = { class: "type-icon" };
+const _hoisted_18$6 = { class: "type-info" };
+const _hoisted_19$6 = { class: "type-title-row" };
+const _hoisted_20$6 = { class: "type-key" };
+const _hoisted_21$6 = { class: "family-badge" };
+const _hoisted_22$6 = ["title"];
+const _hoisted_23$5 = {
   key: 0,
   class: "type-description"
 };
-const _hoisted_24$4 = { class: "type-stats" };
-const _hoisted_25$4 = { class: "stat-chip" };
-const _hoisted_26$3 = {
+const _hoisted_24$5 = { class: "type-stats" };
+const _hoisted_25$5 = { class: "stat-chip" };
+const _hoisted_26$4 = {
   key: 0,
   class: "stat-chip"
 };
-const _hoisted_27$3 = {
+const _hoisted_27$4 = {
   key: 1,
   class: "stat-chip"
 };
-const _hoisted_28$3 = {
+const _hoisted_28$4 = {
   key: 2,
   class: "stat-chip"
 };
-const _hoisted_29$3 = {
+const _hoisted_29$4 = {
   key: 0,
   class: "type-details"
 };
-const _hoisted_30$3 = { class: "detail-section" };
-const _hoisted_31$3 = { class: "pill-list" };
-const _hoisted_32$3 = {
+const _hoisted_30$4 = { class: "detail-section" };
+const _hoisted_31$4 = { class: "pill-list" };
+const _hoisted_32$4 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_33$3 = { class: "detail-section" };
-const _hoisted_34$3 = { class: "pill-list" };
-const _hoisted_35$3 = {
+const _hoisted_33$4 = { class: "detail-section" };
+const _hoisted_34$4 = { class: "pill-list" };
+const _hoisted_35$4 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_36$3 = { class: "detail-section" };
-const _hoisted_37$3 = { class: "pill-list" };
-const _hoisted_38$3 = {
+const _hoisted_36$4 = { class: "detail-section" };
+const _hoisted_37$4 = { class: "pill-list" };
+const _hoisted_38$4 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_39$3 = { class: "detail-section" };
-const _hoisted_40$3 = { class: "pill-list" };
-const _hoisted_41$3 = {
+const _hoisted_39$4 = { class: "detail-section" };
+const _hoisted_40$4 = { class: "pill-list" };
+const _hoisted_41$4 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_42$3 = { class: "detail-section full-width" };
-const _hoisted_43$3 = { class: "pill-list" };
-const _hoisted_44$3 = {
+const _hoisted_42$4 = { class: "detail-section full-width" };
+const _hoisted_43$4 = { class: "pill-list" };
+const _hoisted_44$4 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_45$3 = { class: "add-type-form" };
+const _hoisted_45$4 = { class: "add-type-form" };
 const _hoisted_46$3 = { class: "form-grid" };
 const _hoisted_47$3 = { class: "full-width" };
 const _hoisted_48$3 = { class: "field-label" };
@@ -4311,11 +4446,11 @@ const _hoisted_97$1 = {
 };
 const _hoisted_98$1 = { class: "modal-actions" };
 const _hoisted_99$1 = { key: 1 };
-function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$l, [
+function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$m, [
     createCommentVNode(" ==================== HEADER ==================== "),
-    createBaseVNode("header", _hoisted_2$h, [
-      createBaseVNode("div", _hoisted_3$c, [
+    createBaseVNode("header", _hoisted_2$i, [
+      createBaseVNode("div", _hoisted_3$d, [
         createVNode($setup["NcButton"], {
           class: "back-btn",
           onClick: _cache[0] || (_cache[0] = ($event) => $setup.emit("backToFamilies"))
@@ -4339,7 +4474,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
         ),
         createBaseVNode(
           "p",
-          _hoisted_4$c,
+          _hoisted_4$d,
           toDisplayString($setup.t(
             "agora",
             'Configure inquiry types available in the "{family}" family (fields, allowed responses, transformations and option types).',
@@ -4349,35 +4484,35 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
           /* TEXT */
         )
       ]),
-      createBaseVNode("div", _hoisted_5$b, [
-        createBaseVNode("div", _hoisted_6$a, [
-          createBaseVNode("div", _hoisted_7$a, [
+      createBaseVNode("div", _hoisted_5$c, [
+        createBaseVNode("div", _hoisted_6$b, [
+          createBaseVNode("div", _hoisted_7$b, [
             createBaseVNode(
               "span",
-              _hoisted_8$a,
+              _hoisted_8$b,
               toDisplayString($setup.filteredTypes.length),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_9$9,
+              _hoisted_9$a,
               toDisplayString($setup.t("agora", "inquiry types")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_10$7, [
+          createBaseVNode("div", _hoisted_10$8, [
             createBaseVNode(
               "span",
-              _hoisted_11$7,
+              _hoisted_11$8,
               toDisplayString($setup.groupTypesInFamily.length),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "span",
-              _hoisted_12$6,
+              _hoisted_12$7,
               toDisplayString($setup.t("agora", "group types")),
               1
               /* TEXT */
@@ -4390,13 +4525,13 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
           type: "text",
           label: $setup.t("agora", "Search"),
           "label-outside": true,
-          placeholder: $setup.t("agora", "Search inquiry types…"),
+          placeholder: $setup.t("agora", "Search inquiry types …"),
           class: "search-field"
         }, null, 8, ["modelValue", "label", "placeholder"])
       ])
     ]),
     createCommentVNode(" ==================== EXISTING TYPES ==================== "),
-    createBaseVNode("section", _hoisted_13$6, [
+    createBaseVNode("section", _hoisted_13$7, [
       createBaseVNode("h3", null, [
         createTextVNode(
           toDisplayString($setup.t("agora", "Existing inquiry types")) + " ",
@@ -4405,7 +4540,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
         ),
         createBaseVNode(
           "span",
-          _hoisted_14$6,
+          _hoisted_14$7,
           toDisplayString($setup.filteredTypes.length),
           1
           /* TEXT */
@@ -4413,7 +4548,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
       ]),
       !$setup.filteredTypes.length ? (openBlock(), createElementBlock(
         "div",
-        _hoisted_15$6,
+        _hoisted_15$7,
         toDisplayString($setup.t("agora", "No inquiry types match your filters.")),
         1
         /* TEXT */
@@ -4433,11 +4568,11 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "type-row",
                 onClick: ($event) => $setup.emit("typeSelected", type)
               }, [
-                createBaseVNode("div", _hoisted_17$6, [
+                createBaseVNode("div", _hoisted_17$7, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(type.icon)), { size: 20 }))
                 ]),
-                createBaseVNode("div", _hoisted_18$5, [
-                  createBaseVNode("div", _hoisted_19$5, [
+                createBaseVNode("div", _hoisted_18$6, [
+                  createBaseVNode("div", _hoisted_19$6, [
                     createBaseVNode(
                       "h4",
                       null,
@@ -4447,14 +4582,14 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     ),
                     createBaseVNode(
                       "code",
-                      _hoisted_20$5,
+                      _hoisted_20$6,
                       toDisplayString(type.inquiry_type),
                       1
                       /* TEXT */
                     ),
                     createBaseVNode(
                       "span",
-                      _hoisted_21$5,
+                      _hoisted_21$6,
                       toDisplayString(type.family),
                       1
                       /* TEXT */
@@ -4465,33 +4600,37 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                       title: $setup.t("agora", "Used by {count} group type(s) in this family", {
                         count: $setup.getUsageCount(type.inquiry_type)
                       })
-                    }, toDisplayString($setup.t("agora", "{n} groups", { n: $setup.getUsageCount(type.inquiry_type) })), 9, _hoisted_22$5)) : createCommentVNode("v-if", true)
+                    }, toDisplayString($setup.t("agora", "{n} groups", {
+                      n: $setup.getUsageCount(type.inquiry_type)
+                    })), 9, _hoisted_22$6)) : createCommentVNode("v-if", true)
                   ]),
                   type.description ? (openBlock(), createElementBlock(
                     "p",
-                    _hoisted_23$4,
+                    _hoisted_23$5,
                     toDisplayString(type.description),
                     1
                     /* TEXT */
                   )) : createCommentVNode("v-if", true),
-                  createBaseVNode("div", _hoisted_24$4, [
+                  createBaseVNode("div", _hoisted_24$5, [
                     createBaseVNode(
                       "span",
-                      _hoisted_25$4,
+                      _hoisted_25$5,
                       toDisplayString($setup.t("agora", "{count} fields", { count: type.fields.length })),
                       1
                       /* TEXT */
                     ),
                     type.allowed_response.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_26$3,
-                      toDisplayString($setup.t("agora", "{count} responses", { count: type.allowed_response.length })),
+                      _hoisted_26$4,
+                      toDisplayString($setup.t("agora", "{count} responses", {
+                        count: type.allowed_response.length
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     type.allowed_transformation.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_27$3,
+                      _hoisted_27$4,
                       toDisplayString($setup.t("agora", "{count} transformations", {
                         count: type.allowed_transformation.length
                       })),
@@ -4500,8 +4639,10 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     )) : createCommentVNode("v-if", true),
                     type.allowed_option_type.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_28$3,
-                      toDisplayString($setup.t("agora", "{count} option types", { count: type.allowed_option_type.length })),
+                      _hoisted_28$4,
+                      toDisplayString($setup.t("agora", "{count} option types", {
+                        count: type.allowed_option_type.length
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
@@ -4567,10 +4708,10 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     /* STABLE */
                   }, 8, ["onClick"])
                 ])
-              ], 8, _hoisted_16$6),
+              ], 8, _hoisted_16$7),
               createCommentVNode(" ============ EXPANDED DETAILS ============ "),
-              $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_29$3, [
-                createBaseVNode("div", _hoisted_30$3, [
+              $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_29$4, [
+                createBaseVNode("div", _hoisted_30$4, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -4578,7 +4719,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_31$3, [
+                  createBaseVNode("ul", _hoisted_31$4, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -4599,14 +4740,14 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.fields.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_32$3,
+                      _hoisted_32$4,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_33$3, [
+                createBaseVNode("div", _hoisted_33$4, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -4614,7 +4755,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_34$3, [
+                  createBaseVNode("ul", _hoisted_34$4, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -4635,14 +4776,14 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.allowed_response.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_35$3,
+                      _hoisted_35$4,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_36$3, [
+                createBaseVNode("div", _hoisted_36$4, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -4650,7 +4791,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_37$3, [
+                  createBaseVNode("ul", _hoisted_37$4, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -4671,14 +4812,14 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.allowed_transformation.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_38$3,
+                      _hoisted_38$4,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_39$3, [
+                createBaseVNode("div", _hoisted_39$4, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -4686,7 +4827,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_40$3, [
+                  createBaseVNode("ul", _hoisted_40$4, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -4707,14 +4848,14 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.allowed_option_type.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_41$3,
+                      _hoisted_41$4,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_42$3, [
+                createBaseVNode("div", _hoisted_42$4, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -4722,12 +4863,14 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_43$3, [
+                  createBaseVNode("ul", _hoisted_43$4, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
                       renderList($setup.groupTypesInFamily.filter(
-                        (g) => $setup.normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
+                        (g) => $setup.normalizeArray(g.allowed_inquiry_types).includes(
+                          type.inquiry_type
+                        )
                       ), (gt) => {
                         return openBlock(), createElementBlock(
                           "li",
@@ -4744,10 +4887,12 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                       /* KEYED_FRAGMENT */
                     )),
                     !$setup.groupTypesInFamily.some(
-                      (g) => $setup.normalizeArray(g.allowed_inquiry_types).includes(type.inquiry_type)
+                      (g) => $setup.normalizeArray(g.allowed_inquiry_types).includes(
+                        type.inquiry_type
+                      )
                     ) ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_44$3,
+                      _hoisted_44$4,
                       toDisplayString($setup.t("agora", "No group types reference this inquiry type yet")),
                       1
                       /* TEXT */
@@ -4765,11 +4910,13 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
       ))
     ]),
     createCommentVNode(" ==================== ADD NEW TYPE ==================== "),
-    createBaseVNode("section", _hoisted_45$3, [
+    createBaseVNode("section", _hoisted_45$4, [
       createBaseVNode(
         "h3",
         null,
-        toDisplayString($setup.t("agora", "Add new inquiry type to {family}", { family: $setup.familyLabel })),
+        toDisplayString($setup.t("agora", "Add new inquiry type to {family}", {
+          family: $setup.familyLabel
+        })),
         1
         /* TEXT */
       ),
@@ -5094,7 +5241,13 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
           (openBlock(), createElementBlock(
             Fragment,
             null,
-            renderList(["basic", "fields", "responses", "transformations", "option-types"], (tab) => {
+            renderList([
+              "basic",
+              "fields",
+              "responses",
+              "transformations",
+              "option-types"
+            ], (tab) => {
               return createBaseVNode("button", {
                 key: tab,
                 class: normalizeClass(["tab", { active: $setup.editTab === tab }]),
@@ -5376,8 +5529,8 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__scopeId", "data-v-f2f32798"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypesManager.vue"]]);
-const _sfc_main$k = {
+const AdminTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__scopeId", "data-v-f2f32798"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypesManager.vue"]]);
+const _sfc_main$l = {
   __name: "AdminOptionFamiliesManager",
   emits: ["familySelected"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -5436,11 +5589,18 @@ const _sfc_main$k = {
         let parsedActions = family.actions;
         try {
           if (typeof parsedUi === "string") parsedUi = JSON.parse(parsedUi || "{}");
-          if (typeof parsedRules === "string") parsedRules = JSON.parse(parsedRules || "{}");
-          if (typeof parsedFeatures === "string") parsedFeatures = JSON.parse(parsedFeatures || "[]");
-          if (typeof parsedActions === "string") parsedActions = JSON.parse(parsedActions || "[]");
+          if (typeof parsedRules === "string")
+            parsedRules = JSON.parse(parsedRules || "{}");
+          if (typeof parsedFeatures === "string")
+            parsedFeatures = JSON.parse(parsedFeatures || "[]");
+          if (typeof parsedActions === "string")
+            parsedActions = JSON.parse(parsedActions || "[]");
         } catch (e) {
-          showError(translate("agora", "Failed with family stats : {msg}", { msg: e?.message ?? "" }));
+          showError(
+            translate("agora", "Failed with family stats : {msg}", {
+              msg: e?.message ?? ""
+            })
+          );
         }
         return {
           ...family,
@@ -5525,7 +5685,9 @@ const _sfc_main$k = {
         showSuccess(translate("agora", "Family added"));
         newFamily.value = emptyFamily();
       } catch (e) {
-        showError(translate("agora", "Failed to add family: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to add family: {msg}", { msg: e?.message ?? "" })
+        );
       } finally {
         savingFamily.value = false;
       }
@@ -5546,23 +5708,31 @@ const _sfc_main$k = {
         showSuccess(translate("agora", "Family updated"));
         editingFamily.value = null;
       } catch (e) {
-        showError(translate("agora", "Failed to update family: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to update family: {msg}", { msg: e?.message ?? "" })
+        );
       } finally {
         savingFamily.value = false;
       }
     };
     const deleteFamily = async (family) => {
       const typesCount = family.typesCount ?? 0;
-      const message = typesCount > 0 ? translate("agora", "This family contains {count} option types. Delete anyway?", {
-        count: typesCount
-      }) : translate("agora", "Are you sure you want to delete this family?");
+      const message = typesCount > 0 ? translate(
+        "agora",
+        "This family contains {count} option types. Delete anyway?",
+        {
+          count: typesCount
+        }
+      ) : translate("agora", "Are you sure you want to delete this family?");
       if (!confirm(message)) return;
       try {
         await appSettingsStore.deleteOptionFamily(family.id);
         showSuccess(translate("agora", "Family deleted"));
         if (expandedFamilyId.value === family.id) expandedFamilyId.value = null;
       } catch (e) {
-        showError(translate("agora", "Failed to delete family: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to delete family: {msg}", { msg: e?.message ?? "" })
+        );
       }
     };
     const selectFamily = (family) => {
@@ -5574,7 +5744,8 @@ const _sfc_main$k = {
     const addFeature = () => {
       const value = newFeature.value?.trim();
       if (!value) return;
-      if (!Array.isArray(editingFamily.value.features)) editingFamily.value.features = [];
+      if (!Array.isArray(editingFamily.value.features))
+        editingFamily.value.features = [];
       if (editingFamily.value.features.includes(value)) {
         showError(translate("agora", "Feature already present"));
         return;
@@ -5591,7 +5762,8 @@ const _sfc_main$k = {
         showError(translate("agora", "Action key and label are required"));
         return;
       }
-      if (!Array.isArray(editingFamily.value.actions)) editingFamily.value.actions = [];
+      if (!Array.isArray(editingFamily.value.actions))
+        editingFamily.value.actions = [];
       editingFamily.value.actions.push({
         key: key.trim(),
         label: label.trim(),
@@ -5621,7 +5793,11 @@ const _sfc_main$k = {
         return;
       }
       if (!Array.isArray(newFamily.value.actions)) newFamily.value.actions = [];
-      newFamily.value.actions.push({ key: key.trim(), label: label.trim(), icon: icon?.trim() || "" });
+      newFamily.value.actions.push({
+        key: key.trim(),
+        label: label.trim(),
+        icon: icon?.trim() || ""
+      });
       newAction.value = { key: "", label: "", icon: "" };
     };
     const removeNewFamilyAction = (index) => {
@@ -5656,78 +5832,78 @@ const _sfc_main$k = {
     return __returned__;
   }
 };
-const _hoisted_1$k = { class: "option-families-manager" };
-const _hoisted_2$g = { class: "manager-header" };
-const _hoisted_3$b = { class: "description" };
-const _hoisted_4$b = { class: "header-actions" };
-const _hoisted_5$a = { class: "families-list" };
-const _hoisted_6$9 = { class: "count-badge" };
-const _hoisted_7$9 = {
+const _hoisted_1$l = { class: "option-families-manager" };
+const _hoisted_2$h = { class: "manager-header" };
+const _hoisted_3$c = { class: "description" };
+const _hoisted_4$c = { class: "header-actions" };
+const _hoisted_5$b = { class: "families-list" };
+const _hoisted_6$a = { class: "count-badge" };
+const _hoisted_7$a = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_8$9 = ["onClick"];
-const _hoisted_9$8 = { class: "family-icon" };
-const _hoisted_10$6 = { class: "family-info" };
-const _hoisted_11$6 = { class: "family-title-row" };
-const _hoisted_12$5 = { class: "family-type" };
-const _hoisted_13$5 = {
+const _hoisted_8$a = ["onClick"];
+const _hoisted_9$9 = { class: "family-icon" };
+const _hoisted_10$7 = { class: "family-info" };
+const _hoisted_11$7 = { class: "family-title-row" };
+const _hoisted_12$6 = { class: "family-type" };
+const _hoisted_13$6 = {
   key: 0,
   class: "family-description"
 };
-const _hoisted_14$5 = { class: "family-stats" };
-const _hoisted_15$5 = { class: "stat-chip types" };
-const _hoisted_16$5 = {
+const _hoisted_14$6 = { class: "family-stats" };
+const _hoisted_15$6 = { class: "stat-chip types" };
+const _hoisted_16$6 = {
   key: 0,
   class: "stat-chip"
 };
-const _hoisted_17$5 = {
+const _hoisted_17$6 = {
   key: 1,
   class: "stat-chip"
 };
-const _hoisted_18$4 = {
+const _hoisted_18$5 = {
   key: 2,
   class: "stat-chip layout"
 };
-const _hoisted_19$4 = {
+const _hoisted_19$5 = {
   key: 0,
   class: "family-details"
 };
-const _hoisted_20$4 = { class: "detail-section" };
-const _hoisted_21$4 = { class: "detail-section" };
-const _hoisted_22$4 = { class: "detail-section" };
-const _hoisted_23$3 = { class: "pill-list" };
-const _hoisted_24$3 = {
+const _hoisted_20$5 = { class: "detail-section" };
+const _hoisted_21$5 = { class: "detail-section" };
+const _hoisted_22$5 = { class: "detail-section" };
+const _hoisted_23$4 = { class: "pill-list" };
+const _hoisted_24$4 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_25$3 = { class: "detail-section" };
-const _hoisted_26$2 = { class: "action-list" };
-const _hoisted_27$2 = {
+const _hoisted_25$4 = { class: "detail-section" };
+const _hoisted_26$3 = { class: "action-list" };
+const _hoisted_27$3 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_28$2 = {
+const _hoisted_28$3 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_29$2 = { class: "add-family-form" };
-const _hoisted_30$2 = { class: "form-grid" };
-const _hoisted_31$2 = { class: "full-width" };
-const _hoisted_32$2 = { class: "field-label" };
-const _hoisted_33$2 = { class: "inline-editor" };
-const _hoisted_34$2 = { class: "pill-list" };
-const _hoisted_35$2 = ["onClick"];
-const _hoisted_36$2 = { class: "full-width" };
-const _hoisted_37$2 = { class: "field-label" };
-const _hoisted_38$2 = { class: "inline-editor action-editor" };
-const _hoisted_39$2 = { class: "action-list" };
-const _hoisted_40$2 = { class: "form-actions full-width" };
-const _hoisted_41$2 = { key: 1 };
-const _hoisted_42$2 = { class: "modal-content large-modal" };
-const _hoisted_43$2 = { class: "modal-header" };
-const _hoisted_44$2 = { class: "tabs" };
-const _hoisted_45$2 = ["onClick"];
+const _hoisted_29$3 = { class: "add-family-form" };
+const _hoisted_30$3 = { class: "form-grid" };
+const _hoisted_31$3 = { class: "full-width" };
+const _hoisted_32$3 = { class: "field-label" };
+const _hoisted_33$3 = { class: "inline-editor" };
+const _hoisted_34$3 = { class: "pill-list" };
+const _hoisted_35$3 = ["onClick"];
+const _hoisted_36$3 = { class: "full-width" };
+const _hoisted_37$3 = { class: "field-label" };
+const _hoisted_38$3 = { class: "inline-editor action-editor" };
+const _hoisted_39$3 = { class: "action-list" };
+const _hoisted_40$3 = { class: "form-actions full-width" };
+const _hoisted_41$3 = { key: 1 };
+const _hoisted_42$3 = { class: "modal-content large-modal" };
+const _hoisted_43$3 = { class: "modal-header" };
+const _hoisted_44$3 = { class: "tabs" };
+const _hoisted_45$3 = ["onClick"];
 const _hoisted_46$2 = {
   key: 0,
   class: "tab-panel form-grid"
@@ -5757,9 +5933,9 @@ const _hoisted_56$2 = { class: "inline-editor action-editor" };
 const _hoisted_57$2 = { class: "action-list" };
 const _hoisted_58$2 = { class: "modal-actions" };
 const _hoisted_59$2 = { key: 1 };
-function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$k, [
-    createBaseVNode("header", _hoisted_2$g, [
+function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$l, [
+    createBaseVNode("header", _hoisted_2$h, [
       createBaseVNode("div", null, [
         createBaseVNode(
           "h2",
@@ -5770,7 +5946,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
         ),
         createBaseVNode(
           "p",
-          _hoisted_3$b,
+          _hoisted_3$c,
           toDisplayString($setup.t(
             "agora",
             "Manage option families that group different types of options (e.g., debate, vote, proposal). Each family defines layout, rules, features and actions shared by its option types."
@@ -5779,20 +5955,20 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
           /* TEXT */
         )
       ]),
-      createBaseVNode("div", _hoisted_4$b, [
+      createBaseVNode("div", _hoisted_4$c, [
         createVNode($setup["NcInputField"], {
           modelValue: $setup.searchQuery,
           "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.searchQuery = $event),
           type: "text",
           label: $setup.t("agora", "Search"),
           "label-outside": true,
-          placeholder: $setup.t("agora", "Filter families…"),
+          placeholder: $setup.t("agora", "Filter families …"),
           class: "search-field"
         }, null, 8, ["modelValue", "label", "placeholder"])
       ])
     ]),
     createCommentVNode(" ==================== EXISTING FAMILIES ==================== "),
-    createBaseVNode("section", _hoisted_5$a, [
+    createBaseVNode("section", _hoisted_5$b, [
       createBaseVNode("h3", null, [
         createTextVNode(
           toDisplayString($setup.t("agora", "Existing families")) + " ",
@@ -5801,7 +5977,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
         ),
         createBaseVNode(
           "span",
-          _hoisted_6$9,
+          _hoisted_6$a,
           toDisplayString($setup.filteredFamilies.length),
           1
           /* TEXT */
@@ -5809,7 +5985,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
       ]),
       !$setup.filteredFamilies.length ? (openBlock(), createElementBlock(
         "div",
-        _hoisted_7$9,
+        _hoisted_7$a,
         toDisplayString($setup.t("agora", "No families found.")),
         1
         /* TEXT */
@@ -5829,11 +6005,11 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "family-row",
                 onClick: ($event) => $setup.selectFamily(family)
               }, [
-                createBaseVNode("div", _hoisted_9$8, [
+                createBaseVNode("div", _hoisted_9$9, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(family.icon)), { size: 22 }))
                 ]),
-                createBaseVNode("div", _hoisted_10$6, [
-                  createBaseVNode("div", _hoisted_11$6, [
+                createBaseVNode("div", _hoisted_10$7, [
+                  createBaseVNode("div", _hoisted_11$7, [
                     createBaseVNode(
                       "h4",
                       null,
@@ -5843,7 +6019,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     ),
                     createBaseVNode(
                       "code",
-                      _hoisted_12$5,
+                      _hoisted_12$6,
                       toDisplayString(family.family_type),
                       1
                       /* TEXT */
@@ -5851,37 +6027,43 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   family.description ? (openBlock(), createElementBlock(
                     "p",
-                    _hoisted_13$5,
+                    _hoisted_13$6,
                     toDisplayString(family.description),
                     1
                     /* TEXT */
                   )) : createCommentVNode("v-if", true),
-                  createBaseVNode("div", _hoisted_14$5, [
+                  createBaseVNode("div", _hoisted_14$6, [
                     createBaseVNode(
                       "span",
-                      _hoisted_15$5,
+                      _hoisted_15$6,
                       toDisplayString($setup.t("agora", "{count} types", { count: family.typesCount })),
                       1
                       /* TEXT */
                     ),
                     family.parsedFeatures?.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_16$5,
-                      toDisplayString($setup.t("agora", "{count} features", { count: family.parsedFeatures.length })),
+                      _hoisted_16$6,
+                      toDisplayString($setup.t("agora", "{count} features", {
+                        count: family.parsedFeatures.length
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     family.parsedActions?.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_17$5,
-                      toDisplayString($setup.t("agora", "{count} actions", { count: family.parsedActions.length })),
+                      _hoisted_17$6,
+                      toDisplayString($setup.t("agora", "{count} actions", {
+                        count: family.parsedActions.length
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     family.parsedUi?.layout ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_18$4,
-                      toDisplayString($setup.t("agora", "layout: {layout}", { layout: family.parsedUi.layout })),
+                      _hoisted_18$5,
+                      toDisplayString($setup.t("agora", "layout: {layout}", {
+                        layout: family.parsedUi.layout
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
@@ -5934,10 +6116,10 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     /* STABLE */
                   }, 8, ["onClick"])
                 ])
-              ], 8, _hoisted_8$9),
+              ], 8, _hoisted_8$a),
               createCommentVNode(" Expanded details "),
-              $setup.expandedFamilyId === family.id ? (openBlock(), createElementBlock("div", _hoisted_19$4, [
-                createBaseVNode("div", _hoisted_20$4, [
+              $setup.expandedFamilyId === family.id ? (openBlock(), createElementBlock("div", _hoisted_19$5, [
+                createBaseVNode("div", _hoisted_20$5, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -5953,7 +6135,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_21$4, [
+                createBaseVNode("div", _hoisted_21$5, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -5969,7 +6151,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_22$4, [
+                createBaseVNode("div", _hoisted_22$5, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -5977,7 +6159,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_23$3, [
+                  createBaseVNode("ul", _hoisted_23$4, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -5998,14 +6180,14 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !family.parsedFeatures?.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_24$3,
+                      _hoisted_24$4,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_25$3, [
+                createBaseVNode("div", _hoisted_25$4, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -6013,7 +6195,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_26$2, [
+                  createBaseVNode("ul", _hoisted_26$3, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -6033,7 +6215,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                           ),
                           a.icon ? (openBlock(), createElementBlock(
                             "span",
-                            _hoisted_27$2,
+                            _hoisted_27$3,
                             " (" + toDisplayString(a.icon) + ")",
                             1
                             /* TEXT */
@@ -6045,7 +6227,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !family.parsedActions?.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_28$2,
+                      _hoisted_28$3,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
@@ -6063,7 +6245,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
       ))
     ]),
     createCommentVNode(" ==================== ADD NEW FAMILY ==================== "),
-    createBaseVNode("section", _hoisted_29$2, [
+    createBaseVNode("section", _hoisted_29$3, [
       createBaseVNode(
         "h3",
         null,
@@ -6071,7 +6253,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
         1
         /* TEXT */
       ),
-      createBaseVNode("div", _hoisted_30$2, [
+      createBaseVNode("div", _hoisted_30$3, [
         createVNode($setup["NcInputField"], {
           modelValue: $setup.newFamily.family_type,
           "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newFamily.family_type = $event),
@@ -6116,15 +6298,15 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
           class: "full-width"
         }, null, 8, ["modelValue", "label", "placeholder"]),
         createCommentVNode(" Features inline editor "),
-        createBaseVNode("div", _hoisted_31$2, [
+        createBaseVNode("div", _hoisted_31$3, [
           createBaseVNode(
             "label",
-            _hoisted_32$2,
+            _hoisted_32$3,
             toDisplayString($setup.t("agora", "Features")),
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_33$2, [
+          createBaseVNode("div", _hoisted_33$3, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.newFeature,
               "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.newFeature = $event),
@@ -6149,7 +6331,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
               /* STABLE */
             })
           ]),
-          createBaseVNode("div", _hoisted_34$2, [
+          createBaseVNode("div", _hoisted_34$3, [
             (openBlock(true), createElementBlock(
               Fragment,
               null,
@@ -6158,7 +6340,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                   key: i,
                   class: "pill removable",
                   onClick: ($event) => $setup.removeNewFamilyFeature(i)
-                }, toDisplayString(f) + " ✕ ", 9, _hoisted_35$2);
+                }, toDisplayString(f) + " ✕ ", 9, _hoisted_35$3);
               }),
               128
               /* KEYED_FRAGMENT */
@@ -6166,15 +6348,15 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ]),
         createCommentVNode(" Actions inline editor "),
-        createBaseVNode("div", _hoisted_36$2, [
+        createBaseVNode("div", _hoisted_36$3, [
           createBaseVNode(
             "label",
-            _hoisted_37$2,
+            _hoisted_37$3,
             toDisplayString($setup.t("agora", "Actions")),
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_38$2, [
+          createBaseVNode("div", _hoisted_38$3, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.newAction.key,
               "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.newAction.key = $event),
@@ -6211,7 +6393,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
               /* STABLE */
             })
           ]),
-          createBaseVNode("ul", _hoisted_39$2, [
+          createBaseVNode("ul", _hoisted_39$3, [
             (openBlock(true), createElementBlock(
               Fragment,
               null,
@@ -6250,7 +6432,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
             ))
           ])
         ]),
-        createBaseVNode("div", _hoisted_40$2, [
+        createBaseVNode("div", _hoisted_40$3, [
           createVNode($setup["NcButton"], {
             type: "primary",
             disabled: $setup.savingFamily || !$setup.newFamily.family_type || !$setup.newFamily.label,
@@ -6262,7 +6444,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                 size: 16
               })) : (openBlock(), createElementBlock(
                 "span",
-                _hoisted_41$2,
+                _hoisted_41$3,
                 toDisplayString($setup.t("agora", "Add family")),
                 1
                 /* TEXT */
@@ -6280,8 +6462,8 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
       class: "modal-overlay",
       onClick: withModifiers($setup.cancelEditing, ["self"])
     }, [
-      createBaseVNode("div", _hoisted_42$2, [
-        createBaseVNode("header", _hoisted_43$2, [
+      createBaseVNode("div", _hoisted_42$3, [
+        createBaseVNode("header", _hoisted_43$3, [
           createBaseVNode(
             "h3",
             null,
@@ -6304,7 +6486,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
             /* STABLE */
           })
         ]),
-        createBaseVNode("nav", _hoisted_44$2, [
+        createBaseVNode("nav", _hoisted_44$3, [
           (openBlock(), createElementBlock(
             Fragment,
             null,
@@ -6313,7 +6495,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                 key: tab,
                 class: normalizeClass(["tab", { active: $setup.editTab === tab }]),
                 onClick: ($event) => $setup.editTab = tab
-              }, toDisplayString($setup.t("agora", tab)), 11, _hoisted_45$2);
+              }, toDisplayString($setup.t("agora", tab)), 11, _hoisted_45$3);
             }),
             64
             /* STABLE_FRAGMENT */
@@ -6581,8 +6763,8 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminOptionFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__scopeId", "data-v-42dbd4d0"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOptionFamiliesManager.vue"]]);
-const _sfc_main$j = {
+const AdminOptionFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__scopeId", "data-v-42dbd4d0"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOptionFamiliesManager.vue"]]);
+const _sfc_main$k = {
   __name: "AdminOptionTypesManager",
   props: {
     selectedFamily: { type: Object, default: null }
@@ -6593,7 +6775,9 @@ const _sfc_main$j = {
     const emit = __emit;
     const appSettingsStore = useAppSettingsStore();
     const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
-    const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value);
+    const familyLabel = computed(
+      () => props.selectedFamily?.label ?? familyKey.value
+    );
     const searchQuery = ref("");
     const editingType = ref(null);
     const savingType = ref(false);
@@ -6659,8 +6843,12 @@ const _sfc_main$j = {
       "quadratic",
       "token_weighted"
     ];
-    const fieldTypeOptions = computed(() => FIELD_TYPES.map((ft) => ({ id: ft, label: ft })));
-    const supportFeatureOptions = computed(() => SUPPORT_FEATURES.map((s) => ({ id: s, label: s })));
+    const fieldTypeOptions = computed(
+      () => FIELD_TYPES.map((ft) => ({ id: ft, label: ft }))
+    );
+    const supportFeatureOptions = computed(
+      () => SUPPORT_FEATURES.map((s) => ({ id: s, label: s }))
+    );
     const availableIcons = computed(
       () => Object.keys(InquiryOptionIcons).filter((key) => key !== "default").map((iconId) => ({
         id: iconId,
@@ -6730,7 +6918,9 @@ const _sfc_main$j = {
         return false;
       }
       if (!isEdit) {
-        const exists = allTypes.value.some((existing) => existing.option_type === type.option_type);
+        const exists = allTypes.value.some(
+          (existing) => existing.option_type === type.option_type
+        );
         if (exists) {
           showError(translate("agora", "An option type with this key already exists"));
           return false;
@@ -6751,7 +6941,9 @@ const _sfc_main$j = {
         showSuccess(translate("agora", "Option type added"));
         newType.value = emptyType();
       } catch (e) {
-        showError(translate("agora", "Failed to add option type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to add option type: {msg}", { msg: e?.message ?? "" })
+        );
       } finally {
         savingType.value = false;
       }
@@ -6786,7 +6978,11 @@ const _sfc_main$j = {
         showSuccess(translate("agora", "Option type updated"));
         editingType.value = null;
       } catch (e) {
-        showError(translate("agora", "Failed to update option type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to update option type: {msg}", {
+            msg: e?.message ?? ""
+          })
+        );
       } finally {
         savingType.value = false;
       }
@@ -6803,7 +6999,11 @@ const _sfc_main$j = {
         await appSettingsStore.deleteOptionType(type.id);
         showSuccess(translate("agora", "Option type deleted"));
       } catch (e) {
-        showError(translate("agora", "Failed to delete option type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to delete option type: {msg}", {
+            msg: e?.message ?? ""
+          })
+        );
       }
     };
     const toggleExpand = (id) => {
@@ -6816,7 +7016,9 @@ const _sfc_main$j = {
         return;
       }
       if (!/^[a-z][a-z0-9_]*$/i.test(field.key)) {
-        showError(translate("agora", "Field key must be alphanumeric (underscores allowed)"));
+        showError(
+          translate("agora", "Field key must be alphanumeric (underscores allowed)")
+        );
         return;
       }
       const arr = target === "new" ? newType.value.fields : editingType.value.fields;
@@ -6885,84 +7087,84 @@ const _sfc_main$j = {
     return __returned__;
   }
 };
-const _hoisted_1$j = { class: "option-types-manager" };
-const _hoisted_2$f = { class: "manager-header" };
-const _hoisted_3$a = { class: "description" };
-const _hoisted_4$a = { class: "header-actions" };
-const _hoisted_5$9 = { class: "types-list" };
-const _hoisted_6$8 = { class: "count-badge" };
-const _hoisted_7$8 = {
+const _hoisted_1$k = { class: "option-types-manager" };
+const _hoisted_2$g = { class: "manager-header" };
+const _hoisted_3$b = { class: "description" };
+const _hoisted_4$b = { class: "header-actions" };
+const _hoisted_5$a = { class: "types-list" };
+const _hoisted_6$9 = { class: "count-badge" };
+const _hoisted_7$9 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_8$8 = ["onClick"];
-const _hoisted_9$7 = { class: "type-icon" };
-const _hoisted_10$5 = { class: "type-info" };
-const _hoisted_11$5 = { class: "type-title-row" };
-const _hoisted_12$4 = { class: "type-key" };
-const _hoisted_13$4 = { class: "family-badge" };
-const _hoisted_14$4 = {
+const _hoisted_8$9 = ["onClick"];
+const _hoisted_9$8 = { class: "type-icon" };
+const _hoisted_10$6 = { class: "type-info" };
+const _hoisted_11$6 = { class: "type-title-row" };
+const _hoisted_12$5 = { class: "type-key" };
+const _hoisted_13$5 = { class: "family-badge" };
+const _hoisted_14$5 = {
   key: 0,
   class: "type-description"
 };
-const _hoisted_15$4 = { class: "type-stats" };
-const _hoisted_16$4 = { class: "stat-chip" };
-const _hoisted_17$4 = {
+const _hoisted_15$5 = { class: "type-stats" };
+const _hoisted_16$5 = { class: "stat-chip" };
+const _hoisted_17$5 = {
   key: 0,
   class: "stat-chip"
 };
-const _hoisted_18$3 = {
+const _hoisted_18$4 = {
   key: 1,
   class: "stat-chip"
 };
-const _hoisted_19$3 = {
+const _hoisted_19$4 = {
   key: 2,
   class: "stat-chip support"
 };
-const _hoisted_20$3 = {
+const _hoisted_20$4 = {
   key: 3,
   class: "stat-chip title-flag"
 };
-const _hoisted_21$3 = {
+const _hoisted_21$4 = {
   key: 0,
   class: "type-details"
 };
-const _hoisted_22$3 = { class: "detail-section" };
-const _hoisted_23$2 = {
+const _hoisted_22$4 = { class: "detail-section" };
+const _hoisted_23$3 = {
   key: 0,
   class: "mini-table"
 };
-const _hoisted_24$2 = {
+const _hoisted_24$3 = {
   key: 1,
   class: "muted"
 };
-const _hoisted_25$2 = { class: "detail-section" };
-const _hoisted_26$1 = { class: "pill-list" };
-const _hoisted_27$1 = {
+const _hoisted_25$3 = { class: "detail-section" };
+const _hoisted_26$2 = { class: "pill-list" };
+const _hoisted_27$2 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_28$1 = { class: "detail-section" };
-const _hoisted_29$1 = { class: "pill-list" };
-const _hoisted_30$1 = {
+const _hoisted_28$2 = { class: "detail-section" };
+const _hoisted_29$2 = { class: "pill-list" };
+const _hoisted_30$2 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_31$1 = { class: "add-type-form" };
-const _hoisted_32$1 = { class: "form-grid" };
-const _hoisted_33$1 = { class: "full-width" };
-const _hoisted_34$1 = { class: "field-label" };
-const _hoisted_35$1 = { class: "inline-editor field-editor" };
-const _hoisted_36$1 = { class: "field-list" };
-const _hoisted_37$1 = { class: "full-width" };
-const _hoisted_38$1 = { class: "field-label" };
-const _hoisted_39$1 = { class: "inline-editor" };
-const _hoisted_40$1 = { class: "pill-list" };
-const _hoisted_41$1 = ["onClick"];
-const _hoisted_42$1 = { class: "full-width" };
-const _hoisted_43$1 = { class: "field-label" };
-const _hoisted_44$1 = { class: "inline-editor" };
-const _hoisted_45$1 = { class: "pill-list" };
+const _hoisted_31$2 = { class: "add-type-form" };
+const _hoisted_32$2 = { class: "form-grid" };
+const _hoisted_33$2 = { class: "full-width" };
+const _hoisted_34$2 = { class: "field-label" };
+const _hoisted_35$2 = { class: "inline-editor field-editor" };
+const _hoisted_36$2 = { class: "field-list" };
+const _hoisted_37$2 = { class: "full-width" };
+const _hoisted_38$2 = { class: "field-label" };
+const _hoisted_39$2 = { class: "inline-editor" };
+const _hoisted_40$2 = { class: "pill-list" };
+const _hoisted_41$2 = ["onClick"];
+const _hoisted_42$2 = { class: "full-width" };
+const _hoisted_43$2 = { class: "field-label" };
+const _hoisted_44$2 = { class: "inline-editor" };
+const _hoisted_45$2 = { class: "pill-list" };
 const _hoisted_46$1 = ["onClick"];
 const _hoisted_47$1 = { class: "form-actions full-width" };
 const _hoisted_48$1 = { key: 1 };
@@ -6996,14 +7198,14 @@ const _hoisted_63$1 = { class: "pill-list" };
 const _hoisted_64$1 = ["onClick"];
 const _hoisted_65$1 = { class: "modal-actions" };
 const _hoisted_66$1 = { key: 1 };
-function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_EngineSelectorModal = resolveComponent("EngineSelectorModal");
   return openBlock(), createElementBlock(
     Fragment,
     null,
     [
-      createBaseVNode("div", _hoisted_1$j, [
-        createBaseVNode("header", _hoisted_2$f, [
+      createBaseVNode("div", _hoisted_1$k, [
+        createBaseVNode("header", _hoisted_2$g, [
           createBaseVNode("div", null, [
             createBaseVNode(
               "h2",
@@ -7014,7 +7216,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
             ),
             createBaseVNode(
               "p",
-              _hoisted_3$a,
+              _hoisted_3$b,
               toDisplayString($setup.t(
                 "agora",
                 'Configure option types available in the "{family}" family (fields, allowed responses, support engines and statuses).',
@@ -7024,20 +7226,20 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_4$a, [
+          createBaseVNode("div", _hoisted_4$b, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.searchQuery,
               "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.searchQuery = $event),
               type: "text",
               label: $setup.t("agora", "Search"),
               "label-outside": true,
-              placeholder: $setup.t("agora", "Search option types…"),
+              placeholder: $setup.t("agora", "Search option types …"),
               class: "search-field"
             }, null, 8, ["modelValue", "label", "placeholder"])
           ])
         ]),
         createCommentVNode(" ==================== EXISTING TYPES ==================== "),
-        createBaseVNode("section", _hoisted_5$9, [
+        createBaseVNode("section", _hoisted_5$a, [
           createBaseVNode("h3", null, [
             createTextVNode(
               toDisplayString($setup.t("agora", "Existing option types")) + " ",
@@ -7046,7 +7248,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
             ),
             createBaseVNode(
               "span",
-              _hoisted_6$8,
+              _hoisted_6$9,
               toDisplayString($setup.filteredTypes.length),
               1
               /* TEXT */
@@ -7054,7 +7256,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
           ]),
           !$setup.filteredTypes.length ? (openBlock(), createElementBlock(
             "div",
-            _hoisted_7$8,
+            _hoisted_7$9,
             toDisplayString($setup.t("agora", "No option types match your filters.")),
             1
             /* TEXT */
@@ -7074,11 +7276,11 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                     class: "type-row",
                     onClick: ($event) => $setup.emit("typeSelected", type)
                   }, [
-                    createBaseVNode("div", _hoisted_9$7, [
+                    createBaseVNode("div", _hoisted_9$8, [
                       (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(type.icon)), { size: 20 }))
                     ]),
-                    createBaseVNode("div", _hoisted_10$5, [
-                      createBaseVNode("div", _hoisted_11$5, [
+                    createBaseVNode("div", _hoisted_10$6, [
+                      createBaseVNode("div", _hoisted_11$6, [
                         createBaseVNode(
                           "h4",
                           null,
@@ -7088,14 +7290,14 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         ),
                         createBaseVNode(
                           "code",
-                          _hoisted_12$4,
+                          _hoisted_12$5,
                           toDisplayString(type.option_type),
                           1
                           /* TEXT */
                         ),
                         createBaseVNode(
                           "span",
-                          _hoisted_13$4,
+                          _hoisted_13$5,
                           toDisplayString(type.family),
                           1
                           /* TEXT */
@@ -7103,43 +7305,47 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                       ]),
                       type.description ? (openBlock(), createElementBlock(
                         "p",
-                        _hoisted_14$4,
+                        _hoisted_14$5,
                         toDisplayString(type.description),
                         1
                         /* TEXT */
                       )) : createCommentVNode("v-if", true),
-                      createBaseVNode("div", _hoisted_15$4, [
+                      createBaseVNode("div", _hoisted_15$5, [
                         createBaseVNode(
                           "span",
-                          _hoisted_16$4,
+                          _hoisted_16$5,
                           toDisplayString($setup.t("agora", "{count} fields", { count: type.fields.length })),
                           1
                           /* TEXT */
                         ),
                         type.allowed_response?.length ? (openBlock(), createElementBlock(
                           "span",
-                          _hoisted_17$4,
-                          toDisplayString($setup.t("agora", "{count} responses", { count: type.allowed_response.length })),
+                          _hoisted_17$5,
+                          toDisplayString($setup.t("agora", "{count} responses", {
+                            count: type.allowed_response.length
+                          })),
                           1
                           /* TEXT */
                         )) : createCommentVNode("v-if", true),
                         type.statuses?.length ? (openBlock(), createElementBlock(
                           "span",
-                          _hoisted_18$3,
-                          toDisplayString($setup.t("agora", "{count} statuses", { count: type.statuses.length })),
+                          _hoisted_18$4,
+                          toDisplayString($setup.t("agora", "{count} statuses", {
+                            count: type.statuses.length
+                          })),
                           1
                           /* TEXT */
                         )) : createCommentVNode("v-if", true),
                         type.support_feature && type.support_feature !== "none" ? (openBlock(), createElementBlock(
                           "span",
-                          _hoisted_19$3,
+                          _hoisted_19$4,
                           toDisplayString(type.support_feature),
                           1
                           /* TEXT */
                         )) : createCommentVNode("v-if", true),
                         type.use_title ? (openBlock(), createElementBlock(
                           "span",
-                          _hoisted_20$3,
+                          _hoisted_20$4,
                           toDisplayString($setup.t("agora", "uses title")),
                           1
                           /* TEXT */
@@ -7192,9 +7398,9 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         /* STABLE */
                       }, 8, ["onClick"])
                     ])
-                  ], 8, _hoisted_8$8),
-                  $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_21$3, [
-                    createBaseVNode("div", _hoisted_22$3, [
+                  ], 8, _hoisted_8$9),
+                  $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_21$4, [
+                    createBaseVNode("div", _hoisted_22$4, [
                       createBaseVNode(
                         "h5",
                         null,
@@ -7202,7 +7408,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         1
                         /* TEXT */
                       ),
-                      type.fields.length ? (openBlock(), createElementBlock("table", _hoisted_23$2, [
+                      type.fields.length ? (openBlock(), createElementBlock("table", _hoisted_23$3, [
                         createBaseVNode("thead", null, [
                           createBaseVNode("tr", null, [
                             createBaseVNode(
@@ -7279,13 +7485,13 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         ])
                       ])) : (openBlock(), createElementBlock(
                         "p",
-                        _hoisted_24$2,
+                        _hoisted_24$3,
                         toDisplayString($setup.t("agora", "No custom fields")),
                         1
                         /* TEXT */
                       ))
                     ]),
-                    createBaseVNode("div", _hoisted_25$2, [
+                    createBaseVNode("div", _hoisted_25$3, [
                       createBaseVNode(
                         "h5",
                         null,
@@ -7293,7 +7499,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         1
                         /* TEXT */
                       ),
-                      createBaseVNode("ul", _hoisted_26$1, [
+                      createBaseVNode("ul", _hoisted_26$2, [
                         (openBlock(true), createElementBlock(
                           Fragment,
                           null,
@@ -7314,14 +7520,14 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         )),
                         !type.allowed_response?.length ? (openBlock(), createElementBlock(
                           "li",
-                          _hoisted_27$1,
+                          _hoisted_27$2,
                           toDisplayString($setup.t("agora", "None")),
                           1
                           /* TEXT */
                         )) : createCommentVNode("v-if", true)
                       ])
                     ]),
-                    createBaseVNode("div", _hoisted_28$1, [
+                    createBaseVNode("div", _hoisted_28$2, [
                       createBaseVNode(
                         "h5",
                         null,
@@ -7329,7 +7535,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         1
                         /* TEXT */
                       ),
-                      createBaseVNode("ul", _hoisted_29$1, [
+                      createBaseVNode("ul", _hoisted_29$2, [
                         (openBlock(true), createElementBlock(
                           Fragment,
                           null,
@@ -7350,7 +7556,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                         )),
                         !type.statuses?.length ? (openBlock(), createElementBlock(
                           "li",
-                          _hoisted_30$1,
+                          _hoisted_30$2,
                           toDisplayString($setup.t("agora", "None")),
                           1
                           /* TEXT */
@@ -7368,7 +7574,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
           ))
         ]),
         createCommentVNode(" ==================== ADD NEW TYPE ==================== "),
-        createBaseVNode("section", _hoisted_31$1, [
+        createBaseVNode("section", _hoisted_31$2, [
           createBaseVNode(
             "h3",
             null,
@@ -7376,7 +7582,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_32$1, [
+          createBaseVNode("div", _hoisted_32$2, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.newType.option_type,
               "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newType.option_type = $event),
@@ -7458,15 +7664,15 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
               class: "full-width"
             }, null, 8, ["modelValue", "label"]),
             createCommentVNode(" Inline fields editor "),
-            createBaseVNode("div", _hoisted_33$1, [
+            createBaseVNode("div", _hoisted_33$2, [
               createBaseVNode(
                 "label",
-                _hoisted_34$1,
+                _hoisted_34$2,
                 toDisplayString($setup.t("agora", "Custom fields")),
                 1
                 /* TEXT */
               ),
-              createBaseVNode("div", _hoisted_35$1, [
+              createBaseVNode("div", _hoisted_35$2, [
                 createVNode($setup["NcInputField"], {
                   modelValue: $setup.newField.key,
                   "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $setup.newField.key = $event),
@@ -7521,7 +7727,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                   /* STABLE */
                 })
               ]),
-              createBaseVNode("ul", _hoisted_36$1, [
+              createBaseVNode("ul", _hoisted_36$2, [
                 (openBlock(true), createElementBlock(
                   Fragment,
                   null,
@@ -7561,15 +7767,15 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
               ])
             ]),
             createCommentVNode(" Inline allowed responses "),
-            createBaseVNode("div", _hoisted_37$1, [
+            createBaseVNode("div", _hoisted_37$2, [
               createBaseVNode(
                 "label",
-                _hoisted_38$1,
+                _hoisted_38$2,
                 toDisplayString($setup.t("agora", "Allowed responses")),
                 1
                 /* TEXT */
               ),
-              createBaseVNode("div", _hoisted_39$1, [
+              createBaseVNode("div", _hoisted_39$2, [
                 createVNode($setup["NcInputField"], {
                   modelValue: $setup.newAllowedResponse,
                   "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $setup.newAllowedResponse = $event),
@@ -7593,7 +7799,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                   /* STABLE */
                 })
               ]),
-              createBaseVNode("div", _hoisted_40$1, [
+              createBaseVNode("div", _hoisted_40$2, [
                 (openBlock(true), createElementBlock(
                   Fragment,
                   null,
@@ -7602,7 +7808,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                       key: i,
                       class: "pill removable",
                       onClick: ($event) => $setup.removeAllowedResponse("new", i)
-                    }, toDisplayString(r) + " ✕ ", 9, _hoisted_41$1);
+                    }, toDisplayString(r) + " ✕ ", 9, _hoisted_41$2);
                   }),
                   128
                   /* KEYED_FRAGMENT */
@@ -7610,22 +7816,22 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
               ])
             ]),
             createCommentVNode(" Inline statuses "),
-            createBaseVNode("div", _hoisted_42$1, [
+            createBaseVNode("div", _hoisted_42$2, [
               createBaseVNode(
                 "label",
-                _hoisted_43$1,
+                _hoisted_43$2,
                 toDisplayString($setup.t("agora", "Statuses")),
                 1
                 /* TEXT */
               ),
-              createBaseVNode("div", _hoisted_44$1, [
+              createBaseVNode("div", _hoisted_44$2, [
                 createVNode($setup["NcInputField"], {
                   modelValue: $setup.newStatus.status_key,
                   "onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => $setup.newStatus.status_key = $event),
                   label: $setup.t("agora", "Status key"),
                   "label-outside": true,
-                  placeholder: $setup.t("agora", "status_key")
-                }, null, 8, ["modelValue", "label", "placeholder"]),
+                  placeholder: "status_key"
+                }, null, 8, ["modelValue", "label"]),
                 createVNode($setup["NcInputField"], {
                   modelValue: $setup.newStatus.label,
                   "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => $setup.newStatus.label = $event),
@@ -7648,7 +7854,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                   /* STABLE */
                 })
               ]),
-              createBaseVNode("div", _hoisted_45$1, [
+              createBaseVNode("div", _hoisted_45$2, [
                 (openBlock(true), createElementBlock(
                   Fragment,
                   null,
@@ -7957,8 +8163,8 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
                   "onUpdate:modelValue": _cache[35] || (_cache[35] = ($event) => $setup.newStatus.status_key = $event),
                   label: $setup.t("agora", "Status key"),
                   "label-outside": true,
-                  placeholder: $setup.t("agora", "status_key")
-                }, null, 8, ["modelValue", "label", "placeholder"]),
+                  placeholder: "status_key"
+                }, null, 8, ["modelValue", "label"]),
                 createVNode($setup["NcInputField"], {
                   modelValue: $setup.newStatus.label,
                   "onUpdate:modelValue": _cache[36] || (_cache[36] = ($event) => $setup.newStatus.label = $event),
@@ -8046,8 +8252,8 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT */
   );
 }
-const AdminOptionTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-0457f204"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOptionTypesManager.vue"]]);
-const _sfc_main$i = {
+const AdminOptionTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__scopeId", "data-v-0457f204"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOptionTypesManager.vue"]]);
+const _sfc_main$j = {
   __name: "AdminInquiryGroupTypesManager",
   props: {
     selectedFamily: { type: Object, default: null }
@@ -8057,7 +8263,9 @@ const _sfc_main$i = {
     __expose();
     const props = __props;
     const familyKey = computed(() => props.selectedFamily?.family_type ?? "");
-    const familyLabel = computed(() => props.selectedFamily?.label ?? familyKey.value);
+    const familyLabel = computed(
+      () => props.selectedFamily?.label ?? familyKey.value
+    );
     const emit = __emit;
     const appSettingsStore = useAppSettingsStore();
     const toBool = (value) => value === true || value === 1 || value === "1" || value === "true";
@@ -8233,7 +8441,9 @@ const _sfc_main$i = {
         showSuccess(translate("agora", "Group type added"));
         newType.value = emptyType();
       } catch (e) {
-        showError(translate("agora", "Failed to add group type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to add group type: {msg}", { msg: e?.message ?? "" })
+        );
       } finally {
         savingType.value = false;
       }
@@ -8270,7 +8480,11 @@ const _sfc_main$i = {
         showSuccess(translate("agora", "Group type updated"));
         editingType.value = null;
       } catch (e) {
-        showError(translate("agora", "Failed to update group type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to update group type: {msg}", {
+            msg: e?.message ?? ""
+          })
+        );
       } finally {
         savingType.value = false;
       }
@@ -8287,7 +8501,11 @@ const _sfc_main$i = {
         await appSettingsStore.deleteInquiryGroupType(type.id);
         showSuccess(translate("agora", "Group type deleted"));
       } catch (e) {
-        showError(translate("agora", "Failed to delete group type: {msg}", { msg: e?.message ?? "" }));
+        showError(
+          translate("agora", "Failed to delete group type: {msg}", {
+            msg: e?.message ?? ""
+          })
+        );
       }
     };
     const toggleExpand = (id) => {
@@ -8300,7 +8518,9 @@ const _sfc_main$i = {
         return;
       }
       if (!/^[a-z][a-z0-9_]*$/i.test(field.key)) {
-        showError(translate("agora", "Field key must be alphanumeric (underscores allowed)"));
+        showError(
+          translate("agora", "Field key must be alphanumeric (underscores allowed)")
+        );
         return;
       }
       const arr = target === "new" ? newType.value.fields : editingType.value.fields;
@@ -8389,99 +8609,99 @@ const _sfc_main$i = {
     return __returned__;
   }
 };
-const _hoisted_1$i = { class: "group-types-manager" };
-const _hoisted_2$e = { class: "manager-header" };
-const _hoisted_3$9 = { class: "description" };
-const _hoisted_4$9 = { class: "types-list" };
-const _hoisted_5$8 = { class: "count-badge" };
-const _hoisted_6$7 = {
+const _hoisted_1$j = { class: "group-types-manager" };
+const _hoisted_2$f = { class: "manager-header" };
+const _hoisted_3$a = { class: "description" };
+const _hoisted_4$a = { class: "types-list" };
+const _hoisted_5$9 = { class: "count-badge" };
+const _hoisted_6$8 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_7$7 = ["onClick"];
-const _hoisted_8$7 = { class: "type-icon" };
-const _hoisted_9$6 = { class: "type-info" };
-const _hoisted_10$4 = { class: "type-title-row" };
-const _hoisted_11$4 = { class: "type-key" };
-const _hoisted_12$3 = { class: "family-badge" };
-const _hoisted_13$3 = {
+const _hoisted_7$8 = ["onClick"];
+const _hoisted_8$8 = { class: "type-icon" };
+const _hoisted_9$7 = { class: "type-info" };
+const _hoisted_10$5 = { class: "type-title-row" };
+const _hoisted_11$5 = { class: "type-key" };
+const _hoisted_12$4 = { class: "family-badge" };
+const _hoisted_13$4 = {
   key: 0,
   class: "root-badge"
 };
-const _hoisted_14$3 = {
+const _hoisted_14$4 = {
   key: 0,
   class: "type-description"
 };
-const _hoisted_15$3 = { class: "type-stats" };
-const _hoisted_16$3 = { class: "stat-chip" };
-const _hoisted_17$3 = {
+const _hoisted_15$4 = { class: "type-stats" };
+const _hoisted_16$4 = { class: "stat-chip" };
+const _hoisted_17$4 = {
   key: 0,
   class: "stat-chip"
 };
-const _hoisted_18$2 = {
+const _hoisted_18$3 = {
   key: 1,
   class: "stat-chip"
 };
-const _hoisted_19$2 = {
+const _hoisted_19$3 = {
   key: 2,
   class: "stat-chip"
 };
-const _hoisted_20$2 = {
+const _hoisted_20$3 = {
   key: 3,
   class: "stat-chip"
 };
-const _hoisted_21$2 = {
+const _hoisted_21$3 = {
   key: 4,
   class: "stat-chip layout"
 };
-const _hoisted_22$2 = {
+const _hoisted_22$3 = {
   key: 0,
   class: "type-details"
 };
-const _hoisted_23$1 = { class: "detail-section" };
-const _hoisted_24$1 = {
+const _hoisted_23$2 = { class: "detail-section" };
+const _hoisted_24$2 = {
   key: 0,
   class: "mini-table"
 };
-const _hoisted_25$1 = {
+const _hoisted_25$2 = {
   key: 1,
   class: "muted"
 };
-const _hoisted_26 = { class: "detail-section" };
-const _hoisted_27 = { class: "pill-list" };
-const _hoisted_28 = {
+const _hoisted_26$1 = { class: "detail-section" };
+const _hoisted_27$1 = { class: "pill-list" };
+const _hoisted_28$1 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_29 = { class: "detail-section" };
-const _hoisted_30 = { class: "pill-list" };
-const _hoisted_31 = {
+const _hoisted_29$1 = { class: "detail-section" };
+const _hoisted_30$1 = { class: "pill-list" };
+const _hoisted_31$1 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_32 = { class: "detail-section" };
-const _hoisted_33 = { class: "pill-list" };
-const _hoisted_34 = {
+const _hoisted_32$1 = { class: "detail-section" };
+const _hoisted_33$1 = { class: "pill-list" };
+const _hoisted_34$1 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_35 = { class: "detail-section" };
-const _hoisted_36 = { class: "action-list" };
-const _hoisted_37 = {
+const _hoisted_35$1 = { class: "detail-section" };
+const _hoisted_36$1 = { class: "action-list" };
+const _hoisted_37$1 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_38 = {
+const _hoisted_38$1 = {
   key: 0,
   class: "muted"
 };
-const _hoisted_39 = { class: "detail-section" };
-const _hoisted_40 = { class: "detail-section" };
-const _hoisted_41 = { class: "add-type-form" };
-const _hoisted_42 = { class: "form-grid" };
-const _hoisted_43 = { class: "full-width" };
-const _hoisted_44 = { class: "field-label" };
-const _hoisted_45 = { class: "inline-editor field-editor" };
+const _hoisted_39$1 = { class: "detail-section" };
+const _hoisted_40$1 = { class: "detail-section" };
+const _hoisted_41$1 = { class: "add-type-form" };
+const _hoisted_42$1 = { class: "form-grid" };
+const _hoisted_43$1 = { class: "full-width" };
+const _hoisted_44$1 = { class: "field-label" };
+const _hoisted_45$1 = { class: "inline-editor field-editor" };
 const _hoisted_46 = { class: "field-list" };
 const _hoisted_47 = { class: "full-width" };
 const _hoisted_48 = { class: "field-label" };
@@ -8566,9 +8786,9 @@ const _hoisted_102 = { class: "inline-editor action-editor" };
 const _hoisted_103 = { class: "action-list" };
 const _hoisted_104 = { class: "modal-actions" };
 const _hoisted_105 = { key: 1 };
-function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$i, [
-    createBaseVNode("header", _hoisted_2$e, [
+function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$j, [
+    createBaseVNode("header", _hoisted_2$f, [
       createBaseVNode("div", null, [
         createBaseVNode(
           "h2",
@@ -8579,7 +8799,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
         ),
         createBaseVNode(
           "p",
-          _hoisted_3$9,
+          _hoisted_3$a,
           toDisplayString($setup.t(
             "agora",
             "Configure inquiry group types (e.g., citizen_jury, investigation_case). Each group type belongs to an inquiry family and defines the UI layout, rules, features and actions shared by all groups of this type."
@@ -8590,7 +8810,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
       ])
     ]),
     createCommentVNode(" ==================== EXISTING TYPES ==================== "),
-    createBaseVNode("section", _hoisted_4$9, [
+    createBaseVNode("section", _hoisted_4$a, [
       createBaseVNode("h3", null, [
         createTextVNode(
           toDisplayString($setup.t("agora", "Existing group types")) + " ",
@@ -8599,7 +8819,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
         ),
         createBaseVNode(
           "span",
-          _hoisted_5$8,
+          _hoisted_5$9,
           toDisplayString($setup.filteredTypes.length),
           1
           /* TEXT */
@@ -8607,7 +8827,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
       ]),
       !$setup.filteredTypes.length ? (openBlock(), createElementBlock(
         "div",
-        _hoisted_6$7,
+        _hoisted_6$8,
         toDisplayString($setup.t("agora", "No group types match your filters.")),
         1
         /* TEXT */
@@ -8627,11 +8847,11 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "type-row",
                 onClick: ($event) => $setup.emit("groupTypeSelected", type)
               }, [
-                createBaseVNode("div", _hoisted_8$7, [
+                createBaseVNode("div", _hoisted_8$8, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(type.icon)), { size: 20 }))
                 ]),
-                createBaseVNode("div", _hoisted_9$6, [
-                  createBaseVNode("div", _hoisted_10$4, [
+                createBaseVNode("div", _hoisted_9$7, [
+                  createBaseVNode("div", _hoisted_10$5, [
                     createBaseVNode(
                       "h4",
                       null,
@@ -8641,21 +8861,21 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     ),
                     createBaseVNode(
                       "code",
-                      _hoisted_11$4,
+                      _hoisted_11$5,
                       toDisplayString(type.group_type),
                       1
                       /* TEXT */
                     ),
                     createBaseVNode(
                       "span",
-                      _hoisted_12$3,
+                      _hoisted_12$4,
                       toDisplayString(type.family),
                       1
                       /* TEXT */
                     ),
                     type.is_root ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_13$3,
+                      _hoisted_13$4,
                       toDisplayString($setup.t("agora", "root")),
                       1
                       /* TEXT */
@@ -8663,50 +8883,56 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   type.description ? (openBlock(), createElementBlock(
                     "p",
-                    _hoisted_14$3,
+                    _hoisted_14$4,
                     toDisplayString(type.description),
                     1
                     /* TEXT */
                   )) : createCommentVNode("v-if", true),
-                  createBaseVNode("div", _hoisted_15$3, [
+                  createBaseVNode("div", _hoisted_15$4, [
                     createBaseVNode(
                       "span",
-                      _hoisted_16$3,
+                      _hoisted_16$4,
                       toDisplayString($setup.t("agora", "{count} fields", { count: type.fields.length })),
                       1
                       /* TEXT */
                     ),
                     type.allowed_inquiry_types.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_17$3,
-                      toDisplayString($setup.t("agora", "{count} inquiry types", { count: type.allowed_inquiry_types.length })),
+                      _hoisted_17$4,
+                      toDisplayString($setup.t("agora", "{count} inquiry types", {
+                        count: type.allowed_inquiry_types.length
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     type.allowed_response.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_18$2,
-                      toDisplayString($setup.t("agora", "{count} responses", { count: type.allowed_response.length })),
+                      _hoisted_18$3,
+                      toDisplayString($setup.t("agora", "{count} responses", {
+                        count: type.allowed_response.length
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     type.features.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_19$2,
-                      toDisplayString($setup.t("agora", "{count} features", { count: type.features.length })),
+                      _hoisted_19$3,
+                      toDisplayString($setup.t("agora", "{count} features", {
+                        count: type.features.length
+                      })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     type.actions.length ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_20$2,
+                      _hoisted_20$3,
                       toDisplayString($setup.t("agora", "{count} actions", { count: type.actions.length })),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
                     type.ui?.experience ? (openBlock(), createElementBlock(
                       "span",
-                      _hoisted_21$2,
+                      _hoisted_21$3,
                       toDisplayString(type.ui.experience),
                       1
                       /* TEXT */
@@ -8759,9 +8985,9 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     /* STABLE */
                   }, 8, ["onClick"])
                 ])
-              ], 8, _hoisted_7$7),
-              $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_22$2, [
-                createBaseVNode("div", _hoisted_23$1, [
+              ], 8, _hoisted_7$8),
+              $setup.expandedTypeId === type.id ? (openBlock(), createElementBlock("div", _hoisted_22$3, [
+                createBaseVNode("div", _hoisted_23$2, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -8769,7 +8995,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  type.fields.length ? (openBlock(), createElementBlock("table", _hoisted_24$1, [
+                  type.fields.length ? (openBlock(), createElementBlock("table", _hoisted_24$2, [
                     createBaseVNode("thead", null, [
                       createBaseVNode("tr", null, [
                         createBaseVNode(
@@ -8846,13 +9072,13 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     ])
                   ])) : (openBlock(), createElementBlock(
                     "p",
-                    _hoisted_25$1,
+                    _hoisted_25$2,
                     toDisplayString($setup.t("agora", "No custom fields")),
                     1
                     /* TEXT */
                   ))
                 ]),
-                createBaseVNode("div", _hoisted_26, [
+                createBaseVNode("div", _hoisted_26$1, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -8860,7 +9086,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_27, [
+                  createBaseVNode("ul", _hoisted_27$1, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -8881,14 +9107,14 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.allowed_inquiry_types.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_28,
+                      _hoisted_28$1,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_29, [
+                createBaseVNode("div", _hoisted_29$1, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -8896,7 +9122,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_30, [
+                  createBaseVNode("ul", _hoisted_30$1, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -8917,14 +9143,14 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.allowed_response.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_31,
+                      _hoisted_31$1,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_32, [
+                createBaseVNode("div", _hoisted_32$1, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -8932,7 +9158,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_33, [
+                  createBaseVNode("ul", _hoisted_33$1, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -8953,14 +9179,14 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.features.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_34,
+                      _hoisted_34$1,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_35, [
+                createBaseVNode("div", _hoisted_35$1, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -8968,7 +9194,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("ul", _hoisted_36, [
+                  createBaseVNode("ul", _hoisted_36$1, [
                     (openBlock(true), createElementBlock(
                       Fragment,
                       null,
@@ -8988,7 +9214,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                           ),
                           a.icon ? (openBlock(), createElementBlock(
                             "span",
-                            _hoisted_37,
+                            _hoisted_37$1,
                             " (" + toDisplayString(a.icon) + ")",
                             1
                             /* TEXT */
@@ -9000,14 +9226,14 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     )),
                     !type.actions.length ? (openBlock(), createElementBlock(
                       "li",
-                      _hoisted_38,
+                      _hoisted_38$1,
                       toDisplayString($setup.t("agora", "None")),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true)
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_39, [
+                createBaseVNode("div", _hoisted_39$1, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -9023,7 +9249,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_40, [
+                createBaseVNode("div", _hoisted_40$1, [
                   createBaseVNode(
                     "h5",
                     null,
@@ -9050,7 +9276,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
       ))
     ]),
     createCommentVNode(" ==================== ADD NEW TYPE ==================== "),
-    createBaseVNode("section", _hoisted_41, [
+    createBaseVNode("section", _hoisted_41$1, [
       createBaseVNode(
         "h3",
         null,
@@ -9058,7 +9284,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
         1
         /* TEXT */
       ),
-      createBaseVNode("div", _hoisted_42, [
+      createBaseVNode("div", _hoisted_42$1, [
         createVNode($setup["NcInputField"], {
           modelValue: $setup.newType.group_type,
           "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.newType.group_type = $event),
@@ -9119,15 +9345,15 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
           class: "full-width"
         }, null, 8, ["modelValue", "label"]),
         createCommentVNode(" Fields "),
-        createBaseVNode("div", _hoisted_43, [
+        createBaseVNode("div", _hoisted_43$1, [
           createBaseVNode(
             "label",
-            _hoisted_44,
+            _hoisted_44$1,
             toDisplayString($setup.t("agora", "Custom fields")),
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_45, [
+          createBaseVNode("div", _hoisted_45$1, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.newField.key,
               "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.newField.key = $event),
@@ -9561,7 +9787,15 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
           (openBlock(), createElementBlock(
             Fragment,
             null,
-            renderList(["basic", "fields", "responses", "ui", "rules", "features", "actions"], (tab) => {
+            renderList([
+              "basic",
+              "fields",
+              "responses",
+              "ui",
+              "rules",
+              "features",
+              "actions"
+            ], (tab) => {
               return createBaseVNode("button", {
                 key: tab,
                 class: normalizeClass(["tab", { active: $setup.editTab === tab }]),
@@ -9823,7 +10057,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode(
             "p",
             _hoisted_92,
-            toDisplayString($setup.t("agora", "UI configuration as JSON (experience, layout, display_architecture…).")),
+            toDisplayString($setup.t("agora", "UI configuration as JSON (experience, layout, display_architecture …).")),
             1
             /* TEXT */
           ),
@@ -10009,8 +10243,8 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminInquiryGroupTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-2a51940c"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminInquiryGroupTypesManager.vue"]]);
-const _sfc_main$h = /* @__PURE__ */ defineComponent({
+const AdminInquiryGroupTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-2a51940c"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminInquiryGroupTypesManager.vue"]]);
+const _sfc_main$i = /* @__PURE__ */ defineComponent({
   __name: "AdminTypeRights",
   props: {
     selectedType: { type: Object, required: false }
@@ -10042,7 +10276,11 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
       },
       set: (newRights) => {
         if (props.selectedType) {
-          emit("updateRights", props.selectedType.inquiry_type, newRights);
+          emit(
+            "updateRights",
+            props.selectedType.inquiry_type,
+            newRights
+          );
         }
       }
     });
@@ -10065,7 +10303,11 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     );
     const updateRights = () => {
       if (props.selectedType) {
-        emit("updateRights", props.selectedType.inquiry_type, typeRights.value);
+        emit(
+          "updateRights",
+          props.selectedType.inquiry_type,
+          typeRights.value
+        );
       }
     };
     watch(
@@ -10107,40 +10349,40 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$h = { class: "type-rights" };
-const _hoisted_2$d = { class: "header" };
-const _hoisted_3$8 = {
+const _hoisted_1$i = { class: "type-rights" };
+const _hoisted_2$e = { class: "header" };
+const _hoisted_3$9 = {
   key: 0,
   class: "type-id"
 };
-const _hoisted_4$8 = {
+const _hoisted_4$9 = {
   key: 0,
   class: "settings-container"
 };
-const _hoisted_5$7 = { class: "description" };
-const _hoisted_6$6 = { class: "settings-list" };
-const _hoisted_7$6 = { class: "setting-item" };
-const _hoisted_8$6 = { class: "setting-description" };
-const _hoisted_9$5 = {
+const _hoisted_5$8 = { class: "description" };
+const _hoisted_6$7 = { class: "settings-list" };
+const _hoisted_7$7 = { class: "setting-item" };
+const _hoisted_8$7 = { class: "setting-description" };
+const _hoisted_9$6 = {
   key: 0,
   class: "setting-item engine-mode-setting"
 };
-const _hoisted_10$3 = { class: "setting-label" };
-const _hoisted_11$3 = { class: "engine-picker" };
-const _hoisted_12$2 = { class: "engine-picker-info" };
-const _hoisted_13$2 = { class: "engine-name" };
-const _hoisted_14$2 = { class: "engine-id" };
-const _hoisted_15$2 = { class: "setting-description" };
-const _hoisted_16$2 = { class: "setting-item" };
-const _hoisted_17$2 = { class: "setting-description" };
-const _hoisted_18$1 = { class: "setting-item" };
-const _hoisted_19$1 = { class: "setting-description" };
-const _hoisted_20$1 = { class: "setting-item" };
-const _hoisted_21$1 = { for: "editor-type-select" };
-const _hoisted_22$1 = { class: "setting-description" };
-function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$h, [
-    createBaseVNode("div", _hoisted_2$d, [
+const _hoisted_10$4 = { class: "setting-label" };
+const _hoisted_11$4 = { class: "engine-picker" };
+const _hoisted_12$3 = { class: "engine-picker-info" };
+const _hoisted_13$3 = { class: "engine-name" };
+const _hoisted_14$3 = { class: "engine-id" };
+const _hoisted_15$3 = { class: "setting-description" };
+const _hoisted_16$3 = { class: "setting-item" };
+const _hoisted_17$3 = { class: "setting-description" };
+const _hoisted_18$2 = { class: "setting-item" };
+const _hoisted_19$2 = { class: "setting-description" };
+const _hoisted_20$2 = { class: "setting-item" };
+const _hoisted_21$2 = { for: "editor-type-select" };
+const _hoisted_22$2 = { class: "setting-description" };
+function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$i, [
+    createBaseVNode("div", _hoisted_2$e, [
       createBaseVNode(
         "h2",
         null,
@@ -10150,23 +10392,26 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       $props.selectedType ? (openBlock(), createElementBlock(
         "p",
-        _hoisted_3$8,
+        _hoisted_3$9,
         toDisplayString($props.selectedType.inquiry_type),
         1
         /* TEXT */
       )) : createCommentVNode("v-if", true)
     ]),
-    $props.selectedType ? (openBlock(), createElementBlock("div", _hoisted_4$8, [
+    $props.selectedType ? (openBlock(), createElementBlock("div", _hoisted_4$9, [
       createBaseVNode(
         "p",
-        _hoisted_5$7,
-        toDisplayString($setup.t("agora", "Configure default rights and settings for this inquiry type")),
+        _hoisted_5$8,
+        toDisplayString($setup.t(
+          "agora",
+          "Configure default rights and settings for this inquiry type"
+        )),
         1
         /* TEXT */
       ),
-      createBaseVNode("div", _hoisted_6$6, [
+      createBaseVNode("div", _hoisted_6$7, [
         createCommentVNode(" Support enable/disable "),
-        createBaseVNode("div", _hoisted_7$6, [
+        createBaseVNode("div", _hoisted_7$7, [
           createVNode($setup["NcCheckboxRadioSwitch"], {
             modelValue: $setup.typeRights.supportInquiry,
             "onUpdate:modelValue": [
@@ -10187,33 +10432,33 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
           }, 8, ["modelValue"]),
           createBaseVNode(
             "p",
-            _hoisted_8$6,
+            _hoisted_8$7,
             toDisplayString($setup.t("agora", "Allow users to support this inquiry type")),
             1
             /* TEXT */
           )
         ]),
         createCommentVNode(" Engine selector – replaces the old binary/ternary radio pair "),
-        $setup.typeRights.supportInquiry ? (openBlock(), createElementBlock("div", _hoisted_9$5, [
+        $setup.typeRights.supportInquiry ? (openBlock(), createElementBlock("div", _hoisted_9$6, [
           createBaseVNode(
             "div",
-            _hoisted_10$3,
+            _hoisted_10$4,
             toDisplayString($setup.t("agora", "Support mode")),
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_11$3, [
-            createBaseVNode("div", _hoisted_12$2, [
+          createBaseVNode("div", _hoisted_11$4, [
+            createBaseVNode("div", _hoisted_12$3, [
               createBaseVNode(
                 "span",
-                _hoisted_13$2,
+                _hoisted_13$3,
                 toDisplayString($setup.currentEngineLabel),
                 1
                 /* TEXT */
               ),
               createBaseVNode(
                 "span",
-                _hoisted_14$2,
+                _hoisted_14$3,
                 "(" + toDisplayString($setup.typeRights.supportFeature) + ")",
                 1
                 /* TEXT */
@@ -10239,14 +10484,17 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
           ]),
           createBaseVNode(
             "p",
-            _hoisted_15$2,
-            toDisplayString($setup.t("agora", "Choose which voting method users can use to support this inquiry.")),
+            _hoisted_15$3,
+            toDisplayString($setup.t(
+              "agora",
+              "Choose which voting method users can use to support this inquiry."
+            )),
             1
             /* TEXT */
           )
         ])) : createCommentVNode("v-if", true),
         createCommentVNode(" Comments "),
-        createBaseVNode("div", _hoisted_16$2, [
+        createBaseVNode("div", _hoisted_16$3, [
           createVNode($setup["NcCheckboxRadioSwitch"], {
             modelValue: $setup.typeRights.commentInquiry,
             "onUpdate:modelValue": [
@@ -10267,14 +10515,14 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
           }, 8, ["modelValue"]),
           createBaseVNode(
             "p",
-            _hoisted_17$2,
+            _hoisted_17$3,
             toDisplayString($setup.t("agora", "Allow users to comment on this inquiry type")),
             1
             /* TEXT */
           )
         ]),
         createCommentVNode(" Resources "),
-        createBaseVNode("div", _hoisted_18$1, [
+        createBaseVNode("div", _hoisted_18$2, [
           createVNode($setup["NcCheckboxRadioSwitch"], {
             modelValue: $setup.typeRights.useResourceInquiry,
             "onUpdate:modelValue": [
@@ -10295,17 +10543,17 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
           }, 8, ["modelValue"]),
           createBaseVNode(
             "p",
-            _hoisted_19$1,
+            _hoisted_19$2,
             toDisplayString($setup.t("agora", "Allow users to use resources for this inquiry type")),
             1
             /* TEXT */
           )
         ]),
         createCommentVNode(" Editor type "),
-        createBaseVNode("div", _hoisted_20$1, [
+        createBaseVNode("div", _hoisted_20$2, [
           createBaseVNode(
             "label",
-            _hoisted_21$1,
+            _hoisted_21$2,
             toDisplayString($setup.t("agora", "Editor type")),
             1
             /* TEXT */
@@ -10324,7 +10572,7 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
           }, null, 8, ["modelValue", "reduce"]),
           createBaseVNode(
             "p",
-            _hoisted_22$1,
+            _hoisted_22$2,
             toDisplayString($setup.t("agora", "Select the editor type for this inquiry")),
             1
             /* TEXT */
@@ -10346,8 +10594,8 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["available-engines", "existing-engine"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminTypeRights = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__scopeId", "data-v-60290e39"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypeRights.vue"]]);
-const _sfc_main$g = /* @__PURE__ */ defineComponent({
+const AdminTypeRights = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-60290e39"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypeRights.vue"]]);
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
   __name: "AdminTypeStatus",
   props: {
     selectedType: { type: Object, required: false }
@@ -10371,7 +10619,9 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
       }))
     );
     const statuses = computed(
-      () => props.selectedType ? appSettingsStore.getStatusesForInquiryType(props.selectedType.inquiry_type) : []
+      () => props.selectedType ? appSettingsStore.getStatusesForInquiryType(
+        props.selectedType.inquiry_type
+      ) : []
     );
     const getIconComponent = (iconName) => StatusIcons[iconName] || StatusIcons.ClockOutline;
     const addStatus = () => {
@@ -10415,7 +10665,10 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     };
     const deleteStatus = (statusId) => {
       if (confirm(translate("agora", "Are you sure you want to delete this status?")) && props.selectedType) {
-        appSettingsStore.deleteStatusForInquiryType(props.selectedType.inquiry_type, statusId);
+        appSettingsStore.deleteStatusForInquiryType(
+          props.selectedType.inquiry_type,
+          statusId
+        );
       }
     };
     const moveStatusUp = (statusId) => {
@@ -10446,52 +10699,52 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$g = { class: "type-status" };
-const _hoisted_2$c = { class: "header" };
-const _hoisted_3$7 = {
+const _hoisted_1$h = { class: "type-status" };
+const _hoisted_2$d = { class: "header" };
+const _hoisted_3$8 = {
   key: 0,
   class: "status-management"
 };
-const _hoisted_4$7 = { class: "description" };
-const _hoisted_5$6 = { class: "status-list" };
-const _hoisted_6$5 = {
+const _hoisted_4$8 = { class: "description" };
+const _hoisted_5$7 = { class: "status-list" };
+const _hoisted_6$6 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_7$5 = {
+const _hoisted_7$6 = {
   key: 1,
   class: "status-items"
 };
-const _hoisted_8$5 = { class: "status-content" };
-const _hoisted_9$4 = ["title"];
-const _hoisted_10$2 = { class: "status-info" };
-const _hoisted_11$2 = { class: "status-key" };
-const _hoisted_12$1 = {
+const _hoisted_8$6 = { class: "status-content" };
+const _hoisted_9$5 = ["title"];
+const _hoisted_10$3 = { class: "status-info" };
+const _hoisted_11$3 = { class: "status-key" };
+const _hoisted_12$2 = {
   key: 0,
   class: "status-description"
 };
-const _hoisted_13$1 = { class: "status-properties" };
-const _hoisted_14$1 = { class: "status-actions" };
-const _hoisted_15$1 = { class: "add-status-form" };
-const _hoisted_16$1 = { class: "form-grid" };
-const _hoisted_17$1 = { class: "checkbox-field" };
-const _hoisted_18 = { class: "field-description" };
-const _hoisted_19 = {
+const _hoisted_13$2 = { class: "status-properties" };
+const _hoisted_14$2 = { class: "status-actions" };
+const _hoisted_15$2 = { class: "add-status-form" };
+const _hoisted_16$2 = { class: "form-grid" };
+const _hoisted_17$2 = { class: "checkbox-field" };
+const _hoisted_18$1 = { class: "field-description" };
+const _hoisted_19$1 = {
   key: 0,
   class: "modal-overlay"
 };
-const _hoisted_20 = { class: "modal-content" };
-const _hoisted_21 = { class: "form-grid" };
-const _hoisted_22 = { class: "checkbox-field" };
-const _hoisted_23 = { class: "field-description" };
-const _hoisted_24 = { class: "modal-actions" };
-const _hoisted_25 = {
+const _hoisted_20$1 = { class: "modal-content" };
+const _hoisted_21$1 = { class: "form-grid" };
+const _hoisted_22$1 = { class: "checkbox-field" };
+const _hoisted_23$1 = { class: "field-description" };
+const _hoisted_24$1 = { class: "modal-actions" };
+const _hoisted_25$1 = {
   key: 1,
   class: "no-selection"
 };
-function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$g, [
-    createBaseVNode("div", _hoisted_2$c, [
+function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$h, [
+    createBaseVNode("div", _hoisted_2$d, [
       createBaseVNode(
         "h2",
         null,
@@ -10500,16 +10753,19 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
         /* TEXT */
       )
     ]),
-    $props.selectedType ? (openBlock(), createElementBlock("div", _hoisted_3$7, [
+    $props.selectedType ? (openBlock(), createElementBlock("div", _hoisted_3$8, [
       createBaseVNode(
         "p",
-        _hoisted_4$7,
-        toDisplayString($setup.t("agora", "Manage statuses for this inquiry type. Statuses define the workflow stages")),
+        _hoisted_4$8,
+        toDisplayString($setup.t(
+          "agora",
+          "Manage statuses for this inquiry type. Statuses define the workflow stages"
+        )),
         1
         /* TEXT */
       ),
       createCommentVNode(" Status list for current inquiry type "),
-      createBaseVNode("div", _hoisted_5$6, [
+      createBaseVNode("div", _hoisted_5$7, [
         createBaseVNode(
           "h3",
           null,
@@ -10519,7 +10775,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        $setup.statuses.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_6$5, [
+        $setup.statuses.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_6$6, [
           createBaseVNode(
             "p",
             null,
@@ -10527,7 +10783,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           )
-        ])) : (openBlock(), createElementBlock("div", _hoisted_7$5, [
+        ])) : (openBlock(), createElementBlock("div", _hoisted_7$6, [
           (openBlock(true), createElementBlock(
             Fragment,
             null,
@@ -10536,14 +10792,14 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
                 key: status.statusKey,
                 class: "status-item"
               }, [
-                createBaseVNode("div", _hoisted_8$5, [
+                createBaseVNode("div", _hoisted_8$6, [
                   createBaseVNode("div", {
                     class: "status-icon",
                     title: status.icon
                   }, [
                     (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent(status.icon)), { size: 20 }))
-                  ], 8, _hoisted_9$4),
-                  createBaseVNode("div", _hoisted_10$2, [
+                  ], 8, _hoisted_9$5),
+                  createBaseVNode("div", _hoisted_10$3, [
                     createBaseVNode(
                       "h4",
                       null,
@@ -10553,23 +10809,26 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
                     ),
                     createBaseVNode(
                       "p",
-                      _hoisted_11$2,
+                      _hoisted_11$3,
                       toDisplayString(status.statusKey),
                       1
                       /* TEXT */
                     ),
                     status.description ? (openBlock(), createElementBlock(
                       "p",
-                      _hoisted_12$1,
+                      _hoisted_12$2,
                       toDisplayString(status.description),
                       1
                       /* TEXT */
                     )) : createCommentVNode("v-if", true),
-                    createBaseVNode("div", _hoisted_13$1, [
+                    createBaseVNode("div", _hoisted_13$2, [
                       createBaseVNode(
                         "span",
                         {
-                          class: normalizeClass(["status-badge", status.isFinal ? "final" : "non-final"])
+                          class: normalizeClass([
+                            "status-badge",
+                            status.isFinal ? "final" : "non-final"
+                          ])
                         },
                         toDisplayString(status.isFinal ? $setup.t("agora", "Final") : $setup.t("agora", "Non-Final")),
                         3
@@ -10578,7 +10837,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
                     ])
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_14$1, [
+                createBaseVNode("div", _hoisted_14$2, [
                   createVNode($setup["NcButton"], {
                     disabled: index === 0,
                     onClick: ($event) => $setup.moveStatusUp(status.statusKey)
@@ -10642,7 +10901,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
         ]))
       ]),
       createCommentVNode(" Add new status form "),
-      createBaseVNode("div", _hoisted_15$1, [
+      createBaseVNode("div", _hoisted_15$2, [
         createBaseVNode(
           "h3",
           null,
@@ -10650,7 +10909,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
           1
           /* TEXT */
         ),
-        createBaseVNode("div", _hoisted_16$1, [
+        createBaseVNode("div", _hoisted_16$2, [
           createVNode($setup["NcInputField"], {
             modelValue: $setup.newStatus.statusKey,
             "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.newStatus.statusKey = $event),
@@ -10679,7 +10938,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
             label: "label",
             "input-label": $setup.t("agora", "Select icon")
           }, null, 8, ["modelValue", "options", "input-label"]),
-          createBaseVNode("div", _hoisted_17$1, [
+          createBaseVNode("div", _hoisted_17$2, [
             createVNode($setup["NcCheckboxRadioSwitch"], {
               modelValue: $setup.newStatus.isFinal,
               "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.newStatus.isFinal = $event),
@@ -10697,7 +10956,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
             }, 8, ["modelValue"]),
             createBaseVNode(
               "p",
-              _hoisted_18,
+              _hoisted_18$1,
               toDisplayString($setup.t("agora", "Final statuses cannot be changed once set")),
               1
               /* TEXT */
@@ -10721,8 +10980,8 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ]),
       createCommentVNode(" Edit status modal "),
-      $setup.editingStatus ? (openBlock(), createElementBlock("div", _hoisted_19, [
-        createBaseVNode("div", _hoisted_20, [
+      $setup.editingStatus ? (openBlock(), createElementBlock("div", _hoisted_19$1, [
+        createBaseVNode("div", _hoisted_20$1, [
           createBaseVNode(
             "h3",
             null,
@@ -10730,7 +10989,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_21, [
+          createBaseVNode("div", _hoisted_21$1, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.editingStatus.statusKey,
               "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.editingStatus.statusKey = $event),
@@ -10759,7 +11018,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
               label: "label",
               "input-label": $setup.t("agora", "Select icon")
             }, null, 8, ["modelValue", "options", "input-label"]),
-            createBaseVNode("div", _hoisted_22, [
+            createBaseVNode("div", _hoisted_22$1, [
               createVNode($setup["NcCheckboxRadioSwitch"], {
                 modelValue: $setup.editingStatus.isFinal,
                 "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $setup.editingStatus.isFinal = $event),
@@ -10777,14 +11036,14 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
               }, 8, ["modelValue"]),
               createBaseVNode(
                 "p",
-                _hoisted_23,
+                _hoisted_23$1,
                 toDisplayString($setup.t("agora", "Final statuses cannot be changed once set")),
                 1
                 /* TEXT */
               )
             ])
           ]),
-          createBaseVNode("div", _hoisted_24, [
+          createBaseVNode("div", _hoisted_24$1, [
             createVNode($setup["NcButton"], { onClick: $setup.cancelEdit }, {
               default: withCtx(() => [
                 createTextVNode(
@@ -10814,7 +11073,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ])
       ])) : createCommentVNode("v-if", true)
-    ])) : (openBlock(), createElementBlock("div", _hoisted_25, [
+    ])) : (openBlock(), createElementBlock("div", _hoisted_25$1, [
       createBaseVNode(
         "p",
         null,
@@ -10825,8 +11084,8 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
     ]))
   ]);
 }
-const AdminTypeStatus = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__scopeId", "data-v-832d89d2"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypeStatus.vue"]]);
-const _sfc_main$f = {
+const AdminTypeStatus = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__scopeId", "data-v-832d89d2"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminTypeStatus.vue"]]);
+const _sfc_main$g = {
   __name: "TypeSettingsModal",
   props: {
     selectedType: {
@@ -10868,23 +11127,23 @@ const _sfc_main$f = {
     return __returned__;
   }
 };
-const _hoisted_1$f = { class: "type-settings-modal" };
-const _hoisted_2$b = { class: "modal-header" };
-const _hoisted_3$6 = { class: "type-info" };
-const _hoisted_4$6 = { class: "type-icon" };
-const _hoisted_5$5 = { class: "type-details" };
-const _hoisted_6$4 = { class: "type-key" };
-const _hoisted_7$4 = { class: "simple-menu" };
-const _hoisted_8$4 = ["onClick"];
-const _hoisted_9$3 = { class: "settings-content" };
-function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$f, [
-    createBaseVNode("div", _hoisted_2$b, [
-      createBaseVNode("div", _hoisted_3$6, [
-        createBaseVNode("div", _hoisted_4$6, [
+const _hoisted_1$g = { class: "type-settings-modal" };
+const _hoisted_2$c = { class: "modal-header" };
+const _hoisted_3$7 = { class: "type-info" };
+const _hoisted_4$7 = { class: "type-icon" };
+const _hoisted_5$6 = { class: "type-details" };
+const _hoisted_6$5 = { class: "type-key" };
+const _hoisted_7$5 = { class: "simple-menu" };
+const _hoisted_8$5 = ["onClick"];
+const _hoisted_9$4 = { class: "settings-content" };
+function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$g, [
+    createBaseVNode("div", _hoisted_2$c, [
+      createBaseVNode("div", _hoisted_3$7, [
+        createBaseVNode("div", _hoisted_4$7, [
           (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent($props.selectedType.icon)), { size: 20 }))
         ]),
-        createBaseVNode("div", _hoisted_5$5, [
+        createBaseVNode("div", _hoisted_5$6, [
           createBaseVNode(
             "h3",
             null,
@@ -10894,7 +11153,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
           ),
           createBaseVNode(
             "p",
-            _hoisted_6$4,
+            _hoisted_6$5,
             toDisplayString($setup.props.selectedType.inquiry_type),
             1
             /* TEXT */
@@ -10912,7 +11171,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_7$4, [
+    createBaseVNode("div", _hoisted_7$5, [
       (openBlock(), createElementBlock(
         Fragment,
         null,
@@ -10921,13 +11180,13 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
             key: tab.id,
             class: normalizeClass(["menu-item", { active: $setup.activeSettingsTab === tab.id }]),
             onClick: ($event) => $setup.activeSettingsTab = tab.id
-          }, toDisplayString(tab.label), 11, _hoisted_8$4);
+          }, toDisplayString(tab.label), 11, _hoisted_8$5);
         }),
         64
         /* STABLE_FRAGMENT */
       ))
     ]),
-    createBaseVNode("div", _hoisted_9$3, [
+    createBaseVNode("div", _hoisted_9$4, [
       (openBlock(), createBlock(resolveDynamicComponent($setup.settingsTabs.find((t) => t.id === $setup.activeSettingsTab)?.component), {
         "selected-type": $setup.props.selectedType,
         onUpdateRights: $setup.updateTypeRights
@@ -10935,8 +11194,8 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const TypeSettingsModal = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__scopeId", "data-v-077dce28"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/TypeSettingsModal.vue"]]);
-const _sfc_main$e = {
+const TypeSettingsModal = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__scopeId", "data-v-077dce28"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/TypeSettingsModal.vue"]]);
+const _sfc_main$f = {
   __name: "AdminSettings",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -11000,21 +11259,21 @@ const _sfc_main$e = {
     return __returned__;
   }
 };
-const _hoisted_1$e = { class: "admin-settings-container" };
-const _hoisted_2$a = {
+const _hoisted_1$f = { class: "admin-settings-container" };
+const _hoisted_2$b = {
   key: 0,
   class: "domain-tabs"
 };
-const _hoisted_3$5 = ["onClick"];
-const _hoisted_4$5 = { class: "family-header" };
-const _hoisted_5$4 = { class: "family-title" };
-const _hoisted_6$3 = { class: "family-key" };
-const _hoisted_7$3 = ["disabled", "onClick"];
-const _hoisted_8$3 = { class: "settings-content" };
-function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$e, [
+const _hoisted_3$6 = ["onClick"];
+const _hoisted_4$6 = { class: "family-header" };
+const _hoisted_5$5 = { class: "family-title" };
+const _hoisted_6$4 = { class: "family-key" };
+const _hoisted_7$4 = ["disabled", "onClick"];
+const _hoisted_8$4 = { class: "settings-content" };
+function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$f, [
     createCommentVNode(" ============================================================\n         LEVEL 1 — Domain tabs (hidden once you drill in)\n         ============================================================ "),
-    !$setup.selectedFamily ? (openBlock(), createElementBlock("nav", _hoisted_2$a, [
+    !$setup.selectedFamily ? (openBlock(), createElementBlock("nav", _hoisted_2$b, [
       (openBlock(), createElementBlock(
         Fragment,
         null,
@@ -11023,7 +11282,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
             key: domain.id,
             class: normalizeClass(["domain-tab", { active: $setup.activeDomainId === domain.id }]),
             onClick: ($event) => $setup.switchDomain(domain.id)
-          }, toDisplayString(domain.label), 11, _hoisted_3$5);
+          }, toDisplayString(domain.label), 11, _hoisted_3$6);
         }),
         64
         /* STABLE_FRAGMENT */
@@ -11034,7 +11293,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
       Fragment,
       { key: 1 },
       [
-        createBaseVNode("div", _hoisted_4$5, [
+        createBaseVNode("div", _hoisted_4$6, [
           createVNode($setup["NcButton"], { onClick: $setup.goBackToFamilies }, {
             default: withCtx(() => [
               createTextVNode(
@@ -11046,7 +11305,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
           }),
-          createBaseVNode("div", _hoisted_5$4, [
+          createBaseVNode("div", _hoisted_5$5, [
             createBaseVNode(
               "h2",
               null,
@@ -11056,7 +11315,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
             ),
             createBaseVNode(
               "code",
-              _hoisted_6$3,
+              _hoisted_6$4,
               toDisplayString($setup.selectedFamily.family_type),
               1
               /* TEXT */
@@ -11078,7 +11337,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
                   class: normalizeClass(["sub-tab", { active: $setup.activeSubTab === tab.id }]),
                   disabled: $setup.subTabs.length === 1,
                   onClick: ($event) => $setup.activeSubTab = tab.id
-                }, toDisplayString(tab.label), 11, _hoisted_7$3);
+                }, toDisplayString(tab.label), 11, _hoisted_7$4);
               }),
               128
               /* KEYED_FRAGMENT */
@@ -11092,7 +11351,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
       /* STABLE_FRAGMENT */
     )) : createCommentVNode("v-if", true),
     createCommentVNode(" ============================================================\n         ACTIVE COMPONENT\n         ============================================================ "),
-    createBaseVNode("div", _hoisted_8$3, [
+    createBaseVNode("div", _hoisted_8$4, [
       (openBlock(), createBlock(resolveDynamicComponent($setup.currentComponent), {
         key: `${$setup.activeDomainId}-${$setup.selectedFamily?.family_type ?? "root"}-${$setup.activeSubTab}`,
         "selected-family": $setup.selectedFamily,
@@ -11123,8 +11382,8 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["open", "name"])
   ]);
 }
-const AdminSettings = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__scopeId", "data-v-cd782848"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminSettings.vue"]]);
-const _sfc_main$d = /* @__PURE__ */ defineComponent({
+const AdminSettings = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__scopeId", "data-v-cd782848"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminSettings.vue"]]);
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
   __name: "AdminPerformance",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -11136,11 +11395,17 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
       },
       {
         value: "periodicInquirying",
-        label: translate("agora", "Enable periodic requests of inquiry updates from the client")
+        label: translate(
+          "agora",
+          "Enable periodic requests of inquiry updates from the client"
+        )
       },
       {
         value: "noInquirying",
-        label: translate("agora", "Disable automatic updates (inquiry must be reloaded to get updates)")
+        label: translate(
+          "agora",
+          "Disable automatic updates (inquiry must be reloaded to get updates)"
+        )
       }
     ];
     const __returned__ = { appSettingsStore, updateTypeOptions, get RadioGroupDiv() {
@@ -11150,9 +11415,9 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$d = { class: "user_settings" };
-function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$d, [
+const _hoisted_1$e = { class: "user_settings" };
+function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$e, [
     createVNode($setup["RadioGroupDiv"], {
       modelValue: $setup.appSettingsStore.updateType,
       "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.appSettingsStore.updateType = $event),
@@ -11161,8 +11426,8 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue"])
   ]);
 }
-const AdminPerformance = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminPerformance.vue"]]);
-const _sfc_main$c = /* @__PURE__ */ defineComponent({
+const AdminPerformance = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminPerformance.vue"]]);
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
   __name: "TreeItem",
   props: {
     item: {
@@ -11187,7 +11452,9 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     __expose();
     const props = __props;
     const emit = __emit;
-    const children = computed(() => props.items.filter((i) => i.parentId === props.item.id));
+    const children = computed(
+      () => props.items.filter((i) => i.parentId === props.item.id)
+    );
     const editItem = () => {
       emit("edit", props.item, props.type);
     };
@@ -11203,16 +11470,16 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$c = { class: "tree-item" };
-const _hoisted_2$9 = { class: "tree-label" };
-const _hoisted_3$4 = { class: "tree-actions" };
-const _hoisted_4$4 = {
+const _hoisted_1$d = { class: "tree-item" };
+const _hoisted_2$a = { class: "tree-label" };
+const _hoisted_3$5 = { class: "tree-actions" };
+const _hoisted_4$5 = {
   key: 0,
   class: "tree-children"
 };
-function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_TreeItem = resolveComponent("TreeItem", true);
-  return openBlock(), createElementBlock("div", _hoisted_1$c, [
+  return openBlock(), createElementBlock("div", _hoisted_1$d, [
     createBaseVNode(
       "div",
       {
@@ -11222,12 +11489,12 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
       [
         createBaseVNode(
           "span",
-          _hoisted_2$9,
+          _hoisted_2$a,
           toDisplayString($props.item.name),
           1
           /* TEXT */
         ),
-        createBaseVNode("div", _hoisted_3$4, [
+        createBaseVNode("div", _hoisted_3$5, [
           createVNode($setup["NcButton"], { onClick: $setup.editItem }, {
             default: withCtx(() => [
               createTextVNode(
@@ -11255,7 +11522,7 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
       4
       /* STYLE */
     ),
-    $setup.children.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$4, [
+    $setup.children.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$5, [
       (openBlock(true), createElementBlock(
         Fragment,
         null,
@@ -11276,8 +11543,8 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const TreeItem = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__scopeId", "data-v-37a5142a"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/TreeItem.vue"]]);
-const _sfc_main$b = /* @__PURE__ */ defineComponent({
+const TreeItem = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__scopeId", "data-v-37a5142a"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/TreeItem.vue"]]);
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
   __name: "AdminCategoryLocation",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -11296,20 +11563,24 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     });
     const hierarchicalCategory = computed(() => {
       if (!Array.isArray(appSettingsStore.categoryTab)) return [];
-      const categoriesList = buildHierarchy(appSettingsStore.categoryTab).map((item) => ({
-        value: item.id,
-        label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
-        original: item
-      }));
+      const categoriesList = buildHierarchy(appSettingsStore.categoryTab).map(
+        (item) => ({
+          value: item.id,
+          label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
+          original: item
+        })
+      );
       return [{ value: 0, label: translate("agora", "No parent") }, ...categoriesList];
     });
     const hierarchicalLocation = computed(() => {
       if (!Array.isArray(appSettingsStore.locationTab)) return [];
-      const locationsList = buildHierarchy(appSettingsStore.locationTab).map((item) => ({
-        value: item.id,
-        label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
-        original: item
-      }));
+      const locationsList = buildHierarchy(appSettingsStore.locationTab).map(
+        (item) => ({
+          value: item.id,
+          label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
+          original: item
+        })
+      );
       return [{ value: 0, label: translate("agora", "No parent") }, ...locationsList];
     });
     function buildHierarchy(list, parentId = 0, depth = 0) {
@@ -11326,9 +11597,13 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     const editingOptions = computed(() => {
       if (!editingItem.value) return [];
       if (editingItem.value.type === "category") {
-        return hierarchicalCategory.value.filter((opt) => opt.value !== editingItem.value.id);
+        return hierarchicalCategory.value.filter(
+          (opt) => opt.value !== editingItem.value.id
+        );
       }
-      return hierarchicalLocation.value.filter((opt) => opt.value !== editingItem.value.id);
+      return hierarchicalLocation.value.filter(
+        (opt) => opt.value !== editingItem.value.id
+      );
     });
     const addCategory = () => {
       if (newCategory.value.name.trim()) {
@@ -11406,8 +11681,12 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
         }
       }
     };
-    const rootCategories = computed(() => categories.value.filter((item) => item.parentId === 0));
-    const rootLocations = computed(() => locations.value.filter((item) => item.parentId === 0));
+    const rootCategories = computed(
+      () => categories.value.filter((item) => item.parentId === 0)
+    );
+    const rootLocations = computed(
+      () => locations.value.filter((item) => item.parentId === 0)
+    );
     const __returned__ = { appSettingsStore, selectedCategory, selectedLocation, categories, locations, newCategory, newLocation, editingItem, activeTab, isLoaded, hierarchicalCategory, hierarchicalLocation, buildHierarchy, editingOptions, addCategory, addLocation, editingParent, editItem, saveEdit, deleteItem, rootCategories, rootLocations, get t() {
       return translate;
     }, get NcButton() {
@@ -11421,45 +11700,45 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$b = { class: "category-location-manager" };
-const _hoisted_2$8 = {
+const _hoisted_1$c = { class: "category-location-manager" };
+const _hoisted_2$9 = {
   key: 0,
   class: "loading"
 };
-const _hoisted_3$3 = { key: 1 };
-const _hoisted_4$3 = { class: "tabs" };
-const _hoisted_5$3 = {
+const _hoisted_3$4 = { key: 1 };
+const _hoisted_4$4 = { class: "tabs" };
+const _hoisted_5$4 = {
   key: 0,
   class: "tab-content"
 };
-const _hoisted_6$2 = { class: "add-form" };
-const _hoisted_7$2 = { class: "form-fields" };
-const _hoisted_8$2 = { class: "tree-view" };
-const _hoisted_9$2 = { class: "tree-container" };
-const _hoisted_10$1 = {
+const _hoisted_6$3 = { class: "add-form" };
+const _hoisted_7$3 = { class: "form-fields" };
+const _hoisted_8$3 = { class: "tree-view" };
+const _hoisted_9$3 = { class: "tree-container" };
+const _hoisted_10$2 = {
   key: 1,
   class: "tab-content"
 };
-const _hoisted_11$1 = { class: "add-form" };
-const _hoisted_12 = { class: "form-fields" };
-const _hoisted_13 = { class: "tree-view" };
-const _hoisted_14 = { class: "tree-container" };
-const _hoisted_15 = {
+const _hoisted_11$2 = { class: "add-form" };
+const _hoisted_12$1 = { class: "form-fields" };
+const _hoisted_13$1 = { class: "tree-view" };
+const _hoisted_14$1 = { class: "tree-container" };
+const _hoisted_15$1 = {
   key: 2,
   class: "modal"
 };
-const _hoisted_16 = { class: "modal-content" };
-const _hoisted_17 = { class: "modal-actions" };
-function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$b, [
+const _hoisted_16$1 = { class: "modal-content" };
+const _hoisted_17$1 = { class: "modal-actions" };
+function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$c, [
     !$setup.isLoaded ? (openBlock(), createElementBlock(
       "div",
-      _hoisted_2$8,
+      _hoisted_2$9,
       toDisplayString($setup.t("agora", "Loading categories and locations")),
       1
       /* TEXT */
-    )) : (openBlock(), createElementBlock("div", _hoisted_3$3, [
-      createBaseVNode("div", _hoisted_4$3, [
+    )) : (openBlock(), createElementBlock("div", _hoisted_3$4, [
+      createBaseVNode("div", _hoisted_4$4, [
         createVNode($setup["NcButton"], {
           class: normalizeClass({ active: $setup.activeTab === "categories" }),
           onClick: _cache[0] || (_cache[0] = ($event) => $setup.activeTab = "categories")
@@ -11489,8 +11768,8 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
           /* STABLE */
         }, 8, ["class"])
       ]),
-      $setup.activeTab === "categories" ? (openBlock(), createElementBlock("div", _hoisted_5$3, [
-        createBaseVNode("div", _hoisted_6$2, [
+      $setup.activeTab === "categories" ? (openBlock(), createElementBlock("div", _hoisted_5$4, [
+        createBaseVNode("div", _hoisted_6$3, [
           createBaseVNode(
             "h3",
             null,
@@ -11498,7 +11777,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_7$2, [
+          createBaseVNode("div", _hoisted_7$3, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.newCategory.name,
               "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.newCategory.name = $event),
@@ -11529,7 +11808,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
             }, 8, ["disabled"])
           ])
         ]),
-        createBaseVNode("div", _hoisted_8$2, [
+        createBaseVNode("div", _hoisted_8$3, [
           createBaseVNode(
             "h3",
             null,
@@ -11537,7 +11816,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_9$2, [
+          createBaseVNode("div", _hoisted_9$3, [
             (openBlock(true), createElementBlock(
               Fragment,
               null,
@@ -11558,8 +11837,8 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ])
       ])) : createCommentVNode("v-if", true),
-      $setup.activeTab === "locations" ? (openBlock(), createElementBlock("div", _hoisted_10$1, [
-        createBaseVNode("div", _hoisted_11$1, [
+      $setup.activeTab === "locations" ? (openBlock(), createElementBlock("div", _hoisted_10$2, [
+        createBaseVNode("div", _hoisted_11$2, [
           createBaseVNode(
             "h3",
             null,
@@ -11567,7 +11846,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_12, [
+          createBaseVNode("div", _hoisted_12$1, [
             createVNode($setup["NcInputField"], {
               modelValue: $setup.newLocation.name,
               "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.newLocation.name = $event),
@@ -11598,7 +11877,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
             }, 8, ["disabled"])
           ])
         ]),
-        createBaseVNode("div", _hoisted_13, [
+        createBaseVNode("div", _hoisted_13$1, [
           createBaseVNode(
             "h3",
             null,
@@ -11606,7 +11885,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           ),
-          createBaseVNode("div", _hoisted_14, [
+          createBaseVNode("div", _hoisted_14$1, [
             (openBlock(true), createElementBlock(
               Fragment,
               null,
@@ -11627,8 +11906,8 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ])
       ])) : createCommentVNode("v-if", true),
-      $setup.editingItem ? (openBlock(), createElementBlock("div", _hoisted_15, [
-        createBaseVNode("div", _hoisted_16, [
+      $setup.editingItem ? (openBlock(), createElementBlock("div", _hoisted_15$1, [
+        createBaseVNode("div", _hoisted_16$1, [
           createBaseVNode(
             "h3",
             null,
@@ -11648,7 +11927,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
             clearable: false,
             placeholder: $setup.t("agora", "Select parent")
           }, null, 8, ["modelValue", "options", "placeholder"]),
-          createBaseVNode("div", _hoisted_17, [
+          createBaseVNode("div", _hoisted_17$1, [
             createVNode($setup["NcButton"], {
               onClick: _cache[8] || (_cache[8] = ($event) => $setup.editingItem = null)
             }, {
@@ -11682,9 +11961,136 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     ]))
   ]);
 }
-const AdminCategoryLocation = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__scopeId", "data-v-da2e3bfe"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminCategoryLocation.vue"]]);
-const _sfc_main$a = {
+const AdminCategoryLocation = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__scopeId", "data-v-da2e3bfe"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminCategoryLocation.vue"]]);
+const _sfc_main$b = {
   __name: "AdminModeratorRights",
+  setup(__props, { expose: __expose }) {
+    __expose();
+    const appSettingsStore = useAppSettingsStore();
+    const __returned__ = { appSettingsStore, get t() {
+      return translate;
+    }, get NcCheckboxRadioSwitch() {
+      return NcCheckboxRadioSwitch;
+    }, get useAppSettingsStore() {
+      return useAppSettingsStore;
+    } };
+    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+    return __returned__;
+  }
+};
+const _hoisted_1$b = { class: "rights-management" };
+const _hoisted_2$8 = { class: "description" };
+const _hoisted_3$3 = { class: "rights-list" };
+const _hoisted_4$3 = { class: "right-item" };
+const _hoisted_5$3 = { class: "right-description" };
+const _hoisted_6$2 = { class: "right-item" };
+const _hoisted_7$2 = { class: "right-description" };
+const _hoisted_8$2 = { class: "right-item" };
+const _hoisted_9$2 = { class: "right-description" };
+function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$b, [
+    createBaseVNode(
+      "h2",
+      null,
+      toDisplayString($setup.t("agora", "Moderator rights")),
+      1
+      /* TEXT */
+    ),
+    createBaseVNode(
+      "p",
+      _hoisted_2$8,
+      toDisplayString($setup.t("agora", "Define permissions for users with moderator role")),
+      1
+      /* TEXT */
+    ),
+    createBaseVNode("div", _hoisted_3$3, [
+      createBaseVNode("div", _hoisted_4$3, [
+        createVNode($setup["NcCheckboxRadioSwitch"], {
+          modelValue: $setup.appSettingsStore.moderatorRights.modifyInquiry,
+          "onUpdate:modelValue": [
+            _cache[0] || (_cache[0] = ($event) => $setup.appSettingsStore.moderatorRights.modifyInquiry = $event),
+            _cache[1] || (_cache[1] = ($event) => $setup.appSettingsStore.write())
+          ],
+          type: "switch"
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              toDisplayString($setup.t("agora", "Modify inquiries")),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["modelValue"]),
+        createBaseVNode(
+          "p",
+          _hoisted_5$3,
+          toDisplayString($setup.t("agora", "Allow moderators to modify existing inquiries")),
+          1
+          /* TEXT */
+        )
+      ]),
+      createBaseVNode("div", _hoisted_6$2, [
+        createVNode($setup["NcCheckboxRadioSwitch"], {
+          modelValue: $setup.appSettingsStore.moderatorRights.deleteInquiry,
+          "onUpdate:modelValue": [
+            _cache[2] || (_cache[2] = ($event) => $setup.appSettingsStore.moderatorRights.deleteInquiry = $event),
+            _cache[3] || (_cache[3] = ($event) => $setup.appSettingsStore.write())
+          ],
+          type: "switch"
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              toDisplayString($setup.t("agora", "Delete inquiries")),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["modelValue"]),
+        createBaseVNode(
+          "p",
+          _hoisted_7$2,
+          toDisplayString($setup.t("agora", "Allow moderators to delete inquiries")),
+          1
+          /* TEXT */
+        )
+      ]),
+      createBaseVNode("div", _hoisted_8$2, [
+        createVNode($setup["NcCheckboxRadioSwitch"], {
+          modelValue: $setup.appSettingsStore.moderatorRights.archiveInquiry,
+          "onUpdate:modelValue": [
+            _cache[4] || (_cache[4] = ($event) => $setup.appSettingsStore.moderatorRights.archiveInquiry = $event),
+            _cache[5] || (_cache[5] = ($event) => $setup.appSettingsStore.write())
+          ],
+          type: "switch"
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              toDisplayString($setup.t("agora", "Archive inquiries")),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["modelValue"]),
+        createBaseVNode(
+          "p",
+          _hoisted_9$2,
+          toDisplayString($setup.t("agora", "Allow moderators to archive inquiries")),
+          1
+          /* TEXT */
+        )
+      ])
+    ])
+  ]);
+}
+const AdminModeratorRights = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__scopeId", "data-v-fb7cbc5e"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminModeratorRights.vue"]]);
+const _sfc_main$a = {
+  __name: "AdminOfficialRights",
   setup(__props, { expose: __expose }) {
     __expose();
     const appSettingsStore = useAppSettingsStore();
@@ -11708,137 +12114,10 @@ const _hoisted_6$1 = { class: "right-item" };
 const _hoisted_7$1 = { class: "right-description" };
 const _hoisted_8$1 = { class: "right-item" };
 const _hoisted_9$1 = { class: "right-description" };
+const _hoisted_10$1 = { class: "right-item" };
+const _hoisted_11$1 = { class: "right-description" };
 function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$a, [
-    createBaseVNode(
-      "h2",
-      null,
-      toDisplayString($setup.t("agora", "Moderator rights")),
-      1
-      /* TEXT */
-    ),
-    createBaseVNode(
-      "p",
-      _hoisted_2$7,
-      toDisplayString($setup.t("agora", "Define permissions for users with moderator role")),
-      1
-      /* TEXT */
-    ),
-    createBaseVNode("div", _hoisted_3$2, [
-      createBaseVNode("div", _hoisted_4$2, [
-        createVNode($setup["NcCheckboxRadioSwitch"], {
-          modelValue: $setup.appSettingsStore.moderatorRights.modifyInquiry,
-          "onUpdate:modelValue": [
-            _cache[0] || (_cache[0] = ($event) => $setup.appSettingsStore.moderatorRights.modifyInquiry = $event),
-            _cache[1] || (_cache[1] = ($event) => $setup.appSettingsStore.write())
-          ],
-          type: "switch"
-        }, {
-          default: withCtx(() => [
-            createTextVNode(
-              toDisplayString($setup.t("agora", "Modify inquiries")),
-              1
-              /* TEXT */
-            )
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["modelValue"]),
-        createBaseVNode(
-          "p",
-          _hoisted_5$2,
-          toDisplayString($setup.t("agora", "Allow moderators to modify existing inquiries")),
-          1
-          /* TEXT */
-        )
-      ]),
-      createBaseVNode("div", _hoisted_6$1, [
-        createVNode($setup["NcCheckboxRadioSwitch"], {
-          modelValue: $setup.appSettingsStore.moderatorRights.deleteInquiry,
-          "onUpdate:modelValue": [
-            _cache[2] || (_cache[2] = ($event) => $setup.appSettingsStore.moderatorRights.deleteInquiry = $event),
-            _cache[3] || (_cache[3] = ($event) => $setup.appSettingsStore.write())
-          ],
-          type: "switch"
-        }, {
-          default: withCtx(() => [
-            createTextVNode(
-              toDisplayString($setup.t("agora", "Delete inquiries")),
-              1
-              /* TEXT */
-            )
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["modelValue"]),
-        createBaseVNode(
-          "p",
-          _hoisted_7$1,
-          toDisplayString($setup.t("agora", "Allow moderators to delete inquiries")),
-          1
-          /* TEXT */
-        )
-      ]),
-      createBaseVNode("div", _hoisted_8$1, [
-        createVNode($setup["NcCheckboxRadioSwitch"], {
-          modelValue: $setup.appSettingsStore.moderatorRights.archiveInquiry,
-          "onUpdate:modelValue": [
-            _cache[4] || (_cache[4] = ($event) => $setup.appSettingsStore.moderatorRights.archiveInquiry = $event),
-            _cache[5] || (_cache[5] = ($event) => $setup.appSettingsStore.write())
-          ],
-          type: "switch"
-        }, {
-          default: withCtx(() => [
-            createTextVNode(
-              toDisplayString($setup.t("agora", "Archive inquiries")),
-              1
-              /* TEXT */
-            )
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["modelValue"]),
-        createBaseVNode(
-          "p",
-          _hoisted_9$1,
-          toDisplayString($setup.t("agora", "Allow moderators to archive inquiries")),
-          1
-          /* TEXT */
-        )
-      ])
-    ])
-  ]);
-}
-const AdminModeratorRights = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__scopeId", "data-v-fb7cbc5e"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminModeratorRights.vue"]]);
-const _sfc_main$9 = {
-  __name: "AdminOfficialRights",
-  setup(__props, { expose: __expose }) {
-    __expose();
-    const appSettingsStore = useAppSettingsStore();
-    const __returned__ = { appSettingsStore, get t() {
-      return translate;
-    }, get NcCheckboxRadioSwitch() {
-      return NcCheckboxRadioSwitch;
-    }, get useAppSettingsStore() {
-      return useAppSettingsStore;
-    } };
-    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-    return __returned__;
-  }
-};
-const _hoisted_1$9 = { class: "rights-management" };
-const _hoisted_2$6 = { class: "description" };
-const _hoisted_3$1 = { class: "rights-list" };
-const _hoisted_4$1 = { class: "right-item" };
-const _hoisted_5$1 = { class: "right-description" };
-const _hoisted_6 = { class: "right-item" };
-const _hoisted_7 = { class: "right-description" };
-const _hoisted_8 = { class: "right-item" };
-const _hoisted_9 = { class: "right-description" };
-const _hoisted_10 = { class: "right-item" };
-const _hoisted_11 = { class: "right-description" };
-function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$9, [
     createBaseVNode(
       "h2",
       null,
@@ -11848,13 +12127,13 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     ),
     createBaseVNode(
       "p",
-      _hoisted_2$6,
+      _hoisted_2$7,
       toDisplayString($setup.t("agora", "Define permissions for users with official role")),
       1
       /* TEXT */
     ),
-    createBaseVNode("div", _hoisted_3$1, [
-      createBaseVNode("div", _hoisted_4$1, [
+    createBaseVNode("div", _hoisted_3$2, [
+      createBaseVNode("div", _hoisted_4$2, [
         createVNode($setup["NcCheckboxRadioSwitch"], {
           modelValue: $setup.appSettingsStore.officialRights.modifyInquiry,
           "onUpdate:modelValue": [
@@ -11875,13 +12154,13 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
         }, 8, ["modelValue"]),
         createBaseVNode(
           "p",
-          _hoisted_5$1,
+          _hoisted_5$2,
           toDisplayString($setup.t("agora", "Allow officials to modify existing inquiries")),
           1
           /* TEXT */
         )
       ]),
-      createBaseVNode("div", _hoisted_6, [
+      createBaseVNode("div", _hoisted_6$1, [
         createVNode($setup["NcCheckboxRadioSwitch"], {
           modelValue: $setup.appSettingsStore.officialRights.deleteInquiry,
           "onUpdate:modelValue": [
@@ -11902,13 +12181,13 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
         }, 8, ["modelValue"]),
         createBaseVNode(
           "p",
-          _hoisted_7,
+          _hoisted_7$1,
           toDisplayString($setup.t("agora", "Allow officials to delete inquiries")),
           1
           /* TEXT */
         )
       ]),
-      createBaseVNode("div", _hoisted_8, [
+      createBaseVNode("div", _hoisted_8$1, [
         createVNode($setup["NcCheckboxRadioSwitch"], {
           modelValue: $setup.appSettingsStore.officialRights.archiveInquiry,
           "onUpdate:modelValue": [
@@ -11929,13 +12208,13 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
         }, 8, ["modelValue"]),
         createBaseVNode(
           "p",
-          _hoisted_9,
+          _hoisted_9$1,
           toDisplayString($setup.t("agora", "Allow officials to archive inquiries")),
           1
           /* TEXT */
         )
       ]),
-      createBaseVNode("div", _hoisted_10, [
+      createBaseVNode("div", _hoisted_10$1, [
         createVNode($setup["NcCheckboxRadioSwitch"], {
           modelValue: $setup.appSettingsStore.officialRights.manageModerationStatus,
           "onUpdate:modelValue": [
@@ -11956,8 +12235,11 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
         }, 8, ["modelValue"]),
         createBaseVNode(
           "p",
-          _hoisted_11,
-          toDisplayString($setup.t("agora", "Allow officials to manage moderation status for all inquiry")),
+          _hoisted_11$1,
+          toDisplayString($setup.t(
+            "agora",
+            "Allow officials to manage moderation status for all inquiry"
+          )),
           1
           /* TEXT */
         )
@@ -11965,8 +12247,8 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminOfficialRights = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__scopeId", "data-v-14c25bb2"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOfficialRights.vue"]]);
-const _sfc_main$8 = {
+const AdminOfficialRights = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__scopeId", "data-v-14c25bb2"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminOfficialRights.vue"]]);
+const _sfc_main$9 = {
   __name: "AdminInquiryCreation",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -11984,13 +12266,13 @@ const _sfc_main$8 = {
     return __returned__;
   }
 };
-const _hoisted_1$8 = { class: "user_settings" };
-const _hoisted_2$5 = {
+const _hoisted_1$9 = { class: "user_settings" };
+const _hoisted_2$6 = {
   key: 0,
   class: "settings_details"
 };
-function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$8, [
+function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$9, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.allowInquiryCreation,
       "onUpdate:modelValue": [
@@ -12009,7 +12291,7 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    !$setup.appSettingsStore.allowInquiryCreation ? (openBlock(), createElementBlock("div", _hoisted_2$5, [
+    !$setup.appSettingsStore.allowInquiryCreation ? (openBlock(), createElementBlock("div", _hoisted_2$6, [
       createVNode($setup["NcSelect"], {
         modelValue: $setup.appSettingsStore.inquiryCreationGroups,
         "onUpdate:modelValue": [
@@ -12028,8 +12310,8 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminInquiryCreation = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminInquiryCreation.vue"]]);
-const _sfc_main$7 = {
+const AdminInquiryCreation = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminInquiryCreation.vue"]]);
+const _sfc_main$8 = {
   __name: "AdminInquiriesInNavigation",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -12045,9 +12327,9 @@ const _sfc_main$7 = {
     return __returned__;
   }
 };
-const _hoisted_1$7 = { class: "user_settings" };
-function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$7, [
+const _hoisted_1$8 = { class: "user_settings" };
+function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$8, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.navigationInquiriesInList,
       "onUpdate:modelValue": [
@@ -12068,9 +12350,75 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["modelValue"])
   ]);
 }
-const AdminInquiriesInNavigation = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminInquiriesInNavigation.vue"]]);
-const _sfc_main$6 = {
+const AdminInquiriesInNavigation = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminInquiriesInNavigation.vue"]]);
+const _sfc_main$7 = {
   __name: "AdminShareOpenInquiry",
+  setup(__props, { expose: __expose }) {
+    __expose();
+    const appSettingsStore = useAppSettingsStore();
+    const __returned__ = { appSettingsStore, get t() {
+      return translate;
+    }, get NcCheckboxRadioSwitch() {
+      return NcCheckboxRadioSwitch;
+    }, get NcSelect() {
+      return NcSelect;
+    }, get useAppSettingsStore() {
+      return useAppSettingsStore;
+    } };
+    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+    return __returned__;
+  }
+};
+const _hoisted_1$7 = { class: "user_settings" };
+const _hoisted_2$5 = {
+  key: 0,
+  class: "settings_details"
+};
+function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$7, [
+    createVNode($setup["NcCheckboxRadioSwitch"], {
+      modelValue: $setup.appSettingsStore.allowAllAccess,
+      "onUpdate:modelValue": [
+        _cache[0] || (_cache[0] = ($event) => $setup.appSettingsStore.allowAllAccess = $event),
+        _cache[1] || (_cache[1] = ($event) => $setup.appSettingsStore.write())
+      ],
+      type: "switch"
+    }, {
+      default: withCtx(() => [
+        createTextVNode(
+          toDisplayString($setup.t(
+            "agora",
+            "Enable the shares of inquiries globally, by default admin and moderator have rights"
+          )),
+          1
+          /* TEXT */
+        )
+      ]),
+      _: 1
+      /* STABLE */
+    }, 8, ["modelValue"]),
+    !$setup.appSettingsStore.allowAllAccess ? (openBlock(), createElementBlock("div", _hoisted_2$5, [
+      createVNode($setup["NcSelect"], {
+        modelValue: $setup.appSettingsStore.allAccessGroups,
+        "onUpdate:modelValue": [
+          _cache[2] || (_cache[2] = ($event) => $setup.appSettingsStore.allAccessGroups = $event),
+          _cache[3] || (_cache[3] = ($event) => $setup.appSettingsStore.write())
+        ],
+        "input-label": $setup.t("agora", "Enable only for the following groups"),
+        label: "displayName",
+        options: $setup.appSettingsStore.groups,
+        "user-select": true,
+        multiple: true,
+        loading: _ctx.isLoading,
+        placeholder: $setup.t("agora", "Leave empty to disable globally"),
+        onSearch: $setup.appSettingsStore.loadGroups
+      }, null, 8, ["modelValue", "input-label", "options", "loading", "placeholder", "onSearch"])
+    ])) : createCommentVNode("v-if", true)
+  ]);
+}
+const AdminShareOpenInquiry = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminShareOpenInquiry.vue"]]);
+const _sfc_main$6 = {
+  __name: "AdminSharePublicCreate",
   setup(__props, { expose: __expose }) {
     __expose();
     const appSettingsStore = useAppSettingsStore();
@@ -12095,72 +12443,6 @@ const _hoisted_2$4 = {
 function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$6, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
-      modelValue: $setup.appSettingsStore.allowAllAccess,
-      "onUpdate:modelValue": [
-        _cache[0] || (_cache[0] = ($event) => $setup.appSettingsStore.allowAllAccess = $event),
-        _cache[1] || (_cache[1] = ($event) => $setup.appSettingsStore.write())
-      ],
-      type: "switch"
-    }, {
-      default: withCtx(() => [
-        createTextVNode(
-          toDisplayString($setup.t(
-            "agora",
-            "Enable the shares of inquiries globally, by default admin and moderator have rights"
-          )),
-          1
-          /* TEXT */
-        )
-      ]),
-      _: 1
-      /* STABLE */
-    }, 8, ["modelValue"]),
-    !$setup.appSettingsStore.allowAllAccess ? (openBlock(), createElementBlock("div", _hoisted_2$4, [
-      createVNode($setup["NcSelect"], {
-        modelValue: $setup.appSettingsStore.allAccessGroups,
-        "onUpdate:modelValue": [
-          _cache[2] || (_cache[2] = ($event) => $setup.appSettingsStore.allAccessGroups = $event),
-          _cache[3] || (_cache[3] = ($event) => $setup.appSettingsStore.write())
-        ],
-        "input-label": $setup.t("agora", "Enable only for the following groups"),
-        label: "displayName",
-        options: $setup.appSettingsStore.groups,
-        "user-select": true,
-        multiple: true,
-        loading: _ctx.isLoading,
-        placeholder: $setup.t("agora", "Leave empty to disable globally"),
-        onSearch: $setup.appSettingsStore.loadGroups
-      }, null, 8, ["modelValue", "input-label", "options", "loading", "placeholder", "onSearch"])
-    ])) : createCommentVNode("v-if", true)
-  ]);
-}
-const AdminShareOpenInquiry = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminShareOpenInquiry.vue"]]);
-const _sfc_main$5 = {
-  __name: "AdminSharePublicCreate",
-  setup(__props, { expose: __expose }) {
-    __expose();
-    const appSettingsStore = useAppSettingsStore();
-    const __returned__ = { appSettingsStore, get t() {
-      return translate;
-    }, get NcCheckboxRadioSwitch() {
-      return NcCheckboxRadioSwitch;
-    }, get NcSelect() {
-      return NcSelect;
-    }, get useAppSettingsStore() {
-      return useAppSettingsStore;
-    } };
-    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-    return __returned__;
-  }
-};
-const _hoisted_1$5 = { class: "user_settings" };
-const _hoisted_2$3 = {
-  key: 0,
-  class: "settings_details"
-};
-function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$5, [
-    createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.allowPublicShares,
       "onUpdate:modelValue": [
         _cache[0] || (_cache[0] = ($event) => $setup.appSettingsStore.allowPublicShares = $event),
@@ -12178,7 +12460,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    !$setup.appSettingsStore.allowPublicShares ? (openBlock(), createElementBlock("div", _hoisted_2$3, [
+    !$setup.appSettingsStore.allowPublicShares ? (openBlock(), createElementBlock("div", _hoisted_2$4, [
       createVNode($setup["NcSelect"], {
         modelValue: $setup.appSettingsStore.publicSharesGroups,
         "onUpdate:modelValue": [
@@ -12197,8 +12479,8 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminSharePublicCreate = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminSharePublicCreate.vue"]]);
-const _sfc_main$4 = {
+const AdminSharePublicCreate = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminSharePublicCreate.vue"]]);
+const _sfc_main$5 = {
   __name: "AdminSharePublicShowLogin",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -12214,9 +12496,9 @@ const _sfc_main$4 = {
     return __returned__;
   }
 };
-const _hoisted_1$4 = { class: "user_settings" };
-function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$4, [
+const _hoisted_1$5 = { class: "user_settings" };
+function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$5, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.showLogin,
       "onUpdate:modelValue": [
@@ -12227,7 +12509,10 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     }, {
       default: withCtx(() => [
         createTextVNode(
-          toDisplayString($setup.t("agora", "Enable the login option in the registration dialog of public inquiries")),
+          toDisplayString($setup.t(
+            "agora",
+            "Enable the login option in the registration dialog of public inquiries"
+          )),
           1
           /* TEXT */
         )
@@ -12237,8 +12522,8 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["modelValue"])
   ]);
 }
-const AdminSharePublicShowLogin = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminSharePublicShowLogin.vue"]]);
-const _sfc_main$3 = {
+const AdminSharePublicShowLogin = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminSharePublicShowLogin.vue"]]);
+const _sfc_main$4 = {
   __name: "AdminShowMailAddresses",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -12256,13 +12541,13 @@ const _sfc_main$3 = {
     return __returned__;
   }
 };
-const _hoisted_1$3 = { class: "user_settings" };
-const _hoisted_2$2 = {
+const _hoisted_1$4 = { class: "user_settings" };
+const _hoisted_2$3 = {
   key: 0,
   class: "settings_details"
 };
-function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$3, [
+function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$4, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.showMailAddresses,
       "onUpdate:modelValue": [
@@ -12281,7 +12566,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    !$setup.appSettingsStore.showMailAddresses ? (openBlock(), createElementBlock("div", _hoisted_2$2, [
+    !$setup.appSettingsStore.showMailAddresses ? (openBlock(), createElementBlock("div", _hoisted_2$3, [
       createVNode($setup["NcSelect"], {
         modelValue: $setup.appSettingsStore.showMailAddressesGroups,
         "onUpdate:modelValue": [
@@ -12300,8 +12585,8 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminShowMailAddresses = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminShowMailAddresses.vue"]]);
-const _sfc_main$2 = {
+const AdminShowMailAddresses = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminShowMailAddresses.vue"]]);
+const _sfc_main$3 = {
   __name: "AdminUnrescrictedOwners",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -12319,13 +12604,13 @@ const _sfc_main$2 = {
     return __returned__;
   }
 };
-const _hoisted_1$2 = { class: "user_settings" };
-const _hoisted_2$1 = {
+const _hoisted_1$3 = { class: "user_settings" };
+const _hoisted_2$2 = {
   key: 0,
   class: "settings_details"
 };
-function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$2, [
+function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$3, [
     createVNode($setup["NcCheckboxRadioSwitch"], {
       modelValue: $setup.appSettingsStore.unrestrictedOwner,
       "onUpdate:modelValue": [
@@ -12344,7 +12629,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["modelValue"]),
-    !$setup.appSettingsStore.unrestrictedOwner ? (openBlock(), createElementBlock("div", _hoisted_2$1, [
+    !$setup.appSettingsStore.unrestrictedOwner ? (openBlock(), createElementBlock("div", _hoisted_2$2, [
       createVNode($setup["NcSelect"], {
         modelValue: $setup.appSettingsStore.unrestrictedOwnerGroups,
         "onUpdate:modelValue": [
@@ -12384,7 +12669,10 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode(
             "li",
             null,
-            toDisplayString($setup.t("agora", "Deleting and changing inquiries of participants is not possible")),
+            toDisplayString($setup.t(
+              "agora",
+              "Deleting and changing inquiries of participants is not possible"
+            )),
             1
             /* TEXT */
           )
@@ -12395,8 +12683,8 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     })
   ]);
 }
-const AdminUnrescrictedOwners = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminUnrescrictedOwners.vue"]]);
-const _sfc_main$1 = {
+const AdminUnrescrictedOwners = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminUnrescrictedOwners.vue"]]);
+const _sfc_main$2 = {
   __name: "AdminCleanInstance",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -12455,17 +12743,17 @@ const _sfc_main$1 = {
     return __returned__;
   }
 };
-const _hoisted_1$1 = { class: "user_settings clean-instance-section" };
-const _hoisted_2 = { class: "job_hints danger-warning" };
-const _hoisted_3 = { class: "warning-title" };
-const _hoisted_4 = { class: "warning-highlight" };
-const _hoisted_5 = { class: "job_buttons_section" };
-function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$1, [
-    createBaseVNode("div", _hoisted_2, [
+const _hoisted_1$2 = { class: "user_settings clean-instance-section" };
+const _hoisted_2$1 = { class: "job_hints danger-warning" };
+const _hoisted_3$1 = { class: "warning-title" };
+const _hoisted_4$1 = { class: "warning-highlight" };
+const _hoisted_5$1 = { class: "job_buttons_section" };
+function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$2, [
+    createBaseVNode("div", _hoisted_2$1, [
       createBaseVNode(
         "p",
-        _hoisted_3,
+        _hoisted_3$1,
         " ⚠️ " + toDisplayString($setup.t("agora", "Danger zone - data destruction")) + " ⚠️ ",
         1
         /* TEXT */
@@ -12482,8 +12770,11 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createBaseVNode(
         "p",
-        _hoisted_4,
-        toDisplayString($setup.t("agora", "This operation cannot be undone. All data will be lost forever.")),
+        _hoisted_4$1,
+        toDisplayString($setup.t(
+          "agora",
+          "This operation cannot be undone. All data will be lost forever."
+        )),
         1
         /* TEXT */
       ),
@@ -12498,7 +12789,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_5, [
+    createBaseVNode("div", _hoisted_5$1, [
       createVNode($setup["NcButton"], {
         variant: "danger",
         "aria-label": $setup.cleanInstance.text,
@@ -12527,7 +12818,1305 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminCleanInstance = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-ee1ac32d"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminCleanInstance.vue"]]);
+const AdminCleanInstance = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__scopeId", "data-v-ee1ac32d"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminCleanInstance.vue"]]);
+const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+  __name: "AdminHomeConfigManager",
+  setup(__props, { expose: __expose }) {
+    __expose();
+    const store = useAppSettingsStore();
+    function orgTypeLabel(key) {
+      const labels = {
+        municipality: translate("agora", "Municipality"),
+        university: translate("agora", "University"),
+        association: translate("agora", "Association"),
+        cooperative: translate("agora", "Cooperative"),
+        company: translate("agora", "Company")
+      };
+      return labels[key];
+    }
+    function isOrgType(value) {
+      return typeof value === "string" && ORGANIZATION_TYPES.includes(value);
+    }
+    const activeType = computed(() => {
+      const type = store.getOrganizationType;
+      return isOrgType(type) ? type : "municipality";
+    });
+    const allTemplates = computed(
+      () => ORGANIZATION_TYPES.map((key) => {
+        const record = store.homeConfigs.find(
+          (config) => config.config_key === key
+        );
+        return {
+          key,
+          label: record?.label ?? orgTypeLabel(key),
+          description: record?.description ?? translate("agora", "Default template provided by Agora"),
+          isDefault: activeType.value === key,
+          record
+        };
+      })
+    );
+    onMounted(() => {
+      store.loadHomeConfigs().catch(() => {
+        showError(translate("agora", "Could not load home configurations"));
+      });
+    });
+    const isEditorOpen = ref(false);
+    const activeTab = ref("general");
+    const saving = ref(false);
+    const slotInputs = ref(
+      {}
+    );
+    const sectionLabelRows = ref([]);
+    const form = reactive({
+      id: null,
+      configKey: "municipality",
+      label: "",
+      description: "",
+      sortOrder: 0,
+      data: {},
+      rawJson: "{}"
+    });
+    const tabs = [
+      { id: "general", label: translate("agora", "General") },
+      { id: "hero", label: translate("agora", "Hero") },
+      { id: "promo", label: translate("agora", "Promo") },
+      { id: "sectionLabels", label: translate("agora", "Section labels") },
+      { id: "relevance", label: translate("agora", "Relevance") },
+      { id: "sections", label: translate("agora", "Sections") },
+      { id: "advanced", label: translate("agora", "Advanced (JSON)") }
+    ];
+    function templateToData(template) {
+      return {
+        sections: [...template.sections],
+        sectionLabels: { ...template.sectionLabels ?? {} },
+        hero: {
+          entityName: template.hero.entityName,
+          title: template.hero.title,
+          subtitle: template.hero.subtitle,
+          // Bundled images are not stored as uploaded filenames.
+          actions: (template.hero.actions ?? []).map((action) => ({
+            label: action.label ?? "",
+            url: action.url ?? "",
+            type: action.type ?? "primary",
+            icon: action.icon
+          }))
+        },
+        promo: {
+          title: template.promo.title,
+          description: template.promo.text,
+          cta: { label: template.promo.cta }
+        },
+        relevance: {
+          tiers: template.relevance.tiers.map((tier) => ({
+            key: tier.key,
+            label: tier.label
+          })),
+          weights: { ...template.relevance.weights }
+        }
+      };
+    }
+    function mergeWithTemplate(partial, key) {
+      const base = templateToData(getHomeTemplate(key));
+      return {
+        sections: partial.sections ?? base.sections,
+        sectionLabels: {
+          ...base.sectionLabels,
+          ...partial.sectionLabels ?? {}
+        },
+        hero: {
+          ...base.hero,
+          ...partial.hero ?? {},
+          actions: (partial.hero?.actions ?? base.hero.actions ?? []).map(
+            (action) => ({
+              label: action.label ?? "",
+              url: action.url ?? "",
+              type: action.type ?? "primary",
+              icon: action.icon
+            })
+          )
+        },
+        promo: {
+          ...base.promo,
+          ...partial.promo ?? {},
+          cta: {
+            ...base.promo.cta,
+            ...partial.promo?.cta ?? {}
+          }
+        },
+        relevance: {
+          tiers: partial.relevance?.tiers ?? base.relevance.tiers,
+          weights: {
+            ...base.relevance.weights,
+            ...partial.relevance?.weights ?? {}
+          }
+        }
+      };
+    }
+    function customizeTemplate(row) {
+      const data = templateToData(getHomeTemplate(row.key));
+      isEditorOpen.value = true;
+      activeTab.value = "general";
+      Object.assign(form, {
+        id: null,
+        configKey: row.key,
+        label: row.label,
+        description: "",
+        sortOrder: 0,
+        data,
+        rawJson: JSON.stringify(data, null, 2)
+      });
+      loadSectionLabelRows();
+    }
+    function openEdit(record) {
+      const key = record.config_key;
+      if (!isOrgType(key)) {
+        showError(translate("agora", "Unknown organization type"));
+        return;
+      }
+      const data = mergeWithTemplate(
+        JSON.parse(JSON.stringify(record.data ?? {})),
+        key
+      );
+      isEditorOpen.value = true;
+      activeTab.value = "general";
+      Object.assign(form, {
+        id: record.id,
+        configKey: key,
+        label: record.label,
+        description: record.description ?? "",
+        sortOrder: record.sort_order,
+        data,
+        rawJson: JSON.stringify(data, null, 2)
+      });
+      loadSectionLabelRows();
+    }
+    function closeEditor() {
+      isEditorOpen.value = false;
+    }
+    async function setAsDefault(row) {
+      if (row.isDefault) {
+        return;
+      }
+      try {
+        await store.updateOrganizationType(row.key);
+        showSuccess(
+          translate("agora", "Home template set to {label}", {
+            label: row.label
+          })
+        );
+      } catch {
+        showError(translate("agora", "Could not update the default home template"));
+      }
+    }
+    async function ensureRecordExists() {
+      if (form.id !== null) {
+        return form.id;
+      }
+      if (!form.label.trim()) {
+        throw new Error(translate("agora", "Display label is required"));
+      }
+      applySectionLabelRows();
+      const payload = {
+        configKey: form.configKey,
+        label: form.label,
+        description: form.description || null,
+        data: form.data,
+        sortOrder: Number(form.sortOrder) || 0
+      };
+      const record = await store.createHomeConfigRecord(payload);
+      form.id = record.id;
+      return record.id;
+    }
+    function getSlot(slot) {
+      if (slot === "hero") {
+        form.data.hero ??= {};
+        return form.data.hero;
+      }
+      form.data.promo ??= {};
+      return form.data.promo;
+    }
+    function resetSection(section) {
+      const defaults = templateToData(getHomeTemplate(form.configKey));
+      const value = defaults[section];
+      Object.assign(form.data, { [section]: value });
+      if (section === "sectionLabels") {
+        loadSectionLabelRows();
+      }
+      refreshRawFromData();
+    }
+    function loadSectionLabelRows() {
+      sectionLabelRows.value = Object.entries(form.data.sectionLabels ?? {}).map(
+        ([key, value]) => ({
+          key,
+          value: String(value)
+        })
+      );
+    }
+    function addSectionLabel() {
+      sectionLabelRows.value.push({ key: "", value: "" });
+    }
+    function removeSectionLabel(index) {
+      sectionLabelRows.value.splice(index, 1);
+    }
+    function applySectionLabelRows() {
+      const labels = {};
+      for (const row of sectionLabelRows.value) {
+        const key = row.key.trim();
+        if (key) {
+          labels[key] = row.value;
+        }
+      }
+      form.data.sectionLabels = labels;
+    }
+    function getRelevanceTiersJson() {
+      return JSON.stringify(form.data.relevance?.tiers ?? [], null, 2);
+    }
+    function setRelevanceTiersJson(json) {
+      form.data.relevance ??= {};
+      form.data.relevance.tiers = safeParse(json, []);
+    }
+    function getRelevanceWeightsJson() {
+      return JSON.stringify(form.data.relevance?.weights ?? {}, null, 2);
+    }
+    function setRelevanceWeightsJson(json) {
+      form.data.relevance ??= {};
+      form.data.relevance.weights = safeParse(json, {});
+    }
+    function getSectionsJson() {
+      return JSON.stringify(form.data.sections ?? [], null, 2);
+    }
+    function setSectionsJson(json) {
+      form.data.sections = safeParse(json, []);
+    }
+    function safeParse(json, fallback) {
+      try {
+        return JSON.parse(json);
+      } catch {
+        return fallback;
+      }
+    }
+    function applyRawJson() {
+      try {
+        const parsed = JSON.parse(form.rawJson);
+        if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+          throw new Error(translate("agora", "The configuration must be a JSON object"));
+        }
+        form.data = mergeWithTemplate(
+          parsed,
+          form.configKey
+        );
+        loadSectionLabelRows();
+        refreshRawFromData();
+        showSuccess(translate("agora", "JSON applied"));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        showError(translate("agora", "Invalid JSON: {msg}", { msg: message }));
+      }
+    }
+    function refreshRawFromData() {
+      form.rawJson = JSON.stringify(form.data, null, 2);
+    }
+    function addHeroAction() {
+      const hero = getSlot("hero");
+      hero.actions ??= [];
+      hero.actions.push({
+        label: "",
+        url: "",
+        type: "primary"
+      });
+    }
+    function removeHeroAction(index) {
+      getSlot("hero").actions?.splice(index, 1);
+    }
+    function hasUploadedImage(slot) {
+      return Boolean(getSlot(slot).image);
+    }
+    function slotImageUrl(slot) {
+      if (form.id !== null && hasUploadedImage(slot)) {
+        const record = store.homeConfigs.find((config) => config.id === form.id);
+        return appSettings.homeImageUrl(
+          form.id,
+          slot,
+          record?.updated ?? record?.created ?? 0
+        );
+      }
+      const template = getHomeTemplate(form.configKey);
+      return slot === "hero" ? template.hero.backgroundUrl : template.promo.imageUrl;
+    }
+    function isBundledImage(slot) {
+      return !hasUploadedImage(slot);
+    }
+    function triggerSlotInput(slot) {
+      slotInputs.value[slot]?.click();
+    }
+    async function onImageSelected(event, slot) {
+      const input = event.target;
+      if (!(input instanceof HTMLInputElement)) {
+        return;
+      }
+      const file = input.files?.[0];
+      input.value = "";
+      if (!file) {
+        return;
+      }
+      try {
+        const recordId = await ensureRecordExists();
+        const record = await store.uploadHomeImage(recordId, slot, file);
+        const image = record.data?.[slot]?.image;
+        if (slot === "hero") {
+          form.data.hero ??= {};
+          form.data.hero.image = image;
+        } else {
+          form.data.promo ??= {};
+          form.data.promo.image = image;
+        }
+        refreshRawFromData();
+        showSuccess(translate("agora", "Image uploaded"));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        showError(translate("agora", "Upload failed: {msg}", { msg: message }));
+      }
+    }
+    async function removeImage(slot) {
+      if (form.id === null) {
+        return;
+      }
+      if (!confirm(translate("agora", "Remove this image?"))) {
+        return;
+      }
+      try {
+        await store.deleteHomeImage(form.id, slot);
+        if (slot === "hero") {
+          if (form.data.hero) {
+            delete form.data.hero.image;
+          }
+        } else if (form.data.promo) {
+          delete form.data.promo.image;
+        }
+        refreshRawFromData();
+        showSuccess(translate("agora", "Image removed"));
+      } catch {
+        showError(translate("agora", "Could not remove image"));
+      }
+    }
+    async function save() {
+      if (!form.label.trim()) {
+        showError(translate("agora", "Display label is required"));
+        return;
+      }
+      applySectionLabelRows();
+      const payload = {
+        configKey: form.configKey,
+        label: form.label,
+        description: form.description || null,
+        data: form.data,
+        sortOrder: Number(form.sortOrder) || 0
+      };
+      saving.value = true;
+      try {
+        if (form.id !== null) {
+          await store.saveHomeConfigRecord(form.id, payload);
+        } else {
+          await store.createHomeConfigRecord(payload);
+        }
+        showSuccess(translate("agora", "Template saved"));
+        closeEditor();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        showError(translate("agora", "Save failed: {msg}", { msg: message }));
+      } finally {
+        saving.value = false;
+      }
+    }
+    async function resetTemplate(row) {
+      if (!row.record) {
+        return;
+      }
+      if (!confirm(
+        translate(
+          "agora",
+          "Restore the original Agora template for {label}? Your customizations and uploaded images will be deleted.",
+          { label: row.label }
+        )
+      )) {
+        return;
+      }
+      try {
+        await store.deleteHomeConfigRecord(row.record.id);
+        showSuccess(translate("agora", "Template restored to Agora defaults"));
+      } catch {
+        showError(translate("agora", "Could not restore the template"));
+      }
+    }
+    const __returned__ = { store, orgTypeLabel, isOrgType, activeType, allTemplates, isEditorOpen, activeTab, saving, slotInputs, sectionLabelRows, form, tabs, templateToData, mergeWithTemplate, customizeTemplate, openEdit, closeEditor, setAsDefault, ensureRecordExists, getSlot, resetSection, loadSectionLabelRows, addSectionLabel, removeSectionLabel, applySectionLabelRows, getRelevanceTiersJson, setRelevanceTiersJson, getRelevanceWeightsJson, setRelevanceWeightsJson, getSectionsJson, setSectionsJson, safeParse, applyRawJson, refreshRawFromData, addHeroAction, removeHeroAction, hasUploadedImage, slotImageUrl, isBundledImage, triggerSlotInput, onImageSelected, removeImage, save, resetTemplate, get t() {
+      return translate;
+    }, get NcButton() {
+      return NcButton;
+    }, get NcInputField() {
+      return NcInputField;
+    } };
+    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+    return __returned__;
+  }
+});
+const _hoisted_1$1 = { class: "home-config-manager" };
+const _hoisted_2 = { class: "toolbar" };
+const _hoisted_3 = { class: "description" };
+const _hoisted_4 = { class: "config-table" };
+const _hoisted_5 = { class: "row-description" };
+const _hoisted_6 = {
+  key: 0,
+  class: "badge badge-customized"
+};
+const _hoisted_7 = {
+  key: 1,
+  class: "badge"
+};
+const _hoisted_8 = {
+  key: 0,
+  class: "default-badge"
+};
+const _hoisted_9 = { class: "row-actions" };
+const _hoisted_10 = {
+  key: 0,
+  class: "modal-overlay"
+};
+const _hoisted_11 = { class: "modal-content" };
+const _hoisted_12 = { class: "tabs" };
+const _hoisted_13 = ["onClick"];
+const _hoisted_14 = {
+  key: 0,
+  class: "tab-body"
+};
+const _hoisted_15 = { class: "form-row" };
+const _hoisted_16 = {
+  key: 1,
+  class: "tab-body"
+};
+const _hoisted_17 = { class: "tab-header" };
+const _hoisted_18 = { class: "image-block" };
+const _hoisted_19 = ["src", "alt"];
+const _hoisted_20 = {
+  key: 1,
+  class: "placeholder"
+};
+const _hoisted_21 = { class: "actions" };
+const _hoisted_22 = {
+  key: 0,
+  class: "hint"
+};
+const _hoisted_23 = {
+  key: 2,
+  class: "tab-body"
+};
+const _hoisted_24 = { class: "tab-header" };
+const _hoisted_25 = { class: "image-block" };
+const _hoisted_26 = ["src", "alt"];
+const _hoisted_27 = {
+  key: 1,
+  class: "placeholder"
+};
+const _hoisted_28 = { class: "actions" };
+const _hoisted_29 = {
+  key: 0,
+  class: "hint"
+};
+const _hoisted_30 = { class: "form-row" };
+const _hoisted_31 = {
+  key: 3,
+  class: "tab-body"
+};
+const _hoisted_32 = { class: "tab-header" };
+const _hoisted_33 = { class: "description" };
+const _hoisted_34 = {
+  key: 4,
+  class: "tab-body"
+};
+const _hoisted_35 = { class: "tab-header" };
+const _hoisted_36 = ["value"];
+const _hoisted_37 = ["value"];
+const _hoisted_38 = {
+  key: 5,
+  class: "tab-body"
+};
+const _hoisted_39 = { class: "tab-header" };
+const _hoisted_40 = { class: "description" };
+const _hoisted_41 = ["value"];
+const _hoisted_42 = {
+  key: 6,
+  class: "tab-body"
+};
+const _hoisted_43 = { class: "description" };
+const _hoisted_44 = { class: "advanced-actions" };
+const _hoisted_45 = { class: "modal-actions" };
+function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$1, [
+    createBaseVNode("div", _hoisted_2, [
+      createBaseVNode("div", null, [
+        createBaseVNode(
+          "h2",
+          null,
+          toDisplayString($setup.t("agora", "Home templates")),
+          1
+          /* TEXT */
+        ),
+        createBaseVNode(
+          "p",
+          _hoisted_3,
+          toDisplayString($setup.t(
+            "agora",
+            "Customize the templates provided by Agora and choose which one is used for the home page."
+          )),
+          1
+          /* TEXT */
+        )
+      ])
+    ]),
+    createBaseVNode("table", _hoisted_4, [
+      createBaseVNode("thead", null, [
+        createBaseVNode("tr", null, [
+          createBaseVNode(
+            "th",
+            null,
+            toDisplayString($setup.t("agora", "Organization type")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode(
+            "th",
+            null,
+            toDisplayString($setup.t("agora", "Description")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode(
+            "th",
+            null,
+            toDisplayString($setup.t("agora", "Status")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode(
+            "th",
+            null,
+            toDisplayString($setup.t("agora", "Default")),
+            1
+            /* TEXT */
+          ),
+          _cache[25] || (_cache[25] = createBaseVNode(
+            "th",
+            null,
+            null,
+            -1
+            /* CACHED */
+          ))
+        ])
+      ]),
+      createBaseVNode("tbody", null, [
+        (openBlock(true), createElementBlock(
+          Fragment,
+          null,
+          renderList($setup.allTemplates, (row) => {
+            return openBlock(), createElementBlock(
+              "tr",
+              {
+                key: row.key,
+                class: normalizeClass({ "is-default": row.isDefault })
+              },
+              [
+                createBaseVNode("td", null, [
+                  createBaseVNode(
+                    "strong",
+                    null,
+                    toDisplayString(row.label),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode("div", _hoisted_5, [
+                    createBaseVNode(
+                      "code",
+                      null,
+                      toDisplayString(row.key),
+                      1
+                      /* TEXT */
+                    )
+                  ])
+                ]),
+                createBaseVNode(
+                  "td",
+                  null,
+                  toDisplayString(row.description),
+                  1
+                  /* TEXT */
+                ),
+                createBaseVNode("td", null, [
+                  row.record ? (openBlock(), createElementBlock(
+                    "span",
+                    _hoisted_6,
+                    toDisplayString($setup.t("agora", "Customized")),
+                    1
+                    /* TEXT */
+                  )) : (openBlock(), createElementBlock(
+                    "span",
+                    _hoisted_7,
+                    toDisplayString($setup.t("agora", "Original")),
+                    1
+                    /* TEXT */
+                  ))
+                ]),
+                createBaseVNode("td", null, [
+                  row.isDefault ? (openBlock(), createElementBlock(
+                    "span",
+                    _hoisted_8,
+                    " ★ " + toDisplayString($setup.t("agora", "Default")),
+                    1
+                    /* TEXT */
+                  )) : createCommentVNode("v-if", true)
+                ]),
+                createBaseVNode("td", _hoisted_9, [
+                  row.record ? (openBlock(), createBlock($setup["NcButton"], {
+                    key: 0,
+                    onClick: ($event) => $setup.openEdit(row.record)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Edit")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])) : (openBlock(), createBlock($setup["NcButton"], {
+                    key: 1,
+                    onClick: ($event) => $setup.customizeTemplate(row)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Customize")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])),
+                  !row.isDefault ? (openBlock(), createBlock($setup["NcButton"], {
+                    key: 2,
+                    onClick: ($event) => $setup.setAsDefault(row)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Set as default")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])) : createCommentVNode("v-if", true),
+                  row.record ? (openBlock(), createBlock($setup["NcButton"], {
+                    key: 3,
+                    type: "error",
+                    onClick: ($event) => $setup.resetTemplate(row)
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode(
+                        toDisplayString($setup.t("agora", "Restore defaults")),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])) : createCommentVNode("v-if", true)
+                ])
+              ],
+              2
+              /* CLASS */
+            );
+          }),
+          128
+          /* KEYED_FRAGMENT */
+        ))
+      ])
+    ]),
+    createCommentVNode(" ─────────────────────────────────────────────────────\n         Editor modal (unchanged except for image preview)\n         ───────────────────────────────────────────────────── "),
+    $setup.isEditorOpen ? (openBlock(), createElementBlock("div", _hoisted_10, [
+      createBaseVNode("div", _hoisted_11, [
+        createBaseVNode("nav", _hoisted_12, [
+          (openBlock(), createElementBlock(
+            Fragment,
+            null,
+            renderList($setup.tabs, (tab) => {
+              return createBaseVNode("button", {
+                key: tab.id,
+                class: normalizeClass({ active: $setup.activeTab === tab.id }),
+                onClick: ($event) => $setup.activeTab = tab.id
+              }, toDisplayString(tab.label), 11, _hoisted_13);
+            }),
+            64
+            /* STABLE_FRAGMENT */
+          ))
+        ]),
+        createCommentVNode(" General "),
+        $setup.activeTab === "general" ? (openBlock(), createElementBlock("section", _hoisted_14, [
+          createBaseVNode("div", _hoisted_15, [
+            createVNode($setup["NcInputField"], {
+              "model-value": $setup.orgTypeLabel($setup.form.configKey),
+              label: $setup.t("agora", "Organization type"),
+              disabled: ""
+            }, null, 8, ["model-value", "label"]),
+            createVNode($setup["NcInputField"], {
+              modelValue: $setup.form.sortOrder,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.sortOrder = $event),
+              modelModifiers: { number: true },
+              label: $setup.t("agora", "Sort order"),
+              type: "number",
+              min: 0
+            }, null, 8, ["modelValue", "label"])
+          ]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.form.label,
+            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.label = $event),
+            label: $setup.t("agora", "Display label"),
+            required: ""
+          }, null, 8, ["modelValue", "label"]),
+          createVNode($setup["NcInputField"], {
+            modelValue: $setup.form.description,
+            "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.form.description = $event),
+            label: $setup.t("agora", "Description"),
+            type: "textarea"
+          }, null, 8, ["modelValue", "label"])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" Hero "),
+        $setup.activeTab === "hero" ? (openBlock(), createElementBlock("section", _hoisted_16, [
+          createBaseVNode("div", _hoisted_17, [
+            createVNode($setup["NcButton"], {
+              onClick: _cache[3] || (_cache[3] = ($event) => $setup.resetSection("hero"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Reset to defaults")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createVNode($setup["NcInputField"], {
+            "model-value": $setup.getSlot("hero").entityName ?? "",
+            label: $setup.t("agora", "Entity name"),
+            "onUpdate:modelValue": _cache[4] || (_cache[4] = (v) => $setup.getSlot("hero").entityName = v)
+          }, null, 8, ["model-value", "label"]),
+          createVNode($setup["NcInputField"], {
+            "model-value": $setup.getSlot("hero").title ?? "",
+            label: $setup.t("agora", "Title"),
+            "onUpdate:modelValue": _cache[5] || (_cache[5] = (v) => $setup.getSlot("hero").title = v)
+          }, null, 8, ["model-value", "label"]),
+          createVNode($setup["NcInputField"], {
+            "model-value": $setup.getSlot("hero").subtitle ?? "",
+            label: $setup.t("agora", "Subtitle"),
+            type: "textarea",
+            "onUpdate:modelValue": _cache[6] || (_cache[6] = (v) => $setup.getSlot("hero").subtitle = v)
+          }, null, 8, ["model-value", "label"]),
+          createBaseVNode(
+            "h4",
+            null,
+            toDisplayString($setup.t("agora", "Image")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_18, [
+            $setup.slotImageUrl("hero") ? (openBlock(), createElementBlock("img", {
+              key: 0,
+              src: $setup.slotImageUrl("hero"),
+              class: "preview",
+              alt: $setup.t("agora", "Image preview")
+            }, null, 8, _hoisted_19)) : (openBlock(), createElementBlock(
+              "div",
+              _hoisted_20,
+              toDisplayString($setup.t("agora", "No image")),
+              1
+              /* TEXT */
+            )),
+            createBaseVNode("div", _hoisted_21, [
+              $setup.isBundledImage("hero") ? (openBlock(), createElementBlock(
+                "p",
+                _hoisted_22,
+                toDisplayString($setup.t("agora", "Bundled default — upload to override")),
+                1
+                /* TEXT */
+              )) : createCommentVNode("v-if", true),
+              createBaseVNode(
+                "input",
+                {
+                  ref: (el) => $setup.slotInputs.hero = el,
+                  type: "file",
+                  accept: "image/*",
+                  class: "hidden",
+                  onChange: _cache[7] || (_cache[7] = (e) => $setup.onImageSelected(e, "hero"))
+                },
+                null,
+                544
+                /* NEED_HYDRATION, NEED_PATCH */
+              ),
+              createVNode($setup["NcButton"], {
+                onClick: _cache[8] || (_cache[8] = ($event) => $setup.triggerSlotInput("hero"))
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(
+                    toDisplayString($setup.t("agora", "Upload")),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                _: 1
+                /* STABLE */
+              }),
+              $setup.hasUploadedImage("hero") ? (openBlock(), createBlock($setup["NcButton"], {
+                key: 1,
+                type: "error",
+                onClick: _cache[9] || (_cache[9] = ($event) => $setup.removeImage("hero"))
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(
+                    toDisplayString($setup.t("agora", "Remove")),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                _: 1
+                /* STABLE */
+              })) : createCommentVNode("v-if", true)
+            ])
+          ]),
+          createBaseVNode(
+            "h4",
+            null,
+            toDisplayString($setup.t("agora", "Call-to-action buttons")),
+            1
+            /* TEXT */
+          ),
+          (openBlock(true), createElementBlock(
+            Fragment,
+            null,
+            renderList($setup.getSlot("hero").actions ?? [], (action, i) => {
+              return openBlock(), createElementBlock("div", {
+                key: i,
+                class: "cta-row"
+              }, [
+                createVNode($setup["NcInputField"], {
+                  "model-value": action.label ?? "",
+                  label: $setup.t("agora", "Label"),
+                  "onUpdate:modelValue": (v) => action.label = v
+                }, null, 8, ["model-value", "label", "onUpdate:modelValue"]),
+                createVNode($setup["NcInputField"], {
+                  "model-value": action.url ?? "",
+                  label: $setup.t("agora", "URL"),
+                  "onUpdate:modelValue": (v) => action.url = v
+                }, null, 8, ["model-value", "label", "onUpdate:modelValue"]),
+                createVNode($setup["NcInputField"], {
+                  "model-value": action.type ?? "primary",
+                  label: $setup.t("agora", "Type"),
+                  placeholder: "primary / secondary",
+                  "onUpdate:modelValue": (v) => action.type = v
+                }, null, 8, ["model-value", "label", "onUpdate:modelValue"]),
+                createVNode($setup["NcButton"], {
+                  type: "error",
+                  onClick: ($event) => $setup.removeHeroAction(i)
+                }, {
+                  default: withCtx(() => [..._cache[26] || (_cache[26] = [
+                    createTextVNode(
+                      " × ",
+                      -1
+                      /* CACHED */
+                    )
+                  ])]),
+                  _: 1
+                  /* STABLE */
+                }, 8, ["onClick"])
+              ]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          )),
+          createVNode($setup["NcButton"], { onClick: $setup.addHeroAction }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Add action")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          })
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" Promo "),
+        $setup.activeTab === "promo" ? (openBlock(), createElementBlock("section", _hoisted_23, [
+          createBaseVNode("div", _hoisted_24, [
+            createVNode($setup["NcButton"], {
+              onClick: _cache[10] || (_cache[10] = ($event) => $setup.resetSection("promo"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Reset promo to defaults")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createVNode($setup["NcInputField"], {
+            "model-value": $setup.getSlot("promo").title ?? "",
+            label: $setup.t("agora", "Title"),
+            "onUpdate:modelValue": _cache[11] || (_cache[11] = (v) => $setup.getSlot("promo").title = v)
+          }, null, 8, ["model-value", "label"]),
+          createVNode($setup["NcInputField"], {
+            "model-value": $setup.getSlot("promo").description ?? "",
+            label: $setup.t("agora", "Description"),
+            type: "textarea",
+            "onUpdate:modelValue": _cache[12] || (_cache[12] = (v) => $setup.getSlot("promo").description = v)
+          }, null, 8, ["model-value", "label"]),
+          createBaseVNode(
+            "h4",
+            null,
+            toDisplayString($setup.t("agora", "Promo image")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_25, [
+            $setup.slotImageUrl("promo") ? (openBlock(), createElementBlock("img", {
+              key: 0,
+              src: $setup.slotImageUrl("promo"),
+              class: "preview",
+              alt: $setup.t("agora", "Promo image preview")
+            }, null, 8, _hoisted_26)) : (openBlock(), createElementBlock(
+              "div",
+              _hoisted_27,
+              toDisplayString($setup.t("agora", "No image")),
+              1
+              /* TEXT */
+            )),
+            createBaseVNode("div", _hoisted_28, [
+              $setup.isBundledImage("promo") ? (openBlock(), createElementBlock(
+                "p",
+                _hoisted_29,
+                toDisplayString($setup.t("agora", "Bundled default — upload to override")),
+                1
+                /* TEXT */
+              )) : createCommentVNode("v-if", true),
+              createBaseVNode(
+                "input",
+                {
+                  ref: (el) => $setup.slotInputs.promo = el,
+                  type: "file",
+                  accept: "image/*",
+                  class: "hidden",
+                  onChange: _cache[13] || (_cache[13] = (e) => $setup.onImageSelected(e, "promo"))
+                },
+                null,
+                544
+                /* NEED_HYDRATION, NEED_PATCH */
+              ),
+              createVNode($setup["NcButton"], {
+                onClick: _cache[14] || (_cache[14] = ($event) => $setup.triggerSlotInput("promo"))
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(
+                    toDisplayString($setup.t("agora", "Upload")),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                _: 1
+                /* STABLE */
+              }),
+              $setup.hasUploadedImage("promo") ? (openBlock(), createBlock($setup["NcButton"], {
+                key: 1,
+                type: "error",
+                onClick: _cache[15] || (_cache[15] = ($event) => $setup.removeImage("promo"))
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(
+                    toDisplayString($setup.t("agora", "Remove")),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                _: 1
+                /* STABLE */
+              })) : createCommentVNode("v-if", true)
+            ])
+          ]),
+          createBaseVNode(
+            "h4",
+            null,
+            toDisplayString($setup.t("agora", "Call to action")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("div", _hoisted_30, [
+            createVNode($setup["NcInputField"], {
+              "model-value": $setup.getSlot("promo").cta?.label ?? "",
+              label: $setup.t("agora", "Label"),
+              "onUpdate:modelValue": _cache[16] || (_cache[16] = (v) => {
+                $setup.getSlot("promo").cta = {
+                  ...$setup.getSlot("promo").cta ?? {},
+                  label: v
+                };
+              })
+            }, null, 8, ["model-value", "label"]),
+            createVNode($setup["NcInputField"], {
+              "model-value": $setup.getSlot("promo").cta?.url ?? "",
+              label: $setup.t("agora", "URL"),
+              "onUpdate:modelValue": _cache[17] || (_cache[17] = (v) => {
+                $setup.getSlot("promo").cta = {
+                  ...$setup.getSlot("promo").cta ?? {},
+                  url: v
+                };
+              })
+            }, null, 8, ["model-value", "label"])
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" Section labels "),
+        $setup.activeTab === "sectionLabels" ? (openBlock(), createElementBlock("section", _hoisted_31, [
+          createBaseVNode("div", _hoisted_32, [
+            createVNode($setup["NcButton"], {
+              onClick: _cache[18] || (_cache[18] = ($event) => $setup.resetSection("sectionLabels"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Reset to defaults")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode(
+            "p",
+            _hoisted_33,
+            toDisplayString($setup.t(
+              "agora",
+              "Override the labels shown for each home page section."
+            )),
+            1
+            /* TEXT */
+          ),
+          (openBlock(true), createElementBlock(
+            Fragment,
+            null,
+            renderList($setup.sectionLabelRows, (row, i) => {
+              return openBlock(), createElementBlock("div", {
+                key: i,
+                class: "kv-row"
+              }, [
+                createVNode($setup["NcInputField"], {
+                  modelValue: row.key,
+                  "onUpdate:modelValue": ($event) => row.key = $event,
+                  label: $setup.t("agora", "Section key")
+                }, null, 8, ["modelValue", "onUpdate:modelValue", "label"]),
+                createVNode($setup["NcInputField"], {
+                  modelValue: row.value,
+                  "onUpdate:modelValue": ($event) => row.value = $event,
+                  label: $setup.t("agora", "Label")
+                }, null, 8, ["modelValue", "onUpdate:modelValue", "label"]),
+                createVNode($setup["NcButton"], {
+                  type: "error",
+                  onClick: ($event) => $setup.removeSectionLabel(i)
+                }, {
+                  default: withCtx(() => [..._cache[27] || (_cache[27] = [
+                    createTextVNode(
+                      " × ",
+                      -1
+                      /* CACHED */
+                    )
+                  ])]),
+                  _: 1
+                  /* STABLE */
+                }, 8, ["onClick"])
+              ]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          )),
+          createVNode($setup["NcButton"], { onClick: $setup.addSectionLabel }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Add label")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          })
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" Relevance "),
+        $setup.activeTab === "relevance" ? (openBlock(), createElementBlock("section", _hoisted_34, [
+          createBaseVNode("div", _hoisted_35, [
+            createVNode($setup["NcButton"], {
+              onClick: _cache[19] || (_cache[19] = ($event) => $setup.resetSection("relevance"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Reset to defaults")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode(
+            "h4",
+            null,
+            toDisplayString($setup.t("agora", "Tiers (JSON array)")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("textarea", {
+            class: "json-editor",
+            value: $setup.getRelevanceTiersJson(),
+            onChange: _cache[20] || (_cache[20] = ($event) => $setup.setRelevanceTiersJson($event.target.value))
+          }, null, 40, _hoisted_36),
+          createBaseVNode(
+            "h4",
+            null,
+            toDisplayString($setup.t("agora", "Weights (JSON object)")),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("textarea", {
+            class: "json-editor",
+            value: $setup.getRelevanceWeightsJson(),
+            onChange: _cache[21] || (_cache[21] = ($event) => $setup.setRelevanceWeightsJson($event.target.value))
+          }, null, 40, _hoisted_37)
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" Sections "),
+        $setup.activeTab === "sections" ? (openBlock(), createElementBlock("section", _hoisted_38, [
+          createBaseVNode("div", _hoisted_39, [
+            createVNode($setup["NcButton"], {
+              onClick: _cache[22] || (_cache[22] = ($event) => $setup.resetSection("sections"))
+            }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Reset to defaults")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ]),
+          createBaseVNode(
+            "p",
+            _hoisted_40,
+            toDisplayString($setup.t(
+              "agora",
+              "Ordered list of enabled section keys for the home page."
+            )),
+            1
+            /* TEXT */
+          ),
+          createBaseVNode("textarea", {
+            class: "json-editor",
+            value: $setup.getSectionsJson(),
+            onChange: _cache[23] || (_cache[23] = ($event) => $setup.setSectionsJson($event.target.value))
+          }, null, 40, _hoisted_41)
+        ])) : createCommentVNode("v-if", true),
+        createCommentVNode(" Advanced "),
+        $setup.activeTab === "advanced" ? (openBlock(), createElementBlock("section", _hoisted_42, [
+          createBaseVNode(
+            "p",
+            _hoisted_43,
+            toDisplayString($setup.t(
+              "agora",
+              "Full raw data blob. Use carefully — invalid JSON will be rejected."
+            )),
+            1
+            /* TEXT */
+          ),
+          withDirectives(createBaseVNode(
+            "textarea",
+            {
+              "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => $setup.form.rawJson = $event),
+              class: "json-editor large"
+            },
+            null,
+            512
+            /* NEED_PATCH */
+          ), [
+            [vModelText, $setup.form.rawJson]
+          ]),
+          createBaseVNode("div", _hoisted_44, [
+            createVNode($setup["NcButton"], { onClick: $setup.applyRawJson }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Apply JSON")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            }),
+            createVNode($setup["NcButton"], { onClick: $setup.refreshRawFromData }, {
+              default: withCtx(() => [
+                createTextVNode(
+                  toDisplayString($setup.t("agora", "Refresh from form")),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              _: 1
+              /* STABLE */
+            })
+          ])
+        ])) : createCommentVNode("v-if", true),
+        createBaseVNode("footer", _hoisted_45, [
+          createVNode($setup["NcButton"], { onClick: $setup.closeEditor }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.t("agora", "Cancel")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }),
+          createVNode($setup["NcButton"], {
+            type: "primary",
+            disabled: $setup.saving,
+            onClick: $setup.save
+          }, {
+            default: withCtx(() => [
+              createTextVNode(
+                toDisplayString($setup.saving ? $setup.t("agora", "Saving…") : $setup.t("agora", "Save")),
+                1
+                /* TEXT */
+              )
+            ]),
+            _: 1
+            /* STABLE */
+          }, 8, ["disabled"])
+        ])
+      ])
+    ])) : createCommentVNode("v-if", true)
+  ]);
+}
+const AdminHomeConfigManager = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-76c6f1a8"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Settings/AdminSettings/AdminHomeConfigManager.vue"]]);
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "AdminSettingsPage",
   setup(__props, { expose: __expose }) {
@@ -12539,25 +14128,41 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       wizardStore.openWizard();
     };
     const sections = {
+      homeConfig: {
+        name: translate("agora", "Agora landing page config"),
+        description: translate("agora", "Configure your landing page")
+      },
       cleanInstance: {
         name: translate("agora", "Agora clean instance"),
         description: translate("agora", "Destroy all your agora data")
       },
       templateSetup: {
         name: translate("agora", "Template setup wizard"),
-        description: translate("agora", "Configure your agora instance using pre-built templates")
+        description: translate(
+          "agora",
+          "Configure your agora instance using pre-built templates"
+        )
       },
       inquiryCategoryLocation: {
         name: translate("agora", "Categories and locations management"),
-        description: translate("agora", "Change globally location and category (for all accounts)")
+        description: translate(
+          "agora",
+          "Change globally location and category (for all accounts)"
+        )
       },
       inquirySettings: {
         name: translate("agora", "Inquiry settings"),
-        description: translate("agora", "Change inquiry settings globally (for all accounts)")
+        description: translate(
+          "agora",
+          "Change inquiry settings globally (for all accounts)"
+        )
       },
       shareSettings: {
         name: translate("agora", "Share settings"),
-        description: translate("agora", "Change share settings globally (for all accounts)")
+        description: translate(
+          "agora",
+          "Change share settings globally (for all accounts)"
+        )
       },
       otherSettings: {
         name: translate("agora", "Other settings"),
@@ -12593,7 +14198,10 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       },
       inquiryRights: {
         name: translate("agora", "Inquiry rights"),
-        description: translate("agora", "Change inquiry rights globally (for all accounts)")
+        description: translate(
+          "agora",
+          "Change inquiry rights globally (for all accounts)"
+        )
       },
       moderationSettings: {
         name: translate("agora", "Moderation settings"),
@@ -12601,7 +14209,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       },
       jobSettings: {
         name: translate("agora", "Job control"),
-        description: translate("agora", "Manually start backgropund jobs independent from the cron schedule")
+        description: translate("agora", "Manually start background jobs independent from the cron schedule")
       }
     };
     onMounted(async () => {
@@ -12667,6 +14275,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       return AdminShowMailAddresses;
     }, get AdminUnrescrictedOwners() {
       return AdminUnrescrictedOwners;
+    }, get AdminHomeConfigManager() {
+      return AdminHomeConfigManager;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -12711,6 +14321,19 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                     _: 1
                     /* STABLE */
                   })
+                ]),
+                _: 1
+                /* STABLE */
+              },
+              16
+              /* FULL_PROPS */
+            ),
+            createVNode(
+              $setup["NcSettingsSection"],
+              normalizeProps(guardReactiveProps($setup.sections.homeConfig)),
+              {
+                default: withCtx(() => [
+                  createVNode($setup["AdminHomeConfigManager"])
                 ]),
                 _: 1
                 /* STABLE */

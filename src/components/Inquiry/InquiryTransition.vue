@@ -263,7 +263,8 @@ const loadInquiryData = async () => {
                 size="16"
               />
             </template>
-            {{ !isMobile ? t("agora", "Grid") : "" }}
+            <!-- TRANSLATORS Display mode for child inquiries: grid (table) view, the other option is "List" -->
+            {{ !isMobile ? t('agora', 'Grid') : '' }}
           </NcCheckboxRadioSwitch>
 
           <NcCheckboxRadioSwitch

@@ -107,6 +107,7 @@ OC.L10N.register(
     "Unknown" : "Arussin",
     "Remove" : "Kkes",
     "Add" : "Rnu",
+    "Presentation" : "Tasmuli",
     "Show less" : "Ssken cwiṭ",
     "Read more" : "Ɣeṛ ugar",
     "Active" : "Urmid",

@@ -58,6 +58,7 @@ OC.L10N.register(
     "Unknown" : "I panjohur",
     "Remove" : "Hiqe",
     "Add" : "Shto ",
+    "Presentation" : "Paraqitje",
     "Completed" : "Të plotësuara",
     "Cancelled" : "U anulua",
     "Start date" : "Datë nisjeje",

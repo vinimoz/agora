@@ -1230,12 +1230,7 @@ const removeAction = (target, index) => {
           class="tab-panel"
         >
           <p class="help-text">
-            {{
-              t(
-                "agora",
-                "UI configuration as JSON (experience, layout, display_architecture…).",
-              )
-            }}
+            {{ t('agora', 'UI configuration as JSON (experience, layout, display_architecture …).') }}
           </p>
           <textarea
             class="json-editor"

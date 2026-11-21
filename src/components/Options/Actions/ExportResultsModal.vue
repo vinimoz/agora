@@ -120,20 +120,15 @@ const exportResults = async () => {
     // })
 
     // Simulate API call
-    // await new Promise(resolve => setTimeout(resolve, 1000))
-
-    showSuccess(
-      t(
-        "agora",
-        "To be implemented, results exported successfully as {format}",
-        {
-          format: exportFormat.value.toUpperCase(),
-        },
-      ),
-    );
-
-    emit("exported");
-    handleClose();
+   // await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // TRANSLATORS {format} is the export format in capitals, e.g. "CSV"
+    showInfo(t('agora', 'Exporting results as {format} is not available yet', { 
+      format: exportFormat.value.toUpperCase() 
+    }))
+    
+    emit('exported')
+    handleClose()
   } catch (error) {
     console.error("Export failed:", error);
     showError(t("agora", "Failed to export results"));

@@ -414,7 +414,7 @@ defineExpose({ editingType, newType });
           type="text"
           :label="t('agora', 'Search')"
           :label-outside="true"
-          :placeholder="t('agora', 'Search option types…')"
+          :placeholder="t('agora', 'Search option types …')"
           class="search-field"
         />
       </div>
@@ -770,7 +770,7 @@ defineExpose({ editingType, newType });
               v-model="newStatus.status_key"
               :label="t('agora', 'Status key')"
               :label-outside="true"
-              :placeholder="t('agora', 'status_key')"
+              :placeholder="'status_key'"
             />
             <NcInputField
               v-model="newStatus.label"
@@ -1001,7 +1001,7 @@ defineExpose({ editingType, newType });
               v-model="newStatus.status_key"
               :label="t('agora', 'Status key')"
               :label-outside="true"
-              :placeholder="t('agora', 'status_key')"
+              :placeholder="'status_key'"
             />
             <NcInputField
               v-model="newStatus.label"

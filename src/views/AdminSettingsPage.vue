@@ -129,11 +129,8 @@ const sections = {
     description: t("agora", "Change moderation settings"),
   },
   jobSettings: {
-    name: t("agora", "Job control"),
-    description: t(
-      "agora",
-      "Manually start backgropund jobs independent from the cron schedule",
-    ),
+    name: t('agora', 'Job control'),
+    description: t('agora', 'Manually start background jobs independent from the cron schedule'),
   },
 };
 

@@ -364,14 +364,15 @@ watch(
         </p>
       </div>
       <div class="header-actions">
-        <NcInputField
-          v-model="searchQuery"
-          type="text"
-          :label="t('agora', 'Search')"
-          :label-outside="true"
-          :placeholder="t('agora', 'Filter families…')"
-          class="search-field"
-        />
+	      <NcInputField
+  v-model="searchQuery"
+  type="text"
+  :label="t('agora', 'Search')"
+  :label-outside="true"
+  :placeholder="t('agora', 'Filter families …')"
+  class="search-field"
+/>
+
       </div>
     </header>
 

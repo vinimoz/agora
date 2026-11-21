@@ -1,13 +1,13 @@
 const appName = "agora";
 const appVersion = "1.8.0";
-import { d as defineComponent, V as translate, B as onMounted, _ as _export_sfc, o as openBlock, f as createBlock, g as withCtx, i as createVNode, W as normalizeProps, X as guardReactiveProps, Y as createApp, Z as pinia } from "./NcEmptyContent-zcbErVyJ.chunk.mjs";
-import { N as NcSettingsSection } from "./be-tarask-BJ-91Qvl.chunk.mjs";
-import "./NcDashboardWidget-CgDfA4dU.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-B-vyjuqF.chunk.mjs";
-import "./NcRichText-cwcSz5Cs.chunk.mjs";
-import "./referencePickerModal-Bj01bKRU.chunk.mjs";
-import "./NcProfileHoverCard-CfI0JNf3.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-DXSfr0wQ.chunk.mjs";
+import { d as defineComponent, V as translate, B as onMounted, _ as _export_sfc, o as openBlock, f as createBlock, g as withCtx, i as createVNode, W as normalizeProps, X as guardReactiveProps, Y as createApp, Z as pinia } from "./NcEmptyContent-1duUFQhY.chunk.mjs";
+import { N as NcSettingsSection } from "./be-tarask-3Xk940aQ.chunk.mjs";
+import "./NcDashboardWidget-CbjbEfSD.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-BkKw6jH0.chunk.mjs";
+import "./NcRichText-C6H3fuO_.chunk.mjs";
+import "./referencePickerModal-CbCg3pQA.chunk.mjs";
+import "./NcProfileHoverCard-D1W-FElA.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-DSuG5Cwp.chunk.mjs";
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "UserSettingsPage",
   setup(__props, { expose: __expose }) {

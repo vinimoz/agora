@@ -12,11 +12,11 @@
 })();
 const appName = "agora";
 const appVersion = "1.8.0";
-import { _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, k as createCommentVNode, m as mergeProps, d as defineComponent, f as createBlock, g as withCtx, r as renderSlot, h as resolveDynamicComponent, a3 as DateTime, V as translate, i as createVNode, O as createTextVNode, M as normalizeClass, Y as createApp, Z as pinia } from "./NcEmptyContent-zcbErVyJ.chunk.mjs";
-import { r as registerWidget } from "./NcRichText-cwcSz5Cs.chunk.mjs";
-import "./referencePickerModal-Bj01bKRU.chunk.mjs";
-import { N as NcUserBubble } from "./NcUserBubble-CExbiOZa.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-Cvm3sCpj.chunk.mjs";
+import { _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, k as createCommentVNode, m as mergeProps, d as defineComponent, f as createBlock, g as withCtx, r as renderSlot, h as resolveDynamicComponent, a3 as DateTime, V as translate, i as createVNode, O as createTextVNode, M as normalizeClass, Y as createApp, Z as pinia } from "./NcEmptyContent-1duUFQhY.chunk.mjs";
+import { r as registerWidget } from "./NcRichText-C6H3fuO_.chunk.mjs";
+import "./referencePickerModal-CbCg3pQA.chunk.mjs";
+import { N as NcUserBubble } from "./NcUserBubble-DoNSBLUE.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-s4ewVuI9.chunk.mjs";
 const _sfc_main$2 = {
   name: "CalendarEndIcon",
   emits: ["click"],

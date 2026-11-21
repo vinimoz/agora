@@ -229,17 +229,11 @@
             />
             {{ proposedSolutionCount }} {{ t("agora", "proposed solutions") }}
           </span>
-          <span
-            v-if="participantCount > 0"
-            class="stat"
-          >
-            <component
-              :is="InquiryOptionIcons.Users"
-              :size="12"
-            />
-            {{ participantCount }} {{ t("agora", "participants") }}
-          </span>
-        </div>
+          <span v-if="participantCount > 0" class="stat">
+            <component :is="InquiryOptionIcons.Users" :size="12" />
+            {{ n('agora', '%n participant', '%n participants', participantCount) }}
+	  </span>
+	</div>
       </div>
 
       <!-- Raised by info -->
@@ -799,26 +793,27 @@ const childrenCount = computed(
 // ========================================
 const getStatusLabel = (status?: string) => {
   const labels: Record<string, string> = {
-    open: t("agora", "Open"),
-    under_discussion: t("agora", "Under Discussion"),
-    addressed: t("agora", "Addressed"),
-    withdrawn: t("agora", "Withdrawn"),
-    accepted: t("agora", "Accepted"),
-    resolved: t("agora", "Resolved"),
-    blocked: t("agora", "Blocked"),
-    deferred: t("agora", "Deferred"),
-    proposed: t("agora", "Proposed"),
-    under_review: t("agora", "Under Review"),
-    rejected: t("agora", "Rejected"),
-    implemented: t("agora", "Implemented"),
-    draft: t("agora", "Draft"),
-    published: t("agora", "Published"),
-    closed: t("agora", "Closed"),
-    answered: t("agora", "Answered"),
-    active: t("agora", "Active"),
-  };
-  return status ? labels[status] || status : t("agora", "No status");
-};
+    open: t('agora', 'Open'),
+    under_discussion: t('agora', 'Under Discussion'),
+    // TRANSLATORS Status of a proposal: the point has been dealt with / taken into account
+    addressed: t('agora', 'Addressed'),
+    withdrawn: t('agora', 'Withdrawn'),
+    accepted: t('agora', 'Accepted'),
+    resolved: t('agora', 'Resolved'),
+    blocked: t('agora', 'Blocked'),
+    deferred: t('agora', 'Deferred'),
+    proposed: t('agora', 'Proposed'),
+    under_review: t('agora', 'Under Review'),
+    rejected: t('agora', 'Rejected'),
+    implemented: t('agora', 'Implemented'),
+    draft: t('agora', 'Draft'),
+    published: t('agora', 'Published'),
+    closed: t('agora', 'Closed'),
+    answered: t('agora', 'Answered'),
+    active: t('agora', 'Active'),
+  }
+  return status ? labels[status] || status : t('agora', 'No status')
+}
 
 const getStatusIcon = (status?: string) => {
   const icons: Record<string, string> = {

@@ -12,9 +12,9 @@
 })();
 const appName = "agora";
 const appVersion = "1.8.0";
-import { d as defineComponent, V as translate, b as computed, B as onMounted, a1 as purify_default, y as generateUrl, _ as _export_sfc, o as openBlock, c as createElementBlock, i as createVNode, g as withCtx, j as createBaseVNode, k as createCommentVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, Y as createApp, Z as pinia } from "./NcEmptyContent-zcbErVyJ.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-Cvm3sCpj.chunk.mjs";
-import { c as useSessionStore, d as useInquiriesStore, s as showError, L as Logger, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-CgDfA4dU.chunk.mjs";
+import { d as defineComponent, V as translate, b as computed, B as onMounted, a1 as purify_default, y as generateUrl, _ as _export_sfc, o as openBlock, c as createElementBlock, i as createVNode, g as withCtx, j as createBaseVNode, k as createCommentVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, Y as createApp, Z as pinia } from "./NcEmptyContent-1duUFQhY.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-s4ewVuI9.chunk.mjs";
+import { c as useSessionStore, d as useInquiriesStore, s as showError, L as Logger, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-CbjbEfSD.chunk.mjs";
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "AgoraDashboard",
   setup(__props, { expose: __expose }) {
@@ -24,7 +24,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       emptyContentMessage: translate("agora", "No inquiries found for this category"),
       showMoreText: translate("agora", "Relevant inquiries")
     };
-    const allInquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || []);
+    const allInquiryTypes = computed(
+      () => sessionStore.appSettings.inquiryTypeTab || []
+    );
     const inquiriesStore = useInquiriesStore();
     function loadSessionStore() {
       try {
