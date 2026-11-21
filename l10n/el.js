@@ -887,6 +887,7 @@ OC.L10N.register(
     "Resolution" : "Ανάλυση",
     "responses" : "απαντήσεις",
     "Reopen" : "Άνοιγμα ξανά",
+    "_%n participant_::_%n participants_" : ["%n συμμετέχων","%n συμμετέχοντες"],
     "For" : "Υπέρ",
     "No options yet" : "Δεν υπάρχουν ακόμα επιλογές",
     "Be the first to contribute" : "Γίνετε ο πρώτος που θα συνεισφέρει",

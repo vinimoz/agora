@@ -461,6 +461,7 @@ OC.L10N.register(
     "Blocked" : "Bloqueado",
     "Published" : "Publicado",
     "responses" : "respuestas",
+    "_%n participant_::_%n participants_" : ["%n participante","%n participantes","%n participantes"],
     "Discussion" : "Discusión",
     "Recommendations" : "Recomendaciones",
     "Explore" : "Explorar",

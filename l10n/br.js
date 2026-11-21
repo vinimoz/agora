@@ -39,6 +39,7 @@ OC.L10N.register(
     "Participants" : "Tud",
     "Description" : "Deskrivadur",
     "Unknown" : "Dianv",
+    "Presentation" : "Kinnigadenn",
     "Read more" : "Lenn muioc'h",
     "Active" : "O labourat",
     "Completed" : "Echu",
