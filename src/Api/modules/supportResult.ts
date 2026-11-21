@@ -90,7 +90,6 @@ export const supportResultApi = {
         ].handleRequestCancellation().token,
     });
   },
-
 };
 
 const cancelTokenHandlerObject = createCancelTokenHandler(supportResultApi);

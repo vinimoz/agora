@@ -477,7 +477,7 @@ export function getFamiliesWithOptionTypes(
 
   // Get app settings store (try-catch in case called outside setup)
   let appSettingsStore: ReturnType<typeof useAppSettingsStore> | null = null;
-    appSettingsStore = useAppSettingsStore();
+  appSettingsStore = useAppSettingsStore();
 
   // Get fallback data as backup
   const fallbackData = getFamilyFallbackData();
@@ -1558,7 +1558,7 @@ export async function updateTimelineDates(
     const date =
       startDate instanceof Date ? startDate : new Date(startDate ?? Date.now());
     const updatedOption = setTimelineDates(option, date);
-    await optionsStore.updateOption({ option: updatedOption });
+    await optionsStore.updateOption( updatedOption );
   } catch (error) {
     console.error("Failed to update timeline dates:", error);
     throw error;
@@ -1596,7 +1596,7 @@ export async function setTimelineDatesForOption(
     const finalOption = addLayoutToOption(updatedOption, "timeline");
 
     // Update the option
-    await optionsStore.updateOption({ option: finalOption });
+    await optionsStore.updateOption(finalOption);
   } catch (error) {
     console.error("Failed to set timeline dates:", error);
     throw error;
@@ -1626,7 +1626,7 @@ export async function clearTimelineDates(
       miscFields,
     };
 
-    await optionsStore.updateOption({ option: updatedOption });
+    await optionsStore.updateOption( updatedOption);
   } catch (error) {
     console.error("Failed to clear timeline dates:", error);
     throw error;

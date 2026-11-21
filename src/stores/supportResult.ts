@@ -22,7 +22,6 @@ import type {
   PhasedVotingResult,
   ApprovalDelibResult,
   StarResult,
-  TrendingResult,
 } from "../Types/index";
 import { SupportResultAPI } from "../Api/index";
 import { Logger } from "../helpers/index";
@@ -158,14 +157,6 @@ export const useSupportResultStore = defineStore("supportResult", () => {
           icon: r.percentages.approved >= 50 ? "check" : "help",
         };
       }
-      case "trending": {
-        const r = result as TrendingResult;
-        return {
-          primary: `${r.score}`,
-          secondary: "trending",
-          icon: "fire",
-        };
-      }
       case "ranking": {
         const r = result as RankingResult;
         const bestRank = Math.min(...Object.values(r.rankings));
@@ -256,14 +247,14 @@ export const useSupportResultStore = defineStore("supportResult", () => {
 
       lastCalculated.value = Date.now();
     } catch (err) {
-	    const axiosErr = err as { code?: string };
-    if (axiosErr?.code !== "ERR_CANCELED") {
-      error.value =
-        err instanceof Error ? err.message : "Failed to load results";
-      Logger.error("Error loading engine results", { error: err, engineId });
-      loading.value = false;
+      const axiosErr = err as { code?: string };
+      if (axiosErr?.code !== "ERR_CANCELED") {
+        error.value =
+          err instanceof Error ? err.message : "Failed to load results";
+        Logger.error("Error loading engine results", { error: err, engineId });
+        loading.value = false;
       }
-   }
+    }
   }
 
   async function loadTargetResults(
@@ -334,15 +325,6 @@ export const useSupportResultStore = defineStore("supportResult", () => {
       throw err;
     } finally {
       loading.value = false;
-    }
-  }
-
-  async function loadResultHistory(resultId: number): Promise<void> {
-    try {
-      const response = await SupportResultAPI.getResultHistory(resultId);
-      resultHistory.value.set(resultId, response.data.history);
-    } catch (err) {
-      Logger.error("Error loading result history", { error: err, resultId });
     }
   }
 
@@ -422,7 +404,6 @@ export const useSupportResultStore = defineStore("supportResult", () => {
     loadEngineResults,
     loadTargetResults,
     calculateAndGetResults,
-    loadResultHistory,
     getResultDisplay,
     needsRecalculation,
     reset,

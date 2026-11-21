@@ -21,7 +21,7 @@ export function useHomeConfig() {
    * before the DB-backed home config lands) or when the value is invalid.
    */
   const organizationType = computed<OrganizationType>(() => {
-    const candidate = session.appSettings?.organization?.type;
+    const candidate = session.appSettings?.organizationType;
     if (
       candidate &&
       (ORGANIZATION_TYPES as readonly string[]).includes(candidate)

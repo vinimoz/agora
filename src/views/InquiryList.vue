@@ -13,7 +13,7 @@ import { t, n } from "@nextcloud/l10n";
 import NcAppContent from "@nextcloud/vue/components/NcAppContent";
 import NcEmptyContent from "@nextcloud/vue/components/NcEmptyContent";
 import NcCheckboxRadioSwitch from "@nextcloud/vue/components/NcCheckboxRadioSwitch";
-import NcButton from "@nextcloud/vue/components/NcButton"; 
+import NcButton from "@nextcloud/vue/components/NcButton";
 
 import { HeaderBar, IntersectionObserver } from "../components/Base/index.ts";
 import { AgoraAppIcon } from "../components/AppIcons/index.ts";
@@ -43,7 +43,6 @@ const props = withDefaults(
   }>(),
   { showFilterBar: null },
 );
-
 
 const inquiriesStore = useInquiriesStore();
 const inquiryGroupsStore = useInquiryGroupsStore();
@@ -141,7 +140,6 @@ function handleMainModeChange(mode: string) {
     });
   }
 }
-
 
 // Handle sub mode change
 async function handleSubModeChange(mode: ViewMode) {
@@ -242,7 +240,6 @@ function openInquiry(inquiry: Inquiry) {
     query: { ...route.query },
   });
 }
-
 
 // ============================================================
 // FILTER BAR VISIBILITY
@@ -395,21 +392,23 @@ watch(subMode, (newMode) => {
         <div class="header-controls">
           <div class="mode-switchers">
             <div class="main-mode-switcher">
-	      <NcButton
-    v-if="!isFilterBarControlledByParent"
-    class="filter-toggle-btn"
-    :class="{ active: filterBarVisible }"
-    :title="t('agora', 'Show/hide filters')"
-    @click="filterBarVisible = !filterBarVisible"
-  >
-    <template #icon>
-      <span
-        class="filter-toggle-icon"
-        aria-hidden="true"
-      >{{ filterBarVisible ? "▲" : "▼" }}</span>
-    </template>
-    {{ t("agora", "Filters") }}
-  </NcButton>
+              <NcButton
+                v-if="!isFilterBarControlledByParent"
+                class="filter-toggle-btn"
+                :class="{ active: filterBarVisible }"
+                :title="t('agora', 'Show/hide filters')"
+                @click="filterBarVisible = !filterBarVisible"
+              >
+                <template #icon>
+                  <span
+                    class="filter-toggle-icon"
+                    aria-hidden="true"
+                  >{{
+                    filterBarVisible ? "▲" : "▼"
+                  }}</span>
+                </template>
+                {{ t("agora", "Filters") }}
+              </NcButton>
               <!-- Create mode button -->
               <NcCheckboxRadioSwitch
                 :button-variant="true"
@@ -728,7 +727,7 @@ watch(subMode, (newMode) => {
   gap: 12px;
   flex-shrink: 0;
 
-.filter-toggle-btn {
+  .filter-toggle-btn {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;

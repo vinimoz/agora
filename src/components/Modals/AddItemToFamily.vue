@@ -45,9 +45,12 @@
             class="hint"
           >
             {{
-	     hasEligibleCandidates
-      ? t("agora", "All inquiries in this group are already added to this vote.")
-      : t("agora", "This group has no inquiries yet.")
+              hasEligibleCandidates
+                ? t(
+                  "agora",
+                  "All inquiries in this group are already added to this vote.",
+                )
+                : t("agora", "This group has no inquiries yet.")
             }}
           </p>
         </div>
@@ -275,7 +278,6 @@ function inquiryAlreadyInFamily(
 ): boolean {
   return getForceLayouts(inquiry).includes(familyKey);
 }
-
 
 /** Were there candidates in the group that got filtered out? Drives the hint copy. */
 const hasEligibleCandidates = computed(() => {
@@ -533,7 +535,6 @@ async function addToKanban(): Promise<void> {
   );
   emitFamilyChanged(item, "kanban");
 }
-
 
 // AddItemToFamily.vue — add()
 async function add(): Promise<void> {

@@ -5,21 +5,21 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n'
-import { computed, ref } from 'vue'
+import { t } from "@nextcloud/l10n";
+import { computed, ref } from "vue";
 
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
-import { Inquiry } from '../../Types/index.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
-import { useInquiriesStore } from '../../stores/inquiries.ts'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import NcActionButton from "@nextcloud/vue/components/NcActionButton";
+import NcAppNavigationItem from "@nextcloud/vue/components/NcAppNavigationItem";
+import { Inquiry } from "../../Types/index.ts";
+import { InquiryGeneralIcons } from "../../utils/icons.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import { getInquiryTypeData } from "../../helpers/modules/InquiryHelper.ts";
+import { useInquiriesStore } from "../../stores/inquiries.ts";
+import { showError, showSuccess } from "@nextcloud/dialogs";
 
-import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue'
-import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue'
-import ArchiveRestoreInquiryDialog from '../Modals/ArchiveRestoreInquiryDialog.vue'
+import DeleteInquiryDialog from "../Modals/DeleteInquiryDialog.vue";
+import TransferInquiryDialog from "../Modals/TransferInquiryDialog.vue";
+import ArchiveRestoreInquiryDialog from "../Modals/ArchiveRestoreInquiryDialog.vue";
 
 import {
   canArchive,
@@ -27,54 +27,63 @@ import {
   canDelete,
   canTransfer,
   createInquiryContext,
-} from '../../utils/permissions.ts'
+} from "../../utils/permissions.ts";
 
-const sessionStore = useSessionStore()
-const inquiriesStore = useInquiriesStore()
+const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore();
 
-const { inquiry } = defineProps<{ inquiry: Inquiry }>()
+const { inquiry } = defineProps<{ inquiry: Inquiry }>();
 
 const emit = defineEmits<{
-  (e: 'deleted'): void
-}>()
+  (e: "deleted"): void;
+}>();
 
 // Dialog visibility
-const showDeleteDialog = ref(false)
-const showTransferDialog = ref(false)
-const showArchiveRestoreDialog = ref(false)
+const showDeleteDialog = ref(false);
+const showTransferDialog = ref(false);
+const showArchiveRestoreDialog = ref(false);
 
 // Get inquiry type data
 const inquiryTypeData = computed(() => {
-  const inquiryTypes = sessionStore.appSettings.inquiryTypeTab || []
-  return getInquiryTypeData(inquiry.type, inquiryTypes)
-})
+  const inquiryTypes = sessionStore.appSettings.inquiryTypeTab || [];
+  return getInquiryTypeData(inquiry.type, inquiryTypes);
+});
 
-const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
+const context = computed(() =>
+  createInquiryContext(inquiry, sessionStore.appSettings),
+);
 
 async function toggleArchive() {
   try {
-    await inquiriesStore.toggleArchive({ inquiryId: inquiry.id })
+    await inquiriesStore.toggleArchive({ inquiryId: inquiry.id });
     if (inquiry.status.isArchived) {
-      showSuccess(t('agora', 'Inquiry successfully restored'))
+      showSuccess(t("agora", "Inquiry successfully restored"));
     } else {
-      showSuccess(t('agora', 'Inquiry successfully archived'))
+      showSuccess(t("agora", "Inquiry successfully archived"));
     }
   } catch {
-    showError(t('agora', 'Error archiving or restoring the inquiry'))
+    showError(t("agora", "Error archiving or restoring the inquiry"));
   }
 }
 
 const onInquiryDeleted = () => {
-  showSuccess(t('agora', 'Inquiry successfully deleted'))
-  emit('deleted')
-}
+  showSuccess(t("agora", "Inquiry successfully deleted"));
+  emit("deleted");
+};
 </script>
 
 <template>
   <NcAppNavigationItem
     :name="inquiry.title"
-    :to="inquiry.permissions.view ? { name: 'inquiry', params: { id: inquiry.id } } : null"
-    :class="{ closed: inquiry.status.isExpired, 'inquiry-navigation-item': true }"
+    :to="
+      inquiry.permissions.view
+        ? { name: 'inquiry', params: { id: inquiry.id } }
+        : null
+    "
+    :class="{
+      closed: inquiry.status.isExpired,
+      'inquiry-navigation-item': true,
+    }"
   >
     <template #icon>
       <div class="type-icon">
@@ -86,13 +95,28 @@ const onInquiryDeleted = () => {
       <!-- Archive/Restore Button -->
       <NcActionButton
         v-if="canArchive(context) || canRestore(context)"
-        :name="inquiry.status.isArchived ? t('agora', 'Restore inquiry') : t('agora', 'Archive inquiry')"
-        :aria-label="inquiry.status.isArchived ? t('agora', 'Restore inquiry') : t('agora', 'Archive inquiry')"
+        :name="
+          inquiry.status.isArchived
+            ? t('agora', 'Restore inquiry')
+            : t('agora', 'Archive inquiry')
+        "
+        :aria-label="
+          inquiry.status.isArchived
+            ? t('agora', 'Restore inquiry')
+            : t('agora', 'Archive inquiry')
+        "
         close-after-click
         @click="toggleArchive()"
       >
         <template #icon>
-          <component :is="inquiry.status.isArchived ? InquiryGeneralIcons.Restore : InquiryGeneralIcons.Archive" :size="20" />
+          <component
+            :is="
+              inquiry.status.isArchived
+                ? InquiryGeneralIcons.Restore
+                : InquiryGeneralIcons.Archive
+            "
+            :size="20"
+          />
         </template>
       </NcActionButton>
 
@@ -106,7 +130,10 @@ const onInquiryDeleted = () => {
         @click="showDeleteDialog = true"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Delete" :size="20" />
+          <component
+            :is="InquiryGeneralIcons.Delete"
+            :size="20"
+          />
         </template>
       </NcActionButton>
 
@@ -119,7 +146,10 @@ const onInquiryDeleted = () => {
         @click="showTransferDialog = true"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Transfer" :size="20" />
+          <component
+            :is="InquiryGeneralIcons.Transfer"
+            :size="20"
+          />
         </template>
       </NcActionButton>
     </template>

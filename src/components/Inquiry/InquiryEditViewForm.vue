@@ -399,7 +399,7 @@ onMounted(async () => {
     try {
       await inquiryStore.load(props.inquiry.id);
     } catch (err) {
-      console.error("[InquiryEditViewForm] failed to load inquiry", err);
+      console.error("[InquiryEditViewForm] failed to load ", err);
       hasAccess.value = false;
       return;
     }
@@ -418,7 +418,7 @@ onMounted(async () => {
   // 3. Permission check as before.
   if (!canView(context.value)) {
     hasAccess.value = false;
-    showError("Error you cannot view this inquiry !");
+    showError("Error you cannot view this  !");
     router.push({ name: "list", params: { type: "relevant" } });
     return;
   }
@@ -526,7 +526,6 @@ const canEditInquiry = computed(() =>
   // You might have a context or permission check here
   context.value ? canEdit(context.value) : false,
 );
-
 
 const canParticipateInquiry = computed(() =>
   // You might have a context or permission check here
@@ -763,11 +762,9 @@ const expirationDate = computed({
             <div class="title-field-container">
               <NcTextField
                 v-model="inquiryStore.title"
-                :label="t('agora', 'Inquiry title')"
+                :label="t('agora', 'Title')"
                 :success="inquiryStore.title.length > 0"
-                :helper-text="
-                  t('agora', 'Enter a descriptive title for your inquiry')
-                "
+                :helper-text="t('agora', 'Enter a descriptive title')"
               >
                 <template #icon>
                   <component
@@ -821,7 +818,7 @@ const expirationDate = computed({
       <!-- Metadata section -->
       <div class="metadata-section">
         <h3 class="section-subtitle">
-          {{ t("agora", "INQUIRY DETAILS") }}
+          {{ t("agora", "DETAILS") }}
         </h3>
         <div class="metadata-grid">
           <!-- Row 1 -->
@@ -1051,7 +1048,7 @@ const expirationDate = computed({
               {{ t("agora", "DESCRIPTION") }}
             </h3>
             <p class="section-description">
-              {{ t("agora", "Detailed information about this inquiry") }}
+              {{ t("agora", "Detailed information") }}
             </p>
           </div>
         </div>

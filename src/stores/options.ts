@@ -342,16 +342,14 @@ export const useOptionsStore = defineStore("options", {
      * Add a new option to the store.
      */
     addOption(option: Option): void {
-        const existingIndex = this.options.findIndex(
-            (o) => o.id === option.id,
-        );
+      const existingIndex = this.options.findIndex((o) => o.id === option.id);
 
-        if (existingIndex !== -1) {
-            this.options[existingIndex] = option;
-            return;
-        }
+      if (existingIndex !== -1) {
+        this.options[existingIndex] = option;
+        return;
+      }
 
-        this.options.push(option);
+      this.options.push(option);
     },
 
     /*// Update a single option in the store
@@ -374,48 +372,43 @@ export const useOptionsStore = defineStore("options", {
      * Update an existing option.
      */
     updateOption(option: Option): void {
-        const index = this.options.findIndex(
-            (o) => o.id === option.id,
-        );
+      const index = this.options.findIndex((o) => o.id === option.id);
 
-        if (index === -1) {
-            this.options.push(option);
-            return;
-        }
+      if (index === -1) {
+        this.options.push(option);
+        return;
+      }
 
-        this.options[index] = {
-            ...this.options[index],
-            ...option,
-        };
+      this.options[index] = {
+        ...this.options[index],
+        ...option,
+      };
     },
 
     /**
      * Remove an option by ID.
      */
     removeOption(id: number): void {
-        this.options = this.options.filter(
-            (option) => option.id !== id,
-        );
+      this.options = this.options.filter((option) => option.id !== id);
     },
 
     /**
      * Replace all options.
      */
     setOptions(options: Option[]): void {
-        this.options = options;
+      this.options = options;
     },
 
     /**
      * Remove all options.
      */
     clearOptions(): void {
-        this.options = [];
+      this.options = [];
     },
 
     reset(): void {
       this.$reset();
     },
-
 
     forceUpdateCommentCount(optionId?: number) {
       const commentsStore = useCommentsStore();
@@ -720,7 +713,6 @@ export const useOptionsStore = defineStore("options", {
       this.groups = groups.sort((a, b) => a.id - b.id);
     },
 
-
     // Add a new option with type validation
     async add(payload: {
       title: string;
@@ -824,7 +816,7 @@ export const useOptionsStore = defineStore("options", {
           );
         })();
 
-        this.updateOption({ option: response.data.option });
+        this.updateOption(response.data.option);
       } catch (error) {
         Logger.error("Error updating option", { error, payload });
         this.load();
@@ -903,7 +895,7 @@ export const useOptionsStore = defineStore("options", {
           return OptionsAPI.restoreOption(payload.option.id);
         })();
 
-        this.updateOption({ option: response.data.option });
+        this.updateOption(response.data.option );
       } catch (error) {
         if ((error as AxiosError)?.code === "ERR_CANCELED") {
           return;

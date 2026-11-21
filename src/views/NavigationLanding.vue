@@ -15,7 +15,6 @@ import NcAppNavigationCaption from "@nextcloud/vue/components/NcAppNavigationCap
 import islandIllustration from "../assets/img/island-illustration.png";
 import { AgoraAppIcon } from "../components/AppIcons";
 import { InquiryGeneralIcons, NavigationIcons } from "../utils/icons";
-import { HOME_DEFAULTS } from "../composables/homeDefaults";
 import { useInquiryGroupsStore } from "../stores/inquiryGroups";
 import { useInquiriesStore } from "../stores/inquiries";
 import { useSessionStore } from "../stores/session";
@@ -27,15 +26,22 @@ const inquiriesStore = useInquiriesStore();
 const sessionStore = useSessionStore();
 
 /* ------------------------------------------------------------------ */
-/* BRANDING — driven by homeDefaults.hero                              */
 /* ------------------------------------------------------------------ */
-const cityName = computed(() => "Agora");
-const tagline = computed(() => HOME_DEFAULTS.hero?.tagline || "");
+const entityName = computed(
+  () => sessionStore.appSettings.home?.hero.entityName || "Agora",
+);
+const tagline = computed(
+  () => sessionStore.appSettings.home?.hero.tagline || "",
+);
 
 /* ------------------------------------------------------------------ */
 /* USER ROLES                                                          */
 /* ------------------------------------------------------------------ */
-const isAdmin = computed(() => sessionStore.currentUser?.isAdmin === true || sessionStore.currentUser?.isModerator);
+const isAdmin = computed(
+  () =>
+    sessionStore.currentUser?.isAdmin === true ||
+    sessionStore.currentUser?.isModerator,
+);
 const isManager = computed(
   () => isAdmin.value || sessionStore.currentUser?.isGroupEditor === true,
 );
@@ -62,12 +68,6 @@ interface NavItem {
   visible?: () => boolean;
 }
 
-const selectedGroupType = computed(
-  () =>
-    (route.query.selectedGroupType as string) ||
-    currentGroup.value?.type ||
-    null,
-);
 
 /* ------------------------------------------------------------------ */
 /* MY ACTIVITY — personal shortcuts                                    */
@@ -232,7 +232,7 @@ const primaryNav = computed<NavItem[]>(() => [
     to: { name: "explore", params: { type: "relevant" } },
     children: [],
   },
-  
+
   /* Services — spaces of the "service" family. */
   {
     key: "services",
@@ -275,7 +275,6 @@ const primaryNav = computed<NavItem[]>(() => [
       query: { family: "collective", display: "feed" },
     },
   },
-
 
   /* Agenda — dated consultations and deadlines. */
   {
@@ -410,7 +409,6 @@ function isChildActive(child: NavChild): boolean {
   return true;
 }
 
-
 function isActive(item: NavItem): boolean {
   if (item.key === "landing") {
     return route.name === "home";
@@ -485,7 +483,7 @@ function goToFamily(key: string) {
 function goToFamilySpaces(key: string) {
   inquiriesStore.setFamilyType(key);
   router.push({
-    name: "explore-spaces",              // was: "group-list"
+    name: "explore-spaces", // was: "group-list"
     query: { family: key, viewMode: "group" },
   });
 }
@@ -496,7 +494,6 @@ function isSpaceFamilyActive(key: string): boolean {
     route.query.family === key
   );
 }
-
 
 function goToAllSpaces() {
   router.push({ name: "explore-spaces" });
@@ -529,7 +526,7 @@ onMounted(() => {
             Agora
           </div>
           <div class="nav-brand__sub">
-            {{ cityName }}
+            {{ entityName }}
           </div>
         </div>
       </div>

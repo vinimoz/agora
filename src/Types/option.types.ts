@@ -13,10 +13,9 @@ import type { FamilyStatus } from "./index.ts";
 // ============================================================================
 
 export type OptionStatus =
-  | 'draft' | 'published' | 'archived' | 'deleted'
-  | (string & {});
+  "draft" | "published" | "archived" | "deleted" | (string & {});
 
-  export type OptionConfiguration = {
+export type OptionConfiguration = {
   visibility: "private" | "everyone" | "groups" | "participants";
   showResults: string;
   allowComment: number | null;
@@ -56,8 +55,6 @@ export interface OptionField {
 export type OptionCurrentStatus = {
   created: number;
   updated: number;
-  isArchived: boolean;
-  isDeleted: boolean;
   isExpired: boolean;
   countParticipants: number;
   countComments: number;

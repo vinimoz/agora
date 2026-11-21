@@ -84,7 +84,7 @@ export interface HeroActionConfig {
   hint?: string;
 }
 
-export type HomeImageSlot = "hero" | "promo"
+export type HomeImageSlot = "hero" | "promo";
 
 /** The data blob stored on a HomeConfig row (merged server-side). */
 export interface HomeConfigData {
@@ -150,7 +150,7 @@ export interface HomeConfigPayload {
 
 /** Resolved Home configuration consumed by the landing page. */
 export interface HomeHeroConfig {
-  cityName: string;
+  entityName: string;
   tagline: string;
   title: string;
   subtitle: string;
@@ -250,7 +250,7 @@ export type AppSettings = {
   unrestrictedOwnerGroups: string[];
   home?: HomeConfig;
   homeConfigs: HomeConfigRecord[];
-  organizationType: string;
+  organizationType: OrganizationType | null ;
   navigation?: NavigationConfig;
   categoryTab: Category[];
   locationTab: Location[];

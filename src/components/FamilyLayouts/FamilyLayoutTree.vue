@@ -1186,11 +1186,14 @@ const canEditNode = (node: Option): boolean => {
     isArchived: node.isArchived || false,
   };
 
-  const context = createOptionContext(optionLike , inquiriesStore.getInquiryById(props.parentId));
+  const context = createOptionContext(
+    optionLike,
+    inquiriesStore.getInquiryById(props.parentId),
+  );
   return canEditOption(context);
 };
 
-console.log(" CAN EDIT NODE ",canEditNode.value)
+console.log(" CAN EDIT NODE ", canEditNode.value);
 
 const canCommentOnNode = (node: Option): boolean => {
   if (!node) return false;

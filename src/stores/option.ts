@@ -68,9 +68,7 @@ export const useOptionStore = defineStore("option", {
     status: {
       created: 0,
       updated: 0,
-      isArchived: false,
       isExpired: false,
-      isDeleted: false,
       countParticipants: 0,
       countComments: 0,
       trendingScore: 0,
@@ -308,7 +306,7 @@ export const useOptionStore = defineStore("option", {
     syncToCollectionStore(): void {
       if (this.id === 0) return;
       const optionsStore = useOptionsStore();
-      optionsStore.updateOption({ option: this.optionData });
+      optionsStore.updateOption( this.optionData);
     },
 
     syncDeletionToCollectionStore(): void {
@@ -445,7 +443,6 @@ export const useOptionStore = defineStore("option", {
         throw error;
       }
     },
-
 
     async close(): Promise<void> {
       const inquiryStore = useInquiryStore();
@@ -744,13 +741,13 @@ export const useOptionStore = defineStore("option", {
           );
 
           updatedOption = response?.data?.option;
-	   
+
           if (!updatedOption?.id) {
             throw new Error("No option returned from API");
           }
 
           const optionsStore = useOptionsStore();
-	  optionsStore.updateOption(updatedOption)
+          optionsStore.updateOption(updatedOption);
 
           return updatedOption;
         } catch (error) {
@@ -818,7 +815,7 @@ export const useOptionStore = defineStore("option", {
         this.childs.push(newChild);
 
         const optionsStore = useOptionsStore();
-        optionsStore.updateOption({ option: newChild });
+        optionsStore.updateOption( newChild );
         this.syncToCollectionStore();
         return newChild;
       } catch (error) {
@@ -865,8 +862,8 @@ export const useOptionStore = defineStore("option", {
 
         await OptionsAPI.deleteOption(this.id);
 
-          const optionsStore = useOptionsStore();
-	  optionsStore.removeOption(this.Id)
+        const optionsStore = useOptionsStore();
+        optionsStore.removeOption(this.id);
 
         emit(Event.OptionDeleted, {
           store: "option",
@@ -933,7 +930,7 @@ export const useOptionStore = defineStore("option", {
           });
 
           const optionsStore = useOptionsStore();
-	  optionsStore.updateOption(response.data.option)
+          optionsStore.updateOption(response.data.option);
 
           this.initializeTypeInfo();
           emit(Event.UpdateOptions, {

@@ -60,9 +60,7 @@
           `content-${zone.content || 'inquiries'}`,
           `display-${zone.display?.type || 'cards'}`,
           {
-            'is-empty':
-              !shouldRenderZone(zone) ||
-              !isZoneRenderable(zone),
+            'is-empty': !shouldRenderZone(zone) || !isZoneRenderable(zone),
           },
         ]"
         :style="getZoneStyle(zone)"
@@ -90,11 +88,7 @@
         <!-- Zone body -->
         <div class="zone-content">
           <!-- Render component when data exists AND zone is renderable -->
-          <template
-            v-if="
-              shouldRenderZone(zone) && isZoneRenderable(zone)
-            "
-          >
+          <template v-if="shouldRenderZone(zone) && isZoneRenderable(zone)">
             <component
               :is="getZoneComponent(zone)"
               v-bind="getZoneProps(zone, String(zoneKey))"
@@ -1630,7 +1624,7 @@ function getZoneProps(zone: DisplayZone, zoneKey?: string) {
 
   const data = getZoneData(zone);
   const selectedInquiry = getSelectedInquiry();
-console.log(" GET ZONE PROPS ",content)
+  console.log(" GET ZONE PROPS ", content);
   switch (content) {
     case "inquiry_groups": {
       const groupsData: InquiryGroup[] = Array.isArray(data) ? data : [];
@@ -1822,7 +1816,7 @@ console.log(" GET ZONE PROPS ",content)
         title: homeConfig.value.hero?.title,
         subtitle: homeConfig.value.hero?.subtitle,
         tagline: homeConfig.value.hero?.tagline,
-        cityName: homeConfig.value.hero?.cityName,
+        entityName: homeConfig.value.hero?.entityName,
         backgroundUrl: resolveHeroImage(homeConfig.value.hero?.backgroundUrl),
         weather: homeConfig.value.hero?.showWeather
           ? homeConfig.value.hero?.weather

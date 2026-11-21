@@ -344,7 +344,6 @@ export const useInquiryStore = defineStore("inquiry", {
             sessionStore.route.name === "inquiry" ||
             sessionStore.route.name === "page"
           ) {
-            console.log(" TOOOOOOOO LATE ", inquiryId);
             return InquiriesAPI.getFullInquiry(
               inquiryId ?? sessionStore.currentInquiryId,
             );
@@ -497,11 +496,12 @@ export const useInquiryStore = defineStore("inquiry", {
       return debouncedUpdate();
     },
 
-    async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {
+    async updateMiscField(
+      key: string,
+      value: { key: string; value: string },
+    ): Promise<void> {
       try {
-	     console.log(" Misc FIELLLLLLLLLLLLD ", key)
-	     console.log(" Misc FIELLLLLLLLLLLLD ", value)
-        await InquiriesAPI.updateMiscField(this.id,  {  key,  value } );
+        await InquiriesAPI.updateMiscField(this.id, { key, value });
         this.miscFields[key] = value;
         this.syncToCollectionStore();
       } catch (error) {

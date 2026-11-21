@@ -355,9 +355,9 @@ const familyKey = computed(
 );
 
 const effectiveFamilyKey = computed(() => {
-  if (familyKey.value) return familyKey.value; 
+  if (familyKey.value) return familyKey.value;
   if (props.targetType === "inquiry") return "timeline";
-  return ""; 
+  return "";
 });
 
 const timelineItems = computed<Item[]>(() => {
@@ -373,7 +373,6 @@ const timelineItems = computed<Item[]>(() => {
 
   return list;
 });
-
 
 // ---------------------------------------------------------------------------
 // Date resolution — handles both Option and Inquiry raw objects

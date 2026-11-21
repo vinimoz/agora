@@ -14,7 +14,8 @@ import { InquiryOptionIcons } from "../../utils/icons.ts";
 import ItemCard from "./ItemCard.vue";
 import AddItemToFamily from "../Modals/AddItemToFamily.vue";
 import { OptionsAPI, InquiriesAPI } from "../../Api/index.ts";
-
+import { useOptionsStore } from "../../stores/options";
+import { useInquiriesStore } from "../../stores/inquiries";
 import type {
   Item,
   InquiryOptionType,
@@ -27,8 +28,6 @@ import type {
   FamilyStatus,
 } from "../../Types/index.ts";
 
-import { useOptionStore } from "../../stores/option";   // singular
-import { useInquiryStore } from "../../stores/inquiry"; // singular
 import { getItemsForFamily } from "../../helpers/modules/itemHelpers";
 
 const props = defineProps<{
@@ -64,11 +63,12 @@ const emit = defineEmits<{
   ];
 }>();
 
-const optionStore = useOptionStore();
-const inquiryStore = useInquiryStore();
-
 const showAddModal = ref(false);
 const draggingItemId = ref<number | null>(null);
+
+const optionsStore = useOptionsStore();
+const inquiriesStore = useInquiriesStore();
+
 
 // ---------------------------------------------------------------------------
 // Status field resolution + guard
@@ -139,7 +139,6 @@ const MODERATION_STATUSES: KanbanColumn[] = [
   { value: "rejected", label: t("agora", "Rejected"), color: "#e74c3c" },
 ];
 
-
 const changeStatus = async (itemId: number, newStatus: string) => {
   const item = kanbanItems.value.find((i) => i.id === itemId);
   if (!item) return;
@@ -148,13 +147,14 @@ const changeStatus = async (itemId: number, newStatus: string) => {
   if (oldValue === newStatus) return;
 
   if (resolvedMode.value === "organization") {
-    emit("statusChange", { itemId, field: resolvedStatusField.value, oldValue, newValue: newStatus, mode: "organization" });
+    emit("statusChange", {
+      itemId,
+      field: resolvedStatusField.value,
+      oldValue,
+      newValue: newStatus,
+      mode: "organization",
+    });
     showSuccess(t("agora", "Card moved (visual only — status not changed)"));
-    return;
-  }
-
-  if (!permissions.value.changeStatus) {
-    showError(t("agora", "You are not allowed to change this status."));
     return;
   }
 
@@ -163,7 +163,9 @@ const changeStatus = async (itemId: number, newStatus: string) => {
   try {
     if (field === "optionStatus") {
       if (props.targetType !== "option") {
-        showError(t("agora", "This board cannot change option status on inquiries."));
+        showError(
+          t("agora", "This board cannot change option status on inquiries."),
+        );
         return;
       }
       await OptionsAPI.setOptionStatus(itemId, newStatus);
@@ -174,7 +176,9 @@ const changeStatus = async (itemId: number, newStatus: string) => {
       });
     } else if (field === "inquiryStatus") {
       if (props.targetType !== "inquiry") {
-        showError(t("agora", "This board cannot change inquiry status on options."));
+        showError(
+          t("agora", "This board cannot change inquiry status on options."),
+        );
         return;
       }
       await InquiriesAPI.updateInquiryStatus(itemId, newStatus);
@@ -184,12 +188,16 @@ const changeStatus = async (itemId: number, newStatus: string) => {
       });
     } else if (field === "moderationStatus") {
       if (props.targetType !== "inquiry") {
-        showError(t("agora", "This board cannot change moderation status on options."));
+        showError(
+          t("agora", "This board cannot change moderation status on options."),
+        );
         return;
       }
       // Requires moderation rights — check on the item
       if (!item.raw?.permissions?.edit) {
-        showError(t("agora", "You do not have permission to moderate this item."));
+        showError(
+          t("agora", "You do not have permission to moderate this item."),
+        );
         return;
       }
       await InquiriesAPI.updateModerationStatus(itemId, newStatus);
@@ -198,12 +206,24 @@ const changeStatus = async (itemId: number, newStatus: string) => {
         if (inq?.status) inq.status.moderationStatus = newStatus;
       });
     } else {
-      showError(t("agora", "Changing {field} is not yet supported.", { field }));
+      showError(
+        t("agora", "Changing {field} is not yet supported.", { field }),
+      );
       return;
     }
 
-    emit("statusChange", { itemId, field, oldValue, newValue: newStatus, mode: "status" });
-    showSuccess(t("agora", "Item moved to {column}", { column: getStatusLabel(newStatus) }));
+    emit("statusChange", {
+      itemId,
+      field,
+      oldValue,
+      newValue: newStatus,
+      mode: "status",
+    });
+    showSuccess(
+      t("agora", "Item moved to {column}", {
+        column: getStatusLabel(newStatus),
+      }),
+    );
     emit("updateItems");
   } catch (err) {
     console.error("[kanban] status change failed", err);
@@ -250,30 +270,6 @@ function normaliseTypeStatuses(raw: string[] | undefined): KanbanColumn[] {
 }
 
 
-/** Aggregate statuses across the option types present in this board. */
-function optionTypeColumns(): KanbanColumn[] {
-  const source = props.familyOptionTypes?.length
-    ? props.familyOptionTypes
-    : props.optionTypes;
-
-  const filter = props.kanbanFilters?.types;
-  const relevant = filter?.length
-    ? source.filter((typ) => filter.includes(typ.option_type))
-    : source;
-
-  const seen = new Set<string>();
-  const columns: KanbanColumn[] = [];
-  for (const typ of relevant) {
-    for (const col of normaliseTypeStatuses(typ.statuses)) {
-      if (!seen.has(col.value)) {
-        seen.add(col.value);
-        columns.push(col);
-      }
-    }
-  }
-  return columns;
-}
-
 const statusColumns = computed<KanbanColumn[]>(() => {
   // 1. Explicit override always wins
   if (props.kanbanColumns?.length) return props.kanbanColumns;
@@ -282,7 +278,7 @@ const statusColumns = computed<KanbanColumn[]>(() => {
 
   // 2. Orthogonal inquiry axes
   if (field === "publicationStatus") return PUBLICATION_STATUSES;
-  if (field === "moderationStatus")  return MODERATION_STATUSES;
+  if (field === "moderationStatus") return MODERATION_STATUSES;
 
   // 3. Inquiry workflow — family.statuses → generic
   if (field === "inquiryStatus") {
@@ -318,7 +314,9 @@ const columnCount = computed(() => Math.max(statusColumns.value.length, 1));
 const effectiveFamilyKey = computed(() => {
   if (props.familyKey) return props.familyKey;
   if (props.targetType === "inquiry") {
-    return (props.family as InquiryFamily | null | undefined)?.family_type ?? "";
+    return (
+      (props.family as InquiryFamily | null | undefined)?.family_type ?? ""
+    );
   }
   return (props.family as OptionFamily | null | undefined)?.family_type ?? "";
 });
@@ -353,7 +351,9 @@ function getItemStatusValue(item: Item): string {
   const s = item.raw?.status as Record<string, unknown> | undefined;
   switch (resolvedStatusField.value) {
     case "publicationStatus":
-      return typeof s?.publicationStatus === "string" ? s.publicationStatus : "";
+      return typeof s?.publicationStatus === "string"
+        ? s.publicationStatus
+        : "";
     case "moderationStatus":
       return typeof s?.moderationStatus === "string" ? s.moderationStatus : "";
     case "inquiryStatus":
@@ -431,15 +431,20 @@ async function handleDrop(e: DragEvent, newStatus: string) {
 // ---------------------------------------------------------------------------
 // Status change — load into singleton, call the action, sync back
 // ---------------------------------------------------------------------------
-
 </script>
 
 <template>
-  <div v-if="!boardPermissions.view" class="kanban-layout kanban-forbidden">
+  <div
+    v-if="!boardPermissions.view"
+    class="kanban-layout kanban-forbidden"
+  >
     <p>{{ t("agora", "You do not have access to this board.") }}</p>
   </div>
 
-  <div v-else class="kanban-layout">
+  <div
+    v-else
+    class="kanban-layout"
+  >
     <div class="kanban-actions">
       <NcButton
         v-if="!isReadonly"
@@ -448,7 +453,10 @@ async function handleDrop(e: DragEvent, newStatus: string) {
         @click="showAddModal = true"
       >
         <template #icon>
-          <component :is="InquiryOptionIcons.Plus" :size="18" />
+          <component
+            :is="InquiryOptionIcons.Plus"
+            :size="18"
+          />
         </template>
         {{ t("agora", "Add to board") }}
       </NcButton>
@@ -514,7 +522,10 @@ async function handleDrop(e: DragEvent, newStatus: string) {
             @dragstart="handleDragStart($event, item)"
             @dragend="handleDragEnd"
           >
-            <div v-if="badgesFor(item).length" class="item-badges">
+            <div
+              v-if="badgesFor(item).length"
+              class="item-badges"
+            >
               <span
                 v-for="b in badgesFor(item)"
                 :key="b.value"
@@ -536,7 +547,9 @@ async function handleDrop(e: DragEvent, newStatus: string) {
             <div class="item-footer">
               <span class="item-id">#{{ item.id }}</span>
               <div class="item-actions">
-                <NcActions v-if="canMoveItem(item) && boardPermissions.changeStatus">
+                <NcActions
+                  v-if="canMoveItem(item) && boardPermissions.changeStatus"
+                >
                   <NcActionButton
                     v-for="target in statusColumns.filter(
                       (s) => s.value !== getItemStatusValue(item),
@@ -547,10 +560,15 @@ async function handleDrop(e: DragEvent, newStatus: string) {
                     <template #icon>
                       <div
                         class="status-dot-small"
-                        :style="{ backgroundColor: target.color || getStatusColor(target.value) }"
+                        :style="{
+                          backgroundColor:
+                            target.color || getStatusColor(target.value),
+                        }"
                       />
                     </template>
-                    {{ t("agora", "Move to {column}", { column: target.label }) }}
+                    {{
+                      t("agora", "Move to {column}", { column: target.label })
+                    }}
                   </NcActionButton>
                 </NcActions>
               </div>
@@ -564,7 +582,10 @@ async function handleDrop(e: DragEvent, newStatus: string) {
             @drop="handleDrop($event, status.value)"
           >
             <div class="empty-icon">
-              <component :is="InquiryOptionIcons.Board" :size="32" />
+              <component
+                :is="InquiryOptionIcons.Board"
+                :size="32"
+              />
             </div>
             <p>{{ t("agora", "No items in this column") }}</p>
           </div>
@@ -573,7 +594,6 @@ async function handleDrop(e: DragEvent, newStatus: string) {
     </div>
   </div>
 </template>
-
 
 <style scoped lang="scss">
 .kanban-layout {

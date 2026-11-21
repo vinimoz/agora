@@ -101,9 +101,11 @@ export function useEngineActions(
         // ⚠️ See note below — verify the Phase shape in your Types before
         // shipping this. Placeholder: use whatever phase value the engine's
         // current metadata carries.
-        const phase = (e.metadata?.phase ?? "next") as any;
-        const r = await store.duplicateForPhase(e.id, phase);
-        return r !== null;
+	// Not implemented
+       // const phase = (e.metadata?.phase ?? "next") as any;
+       // const r = await store.duplicateForPhase(e.id, phase);
+       // return r !== null;
+       return false;
       }
     }
   };

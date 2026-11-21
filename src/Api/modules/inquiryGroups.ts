@@ -5,7 +5,7 @@
 import { AxiosResponse } from "@nextcloud/axios";
 import { httpInstance, createCancelTokenHandler } from "./HttpApi.js";
 import { Inquiry, InquiryGroup } from "@/Types";
-import { UpdateInquiryGroupPayload } from "../../Types/inquiryGroup.types.ts";
+import { UpdateInquiryGroupPayload } from "../../Types/inquiryGroups.types.ts";
 
 const inquiryGroups = {
   addGroup(dataInquiryGroup: {
@@ -31,7 +31,6 @@ const inquiryGroups = {
     inquiryGroupId: number,
     updateData: UpdateInquiryGroupPayload,
   ): Promise<AxiosResponse<{ inquiryGroup: InquiryGroup }>> {
-	  console.log(" UPDATE DATA ",updateData)
     return httpInstance.request({
       method: "PUT",
       url: `inquirygroup/update/${inquiryGroupId}`,

@@ -456,36 +456,37 @@ import {
 } from "../../helpers/modules/InquiryOptionHelper";
 import DeleteConfirmationDialog from "../Modals/DeleteConfirmationDialog.vue";
 
-
-
 export type TargetType = "option" | "inquiry";
 
-const props = withDefaults(defineProps<{
-  item: Item;
-  parentId: number;
-  targetType: TargetType;
-  compact?: boolean;
-  inline?: boolean;
-  official?: boolean;
-  highlight?: boolean;
-  showPoll?: boolean;
-  showAction?: boolean;
-  preventClick?: boolean;
-  textMaxLength?: number;
-  progressBar?: boolean;
-  familyType?: string;
-}>(), {
-  compact: false,
-  inline: false,
-  official: false,
-  highlight: false,
-  showPoll: true,
-  showAction: true,
-  preventClick: false,
-  textMaxLength: 200,
-  progressBar: false,
-  familyType: undefined,
-});
+const props = withDefaults(
+  defineProps<{
+    item: Item;
+    parentId: number;
+    targetType: TargetType;
+    compact?: boolean;
+    inline?: boolean;
+    official?: boolean;
+    highlight?: boolean;
+    showPoll?: boolean;
+    showAction?: boolean;
+    preventClick?: boolean;
+    textMaxLength?: number;
+    progressBar?: boolean;
+    familyType?: string;
+  }>(),
+  {
+    compact: false,
+    inline: false,
+    official: false,
+    highlight: false,
+    showPoll: true,
+    showAction: true,
+    preventClick: false,
+    textMaxLength: 200,
+    progressBar: false,
+    familyType: undefined,
+  },
+);
 
 const emit = defineEmits<{
   click: [item: Item];
@@ -528,45 +529,42 @@ const inquiriesStore = useInquiriesStore();
 // ---- SupportFeature still wants the raw object ----
 const supportItem = computed(() => raw.value);
 
-console.log(" ITEM CARD : TAGET TYPE ", props.item)
+console.log(" ITEM CARD : TAGET TYPE ", props.item);
 const itemContext = computed(() => {
-  
   if (!props.item || !raw.value) return null;
-  if (props.targetType === 'inquiry')
-  return createInquiryContext(raw.value);
+  if (props.targetType === "inquiry") return createInquiryContext(raw.value);
   else
-  return createOptionContext(raw.value,inquiriesStore.getInquiryById(props.parentId));
+    return createOptionContext(
+      raw.value,
+      inquiriesStore.getInquiryById(props.parentId),
+    );
 });
 
-console.log(" ITEM CARD : ITEM CONTEXT ", itemContext.value)
+console.log(" ITEM CARD : ITEM CONTEXT ", itemContext.value);
 
 const canEditItem = computed(() => {
-  if ( props.targetType === 'inquiry' ) {
-    return itemContext.value
-      ? canEdit(itemContext.value)
-      : false;
+  if (props.targetType === "inquiry") {
+    return itemContext.value ? canEdit(itemContext.value) : false;
   } else {
     return itemContext.value
-      ? canEditOption(itemContext.value,props.parentId)
-      : false;
-     }
-});
-
-const canDeleteItem = computed(() => {
-  if (props.targetType === 'inquiry') {
-    return itemContext.value
-      ? canDelete(itemContext.value)
-      : false;
-  } else {
-    return itemContext.value
-      ? canDeleteOption(itemContext.value)
+      ? canEditOption(itemContext.value, props.parentId)
       : false;
   }
 });
 
-const canEditOrDelete = computed(() => canEditItem.value || canDeleteItem.value);
+const canDeleteItem = computed(() => {
+  if (props.targetType === "inquiry") {
+    return itemContext.value ? canDelete(itemContext.value) : false;
+  } else {
+    return itemContext.value ? canDeleteOption(itemContext.value) : false;
+  }
+});
 
-console.log(" CAN EDIT OR DELETE INTO ITEM CARD  ", canEditOrDelete.value)
+const canEditOrDelete = computed(
+  () => canEditItem.value || canDeleteItem.value,
+);
+
+console.log(" CAN EDIT OR DELETE INTO ITEM CARD  ", canEditOrDelete.value);
 
 // ---- Type lookups stay the same ----
 const isInquiryItem = computed(() => props.targetType === "inquiry");

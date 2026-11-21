@@ -34,6 +34,17 @@ export interface BaseEntry {
 // ============================================================================
 // INQUIRY ENUMS
 // ============================================================================
+export interface InquiryField {
+  key: string;
+  label: string;
+  type: string;
+  required?: boolean;
+  default?: unknown;
+  allowed_values?: unknown[];
+  rules?: unknown[];
+}
+
+
 
 export type VisibilityType =
   "private" | "groups" | "participants" | "everyone" | "users";
@@ -170,7 +181,7 @@ export interface InquiryType {
   icon: string;
   label: string;
   description?: string;
-  fields: string[];
+  fields: InquiryField[];
   allowed_response: string[];
   allowed_transformation: string[];
   allowed_option_type: string[];

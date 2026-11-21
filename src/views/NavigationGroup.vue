@@ -351,198 +351,193 @@ onMounted(() => {
             {{ t("agora", "Navigation") }}
           </h3>
 
+          <NcAppNavigationItem
+            :name="t('agora', 'Back to family')"
+            :to="{
+              name: 'explore-spaces',
+              query: {
+                family: activeFamily ?? undefined, // ← was missing
+                selectedGroupType: selectedGroupType ?? undefined,
+              },
+            }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                />
+              </svg>
+            </template>
+          </NcAppNavigationItem>
 
-			  <NcAppNavigationItem
-  :name="
-       t('agora', 'Back to family')
-  "
-  :to="{
-      name: 'explore-spaces',
-      query: {
-        family: activeFamily ?? undefined,          // ← was missing
-        selectedGroupType: selectedGroupType ?? undefined,
-      },
-    }"
+          <NcAppNavigationItem
+            :name="t('agora', 'Home')"
+            :to="{ name: 'home' }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
+          <NcAppNavigationItem
+            :name="t('agora', 'Overview')"
+            :to="{
+              name: 'group-list',
+              params: { slug: currentGroup.slug },
+              query: { ...route.query }, // ← preserve family + selectedGroupType
+            }"
+            :exact="true"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
 
-class="navigation-item"
->
-<template #icon>
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-    >
-      <path
-        d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
-      />
-    </svg>
-  </template>
-</NcAppNavigationItem>
+          <NcAppNavigationItem
+            v-if="subgroups.length > 0"
+            :name="t('agora', 'Subgroups')"
+            allow-collapse
+            :open="false"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Folder"
+                class="navigation-icon"
+              />
+            </template>
+            <template #counter>
+              <NcCounterBubble
+                :count="subgroups.length"
+                class="navigation-counter"
+              />
+            </template>
+            <ul class="navigation-sublist">
+              <NcAppNavigationItem
+                v-for="sub in subgroups"
+                :key="sub.id"
+                :name="sub.title"
+                :to="{
+                  name: 'group-list',
+                  params: { slug: sub.slug },
+                  query: { ...route.query },
+                }"
+                class="navigation-subitem"
+              >
+                <template #icon>
+                  <component
+                    :is="getGroupTypeIcon(sub.type)"
+                    class="navigation-icon sub-icon"
+                  />
+                </template>
+              </NcAppNavigationItem>
+            </ul>
+          </NcAppNavigationItem>
 
-	  <NcAppNavigationItem
-	  :name="t('agora', 'Home')"
-		 :to="{ name: 'home' }"
-		      class="navigation-item"
-			     >
-			     <template #icon>
-				     <component
-				     :is="NavigationIcons.Home"
-					  class="navigation-icon"
-						 />
-			     </template>
-	  </NcAppNavigationItem>
-<NcAppNavigationItem
-  :name="t('agora', 'Overview')"
-  :to="{
-      name: 'group-list',
-      params: { slug: currentGroup.slug },
-      query: { ...route.query },        // ← preserve family + selectedGroupType
-    }"
-  :exact="true"
-  class="navigation-item"
->
+          <NcAppNavigationItem
+            v-if="groupInquiries.length > 0"
+            :name="t('agora', 'Inquiries')"
+            allow-collapse
+            :open="false"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="InquiryGeneralIcons.MessageSquare"
+                class="navigation-icon"
+              />
+            </template>
+            <template #counter>
+              <NcCounterBubble
+                :count="groupInquiries.length"
+                class="navigation-counter"
+              />
+            </template>
+            <ul class="navigation-sublist">
+              <InquiryNavigationItems
+                v-for="inq in groupInquiries"
+                :key="inq.id"
+                :inquiry="inq"
+              />
+            </ul>
+          </NcAppNavigationItem>
 
-				     <template #icon>
-					     <component
-					     :is="NavigationIcons.Home"
-						  class="navigation-icon"
-							 />
-				     </template>
-	  </NcAppNavigationItem>
+          <NcAppNavigationItem
+            v-if="hasArchivedSubgroups"
+            :name="t('agora', 'Space archives')"
+            :to="{
+              name: 'group-archived',
+              query: {
+                family: activeFamily ?? undefined,
+                from: currentGroup?.slug,
+              },
+            }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Archive"
+                class="navigation-icon"
+              />
+            </template>
+            <template #counter>
+              <NcCounterBubble
+                :count="archivedSubgroups.length"
+                class="navigation-counter"
+              />
+            </template>
+          </NcAppNavigationItem>
+        </NcAppNavigationList>
 
-	  <NcAppNavigationItem
-	  v-if="subgroups.length > 0"
-	  :name="t('agora', 'Subgroups')"
-	  allow-collapse
-	  :open="false"
-	  class="navigation-item"
-	  >
-	  <template #icon>
-		  <component
-				  :is="NavigationIcons.Folder"
-				  class="navigation-icon"
-				  />
-	  </template>
-	  <template #counter>
-		  <NcCounterBubble
-				  :count="subgroups.length"
-				  class="navigation-counter"
-				  />
-	  </template>
-	  <ul class="navigation-sublist">
-		  <NcAppNavigationItem
-				  v-for="sub in subgroups"
-				  :key="sub.id"
-				  :name="sub.title"
-				  :to="{
-				       name: 'group-list',
-				       params: { slug: sub.slug },
-				       query: { ...route.query },
-				       }"
-				  class="navigation-subitem"
-				  >
-				  <template #icon>
-					  <component
-							  :is="getGroupTypeIcon(sub.type)"
-							  class="navigation-icon sub-icon"
-							  />
-				  </template>
-		  </NcAppNavigationItem>
-	  </ul>
-	  </NcAppNavigationItem>
+        <NcAppNavigationSpacer />
 
-	  <NcAppNavigationItem
-			  v-if="groupInquiries.length > 0"
-			  :name="t('agora', 'Inquiries')"
-			  allow-collapse
-			  :open="false"
-			  class="navigation-item"
-			  >
-			  <template #icon>
-				  <component
-						  :is="InquiryGeneralIcons.MessageSquare"
-						  class="navigation-icon"
-						  />
-			  </template>
-	  <template #counter>
-		  <NcCounterBubble
-				  :count="groupInquiries.length"
-				  class="navigation-counter"
-				  />
-	  </template>
-	  <ul class="navigation-sublist">
-		  <InquiryNavigationItems
-				  v-for="inq in groupInquiries"
-				  :key="inq.id"
-				  :inquiry="inq"
-				  />
-	  </ul>
-	  </NcAppNavigationItem>
+        <NcAppNavigationList v-if="canEditCurrent">
+          <h3 class="navigation-caption">
+            {{ t("agora", "Actions") }}
+          </h3>
 
-	  <NcAppNavigationItem
-			  v-if="hasArchivedSubgroups"
-			  :name="t('agora', 'Space archives')"
-			  :to="{
-			       name: 'group-archived',
-			       query: {
-			       family: activeFamily ?? undefined,
-			       from: currentGroup?.slug,
-			       },
-			       }"
-			  class="navigation-item"
-			  >
-			  <template #icon>
-				  <component
-						  :is="NavigationIcons.Archive"
-						  class="navigation-icon"
-						  />
-			  </template>
-	  <template #counter>
-		  <NcCounterBubble
-				  :count="archivedSubgroups.length"
-				  class="navigation-counter"
-				  />
-	  </template>
-	  </NcAppNavigationItem>
-	</NcAppNavigationList>
-
-	<NcAppNavigationSpacer />
-
-	<NcAppNavigationList v-if="canEditCurrent">
-	<h3 class="navigation-caption">
-		{{ t("agora", "Actions") }}
-	</h3>
-
-	<NcAppNavigationItem
-			:name="t('agora', 'Create')"
-			class="navigation-item"
-			>
-			<template #icon>
-				<component
-						:is="NavigationIcons.Plus"
-						class="navigation-icon"
-						/>
-			</template>
-	<template #actions>
-		<NcActionButton @click="openCreateInquiry">
-		<template #icon>
-			<component :is="NavigationIcons.Plus" />
-		</template>
-		{{ t("agora", "New inquiry") }}
-		</NcActionButton>
-		<NcActionButton
-				v-if="canCreateSubgroup"
-				@click="openCreateSubgroup"
-				>
-				<template #icon>
-					<component :is="NavigationIcons.Folder" />
-				</template>
-		{{ t("agora", "New subgroup") }}
-		</NcActionButton>
-	</template>
-	</NcAppNavigationItem>
-	</NcAppNavigationList>
+          <NcAppNavigationItem
+            :name="t('agora', 'Create')"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Plus"
+                class="navigation-icon"
+              />
+            </template>
+            <template #actions>
+              <NcActionButton @click="openCreateInquiry">
+                <template #icon>
+                  <component :is="NavigationIcons.Plus" />
+                </template>
+                {{ t("agora", "New inquiry") }}
+              </NcActionButton>
+              <NcActionButton
+                v-if="canCreateSubgroup"
+                @click="openCreateSubgroup"
+              >
+                <template #icon>
+                  <component :is="NavigationIcons.Folder" />
+                </template>
+                {{ t("agora", "New subgroup") }}
+              </NcActionButton>
+            </template>
+          </NcAppNavigationItem>
+        </NcAppNavigationList>
       </template>
 
       <!-- ============================================================= -->
@@ -550,392 +545,392 @@ class="navigation-item"
       <!-- Sidebar shows TYPES of the family, not every group instance.   -->
       <!-- ============================================================= -->
       <template v-else-if="activeFamily">
-	      <div class="family-header">
-		      <h3 class="family-title">
-			      {{ familyLabel }}
-		      </h3>
-	      </div>
+        <div class="family-header">
+          <h3 class="family-title">
+            {{ familyLabel }}
+          </h3>
+        </div>
 
-	      <NcAppNavigationList>
-	      <h3 class="navigation-caption">
-		      {{ t("agora", "Group types") }}
-	      </h3>
+        <NcAppNavigationList>
+          <h3 class="navigation-caption">
+            {{ t("agora", "Group types") }}
+          </h3>
 
-	      <NcAppNavigationItem
-			      v-for="type in familyRootTypes"
-			      :key="type.type || type.group_type"
-			      :name="t('agora', type.label)"
-			      :allow-collapse="
-					       groupsOfType(type.type || type.group_type || '').length > 0
-					       "
-			      :open="false"
-			      class="navigation-item"
-			      @click="goToType(type)"
-			      >
-			      <template #icon>
-				      <component
-						      :is="getGroupTypeIcon(type.type || type.group_type || '')"
-						      class="navigation-icon"
-						      />
-			      </template>
-	      <template
-			      v-if="groupsOfType(type.type || type.group_type || '').length > 0"
-			      #counter
-			      >
-			      <NcCounterBubble
-					      :count="groupsOfType(type.type || type.group_type || '').length"
-					      class="navigation-counter"
-					      />
-	      </template>
+          <NcAppNavigationItem
+            v-for="type in familyRootTypes"
+            :key="type.type || type.group_type"
+            :name="t('agora', type.label)"
+            :allow-collapse="
+              groupsOfType(type.type || type.group_type || '').length > 0
+            "
+            :open="false"
+            class="navigation-item"
+            @click="goToType(type)"
+          >
+            <template #icon>
+              <component
+                :is="getGroupTypeIcon(type.type || type.group_type || '')"
+                class="navigation-icon"
+              />
+            </template>
+            <template
+              v-if="groupsOfType(type.type || type.group_type || '').length > 0"
+              #counter
+            >
+              <NcCounterBubble
+                :count="groupsOfType(type.type || type.group_type || '').length"
+                class="navigation-counter"
+              />
+            </template>
 
-		      <ul
-				      v-if="groupsOfType(type.type || type.group_type || '').length > 0"
-				      class="navigation-sublist"
-				      >
-				      <NcAppNavigationItem
-						      v-for="grp in groupsOfType(type.type || type.group_type || '')"
-						      :key="grp.id"
-						      :name="grp.title"
-						      :to="{
-							   name: 'group-list',
-							   params: { slug: grp.slug },
-							   query: { family: activeFamily },
-							   }"
-						      class="navigation-subitem"
-						      />
-		      </ul>
-				      </NcAppNavigationItem>
-	      </NcAppNavigationList>
+            <ul
+              v-if="groupsOfType(type.type || type.group_type || '').length > 0"
+              class="navigation-sublist"
+            >
+              <NcAppNavigationItem
+                v-for="grp in groupsOfType(type.type || type.group_type || '')"
+                :key="grp.id"
+                :name="grp.title"
+                :to="{
+                  name: 'group-list',
+                  params: { slug: grp.slug },
+                  query: { family: activeFamily },
+                }"
+                class="navigation-subitem"
+              />
+            </ul>
+          </NcAppNavigationItem>
+        </NcAppNavigationList>
 
-	      <NcAppNavigationSpacer />
+        <NcAppNavigationSpacer />
 
-	      <NcAppNavigationList>
-	      <NcAppNavigationItem
-			      :name="t('agora', 'Home')"
-			      :to="{ name: 'home' }"
-			      class="navigation-item"
-			      >
-			      <template #icon>
-				      <component
-						      :is="NavigationIcons.Home"
-						      class="navigation-icon"
-						      />
-			      </template>
-	      </NcAppNavigationItem>
+        <NcAppNavigationList>
+          <NcAppNavigationItem
+            :name="t('agora', 'Home')"
+            :to="{ name: 'home' }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
 
-	      <NcAppNavigationItem
-			      :name="t('agora', 'My spaces')"
-			      :to="{ name: 'explore-spaces' }"
-			      class="navigation-item"
-			      >
-			      <template #icon>
-				      <component
-						      :is="InquiryGeneralIcons.FolderMultiple"
-						      class="navigation-icon"
-						      />
-			      </template>
-	      </NcAppNavigationItem>
+          <NcAppNavigationItem
+            :name="t('agora', 'My spaces')"
+            :to="{ name: 'explore-spaces' }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="InquiryGeneralIcons.FolderMultiple"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
 
-	      <NcAppNavigationItem
-			      :name="t('agora', 'Archived groups')"
-			      :to="{ name: 'group-archived', query: { family: activeFamily } }"
-			      class="navigation-item"
-			      >
-			      <template #icon>
-				      <component
-						      :is="NavigationIcons.Archive"
-						      class="navigation-icon"
-						      />
-			      </template>
-	      </NcAppNavigationItem>
-	      </NcAppNavigationList>
+          <NcAppNavigationItem
+            :name="t('agora', 'Archived groups')"
+            :to="{ name: 'group-archived', query: { family: activeFamily } }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Archive"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
+        </NcAppNavigationList>
       </template>
 
       <!-- ============================================================= -->
       <!-- CASE 3 — Portal / "My spaces" (no slug, no family)             -->
       <!-- ============================================================= -->
       <template v-else>
-	      <NcAppNavigationList>
-	      <h3 class="navigation-caption">
-		      {{ t("agora", "My spaces") }}
-	      </h3>
+        <NcAppNavigationList>
+          <h3 class="navigation-caption">
+            {{ t("agora", "My spaces") }}
+          </h3>
 
-	      <NcAppNavigationItem
-			      v-for="type in allRootTypes"
-			      :key="type.type || type.group_type"
-			      :name="t('agora', type.label)"
-			      :allow-collapse="
-					       groupsOfType(type.type || type.group_type || '').length > 0
-					       "
-			      :open="false"
-			      class="navigation-item"
-			      @click="goToType(type)"
-			      >
-			      <template #icon>
-				      <component
-						      :is="getGroupTypeIcon(type.type || type.group_type || '')"
-						      class="navigation-icon"
-						      />
-			      </template>
+          <NcAppNavigationItem
+            v-for="type in allRootTypes"
+            :key="type.type || type.group_type"
+            :name="t('agora', type.label)"
+            :allow-collapse="
+              groupsOfType(type.type || type.group_type || '').length > 0
+            "
+            :open="false"
+            class="navigation-item"
+            @click="goToType(type)"
+          >
+            <template #icon>
+              <component
+                :is="getGroupTypeIcon(type.type || type.group_type || '')"
+                class="navigation-icon"
+              />
+            </template>
 
-	      <template
-			      v-if="groupsOfType(type.type || type.group_type || '').length > 0"
-			      #counter
-			      >
-			      <NcCounterBubble
-					      :count="groupsOfType(type.type || type.group_type || '').length"
-					      class="navigation-counter"
-					      />
-	      </template>
+            <template
+              v-if="groupsOfType(type.type || type.group_type || '').length > 0"
+              #counter
+            >
+              <NcCounterBubble
+                :count="groupsOfType(type.type || type.group_type || '').length"
+                class="navigation-counter"
+              />
+            </template>
 
-		      <ul
-				      v-if="groupsOfType(type.type || type.group_type || '').length > 0"
-				      class="navigation-sublist"
-				      >
-				      <NcAppNavigationItem
-						      v-for="grp in groupsOfType(type.type || type.group_type || '')"
-						      :key="grp.id"
-						      :name="grp.title"
-						      :to="{ name: 'group-list', params: { slug: grp.slug } }"
-						      class="navigation-subitem"
-						      />
-		      </ul>
-				      </NcAppNavigationItem>
+            <ul
+              v-if="groupsOfType(type.type || type.group_type || '').length > 0"
+              class="navigation-sublist"
+            >
+              <NcAppNavigationItem
+                v-for="grp in groupsOfType(type.type || type.group_type || '')"
+                :key="grp.id"
+                :name="grp.title"
+                :to="{ name: 'group-list', params: { slug: grp.slug } }"
+                class="navigation-subitem"
+              />
+            </ul>
+          </NcAppNavigationItem>
 
-				      <NcAppNavigationItem
-						      v-if="allRootTypes.length === 0"
-						      :name="t('agora', 'No group types available')"
-						      :disabled="true"
-						      class="navigation-empty"
-						      />
-	      </NcAppNavigationList>
+          <NcAppNavigationItem
+            v-if="allRootTypes.length === 0"
+            :name="t('agora', 'No group types available')"
+            :disabled="true"
+            class="navigation-empty"
+          />
+        </NcAppNavigationList>
 
-	      <NcAppNavigationSpacer />
+        <NcAppNavigationSpacer />
 
-	      <NcAppNavigationList>
-	      <h3 class="navigation-caption">
-		      {{ t("agora", "Actions") }}
-	      </h3>
+        <NcAppNavigationList>
+          <h3 class="navigation-caption">
+            {{ t("agora", "Actions") }}
+          </h3>
 
-	      <NcAppNavigationItem
-			      :name="t('agora', 'Create space')"
-			      class="navigation-item"
-			      @click="openCreateRootSpace"
-			      >
-			      <template #icon>
-				      <component
-						      :is="NavigationIcons.Plus"
-						      class="navigation-icon"
-						      />
-			      </template>
-	      </NcAppNavigationItem>
-	      </NcAppNavigationList>
+          <NcAppNavigationItem
+            :name="t('agora', 'Create space')"
+            class="navigation-item"
+            @click="openCreateRootSpace"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Plus"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
+        </NcAppNavigationList>
 
-	      <NcAppNavigationSpacer />
+        <NcAppNavigationSpacer />
 
-	      <NcAppNavigationList>
-	      <NcAppNavigationItem
-			      :name="t('agora', 'Archived groups')"
-			      :to="{ name: 'group-archived' }"
-			      class="navigation-item"
-			      >
-			      <template #icon>
-				      <component
-						      :is="NavigationIcons.Archive"
-						      class="navigation-icon"
-						      />
-			      </template>
-	      </NcAppNavigationItem>
+        <NcAppNavigationList>
+          <NcAppNavigationItem
+            :name="t('agora', 'Archived groups')"
+            :to="{ name: 'group-archived' }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Archive"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
 
-	      <NcAppNavigationItem
-			      :name="t('agora', 'Home')"
-			      :to="{ name: 'home' }"
-			      class="navigation-item"
-			      >
-			      <template #icon>
-				      <component
-						      :is="NavigationIcons.Home"
-						      class="navigation-icon"
-						      />
-			      </template>
-	      </NcAppNavigationItem>
-	      </NcAppNavigationList>
+          <NcAppNavigationItem
+            :name="t('agora', 'Home')"
+            :to="{ name: 'home' }"
+            class="navigation-item"
+          >
+            <template #icon>
+              <component
+                :is="NavigationIcons.Home"
+                class="navigation-icon"
+              />
+            </template>
+          </NcAppNavigationItem>
+        </NcAppNavigationList>
       </template>
     </template>
   </NcAppNavigation>
 
   <InquiryGroupCreateDlg
-		  v-if="createGroupDlgToggle"
-		  :inquiry-group-type="selectedInquiryGroupTypeForCreation"
-		  :parent-group-id="selectedParentId"
-		  :available-groups="availableGroups"
-		  @close="handleCloseDialog"
-		  @added="inquiryGroupAdded"
-		  />
+    v-if="createGroupDlgToggle"
+    :inquiry-group-type="selectedInquiryGroupTypeForCreation"
+    :parent-group-id="selectedParentId"
+    :available-groups="availableGroups"
+    @close="handleCloseDialog"
+    @added="inquiryGroupAdded"
+  />
 </template>
 
 <style lang="scss">
 .agora-navigation {
-	padding: 12px 0;
+  padding: 12px 0;
 
-	.current-space {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 12px 16px 16px;
-		margin-bottom: 4px;
-		border-bottom: 1px solid var(--color-border);
+  .current-space {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px 16px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--color-border);
 
-		.space-badge {
-			width: 40px;
-			height: 40px;
-			border-radius: 10px;
-			background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-shrink: 0;
-			box-shadow: 0 2px 8px rgba(74, 111, 143, 0.25);
+    .space-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6c8eb2 0%, #4a6f8f 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(74, 111, 143, 0.25);
 
-			.space-icon {
-				width: 22px;
-				height: 22px;
-				color: white;
-			}
-		}
+      .space-icon {
+        width: 22px;
+        height: 22px;
+        color: white;
+      }
+    }
 
-		.space-info {
-			min-width: 0;
-			flex: 1;
+    .space-info {
+      min-width: 0;
+      flex: 1;
 
-			.space-title {
-				margin: 0;
-				font-size: 15px;
-				font-weight: 700;
-				color: var(--color-main-text);
-				line-height: 1.2;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
+      .space-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--color-main-text);
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-			.space-subtitle {
-				margin: 2px 0 0 0;
-				font-size: 12px;
-				color: var(--color-text-lighter);
-				line-height: 1.3;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-		}
-	}
+      .space-subtitle {
+        margin: 2px 0 0 0;
+        font-size: 12px;
+        color: var(--color-text-lighter);
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
 
-	.family-header {
-		padding: 12px 16px 10px;
-		border-bottom: 1px solid var(--color-border);
-		margin-bottom: 6px;
+  .family-header {
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 6px;
 
-		.family-title {
-			margin: 0;
-			font-size: 14px;
-			font-weight: 700;
-			text-transform: uppercase;
-			letter-spacing: 0.4px;
-			color: var(--color-text-lighter);
-		}
-	}
+    .family-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--color-text-lighter);
+    }
+  }
 }
 
-  .navigation-icon {
-	  width: 20px;
-	  height: 20px;
-	  flex-shrink: 0;
+.navigation-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 
-	  &.sub-icon {
-		  width: 16px;
-		  height: 16px;
-	  }
+  &.sub-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.navigation-caption {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-lighter);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 12px 8px 12px;
+  padding: 0 0 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.navigation-item {
+  margin: 2px 8px;
+  border-radius: 8px;
+
+  &:hover {
+    background-color: var(--color-background-hover);
   }
 
+  &.active {
+    background-color: var(--color-primary-light);
+
+    :deep(.app-navigation-entry__title) {
+      font-weight: 600;
+    }
+  }
+}
+
+.navigation-sublist {
+  margin-left: 8px;
+}
+
+.navigation-subitem {
+  margin: 1px 4px;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: var(--color-background-hover);
+  }
+}
+
+.navigation-counter {
+  background-color: var(--color-background-darker);
+  color: var(--color-text-lighter);
+}
+
+.navigation-empty {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+:deep(.app-navigation__body) {
+  overflow: revert;
+}
+
+:deep(.app-navigation-entry-icon),
+:deep(.app-navigation-entry__title) {
+  transition: opacity 0.2s ease;
+}
+
+:deep(.app-navigation-entry.active .app-navigation-entry-icon),
+:deep(.app-navigation-entry.active .app-navigation-entry__title) {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .agora-navigation {
+    padding: 8px 0;
+
+    .current-space {
+      padding: 10px 12px 12px;
+    }
+  }
+}
+
+.theme--dark {
   .navigation-caption {
-	  font-size: 12px;
-	  font-weight: 600;
-	  color: var(--color-text-lighter);
-	  text-transform: uppercase;
-	  letter-spacing: 0.5px;
-	  margin: 0 12px 8px 12px;
-	  padding: 0 0 8px 0;
-	  border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-light);
   }
-
-  .navigation-item {
-	  margin: 2px 8px;
-	  border-radius: 8px;
-
-	  &:hover {
-		  background-color: var(--color-background-hover);
-	  }
-
-	  &.active {
-		  background-color: var(--color-primary-light);
-
-		  :deep(.app-navigation-entry__title) {
-			  font-weight: 600;
-		  }
-	  }
-  }
-
-  .navigation-sublist {
-	  margin-left: 8px;
-  }
-
-  .navigation-subitem {
-	  margin: 1px 4px;
-	  border-radius: 6px;
-
-	  &:hover {
-		  background-color: var(--color-background-hover);
-	  }
-  }
-
-  .navigation-counter {
-	  background-color: var(--color-background-darker);
-	  color: var(--color-text-lighter);
-  }
-
-  .navigation-empty {
-	  opacity: 0.6;
-	  font-style: italic;
-  }
-
-  :deep(.app-navigation__body) {
-	  overflow: revert;
-  }
-
-  :deep(.app-navigation-entry-icon),
-  :deep(.app-navigation-entry__title) {
-	  transition: opacity 0.2s ease;
-  }
-
-  :deep(.app-navigation-entry.active .app-navigation-entry-icon),
-  :deep(.app-navigation-entry.active .app-navigation-entry__title) {
-	  opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-	  .agora-navigation {
-		  padding: 8px 0;
-
-		  .current-space {
-			  padding: 10px 12px 12px;
-		  }
-	  }
-  }
-
-  .theme--dark {
-	  .navigation-caption {
-		  color: var(--color-text-light);
-	  }
-  }
+}
 </style>

@@ -111,7 +111,7 @@ export interface UpdateInquiryGroupPayload {
   ownedGroup?: string;
   groupStatus?: InquiryGroupWorkflowStatus;
   expire?: number | null;
-  coverId: number | null;
+  coverId?: number | null;
   miscFields?: Record<string, unknown>;
   configuration?: InquiryGroupConfiguration;
 }
@@ -154,6 +154,7 @@ export interface InquiryGroup {
   updated?: number;
   description: string | null;
   owner: User;
+  coverId: number | null;
   type: string;
   trendingScore?: number;
   configuration: InquiryGroupConfiguration;
@@ -164,8 +165,6 @@ export interface InquiryGroup {
   order: number;
   expire: number | null;
   metadata: string | null;
-  coverId: number | null;
-  protected: boolean;
   inquiryIds: number[];
   childs: number[];
   slug: string;

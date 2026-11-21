@@ -240,30 +240,20 @@ export function createOptionContext(
 ): PermissionContext | null {
   const parentCtx = createInquiryContext(parentInquiry);
   if (!parentCtx) return null;
-console.log(" CAN EDIT OPTON ")
 
-  const supportFeature = option.supportFeature
-  const allowComment = option.allowComment
 
   return {
     ...parentCtx,
     userType: getCurrentUserType(),
     contentType: ContentType.Option,
     isOwner: isContentOwner(option.owner.id),
-    isPublic: true,
     isLocked: false,
     isExpired: false,
-    isDeleted: option.isDeleted || false,
-    isArchived: option.isArchived || false,
-    hasGroupRestrictions: false,
-    userGroups: getCurrentUserGroups(),
-    allowedGroups: [],
     optionType: option.type,
-    supportFeature,
-    allowComment,
-  }
+    // supportFeature: option.configuration.supportFeature,
+    // allowComment: option.configuration.allowComment,
+  };
 }
-
 
 export function createInquiryGroupContext(
   group: InquiryGroup,
@@ -281,7 +271,6 @@ export function createInquiryGroupContext(
     isExpired: group.expire ? group.expire * 1000 < Date.now() : false,
     isDeleted: (group.deleted ?? 0) > 0,
     isArchived: group.status.groupStatus === "archived",
-
   };
 }
 
@@ -382,17 +371,18 @@ export function canView(ctx: PermissionContext): boolean {
   const appSettings = useAppSettingsStore();
 
   if (!ctx) return false;
- 
-   console.log(" CTX CAN VIEW ", ctx)
-   console.log(" ALLOW PUBLIC ACCESS ", appSettings.allowPublicAccess)
 
-  if ( (ctx.userType === UserType.Admin) ||  (ctx.userType === UserType.Moderator) ) return true
 
-  if ( ctx.userType === UserType.Admin ) {
-    return ctx.visibilityLevel === "everyone" && appSettings.allowPublicAccess;
-  }
+if (ctx.userType === UserType.Admin) {
+  return true;
+}
 
-  if (ctx.isDeleted) {
+if (ctx.userType === UserType.Moderator) {
+  return true;
+}
+
+
+if (ctx.isDeleted) {
     return [UserType.Moderator, UserType.Admin, UserType.Owner].includes(
       ctx.userType,
     );
@@ -479,11 +469,9 @@ export function canComment(ctx: PermissionContext): boolean {
 
 export function canEdit(ctx: PermissionContext): boolean {
   if (!ctx) return false;
-  
+
   if (ctx.isLocked || ctx.isArchived || ctx.isDeleted) return false;
-  console.log(" CONSOLE LOG CAN EDIT ", ctx) 
   if (ctx.contentType === ContentType.InquiryGroup) {
-    
     if (ctx.isOwner || ctx.userType === UserType.Admin) return true;
     return useSessionStore().currentUser.isGroupEditor === true;
   }
@@ -810,27 +798,24 @@ export function canManageGroupPermissions(ctx: PermissionContext): boolean {
  * @param context
  */
 export function canEditOption(context: PermissionContext): boolean {
-    // Only for options
-   console.log(" CAN EDIT OPTION PERMISSION ",context)
+  // Only for options
 
-    if (context.contentType !== ContentType.Option) {
-        return false
-    }
+  if (context.contentType !== ContentType.Option) {
+    return false;
+  }
 
-    // Content blocking check
-    if (context.isLocked || context.isArchived || context.isDeleted) {
-        return false
-    }
+  // Content blocking check
+  if (context.isLocked) {
+    return false;
+  }
 
-    // Only admin or owner can edit options
-    if (context.userType === UserType.Admin || context.isOwner) {
-        return true
-    }
+  // Only admin or owner can edit options
+  if (context.userType === UserType.Admin || context.isOwner) {
+    return true;
+  }
 
-
-    return false
+  return false;
 }
-
 
 export function canDeleteOption(ctx: PermissionContext): boolean {
   if (ctx.contentType !== ContentType.Option) return false;
@@ -937,6 +922,7 @@ export function canParticipate(
   _ctx: PermissionContext,
   policy?: ParticipationPolicy | null,
 ): boolean {
+  if (_ctx.moderationStatus !== "accepted") return false;
   // Share gating: a share that disallows participation blocks it outright
   const shareRights = getShareParticipationRights();
   if (shareRights !== null && !shareRights.canParticipate) {

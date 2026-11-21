@@ -111,26 +111,32 @@ const supports = {
     });
   },
 
-  getByGroupId(groupId: number): Promise<AxiosResponse<{ supports: Support[] }>> {
-	  return httpInstance.request({
-		  method: "GET",
-		  url: `inquiry/support/group/${groupId}`,
-		  params: { time: +new Date() },
-		  cancelToken:
-			  cancelTokenHandlerObject[this.getByGroupId.name]
-		  .handleRequestCancellation().token,
-	  });
+  getByGroupId(
+    groupId: number,
+  ): Promise<AxiosResponse<{ supports: Support[] }>> {
+    return httpInstance.request({
+      method: "GET",
+      url: `inquiry/support/group/${groupId}`,
+      params: { time: +new Date() },
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getByGroupId.name
+        ].handleRequestCancellation().token,
+    });
   },
 
-  getByEngineId(engineId: number): Promise<AxiosResponse<{ supports: Support[] }>> {
-	  return httpInstance.request({
-		  method: "GET",
-		  url: `inquiry/support/engine/${engineId}`,
-		  params: { time: +new Date() },
-		  cancelToken:
-			  cancelTokenHandlerObject[this.getByEngineId.name]
-		  .handleRequestCancellation().token,
-	  });
+  getByEngineId(
+    engineId: number,
+  ): Promise<AxiosResponse<{ supports: Support[] }>> {
+    return httpInstance.request({
+      method: "GET",
+      url: `inquiry/support/engine/${engineId}`,
+      params: { time: +new Date() },
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getByEngineId.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -138,17 +144,17 @@ const supports = {
    * @param inquiryId The inquiry ID
    */
   getByInquiryId(
-	  inquiryId: number,
+    inquiryId: number,
   ): Promise<AxiosResponse<{ supports: Support[] }>> {
-	  return httpInstance.request({
-		  method: "GET",
-		  url: `inquiry/support/inquiry/${inquiryId}`,
-		  params: { time: +new Date() },
-		  cancelToken:
-			  cancelTokenHandlerObject[
-			  this.getByInquiryId.name
-		  ].handleRequestCancellation().token,
-	  });
+    return httpInstance.request({
+      method: "GET",
+      url: `inquiry/support/inquiry/${inquiryId}`,
+      params: { time: +new Date() },
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getByInquiryId.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
@@ -156,29 +162,29 @@ const supports = {
    * @param userId The user ID
    */
   getByUserId(userId: string): Promise<AxiosResponse<{ supports: Support[] }>> {
-	  return httpInstance.request({
-		  method: "GET",
-		  url: `inquiry/support/user/${userId}`,
-		  params: { time: +new Date() },
-		  cancelToken:
-			  cancelTokenHandlerObject[
-			  this.getByUserId.name
-		  ].handleRequestCancellation().token,
-	  });
+    return httpInstance.request({
+      method: "GET",
+      url: `inquiry/support/user/${userId}`,
+      params: { time: +new Date() },
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getByUserId.name
+        ].handleRequestCancellation().token,
+    });
   },
 
   /**
    * Get support statistics grouped by inquiry type
    */
   getSupportStats(): Promise<AxiosResponse<{ [type: string]: number }>> {
-	  return httpInstance.request({
-		  method: "GET",
-		  url: "inquiry/support/stats/grouped",
-		  cancelToken:
-			  cancelTokenHandlerObject[
-			  this.getSupportStats.name
-		  ].handleRequestCancellation().token,
-	  });
+    return httpInstance.request({
+      method: "GET",
+      url: "inquiry/support/stats/grouped",
+      cancelToken:
+        cancelTokenHandlerObject[
+          this.getSupportStats.name
+        ].handleRequestCancellation().token,
+    });
   },
 };
 

@@ -51,10 +51,10 @@ const formErrors = ref({
 const isProtected = computed({
   get: () => inquiryGroupStore.configuration.protected,
   set: (value: boolean) => {
-    inquiryGroupStore.configuration.protected = value
+    inquiryGroupStore.configuration.protected = value;
     // watcher handles the save; don't call updateConfiguration here
   },
-})
+});
 
 // Computed
 const availableGroupStatuses = computed(() => [
@@ -136,13 +136,13 @@ const getSaveableData = () => ({
   titleExt: inquiryGroupStore.titleExt.trim(),
   description: inquiryGroupStore.description.trim(),
   groupStatus:
-    typeof inquiryGroupStore.status.groupStatus === 'object'
+    typeof inquiryGroupStore.status.groupStatus === "object"
       ? (inquiryGroupStore.status.groupStatus as any)?.id
       : inquiryGroupStore.status.groupStatus,
   expire: inquiryGroupStore.expire,
   coverId: inquiryGroupStore.coverId,
   configuration: {
-    ...inquiryGroupStore.configuration,   
+    ...inquiryGroupStore.configuration,
     protected: inquiryGroupStore.configuration.protected,
   },
 });
@@ -285,13 +285,13 @@ const autoSaveGroup = async () => {
 };
 
 const debouncedSave = () => {
-  if (!canEditFromContext.value) return
+  if (!canEditFromContext.value) return;
   if (saveTimeout.value) {
-    clearTimeout(saveTimeout.value)
+    clearTimeout(saveTimeout.value);
   }
   saveTimeout.value = setTimeout(() => {
-    autoSaveGroup()
-  }, 1000)
+    autoSaveGroup();
+  }, 1000);
 };
 
 const removeCoverImage = async () => {
@@ -340,15 +340,15 @@ watch(
     inquiryGroupStore.configuration.protected,
   ],
   debouncedSave,
-)
+);
 
 // Cleanup on unmount
 
 onUnmounted(() => {
   if (saveTimeout.value) {
-    clearTimeout(saveTimeout.value)
+    clearTimeout(saveTimeout.value);
   }
-})
+});
 
 // Lifecycle
 onMounted(() => {
@@ -566,7 +566,7 @@ onMounted(() => {
           <NcSelect
             v-model="inquiryGroupStore.status.groupStatus"
             :options="statusOptions"
-	      :value-key="'id'"
+            :value-key="'id'"
             :clearable="false"
             :disabled="!canEditFromContext"
             :label-outside="true"

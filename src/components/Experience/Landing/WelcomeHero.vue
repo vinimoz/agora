@@ -9,9 +9,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   >
     <div class="hero-content">
       <span
-        v-if="cityName"
+        v-if="entityName"
         class="hero-city"
-      >{{ cityName }}</span>
+      >{{ entityName }}</span>
       <h1 class="hero-title">
         {{ title }}
       </h1>
@@ -95,7 +95,7 @@ const props = defineProps<{
   title?: string;
   subtitle?: string;
   tagline?: string;
-  cityName?: string;
+  entityName?: string;
   backgroundUrl?: string;
   actions?: any[];
   weather?: { temp: number; location: string } | null;
@@ -110,14 +110,7 @@ const props = defineProps<{
 const emit = defineEmits<{ action: [key: string] }>();
 
 const title = computed(() => props.title || t("agora", "Welcome to Agora"));
-const subtitle = computed(
-  () =>
-    props.subtitle ||
-    t(
-      "agora",
-      "Your space",
-    ),
-);
+const subtitle = computed(() => props.subtitle || t("agora", "Your space"));
 
 /**
  * Resolve a hero background image:
@@ -278,7 +271,7 @@ const actions = computed(
     padding: 12px 14px;
     border: none;
     overflow: visible;
-      white-space: normal;
+    white-space: normal;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.95);
     color: var(--color-main-text);
@@ -309,7 +302,7 @@ const actions = computed(
       display: flex;
       flex-direction: column;
       line-height: 1.2;
-      min-width: 0; 
+      min-width: 0;
       white-space: normal;
     }
 
@@ -320,9 +313,9 @@ const actions = computed(
 
     .action-hint {
       font-size: 11px;
-    color: var(--color-text-maxcontrast); 
-    white-space: normal;
-    overflow: visible;
+      color: var(--color-text-maxcontrast);
+      white-space: normal;
+      overflow: visible;
     }
   }
 

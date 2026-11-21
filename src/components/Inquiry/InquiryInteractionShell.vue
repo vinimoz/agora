@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later */
       :inquiry="inquiry"
       :mode="mode"
     />
-<!--    <template #actions>
+    <!--    <template #actions>
       <NcButton
         v-if="mode === 'view' && canEdit"
         @click="mode = 'edit'"
@@ -62,7 +62,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later */
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref} from "vue";
 import { t } from "@nextcloud/l10n";
 import NcAppSidebar from "@nextcloud/vue/components/NcAppSidebar";
 import NcDialog from "@nextcloud/vue/components/NcDialog";

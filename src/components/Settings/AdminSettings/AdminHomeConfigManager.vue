@@ -3,7 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-
 import { computed, onMounted, reactive, ref } from "vue";
 import { t } from "@nextcloud/l10n";
 import NcButton from "@nextcloud/vue/components/NcButton";
@@ -11,9 +10,7 @@ import NcInputField from "@nextcloud/vue/components/NcInputField";
 import { showError, showSuccess } from "@nextcloud/dialogs";
 import { useAppSettingsStore } from "../../../stores/appSettings.ts";
 import { AppSettingsAPI } from "../../../Api/index.ts";
-import {
-  getHomeTemplate,
-} from "../../../composables/homeDefaults";
+import { getHomeTemplate } from "../../../composables/homeDefaults";
 import {
   ORGANIZATION_TYPES,
   type OrganizationType,
@@ -69,8 +66,8 @@ function orgTypeLabel(key: OrganizationType): string {
 
 function isOrgType(value: unknown): value is OrganizationType {
   return (
-    typeof value === "string"
-    && (ORGANIZATION_TYPES as readonly string[]).includes(value)
+    typeof value === "string" &&
+    (ORGANIZATION_TYPES as readonly string[]).includes(value)
   );
 }
 
@@ -90,8 +87,8 @@ const allTemplates = computed<TemplateRow[]>(() =>
     return {
       key,
       label: record?.label ?? orgTypeLabel(key),
-      description: record?.description
-        ?? t("agora", "Default template provided by Agora"),
+      description:
+        record?.description ?? t("agora", "Default template provided by Agora"),
       isDefault: activeType.value === key,
       record,
     };
@@ -110,9 +107,9 @@ const isEditorOpen = ref(false);
 const activeTab = ref("general");
 const saving = ref(false);
 
-const slotInputs = ref<
-  Partial<Record<HomeImageSlot, HTMLInputElement | null>>
->({});
+const slotInputs = ref<Partial<Record<HomeImageSlot, HTMLInputElement | null>>>(
+  {},
+);
 
 const sectionLabelRows = ref<SectionLabelRow[]>([]);
 
@@ -143,6 +140,7 @@ function templateToData(template: HomeConfig): HomeConfigData {
     sections: [...template.sections],
     sectionLabels: { ...(template.sectionLabels ?? {}) },
     hero: {
+      entityName: template.hero.entityName,
       title: template.hero.title,
       subtitle: template.hero.subtitle,
       // Bundled images are not stored as uploaded filenames.
@@ -286,48 +284,41 @@ async function setAsDefault(row: TemplateRow) {
 // ── Template data helpers ──────────────────────────────────
 
 async function ensureRecordExists(): Promise<number> {
-    if (form.id !== null) {
-        return form.id
-    }
+  if (form.id !== null) {
+    return form.id;
+  }
 
-    if (!form.label.trim()) {
-        throw new Error(t("agora", "Display label is required"))
-    }
+  if (!form.label.trim()) {
+    throw new Error(t("agora", "Display label is required"));
+  }
 
-    applySectionLabelRows()
+  applySectionLabelRows();
 
-    const payload: HomeConfigPayload = {
-        configKey: form.configKey,
-        label: form.label,
-        description: form.description || null,
-        data: form.data,
-        sortOrder: Number(form.sortOrder) || 0,
-    }
+  const payload: HomeConfigPayload = {
+    configKey: form.configKey,
+    label: form.label,
+    description: form.description || null,
+    data: form.data,
+    sortOrder: Number(form.sortOrder) || 0,
+  };
 
-    const record = await store.createHomeConfigRecord(payload)
+  const record = await store.createHomeConfigRecord(payload);
 
-    form.id = record.id
+  form.id = record.id;
 
-    return record.id
+  return record.id;
 }
 
 // ── Template data helpers ──────────────────────────────────
 
-function getSlot(slot: "hero"): NonNullable<HomeConfigData["hero"]>
-function getSlot(slot: "promo"): NonNullable<HomeConfigData["promo"]>
-function getSlot(
-    slot: HomeImageSlot,
-): NonNullable<HomeConfigData["hero"]>
-    | NonNullable<HomeConfigData["promo"]>
-
 function getSlot(slot: HomeImageSlot) {
-    if (slot === "hero") {
-        form.data.hero ??= {}
-        return form.data.hero
-    }
+  if (slot === "hero") {
+    form.data.hero ??= {};
+    return form.data.hero;
+  }
 
-    form.data.promo ??= {}
-    return form.data.promo
+  form.data.promo ??= {};
+  return form.data.promo;
 }
 
 function resetSection(section: keyof HomeConfigData) {
@@ -346,12 +337,12 @@ function resetSection(section: keyof HomeConfigData) {
 // ── Section labels ─────────────────────────────────────────
 
 function loadSectionLabelRows() {
-  sectionLabelRows.value = Object.entries(
-    form.data.sectionLabels ?? {},
-  ).map(([key, value]) => ({
-    key,
-    value: String(value),
-  }));
+  sectionLabelRows.value = Object.entries(form.data.sectionLabels ?? {}).map(
+    ([key, value]) => ({
+      key,
+      value: String(value),
+    }),
+  );
 }
 
 function addSectionLabel() {
@@ -417,9 +408,9 @@ function applyRawJson() {
     const parsed: unknown = JSON.parse(form.rawJson);
 
     if (
-      parsed === null
-      || typeof parsed !== "object"
-      || Array.isArray(parsed)
+      parsed === null ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed)
     ) {
       throw new Error(t("agora", "The configuration must be a JSON object"));
     }
@@ -466,9 +457,7 @@ function hasUploadedImage(slot: HomeImageSlot): boolean {
 
 function slotImageUrl(slot: HomeImageSlot): string | null {
   if (form.id !== null && hasUploadedImage(slot)) {
-    const record = store.homeConfigs.find(
-      (config) => config.id === form.id,
-    );
+    const record = store.homeConfigs.find((config) => config.id === form.id);
 
     return AppSettingsAPI.homeImageUrl(
       form.id,
@@ -493,47 +482,43 @@ function triggerSlotInput(slot: HomeImageSlot) {
 }
 
 async function onImageSelected(event: Event, slot: HomeImageSlot) {
-    const input = event.target
+  const input = event.target;
 
-    if (!(input instanceof HTMLInputElement)) {
-        return
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+
+  const file = input.files?.[0];
+  input.value = "";
+
+  if (!file) {
+    return;
+  }
+
+  try {
+    // Create the configuration record automatically if needed.
+    const recordId = await ensureRecordExists();
+
+    const record = await store.uploadHomeImage(recordId, slot, file);
+
+    const image = record.data?.[slot]?.image;
+
+    if (slot === "hero") {
+      form.data.hero ??= {};
+      form.data.hero.image = image;
+    } else {
+      form.data.promo ??= {};
+      form.data.promo.image = image;
     }
 
-    const file = input.files?.[0]
-    input.value = ""
+    refreshRawFromData();
 
-    if (!file) {
-        return
-    }
+    showSuccess(t("agora", "Image uploaded"));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
 
-    try {
-        // Create the configuration record automatically if needed.
-        const recordId = await ensureRecordExists()
-
-        const record = await store.uploadHomeImage(
-            recordId,
-            slot,
-            file,
-        )
-
-        const image = record.data?.[slot]?.image
-
-        if (slot === "hero") {
-            form.data.hero ??= {}
-            form.data.hero.image = image
-        } else {
-            form.data.promo ??= {}
-            form.data.promo.image = image
-        }
-
-        refreshRawFromData()
-
-        showSuccess(t("agora", "Image uploaded"))
-    } catch (error) {
-        const message = error instanceof Error ? error.message : String(error)
-
-        showError(t("agora", "Upload failed: {msg}", { msg: message }))
-    }
+    showError(t("agora", "Upload failed: {msg}", { msg: message }));
+  }
 }
 
 async function removeImage(slot: HomeImageSlot) {
@@ -584,11 +569,11 @@ async function save() {
   saving.value = true;
 
   try {
-if (form.id !== null) {
-    await store.saveHomeConfigRecord(form.id, payload)
-} else {
-    await store.createHomeConfigRecord(payload)
-}
+    if (form.id !== null) {
+      await store.saveHomeConfigRecord(form.id, payload);
+    } else {
+      await store.createHomeConfigRecord(payload);
+    }
     showSuccess(t("agora", "Template saved"));
     closeEditor();
   } catch (error) {
@@ -623,7 +608,6 @@ async function resetTemplate(row: TemplateRow) {
     showError(t("agora", "Could not restore the template"));
   }
 }
-
 </script>
 <template>
   <div class="home-config-manager">
@@ -665,15 +649,24 @@ async function resetTemplate(row: TemplateRow) {
           </td>
           <td>{{ row.description }}</td>
           <td>
-            <span v-if="row.record" class="badge badge-customized">
+            <span
+              v-if="row.record"
+              class="badge badge-customized"
+            >
               {{ t("agora", "Customized") }}
             </span>
-            <span v-else class="badge">
+            <span
+              v-else
+              class="badge"
+            >
               {{ t("agora", "Original") }}
             </span>
           </td>
           <td>
-            <span v-if="row.isDefault" class="default-badge">
+            <span
+              v-if="row.isDefault"
+              class="default-badge"
+            >
               ★ {{ t("agora", "Default") }}
             </span>
           </td>
@@ -710,11 +703,13 @@ async function resetTemplate(row: TemplateRow) {
       </tbody>
     </table>
 
-
     <!-- ─────────────────────────────────────────────────────
          Editor modal (unchanged except for image preview)
          ───────────────────────────────────────────────────── -->
-    <div v-if="isEditorOpen" class="modal-overlay">
+    <div
+      v-if="isEditorOpen"
+      class="modal-overlay"
+    >
       <div class="modal-content">
         <nav class="tabs">
           <button
@@ -728,39 +723,50 @@ async function resetTemplate(row: TemplateRow) {
         </nav>
 
         <!-- General -->
-        <section v-if="activeTab === 'general'" class="tab-body">
+        <section
+          v-if="activeTab === 'general'"
+          class="tab-body"
+        >
           <div class="form-row">
-  <NcInputField
-    :model-value="orgTypeLabel(form.configKey)"
-    :label="t('agora', 'Organization type')"
-    disabled
-  />
-  <NcInputField
-    v-model.number="form.sortOrder"
-    :label="t('agora', 'Sort order')"
-    type="number"
-    :min="0"
-  />
-</div>
-<NcInputField
-  v-model="form.label"
-  :label="t('agora', 'Display label')"
-  required
-/>
-<NcInputField
-  v-model="form.description"
-  :label="t('agora', 'Description')"
-  type="textarea"
-/>
+            <NcInputField
+              :model-value="orgTypeLabel(form.configKey)"
+              :label="t('agora', 'Organization type')"
+              disabled
+            />
+            <NcInputField
+              v-model.number="form.sortOrder"
+              :label="t('agora', 'Sort order')"
+              type="number"
+              :min="0"
+            />
+          </div>
+          <NcInputField
+            v-model="form.label"
+            :label="t('agora', 'Display label')"
+            required
+          />
+          <NcInputField
+            v-model="form.description"
+            :label="t('agora', 'Description')"
+            type="textarea"
+          />
         </section>
 
         <!-- Hero -->
-        <section v-if="activeTab === 'hero'" class="tab-body">
+        <section
+          v-if="activeTab === 'hero'"
+          class="tab-body"
+        >
           <div class="tab-header">
             <NcButton @click="resetSection('hero')">
-              {{ t("agora", "Reset hero to defaults") }}
+              {{ t("agora", "Reset to defaults") }}
             </NcButton>
           </div>
+          <NcInputField
+            :model-value="getSlot('hero').entityName ?? ''"
+            :label="t('agora', 'Entity name')"
+            @update:model-value="(v) => (getSlot('hero').entityName = v)"
+          />
           <NcInputField
             :model-value="getSlot('hero').title ?? ''"
             :label="t('agora', 'Title')"
@@ -773,34 +779,36 @@ async function resetTemplate(row: TemplateRow) {
             @update:model-value="(v) => (getSlot('hero').subtitle = v)"
           />
 
-          <h4>{{ t("agora", "Hero image") }}</h4>
+          <h4>{{ t("agora", "Image") }}</h4>
           <div class="image-block">
             <img
               v-if="slotImageUrl('hero')"
               :src="slotImageUrl('hero')"
               class="preview"
-              :alt="t('agora', 'Hero image preview')"
+              :alt="t('agora', 'Image preview')"
             >
-            <div v-else class="placeholder">
+            <div
+              v-else
+              class="placeholder"
+            >
               {{ t("agora", "No image") }}
             </div>
             <div class="actions">
-              <p v-if="isBundledImage('hero')" class="hint">
+              <p
+                v-if="isBundledImage('hero')"
+                class="hint"
+              >
                 {{ t("agora", "Bundled default — upload to override") }}
               </p>
               <input
-       	        :ref="(el) => (slotInputs.hero = el as HTMLInputElement | null)"
+                :ref="(el) => (slotInputs.hero = el as HTMLInputElement | null)"
                 type="file"
                 accept="image/*"
                 class="hidden"
                 @change="(e) => onImageSelected(e, 'hero')"
               >
-              <NcButton
-                @click="triggerSlotInput('hero')"
-              >
-                {{
-                     t("agora", "Upload")
-                }}
+              <NcButton @click="triggerSlotInput('hero')">
+                {{ t("agora", "Upload") }}
               </NcButton>
               <NcButton
                 v-if="hasUploadedImage('hero')"
@@ -834,7 +842,12 @@ async function resetTemplate(row: TemplateRow) {
               placeholder="primary / secondary"
               @update:model-value="(v) => (action.type = v)"
             />
-            <NcButton type="error" @click="removeHeroAction(i)">×</NcButton>
+            <NcButton
+              type="error"
+              @click="removeHeroAction(i)"
+            >
+              ×
+            </NcButton>
           </div>
           <NcButton @click="addHeroAction">
             {{ t("agora", "Add action") }}
@@ -842,7 +855,10 @@ async function resetTemplate(row: TemplateRow) {
         </section>
 
         <!-- Promo -->
-        <section v-if="activeTab === 'promo'" class="tab-body">
+        <section
+          v-if="activeTab === 'promo'"
+          class="tab-body"
+        >
           <div class="tab-header">
             <NcButton @click="resetSection('promo')">
               {{ t("agora", "Reset promo to defaults") }}
@@ -868,26 +884,30 @@ async function resetTemplate(row: TemplateRow) {
               class="preview"
               :alt="t('agora', 'Promo image preview')"
             >
-            <div v-else class="placeholder">
+            <div
+              v-else
+              class="placeholder"
+            >
               {{ t("agora", "No image") }}
             </div>
             <div class="actions">
-              <p v-if="isBundledImage('promo')" class="hint">
+              <p
+                v-if="isBundledImage('promo')"
+                class="hint"
+              >
                 {{ t("agora", "Bundled default — upload to override") }}
               </p>
               <input
-                :ref="(el) => (slotInputs.promo = el as HTMLInputElement | null)"
+                :ref="
+                  (el) => (slotInputs.promo = el as HTMLInputElement | null)
+                "
                 type="file"
                 accept="image/*"
                 class="hidden"
                 @change="(e) => onImageSelected(e, 'promo')"
               >
-              <NcButton
-                @click="triggerSlotInput('promo')"
-              >
-                {{
-                    t("agora", "Upload")
-                }}
+              <NcButton @click="triggerSlotInput('promo')">
+                {{ t("agora", "Upload") }}
               </NcButton>
               <NcButton
                 v-if="hasUploadedImage('promo')"
@@ -906,7 +926,10 @@ async function resetTemplate(row: TemplateRow) {
               :label="t('agora', 'Label')"
               @update:model-value="
                 (v) => {
-                  getSlot('promo').cta = { ...(getSlot('promo').cta ?? {}), label: v };
+                  getSlot('promo').cta = {
+                    ...(getSlot('promo').cta ?? {}),
+                    label: v,
+                  };
                 }
               "
             />
@@ -915,7 +938,10 @@ async function resetTemplate(row: TemplateRow) {
               :label="t('agora', 'URL')"
               @update:model-value="
                 (v) => {
-                  getSlot('promo').cta = { ...(getSlot('promo').cta ?? {}), url: v };
+                  getSlot('promo').cta = {
+                    ...(getSlot('promo').cta ?? {}),
+                    url: v,
+                  };
                 }
               "
             />
@@ -923,23 +949,42 @@ async function resetTemplate(row: TemplateRow) {
         </section>
 
         <!-- Section labels -->
-        <section v-if="activeTab === 'sectionLabels'" class="tab-body">
+        <section
+          v-if="activeTab === 'sectionLabels'"
+          class="tab-body"
+        >
           <div class="tab-header">
             <NcButton @click="resetSection('sectionLabels')">
               {{ t("agora", "Reset to defaults") }}
             </NcButton>
           </div>
           <p class="description">
-            {{ t("agora", "Override the labels shown for each home page section.") }}
+            {{
+              t(
+                "agora",
+                "Override the labels shown for each home page section.",
+              )
+            }}
           </p>
           <div
             v-for="(row, i) in sectionLabelRows"
             :key="i"
             class="kv-row"
           >
-            <NcInputField v-model="row.key" :label="t('agora', 'Section key')" />
-            <NcInputField v-model="row.value" :label="t('agora', 'Label')" />
-            <NcButton type="error" @click="removeSectionLabel(i)">×</NcButton>
+            <NcInputField
+              v-model="row.key"
+              :label="t('agora', 'Section key')"
+            />
+            <NcInputField
+              v-model="row.value"
+              :label="t('agora', 'Label')"
+            />
+            <NcButton
+              type="error"
+              @click="removeSectionLabel(i)"
+            >
+              ×
+            </NcButton>
           </div>
           <NcButton @click="addSectionLabel">
             {{ t("agora", "Add label") }}
@@ -947,7 +992,10 @@ async function resetTemplate(row: TemplateRow) {
         </section>
 
         <!-- Relevance -->
-        <section v-if="activeTab === 'relevance'" class="tab-body">
+        <section
+          v-if="activeTab === 'relevance'"
+          class="tab-body"
+        >
           <div class="tab-header">
             <NcButton @click="resetSection('relevance')">
               {{ t("agora", "Reset to defaults") }}
@@ -968,14 +1016,22 @@ async function resetTemplate(row: TemplateRow) {
         </section>
 
         <!-- Sections -->
-        <section v-if="activeTab === 'sections'" class="tab-body">
+        <section
+          v-if="activeTab === 'sections'"
+          class="tab-body"
+        >
           <div class="tab-header">
             <NcButton @click="resetSection('sections')">
               {{ t("agora", "Reset to defaults") }}
             </NcButton>
           </div>
           <p class="description">
-            {{ t("agora", "Ordered list of enabled section keys for the home page.") }}
+            {{
+              t(
+                "agora",
+                "Ordered list of enabled section keys for the home page.",
+              )
+            }}
           </p>
           <textarea
             class="json-editor"
@@ -985,7 +1041,10 @@ async function resetTemplate(row: TemplateRow) {
         </section>
 
         <!-- Advanced -->
-        <section v-if="activeTab === 'advanced'" class="tab-body">
+        <section
+          v-if="activeTab === 'advanced'"
+          class="tab-body"
+        >
           <p class="description">
             {{
               t(
@@ -994,7 +1053,10 @@ async function resetTemplate(row: TemplateRow) {
               )
             }}
           </p>
-          <textarea v-model="form.rawJson" class="json-editor large" />
+          <textarea
+            v-model="form.rawJson"
+            class="json-editor large"
+          />
           <div class="advanced-actions">
             <NcButton @click="applyRawJson">
               {{ t("agora", "Apply JSON") }}
@@ -1009,7 +1071,11 @@ async function resetTemplate(row: TemplateRow) {
           <NcButton @click="closeEditor">
             {{ t("agora", "Cancel") }}
           </NcButton>
-          <NcButton type="primary" :disabled="saving" @click="save">
+          <NcButton
+            type="primary"
+            :disabled="saving"
+            @click="save"
+          >
             {{ saving ? t("agora", "Saving…") : t("agora", "Save") }}
           </NcButton>
         </footer>
@@ -1019,7 +1085,9 @@ async function resetTemplate(row: TemplateRow) {
 </template>
 
 <style scoped>
-.home-config-manager { padding: 20px; }
+.home-config-manager {
+  padding: 20px;
+}
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -1027,14 +1095,24 @@ async function resetTemplate(row: TemplateRow) {
   gap: 16px;
   margin-bottom: 20px;
 }
-.toolbar-actions { display: flex; gap: 12px; align-items: center; }
-.description { color: var(--color-text-lighter); margin: 4px 0 0 0; }
+.toolbar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.description {
+  color: var(--color-text-lighter);
+  margin: 4px 0 0 0;
+}
 .hint {
   font-size: 0.85em;
   color: var(--color-text-lighter);
   margin: 0 0 4px;
 }
-.config-table { width: 100%; border-collapse: collapse; }
+.config-table {
+  width: 100%;
+  border-collapse: collapse;
+}
 .config-table th,
 .config-table td {
   padding: 8px 10px;
@@ -1045,13 +1123,19 @@ async function resetTemplate(row: TemplateRow) {
 .config-table tr.is-default {
   background: var(--color-primary-element-light, #e6f0ff);
 }
-.config-table tr.is-bundled td { color: var(--color-text-lighter); }
+.config-table tr.is-bundled td {
+  color: var(--color-text-lighter);
+}
 .config-table .empty {
   text-align: center;
   padding: 20px;
   color: var(--color-text-lighter);
 }
-.row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .badge {
   display: inline-block;
   padding: 2px 8px;
@@ -1066,8 +1150,14 @@ async function resetTemplate(row: TemplateRow) {
   background: var(--color-primary-element-light, #e6f0ff);
   color: var(--color-primary);
 }
-.badge-instance { background: #fef3c7; color: #92400e; }
-.badge-bundled { background: #f3e8ff; color: #6b21a8; }
+.badge-instance {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-bundled {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
 .default-badge {
   color: var(--color-primary);
   font-weight: 600;
@@ -1078,7 +1168,9 @@ async function resetTemplate(row: TemplateRow) {
   color: var(--color-text-lighter);
   margin-top: 2px;
 }
-.muted { color: var(--color-text-lighter); }
+.muted {
+  color: var(--color-text-lighter);
+}
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1141,7 +1233,11 @@ async function resetTemplate(row: TemplateRow) {
   align-items: end;
   margin-bottom: 8px;
 }
-.image-block { display: flex; gap: 16px; align-items: center; }
+.image-block {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
 .image-block .preview {
   max-width: 260px;
   max-height: 140px;
@@ -1162,7 +1258,9 @@ async function resetTemplate(row: TemplateRow) {
   flex-direction: column;
   gap: 8px;
 }
-.hidden { display: none; }
+.hidden {
+  display: none;
+}
 .json-editor {
   width: 100%;
   min-height: 140px;
@@ -1174,8 +1272,13 @@ async function resetTemplate(row: TemplateRow) {
   background: var(--color-background-dark);
   color: var(--color-main-text);
 }
-.json-editor.large { min-height: 320px; }
-.advanced-actions { display: flex; gap: 12px; }
+.json-editor.large {
+  min-height: 320px;
+}
+.advanced-actions {
+  display: flex;
+  gap: 12px;
+}
 .modal-actions {
   display: flex;
   justify-content: flex-end;

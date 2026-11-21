@@ -39,7 +39,6 @@ export type {
   ReactionResult,
   ApprovalResult,
   ApprovalDelibResult,
-  TrendingResult,
   BordaResult,
   QuadraticResult,
   TokenWeightedResult,
@@ -83,17 +82,10 @@ export function createDefault<T>(): T {
 // ============================================================================
 
 export type KanbanStatusField =
-  | 'publicationStatus'   // inquiry only
-  | 'moderationStatus'    // inquiry only
-  | 'inquiryStatus'
-  | 'optionStatus';
-
-export type KanbanStatusField =
-  | "publicationStatus"
-  | "moderationStatus"
+  | "publicationStatus" // inquiry only
+  | "moderationStatus" // inquiry only
   | "inquiryStatus"
-  | "optionStatus"
-  | "workflowStatus";
+  | "optionStatus";
 
 export type KanbanMode = "organization" | "status";
 

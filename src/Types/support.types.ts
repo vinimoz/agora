@@ -15,7 +15,7 @@ import type {
 // ============================================================================
 
 export type SupportEngineTarget = "inquiry" | "option";
-export type SupportResultTarget = "inquiry" | "option" | "inquirygroup"; 
+export type SupportResultTarget = "inquiry" | "option" | "inquirygroup";
 
 export type SupportResultType = SupportResultData["type"];
 
@@ -55,7 +55,6 @@ export interface SupportResult {
   result: SupportResultData;
   updated: number;
 }
-
 
 // ============================================================================
 // SUPPORT ITEM (raw row)

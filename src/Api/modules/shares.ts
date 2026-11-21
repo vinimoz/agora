@@ -95,7 +95,6 @@ const shares = {
     shareToken: string,
     participationLevel: ShareParticipationLevel,
   ): Promise<AxiosResponse<{ share: Share }>> {
-    console.log(" SET PART ", participationLevel);
     return httpInstance.request({
       method: "PUT",
       url: `share/${shareToken}/participation`,

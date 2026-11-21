@@ -40,7 +40,6 @@ import type {
   SupportResultData,
   SupportResultDataAccess,
   MajorityJudgmentResult,
-  SupportResult,
   Support,
   SupportEngine,
   SupportValue,
@@ -354,12 +353,12 @@ export function useVoteContext(
       await engineStore.loadEnginesByInquiry(pid);
     }
   };
-  
-   const selectEngine = (id: number) => {
+
+  const selectEngine = (id: number) => {
     if (!availableEngines.value.some((e) => e.id === id)) return;
-    selectedEngineId.value = id;      // watcher handles reset + hydrate + results
+    selectedEngineId.value = id; // watcher handles reset + hydrate + results
   };
-  
+
   const effectiveEngineId = computed(
     () => currentEngine.value?.engine || "binary",
   );
@@ -488,7 +487,6 @@ export function useVoteContext(
 
     supportsStore.supports = [...preserved, ...accumulated];
   };
-
 
   /**
    * Supports whose `supportEngineId` matches the current engine.
@@ -1377,10 +1375,10 @@ export function useVoteContext(
     ];
     const res = candidates.find(
       (r): r is MajorityJudgmentResult =>
-        r?.type === "majority_judgment" && !!(r as any).options?.[itemId],
+        r?.type === "majority_judgment" && !!(r as MajorityJudgmentResult).options?.[itemId],
     );
     if (!res) return null;
-    const opt = (res as any).options?.[itemId];
+    const opt = (res as MajorityJudgmentResult).options?.[itemId];
 
     if (!opt) return null;
     const grades: string[] =
@@ -1952,31 +1950,27 @@ export function useVoteContext(
   );
 
   // ---- single authoritative engine-change trigger ----
-watch(
-  () => currentEngine.value?.id ?? null,
-  async (id, prev) => {
-    if (id === prev) return;
-    if (!id) {
-      engineResult.value = null;
-      return;
-    }
-    loadUserVotesForEngine(id, true);
-    await loadResults();
-  },
-  { immediate: true },
-);
+  watch(
+    () => currentEngine.value?.id ?? null,
+    async (id, prev) => {
+      if (id === prev) return;
+      if (!id) {
+        engineResult.value = null;
+        return;
+      }
+      loadUserVotesForEngine(id, true);
+      await loadResults();
+    },
+    { immediate: true },
+  );
 
-// ---- reload only when the *target set* of the current engine changes ----
-watch(
-  () => currentEngine.value?.target_ids?.slice() ?? [],
-  async () => {
-    if (currentEngine.value?.id) await loadResults();
-  },
-);
-
-// ---- single-flight guard inside loadResults ----
-let lastRequestedEngine: number | null = null;
-let inFlight: Promise<void> | null = null;
+  // ---- reload only when the *target set* of the current engine changes ----
+  watch(
+    () => currentEngine.value?.target_ids?.slice() ?? [],
+    async () => {
+      if (currentEngine.value?.id) await loadResults();
+    },
+  );
 
 
   watch(
@@ -1992,12 +1986,13 @@ let inFlight: Promise<void> | null = null;
     { immediate: true },
   );
 
-watch(
-  () => resultStore.results.filter(
-    (r) => r.support_engine_id === currentEngine.value?.id,
-  ).length,
-  () => void loadResults(),
-);
+  watch(
+    () =>
+      resultStore.results.filter(
+        (r) => r.support_engine_id === currentEngine.value?.id,
+      ).length,
+    () => void loadResults(),
+  );
 
   watch(
     () =>

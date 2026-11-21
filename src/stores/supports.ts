@@ -26,7 +26,6 @@ import type {
   ReactionResult,
   ApprovalResult,
   RankingResult,
-  TrendingResult,
   Support,
   SupportableItem,
   SupportResult,
@@ -278,9 +277,9 @@ export const useSupportsStore = defineStore("supports", () => {
     resultData: SupportResultData | null,
     engineId: number | null = null,
   ): void {
-	     if (inquiryId === 0 && optionId === 0 && engineId !== null) {
-    return;
-  }
+    if (inquiryId === 0 && optionId === 0 && engineId !== null) {
+      return;
+    }
     const targetType: "inquiry" | "option" =
       optionId > 0 ? "option" : "inquiry";
     const targetId = optionId > 0 ? optionId : inquiryId;
@@ -1257,7 +1256,6 @@ export const useSupportsStore = defineStore("supports", () => {
         }
         return null;
 
-      case "trending":
       case "none":
         return null;
 
@@ -1347,10 +1345,6 @@ export const useSupportsStore = defineStore("supports", () => {
           secondary: `${r.totals.approved}/${r.totals.total} approved`,
           icon: r.percentages.approved >= 50 ? "check" : "help",
         };
-      }
-      case "trending": {
-        const r = result as TrendingResult;
-        return { primary: `${r.score}`, secondary: "trending", icon: "fire" };
       }
       case "ranking": {
         const r = result as RankingResult;
@@ -1444,19 +1438,19 @@ export const useSupportsStore = defineStore("supports", () => {
   }
 
   async function loadSupportsForGroup(groupId: number): Promise<void> {
-  if (!groupId || groupId <= 0) return;
-  loading.value = true;
-  try {
-    const response = await SupportsAPI.getByGroupId(groupId);
-    for (const s of response.data.supports) setItem(s);
-  } catch (error) {
-    if ((error as AxiosError)?.code !== "ERR_CANCELED") {
-      Logger.error("Error loading group supports", { error });
+    if (!groupId || groupId <= 0) return;
+    loading.value = true;
+    try {
+      const response = await SupportsAPI.getByGroupId(groupId);
+      for (const s of response.data.supports) setItem(s);
+    } catch (error) {
+      if ((error as AxiosError)?.code !== "ERR_CANCELED") {
+        Logger.error("Error loading group supports", { error });
+      }
+    } finally {
+      loading.value = false;
     }
-  } finally {
-    loading.value = false;
   }
-}
 
   function reset(): void {
     supports.value = [];

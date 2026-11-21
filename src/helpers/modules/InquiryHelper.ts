@@ -6,10 +6,7 @@
 import { computed, type Ref } from "vue";
 import { InquiryGeneralIcons, StatusIcons } from "../../utils/icons.ts";
 import type { InquiryGroupType } from "../../Types/inquiryGroups.types.ts";
-import type {
-  Inquiry,
-  InquiryType,
-} from "../../Types/inquiry.types";
+import type { Inquiry, InquiryType, InquiryField } from "../../Types/inquiry.types";
 import type { InquiryStatusDefinition } from "../../Types/appSettings.types";
 
 export interface InquiryFamily {
@@ -436,15 +433,15 @@ export function getAllowedResponseGroupTypes(
 export function getAvailableGroupFields(
   inquiryGroupType: string,
   inquiryGroupTypes: InquiryGroupType[],
-): string[] {
-  const currentType = inquiryGroupTypes.find((t) => t.group_type === inquiryGroupType);
+): InquiryField[] {
+  const currentType = inquiryGroupTypes.find(
+    (t) => t.group_type === inquiryGroupType,
+  );
   if (!currentType || !currentType.fields) return [];
 
-  console.log(" GET AVAILABLE GRP FIELDS " , inquiryGroupType)
-  console.log(" GET AVAILABLE GRP FIELDS TYPES " , inquiryGroupTypes)
-  
   // Parse fields if it's a string (JSON)
-  let fields: string[] = [];
+  //let fields: string[] = [];
+  let fields: InquiryField[] = [];
   if (typeof currentType.fields === "string") {
     try {
       fields = JSON.parse(currentType.fields);
@@ -466,12 +463,12 @@ export function getAvailableGroupFields(
 export function getAvailableFields(
   inquiryType: string,
   inquiryTypes: InquiryType[],
-): string[] {
+): InquiryField[] {
   const currentType = inquiryTypes.find((t) => t.inquiry_type === inquiryType);
   if (!currentType || !currentType.fields) return [];
 
   // Parse fields if it's a string (JSON)
-  let fields: string[] = [];
+  let fields: InquiryField[] = [];
   if (typeof currentType.fields === "string") {
     try {
       fields = JSON.parse(currentType.fields);
@@ -561,7 +558,6 @@ export function getInquiryGroupTypesForFamily(
   inquiryGroupTypesByFamily: Record<string, InquiryType[]>,
 ) {
   const types = inquiryGroupTypesByFamily[familyInquiryType] || [];
-  console.log(" TYPES ", types);
   return types;
 }
 

@@ -112,7 +112,7 @@ import MapClockOutline from "@iconify-icons/mdi/map-clock-outline";
 import Monitor from "@iconify-icons/mdi/monitor";
 import MonitorLock from "@iconify-icons/mdi/monitor-lock";
 import MonitorOff from "@iconify-icons/mdi/monitor-off";
-import Desk from '@iconify-icons/mdi/desk'
+import Desk from "@iconify-icons/mdi/desk";
 
 // For 'ViewKanban' - use one of these alternatives:
 

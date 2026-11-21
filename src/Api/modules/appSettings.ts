@@ -19,10 +19,9 @@ import type {
 } from "../../Types/index.js";
 import { generateUrl } from "@nextcloud/router";
 import type {
-  HomeConfig,
   HomeConfigPayload,
   HomeConfigRecord,
-  HomeImageSlot
+  HomeImageSlot,
 } from "../../Types/appSettings.types";
 
 import type { InquiryGroupType } from "../../Types/inquiryGroups.types.js";
@@ -620,7 +619,11 @@ const appSettings = {
    * The `version` query is a cache-buster — pass `config.updated` (or
    * `created`) so browsers refresh after an admin replaces the file.
    */
-  homeImageUrl(configId: number, slot: HomeImageSlot, version?: number): string {
+  homeImageUrl(
+    configId: number,
+    slot: HomeImageSlot,
+    version?: number,
+  ): string {
     const base = generateUrl(
       `/apps/agora/home-config/${configId}/images/${slot}`,
     );

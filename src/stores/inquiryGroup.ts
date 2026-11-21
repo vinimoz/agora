@@ -7,7 +7,7 @@ import { t } from "@nextcloud/l10n";
 import { showError } from "@nextcloud/dialogs";
 import { emit } from "@nextcloud/event-bus";
 import { AxiosError } from "axios";
-import { UpdateInquiryGroupPayload } from "../Types/inquiryGroup.types.ts";
+import { UpdateInquiryGroupPayload } from "../Types/inquiryGroups.types.ts";
 
 import { Logger } from "../helpers/index.ts";
 import { InquiryGroupsAPI } from "../Api/index.ts";
@@ -339,6 +339,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         deleted: this.deleted,
         description: this.description || null,
         owner: this.owner as unknown as User,
+	coverId: this.coverId,
         type: this.type,
         configuration: {
           visibility: this.configuration.visibility,
@@ -364,8 +365,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         order: this.order,
         expire: this.expire,
         metadata: this.metadata,
-        coverId: this.coverId,
-        protected: this.configuration.protected,
         inquiryIds: this.inquiryIds,
         childs: this.childs,
         slug: this.slug,
@@ -572,8 +571,8 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       if (data.ownedGroup !== undefined)
         this.ownedGroup = data.ownedGroup || "";
       if (data.metadata !== undefined) this.metadata = data.metadata || null;
-      if (data.configuration.protected !== undefined)
-        this.configuration.protected = data.configuration.protected || false;
+      if (data.configuration?.protected !== undefined)
+        this.configuration.protected = data.configuration?.protected || false;
       if (data.order !== undefined) this.order = data.order || 0;
       if (data.expire !== undefined) this.expire = data.expire || null;
       if (data.type !== undefined) this.type = data.type || "default";
@@ -642,6 +641,7 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
         visibilityGroups: [],
         visibilityUsers: [],
         expire: null,
+	protected: false,
         supportEngine: [] as SupportEngine[],
         description: "",
         titleExt: null,
@@ -710,7 +710,6 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
      */
     async load(inquiryGroupId?: number | null): Promise<InquiryGroup | void> {
       let groupId = inquiryGroupId;
-      console.log(" WE LOAD THE GROUP INTO THE STORE ", inquiryGroupId);
       const sessionStore = useSessionStore();
       if (!groupId && sessionStore.route?.params?.id) {
         groupId = Number(sessionStore.route.params.id);
@@ -830,32 +829,27 @@ export const useInquiryGroupStore = defineStore("inquiryGroup", {
       }
     },
 */
-async update(
-  payload: UpdateInquiryGroupPayload,
-): Promise<void> {
-  if (this.id === 0) return
+    async update(payload: UpdateInquiryGroupPayload): Promise<void> {
+      if (this.id === 0) return;
 
-  this.updating = true
+      this.updating = true;
 
-  try {
-    const response = await InquiryGroupsAPI.updateGroup(
-      this.id,
-      payload,
-    )
+      try {
+        const response = await InquiryGroupsAPI.updateGroup(this.id, payload);
 
-    if (response.data?.inquiryGroup) {
-      this.patchFromResponse(response.data.inquiryGroup)
-    }
-  } catch (error) {
-    Logger.error('Error updating inquiry group', {
-      error,
-      payload,
-    })
-    throw error
-  } finally {
-    this.updating = false
-  }
-},
+        if (response.data?.inquiryGroup) {
+          this.patchFromResponse(response.data.inquiryGroup);
+        }
+      } catch (error) {
+        Logger.error("Error updating inquiry group", {
+          error,
+          payload,
+        });
+        throw error;
+      } finally {
+        this.updating = false;
+      }
+    },
 
     /**
      * Update configuration only
@@ -885,19 +879,18 @@ async update(
       }
     },
      */
-async updateConfiguration(
-  configUpdate: Partial<InquiryGroupConfiguration>,
-): Promise<void> {
-  if (this.id === 0) return
+    async updateConfiguration(
+      configUpdate: Partial<InquiryGroupConfiguration>,
+    ): Promise<void> {
+      if (this.id === 0) return;
 
-  await this.update({
-    configuration: {
-      ...this.configuration,
-      ...configUpdate,
+      await this.update({
+        configuration: {
+          ...this.configuration,
+          ...configUpdate,
+        },
+      });
     },
-  })
-},
-
 
     /**
      * Update visibility
@@ -914,7 +907,6 @@ async updateConfiguration(
       if (params.visibilityUsers !== undefined) {
         this.configuration.visibilityUsers = params.visibilityUsers;
       }
-      console.log(" CONFIGRAUTOION UPDATE ", this.configuration);
       try {
         await this.update({ configuration: this.configuration });
       } catch (error) {

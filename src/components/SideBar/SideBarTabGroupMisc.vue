@@ -36,8 +36,8 @@ const localCheckboxes = ref<Record<string, boolean>>({});
 // Local field values for NcInputField to avoid undefined
 const localFieldValues = ref<Record<string, string>>({});
 
-console.log(" IS READONLY ",props.isReadonly)
-console.log(" ERROR ",error)
+console.log(" IS READONLY ", props.isReadonly);
+console.log(" ERROR ", error);
 
 type MiscValue =
   string | boolean | number | null | undefined | Date | string[] | object;
@@ -220,7 +220,7 @@ const dynamicFields = computed(() => {
       inquiryGroupStore.type,
       sessionStore.appSettings?.inquiryGroupTypeTab || [],
     );
-    console.log(" FEILDS     ",fields)
+    console.log(" FEILDS     ", fields);
     return Array.isArray(fields) ? fields : [];
   } catch (e) {
     console.error("Error getting fields:", e);
@@ -228,7 +228,7 @@ const dynamicFields = computed(() => {
   }
 });
 
-console.log(" DYNAMICS FIELDS ",dynamicFields.value)
+console.log(" DYNAMICS FIELDS ", dynamicFields.value);
 
 // ============================================================
 // GET MISC VALUE

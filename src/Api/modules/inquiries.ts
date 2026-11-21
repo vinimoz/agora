@@ -211,7 +211,6 @@ const inquiries = {
     categoryId?: number;
     description?: string;
   }): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-    console.log(" VISIIBILIT YYYYYY ", dataInquiry.visibility);
     return httpInstance.request({
       method: "POST",
       url: "inquiry/add",
@@ -430,12 +429,11 @@ const inquiries = {
 
   updateMiscField(
     inquiryId: number,
-    updateData: { key: string; value: string },
+    updateData: { key: string; value: unknown },
   ): Promise<AxiosResponse<{ miscField: string }>> {
     if (!updateData.key || updateData.key.trim() === "") {
       throw new Error("Key cannot be null or empty for misc field update");
     }
-    console.log(" WE UPDAT THE MIS FIEILD ", updateData);
 
     return httpInstance.request({
       method: "PUT",

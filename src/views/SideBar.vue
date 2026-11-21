@@ -20,7 +20,6 @@ import {
   canUseResource,
   canShare,
   canEdit,
-  canView,
   createInquiryContext,
 } from "../utils/permissions.ts";
 import {

@@ -65,6 +65,7 @@ const municipalityDefaults: HomeConfig = {
   ],
 
   hero: {
+    entityName: "Take back your autority",
     tagline: "Together, let's build tomorrow",
     title: "Welcome to Agora",
     subtitle: "Your civic space for a more direct and participatory democracy",
@@ -151,7 +152,7 @@ const universityDefaults: HomeConfig = {
   ],
 
   hero: {
-    cityName: "Your campus, your voice",
+    entityName: "Your campus, your voice",
     tagline: "Participate in campus life",
     title: "Welcome to your university",
     subtitle: "Shape the decisions that affect your studies and student life",
@@ -239,7 +240,7 @@ const associationDefaults: HomeConfig = {
   ],
 
   hero: {
-    cityName: "Your association, your voice",
+    entityName: "Your association, your voice",
     tagline: "Get involved",
     title: "Welcome to your association",
     subtitle: "Shape the projects and decisions that matter to your community",
@@ -327,7 +328,7 @@ const cooperativeDefaults: HomeConfig = {
   ],
 
   hero: {
-    cityName: "Your co-op, your decisions",
+    entityName: "Your co-op, your decisions",
     tagline: "Decide together",
     title: "Welcome to your cooperative",
     subtitle: "One member, one vote — shape how your co-op runs",
@@ -415,7 +416,7 @@ const companyDefaults: HomeConfig = {
   ],
 
   hero: {
-    cityName: "Your workplace, your voice",
+    entityName: "Your workplace, your voice",
     tagline: "Have your say",
     title: "Welcome to your company space",
     subtitle:

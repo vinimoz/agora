@@ -4,18 +4,32 @@
 -->
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount } from 'vue'
-import { useInquiryStore } from '../../stores/inquiry.ts'
-import { ActionToggleSidebar } from '../Actions/index.ts'
-import { useSessionStore } from '../../stores/session.ts'
-import Collapsible from '../Base/modules/Collapsible.vue'
-const inquiryStore = useInquiryStore()
-const sessionStore = useSessionStore()
+import { computed, onBeforeUnmount } from "vue";
+import { useInquiryStore } from "../../stores/inquiry.ts";
+import { ActionToggleSidebar } from "../Actions/index.ts";
+import { useSessionStore } from "../../stores/session.ts";
+import Collapsible from "../Base/modules/Collapsible.vue";
+import type { CollapsibleProps } from "../components/Base/modules/Collapsible.vue";
+
+
+const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore();
+
+// ============================================================
+// isShortDescription computed
+// ============================================================
+const isShortDescription = computed(() => {
+  const desc = inquiryStore.description || "";
+  return desc.length < 200;
+});
 
 const collapsibleProps = computed<CollapsibleProps>(() => ({
-  noCollapse: !inquiryStore.configuration?.collapseDescription || isShortDescription.value,
-  initialState: inquiryStore.currentUserStatus?.countInquiries === 0 ? 'max' : 'min',
-}))
+  noCollapse:
+    !inquiryStore.configuration?.collapseDescription ||
+    isShortDescription.value,
+  initialState:
+    inquiryStore.currentUserStatus?.countInquiries === 0 ? "max" : "min",
+}));
 
 onBeforeUnmount(() => {
   inquiryStore.$reset();

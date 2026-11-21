@@ -249,8 +249,36 @@ export const useSessionStore = defineStore("session", {
                 state.optionFamilyTab = this.appSettings?.optionFamilyTab || [];
                 state.categoryTab = this.appSettings?.categoryTab || [];
                 state.locationTab = this.appSettings?.locationTab || [];
-                state.organizationType = this.appSettings?.organizationType || '';
-                state.home = this.appSettings?.home || [];
+                state.organizationType =
+                  this.appSettings?.organizationType || null;
+                state.home = this.appSettings?.home ?? {
+  sections: [],
+  hero: {
+    entityName: '',
+    tagline: '',
+    title: '',
+    subtitle: '',
+    actions: [],
+  },
+  promo: {
+    title: '',
+    text: '',
+    cta: '',
+  },
+  relevance: {
+    tiers: [],
+    weights: {
+      owner: 0,
+      participant: 0,
+      space: 0,
+      locality: 0,
+      region: 0,
+      activePhase: 0,
+      new: 0,
+    },
+  },
+};
+
               });
             }
           } catch (storeError) {

@@ -119,16 +119,18 @@ class Share extends EntityWithUser implements JsonSerializable
 		self::TYPE_ADMIN,
 	];
 
-	public const PARTICIPATION_NONE    = 0;
+	public const PARTICIPATION_NONE    = 0; // None
 	public const PARTICIPATION_VOTE    = 1; // 0b01
 	public const PARTICIPATION_COMMENT = 2; // 0b10
 	public const PARTICIPATION_BOTH    = 3; // 0b11 (VOTE | COMMENT)
+	public const PARTICIPATION_ALL    = 4 ; // 0b11 (VOTE | COMMENTi | OPTION)
 
 	public const PARTICIPATION_LEVELS = [
 		self::PARTICIPATION_NONE,
 		self::PARTICIPATION_VOTE,
 		self::PARTICIPATION_COMMENT,
 		self::PARTICIPATION_BOTH,
+		self::PARTICIPATION_ALL,
 	];
 
 	protected IURLGenerator $urlGenerator;

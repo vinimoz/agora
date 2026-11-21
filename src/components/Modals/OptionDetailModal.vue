@@ -591,10 +591,13 @@ const availableResponseTypes = computed(() =>
 // Create context once as computed
 const optionContext = computed(() => {
   if (!optionStore?.id) return null;
-  return createOptionContext(toRaw(optionStore),inquiriesStore.getInquiryById(props.inquiryId));
+  return createOptionContext(
+    toRaw(optionStore),
+    inquiriesStore.getInquiryById(props.inquiryId),
+  );
 });
 
-console.log(" OPTION DETAIL MODAL ",props.inquiryId)
+console.log(" OPTION DETAIL MODAL ", props.inquiryId);
 const canEdit = computed(() =>
   optionContext.value ? canEditOption(optionContext.value) : false,
 );

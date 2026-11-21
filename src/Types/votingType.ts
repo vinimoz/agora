@@ -408,7 +408,6 @@ export interface ApprovalDelibResult {
   percentages: { approved: number };
 }
 
-
 /** Borda Count results */
 export interface BordaResult {
   type: "borda";

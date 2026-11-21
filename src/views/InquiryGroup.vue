@@ -23,14 +23,19 @@
             }"
           >
             <template #icon>
-              <component :is="InquiryGeneralIcons.Home" :size="20" />
+              <component
+                :is="InquiryGeneralIcons.Home"
+                :size="20"
+              />
             </template>
             <span class="breadcrumb-label">{{ t("agora", "Home") }}</span>
           </NcButton>
 
           <!-- Family (only when we are inside an actual group, not the family browser) -->
           <template v-if="showFamilyCrumb">
-            <div class="breadcrumb-separator">❯</div>
+            <div class="breadcrumb-separator">
+              ❯
+            </div>
             <NcButton
               type="tertiary"
               class="breadcrumb-item breadcrumb-family"
@@ -38,15 +43,23 @@
               @click="goToFamilyRoot"
             >
               <div class="breadcrumb-item-content">
-                <component :is="familyIconComponent" class="breadcrumb-icon" />
+                <component
+                  :is="familyIconComponent"
+                  class="breadcrumb-icon"
+                />
                 <span class="breadcrumb-label">{{ familyLabel }}</span>
               </div>
             </NcButton>
           </template>
 
           <!-- Parent groups -->
-          <template v-for="parent in parentGroups" :key="parent.id">
-            <div class="breadcrumb-separator">❯</div>
+          <template
+            v-for="parent in parentGroups"
+            :key="parent.id"
+          >
+            <div class="breadcrumb-separator">
+              ❯
+            </div>
             <NcButton
               type="tertiary"
               class="breadcrumb-item"
@@ -64,12 +77,20 @@
           </template>
 
           <!-- Current -->
-          <div class="breadcrumb-separator">❯</div>
+          <div class="breadcrumb-separator">
+            ❯
+          </div>
           <div class="breadcrumb-current">
             <div class="breadcrumb-current-content">
-              <component :is="currentIconComponent" class="breadcrumb-icon" />
+              <component
+                :is="currentIconComponent"
+                class="breadcrumb-icon"
+              />
               <span class="breadcrumb-label">{{ currentBreadcrumbTitle }}</span>
-              <span v-if="totalInquiries > 0 && hasSlug" class="inquiry-count">
+              <span
+                v-if="totalInquiries > 0 && hasSlug"
+                class="inquiry-count"
+              >
                 ({{ totalInquiries }})
               </span>
               <span
@@ -81,8 +102,8 @@
               <span
                 v-else-if="
                   rootTypesWithGroups.length > 0 &&
-                  !hasSlug &&
-                  !currentGroupType
+                    !hasSlug &&
+                    !currentGroupType
                 "
                 class="inquiry-count"
               >
@@ -97,8 +118,13 @@
       <div class="separation-line" />
 
       <!-- Group not found -->
-      <div v-if="groupNotFound" class="not-found-state">
-        <div class="not-found-icon">🔍</div>
+      <div
+        v-if="groupNotFound"
+        class="not-found-state"
+      >
+        <div class="not-found-icon">
+          🔍
+        </div>
         <h2>{{ t("agora", "Group not found") }}</h2>
         <p>
           {{
@@ -108,7 +134,10 @@
             )
           }}
         </p>
-        <NcButton type="primary" :to="{ name: 'home' }">
+        <NcButton
+          type="primary"
+          :to="{ name: 'home' }"
+        >
           {{ t("agora", "Back to home") }}
         </NcButton>
       </div>
@@ -119,7 +148,10 @@
         <div class="group-header">
           <div class="header-left">
             <div class="group-icon-badge">
-              <component :is="currentIconComponent" class="group-icon" />
+              <component
+                :is="currentIconComponent"
+                class="group-icon"
+              />
             </div>
             <div class="group-title-section">
               <h1 class="group-title">
@@ -145,7 +177,10 @@
         </div>
 
         <!-- Loading -->
-        <div v-if="isLoading" class="loading-state">
+        <div
+          v-if="isLoading"
+          class="loading-state"
+        >
           <div class="spinner" />
           <p>{{ t("agora", "Loading …") }}</p>
         </div>
@@ -157,89 +192,141 @@
         <!--   B) no slug + type selected    → show GROUPS of that type         -->
         <!--   C) slug set                   → show CHILDREN + experience       -->
         <!-- ================================================================ -->
-        <div v-else class="content-area">
+        <div
+          v-else
+          class="content-area"
+        >
           <!-- ============================================================= -->
           <!-- STATE A — Group TYPES grid                                     -->
           <!-- ============================================================= -->
-	  <template v-if="!hasSlug && !currentGroupType">
-  <!-- STEP 1 — no family selected: show families -->
-  <template v-if="!activeFamily">
-    <div class="section-header">
-      <h3>{{ t("agora", "My spaces") }}</h3>
-    </div>
+          <template v-if="!hasSlug && !currentGroupType">
+            <!-- STEP 1 — no family selected: show families -->
+            <template v-if="!activeFamily">
+              <div class="section-header">
+                <h3>{{ t("agora", "My spaces") }}</h3>
+              </div>
 
-    <div v-if="familiesWithRootTypes.length > 0" class="types-grid">
-      <div
-        v-for="family in familiesWithRootTypes"
-        :key="family.key"
-        class="type-vignette"
-        @click="selectFamily(family)"
-      >
-        <div class="type-vignette__icon">
-          <component :is="family.icon" />
-        </div>
-        <div class="type-vignette__body">
-          <h4 class="type-vignette__title">{{ family.label }}</h4>
-          <p v-if="family.description" class="type-vignette__desc">
-            {{ family.description }}
-          </p>
-	  <span class="type-vignette__count">
-  {{ n("agora", "%n type", "%n types", family.rootTypes.length) }}
-</span>
-        </div>
-      </div>
-    </div>
+              <div
+                v-if="familiesWithRootTypes.length > 0"
+                class="types-grid"
+              >
+                <div
+                  v-for="family in familiesWithRootTypes"
+                  :key="family.key"
+                  class="type-vignette"
+                  @click="selectFamily(family)"
+                >
+                  <div class="type-vignette__icon">
+                    <component :is="family.icon" />
+                  </div>
+                  <div class="type-vignette__body">
+                    <h4 class="type-vignette__title">
+                      {{ family.label }}
+                    </h4>
+                    <p
+                      v-if="family.description"
+                      class="type-vignette__desc"
+                    >
+                      {{ family.description }}
+                    </p>
+                    <span class="type-vignette__count">
+                      {{
+                        n(
+                          "agora",
+                          "%n type",
+                          "%n types",
+                          family.rootTypes.length,
+                        )
+                      }}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-    <div v-else class="empty-state">
-      <div class="empty-icon">📁</div>
-      <h3>{{ t("agora", "No spaces available") }}</h3>
-      <p>{{ t("agora", "There are no families with group types yet.") }}</p>
-    </div>
-  </template>
+              <div
+                v-else
+                class="empty-state"
+              >
+                <div class="empty-icon">
+                  📁
+                </div>
+                <h3>{{ t("agora", "No spaces available") }}</h3>
+                <p>
+                  {{
+                    t("agora", "There are no families with group types yet.")
+                  }}
+                </p>
+              </div>
+            </template>
 
-	<!-- STEP 2 — family selected: show its root types -->
-<template v-else>
-  <div class="section-header">
-    <h3>{{ familyLabel }}</h3>
-    <div v-if="canCreateInFamily" class="section-actions">
-      <NcButton class="create-button" @click="createInquiryGroup('')">
-        ➕ {{ t("agora", "Create group") }}
-      </NcButton>
-    </div>
-  </div>
+            <!-- STEP 2 — family selected: show its root types -->
+            <template v-else>
+              <div class="section-header">
+                <h3>{{ familyLabel }}</h3>
+                <div
+                  v-if="canCreateInFamily"
+                  class="section-actions"
+                >
+                  <NcButton
+                    class="create-button"
+                    @click="createInquiryGroup('')"
+                  >
+                    ➕ {{ t("agora", "Create group") }}
+                  </NcButton>
+                </div>
+              </div>
 
-  <div v-if="rootTypesWithGroups.length > 0" class="types-grid">
-    <div
-      v-for="type in rootTypesWithGroups"
-      :key="getTypeKey(type)"
-      class="type-vignette"
-      @click="selectType(type)"
-    >
-      <div class="type-vignette__icon">
-        <component :is="getGroupTypeIconComponent(getTypeKey(type))" />
-      </div>
-      <div class="type-vignette__body">
-        <h4 class="type-vignette__title">
-          {{ t("agora", type.label) }}
-        </h4>
-        <p v-if="type.description" class="type-vignette__desc">
-          {{ t("agora", type.description) }}
-        </p>
-		<span class="type-vignette__count">
-  {{ groupCountOfType(getTypeKey(type)) }}
-  {{ groupCountOfType(getTypeKey(type)) === 1 ? t("agora", "group") : t("agora", "groups") }}
-</span>
-      </div>
-    </div>
-  </div>
+              <div
+                v-if="rootTypesWithGroups.length > 0"
+                class="types-grid"
+              >
+                <div
+                  v-for="type in rootTypesWithGroups"
+                  :key="getTypeKey(type)"
+                  class="type-vignette"
+                  @click="selectType(type)"
+                >
+                  <div class="type-vignette__icon">
+                    <component
+                      :is="getGroupTypeIconComponent(getTypeKey(type))"
+                    />
+                  </div>
+                  <div class="type-vignette__body">
+                    <h4 class="type-vignette__title">
+                      {{ t("agora", type.label) }}
+                    </h4>
+                    <p
+                      v-if="type.description"
+                      class="type-vignette__desc"
+                    >
+                      {{ t("agora", type.description) }}
+                    </p>
+                    <span class="type-vignette__count">
+                      {{ groupCountOfType(getTypeKey(type)) }}
+                      {{
+                        groupCountOfType(getTypeKey(type)) === 1
+                          ? t("agora", "group")
+                          : t("agora", "groups")
+                      }}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-  <div v-else class="empty-state">
-    <div class="empty-icon">📁</div>
-    <h3>{{ t("agora", "No group types available") }}</h3>
-    <p>{{ t("agora", "This family has no group types configured.") }}</p>
-  </div>
-</template>
-</template>
+              <div
+                v-else
+                class="empty-state"
+              >
+                <div class="empty-icon">
+                  📁
+                </div>
+                <h3>{{ t("agora", "No group types available") }}</h3>
+                <p>
+                  {{ t("agora", "This family has no group types configured.") }}
+                </p>
+              </div>
+            </template>
+          </template>
           <!-- ============================================================= -->
           <!-- STATE B / C — Type selected OR a specific slug                 -->
           <!-- ============================================================= -->
@@ -272,19 +359,28 @@
             </div>
 
             <!-- Groups of the selected type (state B) or children (state C) -->
-            <div v-if="displayedGroups.length > 0" class="groups-grid">
+            <div
+              v-if="displayedGroups.length > 0"
+              class="groups-grid"
+            >
               <div
                 v-for="group in displayedGroups"
                 :key="group.id"
                 class="group-vignette-wrapper"
               >
                 <div class="vignette-container">
-                  <div class="group-vignette" @click="selectGroup(group)">
-                    <div v-if="group.coverId" class="vignette-cover">
+                  <div
+                    class="group-vignette"
+                    @click="selectGroup(group)"
+                  >
+                    <div
+                      v-if="group.coverId"
+                      class="vignette-cover"
+                    >
                       <img
                         :src="getCoverUrl(group.coverId)"
                         :alt="group.title"
-                      />
+                      >
                       <div class="vignette-cover-overlay" />
                     </div>
                     <div class="vignette-content">
@@ -294,7 +390,10 @@
                         />
                       </div>
                       <h4>{{ group.title }}</h4>
-                      <p v-if="group.description" class="vignette-description">
+                      <p
+                        v-if="group.description"
+                        class="vignette-description"
+                      >
                         {{ group.description }}
                       </p>
                       <div class="vignette-stats">
@@ -321,7 +420,11 @@
                         >
                           {{ t("agora", "View group") }}
                           <template #icon>
-                            <svg width="16" height="16" viewBox="0 0 24 24">
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                            >
                               <path
                                 d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"
                               />
@@ -336,9 +439,9 @@
                   <div
                     v-if="
                       group &&
-                      (canUserEditGroup(group) ||
-                        canUserDeleteGroup(group) ||
-                        canUserArchiveGroup(group))
+                        (canUserEditGroup(group) ||
+                          canUserDeleteGroup(group) ||
+                          canUserArchiveGroup(group))
                     "
                     class="owner-menu-under"
                   >
@@ -350,7 +453,11 @@
                         @click.stop="modifyGroup(group)"
                       >
                         <template #icon>
-                          <svg width="14" height="14" viewBox="0 0 24 24">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                          >
                             <path
                               d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
                             />
@@ -366,7 +473,11 @@
                         @click.stop="deleteGroup(group)"
                       >
                         <template #icon>
-                          <svg width="14" height="14" viewBox="0 0 24 24">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                          >
                             <path
                               d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
                             />
@@ -382,7 +493,11 @@
                         @click.stop="archiveGroup(group)"
                       >
                         <template #icon>
-                          <svg width="14" height="14" viewBox="0 0 24 24">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                          >
                             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                           </svg>
                         </template>
@@ -395,8 +510,13 @@
             </div>
 
             <!-- Empty state for state B / C -->
-            <div v-else class="empty-state">
-              <div class="empty-icon">📁</div>
+            <div
+              v-else
+              class="empty-state"
+            >
+              <div class="empty-icon">
+                📁
+              </div>
               <h3>{{ emptyStateTitle }}</h3>
               <p>{{ emptyStateMessage }}</p>
               <NcButton
@@ -409,11 +529,14 @@
             </div>
 
             <!--
-									      View toolbar — only in state C (inside a real group).
-									      Experience selector + display-mode selector sit *below* the
-									      children vignettes, never above them.
-								      -->
-            <div v-if="hasSlug && currentInquiryGroup" class="view-toolbar">
+      View toolbar — only in state C (inside a real group).
+      Experience selector + display-mode selector sit *below* the
+      children vignettes, never above them.
+-->
+            <div
+              v-if="hasSlug && currentInquiryGroup"
+              class="view-toolbar"
+            >
               <div class="view-toolbar__left">
                 <ExperienceSwitcher
                   v-if="availableExperiences.length > 1"
@@ -495,7 +618,10 @@
                 />
               </div>
 
-              <div v-else class="inquiry-group-content">
+              <div
+                v-else
+                class="inquiry-group-content"
+              >
                 <InquiryGroupViewMain
                   :group="currentInquiryGroup"
                   :inquiry-ids="currentInquiryGroup.inquiryIds"
@@ -549,7 +675,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { t , n } from "@nextcloud/l10n";
+import { t, n } from "@nextcloud/l10n";
 import { showError, showSuccess } from "@nextcloud/dialogs";
 import NcAppContent from "@nextcloud/vue/components/NcAppContent";
 import NcButton from "@nextcloud/vue/components/NcButton";
@@ -626,7 +752,7 @@ const hasSlug = computed(() => {
 });
 
 const activeFamily = computed<string | null>(
-  () => (route.query.family as string) || null,
+  () => (route.query.family as string) || null,
 );
 
 const isFamilyBrowserMode = computed(
@@ -640,9 +766,9 @@ const currentInquiryGroup = computed<InquiryGroup | null>(() => {
   if (!group || !group.owner) return null;
   return group;
 });
-  console.log(" ACTIVE FAMILY ", activeFamily.value);
-  console.log(" IS FAMILY BROS ", isFamilyBrowserMode.value);
-  console.log(" CURRENT INQUIRY GROUP ", currentInquiryGroup.value);
+console.log(" ACTIVE FAMILY ", activeFamily.value);
+console.log(" IS FAMILY BROS ", isFamilyBrowserMode.value);
+console.log(" CURRENT INQUIRY GROUP ", currentInquiryGroup.value);
 
 // ============================================================
 // Experience
@@ -738,7 +864,7 @@ const familyIconComponent = computed(() => {
 function goToFamilyRoot() {
   if (!activeFamily.value) return;
   router.push({
-    name: "explore-spaces",              // was: "group-list"
+    name: "explore-spaces", // was: "group-list"
     query: { family: activeFamily.value, viewMode: "group" },
   });
 }
@@ -778,7 +904,6 @@ const availableDisplayModes = computed<DisplayType[]>(() => {
   );
 });
 
-
 const familyRootTypeKeys = computed<string[]>(() => {
   const fam = activeFamily.value;
   if (!fam) return [];
@@ -791,14 +916,14 @@ const familyRootTypeKeys = computed<string[]>(() => {
     .filter(Boolean);
 });
 
-
 const rootTypesWithGroups = computed<InquiryGroupType[]>(() => {
   const familyKeys = new Set(familyRootTypeKeys.value);
 
   return (sessionStore.appSettings?.inquiryGroupTypeTab || [])
     .filter((tt: InquiryGroupType) => tt.is_root === true)
-    .filter((tt: InquiryGroupType) =>
-      familyKeys.size === 0 || familyKeys.has(getTypeKey(tt)),
+    .filter(
+      (tt: InquiryGroupType) =>
+        familyKeys.size === 0 || familyKeys.has(getTypeKey(tt)),
     )
     .filter((tt: InquiryGroupType) => groupsOfType(getTypeKey(tt)).length > 0)
     .sort(
@@ -807,7 +932,10 @@ const rootTypesWithGroups = computed<InquiryGroupType[]>(() => {
     );
 });
 
-console.log("OUTSIDE GOOOOOOOOOOOOO INTO ROOT TYPE WITH GROUP", rootTypesWithGroups.value)
+console.log(
+  "OUTSIDE GOOOOOOOOOOOOO INTO ROOT TYPE WITH GROUP",
+  rootTypesWithGroups.value,
+);
 
 function selectType(type: InquiryGroupType) {
   const key = getTypeKey(type);
@@ -822,7 +950,6 @@ function selectType(type: InquiryGroupType) {
     },
   });
 }
-
 
 function clearSelectedType() {
   inquiryGroupsStore.setCurrentGroupType("");
@@ -863,7 +990,7 @@ const displayedGroups = computed<InquiryGroup[]>(() => {
   const familyKeys = new Set(familyRootTypeKeys.value);
 
   if (!hasSlug.value) {
-    if (!currentGroupType.value) return [];        // ← route-derived
+    if (!currentGroupType.value) return []; // ← route-derived
     return inquiryGroupsStore.inquiryGroups
       .filter((g) => {
         const isRoot =
@@ -871,7 +998,7 @@ const displayedGroups = computed<InquiryGroup[]>(() => {
         if (!isRoot) return false;
         if (g.status?.groupStatus === "archived") return false;
         if (familyKeys.size > 0 && !familyKeys.has(g.type)) return false;
-        return g.type === currentGroupType.value;  // ← route-derived
+        return g.type === currentGroupType.value; // ← route-derived
       })
       .sort((a, b) => a.title.localeCompare(b.title));
   }
