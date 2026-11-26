@@ -111,6 +111,7 @@ OC.L10N.register(
     "Type" : "Tyyppi",
     "Active filters" : "Aktiiviset suodattimet",
     "Search" : "Etsi",
+    "Archived {relativeTime}" : "Arkistoidut {relativeTime}",
     "No description provided" : "Kuvausta ei määritetty",
     "{count} participants" : "{count} osallistujaa",
     "Created on {date}" : "Luotu {date}",
