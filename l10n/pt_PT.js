@@ -1443,6 +1443,8 @@ OC.L10N.register(
     "Supports count" : "Número de apoios",
     "Relevant" : "Relevante",
     "All inquiries who are relevant for you, not older than 30 days." : "Todas as consultas relevantes para você, com menos de 30 dias.",
+    "Rejected inquiries" : "Consultas rejeitadas",
+    "These are all inquiries who has been rejected." : "Estas são todas as consultas que foram rejeitadas.",
     "My inquiries" : "Minhas consultas",
     "These are all inquiries where you are the owner." : "Todas estas são consultas nas quais você é o proprietário.",
     "Private inquiries" : "Consultas privadas",
